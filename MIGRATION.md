@@ -142,3 +142,5 @@ snapshot: bundle+tar   # or rsync
 9. **Verification:** submodule status clean ×3; ~/.claude grep-zero; per-repo grep-zero on live sets; relata: only provenance comments reference old paths (covered by symlinks; watch during soak).
 
 **Soak watch-list:** relata operations from inside logos; memorata reindex (external); any tool with absolute paths; sessions started via old-path symlinks (should hit compat memory symlinks). Log breakage here.
+
+**Post-verify corrections:** vivarium `tmp.md` was accidentally committed by an over-broad `git add -A` during the sweep — untracked again (blob remains in private history; Joseph may delete the file at leisure). asf's sweep commit likewise swept in two pre-existing untracked msc items (meta-process-review dir + reflection 28) — left committed, as they are legitimate repo content. **LESSON 2 for mv-src-repo: sweep commits must use explicit pathspecs (only the files the sweep touched), never `add -A`.**
