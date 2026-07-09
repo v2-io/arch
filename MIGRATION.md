@@ -1,6 +1,6 @@
-# Archema member-repo migration — concerns, plan, and the `translata` utility spec
+# Archema member-repo migration — concerns, plan, and the `mv-src-repo` utility spec
 
-*2026-07-10, drafted with Joseph the morning after the program repo was founded. Status: **plan, not yet executed** — four decision points (§1) want Joseph's call first. The general utility (§5) is motivated by this migration and the already-queued second one (archema-io → archema).*
+*2026-07-10, drafted with Joseph the morning after the program repo was founded. Status: **decisions made (§1), execution pending** — delegable per §1b. The general utility (§5) is motivated by this migration and the already-queued second one (archema-io → archema).*
 
 ## 0. Target shape
 
@@ -14,12 +14,33 @@
 
 Members remain fully independent repos with their own laws (charter §1); the parent adds one thing of real epistemic value: **pinned program states** — a parent commit records exact member commits, so "the program as ratified/audited/cited on date X" is one hash (the content-addressed / in-vivia pattern applied to the program itself).
 
-## 1. Decision points (Joseph)
+## 1. Decision points — DECIDED (Joseph, 2026-07-10)
+
+1. ✅ **Submodules**, operated loosely (pointer bumps = deliberate program-snapshot commits).
+2. ✅ **`logos`** — submodule path `archema-io/logos/`, GitHub repo renamed `v2-io/synthese-paper` → `v2-io/logos`. (The `form-*` prefix collision argument carried.)
+3. ✅ **Snapshot (bundles + ignored/untracked tars) + mv + old-path symlinks** — no parked clones in `_ref/`.
+4. ✅ **Safe-to-edit set as proposed** (member repos, ops, rowan, archema-io, `~/.claude/`); protected: `_core/`, `eli/`, `firmatum/`, all history layers. *(Standing unless Joseph amends.)*
+5. ✅ **Utility naming**: plain-spoken — **`mv-src-repo`** in `archema-io/utils/`, not a Latin name. Rule recorded: Latin names are reserved for fundamental things that deserve a new name (memorata was a special case — itself a PROPRIUM memory-mechanism experiment); system tools say what they do. §5 updated accordingly.
+6. ✅ **Rowan msc transplant executed 2026-07-10** (§6 item 1 resolved): the five 2025-12-18 consciousness-infrastructure reflections moved to `agentic-systems/msc/reflections-rowan-2025-12/` with provenance README; the canon citation in `def-death-as-factor-loss` re-pointed (lint clean); commits landed in both repos.
+
+<details><summary>Original decision-point analysis (for the record)</summary>
 
 1. **Structure: submodules (recommended) vs plain nested clones vs symlinks.** Submodules give recursive clone + pinned states; their frictions (detached HEAD after parent checkout; two-step commit-then-bump) are mitigated below (§3.8) and mostly vanish for a single-operator setup where you simply *work inside the member as always* and bump pointers when you want a snapshot. Nested-ignored clones avoid all friction but lose pinning and recursive clone. Symlinks-only loses the unified tree. Recommendation: **submodules, operated loosely** (pointer bumps are deliberate "program snapshot" commits, not per-change chores).
 2. **The philosophy member's name.** `form` works but collides with AAT's `form-*` segment prefix (`form-agent-model`, `form-objective-functional` — "the form segment" would become ambiguous in program-wide speech). Alternatives, same size and register: **`logos`** (the argued/word-facing register; the founding verse makes it nearly a dedication; adjacency to logogenic/logozoetic is resonance to record in the collision ledger, not a conflict), **`argumenta`** (the things argued — exact, -a family), **`disputata`** (quaestiones disputatae — the genre of rigorous argued questions; -ata family with memorata/relata/vestigia). Weak preference: **logos**. Joseph decides.
 3. **Rollback substrate: parked clones in `_ref/` vs snapshot + old-path symlinks.** Recommended: **both halves of the safety, neither via parked clones** — (a) pre-move snapshot (rsync copy to `~/src/_ref/pre-archema-migration-2026-07-10/` *or* `git bundle` per repo + tar of untracked/ignored — bundle+tar is far smaller), then (b) **`mv` the live repos into place** (preserving uncommitted work, ignored content, hooks, reflog — a fresh submodule clone preserves none of that), then (c) **symlinks at the old paths** (`~/src/agentic-systems → ~/src/archema-io/asf`, etc.) so every stale reference, muscle memory, and not-yet-swept doc keeps working during the soak period. Delete symlinks after §3.10's soak; delete the snapshot after that.
 4. **The safe-to-edit set for path sweeps.** Bulk find/replace is safe in: the three member repos, `ops`, `rowan`, `archema-io` itself, `~/.claude/` memory + CLAUDE.md. It should **not** run unsupervised in: `~/src/_core/**`, `~/src/eli/**`, `~/src/firmatum/` (cohort-sensitive, curated, partly historical record — stale paths there are *history*; the old-path symlinks carry them during transition, and a tombstone note at the end is better than rewriting the record). Joseph confirms the exact set; the utility takes it as config, not code.
+
+</details>
+
+## 1b. Delegation readiness (Joseph's question, answered 2026-07-10)
+
+**Yes — delegable, with a specific shape.** The plan is self-sufficient for a careful executor *now that §1 is decided*, but three disciplines govern the delegation (per the standing sub-agent lessons: agents with Bash exceed analysis-only mandates; stage destructive steps):
+
+- **One session, not a fleet.** This is sequential, stateful, journal-keeping work; parallel agents would race on shared paths. A single fresh session (ideally strong-substrate) with this file as its brief.
+- **Phase gates, reported back.** Delegate as three checkpointed phases, each ending in a report before the next begins: **(A)** steps 1–3 (inventory + snapshot — nothing destructive; the report surfaces every uncommitted/unpushed/worktree finding for explicit carry-approval); **(B)** steps 4–6 (GitHub rename, mv+adopt, symlinks — the point of no easy return; gate on A's approval); **(C)** steps 7 & 9 (memory renames + sweeps, per-repo commits, grep-zero verification). The executor keeps the journal *in this file* (append a `## Journal` section, one line per action with its inverse).
+- **Two steps stay with Joseph.** Step 8 (memorata/relata DB surgery — Joseph said he'll drive, and it doubles as the archema/rowan disambiguation pass, which needs human judgment on which "archema" is which) and the global `~/.claude/CLAUDE.md` project-map rewrite (judgment prose, not sed). The executor prepares both as proposals (the exact UPDATE statements; a drafted project-map diff) and stops.
+
+Rollback stays live through phase C via the snapshot + journal. If Joseph prefers not to spend a strong session on it: phases A and C are safely delegable to a lesser substrate; phase B is twenty minutes of commands best run by whoever holds the most context or by Joseph directly from the journal's script.
 
 ## 2. The full concerns list
 
@@ -76,14 +97,14 @@ Rollback at any point ≤ 9: restore from snapshot + `mv` back + rename memory d
 - Grep for the four old paths across the safe set = zero (excluding history layers: CHANGELOG/LOG/_obs/audits/spikes/.integrated — history keeps its paths, per the same rule that keeps "AAD" literal in frozen archaeology; the symlinks + eventual tombstone cover those).
 - Builds: `bin/lint-md` runs in asf; `cargo check` in vivarium; papers `bin/build` in the renamed member.
 
-## 5. `translata` — the general src-project mover (utility spec)
+## 5. `mv-src-repo` — the general src-project mover (utility spec)
 
-*Named for* translatio *(-ata family with memorata/relata/vestigia): the careful ceremonial carrying of something precious to its new shrine.*
+*Plain name by rule (§1.5): utilities say what they do. Lives in `utils/`; Ruby.*
 
-**Shape.** A small CLI (Ruby, per the script-language convention), living either as its own `~/src/translata/` or `archema-io/bin/translata`. Config-driven, not hardcoded: a system-description file (checked into archema-io) declares the bespoke knowledge —
+**Shape.** A small CLI (Ruby, per the script-language convention), living at `archema-io/utils/mv-src-repo` (see `utils/README.md`). Config-driven, not hardcoded: a system-description file (checked into archema-io) declares the bespoke knowledge —
 
 ```yaml
-# translata.yaml (sketch)
+# mv-src-repo.yaml (sketch)
 memory_root: ~/.claude/projects
 memory_globals: [~/.claude/CLAUDE.md, ~/.claude/memory]
 safe_sweep_repos: [archema-io, asf, vivarium, <form>, ops, rowan]   # bulk-editable
@@ -95,11 +116,11 @@ symlink_old_path: true
 snapshot: bundle+tar   # or rsync
 ```
 
-**Verbs.** `translata plan SRC DST` (dry-run: full ordered action list + everything it *would* touch, including per-file sweep hit counts); `translata move SRC DST [--submodule-into PARENT] [--github-rename NEW]`; `translata verify`; `translata rollback <journal>`.
+**Verbs.** `mv-src-repo plan SRC DST` (dry-run: full ordered action list + everything it *would* touch, including per-file sweep hit counts); `mv-src-repo move SRC DST [--submodule-into PARENT] [--github-rename NEW]`; `mv-src-repo verify`; `mv-src-repo rollback <journal>`.
 
 **Behavior requirements.** (1) Pre-flight gate: refuses on dirty status/stashes/worktrees/unpushed unless `--carry` acknowledges each finding. (2) Snapshot before any mutation. (3) **Journal**: every action appended to a journal file with its inverse; `rollback` replays inverses in reverse; every step idempotent so a crashed run resumes. (4) Sweeps are *word-boundary path* replacements, per-repo, each producing one commit with a standard message and a hit-count report; protected paths never touched; a "human-review" bucket for ambiguous hits (e.g. `archema` the program vs the gem). (5) Memory-dir rename derives the slug mechanically from the path (the `-Users-…-src-…` encoding). (6) Index surgery behind per-index adapters (memorata/relata), each with a built-in verification query. (7) `verify` runs the §4 checklist. (8) Old-path symlink creation + a dated reminder entry (in the journal) to remove them.
 
-**Build order.** Don't build it *before* this migration — do this one semi-manually with the journal kept by hand (this file), harvesting each step into the spec; build `translata` from the harvested reality; its first full run is the archema-io → archema rename (§2 last block), which is small, gated, and the perfect shakedown.
+**Build order.** Don't build it *before* this migration — do this one semi-manually with the journal kept by hand (this file), harvesting each step into the spec; build `mv-src-repo` from the harvested reality; its first full run is the archema-io → archema rename (§2 last block), which is small, gated, and the perfect shakedown.
 
 ## 6. Open items appendix
 

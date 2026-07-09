@@ -1,0 +1,200 @@
+{
+  "main": {
+    "id": "486b8ec148cf1ddd",
+    "type": "split",
+    "children": [
+      {
+        "id": "56d93fd287958404",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3d926aac089f3360",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "CHARTER-DRAFT.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CHARTER-DRAFT"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "1ce67b24e0c434dc",
+    "type": "split",
+    "children": [
+      {
+        "id": "1af289c7412da5d7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e3d22fc7427437e5",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "2e5d32de36d799f7",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "c8cd4dc5028aa099",
+    "type": "split",
+    "children": [
+      {
+        "id": "680283cdfddea9b0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "628224512757db3a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "doc/DOMAINS.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for DOMAINS"
+            }
+          },
+          {
+            "id": "4559bd0c2cd79ae6",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "doc/DOMAINS.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from DOMAINS"
+            }
+          },
+          {
+            "id": "7a074197081531d4",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "7265f18d473b2c3f",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "doc/DOMAINS.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of DOMAINS"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "markdown-importer:Open format converter": false,
+      "workspaces:Manage workspace layouts": false,
+      "bases:Create new base": false,
+      "templater-obsidian:Templater": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "slides-extended:Show slide preview": false,
+      "obsidian-focus-mode:Toggle Focus Mode (Shift + Click to show active pane only)": false
+    }
+  },
+  "active": "3d926aac089f3360",
+  "lastOpenFiles": [
+    "utils/README.md",
+    "utils",
+    "MIGRATION.md",
+    "msc/reflections/30-concluding-the-long-session.md",
+    "msc/reflections/29-the-reading-consumed-and-the-impact-question.md",
+    "msc/meta-process-review-2026-07-07/PROCESS-MAP-v0.md",
+    "msc/meta-process-review-2026-07-07/DECISIONS-CENSUS.md",
+    "msc/meta-process-review-2026-07-07/PROCESS-MAP-v0.udon",
+    "doc/DOMAINS.md",
+    "msc/meta-process-review-2026-07-07/05-publication-build-citation-pipeline-findings.md",
+    "msc/meta-process-review-2026-07-07/10-repo-decomposition-strategic-question-findings.md",
+    "msc/meta-process-review-2026-07-07/01-theory-content-lifecycle-findings.md",
+    "msc/meta-process-review-2026-07-07/07-decision-routing-and-joseph-blockers-findings.md",
+    "msc/meta-process-review-2026-07-07/03-naming-terminology-lexicon-findings.md",
+    "msc/meta-process-review-2026-07-07/05-publication-build-citation-pipeline-reflection.md",
+    "msc/meta-process-review-2026-07-07/02-audit-and-spike-lifecycle-findings.md",
+    "msc/meta-process-review-2026-07-07/04-governing-doc-memory-sop-integrity-findings.md",
+    "msc/meta-process-review-2026-07-07/08-tracker-and-msc-hygiene-findings.md",
+    "msc/meta-process-review-2026-07-07/06-cross-project-relationship-backport-findings.md",
+    "msc/meta-process-review-2026-07-07/06-cross-project-relationship-backport-findings.md.tmp.77007.4a8082c504ca",
+    "msc/meta-process-review-2026-07-07/01-theory-content-lifecycle-reflection.md",
+    "msc/meta-process-review-2026-07-07/09-tooling-automation-capability-utilization-findings.md",
+    "msc/meta-process-review-2026-07-07/10-repo-decomposition-strategic-question-reflection.md",
+    "msc/meta-process-review-2026-07-07/02-audit-and-spike-lifecycle-reflection.md",
+    "msc/meta-process-review-2026-07-07/03-naming-terminology-lexicon-reflection.md",
+    "msc/meta-process-review-2026-07-07/04-governing-doc-memory-sop-integrity-reflection.md",
+    "msc/meta-process-review-2026-07-07/09-tooling-automation-capability-utilization-reflection.md",
+    "msc/meta-process-review-2026-07-07/07-decision-routing-and-joseph-blockers-reflection.md",
+    "msc/meta-process-review-2026-07-07/08-tracker-and-msc-hygiene-reflection.md",
+    "msc/meta-process-review-2026-07-07",
+    "spikes/epistemic-target-ontology",
+    "audits/AUDIT-WORKING-731548/verify"
+  ]
+}
