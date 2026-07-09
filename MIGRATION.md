@@ -8,7 +8,7 @@
 ~/src/archema-io/                     # the program repo (→ ~/src/archema later, §4)
   CHARTER-DRAFT.md, charter/, _program-seed/, MIGRATION.md
   asf/        ← submodule = v2-io/agentic-systems   (remote name unchanged)
-  <form?>/    ← submodule = v2-io/<renamed synthese-paper>   (§1.2 names)
+  logos/      ← submodule = v2-io/logos (renamed from synthese-paper)
   vivarium/   ← submodule = v2-io/vivarium          (name parity, unchanged)
 ```
 
