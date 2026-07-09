@@ -8,5 +8,5 @@
 	branch = main
 [submodule "vivarium"]
 	path = vivarium
-	url = https://github.com/josephwecker/vivarium.git
+	url = https://github.com/v2-io/vivarium.git
 	branch = main
