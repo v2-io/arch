@@ -1,6 +1,6 @@
 # The Archema concept matrix — ASF ⇄ papers ⇄ vivarium ⇄ tradition
 
-*2026-07-09, Fable 5 session, built at the end of the first-hand ASF walk. ASF gloss and notation lead each row because ASF is the most authoritative and thoroughly reasoned register; the other columns give the same concept's dress in the philosophy portfolio, in vivarium, and in the philosophical tradition (close/overlapping concepts — precedents to cite, not equivalences unless marked). The **Notes** column carries divergences and cautions; an em-dash means no counterpart (yet). Segment tags are `~/src/agentic-systems/` slugs. Confidence: ASF columns are from first-hand segment reading (or the walk substrate notes where marked °); tradition columns are my placements at conversation-rigor.*
+*2026-07-09, Fable 5 session, built at the end of the first-hand ASF walk. ASF gloss and notation lead each row because ASF is the most authoritative and thoroughly reasoned register; the other columns give the same concept's dress in the philosophy portfolio, in vivarium, and in the philosophical tradition (close/overlapping concepts — precedents to cite, not equivalences unless marked). The **Notes** column carries divergences and cautions; an em-dash means no counterpart (yet). Segment tags are `~/src/archema-io/asf/` slugs. Confidence: ASF columns are from first-hand segment reading (or the walk substrate notes where marked °); tradition columns are my placements at conversation-rigor.*
 
 ## A. The coupling and its epistemics
 

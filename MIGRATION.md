@@ -67,12 +67,12 @@ Rollback stays live through phase C via the snapshot + journal. If Joseph prefer
 - [ ] Editor/shell: VS Code workspace files, shell aliases, mise config, any cron/launchd — grep the dotfiles.
 
 **Path sweeps (the four mappings)**
-- [ ] `~/src/agentic-systems` → `~/src/archema-io/asf`
-- [ ] `~/src/synthese-paper` → `~/src/archema-io/<name>`
-- [ ] `~/src/vivarium` → `~/src/archema-io/vivarium`
+- [x] `~/src/agentic-systems` → `~/src/archema-io/asf` — DONE 2026-07-10
+- [x] `~/src/synthese-paper` → `~/src/archema-io/logos` — DONE 2026-07-10 (GitHub repo renamed v2-io/logos)
+- [x] `~/src/vivarium` → `~/src/archema-io/vivarium` — DONE 2026-07-10 (NB remote is josephwecker/vivarium, not v2-io)
 - [ ] **`~/src/archema` → `~/src/rowan`** — already stale since yesterday, and *canon cites it*: e.g. `asf 04-eli-core/src/def-death-as-factor-loss.md` Working Notes references `~/src/archema/docs/msc/reflections/2025-12-18-consciousness-infrastructure.md` (a consciousness-infrastructure reflection that lives in what is now the *Ruby port* — decide whether that document should also *move* to a better home, e.g. firmatum or archema-io, rather than merely re-pointing).
 - Sweep order: per-repo, one commit per repo with a standard message; verify-by-grep-zero afterward within the safe set; cohort dirs excluded (decision 4).
-- [ ] Don't forget the *new* repo's own files: charter, substrate notes, concept-matrix, seed docs are full of `~/src/agentic-systems/...` etc. — archema-io is itself in the sweep set. (Its `~/src/archema-io/` self-references become mapping #5 during the later rename, §4.)
+- [ ] Don't forget the *new* repo's own files: charter, substrate notes, concept-matrix, seed docs referenced the old paths — swept 2026-07-10. — archema-io is itself in the sweep set. (Its `~/src/archema-io/` self-references become mapping #5 during the later rename, §4.)
 
 **Rowan (remaining tasks, tracked here so the archema rename can gate on them)**
 - [ ] Gem/module rename: gemspec name, `lib/archema*` → `lib/rowan*`, module `Archema` → `Rowan`, binstubs, `require` lines, README body beyond the banner.
@@ -125,6 +125,20 @@ snapshot: bundle+tar   # or rsync
 ## 6. Open items appendix
 
 - Where should the misfiled consciousness-infrastructure reflection currently at `~/src/rowan/docs/msc/reflections/2025-12-18-…` actually live? (It predates the split; it is not about the Ruby port.)
-- Does ops' `papers/` tracking or `v2.io` reference `~/src/synthese-paper` paths anywhere public-facing? (Sweep will catch private; check public separately.)
+- Does ops' `papers/` tracking or `v2.io` reference old `~/src/synthese-paper` paths anywhere public-facing? (Sweep will catch private; check public separately.)
 - Whether vivarium's `spikes/worldview` env-var docs or any Rust code embed absolute paths (unlikely; one grep).
 - Charter §9/§10 gain a line once the structure lands: how member-repo sessions relate to the parent (pointer-bump snapshots; where program-level docs live).
+
+## Journal — executed 2026-07-10 (Fable 5 session, Joseph present)
+
+1. **Pre-flight:** all three members inventoried. Carries committed+pushed: logos (dossier+letter+FEEDBACK, 4 commits incl. 3 pre-existing unpushed), asf (interned rowan reflections + reflections 29–30 + canon path fix). Flags: **vivarium remote is `josephwecker/vivarium`, not v2-io** (used as-is); vivarium `tmp.md` rides untracked.
+2. **Snapshot** → `~/src/_ref/pre-archema-migration-2026-07-10/`: git bundles (asf 222M, logos 17M, vivarium 2.4M) + untracked/ignored tars (excl. target/env/__pycache__/.build/node_modules/.ruby-lsp) + `claude-memory-pre-sweep.tgz`. *Inverse: bundles restore full history; tars restore ignored payloads.*
+3. **GitHub:** `v2-io/synthese-paper` → `v2-io/logos`; remote set-url + fetch OK. *Inverse: rename back.*
+4. **Move+adopt:** `mv` ×3 into archema-io; `git submodule add` adopted existing clones; `absorbgitdirs` migrated gitdirs into `.git/modules/`; branch=main configs; `submodule.recurse true`; pin commit pushed. *Inverse: `mv` back out; de-init submodules; restore .git dirs from modules.*
+5. **Old-path symlinks:** `~/src/{agentic-systems,synthese-paper,vivarium}` → members. *Remove after soak.*
+6. **Claude memory dirs:** 6 dirs renamed (asf base + 04-eli + 04-eli-core + msc-reflections; logos; vivarium) with compat symlinks at old slugs (needed: symlink-path sessions resolve old slugs during soak). *Inverse: reverse renames.*
+7. **~/.claude content sweep:** three path-mappings + slug-mappings across 229 md files; **gotcha logged: `~/.claude/CLAUDE.md` is a symlink → `~/src/memorata/claude/CLAUDE.md`** — `-type f` excluded it twice; sed'd the real target + manual project-map rewrite (archema-io program row added; logos row; rowan row). **The edit sits uncommitted in memorata's working tree — coordinate with the memorata agent.** memorata DB itself: externally handled (Joseph's memorata agent) — dropped from our checklist.
+8. **Repo sweeps** (live docs; history layers excluded per protected-set rule): asf 11 files (+ manual rowan re-point in 04-eli OUTLINE; lint clean), logos 21, vivarium 5 (+archema→rowan: 0 hits), ops 58 (+push), rowan 0, archema-io 2 (concept-matrix improved; **MIGRATION.md self-corrupted and was hand-repaired — LESSON for mv-src-repo: the migration plan/journal itself must be in the sweep's protected set**).
+9. **Verification:** submodule status clean ×3; ~/.claude grep-zero; per-repo grep-zero on live sets; relata: only provenance comments reference old paths (covered by symlinks; watch during soak).
+
+**Soak watch-list:** relata operations from inside logos; memorata reindex (external); any tool with absolute paths; sessions started via old-path symlinks (should hit compat memory symlinks). Log breakage here.
