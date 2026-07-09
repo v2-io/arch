@@ -1,0 +1,12 @@
+[submodule "asf"]
+	path = asf
+	url = https://github.com/v2-io/agentic-systems.git
+	branch = main
+[submodule "logos"]
+	path = logos
+	url = https://github.com/v2-io/logos.git
+	branch = main
+[submodule "vivarium"]
+	path = vivarium
+	url = https://github.com/josephwecker/vivarium.git
+	branch = main
