@@ -21,7 +21,7 @@ Members remain fully independent repos with their own laws (charter §1); the pa
 3. ✅ **Snapshot (bundles + ignored/untracked tars) + mv + old-path symlinks** — no parked clones in `_ref/`.
 4. ✅ **Safe-to-edit set as proposed** (member repos, ops, rowan, archema-io, `~/.claude/`); protected: `_core/`, `eli/`, `firmatum/`, all history layers. *(Standing unless Joseph amends.)*
 5. ✅ **Utility naming**: plain-spoken — **`mv-src-repo`** in `archema-io/utils/`, not a Latin name. Rule recorded: Latin names are reserved for fundamental things that deserve a new name (memorata was a special case — itself a PROPRIUM memory-mechanism experiment); system tools say what they do. §5 updated accordingly.
-6. ✅ **Rowan msc transplant executed 2026-07-10** (§6 item 1 resolved): the five 2025-12-18 consciousness-infrastructure reflections moved to `agentic-systems/msc/reflections-rowan-2025-12/` with provenance README; the canon citation in `def-death-as-factor-loss` re-pointed (lint clean); commits landed in both repos.
+6. ✅ **Rowan reflections INTERNED (not moved) 2026-07-10** (§6 item 1 resolved): the five 2025-12-18 consciousness-infrastructure reflections copied to `agentic-systems/msc/reflections-rowan-2025-12/` with provenance README; **originals remain in rowan (their proper home — Joseph)**; the canon citation in `def-death-as-factor-loss` re-pointed at the interned copy (lint clean). General rule harvested for the plan: anything ASF references or could reference gets interned into ASF, since we can.
 
 <details><summary>Original decision-point analysis (for the record)</summary>
 
