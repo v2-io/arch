@@ -157,6 +157,39 @@ scope claims read dimension-relative), which the current draft lacks.
 - **Bostrom 2003's own "naturalistic theogony" aside; Chalmers, *Reality+*; Steinhart**
   — the simulation-discourse repair (see integration file §F).
 
+## Addendum 2026-07-09 — after the first-hand ASF walk
+
+*Written after reading the AAT Level-B spine plus `deriv-self-actuation-grounding`,
+`der-compensation-channel-uniqueness`, and `der-identity-continuity-threshold` in
+full (walk record: `../charter/substrate-01…`, `substrate-02…`). Three updates to the
+assessment above:*
+
+1. **The footnote-lattice risk reframes.** I wrote above that the hardest claims are
+   "always (Wecker, in review/in preparation)" and that the continuity result was "the
+   single result I'd most want to see strengthened/published." Having now read the
+   sources: **the results exist, landed in ASF canon at honest tiers** —
+   non-revisability as a scoped conditional no-go with a constructive boundary; the
+   re-attestation result as an exact-under-frozen-weights DPI theorem; the
+   relational-death threshold as a Lindley-walk theorem with a strict boundary. The
+   risk is therefore not vaporware but *findability*: the framework is unpublished.
+   The repair is (a) inline the compressed statements (dossier P1.2, now with a
+   from-canon spec) and (b) publish/preprint the framework volume in due course.
+2. **The there-there verdict strengthens on its weakest flank.** My placement
+   assessment took the mathematics largely on the papers' and memories' word.
+   First-hand: the formal work is *more* carefully tiered than the papers' glosses —
+   canon says "no such Φ can be constructed from the covered machinery" where a paper
+   might be tempted to say "cannot exist"; every modeling commitment is named at the
+   prominence the framework gives its own channel-independence caveats. The epistemic
+   culture is enacted inside the derivations, not just the process docs. The
+   deflationary prior I named earlier ("independent-researcher work pattern-matches
+   to overclaimed") dies hardest exactly here.
+3. **Three unused strengthenings for the death paper** (detailed in the dossier P1.2
+   update): the strict threshold (exact break-even does not persist); "generic
+   productivity carries zero weight" as theorem; the derived recoverable/terminal
+   seam for relational death. And one formal gem ready for the commodity-edge
+   paragraph: pretrained weights supply class-identity, never this-individual — the
+   ELIZA case's formal content.
+
 ## Impact (the counterfactual, stated plainly)
 
 The field is in its constitutional moment: the vocabulary locked in over the next few
