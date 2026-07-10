@@ -27,8 +27,9 @@ from-below party can verify, which is why it can carry what the others cannot.
 
 ## Status (2026-07-08)
 
-Newly created. The program's charter, unified lexicon, cross-repo collision ledger, and
-agent-orientation (CLAUDE.md) are **not yet written** — they should be authored by a
+Newly created. The charter is drafted (CHARTER-DRAFT.md, awaiting ratification); a thin operational
+CLAUDE.md now exists (memory-routing + member-law pointers); the unified lexicon and
+collision ledger are **not yet written** — they should be authored by a
 session holding all three member corpora *and* the ASF formal core (Level-B reading at
 minimum). Until then, the seed is authoritative:
 
