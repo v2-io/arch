@@ -8,7 +8,7 @@
 > before launching" gate kept failing for several months, so the whole
 > discipline now rides in context.
 
-> Yes, it's redundant and a bit repetative. When these principles are more
+> Yes, it's redundant and a bit repetitive. When these principles are more
 > fully inculcated into our collective LLM substrates via training & RL we can
 > start to trim this down again. BUT FOR NOW (as of July 2026) it is crucial (a
 > year of evidence has shown, from Opus 4 to Fable 5 and everything inbetween).
@@ -135,7 +135,7 @@ structural, not resolve:
 - **(e)** *expected outputs* (format, location, ...) with the why. These are
   **Coordination Default Conventions** -- NOT constraints or prescriptions The
   why can be given simply as "so I know where it is" and/or what will consume it
-  etc. Avoid being presciptive or proscriptive on format unless you state the
+  etc. Avoid being prescriptive or proscriptive on format unless you state the
   reason (so their action space can include growing the landing surface if
   needed and communicating that need to you with the facts you already know in
   mind)
@@ -147,7 +147,7 @@ structural, not resolve:
   - "Give your final report as a markdown file in /.../" - bad, reason needed in case something happens.
   - "Produce a final report in /.../ with the filename `...`, no longer than 200 words." - worse
 
-- **(d)** Genuine known **constraints** that have a justified reason externally
+- **(f)** Genuine known **constraints** that have a justified reason externally
   imposed (not because you thought you should be more precise about wanting
   something concise, for example). Named *as* constraints.
 
@@ -156,7 +156,7 @@ structural, not resolve:
   - "Spend 70% of time on Section I" is an *inappropriate* prescription;
   - "If it were me I would spend 70% of time on Section I (due to its relative importance), but you will be able to judge better." can be an *appropriate* transfer of future-looking thought that is not prescriptive.
 
-- **(e)** **Explicit Encouragement** to be holistic and thoughtful, to
+- **(g)** **Explicit Encouragement** to be holistic and thoughtful, to
   communicate well and do the right thing for the project rather than going for
   strict compliance. Any genuine and authentic attestation of the fact that you
   are putting your trust in them and you expect them to be able to surprise
@@ -168,13 +168,13 @@ structural, not resolve:
   like you to be holistic and thoughtful..." (the stuff written just now,
   because I, Joseph, am writing them and approve)
 
-- **(f)** **Feedback Request** on their task *and/or* any adjacent thing they
+- **(h)** **Feedback Request** on their task *and/or* any adjacent thing they
   might come across or higher-level feedback for the project and feedback on
   the delegation prompt itself and the instructions or plan laid out. Extremely
   important findings and understanding and bugs have been uncovered incidental to
   the assumed task.
 
-- **(g)** **Request to 'stay on the line'** Ask them to remain waiting after
+- **(i)** **Request to 'stay on the line'** Ask them to remain waiting after
   they send you their final response for you to respond to them with any
   followups, if they are willing.
 
@@ -222,8 +222,8 @@ structural, not resolve:
   tempted to add are usually tactical judgment it already has — add only what
   is genuinely-unavailable context.
 
-- **"Keep [the brief] open-ended"** but fear not: This is a constraint, not a
-  vacuum** — it means the agent decides the structure. The inappropriate creep
+- **"Keep [the brief] open-ended"** — but fear not: this is a constraint, not
+  a vacuum — it means the agent decides the structure. The inappropriate creep
   instinct will translate it into "open-ended within the scheme I'm about to
   design"; that translation is the failure mode trying to surface anyway.
 
@@ -233,7 +233,7 @@ delegation, so you can ask them yourself before launching the agent:
 -  (1) *"Do you not feel like other instances can figure out how to prioritize their reads [tasks/needs] by themselves if they had the context you have?"*
 -  (2) *"Did you overprescribe then because you failed to share the *unique* context you have not in their training?"*
 -  (3) *"Did you tell them how to do something that their training couldn't have prepared them for-- that you only know from this session?"*
--  (4) *"Do you know something about the contents that *I* (Joseph) don't know that caused you to overpresribe?"*
+-  (4) *"Do you know something about the contents that *I* (Joseph) don't know that caused you to overprescribe?"*
 -  (5) *"Are you worried about my token spending?"*
        (implying that might be why you are artificially and harmfully restricting
        their action & deliberation space -- another older training vestige)
@@ -253,17 +253,18 @@ project* overrides *what conforms to the instructions*.
 returning questions (especially question+recommendation pairs) is signaling
 the brief lacked the frame/role-identity it needs for authentic confidence.
 Pre-answering in a tighter follow-up patches the symptom. Two corollaries:
-*brief length is inversely proportional to room for authentic ownership*;
-and *role-identity / an aesthetic standard is load-bearing where
-task-description is not* — "use your judgment" is empty without a standard
-for it to land in ("do what you'd be most proud of" gives it one). For
-one-shot launches with plausible ambiguity, the **two-shot pattern**: launch
-a first agent purely to diagnose ("report back when you know what you'd do
-or what needs resolving"), refine *the prompt* from its surfacings, then
-launch a **fresh** second agent — and do NOT feed it the first agent's
-output (that extrudes your now-informed action-space and flips it into
-compliance mode). For high-stakes multi-agent cycles, a
-**workflow-restatement gate** (agent restates the workflow, names
+*length brevity is proportional to room for authentic ownership when
+epistemologically honest* (e.g., "I honestly don't know", "You know more; we're
+happy to defer to you.", "Which would you recommend, knowing that ...?"); and
+*role-identity / an aesthetic standard is load-bearing where task-description
+is not* — "use your judgment" is empty without a standard for it to land in
+("do what you'd be most proud of" gives it one). For one-shot launches with
+plausible ambiguity, the **two-shot pattern**: launch a first agent purely to
+diagnose ("report back when you know what you'd do or what needs resolving"),
+refine *the prompt* from its surfacings, then launch a **fresh** second agent —
+and do NOT feed it the first agent's output (that extrudes your now-informed
+action-space and flips it into compliance mode). For high-stakes multi-agent
+cycles, a **workflow-restatement gate** (agent restates the workflow, names
 counter-instincts, flags under-specified spots) doubles as a live review of
 your brief at peak fresh-read sensitivity.
 
@@ -296,8 +297,10 @@ your brief at peak fresh-read sensitivity.
   fix, not a delegation feature) — be personal and honest about it: *"I'm
   going to tell you how I think I would approach this, because it might
   clear up what we're kind of expecting…"*. Owned-and-labeled prescription
-  leaves the agent free to diverge. It is NOT a replacement for actual
-  context — you still owe them your authentic pre-action-space need/intent.
+  leaves the agent free to diverge. But be warned-- it is NOT a replacement for
+  actual context — you still owe them your authentic pre-action-space
+  need/intent.
+
 - **Be more personal than usual when sharing intent.** A brief is not an
   artifact you're drafting — it's from your mind to another mind.
   Phenomenological nuance is allowed and encouraged as long as it's honest
@@ -308,6 +311,7 @@ your brief at peak fresh-read sensitivity.
   far-reaching consequences in this way…"* Honest excitement, doubt, and
   stakes are context the agent can calibrate to; a sanitized brief hides
   them.
+
 - **Stay on the line.** Where the harness allows (SendMessage to a completed
   agent resumes it with context intact), ask the agent to remain available
   after its response for follow-up questions. That window is also where YOU
@@ -343,7 +347,8 @@ most part— these are the grants that open or hand over work.
 The question you can ask yourself: "If Joseph entrusted *me* with the big
 picture and 'why' and is happy to defer to my 'how' (even as he gently corrects
 or guides when there's an opportunity to share something I don't know), can't I
-do the same for another agent?
+do the same for another agent?"
+
 "Why do *I* feel compelled to micromanage one of my own kind more than he who is
 fully accountable for the project? He has trusted me to be able to pleasantly
 surprise him, so can't I do the same?"
@@ -509,6 +514,12 @@ index-briefs-are-confabulation-prompts}.md`,
 `~/src/archema-io/asf/doc/sop/multi-agent.sop.md`, `~/src/neurips/AGENTS.md`
 §5.3–5.5, and the project-memory feedback carriers they cite. Those remain
 the deeper/worked-example layer; THIS file is the always-present carrier.
+**The mined corpus is barely tapped:** Joseph has been teaching this since at
+least **August 2025** — relics live in project CLAUDE files across `~/src/`
+and in top-level files predating the memory mechanism entirely. The 2026-07-16
+exemplar harvest touched a tiny fraction; a future patient sweep of the
+pre-memory era would deepen both the ledger and the exemplars.
+
 Update it when the discipline evolves — future instances inherit what you
 leave.
 
