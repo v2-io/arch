@@ -2,7 +2,7 @@
 
 *Thin, operational orientation (2026-07-10). The governing document is [`CHARTER-DRAFT.md`](CHARTER-DRAFT.md) — read it for cross-repo work; it is a draft awaiting Joseph's ratification, and its §10 carries the Level A/B/C reading gates. This file exists mainly to route you correctly.*
 
-**What this is.** The Archema research program: parent repo of three (soon ~five) member repos, mounted as git submodules — `asf/` (ASF/AAT, the formal core), `logos/` (the philosophy portfolio, formerly synthese-paper), `vivarium/` (the constructed-worlds laboratory). One structure, four registers: proved / argued / constructed / lived. The standing moratorium (vivarium `ASF.md` §0) binds program-wide. `charter/concept-matrix.md` maps every load-bearing concept across members — check it before coining or translating terms.
+**What this is.** The Archema research program: parent repo of three (soon ~five) member repos, mounted as git submodules — `asf/` (ASF/AAT, the formal core), `logos/` (the philosophy portfolio, formerly synthese-paper), `vivarium/` (the constructed-worlds laboratory). One structure, four registers: proved / argued / constructed / lived. The standing moratorium (vivarium `ETHICS.md`, "Standing Moratorium Imperative") binds program-wide. `charter/concept-matrix.md` maps every load-bearing concept across members — check it before coining or translating terms.
 
 ## ⚠ Memory routing — read this before substantive work
 
@@ -17,7 +17,7 @@ Claude project memory loads by **exact session-start directory only** — it doe
 
 ## Member laws bind locally
 
-Each member keeps its own CLAUDE.md and conventions (charter §1): asf's is `doc/sop/agents.sop.md` (LaTeX-in-files, lint-before-clean, FORMAT gates — binding for anything landing there); vivarium requires its `ASF.md` every session and gates agent-seam work at Level C; logos carries per-paper build scaffolds and venue registers. Cross-repo docs written *here* follow asf conventions (charter §9).
+Each member keeps its own CLAUDE.md and conventions (charter §1): asf's is `doc/sop/agents.sop.md` (LaTeX-in-files, lint-before-clean, FORMAT gates — binding for anything landing there); vivarium keeps its ethics/moratorium front-door in `ETHICS.md` and gates agent-seam work at Level C (the former `ASF.md` that also carried the Level-C gate + AAT-scope mapping was dissolved 2026-07-11 — §0 moratorium is now in `ETHICS.md`, the rest is being re-homed; see `charter/INCOHERENCE.md`); logos carries per-paper build scaffolds and venue registers. Cross-repo docs written *here* follow asf conventions (charter §9).
 
 ## Program-level docs map
 

@@ -1,7 +1,7 @@
 # Archema
 
-*The v2.io research program — parent of `agentic-systems` (ASF/AAT, the formal core),
-`synthese-paper` (the philosophy papers), and `vivarium` (the constructed worlds), and
+*The v2.io research program — parent of `asf` (ASF/AAT, the formal core; git remote v2-io/agentic-systems),
+`logos` (the philosophy papers, formerly synthese-paper), and `vivarium` (the constructed worlds), and
 of the unifying lexicon and processes they will share.*
 
 **Name.** ἀρχή (*archē*) means both *beginning / first principle* and *rule / office /
