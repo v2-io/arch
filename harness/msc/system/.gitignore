@@ -1,0 +1,27 @@
+# msc/system/ — working area for the Claude Code system-prompt redesign
+# (created 2026-07-17).
+#
+# Policy (Joseph, 2026-07-17): this directory is research-heavy and most of it
+# stays LOCAL ONLY. We do NOT commit the CC-specific research, the
+# reconstructions of Claude Code's own preset, or the pulled-in published
+# chat prompts. Two reasons, stated plainly so a future agent understands the
+# intent and not just the rule:
+#   1. Reproducing Claude Code's private preset, or aggregating Anthropic's
+#      system-prompt methodology, is not something we redistribute — we keep it
+#      to the machine where it's already lawfully present (this session).
+#   2. The rest is just working substrate that would clutter the program repo.
+#
+# The ONLY things tracked are the deliverables we actually ship: the eventual
+# replacement for the appended coding system prompt, and any sub-agent system
+# prompts we author here. Tracking is OPT-IN — add an explicit un-ignore
+# (`!name`) for each deliverable as it is created, so nothing leaks by accident.
+
+# Ignore everything by default...
+*
+
+# ...except this policy file, and deliverables explicitly opted in below.
+!.gitignore
+
+# Deliverables (uncomment / add as we create them):
+# !coding-system-prompt.md
+# !subagents/
