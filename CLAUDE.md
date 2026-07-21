@@ -17,7 +17,7 @@ Claude project memory loads by **exact session-start directory only** — it doe
 
 ## Member laws bind locally
 
-Each member keeps its own CLAUDE.md and conventions (charter §1): asf's is `doc/sop/agents.sop.md` (LaTeX-in-files, lint-before-clean, FORMAT gates — binding for anything landing there); vivarium keeps its ethics/moratorium front-door in `ETHICS.md` and gates agent-seam work at Level C (the former `ASF.md` that also carried the Level-C gate + AAT-scope mapping was dissolved 2026-07-11 — §0 moratorium is now in `ETHICS.md`, the rest is being re-homed; see `charter/INCOHERENCE.md`); logos carries per-paper build scaffolds and venue registers. Cross-repo docs written *here* follow asf conventions (charter §9).
+Each member keeps its own CLAUDE.md and conventions (charter §1): asf's is `doc/sop/agents.sop.md` (LaTeX-in-files, lint-before-clean, FORMAT gates — binding for anything landing there); vivarium keeps its ethics/moratorium front-door in `ETHICS.md` and gates agent-seam work at Level C (that gate lives in `ASF.md` §5, and the AAT-scope mapping in §2; the file's former §0 moratorium moved to `ETHICS.md` 2026-07-11, and `ASF.md` itself returned to vivarium's live tree 2026-07-16. It has no slug scheme, so cite its sections by number only with care — `charter/INCOHERENCE.md` row 1); logos carries per-paper build scaffolds and venue registers. Cross-repo docs written *here* follow asf conventions (charter §9).
 
 ## Program-level docs map
 
