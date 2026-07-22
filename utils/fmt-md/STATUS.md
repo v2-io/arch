@@ -78,6 +78,10 @@ A trained wrap-vs-phb classifier now lives at `model/model.json` (committed: 12 
 
 The philosophy: act reasonably on every break, never mint a triage pile — stderr is courtesy, not homework. **Per-stage guarantee (third entry in the standing rule):** marker insertion deliberately changes rendering (a bare newline becomes `<br>`), so this stage sits outside the unwrap render-equality gate, like `--math`; its guarantee is that it only ever *adds* the two-space marker at an existing break or joins at a soft break — never touches content bytes. Rust port of the 12-feature extractor + tree eval is the implementation step (pure arithmetic + one JSON load; no ML runtime needed).
 
+## Reproducibility acceptance test (2026-07-22, ratified by demonstration)
+
+A fresh fmt-md run over udon's pre-conversion tree (`cc389f9`, in a worktree, current `.fmt-mdignore` supplied) converges with the repo's HEAD **byte-for-byte except one file**: `CORE.md`'s header block, whose `"  "` hard-break markers were added by hand. That is the exact operation the classifier integration automates (a ≥0.85-band label stack), so the acceptance test for the Rust port is: **the same worktree experiment converges with HEAD with zero diffs, no hands.**
+
 ## Not yet (Phase 3+, per PLAN.md)
 
 ## Not yet (Phase 3+, per PLAN.md)
