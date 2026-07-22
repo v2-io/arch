@@ -1,0 +1,49 @@
+id	verdict	note
+U-00	wrap	mid-clause "as / ancestral artifacts"
+U-01	sampler-miss	YAML frontmatter leaked into sample
+U-02	wrap	"modeling it / as an array"
+U-03	sampler-miss	numbered-list item boundary (block edge, out of scope)
+U-04	wrap	"continuous / wall-clock" inside quote
+U-05	wrap	mid-parenthetical synonym list
+U-06	wrap	"sapientia / tool-consciousness"
+U-07	wrap	"closes / it."
+U-08	wrap	"no / longer *produces*"
+U-09	wrap	"most-used / editing tool's"
+U-10	sampler-miss	list item boundary
+U-11	wrap	"vivid / worked examples"
+U-12	wrap	"9a34eb13 = / 2025-09-17" mid-assignment
+U-13	sampler-miss	list item boundary
+U-14	wrap	"clever / stream-processing"
+U-15	sampler-miss	frontmatter
+U-16	sampler-miss	box-drawing tree diagram in raw transcript
+U-17	sampler-miss	frontmatter
+U-18	wrap	"templating and / dynamics"
+U-19	wrap	colon-enumeration continuation, lowercase B
+U-20	sampler-miss	frontmatter
+U-21	sampler-miss	list item boundary
+U-22	wrap	"that / framing"
+U-23	sampler-miss	python code in raw transcript
+U-24	sampler-miss	code in corpus fixture file
+U-25	wrap	"/save` / transcripts"
+U-26	phb	event-stream listing (ElementStart / Attr...) — intended lines, unmarked, in raw transcript
+U-27	sampler-miss	YAML block scalar
+U-28	sampler-miss	paragraph/list boundary
+U-29	wrap	"self-evaluation / checklist"
+V-00	wrap	"the / store is"
+V-01	wrap	"is the / honesty gate"
+V-02	wrap	"its elegance / must not"
+V-03	wrap	"this / document never"
+V-04	wrap	"no count or / ranking"
+V-05	wrap	"Everything else / has prior art."
+V-06	wrap	"the measured / AMR-seam"
+V-07	wrap	"worlds that / give ASF"
+V-08	wrap	"has been / superseded"
+V-09	wrap	"(verified / 2026-07-12)"
+V-10	wrap	"two-day / context)"
+V-11	wrap	"what you / cannot be truthful inside"
+V-12	wrap	sentence-boundary break — per-line indistinguishable from chunking; block context (uniform ~80 margin) decides
+V-13	wrap	"·"-separated inline list wrapped
+V-14	wrap	"conserved / 1.3735e9 km³"
+V-15	wrap	"statement; / ARCHITECTURE §9"
+V-16	wrap	"(the / save *is*"
+V-17	wrap	"**the / vocabulary"

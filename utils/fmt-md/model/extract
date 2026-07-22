@@ -1,0 +1,341 @@
+#!/usr/bin/env python3
+"""Regenerate the fmt-md training corpus into model/training/ (gitignored).
+
+Sources and the measurement rule are described in README.md. Every extracted
+file gets a MANIFEST.tsv row with measured disposition stats — class labels
+are never assumed from location (asf history is contaminated: even msc/spike
+files often got formatted eventually).
+
+Usage:
+    ./extract git REPO_PATH COMMIT [SUBDIR]   # one repo tree at a commit
+    ./extract git-first REPO_PATH [SUBDIR]    # each file at its first commit
+    ./extract chat PROJECTS_GLOB              # ~/.claude jsonl: chat text + Write payloads
+    ./extract live NAME DIR                   # a live directory (e.g. vivarium-archive)
+    ./extract stats                           # (re)measure everything present
+"""
+
+import json
+import statistics
+import subprocess
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+TRAIN = HERE / "training"
+MANIFEST = HERE / "MANIFEST.tsv"
+MANIFEST_COLS = (
+    "relpath\tsource\tref\tn_lines\tprose_p50\tprose_p90\twidth_var"
+    "\thard_breaks\tdisposition\n"
+)
+
+STRUCTURAL = ("#", "|", ">", "-", "*", "`", "$", "+", "=")
+
+
+def prose_widths(text):
+    out = []
+    in_fence = False
+    for line in text.split("\n"):
+        s = line.strip()
+        if s.startswith("```"):
+            in_fence = not in_fence
+            continue
+        if in_fence or not s or s.startswith(STRUCTURAL):
+            continue
+        out.append(len(line.rstrip()))
+    return out
+
+
+def measure(text):
+    """Disposition stats per the measurement rule (D-features, coarse)."""
+    w = prose_widths(text)
+    hb = sum(
+        1 for l in text.split("\n") if l.endswith(("  ", "\\")) and l.strip()
+    )
+    if len(w) < 5:
+        return dict(n=len(w), p50=0, p90=0, var=0, hb=hb, disp="too-small")
+    w_sorted = sorted(w)
+    p50 = w_sorted[len(w) // 2]
+    p90 = w_sorted[int(len(w) * 0.9)]
+    var = statistics.pvariance(w)
+    # coarse call; the model itself never sees this label — it gates which
+    # files donate high-confidence rows
+    if p90 <= 95 and p50 >= 55:
+        disp = "wrapped"
+    elif p50 >= 120:
+        disp = "clean"
+    else:
+        disp = "mixed"
+    return dict(n=len(w), p50=p50, p90=p90, var=round(var, 1), hb=hb, disp=disp)
+
+
+def manifest_row(relpath, source, ref, text):
+    m = measure(text)
+    return (
+        f"{relpath}\t{source}\t{ref}\t{m['n']}\t{m['p50']}\t{m['p90']}"
+        f"\t{m['var']}\t{m['hb']}\t{m['disp']}\n"
+    )
+
+
+def write_out(relpath, text, rows, source, ref):
+    dest = TRAIN / relpath
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(text)
+    rows.append(manifest_row(relpath, source, ref, text))
+
+
+def git(repo, *args):
+    return subprocess.run(
+        ["git", "-C", str(repo), *args], capture_output=True, text=True
+    ).stdout
+
+
+def cmd_git(repo, commit, subdir=""):
+    repo = Path(repo).expanduser()
+    name = f"{repo.name}@{commit[:8]}"
+    rows = []
+    spec = f"{commit}:{subdir}" if subdir else commit
+    listing = git(repo, "ls-tree", "-r", "--name-only", commit, subdir or ".")
+    for f in listing.split("\n"):
+        if not f.endswith(".md"):
+            continue
+        text = git(repo, "show", f"{commit}:{f}")
+        if text:
+            write_out(f"{name}/{f}", text, rows, f"git:{repo.name}", commit)
+    return rows
+
+
+def cmd_git_first(repo, subdir=""):
+    repo = Path(repo).expanduser()
+    name = f"{repo.name}@first"
+    rows = []
+    listing = git(repo, "ls-files", subdir or ".")
+    for f in listing.split("\n"):
+        if not f.endswith(".md"):
+            continue
+        # first commit that touched this path (follow renames)
+        log = git(repo, "log", "--follow", "--format=%H", "--", f)
+        commits = log.split()
+        if not commits:
+            continue
+        first = commits[-1]
+        # the path may differ at that commit under --follow; find it
+        names = git(repo, "show", "--name-only", "--format=", first)
+        old = next(
+            (n for n in names.split("\n") if n.endswith(Path(f).name)), f
+        )
+        text = git(repo, "show", f"{first}:{old}")
+        if text:
+            write_out(
+                f"{name}/{f}", text, rows, f"git-first:{repo.name}", first
+            )
+    return rows
+
+
+def cmd_chat(glob_pat):
+    rows = []
+    for jf in sorted(Path.home().glob(glob_pat)):
+        sid = jf.stem[:8]
+        n_text = n_write = 0
+        try:
+            lines = jf.read_text(errors="replace").split("\n")
+        except OSError:
+            continue
+        for line in lines:
+            try:
+                o = json.loads(line)
+            except (json.JSONDecodeError, ValueError):
+                continue
+            if o.get("type") != "assistant":
+                continue
+            for c in (o.get("message") or {}).get("content") or []:
+                if c.get("type") == "text" and len(c.get("text", "")) > 400:
+                    n_text += 1
+                    write_out(
+                        f"claude-chat/{sid}/{n_text:03}.md",
+                        c["text"],
+                        rows,
+                        "chat-text",
+                        jf.stem,
+                    )
+                elif c.get("type") == "tool_use" and c.get("name") == "Write":
+                    inp = c.get("input") or {}
+                    if str(inp.get("file_path", "")).endswith(".md") and inp.get(
+                        "content"
+                    ):
+                        n_write += 1
+                        write_out(
+                            f"claude-write/{sid}/{n_write:03}.md",
+                            inp["content"],
+                            rows,
+                            "write-payload",
+                            jf.stem,
+                        )
+    return rows
+
+
+def cmd_live(name, src):
+    rows = []
+    src = Path(src).expanduser()
+    for f in src.rglob("*.md"):
+        rel = f.relative_to(src)
+        write_out(
+            f"{name}/{rel}",
+            f.read_text(errors="replace"),
+            rows,
+            f"live:{src}",
+            "worktree",
+        )
+    return rows
+
+
+def cmd_delta():
+    """Round-trip every training file through fmt-md; DELTA.tsv gets one row
+    per file: lines before/after, joins (= lines removed), join_pct, and a
+    phb-mine flag. Rationale (Joseph 2026-07-22): a document that is mostly
+    canonical but not entirely — low nonzero join_pct — was written by an
+    author who demonstrably does not wrap, so its few remaining multi-line
+    paragraphs are disproportionately likely to be deliberate breaks the
+    join-all pass is currently flattening. High-signal phb candidates,
+    no markers needed."""
+    out = HERE / "DELTA.tsv"
+    rows = ["relpath\tlines_before\tlines_after\tjoins\tjoin_pct\tphb_mine\n"]
+    for f in sorted(TRAIN.rglob("*.md")):
+        text = f.read_text(errors="replace")
+        before = text.count("\n")
+        if before < 10:
+            continue
+        r = subprocess.run(
+            ["fmt-md", "-"], input=text, capture_output=True, text=True
+        )
+        after = r.stdout.count("\n")
+        joins = before - after
+        pct = joins / before if before else 0.0
+        mine = "yes" if 0 < pct <= 0.05 else ""
+        rows.append(
+            f"{f.relative_to(TRAIN)}\t{before}\t{after}\t{joins}"
+            f"\t{pct:.3f}\t{mine}\n"
+        )
+    out.write_text("".join(rows))
+    mined = sum(1 for r in rows if r.rstrip().endswith("yes"))
+    print(f"{len(rows) - 1} files round-tripped -> {out}; phb-mine candidates: {mined}")
+    return []
+
+
+def cmd_synth(pop_glob, name):
+    """Joseph's triple pipeline (2026-07-22): known-clean file -> unwrapper
+    diff identifies its phbs (any join on a verified-clean file was an
+    intended break) -> synthetically column-wrap the original -> a
+    wrapped-with-phbs file where EVERY break is labeled by construction:
+    original breaks = phb, injected breaks = wrap. Exact per-break ground
+    truth for the primary discrimination target, no judgment involved.
+    Emits training/synth-<name>/<file>.md + .labels.tsv (1-based line whose
+    trailing break is labeled)."""
+    import random
+    random.seed(20260722)
+    outdir = TRAIN / f"synth-{name}"
+    rows = []
+    n_files = n_phb = n_wrap = 0
+    STRUCT2 = ("#", "|", ">", "-", "*", "`", "$", "+", "=", "!", "[")
+    for f in sorted(TRAIN.glob(pop_glob)):
+        orig = f.read_text(errors="replace")
+        # verify the clean premise mechanically: fmt-md must make few joins
+        r = subprocess.run(["fmt-md", "-"], input=orig, capture_output=True, text=True)
+        canon = r.stdout
+        joins = orig.count("\n") - canon.count("\n")
+        if joins > max(3, orig.count("\n") * 0.03):
+            continue  # not clean enough for the by-construction premise
+        # identify phb sites: original lines that fmt-md joined
+        import difflib
+        o_lines, c_lines = orig.split("\n"), canon.split("\n")
+        phb_orig_lines = set()
+        sm = difflib.SequenceMatcher(None, o_lines, c_lines, autojunk=False)
+        for tag, i1, i2, j1, j2 in sm.get_opcodes():
+            if tag == "replace" and (i2 - i1) > (j2 - j1):
+                phb_orig_lines.update(range(i1, i2 - 1))  # joined-away breaks
+        # wrap the ORIGINAL, tracking labels
+        out_lines, labels = [], []
+        in_fence = False
+        for idx, line in enumerate(o_lines):
+            s = line.strip()
+            if s.startswith("```"):
+                in_fence = not in_fence
+            is_prose = (not in_fence and s and not s.startswith(STRUCT2)
+                        and not line.startswith("    "))
+            if is_prose and len(line) > 100:
+                cur = line
+                while len(cur) > 100:
+                    col = 68 + random.randrange(18)
+                    while col > 0 and not cur[:col].endswith(" "):
+                        col -= 1
+                    if col < 20:
+                        break
+                    nxt = cur[col:].lstrip()
+                    if nxt[:1] in "[$":  # avoid label-ambiguous split points
+                        break
+                    out_lines.append(cur[:col].rstrip())
+                    labels.append((len(out_lines), "wrap"))
+                    n_wrap += 1
+                    cur = nxt
+                out_lines.append(cur)
+            else:
+                out_lines.append(line)
+            if idx in phb_orig_lines:
+                labels.append((len(out_lines), "phb"))
+                n_phb += 1
+        if not any(c == "wrap" for _, c in labels):
+            continue  # nothing injected; skip
+        rel = f.relative_to(TRAIN)
+        dest = outdir / rel
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text("\n".join(out_lines))
+        dest.with_suffix(".labels.tsv").write_text(
+            "line\tclass\n" + "".join(f"{ln}\t{c}\n" for ln, c in labels))
+        rows.append(manifest_row(str(dest.relative_to(TRAIN)), f"synth:{name}", "constructed", "\n".join(out_lines)))
+        n_files += 1
+    print(f"synth-{name}: {n_files} files, {n_wrap} wrap labels, {n_phb} phb labels (by construction)")
+    return rows
+
+
+def cmd_stats():
+    rows = []
+    for f in sorted(TRAIN.rglob("*.md")):
+        rel = f.relative_to(TRAIN)
+        rows.append(
+            manifest_row(str(rel), "(rescan)", "-", f.read_text(errors="replace"))
+        )
+    return rows
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return 2
+    cmd, *rest = sys.argv[1:]
+    fn = {
+        "git": cmd_git,
+        "git-first": cmd_git_first,
+        "chat": cmd_chat,
+        "live": cmd_live,
+        "delta": cmd_delta,
+        "synth": cmd_synth,
+        "stats": cmd_stats,
+    }.get(cmd)
+    if fn is None:
+        print(__doc__)
+        return 2
+    rows = fn(*rest)
+    header_needed = not MANIFEST.exists()
+    with open(MANIFEST, "a") as m:
+        if header_needed:
+            m.write(MANIFEST_COLS)
+        m.writelines(rows)
+    from collections import Counter
+
+    disp = Counter(r.rsplit("\t", 1)[1].strip() for r in rows)
+    print(f"extracted {len(rows)} files -> {TRAIN}")
+    print("dispositions:", dict(disp))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

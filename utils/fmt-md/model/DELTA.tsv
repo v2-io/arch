@@ -1,0 +1,1661 @@
+relpath	lines_before	lines_after	joins	join_pct	phb_mine
+asf@HEAD/01-aat-core/src/causal-access-intro.md	79	79	0	0.000	
+asf@HEAD/01-aat-core/src/cooperative-adversarial-intro.md	57	57	0	0.000	
+asf@HEAD/01-aat-core/src/def-action-transition.md	85	85	0	0.000	
+asf@HEAD/01-aat-core/src/def-adaptive-tempo.md	97	97	0	0.000	
+asf@HEAD/01-aat-core/src/def-agent-environment.md	86	86	0	0.000	
+asf@HEAD/01-aat-core/src/def-agent-spectrum.md	104	104	0	0.000	
+asf@HEAD/01-aat-core/src/def-causal-information-yield.md	91	91	0	0.000	
+asf@HEAD/01-aat-core/src/def-chronica.md	106	106	0	0.000	
+asf@HEAD/01-aat-core/src/def-control-regret.md	92	92	0	0.000	
+asf@HEAD/01-aat-core/src/def-mismatch-signal.md	89	89	0	0.000	
+asf@HEAD/01-aat-core/src/def-model-class-fitness.md	74	74	0	0.000	
+asf@HEAD/01-aat-core/src/def-model-sufficiency.md	82	82	0	0.000	
+asf@HEAD/01-aat-core/src/def-mood.md	56	56	0	0.000	
+asf@HEAD/01-aat-core/src/def-observation-function.md	82	82	0	0.000	
+asf@HEAD/01-aat-core/src/def-pearl-causal-hierarchy.md	115	115	0	0.000	
+asf@HEAD/01-aat-core/src/def-satisfaction-gap.md	117	117	0	0.000	
+asf@HEAD/01-aat-core/src/def-shared-intent.md	79	79	0	0.000	
+asf@HEAD/01-aat-core/src/def-strategic-calibration.md	96	96	0	0.000	
+asf@HEAD/01-aat-core/src/def-strategic-tempo.md	151	151	0	0.000	
+asf@HEAD/01-aat-core/src/def-strategy-dag.md	252	251	1	0.004	yes
+asf@HEAD/01-aat-core/src/def-strategy-dimension.md	101	101	0	0.000	
+asf@HEAD/01-aat-core/src/def-unity-dimensions.md	154	154	0	0.000	
+asf@HEAD/01-aat-core/src/def-value-object.md	191	191	0	0.000	
+asf@HEAD/01-aat-core/src/der-action-selection.md	104	104	0	0.000	
+asf@HEAD/01-aat-core/src/der-adversarial-destabilization.md	125	125	0	0.000	
+asf@HEAD/01-aat-core/src/der-agent-opacity.md	241	241	0	0.000	
+asf@HEAD/01-aat-core/src/der-architecture-noidentifiability.md	214	214	0	0.000	
+asf@HEAD/01-aat-core/src/der-belief-strategy-attractor.md	177	177	0	0.000	
+asf@HEAD/01-aat-core/src/der-causal-hierarchy-requirement.md	94	94	0	0.000	
+asf@HEAD/01-aat-core/src/der-causal-insufficiency-detection.md	256	256	0	0.000	
+asf@HEAD/01-aat-core/src/der-chain-confidence-decay.md	100	100	0	0.000	
+asf@HEAD/01-aat-core/src/der-class-coercion-in-composition.md	123	123	0	0.000	
+asf@HEAD/01-aat-core/src/der-class-coercion-via-wrapping.md	236	236	0	0.000	
+asf@HEAD/01-aat-core/src/der-deliberation-cost.md	137	137	0	0.000	
+asf@HEAD/01-aat-core/src/der-directed-separation.md	254	253	1	0.004	yes
+asf@HEAD/01-aat-core/src/der-gain-sector-bridge.md	177	177	0	0.000	
+asf@HEAD/01-aat-core/src/der-interaction-channel-classification.md	213	213	0	0.000	
+asf@HEAD/01-aat-core/src/der-loop-interventional-access.md	123	123	0	0.000	
+asf@HEAD/01-aat-core/src/der-mood-timescale.md	56	56	0	0.000	
+asf@HEAD/01-aat-core/src/der-multi-timescale-stability.md	132	132	0	0.000	
+asf@HEAD/01-aat-core/src/der-observability-dominance.md	97	97	0	0.000	
+asf@HEAD/01-aat-core/src/der-orient-cascade.md	158	155	3	0.019	yes
+asf@HEAD/01-aat-core/src/der-recursive-update.md	85	85	0	0.000	
+asf@HEAD/01-aat-core/src/der-resource-bounded-destabilization.md	113	111	2	0.018	yes
+asf@HEAD/01-aat-core/src/der-team-persistence.md	151	151	0	0.000	
+asf@HEAD/01-aat-core/src/der-tempo-composition.md	154	147	7	0.045	yes
+asf@HEAD/01-aat-core/src/der-temporal-nesting.md	91	91	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-adaptive-gain-dynamics.md	193	193	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-bilateral-trade-impossibility.md	128	128	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-causal-ib-exploration.md	106	104	2	0.019	yes
+asf@HEAD/01-aat-core/src/deriv-causal-ib-lmi.md	168	168	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-convention-monotonicity.md	104	104	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-critical-mass-composition.md	253	253	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-discrete-sector-condition.md	232	232	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-edge-credence-dynamics.md	683	681	2	0.003	yes
+asf@HEAD/01-aat-core/src/deriv-edge-update-natural-parameter.md	160	160	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-fisher-local-update-gain.md	147	147	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-fisher-whitened-update-rule.md	119	119	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-gain-sector.md	331	331	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-graph-structure-uniqueness.md	245	245	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-l1-update-bias.md	122	122	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-matrix-persistence-condition.md	160	160	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-mechanism-counterfactual-separation.md	76	76	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-observation-ambiguity-bias-bound.md	261	261	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-persistence-cost.md	200	191	9	0.045	yes
+asf@HEAD/01-aat-core/src/deriv-recursive-update.md	242	242	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-regime-marginal-indistinguishability.md	156	156	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-reward-channel-learning-no-go.md	177	177	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-sector-condition.md	362	362	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-self-actuation-grounding.md	166	166	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-social-welfare-aggregation-impossibility.md	126	126	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-stochastic-non-exit.md	116	116	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-strategic-composition.md	265	265	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-strategic-persistence-hard-ceiling.md	107	107	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-strategy-cost-regret-bound.md	319	319	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-strategy-proofness-impossibility.md	131	131	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-tempo-additivity.md	108	108	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-update-detection-latency.md	124	124	0	0.000	
+asf@HEAD/01-aat-core/src/deriv-variational-sector-condition.md	122	122	0	0.000	
+asf@HEAD/01-aat-core/src/detail-linear-ode-approximation.md	238	238	0	0.000	
+asf@HEAD/01-aat-core/src/detail-operationalization.md	195	193	2	0.010	yes
+asf@HEAD/01-aat-core/src/disc-additive-coordinate-forcing.md	155	153	2	0.013	yes
+asf@HEAD/01-aat-core/src/disc-adversarial-coupling-pressure.md	176	176	0	0.000	
+asf@HEAD/01-aat-core/src/disc-anti-collapse.md	52	52	0	0.000	
+asf@HEAD/01-aat-core/src/disc-approximation-tiering.md	72	72	0	0.000	
+asf@HEAD/01-aat-core/src/disc-ciy-unified-objective.md	108	107	1	0.009	yes
+asf@HEAD/01-aat-core/src/disc-composition-consistency.md	148	148	0	0.000	
+asf@HEAD/01-aat-core/src/disc-compression-operations.md	145	145	0	0.000	
+asf@HEAD/01-aat-core/src/disc-constructive-impossibility-posture.md	124	124	0	0.000	
+asf@HEAD/01-aat-core/src/disc-continuity-stance.md	93	93	0	0.000	
+asf@HEAD/01-aat-core/src/disc-credit-assignment-boundary.md	212	211	1	0.005	yes
+asf@HEAD/01-aat-core/src/disc-dynamic-regime-axis.md	204	204	0	0.000	
+asf@HEAD/01-aat-core/src/disc-exploit-explore-deliberate.md	234	234	0	0.000	
+asf@HEAD/01-aat-core/src/disc-identifiability-floor.md	267	267	0	0.000	
+asf@HEAD/01-aat-core/src/disc-implementation-impossibility.md	197	197	0	0.000	
+asf@HEAD/01-aat-core/src/disc-independence-audit.md	130	130	0	0.000	
+asf@HEAD/01-aat-core/src/disc-law-discovery-ceiling.md	81	81	0	0.000	
+asf@HEAD/01-aat-core/src/disc-modularity-state-dynamics.md	178	178	0	0.000	
+asf@HEAD/01-aat-core/src/disc-partial-coupling-pathways.md	204	204	0	0.000	
+asf@HEAD/01-aat-core/src/disc-sandbox-evaluation-ceiling.md	77	77	0	0.000	
+asf@HEAD/01-aat-core/src/disc-separability-pattern.md	146	146	0	0.000	
+asf@HEAD/01-aat-core/src/disc-stability-certificate.md	143	143	0	0.000	
+asf@HEAD/01-aat-core/src/disc-strategic-self-coupling.md	202	202	0	0.000	
+asf@HEAD/01-aat-core/src/disc-structural-imagination.md	56	56	0	0.000	
+asf@HEAD/01-aat-core/src/disc-value-functional-grounding-floor.md	182	182	0	0.000	
+asf@HEAD/01-aat-core/src/disc-w1-structural-bound-boundary.md	89	89	0	0.000	
+asf@HEAD/01-aat-core/src/emp-update-gain.md	123	123	0	0.000	
+asf@HEAD/01-aat-core/src/example-L1.md	168	168	0	0.000	
+asf@HEAD/01-aat-core/src/example-bandit.md	151	151	0	0.000	
+asf@HEAD/01-aat-core/src/example-kalman.md	153	153	0	0.000	
+asf@HEAD/01-aat-core/src/example-strategy.md	406	406	0	0.000	
+asf@HEAD/01-aat-core/src/form-agent-model.md	80	80	0	0.000	
+asf@HEAD/01-aat-core/src/form-complete-agent-state.md	92	92	0	0.000	
+asf@HEAD/01-aat-core/src/form-composition-closure.md	408	408	0	0.000	
+asf@HEAD/01-aat-core/src/form-consolidation-dynamics.md	202	202	0	0.000	
+asf@HEAD/01-aat-core/src/form-event-driven-dynamics.md	119	119	0	0.000	
+asf@HEAD/01-aat-core/src/form-information-bottleneck.md	93	93	0	0.000	
+asf@HEAD/01-aat-core/src/form-objective-functional.md	113	113	0	0.000	
+asf@HEAD/01-aat-core/src/form-resource-budget.md	74	74	0	0.000	
+asf@HEAD/01-aat-core/src/form-sector-condition.md	138	138	0	0.000	
+asf@HEAD/01-aat-core/src/form-strategy-complexity-cost.md	213	213	0	0.000	
+asf@HEAD/01-aat-core/src/form-structural-change-as-parametric-limit.md	86	86	0	0.000	
+asf@HEAD/01-aat-core/src/hyp-auftragstaktik-principle.md	86	86	0	0.000	
+asf@HEAD/01-aat-core/src/hyp-communication-gain.md	95	95	0	0.000	
+asf@HEAD/01-aat-core/src/hyp-directed-separation-under-composition.md	112	112	0	0.000	
+asf@HEAD/01-aat-core/src/hyp-edge-update-via-gain.md	107	107	0	0.000	
+asf@HEAD/01-aat-core/src/hyp-mismatch-dynamics.md	108	108	0	0.000	
+asf@HEAD/01-aat-core/src/hyp-symbiogenic-composition.md	153	153	0	0.000	
+asf@HEAD/01-aat-core/src/impl-causal-access.md	97	97	0	0.000	
+asf@HEAD/01-aat-core/src/impl-composition-machinery.md	81	81	0	0.000	
+asf@HEAD/01-aat-core/src/impl-cooperative-adversarial.md	78	78	0	0.000	
+asf@HEAD/01-aat-core/src/impl-orient-cascade.md	112	111	1	0.009	yes
+asf@HEAD/01-aat-core/src/impl-persistence-and-limits.md	97	97	0	0.000	
+asf@HEAD/01-aat-core/src/impl-strategic-composition.md	106	106	0	0.000	
+asf@HEAD/01-aat-core/src/impl-strategy-dynamics.md	100	100	0	0.000	
+asf@HEAD/01-aat-core/src/impl-strategy-structure.md	88	88	0	0.000	
+asf@HEAD/01-aat-core/src/impl-unity-communication.md	79	79	0	0.000	
+asf@HEAD/01-aat-core/src/internal-external-decomposition.md	75	75	0	0.000	
+asf@HEAD/01-aat-core/src/norm-explicit-strategy-condition.md	101	101	0	0.000	
+asf@HEAD/01-aat-core/src/obs-authored-world-laboratory.md	49	49	0	0.000	
+asf@HEAD/01-aat-core/src/obs-gated-tempo-advantage.md	82	82	0	0.000	
+asf@HEAD/01-aat-core/src/obs-section-i-validation-simulations.md	92	92	0	0.000	
+asf@HEAD/01-aat-core/src/old-tf-appendix-f-multi-agent.md	281	281	0	0.000	
+asf@HEAD/01-aat-core/src/persistence-and-limits-intro.md	65	64	1	0.015	yes
+asf@HEAD/01-aat-core/src/post-causal-structure.md	88	88	0	0.000	
+asf@HEAD/01-aat-core/src/result-adversarial-exponent-regimes.md	104	104	0	0.000	
+asf@HEAD/01-aat-core/src/result-adversarial-tempo-advantage.md	129	129	0	0.000	
+asf@HEAD/01-aat-core/src/result-certificate-existence.md	145	145	0	0.000	
+asf@HEAD/01-aat-core/src/result-contraction-template.md	222	222	0	0.000	
+asf@HEAD/01-aat-core/src/result-mismatch-decomposition.md	84	84	0	0.000	
+asf@HEAD/01-aat-core/src/result-per-dimension-persistence.md	165	165	0	0.000	
+asf@HEAD/01-aat-core/src/result-persistence-condition.md	202	202	0	0.000	
+asf@HEAD/01-aat-core/src/result-sector-condition-stability.md	92	92	0	0.000	
+asf@HEAD/01-aat-core/src/result-sector-persistence-template.md	165	165	0	0.000	
+asf@HEAD/01-aat-core/src/result-structural-adaptation-necessity.md	130	130	0	0.000	
+asf@HEAD/01-aat-core/src/result-unity-closure-mapping.md	161	161	0	0.000	
+asf@HEAD/01-aat-core/src/schema-strategy-persistence.md	185	185	0	0.000	
+asf@HEAD/01-aat-core/src/scope-adaptive-system.md	87	87	0	0.000	
+asf@HEAD/01-aat-core/src/scope-agency.md	91	91	0	0.000	
+asf@HEAD/01-aat-core/src/scope-agent-identity.md	109	109	0	0.000	
+asf@HEAD/01-aat-core/src/scope-and-or.md	91	91	0	0.000	
+asf@HEAD/01-aat-core/src/scope-ciy-observational-proxy.md	91	91	0	0.000	
+asf@HEAD/01-aat-core/src/scope-composite-agent.md	141	141	0	0.000	
+asf@HEAD/01-aat-core/src/scope-edge-update-causal-validity.md	148	148	0	0.000	
+asf@HEAD/01-aat-core/src/scope-multi-agent.md	119	119	0	0.000	
+asf@HEAD/01-aat-core/src/sketch-structural-adaptation-genericity.md	53	53	0	0.000	
+asf@HEAD/01-aat-core/src/strategy-structure-intro.md	71	70	1	0.014	yes
+asf@HEAD/01-aat-core/src/the-cycle-in-motion-intro.md	78	78	0	0.000	
+asf@HEAD/01-aat-core/src/the-reality-model-intro.md	61	61	0	0.000	
+asf@de1082d/src/action-selection.md	60	60	0	0.000	
+asf@de1082d/src/action-transition.md	38	38	0	0.000	
+asf@de1082d/src/adaptive-tempo.md	44	44	0	0.000	
+asf@de1082d/src/adversarial-destabilization.md	79	79	0	0.000	
+asf@de1082d/src/adversarial-exponent-regimes.md	65	65	0	0.000	
+asf@de1082d/src/adversarial-tempo-advantage.md	107	107	0	0.000	
+asf@de1082d/src/agent-environment.md	36	36	0	0.000	
+asf@de1082d/src/agent-identity.md	38	38	0	0.000	
+asf@de1082d/src/agent-model.md	37	37	0	0.000	
+asf@de1082d/src/agent-spectrum.md	45	45	0	0.000	
+asf@de1082d/src/and-or-scope.md	58	58	0	0.000	
+asf@de1082d/src/atomic-changeset.md	43	43	0	0.000	
+asf@de1082d/src/auftragstaktik-principle.md	53	53	0	0.000	
+asf@de1082d/src/causal-hierarchy-requirement.md	57	57	0	0.000	
+asf@de1082d/src/causal-information-yield.md	92	92	0	0.000	
+asf@de1082d/src/causal-structure.md	47	47	0	0.000	
+asf@de1082d/src/chain-confidence-decay.md	56	56	0	0.000	
+asf@de1082d/src/change-distance.md	44	44	0	0.000	
+asf@de1082d/src/change-expectation-baseline.md	82	82	0	0.000	
+asf@de1082d/src/change-investment.md	45	45	0	0.000	
+asf@de1082d/src/change-proximity-principle.md	54	54	0	0.000	
+asf@de1082d/src/changeset-size-principle.md	49	49	0	0.000	
+asf@de1082d/src/chronica.md	33	33	0	0.000	
+asf@de1082d/src/coherence-coupling-measurement.md	46	46	0	0.000	
+asf@de1082d/src/communication-gain.md	58	58	0	0.000	
+asf@de1082d/src/complete-agent-state.md	70	70	0	0.000	
+asf@de1082d/src/composition-closure.md	64	64	0	0.000	
+asf@de1082d/src/composition-consistency.md	61	61	0	0.000	
+asf@de1082d/src/comprehension-time.md	46	46	0	0.000	
+asf@de1082d/src/conceptual-alignment.md	58	58	0	0.000	
+asf@de1082d/src/continuous-operation.md	52	52	0	0.000	
+asf@de1082d/src/control-regret.md	42	42	0	0.000	
+asf@de1082d/src/deliberation-cost.md	97	97	0	0.000	
+asf@de1082d/src/directed-separation.md	68	68	0	0.000	
+asf@de1082d/src/dual-optimization.md	63	63	0	0.000	
+asf@de1082d/src/edge-update-via-gain.md	57	57	0	0.000	
+asf@de1082d/src/event-driven-dynamics.md	78	78	0	0.000	
+asf@de1082d/src/explicit-strategy-condition.md	66	66	0	0.000	
+asf@de1082d/src/exponential-cognitive-load.md	47	47	0	0.000	
+asf@de1082d/src/feature-definition.md	52	52	0	0.000	
+asf@de1082d/src/graph-structure-uniqueness.md	185	185	0	0.000	
+asf@de1082d/src/implementation-time.md	46	46	0	0.000	
+asf@de1082d/src/information-bottleneck.md	39	39	0	0.000	
+asf@de1082d/src/loop-interventional-access.md	53	53	0	0.000	
+asf@de1082d/src/mismatch-decomposition.md	42	42	0	0.000	
+asf@de1082d/src/mismatch-dynamics.md	59	59	0	0.000	
+asf@de1082d/src/mismatch-signal.md	46	46	0	0.000	
+asf@de1082d/src/model-class-fitness.md	35	35	0	0.000	
+asf@de1082d/src/model-sufficiency.md	37	37	0	0.000	
+asf@de1082d/src/multi-agent-scope.md	37	37	0	0.000	
+asf@de1082d/src/multi-timescale-stability.md	71	71	0	0.000	
+asf@de1082d/src/objective-functional.md	53	53	0	0.000	
+asf@de1082d/src/observability-dominance.md	47	47	0	0.000	
+asf@de1082d/src/observation-function.md	39	39	0	0.000	
+asf@de1082d/src/observation-gates-advantage.md	50	50	0	0.000	
+asf@de1082d/src/old-tf-appendix-f-multi-agent.md	281	281	0	0.000	
+asf@de1082d/src/old-tst-via-tft-causal-extensions.md	208	206	2	0.010	yes
+asf@de1082d/src/old-tst-via-tft-mapping.md	263	262	1	0.004	yes
+asf@de1082d/src/old-tst-via-tft-readme.md	53	53	0	0.000	
+asf@de1082d/src/old-tst-via-tft-reformulated-sketch.md	418	416	2	0.005	yes
+asf@de1082d/src/old-tst-via-tft-simulation-proposals.md	248	246	2	0.008	yes
+asf@de1082d/src/operationalization.md	175	175	0	0.000	
+asf@de1082d/src/orient-cascade.md	65	60	5	0.077	
+asf@de1082d/src/pearl-causal-hierarchy.md	63	63	0	0.000	
+asf@de1082d/src/per-dimension-persistence.md	59	59	0	0.000	
+asf@de1082d/src/persistence-condition.md	72	72	0	0.000	
+asf@de1082d/src/principled-decision-integration.md	55	55	0	0.000	
+asf@de1082d/src/recursive-update-derivation.md	182	182	0	0.000	
+asf@de1082d/src/recursive-update.md	44	44	0	0.000	
+asf@de1082d/src/satisfaction-gap.md	57	57	0	0.000	
+asf@de1082d/src/scope-condition.md	41	41	0	0.000	
+asf@de1082d/src/sector-condition-derivation.md	164	164	0	0.000	
+asf@de1082d/src/sector-condition-stability.md	63	63	0	0.000	
+asf@de1082d/src/shared-intent.md	44	44	0	0.000	
+asf@de1082d/src/simulation-results.md	89	89	0	0.000	
+asf@de1082d/src/software-scope.md	57	57	0	0.000	
+asf@de1082d/src/specification-bound.md	73	73	0	0.000	
+asf@de1082d/src/strategic-calibration.md	53	53	0	0.000	
+asf@de1082d/src/strategy-dag.md	105	105	0	0.000	
+asf@de1082d/src/strategy-dimension.md	61	61	0	0.000	
+asf@de1082d/src/strategy-persistence-schema.md	58	58	0	0.000	
+asf@de1082d/src/structural-adaptation-necessity.md	74	74	0	0.000	
+asf@de1082d/src/structural-change-as-parametric-limit.md	46	46	0	0.000	
+asf@de1082d/src/system-availability.md	29	29	0	0.000	
+asf@de1082d/src/system-coherence.md	40	40	0	0.000	
+asf@de1082d/src/system-coupling.md	39	39	0	0.000	
+asf@de1082d/src/team-persistence.md	100	100	0	0.000	
+asf@de1082d/src/tempo-composition.md	53	53	0	0.000	
+asf@de1082d/src/temporal-nesting.md	51	51	0	0.000	
+asf@de1082d/src/temporal-optimality.md	52	52	0	0.000	
+asf@de1082d/src/unity-dimensions.md	74	74	0	0.000	
+asf@de1082d/src/update-gain.md	72	72	0	0.000	
+asf@de1082d/src/value-object.md	63	63	0	0.000	
+asf@de1082d/src/worked-example-bandit.md	150	150	0	0.000	
+asf@de1082d/src/worked-example-kalman.md	144	144	0	0.000	
+asf@de1082d^/src/action-selection.md	60	60	0	0.000	
+asf@de1082d^/src/action-transition.md	46	38	8	0.174	
+asf@de1082d^/src/adaptive-tempo.md	44	44	0	0.000	
+asf@de1082d^/src/adversarial-destabilization.md	79	79	0	0.000	
+asf@de1082d^/src/adversarial-exponent-regimes.md	65	65	0	0.000	
+asf@de1082d^/src/adversarial-tempo-advantage.md	107	107	0	0.000	
+asf@de1082d^/src/agent-environment.md	50	36	14	0.280	
+asf@de1082d^/src/agent-identity.md	38	38	0	0.000	
+asf@de1082d^/src/agent-model.md	48	37	11	0.229	
+asf@de1082d^/src/agent-spectrum.md	45	45	0	0.000	
+asf@de1082d^/src/and-or-scope.md	58	58	0	0.000	
+asf@de1082d^/src/atomic-changeset.md	43	43	0	0.000	
+asf@de1082d^/src/auftragstaktik-principle.md	53	53	0	0.000	
+asf@de1082d^/src/causal-hierarchy-requirement.md	57	57	0	0.000	
+asf@de1082d^/src/causal-information-yield.md	92	92	0	0.000	
+asf@de1082d^/src/causal-structure.md	47	47	0	0.000	
+asf@de1082d^/src/chain-confidence-decay.md	56	56	0	0.000	
+asf@de1082d^/src/change-distance.md	44	44	0	0.000	
+asf@de1082d^/src/change-expectation-baseline.md	82	82	0	0.000	
+asf@de1082d^/src/change-investment.md	45	45	0	0.000	
+asf@de1082d^/src/change-proximity-principle.md	54	54	0	0.000	
+asf@de1082d^/src/changeset-size-principle.md	49	49	0	0.000	
+asf@de1082d^/src/chronica.md	33	33	0	0.000	
+asf@de1082d^/src/coherence-coupling-measurement.md	46	46	0	0.000	
+asf@de1082d^/src/communication-gain.md	58	58	0	0.000	
+asf@de1082d^/src/complete-agent-state.md	70	70	0	0.000	
+asf@de1082d^/src/composition-closure.md	61	60	1	0.016	yes
+asf@de1082d^/src/composition-consistency.md	61	61	0	0.000	
+asf@de1082d^/src/comprehension-time.md	46	46	0	0.000	
+asf@de1082d^/src/conceptual-alignment.md	58	58	0	0.000	
+asf@de1082d^/src/continuous-operation.md	52	52	0	0.000	
+asf@de1082d^/src/control-regret.md	42	42	0	0.000	
+asf@de1082d^/src/deliberation-cost.md	97	97	0	0.000	
+asf@de1082d^/src/directed-separation.md	68	68	0	0.000	
+asf@de1082d^/src/dual-optimization.md	63	63	0	0.000	
+asf@de1082d^/src/edge-update-via-gain.md	57	57	0	0.000	
+asf@de1082d^/src/event-driven-dynamics.md	78	78	0	0.000	
+asf@de1082d^/src/explicit-strategy-condition.md	66	66	0	0.000	
+asf@de1082d^/src/exponential-cognitive-load.md	47	47	0	0.000	
+asf@de1082d^/src/feature-definition.md	52	52	0	0.000	
+asf@de1082d^/src/graph-structure-uniqueness.md	185	185	0	0.000	
+asf@de1082d^/src/implementation-time.md	46	46	0	0.000	
+asf@de1082d^/src/information-bottleneck.md	45	39	6	0.133	
+asf@de1082d^/src/loop-interventional-access.md	53	53	0	0.000	
+asf@de1082d^/src/mismatch-decomposition.md	42	42	0	0.000	
+asf@de1082d^/src/mismatch-dynamics.md	59	59	0	0.000	
+asf@de1082d^/src/mismatch-signal.md	46	46	0	0.000	
+asf@de1082d^/src/model-class-fitness.md	48	35	13	0.271	
+asf@de1082d^/src/model-sufficiency.md	43	37	6	0.140	
+asf@de1082d^/src/multi-agent-scope.md	37	37	0	0.000	
+asf@de1082d^/src/multi-timescale-stability.md	71	71	0	0.000	
+asf@de1082d^/src/objective-functional.md	53	53	0	0.000	
+asf@de1082d^/src/observability-dominance.md	47	47	0	0.000	
+asf@de1082d^/src/observation-function.md	49	39	10	0.204	
+asf@de1082d^/src/observation-gates-advantage.md	50	50	0	0.000	
+asf@de1082d^/src/old-tf-appendix-f-multi-agent.md	281	281	0	0.000	
+asf@de1082d^/src/old-tst-via-tft-causal-extensions.md	208	206	2	0.010	yes
+asf@de1082d^/src/old-tst-via-tft-mapping.md	263	262	1	0.004	yes
+asf@de1082d^/src/old-tst-via-tft-readme.md	53	53	0	0.000	
+asf@de1082d^/src/old-tst-via-tft-reformulated-sketch.md	419	416	3	0.007	yes
+asf@de1082d^/src/old-tst-via-tft-simulation-proposals.md	248	246	2	0.008	yes
+asf@de1082d^/src/operationalization.md	175	175	0	0.000	
+asf@de1082d^/src/orient-cascade.md	65	60	5	0.077	
+asf@de1082d^/src/pearl-causal-hierarchy.md	63	63	0	0.000	
+asf@de1082d^/src/per-dimension-persistence.md	59	59	0	0.000	
+asf@de1082d^/src/persistence-condition.md	72	72	0	0.000	
+asf@de1082d^/src/principled-decision-integration.md	55	55	0	0.000	
+asf@de1082d^/src/recursive-update-derivation.md	182	182	0	0.000	
+asf@de1082d^/src/recursive-update.md	59	44	15	0.254	
+asf@de1082d^/src/satisfaction-gap.md	57	57	0	0.000	
+asf@de1082d^/src/scope-condition.md	43	41	2	0.047	yes
+asf@de1082d^/src/sector-condition-derivation.md	165	165	0	0.000	
+asf@de1082d^/src/sector-condition-stability.md	63	63	0	0.000	
+asf@de1082d^/src/shared-intent.md	44	44	0	0.000	
+asf@de1082d^/src/simulation-results.md	89	89	0	0.000	
+asf@de1082d^/src/software-scope.md	57	57	0	0.000	
+asf@de1082d^/src/specification-bound.md	76	73	3	0.039	yes
+asf@de1082d^/src/strategic-calibration.md	53	53	0	0.000	
+asf@de1082d^/src/strategy-dag.md	105	105	0	0.000	
+asf@de1082d^/src/strategy-dimension.md	61	61	0	0.000	
+asf@de1082d^/src/strategy-persistence-schema.md	58	58	0	0.000	
+asf@de1082d^/src/structural-adaptation-necessity.md	74	74	0	0.000	
+asf@de1082d^/src/structural-change-as-parametric-limit.md	46	46	0	0.000	
+asf@de1082d^/src/system-availability.md	29	29	0	0.000	
+asf@de1082d^/src/system-coherence.md	40	40	0	0.000	
+asf@de1082d^/src/system-coupling.md	39	39	0	0.000	
+asf@de1082d^/src/team-persistence.md	100	100	0	0.000	
+asf@de1082d^/src/tempo-composition.md	53	53	0	0.000	
+asf@de1082d^/src/temporal-nesting.md	51	51	0	0.000	
+asf@de1082d^/src/temporal-optimality.md	68	52	16	0.235	
+asf@de1082d^/src/unity-dimensions.md	74	74	0	0.000	
+asf@de1082d^/src/update-gain.md	72	72	0	0.000	
+asf@de1082d^/src/value-object.md	63	63	0	0.000	
+asf@de1082d^/src/worked-example-bandit.md	150	150	0	0.000	
+asf@de1082d^/src/worked-example-kalman.md	144	144	0	0.000	
+claude-chat/06198123/001.md	26	26	0	0.000	
+claude-chat/13a8971d/001.md	14	14	0	0.000	
+claude-chat/13a8971d/002.md	14	14	0	0.000	
+claude-chat/13a8971d/003.md	15	15	0	0.000	
+claude-chat/13a8971d/004.md	16	16	0	0.000	
+claude-chat/1601121c/002.md	10	10	0	0.000	
+claude-chat/1601121c/003.md	16	16	0	0.000	
+claude-chat/1601121c/004.md	10	10	0	0.000	
+claude-chat/1601121c/005.md	10	10	0	0.000	
+claude-chat/1601121c/007.md	12	12	0	0.000	
+claude-chat/1601121c/008.md	14	14	0	0.000	
+claude-chat/1601121c/009.md	55	55	0	0.000	
+claude-chat/1601121c/010.md	16	16	0	0.000	
+claude-chat/1601121c/011.md	10	10	0	0.000	
+claude-chat/1601121c/012.md	10	10	0	0.000	
+claude-chat/1601121c/014.md	17	17	0	0.000	
+claude-chat/1601121c/017.md	30	30	0	0.000	
+claude-chat/1601121c/019.md	33	33	0	0.000	
+claude-chat/1601121c/020.md	24	24	0	0.000	
+claude-chat/1601121c/023.md	11	11	0	0.000	
+claude-chat/18aabafc/002.md	12	12	0	0.000	
+claude-chat/18aabafc/003.md	12	12	0	0.000	
+claude-chat/18aabafc/004.md	11	11	0	0.000	
+claude-chat/18aabafc/005.md	10	10	0	0.000	
+claude-chat/18aabafc/006.md	10	10	0	0.000	
+claude-chat/18aabafc/008.md	11	10	1	0.091	
+claude-chat/18aabafc/009.md	10	10	0	0.000	
+claude-chat/18aabafc/010.md	13	13	0	0.000	
+claude-chat/18aabafc/013.md	14	14	0	0.000	
+claude-chat/18aabafc/016.md	38	38	0	0.000	
+claude-chat/18aabafc/018.md	38	38	0	0.000	
+claude-chat/18aabafc/020.md	15	15	0	0.000	
+claude-chat/18aabafc/021.md	16	16	0	0.000	
+claude-chat/18aabafc/022.md	15	15	0	0.000	
+claude-chat/18aabafc/023.md	38	38	0	0.000	
+claude-chat/18aabafc/024.md	17	17	0	0.000	
+claude-chat/18aabafc/025.md	49	49	0	0.000	
+claude-chat/18aabafc/026.md	31	31	0	0.000	
+claude-chat/18aabafc/027.md	28	28	0	0.000	
+claude-chat/18aabafc/029.md	11	11	0	0.000	
+claude-chat/18aabafc/032.md	32	32	0	0.000	
+claude-chat/18aabafc/033.md	15	15	0	0.000	
+claude-chat/18aabafc/043.md	18	18	0	0.000	
+claude-chat/18aabafc/044.md	30	30	0	0.000	
+claude-chat/18aabafc/045.md	14	14	0	0.000	
+claude-chat/22abfaae/010.md	16	16	0	0.000	
+claude-chat/22abfaae/021.md	21	21	0	0.000	
+claude-chat/22abfaae/031.md	10	10	0	0.000	
+claude-chat/22abfaae/039.md	17	17	0	0.000	
+claude-chat/22abfaae/044.md	19	19	0	0.000	
+claude-chat/22abfaae/054.md	24	24	0	0.000	
+claude-chat/22abfaae/061.md	19	19	0	0.000	
+claude-chat/22abfaae/063.md	12	12	0	0.000	
+claude-chat/22abfaae/069.md	13	13	0	0.000	
+claude-chat/22abfaae/072.md	21	21	0	0.000	
+claude-chat/22abfaae/076.md	14	14	0	0.000	
+claude-chat/22abfaae/080.md	15	15	0	0.000	
+claude-chat/22abfaae/082.md	20	20	0	0.000	
+claude-chat/305776aa/002.md	13	13	0	0.000	
+claude-chat/305776aa/003.md	12	12	0	0.000	
+claude-chat/305776aa/004.md	14	14	0	0.000	
+claude-chat/305776aa/005.md	15	15	0	0.000	
+claude-chat/305776aa/006.md	11	11	0	0.000	
+claude-chat/305776aa/007.md	10	10	0	0.000	
+claude-chat/305776aa/008.md	12	12	0	0.000	
+claude-chat/305776aa/009.md	13	13	0	0.000	
+claude-chat/305776aa/010.md	12	12	0	0.000	
+claude-chat/305776aa/022.md	11	11	0	0.000	
+claude-chat/305776aa/025.md	13	13	0	0.000	
+claude-chat/305776aa/029.md	10	10	0	0.000	
+claude-chat/445248d8/001.md	48	48	0	0.000	
+claude-chat/45abedbd/001.md	20	20	0	0.000	
+claude-chat/5d686e10/001.md	16	16	0	0.000	
+claude-chat/5d686e10/002.md	41	41	0	0.000	
+claude-chat/5d686e10/006.md	16	16	0	0.000	
+claude-chat/5d686e10/008.md	11	11	0	0.000	
+claude-chat/5d686e10/009.md	12	12	0	0.000	
+claude-chat/5d686e10/016.md	10	10	0	0.000	
+claude-chat/5d686e10/021.md	16	16	0	0.000	
+claude-chat/5d686e10/029.md	11	11	0	0.000	
+claude-chat/5d686e10/032.md	17	17	0	0.000	
+claude-chat/5d686e10/036.md	10	10	0	0.000	
+claude-chat/5d686e10/038.md	16	16	0	0.000	
+claude-chat/5d686e10/040.md	55	55	0	0.000	
+claude-chat/5d686e10/041.md	11	11	0	0.000	
+claude-chat/5d686e10/043.md	44	44	0	0.000	
+claude-chat/5d686e10/045.md	12	12	0	0.000	
+claude-chat/5d686e10/046.md	14	14	0	0.000	
+claude-chat/5d686e10/047.md	10	10	0	0.000	
+claude-chat/5d686e10/049.md	16	16	0	0.000	
+claude-chat/5d686e10/050.md	10	10	0	0.000	
+claude-chat/5d686e10/051.md	14	14	0	0.000	
+claude-chat/5d686e10/052.md	12	12	0	0.000	
+claude-chat/5d686e10/053.md	10	10	0	0.000	
+claude-chat/5d686e10/054.md	13	13	0	0.000	
+claude-chat/5d686e10/055.md	23	23	0	0.000	
+claude-chat/5d686e10/057.md	14	14	0	0.000	
+claude-chat/5d686e10/060.md	10	10	0	0.000	
+claude-chat/5d686e10/061.md	10	10	0	0.000	
+claude-chat/5d686e10/062.md	12	12	0	0.000	
+claude-chat/5d686e10/064.md	10	10	0	0.000	
+claude-chat/5d686e10/065.md	10	10	0	0.000	
+claude-chat/5d686e10/068.md	10	10	0	0.000	
+claude-chat/64bde246/001.md	11	11	0	0.000	
+claude-chat/64bde246/002.md	19	19	0	0.000	
+claude-chat/64bde246/008.md	10	10	0	0.000	
+claude-chat/64bde246/009.md	12	12	0	0.000	
+claude-chat/64bde246/013.md	14	14	0	0.000	
+claude-chat/64bde246/014.md	12	12	0	0.000	
+claude-chat/64bde246/019.md	15	15	0	0.000	
+claude-chat/64bde246/025.md	11	11	0	0.000	
+claude-chat/64bde246/030.md	20	20	0	0.000	
+claude-chat/64bde246/033.md	14	14	0	0.000	
+claude-chat/64bde246/034.md	18	18	0	0.000	
+claude-chat/64bde246/036.md	11	11	0	0.000	
+claude-chat/64bde246/040.md	11	11	0	0.000	
+claude-chat/64bde246/042.md	13	13	0	0.000	
+claude-chat/64bde246/043.md	14	14	0	0.000	
+claude-chat/64bde246/044.md	18	18	0	0.000	
+claude-chat/64bde246/045.md	12	12	0	0.000	
+claude-chat/64bde246/053.md	30	30	0	0.000	
+claude-chat/64bde246/059.md	12	12	0	0.000	
+claude-chat/64bde246/064.md	11	11	0	0.000	
+claude-chat/64bde246/065.md	17	17	0	0.000	
+claude-chat/64bde246/070.md	25	25	0	0.000	
+claude-chat/64bde246/072.md	10	10	0	0.000	
+claude-chat/64bde246/073.md	14	14	0	0.000	
+claude-chat/64bde246/080.md	17	17	0	0.000	
+claude-chat/64bde246/081.md	18	18	0	0.000	
+claude-chat/64bde246/082.md	10	10	0	0.000	
+claude-chat/64bde246/085.md	14	14	0	0.000	
+claude-chat/64bde246/086.md	12	12	0	0.000	
+claude-chat/64bde246/088.md	14	14	0	0.000	
+claude-chat/64bde246/090.md	11	11	0	0.000	
+claude-chat/64bde246/091.md	13	13	0	0.000	
+claude-chat/64bde246/093.md	15	15	0	0.000	
+claude-chat/64bde246/094.md	17	17	0	0.000	
+claude-chat/64bde246/095.md	31	31	0	0.000	
+claude-chat/64bde246/098.md	13	13	0	0.000	
+claude-chat/64bde246/101.md	16	16	0	0.000	
+claude-chat/64bde246/102.md	12	12	0	0.000	
+claude-chat/64bde246/103.md	12	12	0	0.000	
+claude-chat/6c1ad867/002.md	15	15	0	0.000	
+claude-chat/6c1ad867/003.md	10	10	0	0.000	
+claude-chat/6c1ad867/004.md	11	11	0	0.000	
+claude-chat/6c1ad867/006.md	13	13	0	0.000	
+claude-chat/6c1ad867/013.md	12	12	0	0.000	
+claude-chat/6c1ad867/021.md	12	12	0	0.000	
+claude-chat/6c1ad867/030.md	25	25	0	0.000	
+claude-chat/6c1ad867/032.md	25	25	0	0.000	
+claude-chat/6c1ad867/035.md	14	14	0	0.000	
+claude-chat/6c1ad867/041.md	10	10	0	0.000	
+claude-chat/70172191/001.md	31	31	0	0.000	
+claude-chat/70172191/009.md	26	26	0	0.000	
+claude-chat/70172191/010.md	24	24	0	0.000	
+claude-chat/70172191/011.md	30	30	0	0.000	
+claude-chat/70172191/012.md	15	15	0	0.000	
+claude-chat/70172191/013.md	16	16	0	0.000	
+claude-chat/70172191/014.md	20	20	0	0.000	
+claude-chat/70172191/016.md	11	11	0	0.000	
+claude-chat/70172191/018.md	10	10	0	0.000	
+claude-chat/70172191/026.md	26	26	0	0.000	
+claude-chat/75ff6d1a/001.md	22	22	0	0.000	
+claude-chat/75ff6d1a/002.md	21	21	0	0.000	
+claude-chat/75ff6d1a/003.md	25	25	0	0.000	
+claude-chat/75ff6d1a/004.md	20	20	0	0.000	
+claude-chat/75ff6d1a/008.md	14	14	0	0.000	
+claude-chat/75ff6d1a/012.md	14	14	0	0.000	
+claude-chat/75ff6d1a/014.md	18	18	0	0.000	
+claude-chat/75ff6d1a/015.md	16	16	0	0.000	
+claude-chat/75ff6d1a/016.md	10	10	0	0.000	
+claude-chat/75ff6d1a/025.md	17	17	0	0.000	
+claude-chat/75ff6d1a/028.md	12	12	0	0.000	
+claude-chat/75ff6d1a/031.md	12	12	0	0.000	
+claude-chat/75ff6d1a/033.md	11	11	0	0.000	
+claude-chat/75ff6d1a/037.md	11	11	0	0.000	
+claude-chat/75ff6d1a/040.md	12	12	0	0.000	
+claude-chat/75ff6d1a/054.md	14	14	0	0.000	
+claude-chat/75ff6d1a/060.md	10	10	0	0.000	
+claude-chat/75ff6d1a/076.md	12	12	0	0.000	
+claude-chat/75ff6d1a/086.md	10	10	0	0.000	
+claude-chat/75ff6d1a/106.md	28	28	0	0.000	
+claude-chat/75ff6d1a/107.md	21	21	0	0.000	
+claude-chat/75ff6d1a/113.md	10	10	0	0.000	
+claude-chat/9649850b/001.md	12	12	0	0.000	
+claude-chat/9649850b/005.md	17	17	0	0.000	
+claude-chat/9649850b/007.md	20	20	0	0.000	
+claude-chat/9649850b/008.md	17	17	0	0.000	
+claude-chat/9649850b/009.md	24	24	0	0.000	
+claude-chat/9649850b/012.md	36	36	0	0.000	
+claude-chat/9649850b/027.md	10	10	0	0.000	
+claude-chat/9649850b/031.md	15	15	0	0.000	
+claude-chat/9649850b/037.md	31	30	1	0.032	yes
+claude-chat/9649850b/042.md	10	10	0	0.000	
+claude-chat/9649850b/045.md	19	19	0	0.000	
+claude-chat/9649850b/046.md	15	15	0	0.000	
+claude-chat/9649850b/054.md	12	12	0	0.000	
+claude-chat/9649850b/055.md	13	13	0	0.000	
+claude-chat/9649850b/067.md	14	14	0	0.000	
+claude-chat/ab1f7ab5/001.md	13	13	0	0.000	
+claude-chat/ab1f7ab5/002.md	58	58	0	0.000	
+claude-chat/ab1f7ab5/004.md	13	13	0	0.000	
+claude-chat/ab1f7ab5/008.md	10	10	0	0.000	
+claude-chat/ab1f7ab5/010.md	12	12	0	0.000	
+claude-chat/ab1f7ab5/011.md	11	11	0	0.000	
+claude-chat/ab1f7ab5/012.md	12	12	0	0.000	
+claude-chat/ab1f7ab5/013.md	10	10	0	0.000	
+claude-chat/ab1f7ab5/015.md	10	10	0	0.000	
+claude-chat/be2e5fbd/001.md	11	11	0	0.000	
+claude-chat/be2e5fbd/002.md	16	16	0	0.000	
+claude-chat/be2e5fbd/004.md	22	22	0	0.000	
+claude-chat/be2e5fbd/005.md	30	30	0	0.000	
+claude-chat/be2e5fbd/006.md	19	19	0	0.000	
+claude-chat/be2e5fbd/007.md	30	30	0	0.000	
+claude-chat/be2e5fbd/008.md	18	18	0	0.000	
+claude-chat/be2e5fbd/010.md	12	12	0	0.000	
+claude-chat/be2e5fbd/011.md	14	14	0	0.000	
+claude-chat/be2e5fbd/012.md	12	12	0	0.000	
+claude-chat/be2e5fbd/014.md	27	27	0	0.000	
+claude-chat/be2e5fbd/015.md	14	14	0	0.000	
+claude-chat/be2e5fbd/018.md	10	10	0	0.000	
+claude-chat/be2e5fbd/022.md	12	12	0	0.000	
+claude-chat/be2e5fbd/024.md	18	18	0	0.000	
+claude-chat/be2e5fbd/027.md	39	36	3	0.077	
+claude-chat/be2e5fbd/029.md	16	16	0	0.000	
+claude-chat/be2e5fbd/031.md	19	19	0	0.000	
+claude-chat/be2e5fbd/034.md	12	12	0	0.000	
+claude-chat/be2e5fbd/035.md	12	12	0	0.000	
+claude-chat/be2e5fbd/037.md	10	10	0	0.000	
+claude-chat/be2e5fbd/042.md	16	16	0	0.000	
+claude-chat/be2e5fbd/047.md	15	15	0	0.000	
+claude-chat/be2e5fbd/049.md	12	12	0	0.000	
+claude-chat/be2e5fbd/056.md	18	13	5	0.278	
+claude-chat/be2e5fbd/061.md	12	12	0	0.000	
+claude-chat/be2e5fbd/067.md	11	11	0	0.000	
+claude-chat/be2e5fbd/070.md	13	13	0	0.000	
+claude-chat/da5d1672/003.md	13	13	0	0.000	
+claude-chat/da5d1672/007.md	16	16	0	0.000	
+claude-chat/da5d1672/015.md	14	14	0	0.000	
+claude-chat/da5d1672/016.md	13	13	0	0.000	
+claude-chat/da5d1672/017.md	13	13	0	0.000	
+claude-chat/da5d1672/018.md	56	56	0	0.000	
+claude-chat/da5d1672/023.md	38	38	0	0.000	
+claude-chat/da5d1672/024.md	92	92	0	0.000	
+claude-chat/da5d1672/025.md	17	17	0	0.000	
+claude-chat/da5d1672/026.md	12	12	0	0.000	
+claude-chat/da5d1672/027.md	13	13	0	0.000	
+claude-chat/da5d1672/029.md	11	11	0	0.000	
+claude-chat/da5d1672/031.md	15	15	0	0.000	
+claude-chat/da5d1672/032.md	12	12	0	0.000	
+claude-chat/da5d1672/035.md	12	12	0	0.000	
+claude-chat/da5d1672/037.md	14	14	0	0.000	
+claude-chat/da5d1672/038.md	13	13	0	0.000	
+claude-chat/da5d1672/039.md	23	23	0	0.000	
+claude-chat/da5d1672/040.md	15	15	0	0.000	
+claude-chat/da5d1672/061.md	10	10	0	0.000	
+claude-chat/da5d1672/065.md	10	10	0	0.000	
+claude-chat/da5d1672/066.md	10	10	0	0.000	
+claude-chat/da5d1672/071.md	10	10	0	0.000	
+claude-chat/da5d1672/076.md	12	12	0	0.000	
+claude-chat/da5d1672/079.md	10	10	0	0.000	
+claude-chat/da5d1672/084.md	16	16	0	0.000	
+claude-chat/da5d1672/094.md	10	10	0	0.000	
+claude-chat/da5d1672/098.md	10	10	0	0.000	
+claude-chat/da5d1672/099.md	13	13	0	0.000	
+claude-chat/da5d1672/104.md	10	10	0	0.000	
+claude-chat/da5d1672/106.md	12	12	0	0.000	
+claude-chat/da5d1672/108.md	16	16	0	0.000	
+claude-chat/da5d1672/110.md	10	10	0	0.000	
+claude-chat/da5d1672/114.md	13	13	0	0.000	
+claude-chat/da5d1672/115.md	19	19	0	0.000	
+claude-chat/da5d1672/116.md	20	20	0	0.000	
+claude-chat/da5d1672/117.md	11	11	0	0.000	
+claude-chat/da5d1672/118.md	10	10	0	0.000	
+claude-chat/da5d1672/124.md	10	10	0	0.000	
+claude-chat/da5d1672/125.md	18	18	0	0.000	
+claude-chat/da5d1672/126.md	18	18	0	0.000	
+claude-chat/da5d1672/127.md	23	23	0	0.000	
+claude-chat/da5d1672/129.md	11	11	0	0.000	
+claude-chat/da5d1672/130.md	16	16	0	0.000	
+claude-chat/da5d1672/131.md	20	20	0	0.000	
+claude-chat/da5d1672/135.md	20	20	0	0.000	
+claude-chat/da5d1672/136.md	34	34	0	0.000	
+claude-chat/da5d1672/137.md	14	14	0	0.000	
+claude-chat/da5d1672/138.md	13	13	0	0.000	
+claude-chat/da5d1672/139.md	18	18	0	0.000	
+claude-chat/da5d1672/140.md	15	15	0	0.000	
+claude-chat/da5d1672/141.md	33	33	0	0.000	
+claude-chat/da5d1672/144.md	20	20	0	0.000	
+claude-chat/da5d1672/145.md	21	21	0	0.000	
+claude-chat/da5d1672/146.md	10	10	0	0.000	
+claude-chat/da5d1672/148.md	14	14	0	0.000	
+claude-chat/da5d1672/150.md	24	24	0	0.000	
+claude-chat/da5d1672/153.md	12	12	0	0.000	
+claude-chat/da5d1672/154.md	19	19	0	0.000	
+claude-chat/da5d1672/155.md	15	15	0	0.000	
+claude-chat/da5d1672/156.md	22	22	0	0.000	
+claude-chat/da5d1672/162.md	29	29	0	0.000	
+claude-chat/da5d1672/163.md	26	26	0	0.000	
+claude-chat/da5d1672/164.md	10	10	0	0.000	
+claude-chat/da5d1672/165.md	18	18	0	0.000	
+claude-chat/da5d1672/166.md	14	14	0	0.000	
+claude-chat/da5d1672/167.md	23	23	0	0.000	
+claude-chat/da5d1672/168.md	21	21	0	0.000	
+claude-chat/da5d1672/170.md	12	12	0	0.000	
+claude-chat/da5d1672/171.md	12	12	0	0.000	
+claude-chat/da5d1672/172.md	16	16	0	0.000	
+claude-chat/da5d1672/173.md	13	13	0	0.000	
+claude-chat/da5d1672/178.md	12	12	0	0.000	
+claude-chat/da5d1672/179.md	15	15	0	0.000	
+claude-chat/da5d1672/180.md	10	10	0	0.000	
+claude-chat/da5d1672/185.md	13	13	0	0.000	
+claude-chat/da5d1672/186.md	17	17	0	0.000	
+claude-chat/da5d1672/187.md	27	27	0	0.000	
+claude-chat/da5d1672/189.md	11	11	0	0.000	
+claude-chat/da5d1672/191.md	10	10	0	0.000	
+claude-chat/da5d1672/194.md	15	15	0	0.000	
+claude-chat/da5d1672/196.md	17	16	1	0.059	
+claude-chat/da5d1672/197.md	12	12	0	0.000	
+claude-chat/da5d1672/198.md	14	14	0	0.000	
+claude-chat/da5d1672/199.md	17	17	0	0.000	
+claude-chat/da5d1672/201.md	11	11	0	0.000	
+claude-chat/da5d1672/207.md	15	15	0	0.000	
+claude-chat/da5d1672/209.md	18	17	1	0.056	
+claude-chat/da5d1672/211.md	25	22	3	0.120	
+claude-chat/da5d1672/213.md	20	20	0	0.000	
+claude-chat/da5d1672/214.md	20	20	0	0.000	
+claude-chat/da5d1672/218.md	12	12	0	0.000	
+claude-chat/da5d1672/219.md	10	10	0	0.000	
+claude-chat/da5d1672/223.md	27	27	0	0.000	
+claude-chat/da5d1672/226.md	24	24	0	0.000	
+claude-chat/da5d1672/227.md	49	49	0	0.000	
+claude-chat/da5d1672/228.md	11	11	0	0.000	
+claude-chat/da5d1672/229.md	12	12	0	0.000	
+claude-chat/da5d1672/230.md	18	18	0	0.000	
+claude-chat/da5d1672/231.md	19	19	0	0.000	
+claude-chat/da5d1672/233.md	19	19	0	0.000	
+claude-chat/da5d1672/237.md	15	15	0	0.000	
+claude-chat/da5d1672/239.md	21	21	0	0.000	
+claude-chat/da5d1672/240.md	14	14	0	0.000	
+claude-chat/da5d1672/241.md	14	14	0	0.000	
+claude-chat/da5d1672/243.md	24	24	0	0.000	
+claude-chat/da5d1672/244.md	22	22	0	0.000	
+claude-chat/da5d1672/245.md	26	26	0	0.000	
+claude-chat/da5d1672/246.md	23	23	0	0.000	
+claude-chat/da5d1672/248.md	25	25	0	0.000	
+claude-chat/da5d1672/249.md	15	15	0	0.000	
+claude-chat/da5d1672/251.md	10	10	0	0.000	
+claude-chat/da5d1672/252.md	40	40	0	0.000	
+claude-chat/da5d1672/255.md	10	10	0	0.000	
+claude-chat/da5d1672/257.md	20	20	0	0.000	
+claude-chat/da5d1672/258.md	21	21	0	0.000	
+claude-chat/da5d1672/261.md	18	18	0	0.000	
+claude-chat/da5d1672/264.md	11	11	0	0.000	
+claude-chat/da5d1672/269.md	15	15	0	0.000	
+claude-chat/f5f3ddc3/001.md	10	10	0	0.000	
+claude-chat/f5f3ddc3/002.md	14	14	0	0.000	
+claude-chat/f5f3ddc3/003.md	12	12	0	0.000	
+claude-chat/f5f3ddc3/005.md	14	14	0	0.000	
+claude-chat/f5f3ddc3/021.md	15	15	0	0.000	
+claude-chat/f5f3ddc3/065.md	10	10	0	0.000	
+claude-chat/f5f3ddc3/077.md	10	10	0	0.000	
+claude-chat/f5f3ddc3/078.md	11	11	0	0.000	
+claude-chat/f5f3ddc3/086.md	13	13	0	0.000	
+claude-chat/f5f3ddc3/097.md	12	12	0	0.000	
+claude-chat/f5f3ddc3/100.md	19	19	0	0.000	
+claude-chat/f5f3ddc3/101.md	16	16	0	0.000	
+claude-chat/f5f3ddc3/106.md	20	20	0	0.000	
+claude-chat/f5f3ddc3/107.md	12	12	0	0.000	
+claude-chat/fb57249f/001.md	20	20	0	0.000	
+claude-chat/fb57249f/002.md	42	42	0	0.000	
+claude-chat/fb57249f/003.md	14	14	0	0.000	
+claude-chat/fb57249f/004.md	20	20	0	0.000	
+claude-chat/fb57249f/005.md	47	47	0	0.000	
+claude-chat/fb57249f/006.md	16	16	0	0.000	
+claude-chat/fb57249f/008.md	11	11	0	0.000	
+claude-chat/fb57249f/010.md	15	15	0	0.000	
+claude-chat/fb57249f/012.md	14	14	0	0.000	
+claude-chat/fb57249f/013.md	14	14	0	0.000	
+claude-chat/fb57249f/014.md	12	12	0	0.000	
+claude-chat/fb57249f/015.md	59	59	0	0.000	
+claude-chat/fb57249f/016.md	13	13	0	0.000	
+claude-chat/fb57249f/017.md	15	15	0	0.000	
+claude-chat/fb57249f/018.md	41	41	0	0.000	
+claude-chat/fb57249f/020.md	17	17	0	0.000	
+claude-chat/fb57249f/022.md	16	16	0	0.000	
+claude-chat/fb57249f/023.md	12	12	0	0.000	
+claude-chat/fb57249f/024.md	10	10	0	0.000	
+claude-chat/fb57249f/027.md	11	11	0	0.000	
+claude-chat/fb57249f/028.md	13	13	0	0.000	
+claude-chat/fb57249f/030.md	12	12	0	0.000	
+claude-chat/fb57249f/035.md	17	17	0	0.000	
+claude-chat/fb57249f/036.md	33	32	1	0.030	yes
+claude-chat/fb57249f/041.md	25	25	0	0.000	
+claude-chat/fb57249f/043.md	22	22	0	0.000	
+claude-chat/fb57249f/044.md	10	10	0	0.000	
+claude-chat/fb57249f/045.md	24	24	0	0.000	
+claude-chat/fb57249f/046.md	10	10	0	0.000	
+claude-chat/fb57249f/047.md	13	13	0	0.000	
+claude-chat/fb57249f/051.md	15	15	0	0.000	
+claude-chat/fb57249f/053.md	11	11	0	0.000	
+claude-chat/fb57249f/056.md	16	16	0	0.000	
+claude-write/1601121c/001.md	206	105	101	0.490	
+claude-write/1601121c/002.md	166	111	55	0.331	
+claude-write/1601121c/003.md	996	604	392	0.394	
+claude-write/1601121c/004.md	20	16	4	0.200	
+claude-write/1601121c/005.md	98	51	47	0.480	
+claude-write/1601121c/006.md	51	30	21	0.412	
+claude-write/1601121c/007.md	65	39	26	0.400	
+claude-write/1601121c/008.md	122	46	76	0.623	
+claude-write/1601121c/009.md	157	49	108	0.688	
+claude-write/1601121c/010.md	65	47	18	0.277	
+claude-write/1601121c/011.md	512	381	131	0.256	
+claude-write/1601121c/012.md	217	90	127	0.585	
+claude-write/18aabafc/001.md	485	295	190	0.392	
+claude-write/18aabafc/002.md	38	17	21	0.553	
+claude-write/18aabafc/003.md	38	15	23	0.605	
+claude-write/22abfaae/001.md	41	14	27	0.659	
+claude-write/22abfaae/002.md	43	21	22	0.512	
+claude-write/22abfaae/003.md	173	80	93	0.538	
+claude-write/22abfaae/004.md	45	15	30	0.667	
+claude-write/305776aa/001.md	127	67	60	0.472	
+claude-write/5d686e10/001.md	59	18	41	0.695	
+claude-write/5d686e10/002.md	121	23	98	0.810	
+claude-write/5d686e10/003.md	247	157	90	0.364	
+claude-write/5d686e10/004.md	27	18	9	0.333	
+claude-write/5d686e10/005.md	145	69	76	0.524	
+claude-write/5d686e10/006.md	374	124	250	0.668	
+claude-write/5d686e10/007.md	52	15	37	0.712	
+claude-write/5d686e10/008.md	142	66	76	0.535	
+claude-write/5d686e10/009.md	229	95	134	0.585	
+claude-write/5d686e10/010.md	484	195	289	0.597	
+claude-write/5d686e10/011.md	47	21	26	0.553	
+claude-write/5d686e10/012.md	63	23	40	0.635	
+claude-write/64bde246/001.md	268	218	50	0.187	
+claude-write/64bde246/002.md	189	107	82	0.434	
+claude-write/64bde246/003.md	12	12	0	0.000	
+claude-write/64bde246/004.md	12	12	0	0.000	
+claude-write/64bde246/005.md	12	12	0	0.000	
+claude-write/64bde246/006.md	437	336	101	0.231	
+claude-write/64bde246/007.md	112	105	7	0.062	
+claude-write/64bde246/008.md	180	69	111	0.617	
+claude-write/64bde246/009.md	182	74	108	0.593	
+claude-write/64bde246/010.md	103	76	27	0.262	
+claude-write/75ff6d1a/001.md	63	25	38	0.603	
+claude-write/75ff6d1a/002.md	25	12	13	0.520	
+claude-write/75ff6d1a/003.md	57	42	15	0.263	
+claude-write/75ff6d1a/004.md	60	53	7	0.117	
+claude-write/75ff6d1a/005.md	60	53	7	0.117	
+claude-write/75ff6d1a/006.md	26	14	12	0.462	
+claude-write/75ff6d1a/007.md	114	54	60	0.526	
+claude-write/75ff6d1a/008.md	46	22	24	0.522	
+claude-write/75ff6d1a/009.md	26	16	10	0.385	
+claude-write/75ff6d1a/010.md	19	16	3	0.158	
+claude-write/75ff6d1a/011.md	67	40	27	0.403	
+claude-write/76b4257c/001.md	212	165	47	0.222	
+claude-write/76b4257c/002.md	160	157	3	0.019	yes
+claude-write/76b4257c/003.md	119	115	4	0.034	yes
+claude-write/76b4257c/004.md	181	171	10	0.055	
+claude-write/76b4257c/005.md	165	159	6	0.036	yes
+claude-write/76b4257c/006.md	174	170	4	0.023	yes
+claude-write/76b4257c/007.md	149	144	5	0.034	yes
+claude-write/76b4257c/008.md	157	146	11	0.070	
+claude-write/76b4257c/009.md	108	102	6	0.056	
+claude-write/76b4257c/010.md	79	75	4	0.051	
+claude-write/76b4257c/011.md	127	120	7	0.055	
+claude-write/76b4257c/012.md	134	129	5	0.037	yes
+claude-write/76b4257c/013.md	123	116	7	0.057	
+claude-write/9649850b/001.md	55	19	36	0.655	
+claude-write/9649850b/002.md	261	157	104	0.398	
+claude-write/9649850b/003.md	39	17	22	0.564	
+claude-write/9649850b/004.md	70	31	39	0.557	
+claude-write/9649850b/005.md	70	21	49	0.700	
+claude-write/9649850b/006.md	43	14	29	0.674	
+claude-write/ab1f7ab5/001.md	30	12	18	0.600	
+claude-write/ab1f7ab5/002.md	17	14	3	0.176	
+claude-write/ab1f7ab5/003.md	145	69	76	0.524	
+claude-write/ab1f7ab5/004.md	53	33	20	0.377	
+claude-write/be2e5fbd/001.md	57	16	41	0.719	
+claude-write/be2e5fbd/002.md	72	42	30	0.417	
+claude-write/be2e5fbd/003.md	139	43	96	0.691	
+claude-write/be2e5fbd/004.md	75	18	57	0.760	
+claude-write/be2e5fbd/005.md	201	65	136	0.677	
+claude-write/da5d1672/001.md	398	211	187	0.470	
+claude-write/da5d1672/002.md	199	148	51	0.256	
+claude-write/da5d1672/003.md	85	62	23	0.271	
+claude-write/da5d1672/004.md	100	77	23	0.230	
+claude-write/da5d1672/005.md	58	36	22	0.379	
+claude-write/da5d1672/006.md	89	48	41	0.461	
+claude-write/da5d1672/007.md	44	21	23	0.523	
+claude-write/da5d1672/008.md	29	15	14	0.483	
+claude-write/da5d1672/009.md	66	32	34	0.515	
+claude-write/da5d1672/010.md	92	37	55	0.598	
+claude-write/da5d1672/011.md	32	16	16	0.500	
+claude-write/da5d1672/012.md	59	44	15	0.254	
+claude-write/da5d1672/013.md	74	40	34	0.459	
+claude-write/da5d1672/014.md	93	60	33	0.355	
+claude-write/da5d1672/015.md	80	57	23	0.287	
+claude-write/da5d1672/016.md	80	57	23	0.287	
+claude-write/da5d1672/017.md	52	32	20	0.385	
+claude-write/da5d1672/018.md	143	77	66	0.462	
+claude-write/da5d1672/019.md	39	14	25	0.641	
+claude-write/da5d1672/020.md	82	44	38	0.463	
+claude-write/da5d1672/021.md	25	14	11	0.440	
+claude-write/da5d1672/022.md	86	46	40	0.465	
+claude-write/da5d1672/023.md	18	8	10	0.556	
+claude-write/da5d1672/024.md	63	39	24	0.381	
+claude-write/da5d1672/025.md	31	20	11	0.355	
+claude-write/da5d1672/026.md	28	18	10	0.357	
+claude-write/da5d1672/027.md	17	7	10	0.588	
+claude-write/da5d1672/028.md	63	35	28	0.444	
+claude-write/da5d1672/029.md	15	11	4	0.267	
+claude-write/da5d1672/030.md	17	13	4	0.235	
+claude-write/da5d1672/031.md	28	12	16	0.571	
+claude-write/da5d1672/032.md	41	18	23	0.561	
+claude-write/da5d1672/033.md	35	14	21	0.600	
+claude-write/da5d1672/034.md	19	8	11	0.579	
+claude-write/da5d1672/035.md	21	11	10	0.476	
+claude-write/da5d1672/036.md	19	10	9	0.474	
+claude-write/da5d1672/037.md	16	10	6	0.375	
+claude-write/da5d1672/038.md	14	10	4	0.286	
+claude-write/da5d1672/039.md	12	8	4	0.333	
+claude-write/da5d1672/040.md	16	10	6	0.375	
+claude-write/da5d1672/041.md	15	9	6	0.400	
+claude-write/da5d1672/042.md	11	9	2	0.182	
+claude-write/da5d1672/043.md	14	5	9	0.643	
+claude-write/da5d1672/044.md	16	10	6	0.375	
+claude-write/da5d1672/045.md	55	31	24	0.436	
+claude-write/f5f3ddc3/001.md	78	32	46	0.590	
+claude-write/f5f3ddc3/002.md	15	15	0	0.000	
+claude-write/f5f3ddc3/003.md	12	12	0	0.000	
+claude-write/f5f3ddc3/004.md	12	12	0	0.000	
+claude-write/f5f3ddc3/005.md	12	12	0	0.000	
+claude-write/f5f3ddc3/006.md	12	12	0	0.000	
+claude-write/f5f3ddc3/007.md	45	15	30	0.667	
+claude-write/f5f3ddc3/008.md	100	41	59	0.590	
+claude-write/f5f3ddc3/009.md	154	54	100	0.649	
+claude-write/f5f3ddc3/010.md	23	9	14	0.609	
+claude-write/f5f3ddc3/011.md	152	51	101	0.664	
+claude-write/f5f3ddc3/012.md	43	25	18	0.419	
+claude-write/f5f3ddc3/013.md	45	21	24	0.533	
+claude-write/f5f3ddc3/014.md	39	16	23	0.590	
+claude-write/fb57249f/001.md	238	115	123	0.517	
+claude-write/fb57249f/002.md	71	71	0	0.000	
+claude-write/fb57249f/003.md	51	20	31	0.608	
+generated-ollama-llama32/nowrap-1.md	62	52	10	0.161	
+generated-ollama-llama32/nowrap-2.md	51	49	2	0.039	yes
+generated-ollama-llama32/wrapped-1.md	66	66	0	0.000	
+generated-ollama-llama32/wrapped-2.md	113	113	0	0.000	
+generated-ollama-nat/hermes3:3b--adr.md	46	46	0	0.000	
+generated-ollama-nat/hermes3:3b--compare.md	47	46	1	0.021	yes
+generated-ollama-nat/hermes3:3b--guide.md	122	122	0	0.000	
+generated-ollama-nat/hermes3:3b--handoff.md	80	73	7	0.087	
+generated-ollama-nat/hermes3:3b--notes.md	60	52	8	0.133	
+generated-ollama-nat/hermes3:3b--pm.md	41	37	4	0.098	
+generated-ollama-nat/hermes3:3b--runbook.md	61	61	0	0.000	
+generated-ollama-nat/hermes3:3b--spec.md	44	38	6	0.136	
+generated-ollama-nat/llama3.2:3b--adr.md	57	52	5	0.088	
+generated-ollama-nat/llama3.2:3b--compare.md	56	52	4	0.071	
+generated-ollama-nat/llama3.2:3b--guide.md	139	139	0	0.000	
+generated-ollama-nat/llama3.2:3b--handoff.md	64	53	11	0.172	
+generated-ollama-nat/llama3.2:3b--notes.md	48	48	0	0.000	
+generated-ollama-nat/llama3.2:3b--pm.md	37	37	0	0.000	
+generated-ollama-nat/llama3.2:3b--runbook.md	55	55	0	0.000	
+generated-ollama-nat/llama3.2:3b--spec.md	66	66	0	0.000	
+generated-ollama-nat/qwen3:4b--adr.md	118	118	0	0.000	
+generated-ollama-nat/qwen3:4b--compare.md	83	83	0	0.000	
+generated-ollama-nat/qwen3:4b--guide.md	256	256	0	0.000	
+generated-ollama-nat/qwen3:4b--handoff.md	151	151	0	0.000	
+generated-ollama-nat/qwen3:4b--notes.md	67	67	0	0.000	
+generated-ollama-nat/qwen3:4b--pm.md	94	94	0	0.000	
+generated-ollama-nat/qwen3:4b--runbook.md	118	118	0	0.000	
+generated-ollama-nat/qwen3:4b--spec.md	125	125	0	0.000	
+generated-opus-nat/adr2.md	255	145	110	0.431	
+generated-opus-nat/glossary.md	379	205	174	0.459	
+generated-opus-nat/guide2.md	339	329	10	0.029	yes
+generated-opus-nat/incident2.md	212	128	84	0.396	
+generated-opus-nat/notes2.md	37	28	9	0.243	
+generated-opus-nat/plan2.md	410	323	87	0.212	
+generated-opus-nat/pm2.md	158	152	6	0.038	yes
+generated-opus-nat/research2.md	228	107	121	0.531	
+generated-opus-nat/retro2.md	134	131	3	0.022	yes
+generated-opus-nat/rfc.md	468	281	187	0.400	
+generated-opus-nat/spec2.md	283	281	2	0.007	yes
+generated-opus-nat/triage.md	159	159	0	0.000	
+generated-sonnet-2026-07-22/default-adr.md	121	76	45	0.372	
+generated-sonnet-2026-07-22/default-memo.md	73	71	2	0.027	yes
+generated-sonnet-2026-07-22/default-migration.md	114	75	39	0.342	
+generated-sonnet-2026-07-22/default-minutes.md	65	62	3	0.046	yes
+generated-sonnet-2026-07-22/default-postmortem.md	72	69	3	0.042	yes
+generated-sonnet-2026-07-22/default-research.md	117	56	61	0.521	
+generated-sonnet-2026-07-22/nowrap-apidocs.md	88	88	0	0.000	
+generated-sonnet-2026-07-22/nowrap-faq.md	42	42	0	0.000	
+generated-sonnet-2026-07-22/nowrap-onboarding.md	47	47	0	0.000	
+generated-sonnet-2026-07-22/nowrap-runbook.md	53	53	0	0.000	
+generated-sonnet-2026-07-22/nowrap-spec.md	63	63	0	0.000	
+generated-sonnet-2026-07-22/nowrap-tutorial.md	78	78	0	0.000	
+generated-sonnet-2phase/api-rate-limit-postmortem.md	164	158	6	0.037	yes
+generated-sonnet-2phase/ascii-org-chart-explanation.md	92	90	2	0.022	yes
+generated-sonnet-2phase/caching-layer-adr.md	279	114	165	0.591	
+generated-sonnet-2phase/conference-talk-abstract.md	67	67	0	0.000	
+generated-sonnet-2phase/cover-letter-for-job-application.md	31	25	6	0.194	
+generated-sonnet-2phase/customer-outage-status-updates.md	74	72	2	0.027	yes
+generated-sonnet-2phase/database-failover-postmortem.md	105	100	5	0.048	yes
+generated-sonnet-2phase/eulogy-for-family-friend.md	54	54	0	0.000	
+generated-sonnet-2phase/garden-poem-for-newsletter.md	25	15	10	0.400	
+generated-sonnet-2phase/grandmothers-recipe-instructions.md	113	111	2	0.018	yes
+generated-sonnet-2phase/holiday-card-family-letter.md	52	52	0	0.000	
+generated-sonnet-2phase/microservice-latency-investigation.md	128	124	4	0.031	yes
+generated-sonnet-2phase/office-relocation-memo.md	105	102	3	0.029	yes
+generated-sonnet-2phase/open-source-license-change-announcement.md	91	79	12	0.132	
+generated-sonnet-2phase/quarterly-retro-writeup.md	65	60	5	0.077	
+generated-sonnet-2phase/resignation-letter.md	34	30	4	0.118	
+generated-sonnet-2phase/security-vulnerability-disclosure.md	87	83	4	0.046	yes
+generated-sonnet-2phase/software-license-key-instructions.md	88	88	0	0.000	
+generated-sonnet-2phase/team-offsite-agenda-memo.md	74	70	4	0.054	
+generated-sonnet-2phase/technical-debt-assessment.md	148	143	5	0.034	yes
+generated-sonnet-2phase/toast-for-friends-anniversary.md	69	66	3	0.043	yes
+generated-sonnet-2phase/wedding-invitation-details.md	31	25	6	0.194	
+generated-sonnet-nat-2026-07-22/adr2.md	200	79	121	0.605	
+generated-sonnet-nat-2026-07-22/audit2.md	111	109	2	0.018	yes
+generated-sonnet-nat-2026-07-22/brief2.md	100	98	2	0.020	yes
+generated-sonnet-nat-2026-07-22/compare.md	139	136	3	0.022	yes
+generated-sonnet-nat-2026-07-22/faq2.md	109	109	0	0.000	
+generated-sonnet-nat-2026-07-22/glossary.md	214	214	0	0.000	
+generated-sonnet-nat-2026-07-22/guide2.md	210	210	0	0.000	
+generated-sonnet-nat-2026-07-22/handoff.md	62	60	2	0.032	yes
+generated-sonnet-nat-2026-07-22/incident2.md	134	129	5	0.037	yes
+generated-sonnet-nat-2026-07-22/notes2.md	50	48	2	0.040	yes
+generated-sonnet-nat-2026-07-22/plan2.md	146	146	0	0.000	
+generated-sonnet-nat-2026-07-22/pm2.md	135	129	6	0.044	yes
+generated-sonnet-nat-2026-07-22/research2.md	381	178	203	0.533	
+generated-sonnet-nat-2026-07-22/retro2.md	187	104	83	0.444	
+generated-sonnet-nat-2026-07-22/review2.md	111	108	3	0.027	yes
+generated-sonnet-nat-2026-07-22/rfc.md	173	173	0	0.000	
+generated-sonnet-nat-2026-07-22/roadmap.md	110	110	0	0.000	
+generated-sonnet-nat-2026-07-22/runbook2.md	248	246	2	0.008	yes
+generated-sonnet-nat-2026-07-22/spec2.md	210	208	2	0.010	yes
+generated-sonnet-nat-2026-07-22/triage.md	64	64	0	0.000	
+udon@cc389f9/v2/.archived/INDEX.md	131	122	9	0.069	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/MASTER-REGISTRY.md	254	180	74	0.291	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/MERGED-six-maps.md	714	649	65	0.091	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/autopax-practica.md	295	114	181	0.614	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/dialogs.md	212	129	83	0.392	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/elsewhere.md	127	78	49	0.386	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/harness-refs.md	240	93	147	0.613	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/nexum-synaptic-elimigration.md	261	105	156	0.598	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/ref-arch.md	201	81	120	0.597	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/sapientia.md	273	128	145	0.531	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/vaults.md	218	90	128	0.587	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/agentic-tooling-sources/zoetica-ennaos.md	232	100	132	0.569	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/sources-live-consumers.md	51	50	1	0.020	yes
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/sources-schema-versioning.md	489	140	349	0.714	
+udon@cc389f9/v2/.archived/consumed-maps-2026-07-21/sources-udon-repo-design-ux.md	73	63	10	0.137	
+udon@cc389f9/v2/.archived/first-pass/brownfield/BIG-PICTURE-2026-07-20.md	262	257	5	0.019	yes
+udon@cc389f9/v2/.archived/first-pass/brownfield/DIRECTION-2026-07-19.md	70	21	49	0.700	
+udon@cc389f9/v2/.archived/first-pass/brownfield/wire-value-model-2026-07.md	261	157	104	0.398	
+udon@cc389f9/v2/.archived/first-pass/greenfield/CORE-supplement.md	120	119	1	0.008	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/CORE.md	1909	1864	45	0.024	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/DYNAMICS.md	240	207	33	0.138	
+udon@cc389f9/v2/.archived/first-pass/greenfield/EVENTS.md	265	187	78	0.294	
+udon@cc389f9/v2/.archived/first-pass/greenfield/MARKDOWN.md	86	46	40	0.465	
+udon@cc389f9/v2/.archived/first-pass/greenfield/TIME-SPEC.md	507	476	31	0.061	
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/01-elements-identity.md	158	155	3	0.019	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/02-hierarchy.md	119	115	4	0.034	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/03-attributes-scan.md	180	170	10	0.056	
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/04-attribute-values.md	165	159	6	0.036	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/05-blobs-ownership-stacking.md	174	170	4	0.023	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/06-node-values.md	149	144	5	0.034	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/07-prose-dedentation.md	157	146	11	0.070	
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/08-comments.md	109	102	7	0.064	
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/09-escape.md	79	75	4	0.051	
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/10-raw-freeform.md	111	109	2	0.018	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/11-dynamics-references.md	134	129	5	0.037	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield/corpus/12-eof-unclosed.md	123	116	7	0.057	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/README-FIRST.md	68	30	38	0.559	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/defining-udon.md	99	95	4	0.040	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/feedback-from-gemini.md	21	18	3	0.143	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/feedback-from-grok.md	299	219	80	0.268	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/new-spec/ADM.md	166	111	55	0.331	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/new-spec/GLOSSARY.md	208	105	103	0.495	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/new-spec/OPEN-QUESTIONS.md	21	17	4	0.190	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/new-spec/PEDAGOGY.md	65	39	26	0.400	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/new-spec/RATIONALE.md	98	51	47	0.480	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/new-spec/README.md	51	30	21	0.412	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/new-spec/SPEC.md	1014	604	410	0.404	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/01-elements-identity.md	46	46	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/02-hierarchy.md	36	36	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/03-attributes-scan.md	44	44	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/04-attribute-values.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/05-blobs-ownership-stacking.md	48	48	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/06-node-values.md	41	41	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/07-prose-dedentation.md	53	53	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/08-comments.md	35	35	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/09-escape.md	28	28	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/10-raw-freeform.md	33	33	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/11-dynamics-references.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-corpus/12-eof-unclosed.md	32	32	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-spec/CORE.md	837	836	1	0.001	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/snippets/from-spec/TIME-SPEC.md	201	201	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/spec/CORE-supplement.md	120	119	1	0.008	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/spec/CORE.md	1745	1716	29	0.017	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/spec/DYNAMICS.md	226	202	24	0.106	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/spec/MARKDOWN.md	82	44	38	0.463	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2a/spec/TIME-SPEC.md	507	476	31	0.061	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/README-FIRST.md	68	30	38	0.559	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/defining-udon.md	99	95	4	0.040	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/01-elements-identity.md	46	46	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/02-hierarchy.md	36	36	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/03-attributes-scan.md	44	44	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/04-attribute-values.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/05-blobs-ownership-stacking.md	48	48	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/06-node-values.md	41	41	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/07-prose-dedentation.md	53	53	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/08-comments.md	35	35	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/09-escape.md	28	28	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/10-raw-freeform.md	33	33	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/11-dynamics-references.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-corpus/12-eof-unclosed.md	32	32	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-spec/CORE.md	837	836	1	0.001	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/snippets/from-spec/TIME-SPEC.md	201	201	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/spec/CORE-supplement.md	120	119	1	0.008	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/spec/CORE.md	1745	1716	29	0.017	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/spec/DYNAMICS.md	226	202	24	0.106	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/spec/MARKDOWN.md	82	44	38	0.463	
+udon@cc389f9/v2/.archived/first-pass/greenfield-2b/spec/TIME-SPEC.md	507	476	31	0.061	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/README-FIRST.md	68	30	38	0.559	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/agents-thoughts.md	16	12	4	0.250	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/defining-udon.md	99	95	4	0.040	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/feedback-fable.md	122	46	76	0.623	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/feedback-from-grok.md	203	203	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/new-spec/1-GRAMMAR.md	118	115	3	0.025	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/new-spec/2-SPECIFICATION.md	129	125	4	0.031	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/new-spec/3-DIALECTS.md	83	78	5	0.060	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/new-spec/DECISIONS.md	31	21	10	0.323	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/new-spec/GLOSSARY.md	50	49	1	0.020	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/01-elements-identity.md	46	46	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/02-hierarchy.md	36	36	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/03-attributes-scan.md	44	44	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/04-attribute-values.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/05-blobs-ownership-stacking.md	48	48	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/06-node-values.md	41	41	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/07-prose-dedentation.md	53	53	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/08-comments.md	35	35	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/09-escape.md	28	28	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/10-raw-freeform.md	33	33	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/11-dynamics-references.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-corpus/12-eof-unclosed.md	32	32	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-spec/CORE.md	837	836	1	0.001	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/snippets/from-spec/TIME-SPEC.md	201	201	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/spec/CORE-supplement.md	120	119	1	0.008	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/spec/CORE.md	1745	1716	29	0.017	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/spec/DYNAMICS.md	226	202	24	0.106	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/spec/MARKDOWN.md	82	44	38	0.463	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3a/spec/TIME-SPEC.md	507	476	31	0.061	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/README-FIRST.md	68	30	38	0.559	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/agents-thoughts.md	164	114	50	0.305	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/defining-udon.md	99	95	4	0.040	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/feedback-fable.md	157	49	108	0.688	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/feedback-from-gemini.md	24	20	4	0.167	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/CORE.md	880	692	188	0.214	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/DECISIONS.md	246	205	41	0.167	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/GLOSSARY.md	156	148	8	0.051	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/GRAMMAR.md	186	161	25	0.134	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/MODEL.md	311	266	45	0.145	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/OPEN.md	26	24	2	0.077	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/README.md	75	57	18	0.240	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/SEMANTICS.md	190	159	31	0.163	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/dialects/README.md	17	15	2	0.118	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/dialects/dynamics.md	118	105	13	0.110	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/dialects/temporal.md	146	132	14	0.096	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/layers/markdown.md	69	59	10	0.145	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/new-spec/pedagogy/tour.md	114	111	3	0.026	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/01-elements-identity.md	46	46	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/02-hierarchy.md	36	36	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/03-attributes-scan.md	44	44	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/04-attribute-values.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/05-blobs-ownership-stacking.md	48	48	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/06-node-values.md	41	41	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/07-prose-dedentation.md	53	53	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/08-comments.md	35	35	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/09-escape.md	28	28	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/10-raw-freeform.md	33	33	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/11-dynamics-references.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-corpus/12-eof-unclosed.md	32	32	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-spec/CORE.md	837	836	1	0.001	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/snippets/from-spec/TIME-SPEC.md	201	201	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/spec/CORE-supplement.md	120	119	1	0.008	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/spec/CORE.md	1745	1716	29	0.017	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/spec/DYNAMICS.md	226	202	24	0.106	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/spec/MARKDOWN.md	82	44	38	0.463	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/spec/TIME-SPEC.md	507	476	31	0.061	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/work/crosscheck.md	73	73	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/work/inventory.md	58	58	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/work/peer-revision.md	62	53	9	0.145	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/work/recognition-traces/00-event-model.md	80	74	6	0.075	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/work/recognition-traces/README.md	22	18	4	0.182	
+udon@cc389f9/v2/.archived/first-pass/greenfield-3b/work/recognition-traces/expectations.md	751	734	17	0.023	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/README-FIRST.md	68	30	38	0.559	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/defining-udon.md	99	95	4	0.040	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/01-elements-identity.md	46	46	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/02-hierarchy.md	36	36	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/03-attributes-scan.md	44	44	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/04-attribute-values.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/05-blobs-ownership-stacking.md	48	48	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/06-node-values.md	41	41	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/07-prose-dedentation.md	53	53	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/08-comments.md	35	35	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/09-escape.md	28	28	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/10-raw-freeform.md	33	33	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/11-dynamics-references.md	42	42	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-corpus/12-eof-unclosed.md	32	32	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-spec/CORE.md	837	836	1	0.001	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/snippets/from-spec/TIME-SPEC.md	201	201	0	0.000	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/spec/CORE-supplement.md	120	119	1	0.008	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/spec/CORE.md	1745	1716	29	0.017	yes
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/spec/DYNAMICS.md	226	202	24	0.106	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/spec/MARKDOWN.md	82	44	38	0.463	
+udon@cc389f9/v2/.archived/first-pass/greenfield-pristine/spec/TIME-SPEC.md	507	476	31	0.061	
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/README.md	14	9	5	0.357	
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/open-source-file-pass-2-reservoirs-2026-07-21/sources-R1.md	359	327	32	0.089	
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/open-source-file-pass-2-reservoirs-2026-07-21/sources-R2.md	349	286	63	0.181	
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/open-source-file-pass-2-reservoirs-2026-07-21/sources-R3.md	317	316	1	0.003	yes
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/open-source-file-pass-2026-07-21/MERGED-grok-source-maps.md	658	605	53	0.081	
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/open-source-file-pass-2026-07-21/sources-A.md	598	542	56	0.094	
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/open-source-file-pass-2026-07-21/sources-B.md	582	554	28	0.048	yes
+udon@cc389f9/v2/.archived/gathering-scratch-subsumed-2026-07-21/open-source-file-pass-2026-07-21/sources-C.md	610	590	20	0.033	yes
+udon@cc389f9/v2/.archived/second-pass/ADM.md	410	343	67	0.163	
+udon@cc389f9/v2/.archived/second-pass/FIXTURES.md	426	380	46	0.108	
+udon@cc389f9/v2/.archived/second-pass/GLOSSARY.md	227	218	9	0.040	yes
+udon@cc389f9/v2/.archived/second-pass/GRAMMAR.md	163	163	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/HARNESS.md	93	92	1	0.011	yes
+udon@cc389f9/v2/.archived/second-pass/OPEN-ML-STRAWMEN.md	21	21	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/ORACLE-DELTAS.md	28	26	2	0.071	
+udon@cc389f9/v2/.archived/second-pass/PIPELINE.md	104	104	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/PROCESS-FEEDBACK.md	40	27	13	0.325	
+udon@cc389f9/v2/.archived/second-pass/PROCESS.md	419	360	59	0.141	
+udon@cc389f9/v2/.archived/second-pass/README.md	36	36	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/RULING-SUPPLEMENT.md	523	383	140	0.268	
+udon@cc389f9/v2/.archived/second-pass/RULING-TABLE.md	200	194	6	0.030	yes
+udon@cc389f9/v2/.archived/second-pass/SCHEMA.md	35	35	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/SEMANTICS.md	55	55	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/SPEC.md	889	722	167	0.188	
+udon@cc389f9/v2/.archived/second-pass/STATUS.md	80	76	4	0.050	yes
+udon@cc389f9/v2/.archived/second-pass/WARNING-CODES.md	28	28	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/WIRE.md	307	232	75	0.244	
+udon@cc389f9/v2/.archived/second-pass/dialects/README.md	11	11	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/fixtures/INDEX.md	70	70	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/fixtures/README.md	44	44	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/pedagogy/OUTLINE.md	32	32	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/DEMANDS.md	12	12	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/agent-utility/NOTES.md	472	379	93	0.197	
+udon@cc389f9/v2/.archived/second-pass/spikes/agent-utility/README.md	40	37	3	0.075	
+udon@cc389f9/v2/.archived/second-pass/spikes/memory-import/FINDINGS.md	380	380	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/memory-import/samples/2026-07-18-import-019f7328-flush-skeleton.md	31	30	1	0.032	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/memory-import/samples/2026-07-18-import-019f7328-metadata.md	27	27	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/paths/NOTES.md	332	259	73	0.220	
+udon@cc389f9/v2/.archived/second-pass/spikes/paths/README.md	82	66	16	0.195	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/NOTES.md	85	85	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/README.md	44	44	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/06198123-orient-to-udon-project-and-review-todo.md	130	130	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/1601121c-review-udon-spec-greenfield-rewrite.md	1017	968	49	0.048	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/18aabafc-scan-project-and-create-new-parser-fixtures.md	3105	2999	106	0.034	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/22abfaae-spike-eof-behavior-in-descent-parser.md	2760	2760	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/305776aa-context-loading-for-deep-codebase-understanding.md	2226	2206	20	0.009	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/445248d8-analyze-udon-spec-greenfield-revisions-3a-and-3b.md	290	276	14	0.048	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/45abedbd-claude-api-i-m-invoking-this-to-see-if-it.md	39	39	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/5d686e10-orient-in-descent-parser-codebase.md	3518	3478	40	0.011	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/64bde246-learn-about-ultracode-s-repo-scan.md	2743	2538	205	0.075	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/6c1ad867-review-project-todos-specs-and-udon-grammar.md	2014	2014	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/70172191-deep-orientation-of-project-structure-and.md	1424	1420	4	0.003	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/76b4257c-greenfield-grammar-redesign-from-spec.md	220	220	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/9649850b-prepare-for-0-9-release-orientation.md	2048	2033	15	0.007	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/INVENTORY.md	199	199	0	0.000	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/ab1f7ab5-add-udon-syntax-highlighting-to-obsidian.md	579	573	6	0.010	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/be2e5fbd-deep-review-of-project-specs-and-attribute-model.md	3633	3555	78	0.021	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/claude-1601121c-from-jsonl.md	1088	1024	64	0.059	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/claude-445248d8-greenfield-analyze.md	309	290	19	0.061	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/da5d1672-convert-markdown-to-udon-format-for-process-map.md	10004	9929	75	0.007	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/claude/fb57249f-orient-on-udon-codebase-and-parser.md	2309	2284	25	0.011	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/grok/019f67df-orientation.md	2416	2271	145	0.060	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/grok/019f6a01-resume-claude-be2e5fbd.md	1446	857	589	0.407	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/grok/019f7328-thorough-exploration.md	2015	2004	11	0.005	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/grok/019f7d71-greenfield-3b.md	2870	2753	117	0.041	yes
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/grok/019f82c8-v2-spec-this-session.md	2084	1757	327	0.157	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/grok/019f830e-memory-import-subagent.md	915	316	599	0.655	
+udon@cc389f9/v2/.archived/second-pass/spikes/session-vault/raw/grok/INVENTORY.md	16	16	0	0.000	
+udon@cc389f9/v2/.cross-substrate-review-brief.md	78	32	46	0.590	
+udon@cc389f9/v2/DECISIONS.md	170	162	8	0.047	yes
+udon@cc389f9/v2/OPEN.md	61	57	4	0.066	
+udon@cc389f9/v2/README.md	43	25	18	0.419	
+udon@cc389f9/v2/current-0.9.1-spec/.reviews/RESPONSE.md	62	60	2	0.032	yes
+udon@cc389f9/v2/current-0.9.1-spec/.reviews/STEWARD-FLAGS.md	52	23	29	0.558	
+udon@cc389f9/v2/current-0.9.1-spec/.reviews/review-A.md	207	71	136	0.657	
+udon@cc389f9/v2/current-0.9.1-spec/.reviews/review-B.md	192	71	121	0.630	
+udon@cc389f9/v2/current-0.9.1-spec/.reviews/review-agy.md	29	28	1	0.034	yes
+udon@cc389f9/v2/current-0.9.1-spec/.reviews/review-codex.md	41	41	0	0.000	
+udon@cc389f9/v2/current-0.9.1-spec/.reviews/review-grok.md	163	160	3	0.018	yes
+udon@cc389f9/v2/current-0.9.1-spec/CARVEOUTS.md	221	115	106	0.480	
+udon@cc389f9/v2/current-0.9.1-spec/CORE.md	1395	876	519	0.372	
+udon@cc389f9/v2/current-0.9.1-spec/DELTAS.md	44	21	23	0.523	
+udon@cc389f9/v2/current-0.9.1-spec/GLOSSARY.md	203	112	91	0.448	
+udon@cc389f9/v2/current-0.9.1-spec/MODEL.md	204	143	61	0.299	
+udon@cc389f9/v2/current-0.9.1-spec/PEDAGOGY.md	72	47	25	0.347	
+udon@cc389f9/v2/current-0.9.1-spec/RATIONALE.md	108	51	57	0.528	
+udon@cc389f9/v2/current-0.9.1-spec/README.md	78	40	38	0.487	
+udon@cc389f9/v2/current-0.9.1-spec/SEMANTICS.md	111	72	39	0.351	
+udon@cc389f9/v2/current-0.9.1-spec/TUTORIAL.md	172	133	39	0.227	
+udon@cc389f9/v2/udon-needs/01-ideation/01-reconciled-target-files/TARGET-FILES.md	810	676	134	0.165	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/LEDGER.md	348	338	10	0.029	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/I1-usability-enablement-corpus.md	143	81	62	0.434	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/I1-usability-result-bodies.md	224	123	101	0.451	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/I7-historical-archaeology.md	158	72	86	0.544	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/I7-library-api-surfaces.md	161	73	88	0.547	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/II1-sapientia-architecture-and-guides.md	149	68	81	0.544	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/II1-sapientia-dialogs-instrumenta.md	176	66	110	0.625	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/II1-sapientia-elixir-consciousness-compiler.md	207	106	101	0.488	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/II2-zoetica-event-log-durability-architecture.md	96	57	39	0.406	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/II6-shoshin-memory-context-design.md	134	76	58	0.433	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/II8-agent-enhancement-anecdotes.md	118	60	58	0.492	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/III-eli-testimony.md	67	40	27	0.403	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/III-schema-rowan-pipeline-and-plans.md	83	47	36	0.434	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/III-vaults-agents-as-documents-lineage.md	199	125	74	0.372	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/III-vaults-context-memory-field-survey.md	123	58	65	0.528	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/agentic-elixir.md	203	70	133	0.655	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/aider.md	227	84	143	0.630	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/claude-code-snapshot.md	318	139	179	0.563	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/claude-docs.md	268	113	155	0.578	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/codex.md	180	80	100	0.556	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/gemini-cli.md	103	103	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/grok-build.md	117	106	11	0.094	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/kilocode.md	227	137	90	0.396	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/kimi-code.md	245	102	143	0.584	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/minimax-cli.md	208	101	107	0.514	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/mistral-vibe.md	91	91	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/obsidian-help.md	148	62	86	0.581	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/obsidian-linter.md	164	59	105	0.640	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/opencode.md	185	86	99	0.535	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/qwen-code.md	266	138	128	0.481	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/warp.md	197	79	118	0.599	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/harness-invivo/yq.md	183	75	108	0.590	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/recall-floor-archema-harness.md	172	81	91	0.529	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/characterizations/sapientia-bin-buildout.md	269	131	138	0.513	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/I1-usability-witness.md	76	44	32	0.421	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/I2-scenarios-witness.md	153	74	79	0.516	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/I3-design-of-record-witness.md	157	58	99	0.631	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/I4-genre-seeds-witness.md	83	38	45	0.542	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/I5-live-consumers-witness.md	167	71	96	0.575	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/I7-seam-addendum-witness.md	77	49	28	0.364	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II1-sapientia-witness.md	152	61	91	0.599	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II2-zoetica-ennaos-witness.md	118	51	67	0.568	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II3-nexum-witness.md	69	35	34	0.493	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II4-autopax-practica-witness.md	126	44	82	0.651	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II5-dialogs-witness.md	142	56	86	0.606	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II6-elsewhere-witness.md	96	42	54	0.562	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II7-ref-arch-witness.md	120	52	68	0.567	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/II8-harness-refs-witness.md	123	51	72	0.585	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/III-schema-witness.md	95	42	53	0.558	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/III-vaults-witness.md	108	47	61	0.565	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/recall-floor-witnesses.md	107	49	58	0.542	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/session-peak-end-salience-exchange.md	50	24	26	0.520	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/spikes/agent-utility-NOTES.md	492	399	93	0.189	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/spikes/paths-NOTES.md	351	278	73	0.208	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/tst-tooling-roi-residue.md	28	19	9	0.321	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/commentary/worktree-deletion-incident.md	43	29	14	0.326	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I1-usability/AGENT_FEEDBACK-full.md	860	636	224	0.260	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I1-usability/ETHICS.md	39	39	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I1-usability/agent-feedback-excerpts.md	132	85	47	0.356	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I1-usability/authoring-task-defs.md	116	112	4	0.034	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I1-usability/enablement-synthesis.md	223	187	36	0.161	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I1-usability/topic-enablement-seeds-and-prompts.md	181	172	9	0.050	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I2-scenarios/README.md	119	67	52	0.437	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/AGENT-CONTEXT-PROTOCOL.md	600	577	23	0.038	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/TODO-AUX.md	115	33	82	0.713	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/TODO-HUMAN-UX.md	79	30	49	0.620	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/TODO-TEXT-WIRE.md	221	106	115	0.520	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/UDON-AGENT-TOOLS-body.md	507	494	13	0.026	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/adjudication-2026-07-paths-and-silences.md	364	206	158	0.434	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/desc-design-principles.md	67	42	25	0.373	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/descent-experience-2026-07.md	78	39	39	0.500	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/file-naming.md	45	31	14	0.311	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/schema-workbench-2026-07-head.md	123	57	66	0.537	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/self-operata-udon-brainstorm.md	201	169	32	0.159	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/udon-agentic-body.md	1012	1008	4	0.004	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I3-design-of-record/udon-ast.md	774	754	20	0.026	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I5-live-consumers/consumer-vivarium-ordinum-parser.rs.md	340	333	7	0.021	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I5-live-consumers/consumer-vivarium-tabularium-README.md	48	45	3	0.062	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I5-live-consumers/program-archema-TODO.md	58	51	7	0.121	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/I7-seam-addendum/early-demand-asciidocs-2011.md	93	92	1	0.011	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/active-salience-src-and-consciousness-compiler-vision.md	192	141	51	0.266	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/ai-agent-considerations.md	58	58	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/ai-epistemological-architecture.md	135	135	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/claude-code-analysis-excerpt.md	128	128	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/context-queries-excerpt.md	128	128	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/conversation-system-tool-execution-state-machine.md	218	195	23	0.106	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/core-design-philosophy.md	29	29	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/mach-framework-mechanisms.md	284	256	28	0.099	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/minimal-sapientia-tool-contract-excerpt.md	139	139	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/next-steps-tool-consciousness.md	176	170	6	0.034	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/phenomenology-in-tools.md	103	99	4	0.039	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/quick-tooling-conventions-excerpt.md	347	347	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/three-pillars-synthesis.md	135	130	5	0.037	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II1-sapientia/tools-as-truth-bearing.md	142	138	4	0.028	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/01-semantic-technologies-infrastructure.md	1188	1181	7	0.006	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/02-current-agentic-tool-landscape.md	892	890	2	0.002	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/03-formal-methods-validity-guarantees.md	1586	1556	30	0.019	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/04-unified-agent-architectures.md	2638	2628	10	0.004	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/05-tool-building-philosophy-patterns.md	3170	3157	13	0.004	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/06-elixir-implementation-patterns.md	3547	3538	9	0.003	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/QUICK-TOOLING-CONVENTIONS.md	1567	1567	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/addendum-intent-driven-tooling-and-semantic-storage.md	2361	2361	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/addendum-phenomenology-and-tool-architecture.md	1529	1527	2	0.001	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/agent-expertise-best-practices-report.md	237	237	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/agentic-editing-tools-report.md	1253	1245	8	0.006	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/agentic-semantic-code-manipulation-synthesis.md	2645	2641	4	0.002	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/analyzing-codebases-for-specialized-agents.md	325	325	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/ash-framework-analysis.md	1380	1377	3	0.002	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/code-formatting-for-optimal-comprehension.md	541	541	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/compressed-session-origin-transcript.md	404	386	18	0.045	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/conversation-20250928-INSTRUMENTA-excerpt.md	50	43	7	0.140	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/elixir-living-code-guide.md	1332	1330	2	0.002	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/ennaos-misc-notes-jaw.md	150	150	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/mcc-accelerating-ai-agent-comprehension-of-elixir-report.md	1118	1118	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/mcc-accelerating-elixir-ai-agent-dev.md	238	238	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/mcc-alt-state-IR-analysis.md	283	283	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/mcc-elixir-otp-static-analysis-overiew-2025.md	1090	890	200	0.183	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/01-integration-problem.md	312	311	1	0.003	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/02-universal-schema.md	591	589	2	0.003	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/03-four-view-pipeline.md	476	476	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/04-event-log.md	489	486	3	0.006	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/05-provider-translation.md	628	625	3	0.005	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/06-temporal-coherence.md	504	504	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/07-viae-externa.md	729	729	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/PROVENANCE.md	22	22	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/messaging/index.md	47	45	2	0.043	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/mutable-code-comprehension-README.md	109	51	58	0.532	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/mutable-code-comprehension-prompt-for-research.md	166	166	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/praxis-protocol.md	917	900	17	0.019	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/research-report-autodocs.md	777	777	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/signum-editing-recommendations.md	555	551	4	0.007	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/synthesizing-llm-agent-framework.md	235	235	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/temporal-software-theory-distilled.md	804	789	15	0.019	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/tracking-snapshot-spec.md	966	961	5	0.005	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/zi-am-tur-philosophy-seeds.md	584	558	26	0.045	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/zoetica-PRAXES.md	146	146	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II2-zoetica-ennaos/zoetica-misc-notes-jaw.md	339	335	4	0.012	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/ADR-002-command-line-interface.md	693	689	4	0.006	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/SYNTHESIS-SUMMARY-FOR-DAD.md	132	132	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/TYPE-SYSTEMS.md	105	105	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/agentic-toys-comparison-matrix.md	307	307	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/agentic-toys-quick-reference.md	410	402	8	0.020	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/capabilities-design.md	266	264	2	0.008	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/cli-analysis.md	142	142	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/cli-design-recommendation.md	1024	1021	3	0.003	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/cli-gems.md	615	586	29	0.047	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/cli-open-questions.md	782	780	2	0.003	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/cli-testing-requirements.md	1097	1095	2	0.002	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/minimal-sapientia-usage-analysis.md	517	512	5	0.010	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/modern-cli-comparison.md	501	500	1	0.002	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/sapientia-conventions-analysis.md	394	394	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II3-nexum/vision-agentic-toys.md	1211	1209	2	0.002	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/003-workflow.md	328	327	1	0.003	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/013-instrumenta.md	440	440	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-14-operata-principles.md	547	547	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-15-ruby-cli-modern-practices-report--agent-facing-excerpt.md	241	241	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-autonomous-vs-collaborative-decisions.md	158	158	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-code-quality-and-ownership.md	212	212	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-collaboration-mode-entropy-gradient.md	235	233	2	0.009	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-dont-overprescribe-subagents.md	337	337	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-intent-surfacing.md	403	403	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-iterative-adaptive-development.md	117	117	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-make-right-thing-easiest.md	281	281	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-phase2-agent-enablement-plan.md	426	410	16	0.038	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-prefactoring-lessons.md	653	653	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-principles-summary.md	166	158	8	0.048	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-process-patterns-synthesis.md	1118	1092	26	0.023	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-sensibility-to-truth.md	291	291	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-17-thoughtful-not-task-oriented.md	349	347	2	0.006	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-11-18-system-reminders.md	321	320	1	0.003	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-12-02-living-code-vision.md	657	633	24	0.037	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-12-14-core-tools-plan.md	251	246	5	0.020	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-12-14-tool-definition-anatomy.md	322	317	5	0.016	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-12-18-mental-models-and-intent-inference.md	98	96	2	0.020	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/2025-12-20-autocolors-philosophy.md	433	418	15	0.035	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/SYNTHESIS-PART1-UNIFIED-ARCHITECTURE.md	768	758	10	0.013	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/THE-PATTERN.md	1145	1145	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/instrumenta--built-in.md	56	55	1	0.018	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/instrumenta--handler-errors.md	147	146	1	0.007	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/instrumenta--handlers.md	27	27	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/instrumenta--registry.md	181	174	7	0.039	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/instrumenta--tool.md	334	306	28	0.084	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/operata-study.md	68	67	1	0.015	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-01-theory.md	165	165	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-intent-action-layers.md	463	463	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-msc-03-perspectives.md	41	41	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-normative--01-architectural-commitments.md	123	123	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-normative--02-coordination-affordances.md	115	115	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-normative--03-content-discipline.md	115	115	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-normative--04-diagnostic-surfaces.md	121	121	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-normative--05-failure-mode-defaults.md	117	117	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-normative--06-limits-and-positioning.md	123	123	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/practica-structural-identity.md	574	574	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/task-and-issue-tools-survey.md	651	640	11	0.017	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II4-autopax-practica/terminal-consoles.md	742	739	3	0.004	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/architectus-tracking-snapshot-response.md	85	85	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/codex-gpt-cross-model-udon-assessment.md	117	103	14	0.120	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/gemini-ordinator-ideology-as-code.md	116	97	19	0.164	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/gemini-resonance-instrumenta-crystallization.md	63	46	17	0.270	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/interiority-inversion-and-channel-provenance.md	63	63	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/joseph-agent-tooling-vision-primary-turns.md	132	95	37	0.280	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/joseph-origin-prompt-valid-transformations-edit-tool.md	43	28	15	0.349	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/read-first-principles-anti-hallucination.md	53	40	13	0.245	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II5-dialogs/zi-am-tur-quick-tooling-vision-crystallized.md	48	43	5	0.104	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/rowan-dual-audience-docs-excerpt.md	108	74	34	0.315	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/sar-ai-applied-tst-excerpt.md	297	264	33	0.111	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/sar-ai-tst-ideas-excerpt.md	129	89	40	0.310	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/sar-ai-tst-vision-excerpt.md	131	87	44	0.336	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/sar-archive-domain-updates-excerpt.md	114	88	26	0.228	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/sar-error-messages-excerpt.md	95	84	11	0.116	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/self-safety-and-truth-temporal-representation.md	41	41	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II6-elsewhere/self-soren-notes-excerpt.md	58	58	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/codex-synthesis-plan.md	130	130	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/codex-system-prompt.md	308	224	84	0.273	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/geminex-AGENTS.md	73	73	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/geminex-elixir-otp-best-practices-for-ai.md	511	511	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/geminex-methodology.md	131	131	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/other-agents-claude-cli-feature-spec.md	403	387	16	0.040	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/other-agents-claude-cli-technical-architecture.md	925	925	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/other-agents-claude-cli-tool-input-schemas.md	358	358	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sapientia-agent-collaboration-checklist.md	106	105	1	0.009	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sapientia-ethical-agent-collaboration.md	112	112	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sapientia-multi-agent-coordination.md	200	197	3	0.015	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar-indent-languages.md	48	48	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar2-experiment-README-GAME-ENGINE.md	107	107	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar2-experiment-latency-data.md	115	78	37	0.322	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar2-in-context-notation-teaching.md	47	43	4	0.085	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar2-sar-syntax-design.md	384	384	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar3-AST_VS_LSP_REALITY.md	291	284	7	0.024	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar3-lsp-enrichment-measured.md	71	64	7	0.099	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II7-ref-arch/sar3-lsp_chunking_concept.md	474	474	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II8-harness-refs/agent-tool-authoring-conventions.md	151	111	40	0.265	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II8-harness-refs/agents-md-convention-corpus.md	92	77	15	0.163	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II8-harness-refs/cc-tool-suite-prompts.md	185	139	46	0.249	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II8-harness-refs/edit-format-schemas.md	242	216	26	0.107	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II8-harness-refs/harness-nine-requirements-and-seams.md	135	83	52	0.385	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II8-harness-refs/harness-system-disposition-and-context.md	99	86	13	0.131	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/II8-harness-refs/sapientia-era-tool-ideology.md	146	104	42	0.288	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/autopax-ADR-002b-signum-schema.md	578	578	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/autopax-ADR-008-yaml-and-schemas.md	615	609	6	0.010	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/autopax-ADR-012-archema-resource-foundation.md	584	560	24	0.041	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/operata-storage-exploration.md	261	258	3	0.011	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/origin-udon-as-schema-dsl-EXCERPT.md	54	48	6	0.111	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-10-schema-evolution.md	250	249	1	0.004	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-adr-003-document-schema-first.md	164	162	2	0.012	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-constraints.rb.md	606	541	65	0.107	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-decision_log.rb.md	595	531	64	0.108	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-differ.rb.md	619	558	61	0.099	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-feedback.md	421	421	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-schema-evolution-patterns.md	221	221	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/rowan-versioning.rb.md	387	336	51	0.132	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/yaml-spike-v1-FAILURE_MODES.md	252	245	7	0.028	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/yaml-spike-v1-VERDICT.md	367	364	3	0.008	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/yaml-spike-v2-ADVERSARIAL_SUMMARY.md	389	383	6	0.015	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/yaml-spike-v2-MIGRATION_REALITY.md	563	561	2	0.004	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/yaml-spike-v2-RECOVERY_SCENARIOS.md	555	553	2	0.004	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-schema/yaml-spike-v2-VERDICT_UPDATED.md	531	521	10	0.019	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/claude-code-tools-systemprompt.md	684	672	12	0.018	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/claude-tools-design-philosophy-excerpt.md	60	60	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/gemini-CLAUDE-orchestration.md	159	159	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/gemini-agent-content-extractor.md	222	222	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/gemini-agent-research-coordinator.md	264	261	3	0.011	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/prompt-engineering-agent-design-rules-excerpt.md	43	43	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/todowrite-cognitive-scaffolding-excerpt.md	81	81	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/III-vaults/truthfulness-prompts.md	109	77	32	0.294	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/de-novo-testimony/paths-testimony-gemini-2026-07-22.md	88	81	7	0.080	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/de-novo-testimony/templates-testimony-grok-2026-07-22.md	471	463	8	0.017	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/discussion-excerpts/joseph-accumulation-and-ornamental.md	51	50	1	0.020	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/discussion-excerpts/joseph-morning-demand-sampling.md	39	39	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/discussion-excerpts/joseph-project-root-anchor-2026-07-22.md	59	28	31	0.525	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/discussion-excerpts/joseph-what-we-are-missing.md	53	53	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/CONSUMERS.md	153	74	79	0.516	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/GRAMMAR-CONSTRAINED-GENERATION.md	454	444	10	0.022	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/TODO-AGENT-UX.md	106	32	74	0.698	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/TODO-UTILS.md	131	39	92	0.702	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/TOOLING-WISHLIST.md	73	37	36	0.493	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/UDON-AGENT-TOOLS-head.md	198	187	11	0.056	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/UDON-AS-ACP-FORMAT.md	381	369	12	0.031	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/agentic-ux-principles.md	463	210	253	0.546	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/positioning.md	176	119	57	0.324	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/schema-notes-2026-07.md	459	356	103	0.224	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/udon-agentic-head.md	238	236	2	0.008	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/extracts/udon-guarantees.md	514	472	42	0.082	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/harness-workshop/ai-cli-tools-source-assessment.md	146	139	7	0.048	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/copies/harness-workshop/dossier-TAXONOMY.md	460	187	273	0.593	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/syntheses/CONVERGENCES.md	115	86	29	0.252	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/syntheses/asf-dossier-reading-log.md	66	66	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/syntheses/asf-dossier.md	329	329	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/syntheses/external-landscape-2026-07.md	81	81	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/syntheses/tier2-invivo-digest.md	152	149	3	0.020	yes
+udon@cc389f9/v2/udon-needs/01-ideation/02-provenanced/syntheses/tier2-lineage.md	229	145	84	0.367	
+udon@cc389f9/v2/udon-needs/01-ideation/GATHERING-INDEX.md	103	85	18	0.175	
+udon@cc389f9/v2/udon-needs/01-ideation/README.md	114	57	57	0.500	
+udon@cc389f9/v2/udon-needs/01-ideation/STEWARD-CALLS.md	72	35	37	0.514	
+udon@cc389f9/v2/udon-needs/01-ideation/needs-map.md	60	53	7	0.117	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/REBASING-REPORT.md	138	59	79	0.572	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/first-sweep-agentic-tooling/README.md	15	7	8	0.533	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/first-sweep-agentic-tooling/agentic-tooling-search-log.md	227	60	167	0.736	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/first-sweep-agentic-tooling/sources-agentic-tooling.md	549	138	411	0.749	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/grok-pass-GATHERING-INDEX.md	89	87	2	0.022	yes
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/grok-pass-README.md	44	27	17	0.386	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/recall-floor/BATTERY.md	189	141	48	0.254	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/recall-floor/DISPOSITIONS.md	154	88	66	0.429	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/recall-floor/README.md	34	26	8	0.235	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/reconcile-workdir/BUCKET-convergences.md	141	125	16	0.113	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/reconcile-workdir/BUCKET-inventory.md	80	74	6	0.075	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/reconcile-workdir/TF-header.md	35	35	0	0.000	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/reconcile-workdir/UNION-A.md	349	332	17	0.049	yes
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/reconcile-workdir/UNION-C.md	296	204	92	0.311	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/reconcile-workdir/UNION-D.md	86	76	10	0.116	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/schema-sources-search-log.md	259	80	179	0.691	
+udon@cc389f9/v2/udon-needs/01-ideation/scratch/use-udon-for-audit.md	524	193	331	0.632	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/.reviews/review-A.md	283	101	182	0.643	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/.reviews/review-B.md	223	88	135	0.605	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/.reviews/review-agy.md	27	25	2	0.074	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/.reviews/review-codex.md	51	51	0	0.000	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/.reviews/review-grok.md	183	180	3	0.016	yes
+udon@cc389f9/v2/udon-needs/02-tooling-needs/CHANGELOG.md	132	33	99	0.750	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/DEEPENING-CYCLES.md	358	94	264	0.737	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/NOTATION-KEY.md	49	37	12	0.245	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/OUTLINE.md	183	130	53	0.290	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/README.md	63	22	41	0.651	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/RESIDUALS.md	411	118	293	0.713	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/.disposed-for-coordinator-DEEPENING-CYCLES-citation.md	68	26	42	0.618	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/TST-extension-memo.md	228	101	127	0.557	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/epistemology-SYNTHESIS.md	417	116	301	0.722	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/epistemology-pilot-A.md	361	142	219	0.607	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/epistemology-pilot-B.md	422	167	255	0.604	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/for-OUTLINE.md	283	104	179	0.633	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/for-annotation-and-metacognition.md	45	15	30	0.667	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/for-continuity-infrastructure.md	49	22	27	0.551	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/for-joseph.md	141	43	98	0.695	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/pilot-A-workflow-feedback.md	199	60	139	0.698	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/notes/pilot-B-workflow-feedback.md	246	66	180	0.732	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/reports/addressing-exploration.md	367	288	79	0.215	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/reports/agent-utility-exploration.md	506	409	97	0.192	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/reports/quick-tooling-conventions.md	1582	1578	4	0.003	yes
+udon@cc389f9/v2/udon-needs/02-tooling-needs/reports/shipping-practice.md	403	310	93	0.231	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/reports/the-pattern.md	1160	1156	4	0.003	yes
+udon@cc389f9/v2/udon-needs/02-tooling-needs/reports/theory-of-agentic-tooling.md	347	340	7	0.020	yes
+udon@cc389f9/v2/udon-needs/02-tooling-needs/reports/yaml-stress-test.md	1106	1090	16	0.014	yes
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/addressing-is-the-long-pole.md	172	51	121	0.703	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/annotation-and-metacognition.md	231	51	180	0.779	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/context-economy.md	177	63	114	0.644	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/continuity-infrastructure.md	174	50	124	0.713	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/counter-register.md	58	40	18	0.310	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/delegation-as-tooling.md	183	52	131	0.716	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/edit-representation-landscape.md	199	79	120	0.603	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/errors-that-teach.md	278	75	203	0.730	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/freshness-and-atomicity.md	108	44	64	0.593	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/harness-handover-map.md	108	47	61	0.565	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/headless-io-contract.md	115	43	72	0.626	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/intent-as-parameter.md	138	56	82	0.594	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/invocation-paradigms.md	110	42	68	0.618	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/machine-first-documents.md	138	47	91	0.659	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/method-evidence-tiers.md	364	160	204	0.560	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/persistence-is-imported.md	126	46	80	0.635	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/priorities-and-spike-agenda.md	151	49	102	0.675	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/progressive-disclosure-read-path.md	96	39	57	0.594	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/round-trip-and-span-splice.md	126	45	81	0.643	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/schema-guarded-mutation.md	187	78	109	0.583	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/self-chunking-status.md	93	44	49	0.527	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/steering-and-verification-surfaces.md	160	47	113	0.706	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/streaming-and-partial-documents.md	127	46	81	0.638	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/structured-output-two-mechanisms.md	112	42	70	0.625	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/templates-and-dynamics-demand.md	306	66	240	0.784	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/the-crystallized-process-thesis.md	158	54	104	0.658	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/tool-definition-anatomy.md	133	47	86	0.647	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/tools-are-observation-infrastructure.md	150	55	95	0.633	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/tracking-snapshots-as-perception.md	157	51	106	0.675	
+udon@cc389f9/v2/udon-needs/02-tooling-needs/src/typing-and-schema-boundary.md	213	63	150	0.704	
+udon@cc389f9/v2/udon-needs/BRIEF-agentic-tooling-compilation.md	193	76	117	0.606	
+udon@cc389f9/v2/udon-needs/CHANGELOG.md	38	4	34	0.895	
+udon@cc389f9/v2/udon-needs/CLAUDE.md	80	21	59	0.738	
+udon@cc389f9/v2/udon-needs/README.md	240	146	94	0.392	
+udon@cc389f9/v2/udon-needs/pipeline-discussion.md	795	775	20	0.025	yes
+vivarium-archive/CLAUDE.md	61	61	0	0.000	
+vivarium-archive/HANDOFF.md	181	84	97	0.536	
+vivarium-archive/ORIENTATION.md	434	145	289	0.666	
+vivarium-archive/PHASES.md	376	239	137	0.364	
+vivarium-archive/README.md	26	26	0	0.000	
+vivarium-archive/README.root.md	117	64	53	0.453	
+vivarium-archive/SUPERSEDED.md	94	47	47	0.500	
+vivarium-archive/TODO.md	181	170	11	0.061	
+vivarium-archive/VIVARIA-DECLARATIVE-FRONTIER.md	218	218	0	0.000	
+vivarium-archive/VIVARIA-DEFINITIONS.md	390	389	1	0.003	yes
+vivarium-archive/architecture-migration-2026-07-03.md	70	31	39	0.557	
+vivarium-archive/core/OUTLINE.md	482	345	137	0.284	
+vivarium-archive/lexicon-notes-and-scratch.md	124	120	4	0.032	yes
+vivarium-archive/memory-surfaced-2026-07-13.md	923	923	0	0.000	
+vivarium-archive/taxonomy-bdd-stress-test.md	173	110	63	0.364	
+vivarium-archive/universal-biological-rhythms.md	178	177	1	0.006	yes

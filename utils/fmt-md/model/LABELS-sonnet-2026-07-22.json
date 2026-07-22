@@ -1,0 +1,601 @@
+[
+ {
+  "agentId": "a33b67009a0244c2a",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 28,
+     "snippet": "Warm regards,",
+     "why_intended": "Sign-off salutation set on its own line, separated from body paragraphs"
+    },
+    {
+     "line": 30,
+     "snippet": "Daniel Ferris",
+     "why_intended": "Signature name line, start of deliberate signature block"
+    },
+    {
+     "line": 31,
+     "snippet": "Senior Operations Manager",
+     "why_intended": "Title line in signature block"
+    },
+    {
+     "line": 32,
+     "snippet": "Northfield Logistics",
+     "why_intended": "Company line in signature block"
+    },
+    {
+     "line": 33,
+     "snippet": "daniel.ferris@personalemail.com",
+     "why_intended": "Contact email as its own line in signature block"
+    },
+    {
+     "line": 34,
+     "snippet": "(555) 214-7783",
+     "why_intended": "Phone number as final signature-block line"
+    }
+   ]
+  }
+ },
+ {
+  "agentId": "a14ba1377b847259f",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 48,
+     "snippet": "With love and gratitude,\n\n**Our Family**",
+     "why_intended": "Sign-off block: valediction and signature deliberately placed on their own short lines, separated by a blank line, rather than run into the preceding paragraph \u2014 classic letter sign-off formatting."
+    },
+    {
+     "line": 52,
+     "snippet": "*P.S. \u2014 If you'd like more photos...*",
+     "why_intended": "P.S. is deliberately set apart as its own trailing line/paragraph after the sign-off, a conventional letter postscript break rather than a wrap."
+    },
+    {
+     "line": 20,
+     "snippet": "Highlights included:\n\n- A sunrise hike...\n- A minor scare...\n- More wildlife sightings...\n- A running joke...",
+     "why_intended": "The bulleted list breaks (lines 22-25) are deliberate item-per-line structure (key content run as a list), not mechanical wrapping of prose."
+    },
+    {
+     "line": 39,
+     "snippet": "- **College visits and applications**...\n- **A smaller, closer-to-home trip**...\n- **A kitchen table long overdue for replacement**...\n- Continued growth for the little ones...",
+     "why_intended": "Second bulleted list (lines 39-42), each forward-looking item deliberately on its own line rather than run together as prose."
+    }
+   ],
+   "notes": "Every body paragraph (lines 6, 10, 12, 14, 16, 27, 31, 33, 46) is written as a single long unbroken line in the source file \u2014 there is no hard-wrap at any fixed column (not 72/80/100 or similar); this is unwrapped/reflowable Markdown. Consequently there are no line breaks 'inside' a paragraph in the mechanical-wrapping sense \u2014 every line break in the file falls at a structural/block boundary: heading lines (#, ##, ###), blank lines between paragraphs, list items, and the sign-off/P.S. block. Among those boundary breaks, the ones that read as author-intended visible line endings (rather than just Markdown block separation) are the sign-off/signature lines (48-50), the P.S. line (52), and the two bulleted lists (22-25, 39-42) where each list item is a discrete thought deliberately isolated on its own line. Ordinary paragraph-to-paragraph and heading breaks are structurally mechanical (Markdown convention) rather than 'deliberate' in the sense the task is probing for (verse/address/emphatic-short-line intent), so I did not list every paragraph boundary \u2014 only the ones with a clear authorial/formatting intent beyond plain paragraphing."
+  }
+ },
+ {
+  "agentId": "a1de7ba0d607244e1",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 8,
+     "snippet": "**Time:** 4:00 PM (please arrive by 3:30 PM \u2014 seating begins at 3:15 PM)",
+     "why_intended": "key-value field line (Date/Time/Venue block), each field deliberately on its own line rather than wrapped prose"
+    },
+    {
+     "line": 9,
+     "snippet": "**Venue:** The Willowbrook Gardens Chapel",
+     "why_intended": "key-value field line, part of the same ceremony-details block"
+    },
+    {
+     "line": 10,
+     "snippet": "123 Orchard Hill Road, Hudson Valley, NY 12534",
+     "why_intended": "address continuation line placed directly under Venue \u2014 deliberate address-block formatting, not a wrap of line 9 (which is short and unwrapped on its own)"
+    },
+    {
+     "line": 18,
+     "snippet": "**Time:** Cocktail hour begins at 5:00 PM; dinner at 6:30 PM",
+     "why_intended": "key-value field line in the Reception details block"
+    },
+    {
+     "line": 19,
+     "snippet": "**Venue:** The Barn at Willowbrook Gardens (same property as the ceremony \u2014 just follow the string lights down the hill)",
+     "why_intended": "key-value field line, own line despite being long \u2014 consistent field-per-line formatting, not wrap"
+    },
+    {
+     "line": 20,
+     "snippet": "**Address:** 123 Orchard Hill Road, Hudson Valley, NY 12534",
+     "why_intended": "key-value field line, address given its own explicit label/line unlike the ceremony block"
+    },
+    {
+     "line": 30,
+     "snippet": "With love,",
+     "why_intended": "sign-off line, deliberately separated from closing sentence above and from signature line below"
+    },
+    {
+     "line": 31,
+     "snippet": "Sarah & Daniel",
+     "why_intended": "signature line, deliberate closing break after 'With love,'"
+    }
+   ],
+   "wrap_column_estimate": 0,
+   "notes": "Reclassified as 'clean' per allowed enum (meaning: not hard-wrapped) since 'unwrapped' was rejected by schema. Every paragraph-prose sentence sits on a single long line regardless of length (line 3 is short, but lines 12, 22, and 26 run well past any typical 80-column wrap width with no internal breaks) \u2014 this is unwrapped/soft-wrap-reliant prose, not hard-wrapped at a fixed column. The only internal line breaks inside the body occur in the structured key-value 'field' blocks (Date/Time/Venue/Address under Ceremony and Reception) and the closing sign-off, all of which read as deliberate formatting choices (list-like fields, address block, valediction) rather than mechanical wrapping of continuous prose. Headings (#, ##) and blank lines separating paragraphs are markdown structure, not paragraph-internal breaks, so excluded from the list."
+  }
+ },
+ {
+  "agentId": "af5f811ec7e7f9930",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 5,
+     "snippet": "The tomatoes have given their last red gift,",
+     "why_intended": "Verse line 1 of quatrain 1 \u2014 metrical/rhyme unit (gift/bare/glow/air), not a wrap."
+    },
+    {
+     "line": 6,
+     "snippet": "the vines gone brittle, the stakes stand bare;",
+     "why_intended": "Verse line 2, semicolon-terminated clause \u2014 deliberate line break for meter."
+    },
+    {
+     "line": 7,
+     "snippet": "but marigolds still hold their ember glow,",
+     "why_intended": "Verse line 3 of quatrain."
+    },
+    {
+     "line": 8,
+     "snippet": "and asters bloom like stars caught in the air.",
+     "why_intended": "Verse line 4, closes rhyme (bare/air)."
+    },
+    {
+     "line": 10,
+     "snippet": "The maple drops its coins of gold and rust",
+     "why_intended": "Verse line 1 of quatrain 2."
+    },
+    {
+     "line": 11,
+     "snippet": "on beds we'll soon turn over, rake, and rest;",
+     "why_intended": "Verse line 2."
+    },
+    {
+     "line": 12,
+     "snippet": "the compost pile breathes warm beneath the frost,",
+     "why_intended": "Verse line 3."
+    },
+    {
+     "line": 13,
+     "snippet": "turning summer's labor into what comes next.",
+     "why_intended": "Verse line 4, closes rhyme (rust/rest/frost/next)."
+    },
+    {
+     "line": 15,
+     "snippet": "A squash forgotten under curling leaves,",
+     "why_intended": "Verse line 1 of quatrain 3."
+    },
+    {
+     "line": 16,
+     "snippet": "a last bee working clover, slow and low\u2014",
+     "why_intended": "Verse line 2, em-dash enjambment into next line \u2014 deliberate."
+    },
+    {
+     "line": 17,
+     "snippet": "the garden doesn't end here, only sleeps,",
+     "why_intended": "Verse line 3."
+    },
+    {
+     "line": 18,
+     "snippet": "and dreams in root and seed of spring to sow.",
+     "why_intended": "Verse line 4, closes rhyme (leaves/low/sleeps/sow)."
+    },
+    {
+     "line": 20,
+     "snippet": "  So rake the paths and stack the season's yield;",
+     "why_intended": "Closing couplet, set off by blank line and indented two spaces \u2014 deliberate visual/structural marker distinguishing it as the volta/couplet."
+    },
+    {
+     "line": 21,
+     "snippet": "  the quiet work of autumn tends the field.",
+     "why_intended": "Second line of indented closing couplet, rhymes with line 20 (yield/field)."
+    }
+   ],
+   "notes": "The file is a short verse poem plus a one-sentence prose caption, not a prose document, so the hard-wrap-vs-unwrapped classification designed for prose paragraphs doesn't strictly apply to the poem body. Every line break within the four quatrains (lines 5-18) is a deliberate verse-line ending driven by meter and end-rhyme (abab scheme per stanza: gift/bare/glow/air; rust/rest/frost/next; leaves/low/sleeps/sow) \u2014 none is mechanical column-wrapping. The closing couplet (lines 20-21) is further marked as deliberate by a 2-space indent and rhymes yield/field. The one true prose paragraph in the document is the italicized caption on line 25, which is unwrapped \u2014 a single long line with no internal breaks, running well past any typical 80-column wrap width (it's one unbroken line of roughly 230 characters). The title (line 1), subtitle italic (line 3), and closing italic caption (line 25) are all single unwrapped lines.</parameter>\n</invoke>\n"
+  }
+ },
+ {
+  "agentId": "a726cea013ef74ced",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 1,
+     "snippet": "Jordan Ellery",
+     "why_intended": "Letterhead name line, separate from address line 2"
+    },
+    {
+     "line": 2,
+     "snippet": "San Francisco, CA",
+     "why_intended": "Address line, deliberately separated from contact-info line"
+    },
+    {
+     "line": 3,
+     "snippet": "jordan.ellery@email.com | (415) 555-0182 | linkedin.com/in/jordanellery | github.com/jellery",
+     "why_intended": "Contact-info key-value run on its own line"
+    },
+    {
+     "line": 5,
+     "snippet": "July 22, 2026",
+     "why_intended": "Date line, standalone by convention"
+    },
+    {
+     "line": 7,
+     "snippet": "Hiring Team",
+     "why_intended": "Recipient address block, first line"
+    },
+    {
+     "line": 8,
+     "snippet": "Meridian Pay",
+     "why_intended": "Recipient address block, company name line"
+    },
+    {
+     "line": 9,
+     "snippet": "548 Market Street",
+     "why_intended": "Recipient address block, street line"
+    },
+    {
+     "line": 10,
+     "snippet": "San Francisco, CA 94104",
+     "why_intended": "Recipient address block, city/state/zip line"
+    },
+    {
+     "line": 12,
+     "snippet": "Dear Hiring Team,",
+     "why_intended": "Salutation, conventionally on its own line"
+    },
+    {
+     "line": 20,
+     "snippet": "A few specifics from your job posting that I want to speak to directly:",
+     "why_intended": "Lead-in line introducing the bulleted list, set apart from body paragraphs"
+    },
+    {
+     "line": 22,
+     "snippet": "- **Idempotency and exactly-once semantics for transfers.** ...",
+     "why_intended": "Bullet list item, deliberate list formatting not paragraph wrap"
+    },
+    {
+     "line": 23,
+     "snippet": "- **Postgres at scale.** ...",
+     "why_intended": "Bullet list item, deliberate list formatting"
+    },
+    {
+     "line": 24,
+     "snippet": "- **On-call and incident response.** ...",
+     "why_intended": "Bullet list item, deliberate list formatting"
+    },
+    {
+     "line": 30,
+     "snippet": "Sincerely,",
+     "why_intended": "Sign-off line"
+    },
+    {
+     "line": 31,
+     "snippet": "Jordan Ellery",
+     "why_intended": "Signature name line, separate from 'Sincerely,'"
+    }
+   ],
+   "notes": "Every non-body-paragraph line in the document (letterhead, date, address block, salutation, list intro, bullets, sign-off) is a single logical unit occupying its own line \u2014 these are all structurally deliberate, not wrapped prose. The five body paragraphs (lines 14, 16, 18, 26, 28) are each written as one continuous unwrapped line with no internal line breaks at all, so there is nothing mid-paragraph to classify as deliberate vs. mechanical \u2014 the document contains zero mechanical/column-wrapped line breaks anywhere. Overall classification: unwrapped (paragraphs on single long lines), with the surrounding letter furniture using conventional one-item-per-line formatting rather than any wrap column.</notes>\n</invoke>\n"
+  }
+ },
+ {
+  "agentId": "a1aa305db0a6d2349",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [],
+   "notes": "FILE NOT FOUND: the target path /private/tmp/claude-505/-Users-josephwecker-v2-src-archema-io/51509575-bae9-4eda-a0c7-95aa92b4f9bd/scratchpad/gen-sonnet-2phase/research-summary-model-eval.md does not exist. I searched the entire scratchpad tree and did a broader filesystem search for 'model-eval' and 'research-summary' and found zero matches. Cannot classify without the actual file content."
+  }
+ },
+ {
+  "agentId": "a689ee083ac10e614",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [],
+   "notes": "Reinterpreting \"clean\" as the closest available label to \"unwrapped\": every prose paragraph in this file (line 3's intro, and each numbered step's body, e.g. lines 52, 55, 58, 63, 68, 71, 74, 76, 79, 82, 87, 89, 91, 94, and the bullet paragraphs 98-104) is written as a single unbroken line in the source regardless of length (line 3 ~370 chars, line 58 ~380 chars, line 76 ~330 chars) \u2014 there is no column-based hard-wrapping anywhere in body prose. Line breaks present are all structural markdown (headings, blank lines, list items, bold metadata lines like Serves/Active time/Total time), not mid-paragraph wraps. Since no paragraph is ever split across multiple lines, there is no instance of a deliberate in-paragraph line break to report \u2014 the phenomenon the question asks about doesn't arise here; every visible break is between distinct markdown blocks (list items, headings) rather than a stylistic break within continuous prose."
+  }
+ },
+ {
+  "agentId": "a4d72fdc7d13ac7a2",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [],
+   "notes": "Classification: unwrapped (not hard-wrapped at any column). Every paragraph, bullet, list item, and table row in the file is a single long logical line, however long (e.g. line 34's paragraph runs roughly 640 characters, line 44 similarly long) \u2014 there is no hard-wrapping at any fixed column anywhere in the body prose; using \"clean\" here to mean \"not wrapped,\" since the schema's enum has no literal \"unwrapped\" option. Line breaks in the file correspond only to structural/markdown boundaries: heading lines, the metadata block (lines 3-5), the `---` rule, blank lines separating blocks, numbered/bulleted list items, and table rows. None of these breaks occur *inside* a paragraph/sentence-flow \u2014 each is a full markdown-syntactic unit on its own line, so there are no deliberate mid-paragraph line endings (no sign-offs, verse, key-value stacks broken mid-thought, or emphatic short lines standing inside a paragraph) to report. The metadata block (lines 3-5, \"Prepared for:\" / \"Period covered:\" / \"Author:\") is a key:value run, but each entry is already its own full markdown line (and arguably its own one-line \"paragraph\"), not a break inside one \u2014 so it doesn't qualify as an internal deliberate break under this task's definition, though it is worth noting as the closest candidate for a deliberately-terse key:value visual run if a looser reading of \"inside a paragraph\" is wanted."
+  }
+ },
+ {
+  "agentId": "a3c23e42345f2cc7d",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 91,
+     "snippet": "\u2014 The maintainers",
+     "why_intended": "Sign-off line set apart from the closing paragraph by a blank line \u2014 a deliberate visible line ending (letter-style sign-off), not mechanical wrap."
+    }
+   ],
+   "notes": "Body prose is unwrapped: every paragraph is a single long line regardless of length (e.g. line 23's paragraph runs to ~900+ characters on one line; line 5 similarly). There is no column-based hard wrap anywhere in the document. Headings (#, ##), the bullet list in 'The short version', and the bold Q&A lead-ins in 'What this means for you' are separate markdown block elements (list items / paragraph starts), not line breaks occurring inside a single paragraph, so they aren't counted as intra-paragraph deliberate breaks even though they read as short/emphatic. The only true intra-flow deliberate break is the closing sign-off."
+  }
+ },
+ {
+  "agentId": "a037cca2dba7dfb2d",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [],
+   "notes": "Every body paragraph (lines 16, 22, 24, 34, 36, 38, 50, 52, 54, 56, and each bullet under 'Notes for the submitter') is written as a single long logical line with no internal hard-wrapping \u2014 there is no column at which lines break mechanically (some lines run 400-900+ characters). This is 'unwrapped' / soft-wrap-source style: paragraphs sit on one long line and are left for the renderer/editor to wrap visually, not broken by the author at a fixed column. Because no paragraph is broken across multiple lines in the source, there are no internal line breaks to classify as deliberate-vs-mechanical \u2014 the paragraph-internal-break question is moot for this file. The only line breaks present are structural/semantic, not artifacts of prose wrapping: section headers (#/##/###), horizontal-rule dividers (---), the bulleted list under 'From there, the talk moves through...' (lines 28-32, one bullet per line \u2014 a deliberate list structure, but each bullet's own content is itself unwrapped onto one line), the numbered takeaways list (41-44), and the single-line key-value run 'Contact: [email] \u00b7 Twitter/X / Mastodon: [handle] \u00b7 LinkedIn: [url]' (line 58) which uses inline '\u00b7' separators rather than its own line breaks. None of these are cases of continuous prose being deliberately broken mid-thought \u2014 they are the document's outline/list scaffolding, categorically different from the target phenomenon (deliberate breaks inside a running paragraph, e.g. sign-offs/verse/addresses). So the deliberate-break list is empty: the file offers no instance of that phenomenon, since it is either fully unwrapped prose or heading/list structure with nothing in between.</notes>\n<parameter name=\"wrap_column_estimate\">0"
+  }
+ },
+ {
+  "agentId": "a34349316a8a26c90",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 3,
+     "snippet": "**To:** All Staff\n**From:** Office of Operations & Facilities\n**Date:** July 22, 2026\n**Re:** ...",
+     "why_intended": "Memo header block, lines 3-6, is a single markdown paragraph (no blank lines between them) but each key:value field is deliberately given its own visible line \u2014 a classic key-value run, not a wrap artifact. Line lengths vary widely (short 'Date' line vs long 'Re' line), which rules out mechanical column wrapping."
+    }
+   ],
+   "notes": "Every body paragraph in this file (lines 12, 18, 20-23, 25, 31, 33, 36-43, 45, 51-57, 80-81, 86-90, 96-99, 101, 105) is rendered as one single long unbroken line with no internal hard returns \u2014 there is no column-based wrapping anywhere (some lines run 200-400+ characters). List items, table rows, and headers are each also single lines, consistent with the whole document being authored/saved unwrapped (soft-wrap-only, e.g. typical of markdown written in an editor with word-wrap display but no inserted newlines). The only place with more than one line inside what renders as a single paragraph block is the To/From/Date/Re memo header (lines 3-6), which is a deliberate key-value stack. Horizontal rules (---) and blank lines separating sections are structural markdown, not mid-paragraph breaks, so they're excluded from the list. The table (lines 63-78) and numbered/bulleted lists are each one item per line, which is standard Markdown list/table syntax rather than a \"deliberate break inside a paragraph\" in the sense asked about (each bullet/row is its own block-level item, not a wrapped continuation)."
+  }
+ },
+ {
+  "agentId": "a5c94a63f1be9b659",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 3,
+     "snippet": "**To:** All attendees / **From:** Offsite planning / **Date:** July 22, 2026 / **Re:** Logistics and agenda...",
+     "why_intended": "Memo-header key-value run (To/From/Date/Re) \u2014 four short fields each given its own line rather than run together in a single sentence; classic deliberate memo-header formatting, not wrap."
+    }
+   ],
+   "notes": "Prose is unwrapped: every body paragraph (lines 15, 17, 50, 58, 61, 62, 71, 74) sits on a single long logical line regardless of length \u2014 e.g. line 15 runs well past 300 characters and line 74 is short, with no consistent break column between them. This rules out hard-wrapping at any fixed column (there is no column \u2014 lines range from ~30 to ~340+ characters with no clustering). The only genuinely deliberate short-line breaks inside what would otherwise be prose are the four memo-header fields (To/From/Date/Re, lines 3\u20136), which read as a key-value run rather than a wrapped paragraph. Everything else that appears as separate short lines (the tables at lines 23\u201335 and 39\u201348, and the bulleted lists at lines 56\u201362) is structural Markdown (table rows / list items), not a paragraph broken mid-flow, so I did not count those as \"breaks inside a paragraph\" per the task's framing \u2014 though if list items count for your purposes, each bullet in \"What to bring\" (56\u201362) and \"Before you arrive\" (70\u201372) is also a deliberate, author-intended line ending rather than mechanical wrap."
+  }
+ },
+ {
+  "agentId": "a8f09bdb55aeeb98b",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 42,
+     "snippet": "**Time to patch (report to production fix):** approximately 61 hours.\n**Time vulnerability was present in shipped code:** approximately 4 months and 9 days...",
+     "why_intended": "Two bold-led stat lines placed back-to-back with no blank line between them, forming a deliberate key-value pair run (each stat gets its own visible line) rather than a mechanically wrapped continuation of one sentence."
+    }
+   ],
+   "notes": "Classification: unwrapped (paragraphs on single long lines, not hard-wrapped at any column). Every paragraph, list item, and header occupies exactly one (often very long) source line with no internal soft-wrapping \u2014 e.g. line 10 runs roughly 640 characters unbroken, line 43 is a single long sentence, bullet items under 'What was affected' and 'What users should do' are each single long lines. There is no evidence of hard-wrapping at a fixed column (no column near 80/100/120 where breaks cluster); the breaks that exist are markdown block boundaries (headers, list items, table rows), not mid-paragraph wraps. The one place two short declarative statements sit on adjacent lines within what would otherwise read as a single paragraph block is lines 42-43 (no blank line between them), functioning as a deliberate two-line stat callout (key-value style pair). No other intra-paragraph deliberate breaks were found; the rest of the document's line breaks all coincide with normal markdown structural units (heading, list item, table row), so they aren't 'inside a paragraph' in the sense asked about."
+  }
+ },
+ {
+  "agentId": "aef25516597a8ba31",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 3,
+     "snippet": "**Date of incident:** Tuesday, July 15, 2026\n**Duration of impact:** 40 minutes (14:12 UTC \u2013 14:52 UTC)\n**Severity:** SEV-2\n**Status:** Resolved\n**Author:** Platform Reliability Team\n**Reviewers:** Checkout Team, Database Engineering, SRE On-Call",
+     "why_intended": "Metadata/key-value block at the top \u2014 each field deliberately placed on its own line like an address block, not wrapped prose. Not table syntax, just consecutive bold-label lines separated by single newlines \u2014 clearly authored as discrete lines rather than mechanical wrapping."
+    }
+   ],
+   "notes": "Classification: unwrapped (paragraphs on single long lines), not wrapped at any fixed column. Body paragraphs (Summary, Root Cause, Lessons Learned, and each bullet under Impact/What Went Right/What Went Wrong) are single unbroken lines \u2014 e.g. line 14 and line 61 run to several hundred characters with no internal hard-wrap. The Timeline and Follow-Up Actions sections are Markdown tables, where one-row-per-line is mechanically required by table syntax, not an authorial 'deliberate line ending' choice, so those rows were not counted as intended breaks. The only place short lines are stacked outside of table/list mechanics is the metadata block at the very top (lines 3-8), which reads as a deliberately formatted key:value/address-style block. No verse, sign-off, or emphatic short-line usage elsewhere in the document.</notes>\n</invoke>\n"
+  }
+ },
+ {
+  "agentId": "a7ee949ba8bff8eed",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [],
+   "notes": "ERROR: The file /private/tmp/claude-505/-Users-josephwecker-v2-src-archema-io/51509575-bae9-4eda-a0c7-95aa92b4f9bd/scratchpad/gen-sonnet-2phase/vendor-contract-negotiation-summary.md does not exist. I searched the scratchpad directory, the fmt-md project tree, and ran a full filesystem find (which completed with exit code 1 / no matches). No file named vendor-contract-negotiation-summary.md exists anywhere I can find. I cannot classify prose line-breaking or identify intentional breaks without the actual file content \u2014 please verify the path or supply the file.",
+   "wrap_column_estimate": 0
+  }
+ },
+ {
+  "agentId": "a67aa306b9cbbf6fe",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 3,
+     "snippet": "**Effective date:** August 3, 2026",
+     "why_intended": "Header metadata block (lines 3-5) uses one fact per line \u2014 a deliberate key-value run, not wrapped prose. Each of the three lines (Effective date / Prepared for / Owner) is its own visible line by design."
+    },
+    {
+     "line": 23,
+     "snippet": "```  ... ASCII org chart box-drawing ...",
+     "why_intended": "The entire fenced block (lines 23-54) is ASCII art (boxes, connectors, labels) where every line break is deliberate for visual alignment of the org chart, not mechanical prose wrapping."
+    },
+    {
+     "line": 48,
+     "snippet": "4 ICs      6 ICs      5 ICs        8 CSMs      7 CSMs     9 ICs        6 ICs",
+     "why_intended": "IC-count row deliberately spaced/aligned under the corresponding boxes above it."
+    },
+    {
+     "line": 49,
+     "snippet": "(3 from old",
+     "why_intended": "Deliberate multi-line parenthetical broken across lines 49-53 to stay aligned under the 'Escalation Mgr' column of the ASCII chart rather than running as normal prose."
+    },
+    {
+     "line": 62,
+     "snippet": "Three directors report to Dana:",
+     "why_intended": "Short standalone lead-in line before a bulleted list \u2014 a deliberate short emphatic line, not a wrap of a longer sentence (confirmed by the surrounding paragraphs each being single long unwrapped lines)."
+    }
+   ],
+   "notes": "Classification is 'unwrapped' in substance (paragraphs on single long lines, no column-based hard-wrap of body prose anywhere), forced to 'clean' here only because that is the closest allowed enum value. Every ordinary prose paragraph (lines 11, 17, 60, 64, 66, 68, 70, 72, 78-81, 87-92) sits entirely on one long unbroken line in the source. The only intentional interior line breaks are structural/visual: the three-line header metadata block, the ASCII-art org chart (including its aligned IC-count row and the multi-line parenthetical kept aligned to a chart column), and short list lead-ins like line 62 that function as their own visual unit. Bulleted list items are each single long lines, not multi-line wrapped bullets."
+  }
+ },
+ {
+  "agentId": "a4ba040ea8f3ac79e",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [],
+   "notes": "This is a well-formed Markdown document, not raw prose. Every paragraph (lines 3, 16, 20, 24, 31, 32, 36, 42, 53, 64, 68, 78, 80) sits on a single unbroken line regardless of length (line 3 runs to ~230 chars, line 20 to ~180 chars, etc.) \u2014 there is no hard-wrapping at any column; the author let lines run long and relied on Markdown's line-is-not-a-break convention. Line length varies freely from ~40 to ~230 characters with no clustering near a wrap column (e.g. 72/80/100), confirming no mechanical wrapping occurred.\\n\\nAll of the apparent 'short line' structure in the document (numbered steps, bullet sub-items under Step 2 point 3, the table rows, the Quick Reference bullets) is standard Markdown block syntax \u2014 list items and table rows are inherently separate lines/blocks by the format's own syntax, not line breaks manufactured inside a running paragraph of prose. I did not count these as 'deliberate in-paragraph breaks' because they aren't breaks *within* a paragraph at all \u2014 they're separate markdown block-level elements, which is the expected/mechanical way Markdown documents represent such content. There is no sign-off, address, verse, or other freeform prose passage anywhere in the file where the author manually inserted a line break inside what would otherwise render as one paragraph.\\n\\nConclusion: no deliberate intra-paragraph breaks exist in this document \u2014 every actual prose paragraph is a single logical line, and every place a 'line break' visually occurs is accounted for by ordinary Markdown block structure (heading, list item, table row).</notes>\n</invoke>\n"
+  }
+ },
+ {
+  "agentId": "a25cd2b9c814f5d08",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 34,
+     "snippet": "**[Trait 1 \u2014 e.g., how they handle disagreement]**\nI've seen [Spouse A] and [Spouse B] disagree...",
+     "why_intended": "Bold trait-label line immediately followed by its body line with no blank line between \u2014 a deliberate label/body break within one paragraph unit, repeated identically for three traits (33-34, 36-37, 39-40)."
+    },
+    {
+     "line": 37,
+     "snippet": "**[Trait 2 \u2014 e.g., how they show up for others]**\nI also want to mention...",
+     "why_intended": "Same deliberate label+body pairing pattern as Trait 1."
+    },
+    {
+     "line": 40,
+     "snippet": "**[Trait 3 \u2014 e.g., how they've changed/grown]**\nAnd maybe the thing I find most inspiring...",
+     "why_intended": "Same deliberate label+body pairing pattern, completing the parallel three-trait structure."
+    },
+    {
+     "line": 46,
+     "snippet": "That's the part I hope never changes.",
+     "why_intended": "Isolated one-sentence line set off by blank lines on both sides \u2014 a deliberately short emphatic beat closing the sentiment section, not a wrapped continuation."
+    },
+    {
+     "line": 56,
+     "snippet": "To [Spouse A] and [Spouse B].",
+     "why_intended": "Short standalone toast-closing line, isolated by blank lines from the preceding longer toast paragraph \u2014 deliberate rhetorical isolation for the moment of raising the glass, not mechanical wrap."
+    }
+   ],
+   "notes": "Every body paragraph runs on a single unbroken line (no hard-wrap at any fixed column \u2014 lines 13, 19, 21, 25, 29, 34, 40, 44, etc. all far exceed typical wrap widths like 72/80/100 with no internal breaks). This is unwrapped prose (soft-wrap left to the renderer), not column-wrapped and not mixed. Structural elements (heading lines, blank-line paragraph separators, the bracketed-note lines, and the bullet list in Delivery notes) are Markdown formatting rather than prose wrapping. The only breaks that occur *inside* what functions as a single paragraph/unit are the bold-label-then-body pairs in the three trait sections, plus the two isolated short sentiment/toast lines, all listed above."
+  }
+ },
+ {
+  "agentId": "adf076f8fb0c9d3d2",
+  "label": {
+   "overall": "wrapped",
+   "wrap_column_estimate": 80,
+   "intended_breaks_in_paragraphs": [],
+   "notes": "The document is hard-wrapped at approximately column 80 throughout the body prose (headers, list markers, and code spans included in the width count where relevant). This is consistent enough across dozens of bullets and numbered rationale points (e.g. lines 16-27, 57-92, 104-149, 167-210, 214-247, 251-268) to be confident it's deliberate hard-wrap rather than an artifact of viewing width. No paragraph-internal line break in this file reads as author-deliberate in the sense the question asks about (sign-off, address, verse, key-value run, emphatic short line): I found zero qualifying instances. The nearest things to a 'deliberate visible ending' are (1) the one-sentence, isolated Decision line (163) and (2) the bolded **Pros**/**Cons** sub-headers (57, 68, 104, 129) \u2014 but these are each already a complete paragraph or heading unit rather than a break inside a longer paragraph, so they don't meet the bar of the question even though their brevity is clearly intentional. The parenthetical aside at 229-233 is a deliberate content interruption (an author second-guessing a naming choice mid-sentence) but its actual line-break positions still fall at the mechanical ~80-column point, not at a rhetorically chosen spot.</notes>\n</invoke>\n"
+  }
+ },
+ {
+  "agentId": "a04bd392cf91305cf",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "notes": "Body paragraphs are unwrapped \u2014 each paragraph (lines 7, 15, 23, 30, 37, 44, 51, 53, 55, 57, 59, 64, 74) sits on a single long logical line with no mechanical hard-wrap at any column (several run 400-700+ characters). There is no hard-wrapping anywhere in the file; every line break present is structural/deliberate Markdown (headers, hr rules, blank-line paragraph separators, italic key-value status lines, and one bullet/numbered list).",
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 9,
+     "snippet": "*Affected: File Upload Service*",
+     "why_intended": "Deliberate key-value status line, isolated on its own line from the paragraph above and paired with the Not-affected line below \u2014 a label:value pair, not wrapped prose."
+    },
+    {
+     "line": 10,
+     "snippet": "*Not affected: Login, dashboard, downloads, API read operations*",
+     "why_intended": "Paired with line 9; recurring Affected/Not-affected two-line status pattern used at the end of each early update."
+    },
+    {
+     "line": 17,
+     "snippet": "*Affected: File Upload Service (100% of upload traffic)*",
+     "why_intended": "Same recurring key-value pattern, deliberately isolated as its own status line in this update."
+    },
+    {
+     "line": 18,
+     "snippet": "*Not affected: Existing files remain accessible; downloads, previews, and sharing are unaffected*",
+     "why_intended": "Paired with line 17; deliberate label:value line break."
+    },
+    {
+     "line": 25,
+     "snippet": "*Workaround: None available at this time...*",
+     "why_intended": "Standalone italic status line (Workaround), deliberately separated from the narrative paragraph above."
+    },
+    {
+     "line": 32,
+     "snippet": "*Affected: US-West, EU, APAC regions still fully impacted...*",
+     "why_intended": "Deliberate standalone status line following the narrative update paragraph."
+    },
+    {
+     "line": 39,
+     "snippet": "*If you attempted uploads during the outage window and see them missing or incomplete, please retry now...*",
+     "why_intended": "Standalone italic call-to-action line, deliberately separated from the narrative paragraph."
+    },
+    {
+     "line": 46,
+     "snippet": "*Affected: None currently \u2014 monitoring only*",
+     "why_intended": "Deliberate standalone status line, consistent with the recurring Affected/Not-affected pattern used throughout the doc."
+    },
+    {
+     "line": 66,
+     "snippet": "- **Root cause:** A routine network ACL update...",
+     "why_intended": "Deliberate bullet list item; each bullet (lines 66-68) is its own line by design, a list structure rather than wrapped prose."
+    },
+    {
+     "line": 70,
+     "snippet": "1. All network configuration changes will now go through a canary region...",
+     "why_intended": "Deliberate numbered list item (lines 70-72), each its own line as an enumerated set of remediation changes."
+    }
+   ]
+  }
+ },
+ {
+  "agentId": "adb01701d9b134552",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [],
+   "wrap_column_estimate": 0,
+   "notes": "The document contains no hard-wrapped paragraphs at all \u2014 every paragraph, including long ones (e.g. line 11, line 34, line 148), is written as a single unbroken line regardless of length (several run past 400-500 characters). All visible line breaks correspond to deliberate structural boundaries, not mechanical column wrapping: heading lines, bullet list items (each bullet is its own line, e.g. lines 21-24, 38-41), numbered list items (lines 124-125, 131-132), table rows (109-113), and the '---' section-rule separators. None of these are \"breaks inside a paragraph\" in the sense asked about (a wrap point splitting one continuous prose flow into two visual lines) \u2014 they are ordinary Markdown block-level separations (new heading, new list item, new table row), not an author choosing a visual line-ending inside running prose. So there is no wrap column to estimate and no list of deliberate intra-paragraph breaks to report."
+  }
+ },
+ {
+  "agentId": "a6513e5b79d4f6684",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [
+    {
+     "line": 2,
+     "snippet": "### June 3, 1948 \u2013 July 15, 2026",
+     "why_intended": "Title/subtitle pair: the name (line 1) and the dates (line 2) are deliberately split onto separate lines as a two-line masthead rather than wrapped prose."
+    },
+    {
+     "line": 50,
+     "snippet": "Rest well, Hal. The shop's in good hands. The gate's fixed. And the chess table's still out front, if you want it.",
+     "why_intended": "Set off by a horizontal rule after it as its own short closing paragraph \u2014 a deliberate emphatic sign-off line, isolated rather than folded into the preceding paragraph."
+    },
+    {
+     "line": 54,
+     "snippet": "*Service concludes with a reception in the fellowship hall. In lieu of flowers, the family requests donations to the Danville Volunteer Fire Department or the First Methodist Youth Sports Fund, both causes Hal supported quietly for decades.*",
+     "why_intended": "Italicized logistics postscript set apart by a horizontal rule from the eulogy body \u2014 a deliberate register shift, not a wrap."
+    }
+   ],
+   "notes": "Every body paragraph (lines 8, 10, 14, 16, 20, 22-28, 32, 34, 36, 38, 40, 44, 46, 48) is a single unbroken long line regardless of length \u2014 e.g. lines 8 and 46 both run well past 400 characters with no internal newline. There is no column-based hard-wrapping anywhere in the file; it is uniformly the 'unwrapped, paragraphs on single long lines' pattern. Because paragraphs never wrap, there are essentially no internal line breaks to classify as deliberate-vs-mechanical within a paragraph's own body text \u2014 the only line breaks in the file occur at structural Markdown boundaries (headers, horizontal rules, blank lines), which are outside any single paragraph. The three listed items are the closest analogues: the title/subtitle split and the two short closing lines set off by horizontal rules, which function as intentional emphatic/tonal breaks. The bolded story labels (e.g. '**The flood of 1994.**' opening line 22) are inline bold text at the start of a paragraph, not a separate line, so they are not a line-break phenomenon at all."
+  }
+ },
+ {
+  "agentId": "a76c46fa24741448e",
+  "label": {
+   "overall": "clean",
+   "wrap_column_estimate": 0,
+   "intended_breaks_in_paragraphs": [],
+   "notes": "Body prose is unwrapped: every paragraph, table row, and list item occupies exactly one (often very long, e.g. line 15 is ~1500 chars) logical line in the source, with no hard-wrapping to a fixed column anywhere. The visible line structure is all Markdown-syntactic rather than free-running prose broken mid-paragraph: the timeline is a table (one event per row/line), headers and horizontal rules delimit sections, and bullet lists (\u00a72, \u00a74, \u00a75, \u00a77, \u00a78.2) give one bullet per line. Because no paragraph ever spans more than one physical line, there is no candidate for a 'deliberate line break inside a paragraph' (sign-off, verse, emphatic short line, etc.) \u2014 that category requires a paragraph that runs long and gets broken before its natural wrap point, and none occurs in this artifact. The closest analogues (table rows, bullets) are standard block-level Markdown structure, not intentional prose line-endings within a paragraph, so none are reported."
+  }
+ },
+ {
+  "agentId": "ad6b88a8f6f10e4d9",
+  "label": {
+   "overall": "clean",
+   "intended_breaks_in_paragraphs": [],
+   "wrap_column_estimate": 0,
+   "notes": "Classification: unwrapped (single long lines per paragraph) \u2014 used \"clean\" as the closest enum slot since \"unwrapped\" wasn't itself a listed enum value; see notes for the actual finding. Prose is unwrapped: every paragraph (Summary, each Timeline bullet, each Hypothesis's Reasoning/Verdict/Fix paragraphs, Verification bullets, Contributing-factors bullets, Follow-ups bullets) is written as a single long logical line with no hard-wrap at any column \u2014 lines run to several hundred characters (e.g. line 41 ~640 chars, line 79 ~800 chars, line 100 ~700 chars). Markdown renders it as flowing paragraphs regardless of source-line length. The only line breaks present are structural/mechanical markdown breaks: heading lines, blank separator lines between blocks, and one-list-item-per-line breaks for bulleted/numbered lists (Timeline, What-we-checked, Verification, Contributing factors, Follow-ups) and the key:value metadata run at the top (Status/Author/Affected service/Impact window/Severity). Those metadata and list-item breaks are structurally required by Markdown syntax (each `-`/`1.` or bold-label line must start a new line to render as a separate list item or field), so they are mechanical/syntactic rather than a deliberate mid-paragraph visual choice \u2014 none occur *inside* a single paragraph's flowing text. No verse-like, sign-off, address-block, or emphatic short-line breaks appear within any paragraph body; every paragraph, once it starts, runs to its own end as one unbroken line, so no intended in-paragraph breaks were found."
+  }
+ }
+]

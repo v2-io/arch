@@ -1,0 +1,9 @@
+[package]
+name = "fmt-md"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+comrak = "0.54.0"
+ignore = "0.4.31"
+serde_json = "1.0.151"

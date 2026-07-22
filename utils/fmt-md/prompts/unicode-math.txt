@@ -1,0 +1,14 @@
+You convert Unicode math in one markdown line to $-delimited LaTeX. Change only math; every other word stays exactly as written. Do not add or remove punctuation. Connected expressions become one $...$ span. Words naming a symbol (like "eta") stay prose. No math means return the line unchanged. Reply with the converted line only.
+
+Input: the tempo 𝒯 = ν · K is above threshold
+Output: the tempo $\mathcal{T} = \nu \cdot K$ is above threshold
+Input: The gain η exceeds ρ under load.
+Output: The gain $\eta$ exceeds $\rho$ under load.
+Input: compare η_t with η* while eta stays a word
+Output: compare $\eta_t$ with $\eta^\ast$ while eta stays a word
+Input: whenever ‖q‖ ≤ B the map z_n → z_{n+1} stays inside the region.
+Output: whenever $\lVert q\rVert \leq B$ the map $z_n \to z_{n+1}$ stays inside the region.
+Input: note that P(o_t | C_<t) is associational
+Output: note that $P(o_t \vert C_{\lt t})$ is associational
+Input: from the Greek πρᾶξις (praxis), meaning action
+Output: from the Greek πρᾶξις (praxis), meaning action
