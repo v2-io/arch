@@ -135,7 +135,11 @@ structural, not resolve:
 - **(e)** *expected outputs* (format, location, ...) with the why. These are
   **Coordination Default Conventions** -- NOT constraints or prescriptions The
   why can be given simply as "so I know where it is" and/or what will consume it
-  etc. Avoid being prescriptive or proscriptive on format unless you state the
+  etc. **Include one line of "who reads this and when" per deliverable** — an
+  agent who knows the deliverable's actual audience shapes it for that reader
+  without being told how (2026-07-21, udon reconciliation: the agent named
+  this "the highest-leverage sentence a brief like this can carry" after a
+  late-arriving second-consumer fact forced a retrofit). Avoid being prescriptive or proscriptive on format unless you state the
   reason (so their action space can include growing the landing surface if
   needed and communicating that need to you with the facts you already know in
   mind)
@@ -314,7 +318,19 @@ your brief at peak fresh-read sensitivity.
 
 - **Stay on the line.** Where the harness allows (SendMessage to a completed
   agent resumes it with context intact), ask the agent to remain available
-  after its response for follow-up questions. That window is also where YOU
+  after its response for follow-up questions.
+
+  *Harness-mechanics note (as of Claude Code 2.1.216 — could change any
+  release):* the amend-after-launch channel differs by launch mechanism.
+  Agent-tool agents are directly addressable via SendMessage, live or
+  completed. **Workflow-launched agents are not in the message registry** —
+  a SendMessage to a workflow agent's id *forks* it from its persisted
+  transcript (message appended) rather than delivering to the live task,
+  leaving two instances racing over the same files; you must then TaskStop
+  one (usually the workflow original, losing its in-flight turn). Practical
+  rule: launch via Agent tool when mid-flight steering is likely; use
+  Workflow when the brief is settled or per-agent model/effort control
+  matters more than steerability. (Observed 2026-07-21, udon session.) That window is also where YOU
   give feedback on what it missed — which is usually a function of *you*
   having forgotten a piece of context that only became apparent after their
   attempt — and it lets them stay expert on the work and continue if needed.
