@@ -327,10 +327,15 @@ your brief at peak fresh-read sensitivity.
   a SendMessage to a workflow agent's id *forks* it from its persisted
   transcript (message appended) rather than delivering to the live task,
   leaving two instances racing over the same files; you must then TaskStop
-  one (usually the workflow original, losing its in-flight turn). Practical
-  rule: launch via Agent tool when mid-flight steering is likely; use
-  Workflow when the brief is settled or per-agent model/effort control
-  matters more than steerability. (Observed 2026-07-21, udon session.) That window is also where YOU
+  one (usually the workflow original, losing its in-flight turn). Worse
+  (same session, later): **completed** workflow agents usually cannot be
+  resumed at all — "No transcript found" — so "stay on the line" is
+  effectively unavailable for workflow-launched agents; the one mid-run
+  fork that worked appears to be the exception. Practical rule: launch via
+  Agent tool when mid-flight steering OR post-completion follow-up is
+  likely; use Workflow when the brief is settled, the output file is the
+  whole relationship, or per-agent model/effort control matters more.
+  (Observed 2026-07-21, udon session.) That window is also where YOU
   give feedback on what it missed — which is usually a function of *you*
   having forgotten a piece of context that only became apparent after their
   attempt — and it lets them stay expert on the work and continue if needed.
