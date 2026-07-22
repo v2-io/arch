@@ -10,6 +10,7 @@
 use comrak::nodes::{AstNode, NodeValue};
 use comrak::{Arena, Options, parse_document};
 
+pub mod classify;
 pub mod exclude;
 pub mod math;
 
@@ -148,10 +149,41 @@ fn strip_continuation_prefix(line: &str, quote_depth: usize) -> &str {
     rest
 }
 
+/// A classifier verdict the caller may want to tell the user about.
+pub struct Note {
+    pub kept: bool,      // true = kept + marked; false = joined
+    pub p: f64,          // calibrated P(phb)
+    pub line_a: String,  // the two sides of the break, for the stderr note
+    pub line_b: String,
+}
+
+/// Output of a classified format run: the final text (with any added `"  "`
+/// hard-break markers), a gate variant (identical but without the added
+/// markers — marker insertion deliberately changes rendering, so the
+/// render-equality gate must compare against this), and the mid-band notes.
+pub struct Classified {
+    pub output: String,
+    pub gate_output: String,
+    pub notes: Vec<Note>,
+}
+
 /// Canonicalize: join every multi-line prose paragraph to one logical line.
 /// All other bytes pass through unchanged. Idempotent by construction
 /// (single-line paragraphs are not touched).
 pub fn format(input: &str) -> String {
+    format_impl(input, None).output
+}
+
+/// Canonicalize with the break classifier consulted on every candidate join
+/// (the ratified band design, STATUS.md): p ≥ 0.85 keep + mark silently;
+/// 0.5–0.85 keep + mark + note; 0.15–0.5 join + note; < 0.15 join silently.
+/// Deterministic preserved-break categories still take precedence — the
+/// model only judges breaks the engine would otherwise join.
+pub fn format_classified(input: &str, clf: &classify::Classifier) -> Classified {
+    format_impl(input, Some(clf))
+}
+
+fn format_impl(input: &str, clf: Option<&classify::Classifier>) -> Classified {
     let arena = Arena::new();
     let opts = options();
     let root = parse_document(&arena, input, &opts);
@@ -172,13 +204,24 @@ pub fn format(input: &str) -> String {
 
     // line index -> the paragraph it continues (if it is a continuation)
     let lines: Vec<&str> = input.split_inclusive('\n').collect();
+    let bare_lines: Vec<&str> = lines.iter().map(|l| split_eol(l).0).collect();
+    let fstats = clf.map(|_| classify::file_stats(&bare_lines));
+    let mut notes: Vec<Note> = Vec::new();
     let mut out = String::with_capacity(input.len());
+    let mut gate = String::with_capacity(input.len());
     let mut joined_until: usize = 0; // 1-based line already consumed through
+
+    macro_rules! emit {
+        ($s:expr) => {{
+            out.push_str($s);
+            gate.push_str($s);
+        }};
+    }
 
     for para in &paras {
         // emit untouched lines before this paragraph
         for l in joined_until..para.start - 1 {
-            out.push_str(lines[l]);
+            emit!(lines[l]);
         }
         // Partition the paragraph's lines into runs terminated by hard
         // line breaks (which are semantic, R8, and stay). Each run joins
@@ -200,10 +243,49 @@ pub fn format(input: &str) -> String {
             let own_line = looks_like_definition(stripped_probe) || solo || after_colon_math;
             if !run_first && own_line {
                 // intent-preserving break: flush the run before this line
-                out.push_str(&acc);
-                out.push_str(acc_eol);
+                emit!(&acc);
+                emit!(acc_eol);
                 acc.clear();
                 run_first = true;
+            }
+            // Classifier hook: about to JOIN this line into the run — the
+            // model may overrule with keep(+mark). Deterministic keeps above
+            // never reach here. Scope: plain paragraphs only (quote_depth 0),
+            // matching the training distribution.
+            if !run_first {
+                if let (Some(c), Some(fs)) = (clf, fstats.as_ref()) {
+                    if para.quote_depth == 0 && idx > 0 {
+                        let p = c.p_phb(&bare_lines, para.start - 1, idx - 1, para.end, fs);
+                        if p >= 0.5 {
+                            // keep + write the marker nobody remembers
+                            let marked = !acc.ends_with("  ");
+                            out.push_str(&acc);
+                            if marked {
+                                out.push_str("  ");
+                            }
+                            out.push_str(acc_eol);
+                            gate.push_str(&acc);
+                            gate.push_str(acc_eol);
+                            if p < 0.85 {
+                                notes.push(Note {
+                                    kept: true,
+                                    p,
+                                    line_a: acc.clone(),
+                                    line_b: content.trim().to_string(),
+                                });
+                            }
+                            acc.clear();
+                            run_first = true;
+                        } else if p >= 0.15 {
+                            notes.push(Note {
+                                kept: false,
+                                p,
+                                line_a: split_eol(lines[idx - 1]).0.trim().to_string(),
+                                line_b: content.trim().to_string(),
+                            });
+                        }
+                    }
+                }
             }
             if run_first {
                 acc.push_str(content);
@@ -217,27 +299,28 @@ pub fn format(input: &str) -> String {
             // eq-tags are fully solo; definition-looking lines may still
             // absorb their own wrapped continuations
             if solo && !is_para_last {
-                out.push_str(&acc);
-                out.push_str(acc_eol);
+                emit!(&acc);
+                emit!(acc_eol);
                 acc.clear();
                 run_first = true;
             } else if has_hard_break(content) && !is_para_last {
                 // flush run, preserving the trailing break marker bytes
-                out.push_str(&acc);
-                out.push_str(acc_eol);
+                emit!(&acc);
+                emit!(acc_eol);
                 acc.clear();
                 run_first = true;
             } else if is_para_last {
-                out.push_str(acc.trim_end());
-                out.push_str(acc_eol);
+                let t = acc.trim_end().to_string();
+                emit!(&t);
+                emit!(acc_eol);
             }
         }
         joined_until = para.end;
     }
     for l in joined_until..lines.len() {
-        out.push_str(lines[l]);
+        emit!(lines[l]);
     }
-    out
+    Classified { output: out, gate_output: gate, notes }
 }
 
 fn split_eol(raw: &str) -> (&str, &str) {

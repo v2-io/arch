@@ -64,7 +64,12 @@ Exit codes: 0 = done (files written, or nothing needed changing)
 }
 
 fn is_known_flag(a: &str) -> bool {
-    a == "--check" || a == "--force" || a == "--math" || a.starts_with("--math=")
+    a == "--check" || a == "--force" || a == "--no-classify" || a == "--math" || a.starts_with("--math=")
+}
+
+fn trunc(s: &str) -> String {
+    let t: String = s.chars().take(70).collect();
+    if t.len() < s.len() { format!("{t}…") } else { t }
 }
 
 /// Apply the math pass (LLM promotion per line + deterministic $$ blank
@@ -123,22 +128,66 @@ fn main() {
         }
     });
     let force = args.iter().any(|a| a == "--force");
+    let no_classify = args.iter().any(|a| a == "--no-classify");
     let files: Vec<&String> = args
         .iter()
         .filter(|a| {
             a.as_str() != "--check"
                 && a.as_str() != "--force"
+                && a.as_str() != "--no-classify"
                 && a.as_str() != "--math"
                 && !a.starts_with("--math=")
         })
         .collect();
+    let clf = if no_classify {
+        None
+    } else {
+        match fmt_md::classify::Classifier::load() {
+            Ok(c) => Some(c),
+            Err(e) => {
+                eprintln!("fmt-md: classifier unavailable ({e}); running deterministic-only");
+                None
+            }
+        }
+    };
+
+    let run = |input: &str| -> (String, String, Vec<fmt_md::Note>) {
+        match &clf {
+            Some(c) => {
+                let r = fmt_md::format_classified(input, c);
+                (r.output, r.gate_output, r.notes)
+            }
+            None => {
+                let o = fmt_md::format(input);
+                (o.clone(), o, Vec::new())
+            }
+        }
+    };
+
+    let print_notes = |ctx: &str, notes: &[fmt_md::Note]| {
+        let kept: Vec<_> = notes.iter().filter(|n| n.kept).collect();
+        let joined: Vec<_> = notes.iter().filter(|n| !n.kept).collect();
+        if !kept.is_empty() {
+            eprintln!("fmt-md: {ctx}: wasn't sure about the following but KEPT the line break (and marked it). Manually concatenate if that was wrong:");
+            for n in &kept {
+                eprintln!("    (p={:.2}) {} \\n {}", n.p, trunc(&n.line_a), trunc(&n.line_b));
+            }
+        }
+        if !joined.is_empty() {
+            eprintln!("fmt-md: {ctx}: wasn't sure about the following and JOINED the lines. Manually re-separate and append two trailing spaces to make the break permanent:");
+            for n in &joined {
+                eprintln!("    (p={:.2}) {} \\n {}", n.p, trunc(&n.line_a), trunc(&n.line_b));
+            }
+        }
+    };
 
     if files.len() == 1 && files[0] == "-" {
         let mut input = String::new();
         std::io::stdin()
             .read_to_string(&mut input)
             .expect("read stdin");
-        let mut out = fmt_md::format(&input);
+        let (mut out, _gate, notes) = run(&input);
+        print_notes("(stdin)", &notes);
         if let Some(model) = &math_model {
             let (o, flags) = math_pass(&out, model);
             out = o;
@@ -173,12 +222,14 @@ fn main() {
                 continue;
             }
         };
-        let unwrapped = fmt_md::format(&input);
+        let (unwrapped, gate_variant, notes) = run(&input);
         // Built-in safety gate on the unwrap stage: render-equality before
-        // any write. (The math pass deliberately improves rendering, so it
-        // runs after this gate and carries its own per-line verification.)
-        if unwrapped != input
-            && fmt_md::render_fingerprint(&input) != fmt_md::render_fingerprint(&unwrapped)
+        // any write — compared against the gate variant, because classifier
+        // marker insertion deliberately changes rendering (its narrower
+        // guarantee: only add "  " at an existing break, or join at a soft
+        // break). The math pass likewise runs after with its own gates.
+        if gate_variant != input
+            && fmt_md::render_fingerprint(&input) != fmt_md::render_fingerprint(&gate_variant)
         {
             eprintln!(
                 "fmt-md: {}: SKIPPED — result would change rendered document (bug or unsupported construct; please report)",
@@ -186,6 +237,9 @@ fn main() {
             );
             errors = true;
             continue;
+        }
+        if !check {
+            print_notes(&path.display().to_string(), &notes);
         }
         let output = if let Some(model) = &math_model {
             let (o, flags) = math_pass(&unwrapped, model);
