@@ -148,11 +148,48 @@ def start2_class(s):
     return {"`": 7, "*": 8, "[": 9, "(": 10, '"': 11, "$": 12, "_": 13}.get(c0, 14)
 
 
+def style_features(a, b):
+    """Styling self-containment (Joseph, 2026-07-22): a line that opens AND
+    closes its own inline styling is likelier an independent unit; a style
+    span crossing the break is mid-construct. No length constants."""
+    def marks(s):
+        return s.count("**"), s.count("`"), s.count("$")
+    ab, at, ad = marks(a)
+    bb, bt, bd = marks(b)
+    a_balanced = int(ab % 2 == 0 and at % 2 == 0 and ad % 2 == 0)
+    b_balanced = int(bb % 2 == 0 and bt % 2 == 0 and bd % 2 == 0)
+    cross = int(ab % 2 == 1 or at % 2 == 1 or ad % 2 == 1)
+    a_s = a.strip()
+    b_s = b.strip()
+    a_self = int(a_s.startswith(("**", "*", "`", "_")) and ab >= 2 and a_balanced)
+    b_self = int(b_s.startswith(("**", "*", "`", "_")) and bb >= 2 and b_balanced)
+    # bold coverage of A: fraction of chars inside ** spans
+    cov = 0.0
+    if ab >= 2 and a_s:
+        inside = False
+        n_in = 0
+        i = 0
+        chars = a_s
+        while i < len(chars):
+            if chars.startswith("**", i):
+                inside = not inside
+                i += 2
+                continue
+            if inside:
+                n_in += 1
+            i += 1
+        cov = n_in / max(1, len(a_s))
+    return [a_balanced, b_balanced, cross, a_self, b_self, cov]
+
+
 FEATURE_NAMES = [
     "a_width", "b_first_w", "rejoin_w", "a_last_cls", "a_func_end",
     "a_sent_end", "a_clause_end", "paren_depth", "b_first_cls",
     "b_label", "b_lower_func", "cap_nonterm", "lower_term", "b_indent",
-    "a_minus_prev", "a_end2", "b_start2", "blk_n", "blk_edge_var", "blk_frac_sent",
+    "a_minus_prev", "a_end2", "b_start2",
+    "a_marks_bal", "b_marks_bal", "span_crosses", "a_self_styled",
+    "b_self_styled", "a_bold_cov",
+    "blk_n", "blk_edge_var", "blk_frac_sent",
     "blk_all_bound", "blk_label_frac", "blk_int_labels", "blk_range",
     "d_p50", "d_p90", "d_var", "d_frac6090", "d_nlines",
 ]
@@ -197,6 +234,7 @@ def break_features(lines, blk, k, fstats):
         len(a) - prev_w,
         end2_class(a),
         start2_class(bs),
+        *style_features(a, bs),
         len(blk),
         statistics.pvariance(edge) if len(edge) > 1 else 0.0,
         sum(sent_ends) / len(blk_lines),

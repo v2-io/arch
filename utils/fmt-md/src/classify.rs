@@ -33,10 +33,10 @@ pub struct Classifier {
 }
 
 /// Feature order the exporter used; assert against model.json at load.
-const FEATURES: [&str; 12] = [
-    "b_first_cls", "b_start2", "blk_label_frac", "blk_int_labels",
-    "a_last_cls", "a_end2", "blk_n", "blk_edge_var", "rejoin_w",
-    "d_frac6090", "a_width", "blk_frac_sent",
+const FEATURES: [&str; 14] = [
+    "b_first_cls", "b_start2", "blk_label_frac", "a_self_styled",
+    "a_last_cls", "a_bold_cov", "blk_edge_var", "blk_int_labels",
+    "a_end2", "a_width", "rejoin_w", "blk_frac_sent", "d_frac6090", "blk_n",
 ];
 
 impl Classifier {
@@ -253,7 +253,40 @@ pub fn file_stats(lines: &[&str]) -> FileStats {
     FileStats { frac6090: f / n }
 }
 
-fn features(lines: &[&str], pstart: usize, i: usize, pend: usize, fs: &FileStats) -> [f64; 12] {
+/// Styling self-containment (Joseph, 2026-07-22): a line that opens and
+/// closes its own inline styling is likelier an independent unit.
+fn self_styled(s: &str) -> (f64, f64) {
+    let bolds = s.matches("**").count();
+    let ticks = s.chars().filter(|&c| c == '`').count();
+    let dollars = s.chars().filter(|&c| c == '$').count();
+    let balanced = bolds % 2 == 0 && ticks % 2 == 0 && dollars % 2 == 0;
+    let selfs = (s.starts_with("**") || s.starts_with('*') || s.starts_with('`') || s.starts_with('_'))
+        && bolds >= 2
+        && balanced;
+    let mut cov = 0.0;
+    if bolds >= 2 && !s.is_empty() {
+        let (mut inside, mut n_in, mut total) = (false, 0usize, 0usize);
+        let chars: Vec<char> = s.chars().collect();
+        let mut i = 0;
+        while i < chars.len() {
+            if chars[i] == '*' && chars.get(i + 1) == Some(&'*') {
+                inside = !inside;
+                i += 2;
+                total += 2;
+                continue;
+            }
+            if inside {
+                n_in += 1;
+            }
+            total += 1;
+            i += 1;
+        }
+        cov = n_in as f64 / total.max(1) as f64;
+    }
+    (if selfs { 1.0 } else { 0.0 }, cov)
+}
+
+fn features(lines: &[&str], pstart: usize, i: usize, pend: usize, fs: &FileStats) -> [f64; 14] {
     let a = lines[i].trim_end(); // marker-blind
     let b = lines[i + 1];
     let bs = b.trim();
@@ -269,18 +302,21 @@ fn features(lines: &[&str], pstart: usize, i: usize, pend: usize, fs: &FileStats
     };
     let labels_n = blk.iter().filter(|l| is_label_line(l)).count() as f64;
     let frac_sent = blk.iter().filter(|l| sent_end(l)).count() as f64 / blk.len() as f64;
+    let (a_self, a_cov) = self_styled(a.trim_start());
     [
         bs.chars().next().map_or(0.0, char_class), // b_first_cls
         start2_class(bs),                          // b_start2
         labels_n / blk.len() as f64,               // blk_label_frac
-        labels_n,                                  // blk_int_labels
+        a_self,                                    // a_self_styled
         a.chars().last().map_or(0.0, char_class),  // a_last_cls
-        end2_class(a),                             // a_end2
-        blk.len() as f64,                          // blk_n
+        a_cov,                                     // a_bold_cov
         edge_var,                                  // blk_edge_var
-        width(a) + 1.0 + b_first.chars().count() as f64, // rejoin_w
-        fs.frac6090,                               // d_frac6090
+        labels_n,                                  // blk_int_labels
+        end2_class(a),                             // a_end2
         width(a),                                  // a_width
+        width(a) + 1.0 + b_first.chars().count() as f64, // rejoin_w
         frac_sent,                                 // blk_frac_sent
+        fs.frac6090,                               // d_frac6090
+        blk.len() as f64,                          // blk_n
     ]
 }
