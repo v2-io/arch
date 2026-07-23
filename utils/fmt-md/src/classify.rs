@@ -56,6 +56,16 @@ impl Classifier {
     /// paragraph spanning source lines [pstart, pend) (0-based).
     pub fn p_phb(&self, lines: &[&str], pstart: usize, i: usize, pend: usize, fstats: &FileStats) -> f64 {
         let f = features(lines, pstart, i, pend, fstats);
+        self.eval(&f)
+    }
+
+    /// Debug surface (--explain): calibrated p plus named feature values.
+    pub fn explain(&self, lines: &[&str], pstart: usize, i: usize, pend: usize, fstats: &FileStats) -> (f64, Vec<(&'static str, f64)>) {
+        let f = features(lines, pstart, i, pend, fstats);
+        (self.eval(&f), FEATURES.iter().copied().zip(f).collect())
+    }
+
+    fn eval(&self, f: &[f64; 14]) -> f64 {
         let mut acc = 0.0;
         for t in &self.model.trees {
             let mut n = 0usize;

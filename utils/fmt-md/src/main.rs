@@ -10,6 +10,8 @@ usage: fmt-md [--math[=MODEL]] <file.md>...    edit those files in place
        fmt-md --check <file.md>...             dry run; write nothing
        fmt-md [--math[=MODEL]] -               read stdin, write stdout
 
+  --explain         Debug: print every consulted break with its calibrated
+                    probability and named feature values on stderr.
   --check           Dry run. Print the path of each file that would change,
                     change nothing on disk, and exit 1 if there were any.
   --force           Format even files excluded by a .fmt-mdignore.
@@ -64,7 +66,7 @@ Exit codes: 0 = done (files written, or nothing needed changing)
 }
 
 fn is_known_flag(a: &str) -> bool {
-    a == "--check" || a == "--force" || a == "--no-classify" || a == "--math" || a.starts_with("--math=")
+    a == "--check" || a == "--force" || a == "--no-classify" || a == "--explain" || a == "--math" || a.starts_with("--math=")
 }
 
 fn trunc(s: &str) -> String {
@@ -129,12 +131,14 @@ fn main() {
     });
     let force = args.iter().any(|a| a == "--force");
     let no_classify = args.iter().any(|a| a == "--no-classify");
+    let explain = args.iter().any(|a| a == "--explain");
     let files: Vec<&String> = args
         .iter()
         .filter(|a| {
             a.as_str() != "--check"
                 && a.as_str() != "--force"
                 && a.as_str() != "--no-classify"
+                && a.as_str() != "--explain"
                 && a.as_str() != "--math"
                 && !a.starts_with("--math=")
         })
@@ -154,7 +158,7 @@ fn main() {
     let run = |input: &str| -> (String, String, Vec<fmt_md::Note>) {
         match &clf {
             Some(c) => {
-                let r = fmt_md::format_classified(input, c);
+                let r = fmt_md::format_classified(input, c, explain);
                 (r.output, r.gate_output, r.notes)
             }
             None => {

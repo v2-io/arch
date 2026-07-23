@@ -179,11 +179,15 @@ pub fn format(input: &str) -> String {
 /// 0.5–0.85 keep + mark + note; 0.15–0.5 join + note; < 0.15 join silently.
 /// Deterministic preserved-break categories still take precedence — the
 /// model only judges breaks the engine would otherwise join.
-pub fn format_classified(input: &str, clf: &classify::Classifier) -> Classified {
-    format_impl(input, Some(clf))
+pub fn format_classified(input: &str, clf: &classify::Classifier, explain: bool) -> Classified {
+    format_impl_x(input, Some(clf), explain)
 }
 
 fn format_impl(input: &str, clf: Option<&classify::Classifier>) -> Classified {
+    format_impl_x(input, clf, false)
+}
+
+fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool) -> Classified {
     let arena = Arena::new();
     let opts = options();
     let root = parse_document(&arena, input, &opts);
@@ -255,7 +259,18 @@ fn format_impl(input: &str, clf: Option<&classify::Classifier>) -> Classified {
             if !run_first {
                 if let (Some(c), Some(fs)) = (clf, fstats.as_ref()) {
                     if para.quote_depth == 0 && idx > 0 {
-                        let p = c.p_phb(&bare_lines, para.start - 1, idx - 1, para.end, fs);
+                        let p = if explain {
+                            let (p, feats) = c.explain(&bare_lines, para.start - 1, idx - 1, para.end, fs);
+                            let fv: Vec<String> = feats.iter().map(|(n, v)| format!("{n}={v:.3}")).collect();
+                            eprintln!("explain: p={p:.3} L{}..L{} {:?}/{:?}\n         {}",
+                                idx, idx + 1,
+                                bare_lines[idx - 1].chars().rev().take(28).collect::<String>().chars().rev().collect::<String>(),
+                                bare_lines[idx].chars().take(28).collect::<String>(),
+                                fv.join(" "));
+                            p
+                        } else {
+                            c.p_phb(&bare_lines, para.start - 1, idx - 1, para.end, fs)
+                        };
                         if p >= 0.5 {
                             // keep + write the marker nobody remembers
                             let marked = !acc.ends_with("  ");
