@@ -525,6 +525,20 @@ and the scarcity is part of why these are worth holding.
   profiled rather than obeying, disproved the brief's allocation theory,
   and delivered 2.4x — the largest single win from a direction nobody had
   listed.
+- **2026-07-28** (vivarium): the counter-evidence specimen worth its weight —
+  a χ-criterion probe agent, briefed with "measure what's there, not what
+  helps me" and an honest expectation labeled as a prediction, *disproved the
+  prediction it had been handed*: its premise statistic agreed with the
+  expectation, and it re-examined only because an oddity (377 of 384 tiles
+  reporting *no test*) sat beside the confident number. Its own words at
+  stand-down: "A brief that had asked me to verify varying-U would have
+  gotten a yes." The uncorrected finding would have misdirected a fix to the
+  wrong subsystem. Same session, same pattern three times: a discharge agent
+  diverged from the brief's (a)/(b)/(c) map because "the honest deliverable
+  turned out to be a diagnosis, not a rendering," and an explorer agent named
+  the depiction law as the reason it *refused* a feature (tweening) the data
+  begged for. Open framing is not a courtesy; it is the mechanism by which
+  delegated work can correct the delegator.
 - And so, so, so, many more before those
 
 ## Provenance
