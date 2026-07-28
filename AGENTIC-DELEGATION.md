@@ -538,7 +538,13 @@ and the scarcity is part of why these are worth holding.
   turned out to be a diagnosis, not a rendering," and an explorer agent named
   the depiction law as the reason it *refused* a feature (tweening) the data
   begged for. Open framing is not a courtesy; it is the mechanism by which
-  delegated work can correct the delegator.
+  delegated work can correct the delegator. The same session's complementary
+  negative specimen: a base-level spike brief framed its target as "the
+  measured cap on everything hydrological" — well-evidenced *belief* wearing
+  measurement's confidence — and the agent reported spending its first hour
+  inside that frame before its own control refuted the central attribution.
+  Its correction for future briefs: carry "here is what we believe" and
+  "here is what has actually been measured" as separate registers.
 - And so, so, so, many more before those
 
 ## Provenance
