@@ -544,7 +544,15 @@ and the scarcity is part of why these are worth holding.
   measurement's confidence — and the agent reported spending its first hour
   inside that frame before its own control refuted the central attribution.
   Its correction for future briefs: carry "here is what we believe" and
-  "here is what has actually been measured" as separate registers.
+  "here is what has actually been measured" as separate registers. Third
+  specimen, same day, from a research brief: the delegator enumerated the
+  neighborhoods to search; the agent worked the list in order and the most
+  consequential hit on each half arrived from OFF the list — and separately,
+  a spike file already existed stating the question more precisely than the
+  brief did. Its rule, worth keeping verbatim: "if an artifact exists that
+  states the question better than the brief does, send the artifact." And
+  where enumeration is unavoidable, mark each item checked-vs-guess so the
+  agent knows where the unexplored volume actually is.
 - And so, so, so, many more before those
 
 ## Provenance
