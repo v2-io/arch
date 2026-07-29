@@ -9,10 +9,10 @@
 Claude project memory loads by **exact session-start directory only** — it does not cascade. This file cascades; memory does not. Therefore:
 
 - **Started at the program root but working on a member?** That member's memory did NOT load. Before substantive member work, Read its index:
-  - asf → `~/.claude/projects/-Users-josephwecker-v2-src-archema-io-asf/memory/MEMORY.md`
-  - logos → `~/.claude/projects/-Users-josephwecker-v2-src-archema-io-logos/memory/MEMORY.md`
-  - vivarium → `~/.claude/projects/-Users-josephwecker-v2-src-archema-io-vivarium/memory/MEMORY.md`
-- **Started inside a member?** Your member memory loaded, this file cascaded in, and the program-level memory did NOT load — its index is at `~/.claude/projects/-Users-josephwecker-v2-src-archema-io/memory/MEMORY.md` (read it for program state: soak status, parallel-agent coordination, queued work).
+  - asf → `~/.claude/projects/-Users-josephwecker-v2-src-arch-asf/memory/MEMORY.md`
+  - logos → `~/.claude/projects/-Users-josephwecker-v2-src-arch-logos/memory/MEMORY.md`
+  - vivarium → `~/.claude/projects/-Users-josephwecker-v2-src-arch-vivarium/memory/MEMORY.md`
+- **Started inside a member?** Your member memory loaded, this file cascaded in, and the program-level memory did NOT load — its index is at `~/.claude/projects/-Users-josephwecker-v2-src-arch/memory/MEMORY.md` (read it for program state: soak status, parallel-agent coordination, queued work).
 - **Session-start rule of thumb (for Joseph):** start the session where the work's center of gravity is — member dir for member work, root for cross-member work. `/add-dir` grants file access but never loads memory; compensate with an explicit Read of the relevant index.
 
 ## Member laws bind locally
