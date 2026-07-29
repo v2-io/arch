@@ -6,7 +6,7 @@
 
 ```
 ~/src/archema-io/                     # the program repo (→ ~/src/archema later, §4)
-  CHARTER-DRAFT.md, charter/, _program-seed/, MIGRATION.md
+  CHARTER-DRAFT.md, charter/, .archive/ (was _program-seed/; philosophy moved to logos/), MIGRATION.md
   asf/        ← submodule = v2-io/agentic-systems   (remote name unchanged)
   logos/      ← submodule = v2-io/logos (renamed from synthese-paper)
   vivarium/   ← submodule = v2-io/vivarium          (name parity, unchanged)

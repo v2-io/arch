@@ -27,16 +27,20 @@ from-below party can verify, which is why it can carry what the others cannot.
 
 ## Status (2026-07-08)
 
-Newly created. The charter is drafted (CHARTER-DRAFT.md, awaiting ratification); a thin operational
-CLAUDE.md now exists (memory-routing + member-law pointers); the unified lexicon and
+The charter is drafted (CHARTER-DRAFT.md, awaiting ratification); a thin operational
+CLAUDE.md exists (memory-routing + member-law pointers); the unified lexicon and
 collision ledger are **not yet written** — they should be authored by a
 session holding all three member corpora *and* the ASF formal core (Level-B reading at
-minimum). Until then, the seed is authoritative:
+minimum).
 
-- **`_program-seed/`** — the founding synthesis (2026-07-08 session): placement
-  assessment of the philosophy papers, the vivarium⇄philosophy⇄ASF integration
-  findings, the witnessing-channel findings, naming decisions, and the granted-agency
-  resubmission strategy. Start with `_program-seed/README.md`.
+**Founding synthesis (2026-07-08)** — philosophy lives in `logos/`; historical naming
+record in `.archive/`:
+
+- `logos/philosophy-papers-feedback.md` — placement assessment of the paper portfolio
+- `logos/philosophy-vivarium-integration.md` — structural IDs across papers ⇄ vivarium ⇄ ASF
+- `logos/04-inquiry-after-consciousness/witnessing-channel-findings.md` — verifiable-from-below, truth-gating, warrant-decay
+- `logos/03-inquiry-ai-agents/granted-agency-resubmission-notes.md` — desk-rejection cut strategy
+- `.archive/naming-candidates.md` — Archema / rowan naming decision record
 
 **Naming housekeeping:** the previous holder of the Archema name (the Ruby Ash-framework
 port) is now [v2-io/rowan](https://github.com/v2-io/rowan) (`~/src/rowan/`), with its
