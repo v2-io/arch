@@ -553,6 +553,26 @@ and the scarcity is part of why these are worth holding.
   states the question better than the brief does, send the artifact." And
   where enumeration is unavoidable, mark each item checked-vs-guess so the
   agent knows where the unexplored volume actually is.
+- **2026-07-29** (udon, format-failures research): a positive specimen with
+  the causal chain visible end-to-end. The coordinator, briefing an Opus
+  researcher to analyze document-format failures "in ASF first-principles
+  terms," began enumerating which theory instruments would apply (κ×A here,
+  turnover multiplier there). Joseph stopped it mid-plan: *"don't prescribe
+  its deliberation space across first principles though -- it will almost
+  certainly find relevant sections that aren't immediately apparent from the
+  dossier."* The brief shipped with the caution quoted inside it and only
+  *location* knowledge (outlines as pull-up indexes). The researcher's own
+  post-hoc attribution: *"If I'd been handed three named results, I would
+  have used those three well and stopped"* — and the two most productive
+  lenses in its map (anti-collapse; the multi-timescale threshold) were,
+  in its words, "ones nobody would have put on a list for a format-history
+  task"; anti-collapse "reorganized the entire map." Same session, the
+  matching accident-evidence: a server outage killed its six evidence
+  sub-agents, forcing it to read theory segments whole instead of
+  integrating summaries — "the outage forced the discipline that the
+  discipline is supposed to force" — and that primary-reading caught the
+  one bad citation it nearly shipped. Its standing self-summary is also a
+  register exemplar: "good reach, verification partly outstanding."
 - And so, so, so, many more before those
 
 ## Provenance
