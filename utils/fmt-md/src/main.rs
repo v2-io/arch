@@ -31,6 +31,15 @@ To preview the actual edits to one file, use stdin mode and your own diff:
 
     fmt-md - < FILE.md | diff FILE.md -
 
+STDIN MODE IS UNGUARDED, which matters most in exactly that preview use. There
+is no filename to read, so neither a .fmt-mdignore exclusion nor the .udon
+guard can be consulted; and the render-equality gate is not run at all, because
+stdin writes to stdout and there is no write to refuse. So the pipeline above
+answers "what would the engine do to these bytes", not "what would fmt-md write
+to this file" — a file that file mode would skip comes back fully reformatted
+through stdin. When the question is whether a file would actually change, ask
+it directly with --check FILE, which runs the guards and the gate.
+
 EXCLUSIONS: a .fmt-mdignore file (gitignore syntax) at or above a file marks
 it as not-for-formatting, and is honoured even when the file is named
 explicitly — because the realistic accident is an agent running
@@ -48,9 +57,10 @@ the value; a bare attribute value runs to end of line, so a join can swallow
 every following :key into one attribute holding garbage; and !:lang: verbatim
 blocks are invisible to this tool's parser and get flattened. All three
 survive the render check, because a mangled UDON line renders as ordinary
-markdown text. --allow-udon proceeds anyway. The guard reads the filename, so
-it cannot fire in stdin mode — there is no name to read; stdin writes to
-stdout, so nothing is corrupted in place.
+markdown text. --allow-udon proceeds anyway; --force deliberately does not, so
+overriding verbatim exclusions cannot quietly disable this too. Like the
+exclusions above, this guard is filename-keyed and therefore absent in stdin
+mode — see STDIN MODE IS UNGUARDED.
 
 WHAT IT CHANGES: each prose paragraph that is split across several lines
 becomes one long line — including paragraphs inside list items, blockquotes,
@@ -58,7 +68,7 @@ and footnotes. Tables, code (fenced and inline), YAML frontmatter, math,
 wikilinks, HTML, and line breaks that carry meaning are left alone.
 
 WHY UNWRAPPING IS SAFE: the source text changes, but the rendered document
-must not. Before writing anything, fmt-md re-parses its own output and
+must not. Before writing any file, fmt-md re-parses its own output and
 compares the rendered result against the original. If they differ at all —
 which would mean a bug in fmt-md — that file is left exactly as it was and
 the problem is reported. Running fmt-md again on its output changes nothing.
