@@ -15,6 +15,10 @@ usage: fmt-md [--math[=MODEL]] <file.md>...    edit those files in place
   --check           Dry run. Print the path of each file that would change,
                     change nothing on disk, and exit 1 if there were any.
   --force           Format even files excluded by a .fmt-mdignore.
+  --allow-udon      Format .udon files too. Off by default, and the default
+                    is the recommendation — see FOREIGN LANGUAGES below.
+                    Deliberately NOT covered by --force, so that overriding
+                    verbatim exclusions does not also disable this.
   --math[=MODEL]    Additionally promote Unicode/bare math to $LaTeX$ using
                     a local ollama model (default llama3.2:3b). The model
                     proposes only where each expression starts and stops;
@@ -34,6 +38,19 @@ explicitly — because the realistic accident is an agent running
 transcripts, provenanced copies, and frozen archaeology: reformatting those
 is render-equivalent and still wrong, and no automatic check can tell,
 because nothing about the rendered document changed.
+
+FOREIGN LANGUAGES: .udon files are skipped by default, even when named
+explicitly, because UDON is not markdown and the safety gate below cannot
+tell. Three reasons, each reproduced rather than argued (see
+UDON-ASSESSMENT-2026-07-29.md): UDON's text law makes the newline literal
+text content rather than collapsible whitespace, so joining prose lines edits
+the value; a bare attribute value runs to end of line, so a join can swallow
+every following :key into one attribute holding garbage; and !:lang: verbatim
+blocks are invisible to this tool's parser and get flattened. All three
+survive the render check, because a mangled UDON line renders as ordinary
+markdown text. --allow-udon proceeds anyway. The guard reads the filename, so
+it cannot fire in stdin mode — there is no name to read; stdin writes to
+stdout, so nothing is corrupted in place.
 
 WHAT IT CHANGES: each prose paragraph that is split across several lines
 becomes one long line — including paragraphs inside list items, blockquotes,
@@ -66,7 +83,7 @@ Exit codes: 0 = done (files written, or nothing needed changing)
 }
 
 fn is_known_flag(a: &str) -> bool {
-    a == "--check" || a == "--force" || a == "--no-classify" || a == "--explain" || a == "--math" || a.starts_with("--math=")
+    a == "--check" || a == "--force" || a == "--allow-udon" || a == "--no-classify" || a == "--explain" || a == "--math" || a.starts_with("--math=")
 }
 
 fn trunc(s: &str) -> String {
@@ -130,6 +147,7 @@ fn main() {
         }
     });
     let force = args.iter().any(|a| a == "--force");
+    let allow_udon = args.iter().any(|a| a == "--allow-udon");
     let no_classify = args.iter().any(|a| a == "--no-classify");
     let explain = args.iter().any(|a| a == "--explain");
     let files: Vec<&String> = args
@@ -137,6 +155,7 @@ fn main() {
         .filter(|a| {
             a.as_str() != "--check"
                 && a.as_str() != "--force"
+                && a.as_str() != "--allow-udon"
                 && a.as_str() != "--no-classify"
                 && a.as_str() != "--explain"
                 && a.as_str() != "--math"
@@ -208,15 +227,24 @@ fn main() {
     let mut excluder = fmt_md::exclude::Excluder::new();
     for f in files {
         let path = PathBuf::from(f);
-        if !force {
-            if let Some(rule_file) = excluder.excluded(&path) {
-                eprintln!(
-                    "fmt-md: {}: skipped, excluded by {} (--force overrides)",
-                    path.display(),
-                    rule_file.display()
-                );
-                continue;
-            }
+        if !allow_udon
+            && let Some(lang) = fmt_md::exclude::foreign_language(&path)
+        {
+            eprintln!(
+                "fmt-md: {}: skipped, .{lang} is not markdown — its line breaks carry meaning this tool has no model of, so the render-equality gate cannot defend it (--allow-udon overrides)",
+                path.display()
+            );
+            continue;
+        }
+        if !force
+            && let Some(rule_file) = excluder.excluded(&path)
+        {
+            eprintln!(
+                "fmt-md: {}: skipped, excluded by {} (--force overrides)",
+                path.display(),
+                rule_file.display()
+            );
+            continue;
         }
         let input = match std::fs::read_to_string(&path) {
             Ok(s) => s,

@@ -14,12 +14,54 @@
 //! line, because the realistic accident is an agent running
 //! `fmt-md $(find . -name '*.md')` — the tool has to be the thing that
 //! remembers.
+//!
+//! This module carries a second guard of the same family, keyed on the file
+//! extension rather than an ignore file. That is still a declaration and not
+//! an inference: whoever named a file `.udon` declared its language, and the
+//! extension is the most durable form that declaration takes — it travels
+//! with the file into trees that have no `.fmt-mdignore` and cannot be
+//! forgotten when a new directory is added. See `foreign_language`.
 
 use ignore::gitignore::{Gitignore, GitignoreBuilder};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
 pub const IGNORE_FILE: &str = ".fmt-mdignore";
+
+/// Extensions whose language fmt-md has no model of, and whose line
+/// structure carries meaning the render-equality gate cannot see.
+///
+/// UDON is the founding member, and the reasoning is worth keeping next to
+/// the list because the instinct to accept `.udon` as "markdown enough" has
+/// already come up once (`UDON-ASSESSMENT-2026-07-29.md`, which reproduced
+/// each failure rather than arguing it). Three facts, each from UDON's own
+/// spec: the newline is *literal text content* under the text law, not
+/// collapsible whitespace — so joining two prose lines edits the
+/// reconstructed value rather than preserving it; a bare attribute value runs
+/// to end of line, so joining `:author X` onto the line above silently
+/// swallows every following `:key` into one attribute holding garbage; and
+/// `!:lang:` verbatim blocks are invisible to comrak, which reads them as
+/// ordinary paragraphs and flattens working source into one line.
+///
+/// None of that is visible to the render-equality gate, and that is the
+/// point: the gate compares *CommonMark renders*, and a corrupted UDON
+/// attribute line renders as unremarkable Markdown text. The tool's central
+/// safety claim has no UDON referent to be true or false about, so the guard
+/// has to sit in front of the gate rather than relying on it.
+pub const FOREIGN_EXTENSIONS: &[&str] = &["udon"];
+
+/// Does `path`'s own name declare a language from `FOREIGN_EXTENSIONS`?
+/// Returns the matched extension, for reporting.
+///
+/// Filename-keyed, so it cannot help in stdin mode (`fmt-md - < f.udon`) —
+/// there is no name to read. That is a real hole and is documented in
+/// `--help` rather than papered over; stdin mode writes to stdout, so the
+/// accident it guards against (in-place corruption of a tree) is not
+/// reachable that way.
+pub fn foreign_language(path: &Path) -> Option<&'static str> {
+    let ext = path.extension()?.to_str()?.to_ascii_lowercase();
+    FOREIGN_EXTENSIONS.iter().copied().find(|e| *e == ext)
+}
 
 /// Caches one compiled matcher per directory that holds a `.fmt-mdignore`.
 #[derive(Default)]

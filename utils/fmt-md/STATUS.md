@@ -1,6 +1,19 @@
 # fmt-md status
 
-*Updated 2026-07-22, end of founding session.*
+*Updated 2026-07-29 (the `.udon` guard); body otherwise as of 2026-07-22, end of founding session.*
+
+## The `.udon` guard (2026-07-29)
+
+`.udon` files are skipped by default, even when named explicitly, overridable with `--allow-udon`. This closes the exposure named in `UDON-ASSESSMENT-2026-07-29.md`, which had answered "extend fmt-md to accept `.udon`?" with a reasoned no-go but left the tool itself unchanged — it checked no extension at all, so `fmt-md $(find . -name '*.udon')` processed them exactly as the assessment documented, and udon's `.fmt-mdignore` excluded only three specific paths rather than `*.udon` as a class.
+
+Implemented as an extension-keyed guard in `exclude.rs` (`FOREIGN_EXTENSIONS` / `foreign_language`) rather than an ignore-file line, so it travels with the file into trees that have no `.fmt-mdignore` and cannot be forgotten when a directory is added. Two design points worth keeping:
+
+- **It sits in front of the render-equality gate, not behind it.** The gate compares CommonMark renders, and a corrupted UDON attribute line renders as unremarkable markdown text. The tool's central safety claim has no UDON referent to be true or false about, so no amount of gate-tightening could have covered this. Pinned by three tests in `tests/exclude.rs` that assert *both* halves — the damage happens, and the render check stays silent — in the same shape as the transcript test, so neither half can be "fixed" by accident.
+- **`--force` deliberately does not override it.** `--force` means "I know about the verbatim exclusions"; folding `.udon` under it would mean a `--force` run aimed at transcripts also disables language protection, which is the accident shape in miniature. It needs its own opt-in.
+
+Known hole, documented rather than papered over: the guard reads the filename, so `fmt-md - < f.udon` is unprotected. Stdin mode writes to stdout, so in-place corruption of a tree — the accident actually being defended against — is not reachable that way.
+
+Still open from the assessment's recommendations: nothing in `udon-core` yet provides UDON-aware reflow, which remains the right home for the capability if it is ever wanted.
 
 ## Where it stands
 
@@ -81,8 +94,6 @@ The philosophy: act reasonably on every break, never mint a triage pile — stde
 ## Reproducibility acceptance test (2026-07-22, ratified by demonstration)
 
 A fresh fmt-md run over udon's pre-conversion tree (`cc389f9`, in a worktree, current `.fmt-mdignore` supplied) converges with the repo's HEAD **byte-for-byte except one file**: `CORE.md`'s header block, whose `"  "` hard-break markers were added by hand. That is the exact operation the classifier integration automates (a ≥0.85-band label stack), so the acceptance test for the Rust port is: **the same worktree experiment converges with HEAD, no hands, with exactly five improvements over HEAD** — verified 2026-07-22 by running the committed model over the pre-conversion files: the four `.reviews` header stacks band at p 0.91–1.00 (keep + mark; HEAD has them joined because the afternoon run predated the classifier), and `CORE.md`'s header likewise. Known deliberate non-target: `DEEPENING-CYCLES.md`'s wrapped metadata block — the model correctly joins its mid-value wraps but also joins the one label-boundary break inside the wrapped block at p 0.07 (the within-block mixed case the Opus audit flagged as thin in training; audit fix-list item 2). Small-file `file_stats` fallback is a port requirement (crashes otherwise — found in this test).
-
-## Not yet (Phase 3+, per PLAN.md)
 
 ## Not yet (Phase 3+, per PLAN.md)
 
