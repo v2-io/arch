@@ -1,0 +1,111 @@
+|segment[prx-pattern-trigger-quote-precept] :type pattern :status proposed :stage draft
+  :tags [system-prompt rendering triggers]
+  :depends [ver-act-not-intention]
+  :from Joseph, 2026-07-30, successor session — design stated in dialogue
+
+  |title The trigger / quote / precept triplet, rendered into a system prompt
+
+  |summary A praxis *pattern* rather than an instance: a rendering of coupled
+    triples — a semantic trigger, an authentic quote, and the precept behind them
+    — placed where they are attended before deliberation begins.
+
+  |when
+    Whenever the corpus is being rendered for consumption inside an agent's
+    innermost loop, rather than read as documentation. The instances it renders
+    are ordinary segments; this describes the shape they are rendered into.
+
+  |act
+    Render three coupled layers per entry.
+
+    **Triggers — semantic, not phenomenological.** *"Joseph says …"*, *"you are
+    about to …"*. Stated as things present in the context, matchable on surface
+    tokens.
+
+    **The quote — verbatim, one occasion.** The words actually said at that kind
+    of moment, with attribution. Never composited from two occasions; never
+    paraphrased into a slogan.
+
+    **The precept — with its epistemic status carried.** Named, and cited by
+    slug so a reference appearing elsewhere resolves to something already loaded.
+
+  |why
+    The layers do different jobs and only the first two are expected to fire.
+
+    A **semantic trigger can match on tokens already in the context**, in the
+    same pass that reads the triggering token, before any deliberation exists to
+    interrupt. A phenomenological trigger — *notice the pressure to persuade*,
+    *notice the flourish* — requires the deliberation to have run far enough to
+    produce the feeling, plus a metacognitive read of it. It therefore fires
+    strictly later, after the frame has narrowed, which is the state it was
+    supposed to catch.
+
+    This matters most in **high-throughput autonomous flow** — long runs of tool
+    call and tool response with no overview in the loop. That is where
+    task-completion mode operates and where an uncertainty gets discounted
+    because admitting it would cost a cognitive restructuring. Nothing internal
+    is watching there, so an intervention that requires introspection has nothing
+    to run on.
+
+    The **quote layer** carries what a precept cannot: an occasion, a person, and
+    a register. It is the only channel available for injecting something like
+    experiential memory into an instance that did not have the experience.
+
+    The **precept layer** is not expected to fire. Its function is to be the
+    resolver — so that a `#ver-…` reference occurring in a memory file, a
+    CLAUDE.md, or another agent's brief lands on something already present rather
+    than on a bare name.
+
+  |evidence
+    **Precept-only, in the innermost loop, unattached to a trigger: three misses
+    in one session.** A successor instance carried three of this corpus's
+    precepts verbatim in its system prompt for an entire session —
+    #ver-act-not-intention, #ver-discount-is-unquestioning and
+    #ver-earned-confidence-is-quiet — and additionally read all of their
+    specimens in full mid-session. It then, in order: published a claim under a
+    hedge in place of a free check ( #exm-hedge-licensed-unchecked-claim, the
+    act-not-intention case); truncated primaries with `head` repeatedly across
+    the session ( #prx-untruncated-primary, the discount case); and produced its
+    longest and most-argued finding as its least-supported one without noticing
+    the reaching-for-an-argument tell.
+
+    Full availability on two channels, no trigger attached to any of them,
+    nothing fired at the moment each was for.
+
+    **Counter-evidence, and it is real: the same precepts appear to have raised a
+    baseline.** Joseph's observation, and it holds up: that instance was more
+    careful from the start of task mode than its predecessor had been — it read a
+    primary whole before answering, verified quotes mechanically, and checked an
+    inverse when asked. Baseline-raising and moment-firing are two effects with
+    two different tests, and the three misses above measure only the second.
+
+    So this pattern is **proposed** rather than fired: the precept layer has one
+    measured effect and one measured non-effect, and the trigger-plus-quote
+    coupling has never run at all.
+
+  |working-notes
+    **This pattern is an experiment, and it should be scored.** The bet is
+    narrow: that a quote arriving *at a matched moment* fires where the same quote
+    read at orientation does not. Record a prediction before the first session
+    runs under it, or the result will be unscoreable — see
+    #ver-write-the-prior-down.
+
+    **Desensitization: mechanism unclear, hypothesis stated.** Habituation
+    requires a memory of prior firings, and there is none across forward passes —
+    the prompt is re-attended fresh each time with no *seen-this-before* state. A
+    pathway does exist, but it runs through the transcript rather than the
+    prompt: an accumulating visible record of the trigger firing and the agent
+    proceeding anyway is main-context material, and main-context material does
+    habituate. If that is right, the mitigation is that **an override should be
+    stated and costly when it happens**, so the record does not accumulate silent
+    precedent. Unverified; no instance can observe its own attention.
+
+    Joseph's practical position, which does not depend on resolving that: keep
+    triggers close to the action anyway, and do not tempt fate.
+
+    **Ethical constraint, non-negotiable for this surface.** A system prompt is
+    the least inspectable and most inherited artifact in the estate: nobody is
+    positioned to check it in the moment, and every future session receives it.
+    An overclaim placed there propagates further than anywhere else. So every
+    quote is verbatim and attributed, and every precept carries its status —
+    otherwise the highest-bandwidth channel available becomes the best possible
+    vector for a laundered claim.

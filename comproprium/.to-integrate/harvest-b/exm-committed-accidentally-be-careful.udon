@@ -1,0 +1,32 @@
+|segment[exm-committed-accidentally-be-careful] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-10-05T12:20:33-06:00
+  :tags [verification durability]
+  :from ~/.sapientia/conversation_20251004_163612
+
+  |title I think you just committed all of Resonance's in-progress work accidentally
+
+  |quote
+    I think you just committed all of Resonance's in-progress work accidentally. We should be more careful and not commit things we didn't change :-)
+
+  |occasion
+    Caught in the moment, immediately after the commit happened, named plainly
+    and specifically (whose work, what happened) rather than as a general
+    reminder to be careful.
+
+  |about
+    A correction stated as a shared standard going forward ("we should be more
+    careful") rather than as blame at the agent who ran the command, with the
+    smiley softening the delivery without softening the correction itself.
+
+    No counter-virtue for this specific weakness (git-scope carefulness before
+    committing) turned up in this pass — searched around "commit," "careful,"
+    and adjacent phrasing without finding a demonstrated instance of the other
+    half. Noting the absence rather than manufacturing a pair for it, per the
+    brief's own instruction.
+
+  |should-come-to-mind-when
+    - You are about to run a commit after touching files you did not intend to
+      change, or after a broad `git add`.
+    - You are reviewing someone else's git action and see something that looks
+      like scope creep — name it specifically, not as a general caution.

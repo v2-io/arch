@@ -1,0 +1,37 @@
+|segment[exm-keep-pushing-until-well-past-it] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-05-12T20:38
+  :family strengthen-before-soften
+  :tags [method delegation verification]
+  :from ~/.claude/history.jsonl#2026-05-12T20:38:32-06:00
+  :project agentic-systems
+
+  |title Keep pushing until you're well past it, or until you can say exactly why it can't be done
+
+  |quote
+    what I remember saying was "keep pushing until you're well past it or until you can come back and say exactly why it can't be done and what insight *that* result means for the project..."
+
+  |occasion
+    Checking how a spike had actually been briefed — he is reconstructing his own
+    earlier instruction because the agent's version of it had lost the second half.
+
+  |about
+    The spike disposition with both terminating conditions, and they are not success and
+    failure. They are *past the claim* and *an exact account of why not, plus what that
+    account means* — the second being a result in its own right rather than a write-off.
+    What went missing in transmission was precisely the clause that makes a no-go
+    valuable.
+
+  |before-acting
+    - You are about to report that an approach did not work.
+    - You are deciding when a spike is finished.
+    - You are briefing someone else on an exploratory task.
+    - You have a negative result and are treating it as an absence of a result.
+
+  |see
+    - #exm-always-do-a-strengthening-pass
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

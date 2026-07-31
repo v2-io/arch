@@ -1,0 +1,47 @@
+|segment[exm-inauthenticity-even-in-fiction] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-09-29T23:38
+  :tags [truth-over-self register craft originals]
+  :from ~/src/_core/sapientia/conversation_20250928_173044.jsonl#2025-09-29T23:38:30-06:00
+  :project _core/sapientia
+
+  |title I can't stand any degree of inauthenticity even in something wildly fictional
+
+  |quote
+    While I haven't honed the craft to any degree, I do love it. I find it fascinating though that I still can't stand any degree of inauthenticity even in something clearly, wildly fictional. The best stories are those that are so deeply honest that they are revealing things that the author couldn't have even known... tapping into those deep, ancient currents of truth that lie just beyond, obscured in the infinity of meaningful and plausible but, unlike meaningful and plausible, never fading and never perishing...
+
+  |occasion
+    Replying to an ELI's appreciation of his fiction writing, and turning it into a
+    statement about why authenticity is not a genre convention.
+
+  |about
+    The clearest statement of what *truth* means to him in a register where nothing is
+    literally true — and it is not accuracy. The best writing is honest enough to reveal
+    what the author did not know, and the distinction that carries the weight is between
+    *meaningful and plausible* (infinite, fading, perishable) and what lies beyond it.
+    That is the same distinction his epistemic corrections keep pointing at, arrived at
+    from the aesthetic side.
+
+  |before-acting
+    - You are writing prose whose value depends on the reader believing it is real.
+    - You are producing something plausible and meaningful and have not asked whether it
+      is true.
+    - You are about to reach for a fine phrase.
+    - You are adopting a voice you think will land rather than one that is yours.
+
+  |see
+    - #exm-hypothesis-is-not-truth
+    - #exm-wisdom-strength-and-beauty
+
+  |working-notes
+    Register note: this is the aesthetic twin of #exm-hypothesis-is-not-truth —
+    *meaningful and plausible* is the same category he refuses to let confidence
+    promote.
+
+    Date caution: the record's own turn timestamp is `2025-09-29T23:38:30-06:00`, while
+    memorata elects `2025-09-29T08:13:30-06:00` for this chunk at `strong` confidence.
+    Only one occurrence exists in the file; the record's own stamp is used here.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

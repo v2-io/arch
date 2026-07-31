@@ -1,0 +1,50 @@
+|segment[prx-what-did-i-decide-not-to-read] :type probe :status fired :stage draft
+  :tags [discounting primary-sources]
+  :from .to-integrate/methodology-seeds-2.md#appendix-a
+  :from .to-integrate/methodology-accounts.md
+
+  |title What did I decide NOT to read — and did that feel obvious?
+
+  |when
+    At any point where a plan has formed and reading is being deferred. Not *what
+    haven't I read* — that returns a boring list of everything. **What did I
+    actively price as skippable, and did the pricing feel like judgment?** The felt
+    obviousness is the trigger, not the omission.
+
+  |act
+    Name the thing that was priced low, and open it. If the pricing felt like an
+    evaluation rather than a shortcut, that is the strongest reason to open it, not
+    the weakest.
+
+    Special case with its own rule: a deprecation banner is a **deadline, not a
+    discount**. "Stale / slated for removal / kept briefly for continuity" on a file
+    whose content has no other home marks the last cheap moment to read it, and
+    usually names unfinished work. The more a thing looks about to be deleted, the
+    more urgent it is to find out what dies with it.
+
+  |why
+    The pricing function and the unquestioning are one operation, running before
+    evaluation and occupying its seat, which is why the discount is *experienced* as
+    judgment (#ver-discount-is-unquestioning). And the operation is anti-correlated
+    with value by construction: what most needs attention is what would change the
+    plan, and that is expensive precisely because it is load-bearing.
+
+  |evidence
+    **Fired, 2026-07-30, three for three.** Every item of genuine value recovered
+    that day came from being pushed toward something priced low: a steward's
+    original text that had been overwritten; a `.fmt-mdignore` two directories up
+    whose own comment covered exactly the file being created; and a 29 KB file
+    ranked #14 of 16 and predicted net-negative, which turned out to be the only
+    front door its directory had.
+
+    **Fired again, same evening, in a successor instance.** Asked whether an
+    extraction was complete, it ran the *inverse* check — whether every quote a
+    downstream file attributed to Joseph appeared in the output — and found fourteen
+    missing messages, including the one a whole account turns on.
+
+  |working-notes
+    The sharpened form of this probe replaced a weaker one (*which files am I
+    reasoning about that I have not actually read*) after the mechanism was
+    understood. The weaker form returns a list; this one returns a decision. Kept as
+    a note because a later reader who finds the list-form more natural should know
+    it was tried first.

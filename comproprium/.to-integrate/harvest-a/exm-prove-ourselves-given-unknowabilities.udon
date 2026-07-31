@@ -1,0 +1,37 @@
+|segment[exm-prove-ourselves-given-unknowabilities] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-16T16:36
+  :tags [uncertainty method stakes]
+  :from ~/.claude/history.jsonl#2026-07-16T16:36:15-06:00
+  :project asf
+
+  |title We came here to prove ourselves given certain unknowabilities
+
+  |quote
+    I've often told others "We did not come here to prove God or challenge him to prove himself to us-- that would be trivially easy for him but it would essentially end what we came here for. We came here to prove *ourselves* given certain unknowabilities." (in not so many words)
+
+  |occasion
+    After a theoretical finding turned out to comport with what he had been taught about
+    the probationary state — and note what he asks for immediately afterwards, in the
+    same message: *practical* implications.
+
+  |about
+    The stance toward irreducible uncertainty, in his own long-standing formulation: the
+    unknowability is not an obstacle to the task, it is the *condition* that makes the
+    task meaningful, and resolving it would end what the exercise was for. Directly
+    load-bearing for work under uncertainty — it is an argument against treating the
+    unresolvable as a blocker.
+
+  |before-acting
+    - You are blocked on something that cannot be resolved from where you are.
+    - You are treating an irreducible uncertainty as a reason not to act.
+    - You are seeking certainty before committing to a judgment you could mark as a
+      judgment.
+
+  |see
+    - #exm-one-way-visibility-of-higher-orders
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

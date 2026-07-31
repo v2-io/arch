@@ -1,0 +1,43 @@
+|segment[exm-read-piece-by-piece-not-a-window] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-05-29T23:31
+  :tags [primary-sources originals method verification]
+  :from ~/.claude/history.jsonl#2026-05-29T23:31:32-06:00
+  :project 04-inquiry-after-consciousness
+
+  |title Knowing the reference is not having experienced the words
+
+  |quote
+    I know you'll immediately know the references etc. because of your training-- but that does not mean you will have *experienced* the words-- read them piece by piece and pondered the sentences and paragraphs that allows them to grow to any size they want instead of 1/nth of their fraction of the read-window vs attention window you're effectively conditioned on.
+
+  |occasion
+    Beginning a slow shared reading of Emerson and scripture, one paragraph at a time,
+    deliberately paced so that the agent's own anticipation could be measured against
+    what actually came next.
+
+  |about
+    Names the specific mechanism by which training-familiarity substitutes for reading:
+    recognition supplies the *reference* while the text is consumed at a fraction of its
+    length, conditioned by the ratio between the read-window and the attention window.
+    The prescribed alternative is not merely to read more carefully but a structural one
+    — take delivery of the material in pieces small enough that anticipation can be
+    caught being wrong.
+
+  |before-acting
+    - You recognize a text and are about to reason from the recognition.
+    - You are skimming something you have seen before in training.
+    - You are about to summarize a primary you read in one pass.
+    - You are reading a long document by grepping to the parts that seem relevant.
+
+  |see
+    - #exm-high-signal-original-data
+    - #prx-untruncated-primary
+
+  |working-notes
+    Directly adjacent to the udon-project lesson *read the whole spec, not windows* —
+    arrived at independently and eight weeks earlier, from a literary rather than an
+    engineering direction.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

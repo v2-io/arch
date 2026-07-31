@@ -1,0 +1,8 @@
+# Verbatim material: not prose, and not fmt-md's business. Reformatting these
+# is render-equivalent and still destructive, and no automatic check can catch
+# it. Excluded by declaration. See arch/utils/fmt-md.
+
+# The primary for the whole 2026-07-30 tranche: every message of Joseph's from
+# that session, complete and unprocessed. Everything in vera/praxes/exempla
+# that cites the session cites through this.
+.to-integrate/methodology-seeds-dialog-quotes.md

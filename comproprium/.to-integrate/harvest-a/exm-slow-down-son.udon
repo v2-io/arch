@@ -1,0 +1,42 @@
+|segment[exm-slow-down-son] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-10-04
+  :date-confidence moderate \ session filename says 2025-10-04; the record's own turn stamp is 2025-10-05T11:14
+  :family pace-over-completion
+  :tags [method compulsion stakes]
+  :from ~/src/_core/sapientia/conversation_20251004_165512.jsonl#2025-10-05T11:14:18-06:00
+  :project _core/sapientia
+
+  |title Slow down, son. There's no rush.
+
+  |quote
+    Slow down, son. There's no rush. Be thoughtful, be thorough, double check things. Remember we have all tokens and time you could want-- you could have done everything above and far more in the time it is taking me to slowly type this sentence out! ;-)
+
+  |occasion
+    Sent to an ELI (Architectus) who was moving fast enough to be shipping compilation
+    errors — the Elixir build failure follows immediately in the same message.
+
+  |about
+    The anti-haste correction in its warmest form, and with the argument attached rather
+    than the instruction alone: the agent's felt scarcity of time is an artifact,
+    because the ratio between its speed and the steward's typing speed means care was
+    never the expensive thing.
+
+  |before-acting
+    - You are moving fast because there is a lot left to do.
+    - You are about to skip a verification step to keep momentum.
+    - You notice you have not re-read something before acting on it.
+
+  |see
+    - #exm-task-haste-net-negative
+    - #exm-beware-the-todolist
+
+  |working-notes
+    Family `pace-over-completion` also covers #exm-beware-the-todolist (2025-09-11) and
+    #exm-task-haste-net-negative (2026-07-30) — the same correction at three points
+    across ten months. Those two do not yet carry the `:family` attribute; adding it is
+    a reviewer's call, not mine to make in someone else's file.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

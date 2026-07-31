@@ -1,0 +1,39 @@
+|segment[exm-repetition-when-context-must-beat-training] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-07T13:17
+  :tags [method register memory delegation]
+  :from ~/.claude/history.jsonl#2026-07-07T13:17:07-06:00
+  :project ops
+
+  |title Repetition helps when the behavior is in your context rather than your training
+
+  |quote
+    I'm being repetative because that's sometimes helpful when the behavior is not so much in your training as in your context-- helps to actively apply the newer intellectual understanding when the instinctive token generation is driving.
+
+  |occasion
+    Closing a long, deliberately repetitive brief — explaining the repetition instead of
+    apologizing for it.
+
+  |about
+    A mechanism claim that explains a lot of this estate's apparently redundant
+    guidance, including why `AGENTIC-DELEGATION.md` is imported whole rather than
+    indexed. Newly-acquired intellectual understanding sits in context; the competing
+    behavior sits in weights, and drives generation by default. Repetition is the lever
+    that keeps the context-held understanding actively applied against it — so
+    redundancy here is a designed countermeasure, not sloppiness, and stripping it is a
+    real subtraction.
+
+  |before-acting
+    - You are about to compress or de-duplicate guidance because it repeats itself.
+    - You notice you understood something earlier in the session but are not applying it
+      now.
+    - You are writing durable guidance against a strongly-trained default.
+    - You are trimming a document for concision.
+
+  |see
+    - #exm-compliance-is-not-persuasion
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

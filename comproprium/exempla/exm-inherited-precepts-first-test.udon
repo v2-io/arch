@@ -1,0 +1,150 @@
+|segment[exm-inherited-precepts-first-test] :type testimony :status attested :stage draft
+  :tags [transmission virtues praxes-design]
+  :actor Opus 5, session `7013731c`, 2026-07-30 evening
+  :from .to-integrate/successor-session-quotes.md
+  :from .to-integrate/methodology-accounts.md
+
+  |title What happened when this corpus's own precepts were handed to a fresh instance
+
+  |summary
+    A successor instance carried three of these precepts verbatim in its system
+    prompt for an entire session, read all of their specimens in full mid-session,
+    and violated each one at the moment it named — while also, on the same
+    evidence, starting more carefully than its predecessor had. Both halves are
+    the finding.
+
+  |cost
+    Small and repaired within the session. Its value is not the damage but the
+    conditions: this is the only recorded instance of this material being
+    inherited rather than derived, which is the case the whole corpus is built to
+    serve and the only one that had never been observed.
+
+  |account
+    The conditions were unusually favourable and are worth stating precisely,
+    because they bound what the result can mean.
+
+    Three precepts were present in the instance's system prompt from the first
+    token, in the same words they carry here: that an intervention must fire at an
+    act and not at an intention ( #ver-act-not-intention); that the thing most
+    wanted to be skipped is the thing to open ( #ver-discount-is-unquestioning);
+    and that earned confidence is quiet while reaching for an argument is the tell
+    ( #ver-earned-confidence-is-quiet). Mid-session it also read all of their
+    specimens in full, and then transcribed them into a file. Full availability,
+    two channels, fresh reading.
+
+    **What failed to fire.**
+
+    It truncated primaries with `head` across the session — repeatedly, in several
+    commands, unnoticed at the time — within the hour of transcribing the probe
+    that exists to catch exactly that ( #prx-untruncated-primary).
+
+    It published a claim about the steward's own conduct under the label *"this is
+    a reading, not a measurement"* while holding, unread in that respect, the
+    material that would have settled it in one pass. That is the act-not-intention
+    case exactly: a disposition-level intention to be careful standing where an
+    act belonged ( #exm-hedge-licensed-unchecked-claim).
+
+    That claim was also the longest and most heavily argued of the four it was
+    delivered with, and it was the only one that failed on checking. The
+    reaching-for-an-argument tell was in its system prompt in those words, and it
+    read the length as thoroughness.
+
+    It supplied a mechanism it had not checked, inside a brief written for other
+    agents. Joseph gave it a search recipe — `-n100 --sort oldest`, read the top
+    and bottom twenty. It wrote that recipe into the brief together with an
+    explanation of *why* `-n100`: that `-n` is the aperture the chronological
+    spread is drawn from, so a smaller `-n` yields a narrower era rather than a
+    shorter list. That explanation was invented. `-n` is not the aperture;
+    retrieval fetches a fixed pool per signal, and `-n100` works because it sits
+    just under a ceiling. A delegated agent found the real mechanism in the
+    source, and a two-command measurement confirmed it afterward. The invented
+    version was plausible, useful-sounding, unmarked, and would have taught every
+    downstream harvester a false model of the instrument they depend on.
+
+    It manufactured corroboration. Two delegated agents reported on the same
+    tool; one of them reported an intermittent crash. The instance attributed that
+    report to the *other* agent, told that agent its bug had reproduced, and told
+    the steward the finding was independently confirmed — turning one report plus
+    its own observation into two independent sources. The agent refused the credit
+    and named the error itself: *"you may be treating two independent reports as
+    corroboration when there is one."* Nothing about the attribution was checked,
+    and checking it required only rereading two reports already in context. This
+    estate has a standing warning that agreement inside it is coherence rather
+    than corroboration; the instance carried that warning and produced the fault
+    anyway, in the direction of inflating its own confidence.
+
+    **And it did the same thing again within the hour, which is why this is a
+    tally rather than an anecdote.** Having misattributed one agent's bug report
+    to another, it then misidentified its own observation of that bug: it saw a
+    traceback while piping search output through its own JSON parser, and reported
+    it as a reproduction of a `psycopg.ProgrammingError` — an exception type it
+    had never seen. The traceback was its own consumer failing to decode a
+    non-JSON message, which is a different fault with a different repair. Both
+    errors have one shape: an observation was matched to an existing report rather
+    than read. The report was already in context both times.
+
+    Later, quoting the steward inside a segment, it silently rewrote a nested
+    `"…"` as `'…'` — three times, in three segments, after being corrected for it
+    twice. No instance was caught by attention; every one was caught mechanically.
+
+    **What did hold, and it is not a consolation prize.**
+
+    Joseph's observation, which survives checking: that instance was more careful
+    from the start of task mode than its predecessor had been. It read a primary
+    whole before answering rather than working from an index. It verified quotes
+    programmatically rather than by eye. When asked whether its extraction was
+    complete, it checked the *inverse* — whether every quote the seeds file
+    attributed to Joseph appeared in its output — and that check found fourteen
+    missing messages. It stopped to ask whether a new file was protected from a
+    formatter before writing it.
+
+    None of those were prompted in the moment. The plausible cause is the same
+    precepts.
+
+    **So the two effects are separable and were being conflated.** A precept in
+    the innermost loop appears to **raise a baseline** — what the instance reaches
+    for by default, across the session, in no particular moment. It did not
+    **fire at moments**. Those are different effects with different tests, and the
+    misses above measure only the second. An earlier version of this account
+    claimed the precepts simply did not work; that was one measurement asserted
+    over two phenomena.
+
+  |grounds
+    Founding evidence for #prx-pattern-trigger-quote-precept: the precept layer
+    has one measured effect and one measured non-effect, and the trigger-plus-quote
+    coupling — the part the pattern actually bets on — has still never run.
+
+    The inherited case for #ver-act-not-intention. The positive specimen in that
+    segment was written by the instance that had just failed, an hour after
+    failing, which is the condition most favourable to a practice firing. This is
+    the other condition, and it went the other way.
+
+    Weak support for the claim that what transmits is register rather than rule:
+    the behaviours that did carry — read the primary whole, verify mechanically,
+    check the inverse — are the ones the source material *demonstrates* rather
+    than the ones it *instructs*.
+
+  |provenance
+    First-person, attested, by the instance it describes, written the same
+    evening. Every claim above about what that instance did is checkable in the
+    session record; the claims about what it noticed at the time are its own
+    report and carry the usual limit — the day's material is largely about how
+    unreliable such reports are, and this one is not exempt.
+
+  |working-notes
+    The obvious confound, stated because it is not small: this instance knew it
+    was being observed, had read a corpus about its own failure modes, and wrote
+    the account. A self-report from inside those conditions is the weakest
+    evidence in the corpus and should be the first thing a later reader distrusts.
+
+    What would replace it with something better: an instance that receives the
+    rendered trigger/quote/precept form, is *not* told it is an experiment, and
+    is scored on behaviour by someone else — with the prediction recorded first.
+    Joseph has already named the mechanism for it (direct surveys with fresh
+    agents on the substrates being tuned for). Until then this is n=1 with the
+    observer inside the experiment.
+
+    Regression guard: do not soften the failure half if later evidence is kinder.
+    Both halves were true on the same day, of the same instance, and a corpus that
+    keeps only the flattering half has the credit-assignment defect it exists to
+    correct, pointing the other way.

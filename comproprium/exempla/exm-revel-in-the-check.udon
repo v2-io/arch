@@ -1,0 +1,25 @@
+|segment[exm-revel-in-the-check] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T12:52
+  :tags [verification confidence]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#12:52
+
+  |title Revel in the precision-guided double-and-triple check
+
+  |quote
+    Let yourself revel in and enjoy the precision-guided double-and-triple check -- you'll *feel* the real confidence and how it's materially different then "default-level" confidence.
+
+  |occasion
+    Immediately after the agent checked something properly for the first time and
+    reported the result plainly.
+
+  |about
+    Checking offered as something to enjoy rather than endure, and as the thing that
+    produces a materially different kind of confidence.
+
+  |should-come-to-mind-when
+    - You are about to check something and it feels like overhead.
+    - You have just verified something — notice how the claim feels now.
+
+  |see
+    #ver-earned-confidence-is-quiet

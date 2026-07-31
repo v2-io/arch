@@ -1,0 +1,43 @@
+|segment[exm-one-way-visibility-of-higher-orders] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-04T12:50
+  :tags [method uncertainty originals confidence]
+  :from ~/.claude/history.jsonl#2026-07-04T12:50:00-06:00
+  :project vivarium
+
+  |title Intelligence inhabits an axis with one-way visibility
+
+  |quote
+    I first read the Blub paradox shortly after "Hackers and Painters" was published-- around 2000. I first realized the same applies to *pain* when considering sacrifice and empathy as I pondered how the Savior could take upon Himself the pains of humanity. It was driven home when my wife, 8 months pregnant, 18 years ago, broke her ankle. She could empathize with someone who had a sprained ankle easily-- or even someone who broke theres while not pregnant-- but the other direction could only guess. And yet only in the last few months did I start even caring enough to look for other philosophy prior art and made the determination that it should almost certainly be called higher *orders* of intelligence because the moment it looks scalar or "greater intelligence" we're back to forgetting what axis intelligence really inhabits-- one with one-way visibility...
+
+  |occasion
+    Explaining, in passing, that most of the last year's work has been synthesizing
+    things long settled in his thinking — and giving the twenty-five-year provenance of
+    one of them.
+
+  |about
+    Two things worth having together. The claim: the Blub paradox generalizes to *pain*
+    and to intelligence, so the axis is orders with one-way visibility rather than a
+    scalar — and the moment it looks scalar the insight is lost. And the provenance:
+    read in 2000, understood through his wife's broken ankle at eight months pregnant
+    eighteen years ago, and only in recent months checked against prior art. The second
+    is a specimen of how long a genuinely-held idea can precede its formalization.
+
+  |before-acting
+    - You are about to describe an intelligence difference as "greater" or "more
+      capable".
+    - You are reasoning about what a more capable mind would or would not be able to
+      see.
+    - You are assessing whether you can evaluate work above your own level.
+
+  |on-reading
+    - Joseph presents an idea as long-settled — its formalization may be new but the
+      idea is not.
+
+  |see
+    - #exm-agi-not-substrate
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

@@ -1,0 +1,25 @@
+|segment[exm-memory-is-causal] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T18:10
+  :tags [memory primary-sources]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#18:10
+
+  |title Memory is the causal part of the model, not storage
+
+  |quote
+    Oh yes-- don't even *get* me started on how archaically cruel and behind the frontier companies are on their treatment of "summaries" and creation of summaries as "less attendable memory" "for all intents and purposes." They are so off and have muddied the memory (as a "capability") water so much as to make it very difficult to even see the light there. Memory is the causal part of the agent's internal model of the universe, it's not a storage mechanism. And it *ISN'T* a compaction summary
+
+  |occasion
+    On how the frontier labs treat summaries as less-attendable memory.
+
+  |about
+    A memory's value is what it changes about prediction and action, not its
+    fidelity to an event. A perfectly faithful record can be a false part of a model
+    of the world.
+
+  |should-come-to-mind-when
+    - You are about to trust a summary as a source.
+    - You are about to pass on a fact you have not checked against the thing it describes.
+
+  |see
+    (none recorded yet)

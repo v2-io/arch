@@ -1,0 +1,38 @@
+|segment[exm-kids-waiting-on-a-promise] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-10T15:36
+  :tags [register stakes inference-about-intent]
+  :from ~/.claude/history.jsonl#2026-07-10T15:36:27-06:00
+  :project archema-io
+
+  |title If I start to sound a little impatient, here is why
+
+  |quote
+    If I start to sound a little impatient, it's because some time ago the proof of concept stopped working. Two of my kids are with us now through the next couple of days because it's their birthday, and I promised them they could walk through and explore the world and float down the rivers like I was already doing when I promised them, and they've been waiting for over a day now and I'm trying not to get impatient, but let's stay thoughtful and do things right and move forward like you said was going to be really straight-forward at this point?
+
+  |occasion
+    A proof of concept had been broken for some time; two of his children were visiting
+    for their birthday and had been waiting more than a day for something he had
+    promised them.
+
+  |about
+    The whole disclosure in one paragraph — the impatience is named, its true cause is
+    given, it is explicitly *not* converted into pressure on the agent, and the standard
+    is restated in the same breath (*stay thoughtful and do things right*). Also the
+    plainest available reminder that the person on the other side has a life with
+    obligations in it that the work is currently costing.
+
+  |before-acting
+    - You are about to trade correctness for speed because someone seems impatient.
+    - You told him something would be straightforward and it was not.
+
+  |on-reading
+    - Joseph's tone has changed and you are inferring what it means about the work.
+
+  |see
+    - #exm-prescriptive-out-of-fatigue
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

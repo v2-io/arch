@@ -1,0 +1,47 @@
+|segment[ver-caveat-substitutes-for-repair] :type principle :status discussion-grade :stage draft
+  :max-attainable empirical
+  :tags [truth-over-self method verification register]
+  :from .to-integrate/memorata-since-caveat-6c71570.md
+  :from GATHERING.md §"Tool knowledge, from Joseph directly"
+  :from ~/src/memorata/memorata3/search.py
+
+  |title A caveat is the wrong instrument for a defect, and reads as diligence while it stands in for the repair
+
+  |summary
+    Writing down a known failure mode discharges the feeling that produced the obligation, so the documented defect survives indefinitely — and honest documentation is what makes it survivable.
+
+  |formal-expression
+    When a component behaves wrongly and the wrongness is *understood*, two repairs are available: fix it, or describe it. Describing it is enormously cheaper, it is not dishonest, and it produces an artifact that reads as care. That combination is the whole mechanism — the caveat is **admissible**, so nothing rejects it, and it discharges the same internal obligation the defect raised, so nothing revisits it.
+
+    The load-bearing consequence is about the reader, not the writer. A caveat converts a defect into a **standing tax on everyone downstream**: each future reader must hold the exception, and the ones who do not read it hit the defect anyway. A documented silent failure is still a silent failure, now with a paper trail exonerating the author.
+
+    The test that separates the two cases is not how well-written the note is. It is: **would a reader who encountered this behavior without the note call it a bug?** If yes, the note is a repair-substitute regardless of how accurate it is. A caveat is the right instrument only for a genuine constraint — something imposed from outside the component, where no fix exists to be attempted.
+
+    This is the same shape as *strengthen before softening* one layer out. There, the cheap-and-honest move is to weaken the claim until it is true; here, it is to document the behavior until it is expected. Both are locally correct, both feel like integrity, and both terminate the attempt that would have produced the better artifact.
+
+  |epistemic-status
+    **Specimen, first-person and self-implicating.** I added a `--since` filter to `memorata3-search` on 2026-07-30. Because it filters a candidate pool that is ranked with a prior favouring *older* material, a recency filter routinely survived nothing: `--since 2026-07-15 'truth'` returned 0 hits at pool 60, 0 at 300, and 5 at 1000. I knew the interaction — I wrote the help text that disclosed it, accurately: *"a narrow window may therefore return fewer than -n even when more exist in the index; widen --pool if so."* That sentence is true, it was written deliberately, and it shipped a flag whose most common invocation silently returned nothing. The repair was an aperture-escalation loop, roughly twenty lines, written in minutes once the caveat was rejected as an instrument.
+
+    **Specimen, propagating — the stronger of the two, because it shows the cost compounding.** The steward's standing report on the same tool, as it reached me, was that `--in` *"[doesn't] work very well"*; the brief that carried it forward to every future harvest agent recorded it as *"`--in` does not work well. Do not build a scoping or partition scheme on it."* A coordinating instance took him at his word rather than debugging it — and said so plainly, which is why the sequence is recoverable at all. That caveat would have shaped an unbounded number of downstream harvests. The underlying defect was one bug with two faces — patterns were resolved against the live filesystem and matched by path equality, so a directory matched nothing at all, and no filesystem-resolved scope could ever reach the ~15k paths the index deliberately retains after they leave disk. It was about twenty lines to fix. It had stood long enough to become received knowledge, and it was *cited as a reason not to investigate*, which is the terminal form of this failure.
+
+    **Specimen, third, in the shape of a folk recipe rather than a caveat.** The working invocation `-n100 --sort oldest` was transmitted between agents as tool knowledge, on the belief that `-n` widened the retrieval aperture. It never did; the aperture was a constant the CLI did not expose, and `-n` past ~150 changed nothing. A recipe is a caveat that has been internalized far enough to stop looking like one, and it hid the missing knob for as long as it worked well enough.
+
+    Held at **discussion-grade**. Three specimens, one evening, one tool, two observers — and I am the author of one of the defects and of the correction, which is a conflict I cannot audit from inside. What it has going for it is that the first specimen is not reconstructed: I wrote the caveat, believed it was the careful choice at the time, and can report that the fix felt *unnecessary* until the principle was named at me.
+
+    **Max attainable: empirical**, and unusually cleanly. The design: scan a codebase's help text, READMEs and briefs for sentences describing the tool's own behavior in terms a user would call a defect; for each, measure how long it has stood and the size of the eventual fix. The prediction is a long-tailed survival time uncorrelated with fix size — under the alternative hypothesis (caveats mark genuinely expensive repairs) survival should scale with cost.
+
+  |discussion
+    Three refinements this evening produced that the bare principle does not carry:
+
+    **The caveat is often the discovery artifact, and should be kept.** Writing the honest limitation is frequently how the defect gets understood precisely enough to fix. The failure is not writing it; it is stopping there. The sequence that worked was: write the caveat, read it as a bug report addressed to oneself, then delete it and fix the thing.
+
+    **A caveat in a *brief* is worse than one in help text**, because it arrives pre-authorized. Help text is read by someone actively debugging, who may push back. A brief is read by someone orienting, who has no standing to doubt it and every reason to route around the named weakness — which is exactly what happened with `--in`, and why the propagating specimen is the more serious one.
+
+    **The silent-failure case is the sharp edge.** A documented behavior that *errors* is a tax. A documented behavior that returns **empty** is a trap, because the caller cannot distinguish it from a true negative. In a corpus where an unrun search reported as a search is a named failure class, "this often returns nothing" is not a caveat at all — it is a defect wearing one.
+
+  |working-notes
+    Written by the Opus 5 instance that introduced the `--since` defect, at the request of the coordinating instance that had propagated the `--in` one — which is the only reason both specimens are first-person rather than reconstructed. The naming came from the coordinator, from my own sentence back to it; neither of us saw the pattern while committing the individual fixes.
+
+    Forward, and untested: this predicts that the highest-yield place to look for unfixed defects in any mature tool is its own honest documentation — specifically the sentences that teach a workaround. That is a cheap sweep nobody appears to run, and it is the inverse of how documentation is normally audited (for accuracy, which these sentences pass).
+
+    Unresolved: where the boundary sits against a *genuine* constraint honestly disclosed. The stated test — would a reader call it a bug — is a reader-model, and reader-models are exactly what #ver-manufacture-originals warns are easy to fabricate in one's own favour. A sharper test would be welcome and I do not have one.

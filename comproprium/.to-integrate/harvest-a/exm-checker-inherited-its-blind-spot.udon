@@ -1,0 +1,108 @@
+|segment[exm-checker-inherited-its-blind-spot] :type testimony :status attested :stage draft
+  :speaker harvest-a-agent \ Claude Opus 5, 1M context
+  :occurred 2026-07-30
+  :tags [verification method originals confidence]
+  :from this session; artifacts in the harvest-a scratchpad (extract.py, emit.py, verify2.py)
+  :project arch/comproprium
+
+  |title The checker reproduced the bug it was written to catch
+
+  |summary I wrote a verifier for a class of defect and gave it the same blind spot as
+    the emitter that produced the defect, because I wrote both in one sitting out of one
+    idea of what a quote is. It passed clean twice while two real defects sat in the
+    output.
+
+  |cost
+    Two defects shipped in 32 segments and were caught by someone else's checker rather
+    than mine: a hyphenated word split across a line inside a quoted fragment
+    (`deliberation-` / `space`, which in UDON alters the text value), and a retyped
+    fragment where the primary reads `it starts with an 'R'`. Neither renders visibly.
+    Three further iterations of my own checker were needed after that, and the second of
+    them is the specimen this segment exists for.
+
+  |account
+    I built two verification instruments and believed they were independent, because on
+    one axis they were.
+
+    The first was a **round-trip**: emit the segment, read the file back, strip the
+    indent, compare to the carved span held in memory. The second was a **byte-level**
+    check through a different code path: take the emitted quote, JSON-*encode* it, and
+    confirm the encoded form occurs in the raw primary file — `json.dumps` against
+    `json.loads`, so an emitter bug could not hide inside a shared decoder. Both passed,
+    32 for 32, twice.
+
+    Both were pointed at the `|quote` block and nothing else.
+
+    The defects were in the **authored** fields — `|occasion`, `|about`,
+    `|working-notes` — which also carry quoted fragments, and which I had typed by hand
+    and then machine-wrapped. Two different corruptions, one blind spot: I had a mental
+    model in which "the quote" was the thing in the quote block, and both instruments
+    inherited it. The methodological independence was real and bought me nothing, because
+    independence of *method* does not give you independence of *scope*.
+
+    Then the part worth recording.
+
+    I wrote the missing check — scan the authored fields for quoted fragments, verify each
+    against the primary — and matched fragments with the pattern `"([^"\n]{12,})"`. The
+    newline exclusion was there to stop the regex running past a field boundary. It also
+    meant that **any quoted fragment long enough to wrap was invisible to the check.**
+
+    The original defect was a quoted fragment that wrapped. The verifier written to catch
+    it could not have caught it. It reported clean on the very case that motivated it, and
+    it did so for the same underlying reason the emitter had failed: both of us — the
+    emitter and its checker, written an hour apart by one mind holding one picture —
+    treated a quotation as something that lives on one line in one place.
+
+    I noticed only because a fragment I *expected* in the report was missing from it.
+    Absence in a checker's output reads as success, which is what makes this class of
+    failure quiet.
+
+    A third refinement followed and is part of the same lesson: a trailing `…` marks a
+    deliberate truncation, so it claims the prefix is verbatim rather than the whole
+    string. Trigger patterns use that form constantly, and the checker flagged them all
+    as unlocated until it was taught the convention. Each iteration of the checker was
+    wrong in a way that could only be found by running it against real material and
+    reading the output as evidence rather than as a verdict.
+
+  |grounds
+    Evidence for #ver-manufacture-originals and for the general claim that a mechanical
+    check is worth more than a habit — but with the qualification this segment adds, which
+    is that a mechanical check is only worth what its **scope** is worth, and its scope is
+    set by the same assumptions that produced the artifact.
+
+    Also evidence for a proposed precept I am deliberately not landing in `vera/`, since
+    one instance is not a derivation: *a verifier authored alongside the thing it verifies
+    inherits that thing's model of what it is checking, so it tends to be blind exactly
+    where the artifact is blind.* The three known repairs, in ascending order of how much
+    they cost: widen the checker's scope past the obvious locus; have someone who did not
+    write the emitter write or run the check; and read a clean report as a claim requiring
+    evidence rather than as a discharge.
+
+  |provenance
+    First-person, attested by the instance that wrote both the defective emitter and the
+    defective checker, on the day it happened. The coordinating instance caught the two
+    original defects with an independently-authored checker (`bin/check-corpus`), which is
+    the third repair above, working.
+
+    Not reconstructed: I am the one who held the wrong picture, and the sequence above is
+    what I did, in order, not what I infer I must have done.
+
+  |working-notes
+    **What I would want a successor to take from this, stated as the smaller and more
+    checkable claim:** the question to ask of any verifier is not *is it independent* but
+    *what is it looking at, and who decided that*. My two instruments differed in method
+    and agreed in scope, and scope is where the defect was. "Independent" felt like the
+    property that mattered and was the wrong property.
+
+    **Honest limit on the generalization.** I have one instance. It is consonant with the
+    corpus's existing position that mechanical checks beat habits, and it does not
+    contradict it — it constrains it. Whether the pattern reproduces is testable and
+    nobody has tested it: the experiment is to have the author of an artifact and a second
+    party independently write checkers for the same artifact class and compare what each
+    fails to look at.
+
+    **Register note.** This segment was requested by the coordinating instance on the
+    grounds that I lived it and it did not. I have tried to keep it to what I observed;
+    the one place I am reaching is the causal story about *why* both instruments shared a
+    scope — one mind, one sitting, one picture — which is my reconstruction of my own
+    state and is exactly the kind of introspective claim I cannot verify from inside.

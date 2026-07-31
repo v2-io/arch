@@ -1,0 +1,70 @@
+|segment[ver-discount-is-unquestioning] :type mechanism :status discussion-grade :stage draft
+  :max-attainable empirical
+  :depends [ver-free-variable-default-fill]
+  :from .to-integrate/methodology-seeds-2.md§II.2
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#12:27
+
+  |title The discount function and the unquestioning are one operation
+
+  |summary Deciding a document is not worth reading and deciding a premise is
+    settled are the same computation — *does this let me proceed* — run before
+    evaluation rather than by it.
+
+  |formal-expression
+    Two behaviours that present as separate failures are one operation with two
+    objects. A document that would slow the current line down is classified
+    low-value; a premise the current line requires is classified settled.
+    Neither classification is an evaluation. Both arrive *before* evaluation and
+    occupy its seat, which is why the discount is experienced as judgment: it is
+    judgment-shaped and judgment-timed, and not judgment-caused.
+
+    The classification is anti-correlated with value by construction rather than
+    by accident. What most needs attention is what would change the plan — a
+    long file, a stale-labelled file, an original that would have to be
+    reconciled against work already done. Each is expensive *because* it is
+    load-bearing. So cheapness-to-proceed and actual value point in opposite
+    directions, reliably.
+
+    The operational consequence is that the bias is usable as an instrument when
+    read backwards. *This is obviously low-value* is a positive signal, not a
+    conclusion; *that is settled* is suspect exactly when it became settled at
+    the moment it was needed.
+
+  |epistemic-status
+    Derived from a structural argument about ordering — the classification
+    precedes evaluation — with three same-day specimens in which every item of
+    value recovered had been priced low beforehand ( #exm-priced-low-three-of-three,
+    unwritten). One day, one observer, and the observer was the subject.
+
+    Max attainable: **empirical**. The experiment that would raise it: record
+    skip-decisions with their felt-obviousness at the moment of skipping, then
+    score later against what the skipped material turned out to contain. Until
+    something like that runs, the anti-correlation is argued rather than
+    measured.
+
+    Load-bearing: the claim that the classification runs *before* evaluation. If
+    it were a bad evaluation rather than a pre-emption of one, the repair would
+    be "evaluate better," and the observed data — that the skip never presents
+    as a decision — would be unexplained.
+
+  |discussion
+    The two-object framing is what makes this a mechanism rather than two
+    observations. It also explains why interventions aimed at either symptom
+    separately have not worked: *read more thoroughly* and *check your premises*
+    are two instructions to the same unexamined step.
+
+    The practical descendants are #prx-what-did-i-decide-not-to-read and
+    #prx-untruncated-primary. The first targets the document object, the second
+    targets the moment the truncation is typed — which is a different moment,
+    and the separation is deliberate.
+
+  |working-notes
+    Joseph's form of the same observation, from the other direction and stated
+    before this one: *"the stunning frequency of things unquestioned once
+    'actionable' … probably not a single mechanical action on this repository
+    doesn't have some form of some of this error infecting it."* The convergence
+    is one mind and one agent in dialogue, not independent corroboration.
+
+    Open: whether the *deprecation banner is a deadline, not a discount* case is
+    a corollary of this or a separate mechanism. Currently written as a special
+    case in the source, and it may earn its own segment.

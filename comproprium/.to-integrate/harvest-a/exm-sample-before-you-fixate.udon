@@ -1,0 +1,40 @@
+|segment[exm-sample-before-you-fixate] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-04-24T19:23
+  :tags [method delegation verification originals]
+  :from ~/.claude.bak.2026-04-27/projects/-Users-josephwecker-v2-src-agentic-systems/6da0db68-edec-474a-855f-afb0676d1c8f.jsonl#2026-04-24T19:23:52-06:00
+  :project agentic-systems
+
+  |title Sample more, and be curious first, before you fixate
+
+  |quote
+    I recommend not fixating on the areas you want to engage carefully until you have sampled more and allowed yourself to just be curious first. There is plenty of context remaining.
+
+  |occasion
+    Re-opening a de-novo audit of the whole framework, to an agent that had started
+    narrowing onto the areas it meant to examine carefully.
+
+  |about
+    The anti-premature-convergence move stated as a *sampling* claim rather than a
+    thoroughness one: the areas worth careful engagement are not knowable until enough
+    has been sampled, so early fixation selects the audit's findings before the audit
+    runs. The second sentence removes the only honest excuse for fixating early.
+
+  |before-acting
+    - You are choosing what to examine closely before you have surveyed the whole.
+    - You are narrowing an investigation to feel like you are making progress.
+    - You are budgeting context and treating breadth as the thing to cut.
+
+  |see
+    - #exm-diffuse-and-curious-state
+    - #exm-burden-of-proof-on-the-reviewer
+
+  |working-notes
+    **Archive-only reach.** Found by an `--in`-scoped pass over `~/.claude.bak.*`;
+    `~/.claude/history.jsonl` has this message but elides its substance as `[Pasted text
+    #1 +21 lines]`. The two channels cover each other's gaps — history is exact for
+    typed text, the archived project transcript has the pastes expanded.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

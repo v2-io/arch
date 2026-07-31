@@ -1,0 +1,47 @@
+|segment[exm-how-many-letters-until-the-learner-sees] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-01-17T14:11
+  :tags [method verification confidence pedagogy]
+  :from ~/.claude/history.jsonl#2026-01-17T14:11:58-07:00
+  :project cddf
+
+  |title How many letters in until the learner realizes what the teacher is saying
+
+  |quote
+    I've actually had conversations like this when teaching my children:
+
+    "And the answer is [what?]..." gesture for them to answer... they guess one wrongly, I respond "it starts with an 'R'"  they answer... "R...ailroad?"  me- "nope, R-H" -- "Oh, Rhythm!"  "right."
+
+    In other words, how many letters in until the learner realizes what the teacher is saying-- this is very relevant-- grammatical structures and stylistic choices will be picked up after one or two letters, whereas the real pivot points are ones that have to be uniquely spelled out before the learner realizes it.
+
+  |occasion
+    Working on a token-surprisal matcher, he explains what the metric should measure by
+    way of how he prompts his own children toward an answer — *"it starts with an 'R'"*,
+    *"R-H"*, *"Oh, Rhythm!"*
+
+  |about
+    A measurement idea and a teaching method that are the same idea: how much
+    disambiguation a learner needs before recognition fires is a direct read on where
+    the real content is. Grammar and style resolve after a letter or two and are
+    therefore nearly free; the genuine pivot points must be spelled out almost
+    completely. Useful well beyond the tool — it says which parts of any document a
+    reader is actually getting information from, and which they are merely confirming.
+
+  |before-acting
+    - You are deciding which parts of a document carry the real content.
+    - You are compressing something and need to know what is safe to drop.
+    - You are predicting what comes next in a text you are reading.
+    - You are teaching or briefing and choosing how much to spell out.
+
+  |see
+    - #exm-read-piece-by-piece-not-a-window
+
+  |working-notes
+    Also a specimen of how his methodology arrives: a domestic practice recognized as a
+    formal measure, with the formalization following the practice rather than generating
+    it. Compare the twenty-five-year provenance in
+    #exm-one-way-visibility-of-higher-orders.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

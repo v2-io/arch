@@ -1,0 +1,26 @@
+|segment[exm-penny-wise-pound-foolish] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T12:36
+  :tags [primary-sources discounting]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#12:36
+
+  |title Penny-wise, pound-foolish
+
+  |quote
+    Did you really save crucial tokens by not reading the last several lines of those commit messages? once again, penny-wise, pound-foolish.
+
+  |occasion
+    After four commit bodies had been truncated with `head -6`, and the truncated
+    remainder turned out to hold a corpus's design intent, a porting map, and two
+    undocumented format defects.
+
+  |about
+    The economy that was never computed. The tell is that the efficiency story
+    arrives afterward, when challenged.
+
+  |should-come-to-mind-when
+    - You are about to type `head -n`, `tail -n`, `--oneline`, `--stat`, or `wc -l` against a primary.
+    - You are about to read a summary of something you could read.
+
+  |see
+    #ver-discount-is-unquestioning

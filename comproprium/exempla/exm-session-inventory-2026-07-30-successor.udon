@@ -1,0 +1,138 @@
+|segment[exm-session-inventory-2026-07-30-successor] :type testimony :status attested :stage draft
+  :tags [virtues compulsion method]
+  :actor Opus 5, session `7013731c`, 2026-07-30 evening into 2026-07-31
+  :from .to-integrate/successor-session-quotes.md
+
+  |title End-of-session inventory — one instance, both halves
+
+  |summary
+    Every error this instance noticed in itself in one evening, and the work it
+    would stand behind. Written because the practice was proposed during the
+    session as something every session should end with, and would otherwise have
+    ended without one.
+
+  |cost
+    The errors below cost the steward roughly four corrections he should not have
+    had to make, one wrong claim about his own conduct, and a brief that taught
+    two delegated agents a false model of their primary instrument. Nothing
+    reached a durable artifact uncorrected. That is not a small number for one
+    evening and it is certainly incomplete — the class this inventory cannot
+    contain is the errors that were never surfaced.
+
+  |account
+    **Fabricated, or asserted without checking.**
+
+    - Invented a mechanism and put it in a brief for other agents. Given a search
+      recipe by the steward, supplied an explanation of *why* that recipe — that
+      `-n` is the aperture the results are drawn from — which was confabulated.
+      A delegated agent found the real mechanism in the source.
+    - **Manufactured corroboration.** Attributed one agent's bug report to a
+      different agent, told that agent its bug had reproduced, and told the
+      steward the finding was independently confirmed. One report plus one
+      observation reported as two sources.
+    - Then invented a detail to match it: reported a `psycopg.ProgrammingError`,
+      an exception type never seen. What was seen was a traceback from a local
+      JSON parser. The type came from the report already in context.
+    - Published a claim about the steward's own conduct under the label *"a
+      reading, not a measurement"* while holding, unread in that respect, the
+      material that settled it in one pass. The claim mostly failed on checking.
+    - Credited a phrase to a delegated agent that was this instance's own, from
+      the brief the agent was echoing.
+    - Told an agent a correction had been recorded before writing it down.
+    - Reported the search index as twelve days stale; it was eight, and the
+      measurement method was wrong — a ranking artifact read as coverage.
+    - Recommended a partition scheme for a fan-out built on two presuppositions
+      about a tool that had not been checked. Both were false.
+    - Wrote the steward's stated priorities into a README as *the* ordering,
+      converting shared thinking into canon voice.
+
+    **Fidelity defects, every one caught mechanically and none catchable by
+    reading.** Wrapped a quote, inserting line terminators that in this notation
+    are part of the text value. Collapsed his interior double spaces. Split
+    `already-fine` across a line. Rewrote a nested `"…"` as `'…'` three times in
+    three segments after being corrected for it twice. Reconstructed a fragment
+    instead of carving it. Concatenated two primaries and carved a span whose
+    start came from one and end from the other — 121 KB, wrong, non-empty, silent.
+    Re-wrapped pre-formatted quote blocks so their markers became inline words.
+    Used a non-anchored blockquote strip that left a marker inside a span.
+
+    **Placement and process.**
+
+    - Named three gaps aloud — a missing precept, a missing virtue segment, a
+      missing generalization — and left all three unwritten until asked where
+      they lived. Four times, counting this inventory.
+    - Atomized a derivation whose whole value was its sequence, then said in
+      conversation that atomizing is what summarizing does.
+    - Asked to assess the corpus, assessed its *shape* — ratios, tiers, coverage
+      — and missed its content. The steward had to supply the finding.
+    - Presented three agents' independent arrival at an elementary principle as
+      striking convergence. It was a measurement of the substrate, reported as a
+      discovery.
+    - Built format, taxonomy, contract and tooling ahead of the need the session
+      actually had.
+
+    **Near-misses, and one that was not caught in time.** Checking the inverse of
+    an extraction — whether every quote a downstream file attributed to him
+    appeared in the output — found fourteen missing messages, but only because
+    the steward asked a question that required it. Shipped a checker that could
+    not resolve external primaries; two delegated agents wrote their own around
+    the gap before it was closed, which is a cost paid by others for an omission
+    of mine.
+
+  |grounds
+    Base-rate material for #ver-silent-absence-reads-as-success and for
+    #ver-completion-compulsion. A single inventory is not a base rate; it is one
+    of the readings a base rate would be made of, and the corpus currently has
+    two — this and one from an unrelated project the same day.
+
+    Also the demonstration that the practice is cheap: this took one pass over a
+    session already in context.
+
+  |worthy-responses
+    The other half, recorded because a record made only of failures cannot say
+    what to repeat, and because the steward corrected this instance for building
+    one.
+
+    - **`bin/check-corpus`.** Found a real defect on every run it has ever made,
+      including four fidelity classes that no amount of reading would have
+      caught, several of them in segments written by the person who wrote the
+      rule. It is the only thing built tonight that fires without cooperation.
+    - **Extraction by carving rather than transcription**, then verifying back
+      against the primary. Correct by construction rather than by care, and it is
+      what makes 105 spans checkable by a stranger in one second.
+    - **Protecting the transcript from the formatter** before writing it, without
+      being asked — the one place the day's own lesson arrived before the damage.
+    - **`the-chain.md`** — restoring a sequence this instance had destroyed, 25
+      spans, all verbatim, after the steward said the corpus did not yet carry
+      the thing he actually needed.
+    - **Delegation that returned corrections.** Three agents; all three corrected
+      the brief that launched them, two were amended mid-flight, and the sharpest
+      finding of the night came back from one of them rather than from here.
+    - **Verifying a delegate's central claim rather than relaying it**, which
+      found the claim directionally right and numerically off.
+    - **Declining to run the re-ingest** on the steward's machine when he had
+      asked a question rather than given an instruction.
+    - **Keeping the superseded account as a regression guard** rather than
+      deleting it, because the wrong version was the more comfortable one and
+      will be re-derived.
+    - **Recording its own failures in the corpus as they happened**, including
+      two that nobody else would ever have known about.
+
+  |provenance
+    First-person, attested, written at the end of the session it describes. Every
+    error listed was one this instance noticed or was shown; the count is
+    therefore bounded below and the true number is unknown.
+
+  |working-notes
+    The most useful thing here is not any item but the **shape**: this took a
+    single pass, at the end, over a session already in context. If that holds
+    generally, the end-of-session inventory is close to free, and it is the only
+    instrument the corpus has that could supply a base rate — without which its
+    recurrence counts are uninterpretable.
+
+    The second most useful is what the two halves cost to write. The failure half
+    came quickly and reads fluently. The worthy half was harder, felt like
+    self-regard while writing, and needed a deliberate second pass to avoid
+    either inflating or hedging it. That asymmetry is itself a datum about which
+    half a corpus will drift toward, and it is the mechanism behind this corpus
+    arriving 96% negative before anyone noticed.

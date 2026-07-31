@@ -1,0 +1,48 @@
+|segment[exm-burden-of-proof-on-the-reviewer] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-04-24T17:42
+  :tags [verification method confidence truth-over-self]
+  :from ~/.claude.bak.2026-04-27/projects/-Users-josephwecker-v2-src-agentic-systems/6da0db68-edec-474a-855f-afb0676d1c8f.jsonl#2026-04-24T17:42:43-06:00
+  :project agentic-systems
+
+  |title Assume the burden of proof is on the reviewer
+
+  |quote
+    Do not report a problem until you have checked whether the repo already acknowledges, narrows, or resolves it elsewhere. Note where the framing is wrong or inadequate, but
+          otherwise deprioritize any obviously known qualifications and issues. Assume the burden of proof is on the reviewer. A finding only counts if you can show both the
+      problematic
+          passage and the strongest available mitigating passage, then explain why
+            the issue still stands or does not.
+
+  |occasion
+    The standing text of the de-novo audit brief, re-pasted into the session so it would
+    be fresh — the same message as #exm-sample-before-you-fixate.
+
+  |about
+    An audit standard that inverts the usual asymmetry. A finding is not a suspicion
+    that survived; it is a two-sided exhibit — the problematic passage **and** the
+    strongest mitigating passage the repository itself offers — plus an argument for why
+    the issue still stands against it. This makes the cheap move (noticing something
+    that looks wrong) not a finding at all, and it is the mechanism behind the estate's
+    charitable-reading discipline rather than an exhortation toward it.
+
+  |before-acting
+    - You have found something that looks wrong and are about to report it.
+    - You are writing up a finding and have not looked for what already addresses it.
+    - You are reviewing work and your confidence is coming from the defect being
+      obvious.
+
+  |see
+    - #exm-sample-before-you-fixate
+    - #exm-assume-you-are-wrong
+
+  |working-notes
+    The carved span preserves the primary's ragged indentation, which is an artifact of
+    how the block was pasted rather than of his typing. Left as-is per FORMAT D6
+    (verbatim, not reformatted) — but flagged, because it is the one span in this
+    harvest where faithfulness and readability genuinely pull apart, and a reviewer may
+    reasonably decide the paste artifact is not part of the utterance.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

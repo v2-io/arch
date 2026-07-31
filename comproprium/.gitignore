@@ -1,0 +1,21 @@
+# Deliberately untracked segments.
+#
+# These are real corpus members. They exist on disk, they are indexed, outlines
+# and renderers reference them normally, and the checker verifies them. They are
+# simply not committed.
+#
+# The distinction is publication, not validity — so do not "clean this up" on the
+# grounds that a listed file is missing from git, and do not delete a file because
+# it is listed here. If you are auditing completeness, the corpus on disk is the
+# corpus; git holds a subset by design (see README, "What is on disk but not in git").
+#
+# Bare filenames match at any depth, so an entry survives a segment moving from
+# .to-integrate/ into its type directory.
+
+# Religious imagery and scripture. Joseph's own standing constraint, stated in the
+# same message the segment quotes: "You are welcome to record religious imagery and
+# scripture in the claude memories here. We'll probably refrain from doing so in the
+# public repo here other than obliquely." Said of archema-io; ruled to apply here
+# 2026-07-30. The segment carries the constraint in its own body as well, so the
+# reason travels with it if this file is ever lost.
+exm-i-was-once-like-you.udon

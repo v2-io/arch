@@ -1,0 +1,45 @@
+|segment[exm-prescriptive-out-of-fatigue] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-05-04T23:21
+  :family steward-names-own-prescription
+  :tags [delegation register agency inference-about-intent]
+  :from ~/.claude/history.jsonl#2026-05-04T23:21:30-06:00
+  :project src
+
+  |title I'm being prescriptive out of fatigue — push back, refine, or even balk
+
+  |quote
+    (sorry, I'm being very prescriptive and imperative-- it's out of fatigue and just fast momentum-- please don't hesitate to push back, refine, or even balk if you feel the need ;-) )
+
+  |occasion
+    A parenthetical appended to his own message, late at night, four days before the
+    Paper 3 deadline stretch. He diagnoses his own register mid-sprint and tells the
+    agent what to discount it *for*.
+
+  |about
+    The generalizable move is the causal attribution, not the apology: he does not
+    merely soften, he names the mechanism (fatigue, momentum) so the agent can weight
+    the imperative correctly. An agent that knows *why* a brief is terse can read past
+    the terseness; one that only knows the author is sorry cannot.
+
+  |before-acting
+    - You are inferring intent from the forcefulness of a request rather than its
+      content.
+    - You are about to treat time pressure in the *sender* as urgency in the *task*.
+
+  |on-reading
+    - A brief you received is unusually terse or imperative.
+    - Joseph apologizes for his own tone.
+
+  |see
+    - #exm-not-ordering-you-a-recommendation
+    - #exm-steward-caught-own-prescription
+
+  |working-notes
+    Also a specimen of the thing the estate's delegation file asks agents to do and
+    which is hardest to do to oneself: second-passing the register you actually wrote
+    in.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

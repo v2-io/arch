@@ -1,0 +1,27 @@
+|segment[exm-not-a-single-mechanical-action] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T12:47
+  :tags [register delegation discounting]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#12:47
+
+  |title Co-extensive with the action space
+
+  |quote
+    BTW-- I didn't go looking for this example-- I just wanted to know if you were even going to *read* what had just been deliberately placed as the "handoff document, with proper note about its life-expectancy" (as my instructions seemed so obvious to me that I didn't double-check the sonnet agent's execution). The fact that it literally shows a combination of all of the error modes alluded to earlier is due to: stunning frequency. As in *ubiquitous* as in-- probably not a single mechanical action on this repository doesn't have some form of some of this error infecting it.
+
+  |occasion
+    After a handoff document he had dictated turned out to contain every error mode
+    discussed that morning — and he had placed it there to see whether the agent
+    would read it at all.
+
+  |about
+    A structural claim rather than a frequency one: every action has unspecified
+    degrees of freedom, and the mechanism is free-variable-to-trained-default. Most
+    of the mass of any action is fill.
+
+  |should-come-to-mind-when
+    - You are about to call an artifact fine because nothing looks wrong with it.
+    - You are executing an instruction that left the wording to you.
+
+  |see
+    #ver-free-variable-default-fill

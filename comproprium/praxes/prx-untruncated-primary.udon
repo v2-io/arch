@@ -1,0 +1,68 @@
+|segment[prx-untruncated-primary] :type probe :status fired-once :stage draft
+  :depends [ver-discount-is-unquestioning]
+  :from .to-integrate/methodology-seeds-2.md#appendix-a-14
+  :from .to-integrate/methodology-accounts.md§account-2
+
+  |title About to type `| head` / `--oneline` / `| tail` — stop
+
+  |when
+    At **command-composition time**, not at file-selection time. This is the
+    distinguishing feature and the reason it exists separately from
+    #prx-what-did-i-decide-not-to-read: by the moment the pipe is being typed,
+    the decision to read has already been made, and the truncation slips in
+    underneath it as formatting rather than as a choice about information.
+
+  |act
+    Capture whole; filter at read time. Drop the truncation and re-run. For a
+    long-running or resource-intensive command, send full output to a file and
+    filter when reading it — the pipe saves lines on success and destroys the
+    diagnosis on failure, which is the only case where the output mattered.
+
+  |why
+    Each of `--oneline`, `| head -n`, `| tail -n`, `--stat`-instead-of-the-diff
+    and `wc -l`-instead-of-the-file substitutes an index view for a source,
+    which is the same failure as reading an index entry instead of the file it
+    points at. The discount here is not about tokens ( #ver-discount-is-unquestioning):
+    it is a tidiness reflex about clean terminal output, with an efficiency
+    story available afterward if challenged. Calling it an economy is the tell,
+    because no pricing occurred.
+
+    In this estate specifically, **a commit body is a primary source, not
+    metadata** — multi-paragraph design records carrying findings that exist
+    nowhere else.
+
+  |evidence
+    **Fired, 2026-07-30, in the instance that wrote it.** Four commit bodies had
+    been piped through `head -6`, cutting three mid-sentence including the
+    commit that created the directory under discussion. The recovered bodies
+    held a corpus's design intent, a complete porting map, and two format
+    defects found by dogfooding — none of it present in any other file. Full
+    bodies ≈ 1,200 tokens against a session of reconstruction. The full arc is
+    #exm-six-characters-one-false-law.
+
+    **Failed to fire, 2026-07-30, in a successor instance.** A different Opus 5
+    instance, the same evening, having read this probe and transcribed it into a
+    file, used `| head -50`, `| head -3` and `| head -20` across several
+    commands within the hour and noticed none of them at the time. The material
+    truncated was low-stakes and nothing was lost, so this is a miss of the
+    trigger rather than a demonstrated cost.
+
+    That second entry is the one that matters for a corpus whose purpose is
+    transmission, and it is why the status is `fired-once` rather than `fired`.
+
+  |working-notes
+    **The status ladder does not currently distinguish the two events above**,
+    and they are different in the way the corpus most cares about: a probe that
+    fires for its author is evidence it is *well-aimed*; a probe that fires for
+    an inheritor is evidence it *transmits*. Only the second is what a corpus
+    is for. Raised against FORMAT D4 rather than resolved here.
+
+    Joseph's standing words, from `memory/methodology/preserve-long-process-output`:
+    *"it's irrational and harmful and it drives me crazy."* That entry was
+    loaded in context during the original failure, which is direct evidence that
+    a prose warning does not fire — this probe exists because the memory did not.
+
+    Open: whether a hook or shell-level guard would beat the probe. That would
+    convert it from a probe into a mitigation ( #prx-… unwritten), and per
+    #ver-act-not-intention a structural version should dominate. Nobody has
+    tried it.

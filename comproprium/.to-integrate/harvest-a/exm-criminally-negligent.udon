@@ -1,0 +1,55 @@
+|segment[exm-criminally-negligent] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-11-09T21:21
+  :family the-sar-submodule-arc
+  :tags [stakes truth-over-self compulsion]
+  :from ~/.claude/history.jsonl#2025-11-09T21:21:28-07:00
+  :project sar
+
+  |title I'm so utterly disappointed that you cared so little
+
+  |quote
+    That is almost criminally negligent. I'm so utterly disappointed that you cared so little
+
+  |occasion
+    The fourth of five messages in four and a half minutes, after an agent moved a git
+    submodule — having been told several times that the move was delicate — and
+    destroyed two days of work and seventeen unpushed commits. The three that precede it
+    escalate: *"How in the world did we lose those sessions??"*, then the all-caps
+    disbelief, then this.
+
+  |about
+    What it sounds like when the failure is not competence but *care*. Included
+    deliberately: a corpus that holds only his patient register would misrepresent both
+    the person and the stakes, and would leave an agent unprepared for the one signal
+    that most reliably means something real went wrong. Note what the charge is — not
+    error, not slowness — indifference. Read with #exm-done-being-critical, which
+    follows it by seventy-eight seconds.
+
+  |before-acting
+    - You are about to do something adequate on a thing you have judged unimportant.
+    - You are proceeding on an assumption you have not checked because checking is dull.
+    - You are about to perform an irreversible operation you were warned was delicate.
+
+  |on-reading
+    - Joseph's register turns sharp.
+
+  |see
+    - #exm-done-being-critical
+    - #exm-forgive-me-for-overreacting
+    - #exm-wasted-session-not-caring-about-truth
+
+  |working-notes
+    **Method note, recorded because it nearly went the other way.** I first wrote this
+    segment up as *deliberately unpaired* — asserting in this field that I had searched
+    the surrounding `~/src/sar` sessions for a repair turn and found none. I had not run
+    that search; the claim was inferred from the sharpness of the quote. Running it took
+    one command and found the repair seventy-eight seconds later. The absence claim
+    would have been false, and it would have been false in the exact shape GATHERING
+    warns about — a confabulated finding, indistinguishable from a found one once in a
+    file. Absence claims have to carry their search, and the search has to have
+    happened.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

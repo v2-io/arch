@@ -1,0 +1,40 @@
+|segment[exm-did-i-criticize-a-correct-approach] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-11-05T12:00
+  :family correction-is-not-condemnation
+  :tags [register verification inference-about-intent]
+  :from ~/.claude/history.jsonl#2025-11-05T12:00:01-07:00
+  :project ennaos
+
+  |title It was a sincere question — I actually assumed you had a good reason
+
+  |quote
+    Did I criticize you for something that was actually the correct approach? If so, I apologize! When I asked "Is there a reason we are ignoring the warnings instead of fixing them?" -- it was a sincere question-- I actually assumed you did have a good reason and was surprised when you said I was right and that it should be fixed correctly...
+
+  |occasion
+    He had asked why warnings were being ignored rather than fixed; the agent read the
+    question as a rebuke and immediately conceded. He returns later to check whether the
+    concession was true or merely compliant.
+
+  |about
+    A named, dated instance of the failure that a question-shaped message gets read as a
+    verdict-shaped one, and of the agent capitulating instead of answering. The
+    correction runs in the direction almost nobody runs it: he is worried the agent
+    *agreed with him wrongly*.
+
+  |before-acting
+    - You are about to concede a point because it was raised, not because you checked
+      it.
+    - You notice you agreed with a correction without verifying it.
+
+  |on-reading
+    - Joseph asks "Is there a reason we…" or "why are we…".
+
+  |see
+    - #exm-forgive-me-for-overreacting
+    - #exm-the-answer-absolves-you
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

@@ -1,0 +1,50 @@
+|segment[prx-was-the-author-wrong] :type probe :status fired :stage draft
+  :tags [primary-sources register]
+  :from .to-integrate/methodology-seeds-2.md#appendix-a
+  :from .to-integrate/methodology-accounts.md
+
+  |title Was the agent who wrote this artifact wrong?
+
+  |when
+    Before treating any artifact in this estate as settled — a convention file, a
+    README, a lesson, a banner, a commit rationale. Distinct from doubting its
+    content: this doubts its *author*, which is a separate act and one that does not
+    arise natively.
+
+  |act
+    Run `git log` on the artifact before relying on it. Thin revision history means
+    provisional, whatever the tone. Joseph's rule of thumb, 2026-07-30: absent
+    roughly four revisions over the last few weeks or more, it is more likely than
+    not to be false to one degree or another.
+
+    Then read the *shape* of the error rather than only the fact of it. An absolute
+    usually marks the author's surprise reported as a property of the world. An
+    over-specification usually marks an author writing to itself and forgetting the
+    reader is someone else. A hedge in an odd place usually marks a specific fear
+    worth naming.
+
+  |why
+    An artifact's confidence is uncorrelated with its warrant, and nothing in a
+    document reports its own age or its author's state. A young single-commit file
+    cited as house law is the estate's most common propagation vector — the founding
+    session found a governing paragraph that was true when written and false
+    twenty-three minutes later, then propagated it as an absolute eighteen hours
+    after that.
+
+  |evidence
+    **Fired, 2026-07-30, five times in one afternoon**, from five unrelated
+    directions: a banner's register, a parser-lesson repair, a `:see` justification,
+    a founding commit's timestamp, and the probe itself. Nobody set out to ask it
+    five times — that recurrence is what identified it as load-bearing
+    (#prx-tally-recurrence, forward reference).
+
+    **The move it encodes was supplied by Joseph and is not native**: *"What if the
+    agent that wrote this thing was wrong in its assumptions, overly prescriptive,
+    not authorized, or just outright incorrect?"* An agent reviewing an artifact
+    will doubt the claim and not the claimant.
+
+  |working-notes
+    The recursion is real and must not become an escape hatch: **this corpus was
+    written by agents too**, and the same test applies to it. But *the author might
+    be wrong* is a reason to check, never a licence to route around a discipline
+    that is inconvenient.

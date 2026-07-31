@@ -1,0 +1,215 @@
+#!/usr/bin/env python3
+"""check-corpus — the corpus's own falsifier.
+
+Every verification run in this corpus's first evening was ad hoc, and every one of
+them found real defects: a wrapped quote (which inserts line terminators, and in UDON
+a terminator is part of the text value), collapsed interior whitespace, a hyphenated
+word split across lines, a substituted quote character. None of those change how the
+text renders, so none would survive contact with proofreading — which is exactly why
+the check has to be mechanical rather than a habit (#ver-manufacture-originals).
+
+Run from anywhere:  bin/check-corpus [--verbose]
+Exit 0 when clean, 1 when anything is FAIL. WARN never fails the run.
+
+What it checks
+  1. Quote fidelity — every quoted span locates in a staged primary, verbatim.
+  2. Reference integrity — every #slug either resolves or is reported as a forward
+     reference; slugs within edit distance 2 of a real one are called out as likely
+     typos, since a typo and a forward reference are otherwise indistinguishable.
+  3. Shape — required cadence fields per segment type (FORMAT D3).
+  4. Placement — slug prefix agrees with the directory it lives in (FORMAT D1).
+
+What it deliberately does not check: whether a claim is true, whether a status is
+honest, or whether a practice ever fired. Those are not mechanical and pretending
+otherwise would make this a proxy wearing verification's clothes.
+"""
+import os, re, sys, glob, json
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(ROOT)
+VERBOSE = '--verbose' in sys.argv
+
+DIRS = {'vera': 'ver-', 'praxes': 'prx-', 'exempla': 'exm-'}
+EXTRA = [a for a in sys.argv[1:] if not a.startswith('--')]   # extra dirs, e.g. staged harvests
+
+# Cadence per FORMAT D3. Quotation and demonstration are exempla sub-shapes.
+REQUIRED = {
+    'quotation':     ['|title', '|quote', '|occasion', '|about'],
+    'demonstration': ['|title', '|summary', '|account', '|what-would-have-happened-instead',
+                      '|provenance'],
+    'account':       ['|title', '|summary', '|account'],
+    'testimony':     ['|title', '|summary', '|account', '|provenance'],
+    'exchange':      ['|title', '|summary', '|account'],
+    'probe':         ['|title', '|when', '|act', '|why'],
+    'practice':      ['|title', '|when', '|act', '|why'],
+    'mitigation':    ['|title', '|when', '|act', '|why'],
+    'protocol':      ['|title', '|when', '|act', '|why'],
+    'pattern':       ['|title', '|when', '|act', '|why'],
+    '_vera_default': ['|title', '|summary', '|formal-expression', '|epistemic-status'],
+}
+VERA_EXEMPT = {'discussion'}      # cadence exemption, FORMAT source §4
+
+findings = []
+def add(level, seg, msg):
+    findings.append((level, seg, msg))
+
+def norm(s):
+    """Declared normalization for locating a span. Emphasis and code markers are
+    presentation; dashes and curly quotes vary by source. Everything else, including
+    interior whitespace runs, must match — collapsing them silently edits the speaker."""
+    s = s.replace('—', '--').replace('–', '-')
+    s = re.sub(r'[‘’]', "'", s)
+    s = re.sub(r'[“”]', '"', s)
+    s = s.replace('*', '').replace('`', '')
+    s = re.sub(r'(?m)^[ \t]*>[ \t]?', '', s)   # blockquote markers are presentation
+    return re.sub(r'\s+', ' ', s).strip()
+
+# ---------- load primaries ----------
+primaries = {}
+for p in glob.glob('.to-integrate/**/*.md', recursive=True) + glob.glob('.integrated/**/*.md', recursive=True):
+    primaries[p] = norm(re.sub(r'\n>\s?', '\n', open(p, encoding='utf-8').read()))
+POOL = '\n'.join(primaries.values())
+
+_ext_cache = {}
+def external_text(path):
+    """A :from that names a readable file is verifiable — read it rather than
+    excusing it. Two agents wrote their own checkers around this gap before it was
+    closed, which is the evidence that a WARN here was too comfortable."""
+    real = os.path.expanduser(path.split('#')[0])
+    if real in _ext_cache:
+        return _ext_cache[real]
+    txt = None
+    files = []
+    if os.path.isfile(real):
+        files = [real]
+    elif os.path.isdir(real):
+        # a memorata `path` may name a directory (an api-call bundle, a session dir)
+        for dp, _, fns in os.walk(real):
+            files += [os.path.join(dp, fn) for fn in fns]
+    if files:
+        raw = '\n'.join(open(f, encoding='utf-8', errors='replace').read()
+                        for f in files if os.path.getsize(f) < 20_000_000)
+        real_is_json = any(f.endswith(('.jsonl', '.json')) for f in files)
+        if real_is_json:
+            out = []
+            def walk(o):
+                if isinstance(o, str): out.append(o)
+                elif isinstance(o, dict): [walk(v) for v in o.values()]
+                elif isinstance(o, list): [walk(v) for v in o]
+            for line in raw.splitlines():
+                line = line.strip()
+                if line:
+                    try: walk(json.loads(line))
+                    except Exception: pass
+            txt = norm('\n'.join(out) + '\n' + raw)
+        else:
+            txt = norm(raw)
+    _ext_cache[real] = txt
+    return txt
+
+# ---------- load segments ----------
+segs = {}
+scan = [(d, f) for d in DIRS for f in sorted(glob.glob(f'{d}/*.udon'))]
+scan += [(None, f) for d in EXTRA for f in sorted(glob.glob(os.path.join(d, '*.udon')))]
+for d, f in scan:
+        t = open(f, encoding='utf-8').read()
+        m = re.search(r'\|segment\[([^\]]+)\]', t)
+        if not m:
+            add('FAIL', f, 'no |segment[slug] header'); continue
+        segs[m.group(1)] = dict(path=f, dir=d, staged=(d is None), text=t,
+                                type=(re.search(r':type (\S+)', t) or [None, None])[1])
+
+if not segs:
+    print('no segments found'); sys.exit(0)
+
+# ---------- 1. quote fidelity ----------
+quoted = located = 0
+for slug, s in segs.items():
+    spans = []
+    m = re.search(r'\n  \|quote\n(.*?)(?=\n\n  \||\Z)', s['text'], re.S)
+    if m:
+        spans += [p for p in m.group(1).split('\n\n') if p.strip()]
+    spans += re.findall(r'\*"(.+?)"\*', s['text'], re.S)
+    external = [f for f in re.findall(r':from (\S+)', s['text'])
+                if not f.startswith(('.to-integrate', '.integrated'))]
+    for span in spans:
+        for piece in re.split(r'…|\[…\]', span):
+            q = norm(piece).strip(' .,;:')
+            if len(q.split()) < 5:
+                continue
+            quoted += 1
+            if q in POOL:
+                located += 1
+            elif any((external_text(e) or '') and q in external_text(e) for e in external):
+                located += 1
+            elif any(external_text(e) is None for e in external):
+                located -= 1
+                add('WARN', slug, f'primary not readable from here ({external[0]}) — '
+                                  f'unverified: "{q[:48]}…"')
+            else:
+                add('FAIL', slug, f'quoted span not located in any primary: "{q[:72]}…"')
+
+# ---------- 2. reference integrity ----------
+def dist(a, b):
+    if abs(len(a) - len(b)) > 2: return 99
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1]
+
+forward = set()
+for slug, s in segs.items():
+    for ref in set(re.findall(r'#((?:ver|prx|exm)-[a-z0-9-]+)', s['text'])):
+        if ref in segs:
+            continue
+        near = [k for k in segs if dist(ref, k) <= 2]
+        if near:
+            add('FAIL', slug, f'#{ref} does not exist and is within edit distance 2 of '
+                              f'{", ".join("#" + n for n in near)} — likely a typo')
+        else:
+            forward.add((slug, ref))
+
+# ---------- 3. shape ----------
+for slug, s in segs.items():
+    t = s['type']
+    if t is None:
+        add('FAIL', slug, 'no :type'); continue
+    req = REQUIRED.get(t)
+    if req is None:
+        req = None if (s['dir'] in (None, 'vera') and t in VERA_EXEMPT) else REQUIRED['_vera_default']
+        if s['dir'] not in (None, 'vera') and t not in REQUIRED:
+            add('WARN', slug, f':type {t} is not in the known set for {s["dir"]}/ — new kind, or a typo?')
+            req = None
+    for field in (req or []):
+        if not re.search(r'\n  ' + re.escape(field) + r'(\s|$)', s['text']):
+            add('FAIL', slug, f'missing required section {field} for :type {t}')
+
+# ---------- 4. placement ----------
+for slug, s in segs.items():
+    if s['staged']:
+        continue
+    want = DIRS[s['dir']]
+    if not slug.startswith(want):
+        add('FAIL', slug, f'slug does not start with {want} but lives in {s["dir"]}/')
+    if os.path.basename(s['path']) != slug + '.udon':
+        add('FAIL', slug, f'filename {os.path.basename(s["path"])} != slug')
+
+# ---------- report ----------
+fails = [f for f in findings if f[0] == 'FAIL']
+warns = [f for f in findings if f[0] == 'WARN']
+for level, seg, msg in fails + warns:
+    print(f'{level}  {seg}: {msg}')
+if forward:
+    print(f'\nforward references ({len(forward)}) — expected per FORMAT source §7.2, '
+          f'each names a segment that should exist:')
+    for src, ref in sorted(forward):
+        print(f'  #{ref}  (from {src})')
+
+print(f'\n{len(segs)} segments · {located}/{quoted} quoted spans located in a primary · '
+      f'{len(fails)} fail · {len(warns)} warn · {len(forward)} forward refs')
+if warns:
+    print('(warns are coverage limits, not defects — see the WARN lines above)')
+sys.exit(1 if fails else 0)

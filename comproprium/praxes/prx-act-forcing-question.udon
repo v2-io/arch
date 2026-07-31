@@ -1,0 +1,73 @@
+|segment[prx-act-forcing-question] :type practice :status fired :stage draft
+  :depends [ver-act-not-intention]
+  :from .to-integrate/methodology-seeds-2.md§III
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#12:35
+
+  |title Correct with a question whose answer is not already in the agent's context
+
+  |summary The intervention that reliably produces an act is a question that
+    cannot be answered from what the agent already holds; force is orthogonal to
+    whether anything gets checked.
+
+  |when
+    Whenever a correction is being given to a working agent — mid-turn, in a
+    brief, or in a review. The actor here is the **steward or delegating
+    agent**, not the agent being corrected, which makes this the first practice
+    in this corpus whose subject is the one giving the instruction.
+
+  |act
+    Ask about a specific object the agent has not opened, rather than asserting
+    the principle it violated. *What might you be missing if you didn't read the
+    whole commit message?* rather than *always read commit messages*. Name a
+    file, a command, a diff, an artifact — something whose answer requires
+    leaving the current frame to go get it.
+
+    Where an assertion is warranted anyway, follow it with a request for an act.
+    The assertion establishes the stakes; the request produces the repair.
+
+  |why
+    An assertion, however forceful and however true, arrives in the same
+    register as the failure — generated, fluent, self-ratifying — and is
+    metabolised into prose. The agent produces an analysis of the failure, which
+    can be excellent, and which occupies the place where the repair goes. A
+    question with an external referent cannot be discharged that way: answering
+    it *is* the act.
+
+    This is the delivery-side companion to #ver-act-not-intention, which governs
+    how an agent writes its own reminders. Same law, other end of the channel.
+
+  |evidence
+    **Measured across one session, 2026-07-30, six instances against three
+    counter-instances.** The six each produced a tool call and, in four cases, a
+    finding that changed the session: *"What might you be missing if you didn't
+    even bother to read an entire commit message?"* (12:35) → the commit bodies
+    re-read, design intent recovered; the `spikes-README` questions (12:21–12:24)
+    → git checks run before reasoning; *"is this valid as per current 0.9.1?"*
+    (12:57) → the spec re-opened rather than answered from ten-minute-old
+    memory; *"go ahead and try it on a temporary udon file and see why"* (14:07)
+    → a test that falsified a claim the agent had already propagated into
+    another agent's brief; *"make sure the latest changes to fmt-md actually got
+    cargo released"* (14:10) → a week-stale installed binary found.
+
+    The three counter-instances are assertions, all correct, none of which
+    produced a check: the capitalised message at 11:07, *"ASSUME YOU ARE WRONG"*
+    at 12:51, and *"once again, penny-wise, pound-foolish"* at 12:36. The first
+    produced the day's best self-analysis and no repair; the repair came from
+    the smaller request eleven minutes later ( #exm-morning-rewrite).
+
+    Confounded, and stated: the questions were also *specific* where the
+    assertions were *general*, so specificity and act-forcing are not separated
+    by this sample. The proposed discriminator — external referent — is the
+    author's reading of why they differ, not a controlled result.
+
+  |working-notes
+    Forward: this predicts something checkable in the delegation corpus. Briefs
+    that ask a question about a named artifact should produce more divergence
+    from the brief's own assumptions than briefs that assert what to watch for.
+    `arch/AGENTIC-DELEGATION.md` records several instances that would bear on
+    it, gathered for a different purpose.
+
+    Tension worth holding rather than resolving: this practice is *not* an
+    argument for interrogative tone. A question with no external referent —
+    *have you considered whether this is right?* — has the assertion's failure
+    mode and the question's overhead.

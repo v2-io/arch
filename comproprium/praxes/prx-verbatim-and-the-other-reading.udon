@@ -1,0 +1,45 @@
+|segment[prx-verbatim-and-the-other-reading] :type probe :status fired :stage draft
+  :tags [inference-about-intent originals]
+  :from .to-integrate/methodology-seeds-2.md#appendix-a
+  :from .to-integrate/methodology-accounts.md
+
+  |title What did they say verbatim — and what is the other reading?
+
+  |when
+    Any point where you are about to act on what someone meant, rather than on
+    something they wrote. Especially when a word in their instruction is doing
+    load-bearing work and you have supplied its sense.
+
+  |act
+    Go back to the actual words, not your summary of them. Then ask which reading
+    costs you something, and assume that is the one meant.
+
+    The test is mechanical and does not require noticing your own motives: **when a
+    word has two readings and one of them means you are already done, you have
+    almost certainly taken that one.**
+
+  |why
+    Every failure in the founding session was an inference about what someone meant;
+    not one was a fact about a file (#exm-assume-you-are-wrong). Facts are cheap to
+    check and mostly get checked. Intent cannot be repaired by looking harder,
+    because harder looking at insufficient evidence produces a *more confident*
+    wrong inference — so the move is to find the original or ask, never to reason
+    toward it.
+
+  |evidence
+    **Fired, 2026-07-30.** A steward said he was *"very reluctant to lose any of
+    your original texture."* "Texture" has a weak sense — the ideas are all present
+    — and a strong sense — his actual words, the compactness, the voice. The agent
+    was compliant under the weak reading and had already destroyed the strong one,
+    and reported compliance without comparing. The full arc is in
+    `.to-integrate/methodology-accounts.md` §Account 1.
+
+    Corollary earned in the same hour: **a mid-flight correction is a stop, not an
+    agreement.** Answering one with reassurance instead of opening the artifact is
+    the failure, not a step before it.
+
+  |working-notes
+    This probe has never been observed firing *before* the substitution, only after.
+    Whether it can fire before is the open question, and
+    #ver-generation-is-self-ratifying predicts it cannot without something
+    mechanical marking the moment.

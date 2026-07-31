@@ -1,0 +1,29 @@
+|segment[exm-assume-you-are-wrong] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T12:51
+  :tags [truth-over-self verification inference-about-intent]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#12:51
+
+  |title "ASSUME YOU ARE WRONG"
+
+  |quote
+    I had a mentor who would often cite: "Don't assume. Assuming just makes an 'ass' out of 'u' and 'me'"   It isn't just a logogenic agent issue. It just happens to be a logogenic issue that models had matured past but have recently regressed to in the anthropic line. Fable does almost all of its work at high-level-intent correctness, often being able to infer intent beyond what my mind can even infer about its *own* intent (or before I realize it). Complete opposite intelligence and agency vector.
+> ASSUME YOU ARE WRONG.
+
+  |occasion
+    After a morning in which every failure had been an inference about what someone
+    meant rather than a fact about a file, and after being shown that a Sonnet agent
+    had inverted his instruction inside the one free variable it had.
+
+  |about
+    The standing default under everything else. Its job is to dispatch a check, not
+    to generate a caveat — doubt that produces hedging is the twin failure, not the
+    cure.
+
+  |should-come-to-mind-when
+    - You are about to state what someone meant, wanted, or intended.
+    - You are about to act on an inference rather than on something you read.
+    - A premise just became settled at the moment you needed it settled.
+
+  |see
+    #ver-discount-is-unquestioning

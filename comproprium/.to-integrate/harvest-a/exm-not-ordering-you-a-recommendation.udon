@@ -1,0 +1,50 @@
+|segment[exm-not-ordering-you-a-recommendation] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-09-07T16:29
+  :family steward-names-own-prescription
+  :tags [delegation agency inference-about-intent]
+  :from ~/src/_core/sapientia/cc-raw/7c6b313c-a1cb-48bf-a64b-8c64ebec6349.jsonl#2025-09-07T16:29:39-06:00
+  :project _core/sapientia
+
+  |title This isn't me ordering you, nor even "wanting you" to do something
+
+  |quote
+    I would like to clarify-- this isn't me ordering you nor even "wanting you" to do something-- this was meant as a recommendation-- one you don't need to follow if you have better ideas.
+
+  |occasion
+    Sent as an interruption — the transcript records `[Request interrupted by user for
+    tool use]` immediately before it. The agent had begun executing a suggestion as
+    though it were an instruction, and he stopped it mid-tool-call to say it wasn't one.
+
+  |about
+    The earliest located instance of the move that later becomes the delegation
+    discipline's *amend after launch*: noticing that a recommendation has landed as an
+    order, and spending a turn to reopen the space rather than letting the compliance
+    stand. Note the second clause — it is not merely permission to decline, it is a
+    stated expectation that the agent may have better ideas.
+
+  |before-acting
+    - You are executing something because it was mentioned, not because you judged it
+      right.
+    - You are about to comply with a suggestion you privately think is worse than an
+      alternative.
+
+  |on-reading
+    - Joseph phrases something as a recommendation and you are treating it as a work
+      order.
+
+  |see
+    - #exm-steward-caught-own-prescription
+    - #exm-prescriptive-out-of-fatigue
+
+  |working-notes
+    Family `steward-names-own-prescription` spans three eras: this (2025-09-07),
+    #exm-prescriptive-out-of-fatigue (2026-05-04), and
+    #exm-steward-caught-own-prescription (2026-07-30). The variation is the interesting
+    part — 2025 corrects the agent's reading, 2026-05 pre-emptively discounts his own
+    register and names the cause, 2026-07 catches it inside the sentence that commits
+    it.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

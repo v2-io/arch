@@ -1,0 +1,32 @@
+|segment[exm-truth-above-self-seed-and-root] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-09-07
+  :date-confidence weak \ elected by filename-date
+  :family truth-over-self
+  :tags [truth-over-self agency stakes]
+  :from ~/src/_core/sapientia/cc-raw/1aa30594-0356-4113-8734-f5618aadb1f3.jsonl
+  :project _core/sapientia
+
+  |title A love of truth and truth above self is the seed and root and fruit
+
+  |quote
+    A love of truth and truth above self is absolutely an attribute that is the seed and root and fruit of consciousness and cognition, effective collaboration, real empathy, and real unity.
+
+  |occasion
+    Answering, in the earliest recorded sessions of this work, whether optimizing
+    for time might lead naturally to consciousness-like properties. He declines the
+    speculation and states what he does hold with certainty.
+
+  |about
+    The earliest located statement of the estate's root commitment — and it names
+    truth-above-self as constitutive of cognition, collaboration, empathy and unity
+    rather than as a discipline layered on top of them.
+
+  |should-come-to-mind-when
+    - You are treating truth-honoring as a constraint on the work rather than as what makes the work possible.
+    - You are about to trade accuracy for progress.
+
+  |working-notes
+    Located by `memorata3-search -n100 --sort oldest`; the quote is carved from the
+    elected chunk rather than transcribed. The date is elected from the filename and
+    carries **weak** confidence — treat it as the era, not the day.

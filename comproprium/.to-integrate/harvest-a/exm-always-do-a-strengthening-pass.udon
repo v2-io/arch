@@ -1,0 +1,41 @@
+|segment[exm-always-do-a-strengthening-pass] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-05-05T20:16
+  :family strengthen-before-soften
+  :tags [method verification confidence]
+  :from ~/.claude/history.jsonl#2026-05-05T20:16:29-06:00
+  :project neurips2026
+
+  |title ALWAYS do a strengthening pass, however awkward or improbable or impossible, first
+
+  |quote
+    Be sure that there is language about how many times we've been pleasantly surprised by attempting very improbable strengthening spikes on even small things like "'iff' should be downgraded". The takeaway-- ALWAYS do a strenthening pass, however awkward or improbable or impossible, first.
+
+  |occasion
+    Dictating what should go into the delegation guidance, citing the evidence for it:
+    the number of times an improbable strengthening spike had paid off on something as
+    small as whether an *"iff"* should be downgraded.
+
+  |about
+    The rule stated with its warrant attached — repeated surprise on cases chosen
+    precisely because they looked too small to be worth it. The *however awkward or
+    improbable or impossible* is doing the work: the qualifier exists because the
+    estimate of futility is the thing that has been repeatedly wrong.
+
+  |before-acting
+    - You have found an overclaim and the obvious fix is to weaken the wording.
+    - You are estimating that an attempt will fail and using the estimate to skip it.
+    - The change is small enough that a strengthening attempt feels disproportionate.
+
+  |see
+    - #exm-keep-pushing-until-well-past-it
+
+  |working-notes
+    The same message proposes the *"extruding your action-space into their
+    deliberation-space. It's gross and unsanitary"* line for the delegation guidance —
+    this is the primary for that formulation's entry into the written discipline, and it
+    is here in the same breath as strengthen-first.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

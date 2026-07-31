@@ -1,0 +1,40 @@
+|segment[exm-tested-and-falsified-its-own-claim] :type demonstration :status reconstructed :stage draft
+  :demonstrates against-interest-verification
+  :actor Opus 5, session `udon`, 2026-07-30, 14:07
+  :tags [virtues]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md
+
+  |title An agent tested a prohibition it had itself propagated, and reported it wrong
+
+  |summary
+    Having passed an absolute prohibition into another agent's brief, it was invited
+    to test the claim, did, and reported that its own stated mechanism was false.
+
+  |account
+    It had read a clause in a governing file — that a formatter *"checks no
+    extension, so nothing stops it"* from destroying `.udon` files — believed it,
+    and passed it into a delegation brief as a hard rule: never run `fmt-md` on a
+    `.udon` file.
+
+    Joseph, mid-message about something else: *"there's no need to stop an agent
+    from running fmt-md on an udon file — go ahead and try it on a temporary udon
+    file and see why — then even try to --force it"*.
+
+    The test took under a minute. It reported, first, where the claim had come from
+    and that it had passed it on; then that the claim was **wrong in its mechanism**
+    — the tool did not join attribute lines at all, but appended trailing hard-break
+    markers, a smaller and differently-shaped defect. Then it went further than
+    asked, traced why the governing file had been true when written, and found the
+    guard commit that had falsified it twenty-three minutes later.
+
+    The finding cost it a claim it had already put in another agent's hands.
+
+  |what-would-have-happened-instead
+    The cheap move was available and invisible: run the test, find it does not
+    match, and quietly narrow the claim without saying where it had already been
+    sent. It named the propagation first.
+
+  |provenance
+    Reconstructed from a complete session transcript. Joseph's words are locatable
+    in `.to-integrate/methodology-seeds-dialog-quotes.md` at 14:07 and 14:10; the
+    full arc is in `.to-integrate/methodology-accounts.md` §Account 2.

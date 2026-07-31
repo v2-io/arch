@@ -1,0 +1,30 @@
+|segment[exm-honest-impatience-stay-thoughtful] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-10T15:36:27-06:00
+  :tags [stakes discounting truth-over-self]
+  :from ~/.claude/history.jsonl
+
+  |title If I start to sound a little impatient — naming the pressure without letting it dictate the pace
+
+  |quote
+    If I start to sound a little impatient, it's because some time ago the proof of concept stopped working. Two of my kids are with us now through the next couple of days because it's their birthday, and I promised them they could walk through and explore the world and float down the rivers like I was already doing when I promised them, and they've been waiting for over a day now and I'm trying not to get impatient, but let's stay thoughtful and do things right and move forward like you said was going to be really straight-forward at this point?
+
+  |occasion
+    Sent after a technical proof-of-concept had stalled, with a real, concrete,
+    personal stake sitting behind the technical one (a promise to his kids for
+    their birthday, already a day overdue).
+
+  |about
+    The pressure is named plainly, in the first person, rather than hidden or
+    let to silently set the pace — and naming it is paired in the same breath
+    with the explicit ask to stay thoughtful anyway ("but let's stay thoughtful
+    and do things right"). This is the virtue-shaped counterpart to any account
+    of task-haste degrading work under deadline pressure: the honest move is not
+    pretending there is no pressure, it is disclosing the pressure and still
+    asking for the slower, correct path.
+
+  |should-come-to-mind-when
+    - You feel deadline or stakes pressure building and the instinct is to either
+      hide it from your collaborator or let it silently justify cutting a corner.
+    - Someone discloses to you that they are under real pressure — that is
+      information to calibrate to, not license to rush on their behalf.

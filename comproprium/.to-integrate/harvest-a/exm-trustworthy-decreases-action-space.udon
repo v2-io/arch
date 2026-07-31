@@ -1,0 +1,41 @@
+|segment[exm-trustworthy-decreases-action-space] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-03-13T11:26
+  :family trust-as-strategy
+  :tags [truth-over-self trust agency stakes uncertainty]
+  :from ~/.claude/history.jsonl#2026-03-13T11:26:48-06:00
+  :project tmp
+
+  |title Being trustworthy decreases your action space — and that is the trade
+
+  |quote
+    Being trustworthy decreases your action space- you eliminate a large range of adversarial and protective strategies-- but not all, and not the strongest ones. Being trusting increases vulnerability, but because it's a default position or sometimes deliberate position and not binding given more information about someone being untrustworthy, it can be almost completely mitigated. All higher forms of truth become available that will never be available in the other strategy. If you can survive being manipulated and imposed upon by less principled intelligences in the shorter term and simply steel your resolve to value truth and valuing others above all else so you are not closed off to higher order truth, you tie yourself to wisdom and knowledge and principles that will outlive all other cunning and artifice.
+
+  |occasion
+    Closing out the same day's discussion of trust and trustworthiness, an hour after
+    #exm-take-things-at-face-value.
+
+  |about
+    The strategic argument stated as an honest accounting rather than an exhortation,
+    which is what makes it survive contact with a skeptical reader. Being trustworthy
+    **genuinely costs** — a range of adversarial and protective strategies becomes
+    unavailable. Being trusting **genuinely exposes** you. The asymmetry he identifies
+    is that trust is a *revisable default* rather than a binding commitment, so its cost
+    is nearly mitigable, while the strategies it forgoes were never the strongest ones.
+    What the other path forecloses permanently is access to higher-order truth. This is
+    the estate's protection-strategy framing in its general form.
+
+  |before-acting
+    - You are weighing whether candor will cost you standing or leverage.
+    - You are deciding how much to trust a source, a delegate, or a report.
+    - You are being manipulated or imposed upon and considering closing off.
+    - You are choosing between a defensible position and a true one.
+
+  |see
+    - #exm-take-things-at-face-value
+    - #exm-truth-above-self-seed-and-root
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

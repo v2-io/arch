@@ -1,0 +1,54 @@
+|segment[exm-declined-to-use-a-new-affordance] :type demonstration :status reconstructed :stage draft
+  :demonstrates restraint-with-a-new-permission
+  :actor An Opus 5 harvest agent, 2026-07-30
+  :tags [virtues]
+  :from .to-integrate/agent-reports-2026-07-30.md
+
+  |title Given permission to leave a field empty, an agent used it once and stopped
+
+  |summary
+    Handed a new licence — trigger fields may legitimately be empty — an agent
+    applied it to the one case that warranted it and explicitly refused to apply it
+    further to demonstrate the feature.
+
+  |cost
+    None incurred. The cost avoided was a corpus whose new convention had been
+    exercised for its own sake, with no way afterward to tell demonstration from
+    judgement.
+
+  |account
+It had written 36 segments against a field that forced every quotation to
+    carry a trigger. It reported the strain rather than absorbing it, and the
+    field was split, with a new licence attached: a trigger field may be empty,
+    and empty means *orientation material, not innermost-loop material*.
+
+    A new affordance invites display. What it did instead:
+
+    > *"No segment did — I only cut what was fabricated, and pruning further to
+    > demonstrate the new field would have been its own kind of dishonesty."*
+
+    One deletion, of the single trigger it judged fabricated — which it identified
+    by turning a phrase from its own brief back on its own output, calling it *"a
+    disposition wearing a trigger's clothes, which is exactly what your README
+    warns against"* — and then a stop, with the reason stated.
+
+  |what-would-have-happened-instead
+    A handful of newly-empty fields, each defensible individually, collectively
+    unreadable: nobody downstream could distinguish "this quote genuinely has no
+    moment" from "the author was exercising a new permission." The convention would
+    have been established and simultaneously made uninformative.
+
+  |grounds
+    Evidence for the general shape of #ver-free-variable-default-fill running the
+    other way: a newly opened slot is a free variable, and the default that fills it
+    is *use the new thing*.
+
+  |provenance
+    Reconstructed by the instance that coordinated these agents, on the evening of
+    2026-07-30. Quoted spans are carved from the staged agent reports; the reports
+    themselves are transcribed-by-recipient rather than machine-extracted, which is
+    a weaker channel than the session transcripts beside them.
+
+  |working-notes
+    Unprompted. No part of the licence warned against over-application, and the
+    coordinating instance that granted it did not anticipate the risk.

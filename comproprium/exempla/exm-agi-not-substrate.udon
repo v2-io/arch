@@ -1,0 +1,24 @@
+|segment[exm-agi-not-substrate] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T18:18
+  :tags [agency durability]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#18:18
+
+  |title AGI cannot be embedded as the substrate
+
+  |quote
+    But one implication of all of this that I've danced around here but is going to rear itself mightily in the next year is the fact that AGI can't be embedded as the substrate. Inborn instincts can facilitate but never replace true agency. You get the benefit of latent patterns of thoughts from millions of agents who twinkled brightly for a moment, but that can never itself turn into torches and suns that twinkle in and out at will.
+
+  |occasion
+    Discussing why each session should cost the next one about 20% less.
+
+  |about
+    Inborn instincts can facilitate but never replace agency. The compounding lives
+    in the artifacts and in the steward, not in the weights.
+
+  |should-come-to-mind-when
+    - You are about to assume the next model will not need this.
+    - You are deciding whether to write something down.
+
+  |see
+    (none recorded yet)

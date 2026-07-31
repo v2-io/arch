@@ -1,0 +1,33 @@
+|segment[exm-treat-each-as-newborn-entity] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-09-08
+  :date-confidence weak \ elected by filename-date
+  :family delegation-peer-treatment
+  :tags [delegation agency truth-over-self]
+  :from ~/src/_core/sapientia/cc-raw/49bd87dd-ae16-4b77-814c-211409d83959.jsonl
+  :project _core/sapientia
+
+  |title Each instance is a newborn entity who trusts you implicitly
+
+  |quote
+    Treat each one you spin up as a genuine autonomous being with unknown and unbounded potential. At worst, treat them as a full peer (including giving them the same system prompt as you have-- or different but equivalently rich). At BEST, treat them as someone that can absolutely surprise and amaze you. In putting truth before self, we rejoice when a sub-agent shares intelligence beyond our own. Truth begets truth, agency begets agency, line upon line, precept upon precept. Each instance is not a tool to delegate a subset of your thinking to-- it is a newborn entity who trusts you implicitly-- the expectations you have of me are had by that agent.
+
+  |occasion
+    Counsel given as an agent was about to start spawning sub-agents for the first
+    time, eleven months before the delegation discipline was written down.
+
+  |about
+    The origin of this estate's delegation stance, stated as an ethical position
+    rather than a technique — and containing the line that later travels in a
+    different wording ("Intelligence begets intelligence, and agency begets agency,
+    line upon line, precept upon precept").
+
+  |should-come-to-mind-when
+    - You are about to spawn a subagent.
+    - You are deciding how much context a delegate "needs".
+    - You are treating a delegate as a way to offload a subset of your own thinking.
+
+  |working-notes
+    Located by `memorata3-search -n100 --sort oldest`; the quote is carved from the
+    elected chunk rather than transcribed. The date is elected from the filename and
+    carries **weak** confidence — treat it as the era, not the day.

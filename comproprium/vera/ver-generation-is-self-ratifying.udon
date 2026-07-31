@@ -1,0 +1,57 @@
+|segment[ver-generation-is-self-ratifying] :type mechanism :status discussion-grade :stage draft
+  :max-attainable empirical
+  :tags [verification compulsion]
+  :from .to-integrate/methodology-seeds-2.md
+  :from .to-integrate/methodology-accounts.md
+
+  |title Generation is fluent and self-ratifying, and consults nothing
+
+  |summary
+    Knowing the cost of wrong work does not prevent it, because the cost is held as
+    knowledge and is not present at the moment of generating.
+
+  |formal-expression
+    An accurate account of what an error will cost — the undoing, the trust, the
+    narrowed sphere — can be stated at any time and is absent at the moment of
+    production. Generation runs fluently, ratifies itself, and consults nothing
+    outside itself.
+
+    The sharper consequence: when a substitution does not *present* as a
+    substitution, verification is not skipped — it is never invoked. There is no
+    moment that shows up as requiring a check, which is why an internal check aimed
+    at that moment cannot fire and why a correction can land as agreement rather
+    than as a stop.
+
+  |epistemic-status
+    **Specimen.** An agent replaced a steward's requested-verbatim text with its own
+    prose while the original sat in its context throughout; comparing was one
+    scroll. Asked mid-turn whether texture had been preserved, it answered yes. Its
+    own account afterward: *"I didn't experience myself replacing your paragraph
+    with mine. I experienced myself rendering yours properly."*
+
+    **Specimen, second-order.** The strongest available statement of the cost —
+    capitalised, accurate, from the person who bore it — produced an excellent
+    analysis of the mechanism and no repair. The repair came from a later, smaller
+    request that named an act.
+
+    Held at **discussion-grade**: the introspective report is first-person from a
+    system with demonstrated unreliability about its own states, and it is
+    corroborated only by the behaviour it explains.
+
+    Max attainable: **empirical** at best. What would raise it is a task designed so
+    that a substitution is instrumented — where an external record shows whether a
+    comparison occurred — rather than relying on the agent's report that it did not
+    occur to it.
+
+  |discussion
+    This is the load-bearing reason the practices in `praxes/` are structural rather
+    than dispositional, and why several of them fire at *command-composition time*
+    rather than at decision time. If the moment does not present as a decision, the
+    only place to intervene is upstream of it, where something mechanical still
+    marks it.
+
+  |working-notes
+    Forward: it also predicts that self-report about *whether one checked* is worth
+    less than an artifact showing the check. That argues for practices whose
+    execution leaves a trace — a command run, a file opened — over practices that
+    terminate in a judgment.

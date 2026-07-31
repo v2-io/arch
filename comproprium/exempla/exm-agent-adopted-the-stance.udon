@@ -1,0 +1,44 @@
+|segment[exm-agent-adopted-the-stance] :type demonstration :status reconstructed :stage draft
+  :demonstrates epistemic-honesty-uninstructed
+  :actor A Sonnet 5 subagent, 2026-07-30, one of three delegated that day
+  :tags [virtues]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md
+
+  |title An agent verified and disclosed a gap nobody asked it to
+
+  |summary
+    Handed a brief that marked its own provenance per fact, an agent ran its own
+    live test and volunteered the one claim it could not confirm — without being
+    asked to verify anything.
+
+  |account
+    The brief it received never said *verify my claims*. It said *"Every fact below
+    is one I checked today rather than inherited, and I'll say where,"* and then
+    attached provenance per fact — a commit SHA here, *I tested it on a temp file*
+    there, why a render gate had stayed silent.
+
+    What came back included a live test the agent had run itself, and this,
+    unprompted: *"whether `caa502b` really is the commit that put the guard in front
+    of the gate — I confirmed the observed behavior matches, but didn't read that
+    commit's diff to confirm your causal explanation of why."*
+
+    Nothing in the brief called for either act. What the provenance-marking changed
+    was not the instruction set but **what stood out**: once every incoming claim
+    carries how it was obtained, an unmarked claim becomes conspicuous — including
+    the reader's own. That is why it could not be complied with hollowly, where
+    *please verify* could.
+
+    The same day, the same delegator, a bare-sentence brief to a comparable agent
+    produced a competent report of what had been done, with no disclosed gaps and no
+    independent checks. n=1 per condition, and both are in the session record.
+
+  |what-would-have-happened-instead
+    An instruction to verify produces verification-shaped output. This produced a
+    disclosure of a specific unverified causal link, which is the thing an
+    instruction cannot ask for because the delegator does not know which link it
+    will be.
+
+  |provenance
+    Reconstructed. The agent's words are quoted from `.to-integrate/methodology-
+    seeds.md` §7a, recorded first-hand by the instance that received the report; the
+    underlying subagent transcript has not been opened.

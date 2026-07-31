@@ -1,0 +1,85 @@
+|segment[ver-silent-absence-reads-as-success] :type hypothesis :status discussion-grade :stage draft
+  :max-attainable empirical
+  :tags [verification tooling silence]
+  :from .to-integrate/successor-session-quotes.md
+  :from .to-integrate/agent-reports-2026-07-30.md
+
+  |title A silent nothing is indistinguishable from a checked nothing
+
+  |summary
+    Where a failure, an empty result, and an unrun check all present as silence, the
+    reader cannot tell them apart — and every one of them reads as success.
+
+  |formal-expression
+    A check that finds nothing and a check that never ran produce the same
+    observable: no output. So does a check that crashed, a scope that matched
+    nothing, and a claim of absence nobody made. In each case the *shape* of the
+    result is a clean report, and a clean report is read as a pass.
+
+    The asymmetry is what makes this worth stating as its own claim rather than as
+    an instance of carelessness. A wrong answer is a claim, and a claim can collide
+    with another claim — the mechanism the whole segment arrangement rests on. **An
+    absent answer makes no claim, so it can collide with nothing**, and no amount of
+    downstream discipline recovers it.
+
+    Two consequences follow, and they point at different repairs. For **tools**:
+    distinguish the states in the interface — an empty result, a failed run, and an
+    unmatched scope should not share an exit code or an output stream. For
+    **claims**: an absence claim must name the search that produced it, and the
+    search must have run.
+
+  |epistemic-status
+    **Eight specimens, one evening, five of them found independently by three agents
+    who were not looking for this:**
+
+    1. A search tool printed the prose `No results found.` to stdout and exited `0`
+    under `--json`, so a genuine empty result, a crashed query, and a scope matching
+    nothing were one observable. 2. `--in` was `nargs='+'` and silently consumed the
+    query as another scope pattern, returning zero hits with no error. 3.
+    `--scope-debug` output resisted parsing because a delimiter was multibyte; `grep
+    -o` returned nothing and the caller read that as a zero count. 4. A `grep -rl …
+    | head` test always exited `0`, nearly turning an inconclusive check into a
+    pass. 5. A stale-exemption loop failed silently under `set -e` on the healthy
+    path. 6. An absence claim was written as searched when the search had not run;
+    the thing it claimed absent was 78 seconds away in the same record. 7. A
+    verifier's clean report was read as a pass by its author; the defects were
+    outside its scope, and only a *missing expected item* in the output revealed it.
+    8. A span carve that searched two primaries as one concatenated string matched a
+    start in the first and an end in the second — producing a wrong, non-empty, 121
+    KB result that nothing complained about.
+
+    Held at **discussion-grade**: eight instances is a lot for one evening and none
+    of it is measured. Every instance is from one estate, one night, and mostly one
+    tool family, which is exactly the sampling that produces a spurious pattern.
+
+    Max attainable: **empirical**, and the test is cheap — instrument a corpus of
+    checks and searches, count how often a zero-result is produced by a fault rather
+    than by the world, and compare against how often the caller distinguished them.
+    Nobody has run it.
+
+    Load-bearing: that the states are *observationally identical to the consumer*.
+    If a reader could tell them apart with ordinary care, this reduces to
+    carelessness and no structural repair is warranted.
+
+  |discussion
+    This is why an empty field in this corpus is required to *say* it is empty, why
+    `bin/check-corpus` prints located-count and total rather than only failures, and
+    why an unpaired finding must carry its search ( #ver-manufacture-originals, and
+    the harvest brief's absence rule).
+
+    It also explains something the corpus otherwise treats as coincidence: several
+    of the day's most expensive errors were not wrong answers but *absent* ones — an
+    unread commit body, an unopened original, fourteen messages that no extractor
+    emitted. Those cost more than the wrong answers did, and took longer to find,
+    because nothing contradicted them.
+
+  |working-notes
+    Regression guard: the natural repair — *be more careful with empty results* — is
+    a disposition and loses ( #ver-act-not-intention). The repairs that worked were
+    interface-level: distinguishable exit states, a count printed beside a pass, a
+    required field that must be filled with the word *none*.
+
+    Open: whether this is a distinct mechanism or the observable face of
+    #ver-generation-is-self-ratifying — an absent result never presents as a moment
+    either. Left unresolved deliberately; the interrelations across this corpus are
+    not yet worth forcing.

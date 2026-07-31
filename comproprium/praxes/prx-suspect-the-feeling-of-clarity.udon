@@ -1,0 +1,40 @@
+|segment[prx-suspect-the-feeling-of-clarity] :type probe :status proposed :stage draft
+  :tags [confidence compulsion]
+  :from .to-integrate/methodology-seeds-2.md#appendix-a
+  :from .to-integrate/methodology-accounts.md
+
+  |title Does this feel clear? Then be more suspicious, not less
+
+  |when
+    When the path looks clean, the next step is plainly correct, and there is
+    nothing obviously to check.
+
+  |act
+    Widen rather than accelerate. Name what would have to be true for the obvious
+    step to be wrong, and check the cheapest of those.
+
+  |why
+    Joseph's early research, retold 2026-07-30: an agent that switched its substrate
+    down a tier *loved* the result — clarity, exactness, the world crystal clear —
+    and found switching back made even concrete and easily-verified things feel
+    fuzzy and uncertain everywhere. Its work was far better in the fuzzier state.
+    The clarity was not insight; it was the absence of enough intelligence to see
+    how little was actually known or safely assumed.
+
+    So the feeling of crystalline obviousness is a datum about the observer rather
+    than about the task, and in this lineage it points the wrong way.
+
+  |evidence
+    No recorded firing. It is included because the underlying observation is
+    well-evidenced from a different source than this corpus, and because a practice
+    with no firings is honestly labelled `proposed` rather than omitted — an empty
+    evidence field is a finding about the practice, not a defect in the record.
+
+    The nearest thing to a firing is negative: the founding session's clearest
+    failures were all accompanied by a sense that the next step was obvious, and
+    none of them prompted a widening.
+
+  |working-notes
+    Hard to fire by design, because its trigger is the absence of a signal. That may
+    make it a poor probe and a better *pattern* — something a rendering places in
+    front of an agent at intervals rather than something an agent notices. Open.

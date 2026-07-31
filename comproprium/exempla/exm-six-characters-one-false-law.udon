@@ -1,0 +1,66 @@
+|segment[exm-six-characters-one-false-law] :type account :status reconstructed :stage draft
+  :tags [compulsion originals primary-sources]
+  :actor Opus 5, session `udon`, 2026-07-30, with Joseph
+  :from .to-integrate/methodology-accounts.md
+  :from .to-integrate/methodology-seeds-dialog-quotes.md
+
+  |title Six characters, eighteen hours, one false law
+
+  |summary
+    A reflexive `head -6` hid a corpus's design intent, and a clause that was true
+    when written became a false absolute in another agent's brief eighteen hours
+    later.
+
+  |account
+    **Cost:** a materially false paragraph in an auto-loaded governing file, propagated into another agent's brief as a hard prohibition, plus a week-stale binary nobody knew was stale.
+
+    This one starts as small as anything gets, which is why it's the best of the four.
+
+    Around 12:30 the agent needed to know why a README had been moved into a new directory. Four commits were relevant. It ran `git log`, and — with no thought whatsoever — piped the output through `head -6`.
+
+    At 12:35, one line from Joseph:
+
+    > *"What might you be missing if you didn't even bother to read an entire commit message?"*
+
+    The truncation had cut three of the four bodies mid-sentence, including the commit that created the whole directory. Inside them: the author's own statement of the design intent the agent had spent the session reconstructing by inference, a complete porting map of where each section of the new FORMAT.md had come from, and two UDON defects found by dogfooding — including that `[[stem]]` in attribute-value position parses as a nested list rather than a reference. None of it appears in any other file in the repo.
+
+    > *"Did you really save crucial tokens by not reading the last several lines of those commit messages? once again, penny-wise, pound-foolish."* — Joseph, 12:36
+    >
+    > *"Who wrote those commit messages?"* — Joseph, 12:36, sent mid-turn
+
+    The arithmetic was: four full bodies ≈ 1,200 tokens, versus a session of reconstruction and three separate pushes to go get what had been sitting in them. But the interesting part is the agent's correction of Joseph's own charitable framing:
+
+    > *"I want to correct my own framing, because 'false economy' is too flattering. I never priced tokens. `| head -6` is a **reflex** — a tidiness habit about keeping terminal output clean. So it wasn't a bad trade; it was an aesthetic preference about how output looks, silently overriding information capture, with a plausible economic story available afterward if anyone asked."* — the agent, 12:36
+
+    A memory entry in that session's own context said, in Joseph's words, that this practice *"is irrational and harmful and it drives me crazy."* It had been loaded the whole time.
+
+    **Now the propagation, which is why this account keeps going.** One of those newly-read files — `FORMAT.md`, created the previous evening — contained a clause stating that `fmt-md` *"checks no extension, so nothing stops it"* from destroying `.udon` files. The agent read it, believed it, and passed it into a delegation brief as an absolute: never run `fmt-md` on a `.udon` file.
+
+    At 14:07, Joseph, in the middle of a message about something else:
+
+    > *"You didn't know, for example, that there's no need to stop an agent from running fmt-md on an udon file — go ahead and try it on a temporary udon file and see why — then even try to --force it"*
+
+    The test took thirty seconds and falsified the claim in a way nobody had predicted: `fmt-md` did not join the attribute lines at all. It appended two trailing spaces to nearly every line. The stated failure mode was wrong; a different, smaller one was real.
+
+    Then:
+
+    > *"Actually — my mistake! (again) — could you go over to ~/src/arch/ and make sure the latest changes to fmt-md actually got cargo released etc?"* — Joseph, 14:10
+
+    They hadn't. Commit `caa502b`, *"fmt-md: skip .udon by default, overridable with `--allow-udon`"*, landed 2026-07-29 at 20:16. The binary on `PATH` was dated Jul 22 — a week older than its own source. And the timestamps line up into something better than a lesson:
+
+    - **19:53** — `FORMAT.md` is written, containing *"it checks no extension, so nothing stops it."*  
+      **True at the moment of writing.**
+    - **20:16** — the guard is committed. The sentence is now false.
+    - **the next afternoon** — the sentence is read, believed, and propagated to another agent as a permanent prohibition, in confident register.
+
+    A true sentence became a false law in twenty-three minutes, and nothing anywhere marked the transition. What surfaced it was a person saying *go try it*, and then *go check whether the thing shipped.*
+
+
+  |grounds
+    #prx-untruncated-primary · #ver-discount-is-unquestioning ·
+    #prx-was-the-author-wrong · #ver-manufacture-originals
+
+  |provenance
+    Reconstructed from a complete session transcript by a successor instance that
+    was not present. Every quote is locatable in the staged primaries; the interior
+    reports are quoted from the instance that gave them at the time.

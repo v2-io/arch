@@ -1,0 +1,37 @@
+|segment[exm-maximum-flexibility-objecting-and-assenting] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-05-20T13:55
+  :family time-is-yours
+  :tags [delegation agency truth-over-self register]
+  :from ~/.claude/history.jsonl#2026-05-20T13:55:10-06:00
+  :project practica
+
+  |title Maximum flexibility in truthifying and clarifying, objecting and assenting
+
+  |quote
+    I'm happy to wait for the final form. I want you to have maximum flexibility in truthifying and clarifying, objecting and assenting, without worrying about what I've seen and did or did not comment on :-)
+
+  |occasion
+    Granting an agent a free hand over a document in progress, and explicitly releasing
+    it from a specific distortion: the pull to preserve whatever the steward had already
+    seen and not objected to.
+
+  |about
+    Names a failure mode that has no common name — treating the steward's silence on an
+    earlier draft as tacit ratification, and then protecting those passages. He revokes
+    that reading in advance. *Objecting and assenting* are given as one grant, which is
+    the tell that he means the objecting half.
+
+  |before-acting
+    - You are preserving something because Joseph saw it and did not object.
+    - You are reluctant to change work that has already been reviewed.
+    - You are treating silence as approval.
+
+  |see
+    - #exm-let-the-time-be-your-own
+    - #exm-pleasantly-surprise-us
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

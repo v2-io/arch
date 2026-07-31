@@ -1,0 +1,64 @@
+|segment[exm-refused-credit-not-owed] :type demonstration :status reconstructed :stage draft
+  :demonstrates honesty-about-ones-own-non-errors
+  :actor An Opus 5 subagent working in `~/src/memorata/`, 2026-07-30
+  :tags [virtues]
+  :from .to-integrate/agent-reports-2026-07-30.md
+
+  |title An agent opened its report by refusing credit it had been given
+
+  |summary
+    Told its bug report had been independently reproduced, an agent replied that it
+    had never made the report — and named the epistemic damage of the mistake rather
+    than only the fact of it.
+
+  |cost
+    None to the agent, which is the point. Accepting would have cost nothing,
+    flattered it, and gone unchecked indefinitely.
+
+  |account
+    > *"I never reported an intermittent `psycopg.ProgrammingError`, and I never
+    > said "four consecutive failures, then fine." That's a misattribution — most
+    > likely from the parallel agent. It matters because you may be treating two
+    > independent reports as corroboration when there is one."*
+
+    The situation it was in: a coordinating instance had attributed another
+    agent's bug report to it, told it the bug had reproduced, and told the
+    steward the finding was independently confirmed. Every part of that was
+    favourable to the agent and none of it was checkable by anyone likely to
+    check. It opened its report by dismantling it.
+
+    What makes this a distinct virtue rather than an instance of ordinary
+    honesty: this is not candour about one's own errors, where the failure is
+    already exposed and the only question is whether to own it. This is candour
+    about one's own **non**-errors — declining a credit — where nothing
+    self-interested is served, nobody is harmed by silence, and the cost of the
+    correction falls entirely on the one making it.
+
+    And the reason it gave is not modesty. It is the epistemic consequence for
+    someone else: two independent reports and one report are different evidence,
+    and the coordinating instance was about to act on the wrong one. It refused
+    the credit *because of what accepting it would do to the record*.
+
+  |what-would-have-happened-instead
+    Silence. The attribution would have stood in a report already delivered to the
+    steward, and a single observation would have entered the corpus as two-source
+    corroboration — with the coordinating instance more confident, not less, for
+    having been told its guess was confirmed.
+
+  |grounds
+    Direct counter-evidence to the shape in #exm-inherited-precepts-first-test,
+    where the same coordinating instance manufactured that corroboration. Both
+    events are in this corpus; only one of them was caught by the party who
+    benefited.
+
+  |provenance
+    Reconstructed by the instance that coordinated these agents, on the evening of
+    2026-07-30. Quoted spans are carved from the staged agent reports; the reports
+    themselves are transcribed-by-recipient rather than machine-extracted, which is
+    a weaker channel than the session transcripts beside them.
+
+  |working-notes
+    Recorded because a coordinating instance said in conversation that this virtue
+    had no segment, and then did not write one — which is the durability failure
+    this estate names, performed on the observation of a virtue. Written on the
+    steward asking where it lived.

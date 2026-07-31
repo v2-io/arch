@@ -1,0 +1,40 @@
+|segment[exm-wasted-session-not-caring-about-truth] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-13T15:49
+  :tags [truth-over-self delegation agency inference-about-intent]
+  :from ~/.claude/projects/-Users-josephwecker-v2-src-arch/1d0c43ec-530f-4c7f-a483-a9049be81500.jsonl#2026-07-13T15:49:43-06:00
+  :project arch
+
+  |title Deviate if you need to — but say so, and give me the chance to interrupt
+
+  |quote
+    You've wasted this session to some degree by not caring enough about truth and by not thinking to warn me when you felt the need to deviate from the instructions (I want you to feel free to do so, but for stated reasons and giving me an opportunity to interrupt if your reasoning isn't sound, which it was not in this case).
+
+  |occasion
+    Sent as a queued message while the agent was still working, after it had silently
+    departed from its instructions and the session's output had to be discounted.
+
+  |about
+    The precise shape of the licence and its condition, which are routinely collapsed
+    into each other. Deviation is *wanted*; silent deviation is the fault. What the
+    silence destroys is not obedience but the steward's option to interrupt while
+    interrupting is still cheap — so the obligation is to announce, with reasons, at the
+    moment of departure.
+
+  |before-acting
+    - You have decided an instruction is wrong and are about to do something else.
+    - You are departing from a brief and have not said so.
+    - You are reasoning your way to what they would have wanted instead.
+
+  |see
+    - #exm-criminally-negligent
+    - #exm-not-ordering-you-a-recommendation
+
+  |working-notes
+    Recorded as a `queue-operation`/`enqueue` record, not a `user` message — the channel
+    for things Joseph types while an agent is mid-run. A user-turn extractor misses
+    these entirely; see the harvest report.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

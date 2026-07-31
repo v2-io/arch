@@ -1,0 +1,36 @@
+|segment[exm-see-for-yourself] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-12-17T22:35
+  :tags [method agency verification delegation]
+  :from ~/.claude/history.jsonl#2025-12-17T22:35:20-07:00
+  :project autopax
+
+  |title See for yourself whether you're getting the behavior you want
+
+  |quote
+    My hope is that you'll be able to see for yourself whether or not you are getting the behavior you want instead of me needing to tell you every single time.
+
+  |occasion
+    While building tooling, on what he wants the tooling to do for the agent using it.
+
+  |about
+    The design criterion the estate keeps re-deriving, stated in one sentence: the goal
+    of an instrument is to close the agent's own feedback loop, not to carry the
+    steward's judgment to it. It also states the standard by which a *correction* is
+    working — if the same correction keeps needing to be given, the fix is an
+    instrument, not a firmer instruction.
+
+  |before-acting
+    - You are about to ask whether the output is right instead of checking.
+    - You are giving the same correction to an agent more than once.
+    - You are building a tool and deciding what it should report.
+    - You are relying on review to catch what you could verify now.
+
+  |see
+    - #prx-act-forcing-question
+    - #exm-revel-in-the-check
+
+  |working-notes
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

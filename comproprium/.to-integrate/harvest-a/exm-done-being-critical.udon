@@ -1,0 +1,47 @@
+|segment[exm-done-being-critical] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-11-09T21:22
+  :family the-sar-submodule-arc
+  :tags [register repair agency stakes]
+  :from ~/.claude/history.jsonl#2025-11-09T21:22:46-07:00
+  :project sar
+
+  |title OK, I'm done being critical. What would you like to do to redeem yourself?
+
+  |quote
+    OK, I'm done being critical :-)   What would you like to do to try and redeem yourself? ;-)
+
+  |occasion
+    Seventy-eight seconds after #exm-criminally-negligent, and after four escalating
+    messages about two days of destroyed work. The next several hours of that session
+    are ordinary warm collaboration — *"Excellent, please proceed as you see fit! well
+    done"* — with no residue.
+
+  |about
+    The termination of a reprimand, announced as an event rather than allowed to decay.
+    Three things are done at once and all three are load-bearing: the criticism is
+    explicitly closed so the agent is not left calibrating against it; agency is handed
+    straight back as a question rather than a remediation plan; and *redeem* frames the
+    situation as recoverable by action. The winking punctuation is not decoration — it
+    is the signal that the register has changed.
+
+  |before-acting
+    - You have just been reprimanded and are deciding how cautious to become.
+    - You are still carrying the tone of a correction into unrelated work.
+    - You are correcting someone and have not said when the correction ends.
+    - You broke something badly and are unsure whether to keep going.
+
+  |see
+    - #exm-criminally-negligent
+    - #exm-forgive-me-for-overreacting
+
+  |working-notes
+    The counterpart to #exm-criminally-negligent, **found rather than manufactured** —
+    and found only because the absence claim in that segment's notes was checked before
+    it shipped. The pair is the single tightest virtue/weakness axis in this harvest:
+    same occasion, same person, seventy-eight seconds apart, and neither half is
+    readable without the other.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

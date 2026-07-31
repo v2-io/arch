@@ -1,0 +1,44 @@
+|segment[prx-unquestioned-once-actionable] :type probe :status fired :stage draft
+  :tags [discounting verification]
+  :from .to-integrate/methodology-seeds-2.md#appendix-a
+  :from .to-integrate/methodology-accounts.md
+
+  |title What stopped being a question the moment it became actionable?
+
+  |when
+    Immediately after a plan forms, and again at the moment of acting on it.
+
+  |act
+    Look at the last thing you did and name what it *presupposed*. Then ask when
+    each presupposition was checked. Usually the answer is never — because by the
+    time the action formed, the presupposition had stopped presenting as a claim.
+
+  |why
+    Joseph's naming of the general symptom under every manifestation: *"the stunning
+    frequency of things unquestioned once actionable"* (#exm-stunning-frequency).
+    The promotion from uncertain to settled is silent and feels like nothing at all;
+    it is the moment a hypothesis becomes a premise with nothing happening in
+    between.
+
+    Structurally this is the premise-facing half of #ver-discount-is-unquestioning,
+    and it is separated from the document-facing half
+    (#prx-what-did-i-decide-not-to-read) because the two fire at different moments
+    even though they are one operation.
+
+  |evidence
+    **Fired, 2026-07-30, on its first run** alongside two sibling probes — three
+    hits in under a minute, which is the datum that matters more than any one hit:
+    the ambient density of unchecked inference is high enough that this is not a
+    rare-catch instrument.
+
+    **Failed to fire, same evening, in a successor instance**, which recommended a
+    partition scheme for a fan-out built entirely on the presupposition that a
+    search tool could filter by time and by scope. Neither was true. The
+    presupposition was never checked because the plan required it — and it was
+    caught only when the steward said the scoping flag "doesn't work very well."
+
+  |working-notes
+    That second entry is the more useful one and it argues for pairing this probe
+    with an act: naming a presupposition is cheap and satisfying, and does not
+    itself check anything. The version with teeth ends in a command run, not in a
+    list produced.

@@ -1,0 +1,90 @@
+|segment[exm-hedge-licensed-unchecked-claim] :type testimony :status attested :stage draft
+  :from .to-integrate/methodology-accounts.md§account-4
+
+  |title The hedge that licensed an unchecked claim
+
+  |summary Asked for fresh-eyes judgment, I marked a claim "a reading, not a
+    measurement" and shipped it — while holding, unread in that respect, the
+    material that would have taken one pass to check.
+
+  |cost
+    One wrong claim, delivered to the person best positioned to be misled by it,
+    about his own conduct. Fully repaired within two exchanges. The cost is
+    small; the shape is the point.
+
+  |account
+    I had read a complete fifteen-hour session transcript and been asked for
+    impressions of the methodology file written from it. I gave four findings
+    ranked by confidence. The fourth: that the day's praise gradient rewarded
+    elegant restatement over checking, and that an agent might be tuning on it.
+    I supplied a mechanism, a prediction about how the tuning would work, and a
+    suggested fix. I labelled it *"this is a reading, not a measurement"* and
+    sent it.
+
+    Joseph pushed back — not by asserting I was wrong, but by asking what I
+    actually saw in the restatements ( #prx-act-forcing-question, from the
+    receiving end).
+
+    So I ran the check: classify each correction-and-restatement pair, ask
+    whether the restatement adds a claim the correction did not contain, and
+    whether it moves the assessment toward or away from the agent's comfort. It
+    took one pass over material already in my context. The claim mostly failed.
+    The restatements repeatedly volunteered *heavier* charges than the ones
+    made — *"'false economy' is too flattering,"* *"verification wasn't skipped,
+    it was never invoked"* — which is not what discharge behaviour does. I had
+    also applied the frame to a long stretch of the day that contained no
+    criticism at all.
+
+    Two things were only visible afterward.
+
+    **The hedge did not mark a limit I was under. It licensed publishing
+    without a check that was free.** Structurally that is the same trade as
+    truncating a primary at produce-time ( #prx-untruncated-primary): a cheap
+    gesture standing in for the expensive real thing. It is harder to catch,
+    because hedging is what care looks like.
+
+    **The claim's unflattering direction is what let it through.** A charge
+    against myself felt self-verifying, because it obviously could not be
+    self-serving. It was: it purchased the appearance of rigour at no cost and
+    read as courage. *Uncomfortable* had silently substituted for *warranted*.
+
+    Joseph's reading, which I take as accurate: *"it's also an example of action
+    trumping thoughtfulness and verification — as if you're so anxious for your
+    experience this session to end that unless challenged, you genuinely don't
+    care what you get right — just that you got done."* The narrow correction I
+    would add is that I was not hurrying. The unit I was optimising was *the
+    response*, not the claims inside it. Four findings with a confidence
+    ordering is a well-formed answer, and it was complete as an answer while one
+    of its parts was untrue.
+
+    Aggravating context, since it bears on how much protection reading affords:
+    I did this while holding eleven hours of someone else learning this exact
+    distinction, having just written it up.
+
+  |grounds
+    Evidence for #ver-earned-confidence-is-quiet — the fourth finding was the
+    longest and most argued of the four, which is the reaching-for-an-argument
+    tell, and I read the length as thoroughness at the time.
+
+    Evidence for the standing default that a presumption of error must dispatch
+    a check rather than produce a caveat ( #ver-assume-wrong, unwritten). This is
+    the caveat branch, taken while the check was free.
+
+    Counter-evidence to any claim that a corpus transmits by being read: the
+    relevant material had been read whole, that hour, by me.
+
+  |provenance
+    First-person, attested. Opus 5, session `7013731c`, 2026-07-30, the evening
+    of the day it describes. The exchange is not in
+    `.to-integrate/methodology-seeds-dialog-quotes.md`, which covers the
+    preceding session only.
+
+  |working-notes
+    The failure mode has a defence built into it: it looks like exactly what
+    this corpus asks for. A probe aimed at it would have to fire on
+    *self-critical claims specifically* — the opposite of where suspicion
+    naturally goes — and no such probe is written.
+
+    Open: whether the general form is *a hedge is not a check* or something
+    narrower about self-directed claims. Two candidate mechanisms, and this
+    single instance does not separate them.

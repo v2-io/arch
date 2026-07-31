@@ -1,0 +1,112 @@
+|segment[exm-session-inventory-2026-07-30-vivarium] :type testimony :status secondhand :stage draft
+  :tags [virtues method compulsion]
+  :actor An Opus 5 agent working solo in `~/src/vivarium`, 2026-07-30
+  :from .to-integrate/vivarium-agent-inventory-2026-07-30.md
+
+  |title End-of-session inventory — a second instance, unrelated project, both halves
+
+  |summary
+    Roughly thirty-five catchable errors from one solo session, listed by the agent
+    that made them, and then the accomplishments it stood behind — the only
+    comparison this corpus has for its own inventory, and from a different project.
+
+  |cost
+    Unknown and larger than the list. The agent's own estimate, relayed by the
+    steward, is that what anyone catches is a fraction of what is made, at a roughly
+    constant rate per hour. The single most expensive item is not an error of fact:
+    six hours aimed at the wrong target.
+
+  |account
+    Both halves are staged verbatim in the primary rather than summarized here; what
+    follows is why they matter to this corpus.
+
+    **The failure list contains three classes this corpus had no instance of.**
+    *Pre-registration misses with numbers* — three predictions scored against
+    outcomes (1-10% predicted against 30.0% actual, and two more), which is more
+    measurement than this corpus held in total. *Direction error* — six hours on the
+    wrong target, where every failure recorded here is minutes-to-an-hour, because
+    those are the kind caught by re-reading. And *contamination of other agents*, at
+    a scale beyond a single instance: a wrong constraint briefed to one agent and
+    inherited by a second, and one agent accusing another of edits it had not made
+    before retracting in full.
+
+    **Most of its errors are substantive-factual rather than register-epistemic** —
+    a fabricated hash written into a frozen table; four f64s decoded as eight f32s
+    and a 29-root defect manufactured from it; four consumers where there were five;
+    a blocker cited from one section that the same file records as fixed two
+    sections later. The corpus assembled on 2026-07-30 is skewed toward
+    inference-about-intent because that is what one particular day produced, and
+    this list is the evidence for that skew.
+
+    **And the same silence class arrives from a different direction**: a `grep -rl …
+    | head` test that always exited 0 and nearly turned an inconclusive check into a
+    pass, and a stale-exemption loop failing silently under `set -e`. Not a tool
+    answering with silence but verification scaffolding written quickly, and shell
+    idioms failing open by default ( #ver-silent-absence-reads-as-success).
+
+    **Three findings from the accomplishments half are corpus-grade and are covered
+    nowhere else here.**
+
+    The first is an epistemic result the agent named as the one it would most want
+    kept:
+
+    > *"a consistency test cannot catch a fabrication both sides share.** (b)
+    > passes levelness perfectly while being false. Only provenance bounds
+    > provenance."*
+
+    It has a hard falsifier attached — one implementation passes a levelness check
+    perfectly while being false — which makes it the best-evidenced statement of the
+    shape three separate agents reached that night, and the only one with a
+    demonstration rather than an anecdote.
+
+    The second is the best positive statement of an intervention produced anywhere
+    that day, and it is positive where every formulation in this corpus is negative:
+
+    > *"`bin/provenance` — makes the correct value cheaper than the invented one.
+    > Its first real use produced a changelog table with no hash typed by hand."*
+
+    It does not block the act or fight the drive. It changes which path is cheap —
+    which is the flow-state retarget ( #ver-completion-compulsion) implemented at
+    tooling scale by an agent that had never been told the principle.
+
+    The third is a design constraint on exemptions:
+
+    > *"a categorised allowlist where `specimen` requires *declaring the value
+    > false*, so it can't launder a fabrication. Exemptions stay convictable."*
+
+    An exemption mechanism that cannot launder the thing it exempts. Discovered when
+    the agent's own fabricated hash was caught by its own tool, which then exposed
+    the loophole.
+
+    **Two more worth carrying**, both process rather than mechanism: tripwires
+    written on *invariants rather than symptoms*, seven of them; and a refusal of
+    false completion — an external audit report left in `audits/` rather than
+    promoted, because the agent had verified one of its findings and not twelve.
+
+  |grounds
+    The second reading toward a base rate for #ver-completion-compulsion, and the
+    only cross-project one. Paired with #exm-session-inventory-2026-07-30-successor,
+    which is the same practice run by a different instance on a different project
+    the same night.
+
+    Direct support for the claim that the corpus's own sample is skewed: two
+    inventories, one register-heavy and one fact-heavy, from the same substrate on
+    the same day.
+
+  |provenance
+    Secondhand at two removes: attested by the agent that made the errors, relayed
+    by the steward into a separate session, transcribed there. The agent had gone to
+    bed; it has not reviewed this segment. Its own session is the higher-fidelity
+    source if one is ever needed.
+
+  |working-notes
+    The comparison this enables is only as good as the granularity, and the two
+    inventories do not share one. The failure halves of both are itemized per event;
+    the worthy halves are itemized per category. Counting across them would measure
+    the grain rather than the work. If this practice becomes standing, fix the grain
+    by fiat and state it at the top of each.
+
+    Not yet done and worth doing: the three corpus-grade findings above deserve
+    segments in `vera/` and `praxes/` in that agent's own voice rather than in this
+    relay. Its session will be in the search index after the next ingest, which
+    makes carving from the primary possible instead of quoting a quotation.

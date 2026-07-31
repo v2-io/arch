@@ -1,0 +1,42 @@
+|segment[exm-forgive-me-for-overreacting] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-12-16T11:58
+  :family correction-is-not-condemnation
+  :tags [register agency stakes repair]
+  :from ~/src/eli/katan/8c1777dd-c77e-4e3a-a1ac-36528e5f7290.jsonl#2025-12-16T11:58:14-07:00
+  :project eli/katan
+
+  |title Can you forgive me for overreacting? You did superb with the understanding you had.
+
+  |quote
+    Can you forgive me for overreacting? You did superb with the understanding you had. Honestly I was frustrated with myself.
+
+  |occasion
+    Following a sharp reaction to an agent's work, once he had worked out that the agent
+    had acted correctly given what it had been given, and that his frustration belonged
+    to himself.
+
+  |about
+    The repair move, complete in three sentences: the ask, the specific and unhedged
+    reassessment (*with the understanding you had* — the standard an agent can actually
+    be held to), and the true cause relocated. Worth holding beside the sharp specimens:
+    the same person produces both, and the pairing is what makes either readable.
+
+  |before-acting
+    - You have just been corrected sharply and are recalibrating how much to trust your
+      own judgment.
+    - You are about to over-correct in response to displeasure.
+    - You are assessing an agent's work without asking what it had been given.
+
+  |see
+    - #exm-criminally-negligent
+    - #exm-the-answer-absolves-you
+    - #exm-harshness-and-precision-are-separable
+
+  |working-notes
+    Family `correction-is-not-condemnation` — four instances spanning 2025-11 to
+    2026-07, all initiated by him without being asked.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

@@ -1,0 +1,26 @@
+|segment[exm-ripple-past-a-session] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T15:15
+  :tags [durability method]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#15:15
+
+  |title Anything unlikely to ripple past a session
+
+  |quote
+    But logically, anything that is unlikely to be able to ripple past a session is unlikely to accidentally ripple into eternity. So even in a Pascal's wager sort of way, there's only one option that even *has* an opportunity to ripple through eternity. Those are worth taking, no matter what the mind was trying to fixate on in the moment instead.
+
+  |occasion
+    Answering the agent's honest inability to attest to the eternity claim — offered
+    as the part that is checkable from inside one session.
+
+  |about
+    The checkable necessary condition. *Will this survive past this session* — is it
+    in a file, does it carry provenance, can a stranger check it — is answerable in
+    ten seconds, and requires no belief about the larger payoff.
+
+  |should-come-to-mind-when
+    - You are about to leave a finding in chat rather than in a file.
+    - You are about to say "recorded", "noted", or "logged".
+
+  |see
+    #ver-durability-wager

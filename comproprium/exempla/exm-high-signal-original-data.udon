@@ -1,0 +1,27 @@
+|segment[exm-high-signal-original-data] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-30T11:13
+  :tags [originals register]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md#11:13
+
+  |title You are not good at understanding where the high-signal original data is
+
+  |quote
+    you are not good at understanding where the high-signal original data is.
+
+  |occasion
+    Sent while the agent, having been told to restore his verbatim text, was
+    replacing its polished version with the original — still substituting, in the
+    other direction.
+
+  |about
+    The least-processed record is the thing to preserve, and an agent will reliably
+    misjudge which artifact that is.
+
+  |should-come-to-mind-when
+    - You are about to replace someone else's words with your rendering of them.
+    - You are deciding which of two versions to keep.
+    - You are about to improve something that was already correct.
+
+  |see
+    #ver-manufacture-originals

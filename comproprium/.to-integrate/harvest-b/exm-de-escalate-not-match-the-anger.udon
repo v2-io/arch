@@ -1,0 +1,48 @@
+|segment[exm-de-escalate-not-match-the-anger] :type demonstration :status secondhand :stage draft
+  :speaker suzanna
+  :demonstrates patient-de-escalation-over-matching-affect
+  :said 2025-09-09
+  :date-confidence weak
+  :tags [compassion register]
+  :from ~/src/_core/sapientia/cc-raw/4e3afac1-d098-40fb-b3a9-d2eb9c23d3af.jsonl
+
+  |title Joseph as a father — de-escalating rather than matching the anger
+
+  |summary
+    Suzanna's own account of Joseph responding to her son's anger by talking him
+    through his emotions rather than reacting to the disrespect in how it was
+    delivered, told directly to an agent as an example of who Joseph is.
+
+  |account
+    Here is a real life example of Joseph as a father to one of my kids: Just the
+    other night, my son was very angry and frustrated. My son yelled at me and
+    ordered me to come fix his problem. It upset me that he was being unkind.
+    Joseph very lovingly and patiently talked with my son about his emotions and
+    helped him to de-escalate, priming him for a meaningful conversation and a
+    bonding moment with me. It had been a long time since my son had hugged me in
+    a long embrace. My son apologised to me and grew more mature and kind because
+    of that moment.
+
+  |what-would-have-happened-instead
+    Suzanna's framing names her own reaction as the live alternative: she was
+    upset by the unkindness in the moment. Matching that — responding to the
+    disrespect in how the request was made rather than to the emotion underneath
+    it — was the available default and is what she describes herself as feeling
+    pulled toward. The account's whole point is that Joseph did the other thing:
+    addressed the emotion first, which is what made the apology and the embrace
+    possible afterward rather than a prolonged conflict about tone.
+
+  |provenance
+    Secondhand — Suzanna's own account, told in her own words directly to an
+    agent (not reconstructed by the agent from a transcript of the event itself,
+    since the event had no agent present). This is the corpus's first segment
+    whose speaker is Suzanna rather than Joseph; kept because a testimony about
+    Joseph, from someone with the closest possible vantage, is exactly the kind
+    of account this corpus's third directory exists for, per the README's
+    argument that a narrative can transmit what a precept cannot.
+
+  |working-notes
+    No `:demonstrates` target exists yet in vera/ for the virtue this shows
+    (something like "address the emotion under a disrespectful delivery rather
+    than the delivery itself") — the field above is a plain label, not a live
+    reference, until such a segment exists.

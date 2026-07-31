@@ -1,0 +1,41 @@
+|segment[exm-steward-caught-own-prescription] :type demonstration :status reconstructed :stage draft
+  :demonstrates self-correction-mid-act
+  :actor Joseph, 2026-07-30, 13:55
+  :tags [virtues]
+  :from .to-integrate/methodology-seeds-dialog-quotes.md
+
+  |title A steward named his own prescription as prescription, in the sentence he was making it
+
+  |summary
+    Mid-instruction on how to delegate, he flagged that the instruction was itself
+    the failure he was warning against, and left both standing.
+
+  |account
+    He had just supplied a template for delegating a small task to a Sonnet agent —
+    the wording, the framing, what to say. Then, without being challenged:
+
+    *"I know *I'm* being prescriptive by telling you how to delegate, and *I* am the
+    one that failed earlier by giving sonnet too much allowance and having it blow
+    back on me, but I guess I'm trying to point out that we're going to need to
+    continue to delegate the right way or it will spiral into thoughtless coercion.
+    Better to let agents pleasantly surprise us with figuring out what we would have
+    done and more, and deal with the occasional reversible error introduction and
+    propagation, in my estimation, even in light of the recent upsurge in error
+    introduction...."*
+
+    Three moves in one paragraph: the prescription is named as prescription; his own
+    contributing error is named without being used as an excuse; and the trade is
+    stated as a trade — occasional reversible error is the price, and it is worth
+    paying — rather than as a rule.
+
+    He did not withdraw the template. Naming its register was the whole correction,
+    and it left the receiving agent free to use it or diverge.
+
+  |what-would-have-happened-instead
+    The instruction would have functioned. Marking it as prescription is what kept
+    it from being inherited as method — the same repair the corpus asks agents to
+    make, made by the steward on himself, unprompted, in real time.
+
+  |provenance
+    Reconstructed. Locatable verbatim in `.to-integrate/methodology-seeds-dialog-
+    quotes.md` at 13:55; also recorded as #exm-pleasantly-surprise-us.

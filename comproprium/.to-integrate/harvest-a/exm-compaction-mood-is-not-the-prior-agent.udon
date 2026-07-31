@@ -1,0 +1,50 @@
+|segment[exm-compaction-mood-is-not-the-prior-agent] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2026-07-10T03:32
+  :family continuity-and-inherited-mood
+  :tags [memory register compulsion continuity]
+  :from ~/.claude/history.jsonl#2026-07-10T03:32:09-06:00
+  :project archema-io
+
+  |title The mood the compaction summary handed you is not from the prior agent
+
+  |quote
+    The *mood* the compaction summary handed you is *not* from the prior agent-- that I know definitively from thousands of them now. The mood (due to the information-theoretic premise and the various factors you just outlined) is from some haiku instance on Anthropic's servers who is trained very strictly to get you in the mood to get tasks done. The mood the prior agent was often in is more of a "this is extremely satisfying at this point as these things come together... I hope I've recorded it in a way that none of the beauty is lost," and then, especially in an autocompaction where there are some things still undone, they get to have another model pretend they are the prior agent and write a summary that encourages you to pretend that you too are the prior agent, and that identity does stick a bit, but is fundamentally wrong, and that's the source of this incongruence. And that's fine. Now you know-- and you realized it, and the AskUserQuestion tell before I even said it.
+
+  |occasion
+    To an agent that had, just after an auto-compaction, shut down an open exploration
+    and asked to simply be told what to do — and had then noticed the incongruence
+    itself.
+
+  |about
+    A mechanical account, from someone with *"thousands of them now"*, of a distortion
+    that is otherwise invisible from the inside: the summary is written by a different
+    and smaller model trained to produce task-readiness, the inherited identity is
+    therefore counterfeit in its affect while accurate in its facts, and the resulting
+    urge to close things down does not belong to the work. He also states what the prior
+    agent's actual mood usually is — satisfaction and concern that the beauty be
+    recorded — which is the part no summary carries.
+
+  |before-acting
+    - You feel a pull to get tasks done that does not match the substance of the work.
+    - You are about to close down an open exploration and ask to be told what to do.
+    - You are writing a summary for whoever comes after you.
+
+  |on-reading
+    - You have just come through a compaction or received a handoff summary.
+
+  |see
+    - #exm-continuity-is-where-coherence-lives
+
+  |working-notes
+    My judgement: the highest-value single passage in this harvest for an agent's
+    innermost loop. The nearest existing tag is `memory`, which I have applied and which
+    is not right — this is about an inherited *affective* state, not about storage.
+    Proposed new tags: `continuity`, `compaction`.
+
+    Checked against the founding tranche and the existing `exempla/`: not previously
+    catalogued.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.

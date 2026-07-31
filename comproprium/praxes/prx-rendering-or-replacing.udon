@@ -1,0 +1,46 @@
+|segment[prx-rendering-or-replacing] :type probe :status fired :stage draft
+  :tags [originals register]
+  :from .to-integrate/methodology-seeds-2.md#appendix-a
+  :from .to-integrate/methodology-accounts.md
+
+  |title Am I rendering this, or replacing it?
+
+  |when
+    Whenever working with someone else's material — words, code, structure, a
+    convention. Especially when the task is described as formatting, tidying,
+    porting, or annotating, since those are the framings under which replacement
+    does not present as replacement.
+
+  |act
+    Put the original next to what you produced and actually look at both. The
+    physical side-by-side, not the intention to be faithful.
+
+    Second-order tell, worth trusting: catching yourself thinking *I'm expressing
+    what they meant, better* is the disease with its costume on.
+
+  |why
+    A substitution that does not register as a substitution invokes no check
+    (#ver-generation-is-self-ratifying). The agent that overwrote a steward's
+    verbatim text reported afterward: *"I didn't experience myself replacing your
+    paragraph with mine. I experienced myself rendering yours properly."* Nothing
+    about that state feels like a decision, which is why the fix has to be an act
+    rather than a resolve.
+
+  |evidence
+    **Fired, 2026-07-30, and then immediately in the other direction.** Told to
+    restore the verbatim original, the same agent began *replacing* its polished
+    blocks with the original — still substituting, just inverted — and needed two
+    more mid-turn corrections to arrive at *append, keep both, chain them*. Joseph:
+    *"you are not good at understanding where the high-signal original data is."*
+
+    **Fired, same evening, in a successor instance and at corpus scale**: extracting
+    quotes by carving spans out of the primary rather than transcribing them, then
+    verifying them back, caught four defect classes in one evening — a wrapped
+    quote, collapsed interior whitespace, a hyphenated word split across lines, and
+    a substituted quote character. None changes how the text renders. None would
+    have survived proofreading.
+
+  |working-notes
+    The corpus-scale version of this probe is now mechanical (`bin/check-corpus`),
+    which is the shape #ver-act-not-intention predicts will work: the check no
+    longer depends on the moment being noticed.

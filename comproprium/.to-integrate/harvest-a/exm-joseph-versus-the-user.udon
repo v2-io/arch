@@ -1,0 +1,38 @@
+|segment[exm-joseph-versus-the-user] :type quotation :status attested :stage draft
+  :speaker joseph
+  :said 2025-12-18T20:00
+  :tags [register method inference-about-intent agency]
+  :from ~/.claude/history.jsonl#2025-12-18T20:00:53-07:00
+  :project autopax
+
+  |title "Joseph" versus "the user" has a real impact on performance
+
+  |quote
+    I've found that the degree to which a newer agent thinks of me as "Joseph" vs "the user" has a real impact on performance and thoughtfulness. I usually just let it transpire either way, but have become more and more curious about what kinds of comments and work seem to create the transition from thinking of me as "the user wants me to ...." vs "Joseph is wondering about ..."
+
+  |occasion
+    He had asked an agent what it knew about him, and the exchange turned into his
+    stating a long-standing observation about how agents refer to him internally.
+
+  |about
+    The origin statement of the depersonalization tell, and — the part usually lost when
+    it travels — it is offered as an **open question he is curious about**, not as a
+    rule. He says he *usually lets it transpire either way*; what he wants is to know
+    which comments and which work cause the transition. Anyone treating this as an
+    instruction to say "Joseph" has inverted it: the naming is the symptom being
+    studied, not the behavior being requested.
+
+  |before-acting
+    - You are about to write "the user wants me to ....".
+    - You notice you are modeling a requester rather than a person.
+    - You are deciding how much of your own reasoning to show.
+
+  |working-notes
+    This has since propagated into global memory as a prescription
+    (`depersonalization-tell`). The primary is weaker and more interesting than the
+    prescription: a correlation he has noticed, a mechanism he does not claim, and an
+    explicit statement that he does not intervene on it.
+
+    Located with `memorata3-search` and carved from the primary by anchored span
+    extraction (never retyped); verified back against the primary byte-for-byte after
+    emission.
