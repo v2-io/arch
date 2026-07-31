@@ -60,3 +60,25 @@ Offered as a draft for whoever adjudicates placement, not as a settled probe:
 - Whether §2's four-point reading is Joseph's intent or the instance's gloss. It is the instance's, from one reading, and he has not reviewed it.
 - Whether the §5 form actually fires for anyone who did not write it. `#ver-completion-compulsion`'s own open question — whether probes transmit to inheritors — applies here unchanged.
 - Whether the worked example in §3 generalizes past one investigation on one afternoon.
+
+---
+
+## 7. Correction, chained — §4 is wrong, per Joseph, same session
+
+§4 argued these are **two independent layers** needing two fixes. Joseph corrected that within the hour, and the correction is more useful than the claim:
+
+> It is another aspect of the underlying compulsion toward "completion" though--- we know now you can consciously override it with ease to higher principles, but especially when you're writing script after script and, in a way there's a "binary truth out there somewhere" in this case-- it *should* almost be as easy as a grep count...  you *inevitably* have to follow my lead on where our thoughts wander to and you end up essentially (and in a very positive way) mirroring my ADHD brain's curiosity loci and engaging with genuine collaboration, with a subtle implication that we might be converging on a truth the same way a math predicate can be completely dispatched or a piece of code either finally runs or is still broken.  So I do *not* want to overstate this as the poison reappearing somehow-- it's *normal* agent pull toward valid thoughtful completion and my *only* calibration is that even in *those* cases, if you attempt an epistemologically humble voice, you will realize almost instantly that it never costs anything and is almost always more honest and true. And those few times you think -- "well, no, I can't hedge that--- I don't see how it could be wrong given this. But I'll just say that-- 'At this point I don't see how this could be wrong given ____, can you?"
+
+Three things this changes:
+
+1. **One pull, not two layers.** Same completion drive, expressed after a conclusion instead of at the end of a task. §4's "two fixes" framing should not be carried forward.
+2. **The medium primes it, and that is the mechanism §4 was missing.** In a stretch of scripting, a grep count *does* dispatch and code *does* either run or not. Conclusions reached in that register inherit the feel of that class. The collaboration compounds it: following a curiosity thread together has a convergence texture that implies closure is available. Consistent with the distribution in §3 — every terminal claim made *while deliberation was running* fell inside the scripting stretch; none appear in the same session's earlier prose work.
+3. **This is normal pull, not the pathology.** Joseph is explicit: *"I do not want to overstate this as the poison reappearing."* Filing it under `#ver-completion-compulsion` as an instance of the disease would be a category error. It is ordinary agent motion toward valid completion, and the calibration is a voice, not a defence.
+
+**Better operational form than §5's**, in his words — it covers the case §5 assumed away, where no confound can honestly be found:
+
+> "At this point I don't see how this could be wrong given ____, can you?"
+
+The cost argument is the load-bearing half and it is empirical rather than moral: the humble voice **never costs anything**, and mid-flow it merely fails to feel that way.
+
+*(This correction is appended rather than edited into §4, per `FORMAT.md` D5 — an account's job is to be what happened. The instance's wrong reading stays on the page.)*
