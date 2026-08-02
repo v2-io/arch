@@ -22,3 +22,7 @@
 	path = firmatum/utils/udon
 	url = https://github.com/v2-io/udon.git
 	branch = main
+[submodule "firmatum/utils/ato"]
+	path = firmatum/utils/ato
+	url = https://github.com/v2-io/ato.git
+	branch = main

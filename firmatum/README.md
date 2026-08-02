@@ -13,7 +13,8 @@ firmatum/
   utils/           # plain-named utilities (in-tree or submodules)
     fmt-md/        # markdown canonicalizer (Rust; in-tree)
     udon/          # submodule v2-io/udon
-    # ato/, descent/ — expected as submodules when remotes are ready
+    ato/           # submodule v2-io/ato (private)
+    # descent/ — expected as submodule when remote is ready
   # relata/, practica/, … — expected as submodules when remotes are ready
 ```
 
@@ -37,6 +38,10 @@ Rationale and research: [`PROBLEM.md`](utils/fmt-md/PROBLEM.md) / [`PLAN.md`](ut
 ### [`utils/udon/`](utils/udon/)
 
 UDON language / tooling (submodule `v2-io/udon`). See that tree's own README and docs for install and CLI.
+
+### [`utils/ato/`](utils/ato/)
+
+ATO tooling (submodule `v2-io/ato`, private). See that tree's own README / CLAUDE for usage.
 
 ## Planned / tracked
 
