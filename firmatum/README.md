@@ -61,7 +61,7 @@ After clone of arch: submodule update, then reinstall gem from `firmatum/relata`
 
 Practica notes/docs (submodule `v2-io/practica`).
 
-**Symlinks (not a submodule blocker):** local-only outside-repo links under `.obsidian/` (shared config) and `ref/Art-of-Action` → `~/src/_ref/books/…` are **gitignored / not tracked**. A fresh submodule clone will not recreate them; optional for reading refs and Obsidian. No install binary.
+**Local-only overlay (gitignored; must be recreated per machine):** `.obsidian/` (shared-config symlinks + vault-local plugins/json) and `ref/Art-of-Action` → `~/src/_ref/books/…`. Fresh `git submodule update` does **not** bring these — they live only in a working tree that had them (e.g. historical `~/src/practica`). On this machine they were **physically recreated under `firmatum/practica/`** (2026-08-02) so the programme mount is usable as an Obsidian vault without depending on `~/src/practica`. No install binary.
 
 ### descent — deferred re-home
 
