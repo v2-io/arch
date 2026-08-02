@@ -50,12 +50,14 @@ Cross-project bibliography CLI (submodule `v2-io/relata`). **Code-only repo**; b
 
 | Concern | Fact |
 |---|---|
-| **Data** | `$RELATA_DATA_DIR` (default `~/.local/share/relata/`) — not inside the gem or any clone |
-| **Global command** | Installed gem `relata` (currently e.g. under mise Ruby `…/gems/relata-0.5.0/`) |
-| **Developing from this mount** | Changes under `firmatum/relata` do **not** affect the global binary until you reinstall the gem from this path (e.g. `gem build relata.gemspec && gem install ./relata-*.gem` from `firmatum/relata`, or your usual dx/mise flow). `~/src/relata` is not special to the data dir — only whichever checkout you last `gem install`ed from supplies the code. |
-| **Tests** | Some tests reference machine-local paths under `~/src/_ref/…` (optional assets); suite is not fully portable without those trees. |
+| **Data** | `$RELATA_DATA_DIR` (default `~/.local/share/relata/`) — **already external**; no “move the bibliography” when mounting under firmatum. Same store whether you run from `~/src/relata` or `firmatum/relata`. |
+| **Global command** | Gem install under mise Ruby (`…/gems/relata-*`). Not a path into any checkout. |
+| **Developing from this mount** | Edit `firmatum/relata`, then **`gem build` + `gem install` from that directory** so PATH `relata` picks up the new code. Submodule alone does not replace the gem. |
+| **Local overlay (this machine, 2026-08-02)** | Obsidian vault overlay recreated under `firmatum/relata/` (shared-config symlinks + vault-local plugins/json), same class of gitignored local as practica. `mise trust` applied on `firmatum/relata/mise.toml`. |
+| **Not moved** | `_emitted/`, `.yardoc/`, `.ruby-lsp/` — generated/local IDE; recreate as needed. |
+| **Tests** | Some tests assume `~/src/_ref/…` assets; optional. |
 
-After clone of arch: submodule update, then reinstall gem from `firmatum/relata` if you want *this* tree to be the live code path. Data continues to work without that step.
+After clone of arch: `git submodule update`, `mise trust firmatum/relata` if needed, reinstall gem from `firmatum/relata` for live code; data dir keeps working without that.
 
 ### [`practica/`](practica/)
 
