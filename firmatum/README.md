@@ -14,7 +14,7 @@ firmatum/
     fmt-md/        # markdown canonicalizer (Rust; in-tree)
     udon/          # submodule v2-io/udon
     ato/           # submodule v2-io/ato (private)
-    # descent/ — expected as submodule when remote is ready
+    # descent/ — NOT mounted here yet (see below)
   # relata/, practica/, … — expected as submodules when remotes are ready
 ```
 
@@ -43,10 +43,15 @@ UDON language / tooling (submodule `v2-io/udon`). See that tree's own README and
 
 ATO tooling (submodule `v2-io/ato`, private). See that tree's own README / CLAUDE for usage.
 
+### descent — deferred re-home
+
+**Do not add `firmatum/utils/descent` yet.** Descent already lives as a submodule of udon (`firmatum/utils/udon/tools/descent` → `v2-io/descent`). Leave it there until Joseph removes that nest from within udon and re-homes work from a firmatum/utils perspective. Adding a second mount would dual-track the same remote.
+
 ## Planned / tracked
 
 - **`mv-src-repo`** — the general `~/src/` project relocator (spec in [`../MIGRATION.md`](../MIGRATION.md) §5): config-driven (safe-sweep repo set, protected paths, Claude memory roots, memorata/relata adapters), dry-run `plan`, journaled actions with inverses, `rollback`, verification. **Build it *after* the first migration is done by hand** — harvest the hand-kept journal in MIGRATION.md into the implementation; shakedown run = the gated `archema-io` → `archema` rename. Ruby, per the script-language convention.
-- **Submodules** for other belt citizens (relata, practica, ato, udon, descent, …) as their remotes are confirmed clean.
+- **Submodules** for other belt citizens (relata, practica, …) as their remotes are confirmed clean.
+- **`utils/descent`** — only after udon drops `tools/descent` (see above).
 
 ## Conventions
 
