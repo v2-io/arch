@@ -6,13 +6,19 @@ It exists because the general-purpose formatters get this wrong in ways that cos
 
 ## Build and install
 
+Source lives at `firmatum/utils/fmt-md/` in the Archema programme tree (moved from `utils/fmt-md/` 2026-08-01). Install is still plain cargo — the global binary does not depend on a fixed source path after install.
+
 ```sh
+# from arch/ (programme root):
+cargo install --path firmatum/utils/fmt-md
+
+# or from this directory:
 cargo install --path .     # build release + install to ~/.cargo/bin/fmt-md
 cargo test                 # 9 tests: invariants, ground truth, math gates
 cargo build --release      # build only; binary at target/release/fmt-md
 ```
 
-`cargo install --path .` is the whole install story — re-run it to upgrade, `cargo uninstall fmt-md` to remove. It requires `~/.cargo/bin` on your PATH; that line was added to `~/.zshrc` on 2026-07-22 (it had been missing, which had left a few earlier `cargo install`s unreachable).
+`cargo install --path …` is the whole install story — re-run it to upgrade after pulls or path moves, `cargo uninstall fmt-md` to remove. It requires `~/.cargo/bin` on your PATH; that line was added to `~/.zshrc` on 2026-07-22 (it had been missing, which had left a few earlier `cargo install`s unreachable).
 
 Optional: `--math` additionally needs a local [ollama](https://ollama.com) with the chosen model pulled (`ollama pull llama3.2:3b`). Everything else works without it.
 
