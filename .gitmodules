@@ -10,3 +10,7 @@
 	path = vivarium
 	url = https://github.com/v2-io/vivarium.git
 	branch = main
+[submodule "proprium/INGEST/old-firmatum"]
+	path = proprium/INGEST/old-firmatum
+	url = https://github.com/v2-io/firmatum.git
+	branch = main
