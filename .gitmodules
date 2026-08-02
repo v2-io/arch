@@ -14,3 +14,7 @@
 	path = proprium/INGEST/old-firmatum
 	url = https://github.com/v2-io/firmatum.git
 	branch = main
+[submodule "proprium/corporeum/INGEST/autopax"]
+	path = proprium/corporeum/INGEST/autopax
+	url = https://github.com/v2-io/autopax.git
+	branch = main
