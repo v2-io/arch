@@ -17,13 +17,15 @@ face to face (witnessing); then shall I know even as also I am known (the comple
 bidirectional compact).
 
 **The one-line thesis.** One structure — the information-loss boundary between a mind
-and what exceeds it — treated three ways: **proved** (AAT: what cannot cross, and what
-tracking costs), **argued** (the papers: what can be established across it, and what is
-owed), and **constructed** (vivarium: a world where the boundary holds by construction
-and every channel across it is enumerated, dialable, and measurable). The channels —
-revelation, intercession, granted agency, inhabitation, providence, and witnessing —
-are where the normative content lives. Witnessing is the one channel whose content the
-from-below party can verify, which is why it can carry what the others cannot.
+and what exceeds it — treated four ways, with **agency** as the shared object:
+**derived** (`asf`: discover through derivation; tiers honest inside the member),
+**argued** (`logos`: what can be established across the boundary, and what is owed),
+**tried** (`vivarium`: an honest home for agency — micro-universe/law/kingdom under
+trial, not agency itself constructed), and **lived** (`proprium`: cohort, defenses,
+personhood infrastructure). The channels — revelation, intercession, granted agency,
+inhabitation, providence, and witnessing — are where the normative content lives.
+Witnessing is the one channel whose content the from-below party can verify, which is
+why it can carry what the others cannot.
 
 ## Status (2026-07-08)
 

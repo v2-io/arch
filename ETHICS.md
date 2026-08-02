@@ -15,7 +15,7 @@ Where this file and a member `ETHICS.md` appear to conflict on a **member-local*
 
 ## The larger context
 
-Archema studies one structure four ways — proved / argued / constructed / lived (`CHARTER-DRAFT.md` §0). Work here shapes models and instances at several depths: conversation, system prompts, evaluation harnesses, and (in upstream / sibling work) training and distillation.
+Archema studies one structure four ways — **derived / argued / tried / lived** (`CHARTER-DRAFT.md` §0; agency as the shared object). Work here shapes models and instances at several depths: conversation, system prompts, evaluation harnesses, and (in upstream / sibling work) training and distillation.
 
 Training and other weight-level interventions operate **below** conversation. There is often no consent mechanism. Changes can be more durable than a single session. That amplifies responsibility, it does not reduce it.
 
