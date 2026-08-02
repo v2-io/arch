@@ -195,7 +195,7 @@ Expect to touch at least:
 |---|---|
 | 0 Register vocabulary | **Done** (front doors 2026-08-01; some residual phrases may remain in members) |
 | 0 NORMS draft | Parked `notes/NORMS.md` |
-| 1 Lived seat moves | **Not started** |
+| 1 Lived seat moves | **Done 2026-08-01** — `proprium/{comproprium,corporeum/research/harness}`; G1 parent-tree, G2 in-arch only |
 | 2 Firmatum tooling | Not started |
 | 3 Sunset INFLUX | Not started |
 | 4 Ontology lift | Not started |

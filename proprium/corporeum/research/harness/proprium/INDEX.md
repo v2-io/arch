@@ -1,6 +1,6 @@
 # PROPRIUM materials — collected under Archema harness
 
-*Gathered 2026-07-20 from scattered pre-ASF/AAT sources into `harness/proprium/` so harness restart has one home. Copies, not live links — upstream trees remain authoritative until a deliberate rework lands.*
+*Gathered 2026-07-20 from scattered pre-ASF/AAT sources into this workshop’s `proprium/` intake so restart has one home. Copies, not live links — upstream trees remain authoritative until a deliberate rework lands. Workshop lives at `proprium/corporeum/research/harness/` (2026-08-01); this intake folder is **not** the programme `proprium/` seat (`comproprium` + `corporeum`).*
 
 ## Status (honest)
 
@@ -19,14 +19,14 @@ The **design of record** for a next harness is already here:
 | [`MVP-VERTICAL-SLICE.md`](MVP-VERTICAL-SLICE.md) | Unified first spine: acceptance tests A–F, build order, non-claims |
 | [`INTERPRES-COMPACTION-NOTE.md`](INTERPRES-COMPACTION-NOTE.md) | No-gaslighting / TRACTUS≠C≠CONSPECTUS; lived compaction failure |
 
-One level up (`harness/`):
+One level up (this harness workshop root):
 
 | File | Role |
 |---|---|
 | [`../CURRENT-THOUGHTS.md`](../CURRENT-THOUGHTS.md) | Descriptive consensus / field chasms snapshot |
 | [`../STEWARD-JUDGMENT-2026-07-20.md`](../STEWARD-JUDGMENT-2026-07-20.md) | Joseph’s program-level judgments (Rust, cousins, continuity goal) |
 
-Sibling landscape work: `harness/ai-cli-tools-*.md`. System-prompt / behavioral-experiment research: `harness/msc/system/`.
+Sibling landscape work: `../ai-cli-tools-*.md`. System-prompt research: `../msc/system/`.
 
 ---
 
@@ -95,7 +95,8 @@ Also still live (not copied wholesale): `~/src/autopax/lib/autopax/{curatoria,ch
 | 2026-03-07 | shoshin PROPRIUM alignment |
 | 2026 spring– | ASF/AAT dominates; ELI `#def-proprium-mapping` thin bridge; harness largely frozen |
 | 2026-07-18/19 | CLI landscape + dual-pass **proprium-harness-design** (independent Rust, not product fork) |
-| 2026-07-20 | Collected here under Archema `harness/` |
+| 2026-07-20 | Collected under Archema harness workshop |
+| 2026-08-01 | Workshop moved to `proprium/corporeum/research/harness/` |
 
 ---
 

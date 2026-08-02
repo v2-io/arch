@@ -21,4 +21,4 @@ Each member keeps its own CLAUDE.md and conventions (charter §1): asf's is `doc
 
 ## Program-level docs map
 
-`CHARTER-DRAFT.md` (constitution, draft) · `charter/concept-matrix.md` (concept mappings) · `charter/substrate-01/02` (the ASF-walk record grounding the charter) · founding philosophy in `logos/` (`philosophy-papers-feedback.md`, `philosophy-vivarium-integration.md`, paper-local witnessing / granted-agency notes) · `.archive/` (historical naming record) · `MIGRATION.md` (the 2026-07-10 restructure + journal + mv-src-repo spec) · `utils/` (program tools; plain names).
+`CHARTER-DRAFT.md` (constitution, draft) · `charter/concept-matrix.md` (concept mappings) · `charter/substrate-01/02` (the ASF-walk record grounding the charter) · founding philosophy in `logos/` · **`proprium/`** (lived seat: `comproprium/`, `corporeum/research/harness/`) · `.archive/` · `MIGRATION.md` · `notes/TREE-REORG-PLAN.md` · `utils/` (program tools; plain names).

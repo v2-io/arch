@@ -2,6 +2,8 @@
 
 *What is held in common between minds working here: what is true, what to do, and what actually happened.*
 
+*Path: `proprium/comproprium/` — communal methodology under the lived register seat.*
+
 **Status, in Joseph's words, 2026-07-30:** *"proof of concept with aspirations to be disciplined in a way worthy of becoming critical lived/living infrastructure."* Nothing here is ratified. The directory names, the segment kinds, and the repo's own boundary are open — see *Open* below.
 
 ## Priorities
@@ -100,7 +102,7 @@ This is stated here because otherwise the absence is silent, and a later complet
 *None of these is settled by an agent session.*
 
 1. ~~The third type's name.~~ **Ruled `exempla`** by Joseph, 2026-07-30 — *"Teach by precept and example."* (Alternatives weighed and declined: `testimonia`, `acta`, `commentarii`, `narrationes`.)
-2. **The repo's own name and boundary.** `comproprium` is Joseph's working name. Whether this is a directory inside `arch/`, an Archema member with its own repo, or something that lives beside PROPRIUM is undecided — and whether the name collides with PROPRIUM's existing structure in `firmatum` has not been checked by anyone who has read it.
+2. **The repo's own name and boundary.** Nested under programme `proprium/` (2026-08-01) as the communal half of the lived seat; further member-repo extraction still open. Collision with symbolic PROPRIUM / firmatum ontology remains a naming caution, not a layout blocker.
 3. **Which segment kinds this corpus needs.** ASF's `type` vocabulary is a theory's (`postulate` · `derived` · `result` · …) and does not fit an account or a practice. See FORMAT.md; the current set is proposed, not adopted.
 4. **Whether `praxes` needs a use-evidence field.** If a practice is adjudicated by whether it fired, the segment needs somewhere to record firings — and a field with no entries is then a finding rather than an omission.
 5. **Where this corpus ends.** It overlaps ASF's agent theory, vivarium's audit conventions, and the delegation discipline in `arch/AGENTIC-DELEGATION.md`, and no boundary is drawn.

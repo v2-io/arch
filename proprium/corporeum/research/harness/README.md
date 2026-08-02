@@ -1,4 +1,6 @@
-# Archema harness workshop
+# Harness workshop (corporeum research)
+
+*Path: `proprium/corporeum/research/harness/` — research intake under the lived register’s realization layer, not the programme root. See `proprium/README.md` and `proprium/corporeum/README.md`.*
 
 Intake and design substrate for restarting **personhood / continuity infrastructure**
 (PROPRIUM-shaped), after ASF/AAT matured and commodity coding CLIs finally expose
@@ -24,24 +26,18 @@ usable seams. **Not** a shipping product repo; **not** a fork of OpenCode/Codex.
 ## Layout
 
 ```
-harness/
-  README.md                 ← this file
+proprium/corporeum/research/harness/   ← this workshop
+  README.md
   STEWARD-JUDGMENT-*.md
   CURRENT-THOUGHTS.md
-  lived.md                  ← CLI census scratch
-  ai-cli-tools-*.md         ← landscape (source assessment, fork rec, …)
-  msc/system/               ← system-prompt / act-vs-report experiment workshop
-  proprium/
+  lived.md
+  ai-cli-tools-*.md
+  msc/system/
+  proprium/                 ← PROPRIUM *intake copies* (not programme proprium/ seat)
     INDEX.md
     CHRONICA-PORT-SPEC.md
-    AGENTIC-LOOP-PORT-SPEC.md
-    MVP-VERTICAL-SLICE.md
-    proprium-harness-design.md
-    proprium-harness-grok-input.md
-    canonical/              ← PROPRIUM ontology + architecture v2
-    archaeology/
-    bridges/
-    stalled-lineage/        ← autopax, sapientia survey, nexum, …
+    …
+    canonical/ archaeology/ bridges/ stalled-lineage/
 ```
 
 **Upstream live code (not copied wholesale):**  

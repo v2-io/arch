@@ -16,7 +16,8 @@ The terminology system currently lives entirely in asf (`asf/terminology/` entri
 
 ## Program-level items
 
-- [x] **Register vocabulary refresh (2026-08-01, Joseph).** Landed: **derived / argued / tried / lived** → `asf` / `logos` / `vivarium` / `proprium`. Front doors updated; detail + residuals in `notes/register-vocabulary-cue-2026-08-01.md`. (Tree migration of `proprium/` seat still separate.)
+- [x] **Register vocabulary refresh (2026-08-01, Joseph).**
+- [x] **Tree reorg phase 1 (2026-08-01).** In-arch: `comproprium/` + `harness/` → `proprium/`. Plan: `notes/TREE-REORG-PLAN.md`. Landed: **derived / argued / tried / lived** → `asf` / `logos` / `vivarium` / `proprium`. Front doors updated; detail + residuals in `notes/register-vocabulary-cue-2026-08-01.md`. (Tree migration of `proprium/` seat still separate.)
 
 - [ ] **Migrate `archema-io` → `archema`.** Already specced as the queued second migration — see `MIGRATION.md` (§4 + the §5 general utility motivated by exactly this). Don't re-plan here; execute from there. One item to fold into its sweep: asf's `core.hooksPath` still points at the pre-rename `~/src/agentic-systems/.git/hooks` (works only via the transition symlink — will break silently when that symlink is cleaned; fix is one `git config` per repo, discovered 2026-07-14).
 - [ ] **Terminology auditing process.** Design + build (Joseph, 2026-07-16). Shape TBD — candidate ingredients from existing practice: the asf naming-cycle SOP (`asf/doc/sop/naming.sop.md`), the concept-matrix coherence check, drift detection between entries and actual segment/prose usage, and the C8-vs-C5-style conflicting-decision detection that the 2026-07-15 execution surfaced manually.
