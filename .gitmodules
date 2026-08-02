@@ -18,3 +18,7 @@
 	path = proprium/corporeum/INGEST/autopax
 	url = https://github.com/v2-io/autopax.git
 	branch = main
+[submodule "firmatum/utils/udon"]
+	path = firmatum/utils/udon
+	url = https://github.com/v2-io/udon.git
+	branch = main

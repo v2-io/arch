@@ -12,7 +12,8 @@ Program-level tools that **firm, confirm, and establish** work across the estate
 firmatum/
   utils/           # plain-named utilities (in-tree or submodules)
     fmt-md/        # markdown canonicalizer (Rust; in-tree)
-    # ato/, udon/, descent/ — expected as submodules when remotes are ready
+    udon/          # submodule v2-io/udon
+    # ato/, descent/ — expected as submodules when remotes are ready
   # relata/, practica/, … — expected as submodules when remotes are ready
 ```
 
@@ -32,6 +33,10 @@ cargo install --path firmatum/utils/fmt-md
 `cargo install --path .` from inside `firmatum/utils/fmt-md` is equivalent. Re-run to upgrade; `cargo uninstall fmt-md` to remove. The installed binary does not hard-code the source path — only reinstall needs the new location.
 
 Rationale and research: [`PROBLEM.md`](utils/fmt-md/PROBLEM.md) / [`PLAN.md`](utils/fmt-md/PLAN.md) / [`research/`](utils/fmt-md/research/). Capability and limits: [`STATUS.md`](utils/fmt-md/STATUS.md). Usage: [`README.md`](utils/fmt-md/README.md) and `fmt-md --help`.
+
+### [`utils/udon/`](utils/udon/)
+
+UDON language / tooling (submodule `v2-io/udon`). See that tree's own README and docs for install and CLI.
 
 ## Planned / tracked
 
