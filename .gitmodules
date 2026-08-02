@@ -18,11 +18,19 @@
 	path = proprium/corporeum/INGEST/autopax
 	url = https://github.com/v2-io/autopax.git
 	branch = main
-[submodule "firmatum/utils/udon"]
-	path = firmatum/utils/udon
+[submodule "firmatum/udon"]
+	path = firmatum/udon
 	url = https://github.com/v2-io/udon.git
 	branch = main
-[submodule "firmatum/utils/ato"]
-	path = firmatum/utils/ato
+[submodule "firmatum/ato"]
+	path = firmatum/ato
 	url = https://github.com/v2-io/ato.git
+	branch = main
+[submodule "firmatum/practica"]
+	path = firmatum/practica
+	url = https://github.com/v2-io/practica.git
+	branch = main
+[submodule "firmatum/relata"]
+	path = firmatum/relata
+	url = https://github.com/v2-io/relata.git
 	branch = main

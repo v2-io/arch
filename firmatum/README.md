@@ -10,51 +10,72 @@ Program-level tools that **firm, confirm, and establish** work across the estate
 
 ```text
 firmatum/
-  utils/           # plain-named utilities (in-tree or submodules)
-    fmt-md/        # markdown canonicalizer (Rust; in-tree)
-    udon/          # submodule v2-io/udon
-    ato/           # submodule v2-io/ato (private)
-    # descent/ — NOT mounted here yet (see below)
-  # relata/, practica/, … — expected as submodules when remotes are ready
+  utils/              # programme-internal / pre-public tools only
+    fmt-md/           # in-tree for now; queued for rename + own repo + re-submodule
+  udon/               # sm v2-io/udon  (independent product)
+  ato/                # sm v2-io/ato   (private)
+  relata/             # sm v2-io/relata
+  practica/           # sm v2-io/practica
+  # descent/          # deferred — still nested under udon/tools/descent
 ```
 
-## Built
+**Split:** top-level `firmatum/<project>/` = independently applicable projects. `firmatum/utils/` = Archema-local or not-yet-extracted tools (and, later, shared `bin/` harvest).
+
+## Built / mounted
 
 ### [`utils/fmt-md/`](utils/fmt-md/)
 
-Markdown canonicalizer for the house standards: removes manual word-wrapping (structurally, via a CommonMark parse — no heuristics, no flag-triage pile) and optionally promotes Unicode math to `$LaTeX$` with a local ollama model behind deterministic verification. Rust.
+Markdown canonicalizer (Rust; house standards today; general engine). In-tree.
 
-**Install (global):** from this repo, re-run after clone or path moves:
+**Install (global):**
 
 ```sh
 cargo install --path firmatum/utils/fmt-md
-# binary: ~/.cargo/bin/fmt-md  (requires ~/.cargo/bin on PATH)
+# → ~/.cargo/bin/fmt-md  (requires ~/.cargo/bin on PATH)
 ```
 
-`cargo install --path .` from inside `firmatum/utils/fmt-md` is equivalent. Re-run to upgrade; `cargo uninstall fmt-md` to remove. The installed binary does not hard-code the source path — only reinstall needs the new location.
+Queued (not done): rename, public crate/repo readiness, re-intern as `firmatum/<newname>/` submodule and empty-or-repurpose `utils/` for internal migrators.
 
-Rationale and research: [`PROBLEM.md`](utils/fmt-md/PROBLEM.md) / [`PLAN.md`](utils/fmt-md/PLAN.md) / [`research/`](utils/fmt-md/research/). Capability and limits: [`STATUS.md`](utils/fmt-md/STATUS.md). Usage: [`README.md`](utils/fmt-md/README.md) and `fmt-md --help`.
+### [`udon/`](udon/)
 
-### [`utils/udon/`](utils/udon/)
+UDON language / tooling (submodule `v2-io/udon`). See that tree's README.
 
-UDON language / tooling (submodule `v2-io/udon`). See that tree's own README and docs for install and CLI.
+### [`ato/`](ato/)
 
-### [`utils/ato/`](utils/ato/)
+ATO tooling (submodule `v2-io/ato`, private). See that tree's README / CLAUDE.
 
-ATO tooling (submodule `v2-io/ato`, private). See that tree's own README / CLAUDE for usage.
+### [`relata/`](relata/)
+
+Cross-project bibliography CLI (submodule `v2-io/relata`). **Code-only repo**; bibliography data is external.
+
+| Concern | Fact |
+|---|---|
+| **Data** | `$RELATA_DATA_DIR` (default `~/.local/share/relata/`) — not inside the gem or any clone |
+| **Global command** | Installed gem `relata` (currently e.g. under mise Ruby `…/gems/relata-0.5.0/`) |
+| **Developing from this mount** | Changes under `firmatum/relata` do **not** affect the global binary until you reinstall the gem from this path (e.g. `gem build relata.gemspec && gem install ./relata-*.gem` from `firmatum/relata`, or your usual dx/mise flow). `~/src/relata` is not special to the data dir — only whichever checkout you last `gem install`ed from supplies the code. |
+| **Tests** | Some tests reference machine-local paths under `~/src/_ref/…` (optional assets); suite is not fully portable without those trees. |
+
+After clone of arch: submodule update, then reinstall gem from `firmatum/relata` if you want *this* tree to be the live code path. Data continues to work without that step.
+
+### [`practica/`](practica/)
+
+Practica notes/docs (submodule `v2-io/practica`).
+
+**Symlinks (not a submodule blocker):** local-only outside-repo links under `.obsidian/` (shared config) and `ref/Art-of-Action` → `~/src/_ref/books/…` are **gitignored / not tracked**. A fresh submodule clone will not recreate them; optional for reading refs and Obsidian. No install binary.
 
 ### descent — deferred re-home
 
-**Do not add `firmatum/utils/descent` yet.** Descent already lives as a submodule of udon (`firmatum/utils/udon/tools/descent` → `v2-io/descent`). Leave it there until Joseph removes that nest from within udon and re-homes work from a firmatum/utils perspective. Adding a second mount would dual-track the same remote.
+**Do not add `firmatum/descent` yet.** Descent already lives as `firmatum/udon/tools/descent` → `v2-io/descent`. Leave it until Joseph removes that nest from within udon and re-homes at `firmatum/descent/`.
 
 ## Planned / tracked
 
-- **`mv-src-repo`** — the general `~/src/` project relocator (spec in [`../MIGRATION.md`](../MIGRATION.md) §5): config-driven (safe-sweep repo set, protected paths, Claude memory roots, memorata/relata adapters), dry-run `plan`, journaled actions with inverses, `rollback`, verification. **Build it *after* the first migration is done by hand** — harvest the hand-kept journal in MIGRATION.md into the implementation; shakedown run = the gated `archema-io` → `archema` rename. Ruby, per the script-language convention.
-- **Submodules** for other belt citizens (relata, practica, …) as their remotes are confirmed clean.
-- **`utils/descent`** — only after udon drops `tools/descent` (see above).
+- **`mv-src-repo`** — general `~/src/` relocator (spec in [`../MIGRATION.md`](../MIGRATION.md) §5); after hand migrations are harvested.
+- **fmt-md** rename + public extraction + submodule re-intern (see above).
+- **Harvest** cross-member `bin/` tools that belong in `firmatum/utils/`.
+- **`utils/descent`** — only after udon drops `tools/descent`.
 
 ## Conventions
 
-Ruby for scripts; Rust where the tool is durable content-parsing (see language note in asf's `agents.sop.md`). Each tool gets a `--help` worth reading and refuses destructive work without a journal.
+Ruby for scripts; Rust where the tool is durable content-parsing (see asf `agents.sop.md`). Each tool gets a `--help` worth reading and refuses destructive work without a journal.
 
 See `notes/TREE-REORG-PLAN.md` for programme tree context.
