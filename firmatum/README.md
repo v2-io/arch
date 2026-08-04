@@ -12,6 +12,8 @@ Program-level tools that **firm, confirm, and establish** work across the estate
 firmatum/
   utils/              # programme-internal / pre-public tools only
     fmt-md/           # in-tree for now; queued for rename + own repo + re-submodule
+    code/             # small installable CLIs (symlink → ~/.local/bin)
+      git-heat-decay/ # git-heat — commit-decay heatmap
   udon/               # sm v2-io/udon  (independent product)
   ato/                # sm v2-io/ato   (private)
   relata/             # sm v2-io/relata
@@ -35,6 +37,20 @@ cargo install --path firmatum/utils/fmt-md
 ```
 
 Queued (not done): rename, public crate/repo readiness, re-intern as `firmatum/<newname>/` submodule and empty-or-repurpose `utils/` for internal migrators.
+
+### [`utils/code/`](utils/code/)
+
+Installable code utilities (index: [`utils/code/README.md`](utils/code/README.md)).
+
+#### [`git-heat`](utils/code/git-heat-decay/) (`git-heat-decay/`)
+
+Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer.
+
+```sh
+ln -sfn ~/src/arch/firmatum/utils/code/git-heat-decay/git-heat ~/.local/bin/git-heat
+git-heat --help
+git-heat --html --serve
+```
 
 ### [`udon/`](udon/)
 

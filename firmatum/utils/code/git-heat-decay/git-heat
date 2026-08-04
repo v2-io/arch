@@ -1,0 +1,1980 @@
+#!/usr/bin/env python3
+"""git-heat — walkable commit-decay heatmap for any git repo or subdirectory.
+
+Per-path heat from git history with exponential *commit* decay, optional HTML
+tree + syntax-highlighted file viewer, and a focus slider (half-life in commits).
+
+Heat model
+  raw = sum over non-initial touches of exp(-age / tau)
+  tau = half_life / ln(2); age = commits behind HEAD (0 = HEAD)
+  heat = 2 * (1 - exp(-1/tau)) * raw
+    → touched every commit forever converges to ~2 at any half-life
+  dir heat = max of non-noise leaves under it
+  initial commit excluded; noise basenames (Cargo.toml, SOURCE_REV) → heat 0
+    and do not contribute to parent directory max
+
+Examples
+  git-heat                          # CLI ranking for cwd's repo
+  git-heat --html --serve           # heatmap + viewer at http://127.0.0.1:8765/
+  git-heat ~/src/arch/asf --html    # whole repo
+  git-heat crates/codegen --html    # one subdirectory only
+  git-heat --half-life 3 --top 20 .
+
+See also: firmatum/utils/code/git-heat-decay/README.md
+"""
+
+from __future__ import annotations
+
+import argparse
+import html
+import json
+import math
+import subprocess
+import sys
+import time
+from collections import defaultdict
+from pathlib import Path
+from typing import Any
+
+# Slider positions left→right: long half-life (historical/smooth) → short (recent/hot).
+# Log-ish series 1,2,3,5,7,11,13,17,21 (slider order = reverse of that).
+HALF_LIFE_CHOICES: list[int] = [21, 17, 13, 11, 7, 5, 3, 2, 1]
+DEFAULT_HALF_LIFE = 7
+ZERO_HEAT_BG = "#222222"
+
+# Predictable churn that drowns signal — shown as heat-0 (#222) and excluded
+# from parent directory max-heat rollup (and from color-scale heat_max).
+# Mutable so --noise can extend for a single run without rebinding the name.
+DEFAULT_NOISE_BASENAMES: frozenset[str] = frozenset({"Cargo.toml", "SOURCE_REV"})
+NOISE_BASENAMES: set[str] = set(DEFAULT_NOISE_BASENAMES)
+
+
+def is_noise_path(path: str) -> bool:
+    return Path(path).name in NOISE_BASENAMES
+
+
+def set_noise_basenames(names: set[str] | frozenset[str]) -> None:
+    NOISE_BASENAMES.clear()
+    NOISE_BASENAMES.update(names)
+
+
+def git_commit_touch_log(repo: Path) -> list[tuple[str, float, list[str]]]:
+    """Oldest→newest commits: (hash, unix_ts, paths). Paths via ACMR filter."""
+    cmd = [
+        "git",
+        "-C",
+        str(repo),
+        "log",
+        "--reverse",
+        "--pretty=format:%H %ct",
+        "--name-only",
+        "--diff-filter=ACMR",
+    ]
+    out = subprocess.check_output(cmd, text=True, errors="replace")
+    commits: list[tuple[str, float, list[str]]] = []
+    cur_hash: str | None = None
+    cur_ts: float | None = None
+    cur_paths: list[str] = []
+
+    def flush() -> None:
+        nonlocal cur_hash, cur_ts, cur_paths
+        if cur_hash is not None and cur_ts is not None:
+            commits.append((cur_hash, cur_ts, cur_paths))
+        cur_hash, cur_ts, cur_paths = None, None, []
+
+    for line in out.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        # commit header: "<40hex> <unix_ts>"
+        parts = line.split()
+        if (
+            len(parts) == 2
+            and len(parts[0]) == 40
+            and all(c in "0123456789abcdef" for c in parts[0])
+            and parts[1].isdigit()
+        ):
+            flush()
+            cur_hash = parts[0]
+            cur_ts = float(parts[1])
+            cur_paths = []
+            continue
+        if cur_hash is None:
+            continue
+        # path line (skip commit subject noise)
+        if "/" not in line and "." not in line and " " in line:
+            continue
+        cur_paths.append(line)
+    flush()
+    return commits
+
+
+def leaf_touch_data(
+    commits: list[tuple[str, float, list[str]]],
+) -> tuple[dict[str, list[int]], dict[str, float], int, int]:
+    """Build per-path commit ages (excluding initial) and last-touch mtime.
+
+    Returns (ages_by_path, mtime_by_path, n_commits, n_non_initial_touches).
+    age = commits behind HEAD (0 = HEAD). Initial commit contributes no ages.
+    Paths only in the initial commit still appear with ages=[] and mtime=0.
+    """
+    if not commits:
+        return {}, {}, 0, 0
+
+    n = len(commits)
+    ages: dict[str, list[int]] = defaultdict(list)
+    mtime: dict[str, float] = {}
+    n_touches = 0
+
+    for idx, (_h, ts, paths) in enumerate(commits):
+        is_initial = idx == 0
+        age = (n - 1) - idx  # HEAD → 0
+        for path in paths:
+            if is_initial:
+                # inventory only — no heat contribution
+                if path not in ages:
+                    ages[path] = []
+                mtime.setdefault(path, 0.0)
+                continue
+            ages[path].append(age)
+            n_touches += 1
+            prev = mtime.get(path, 0.0)
+            if ts > prev:
+                mtime[path] = ts
+
+    return dict(ages), mtime, n, n_touches
+
+
+def heat_from_ages(ages: list[int], tau: float) -> float:
+    """Scale-invariant heat: every-commit forever → 2 at any τ.
+
+    raw = Σ exp(-age/τ) grows like ~τ for frequent touches; multiply by
+    2·(1 − e^{−1/τ}) so the infinite geometric sum normalizes to 2
+    (the natural steady state when half_life=1, where e^{−1/τ}=1/2).
+    """
+    if not ages or tau <= 0:
+        return 0.0
+    raw = sum(math.exp(-a / tau) for a in ages)
+    # per-step decay factor; avoid underflow/cancellation for tiny tau
+    r = math.exp(-1.0 / tau)
+    scale = 2.0 * (1.0 - r)  # → 2/S(τ); S = 1/(1-r)
+    return scale * raw
+
+
+def compute_leaf_heat(
+    ages_by_path: dict[str, list[int]], half_life: float
+) -> dict[str, float]:
+    tau = half_life / math.log(2)
+    out: dict[str, float] = {}
+    for p, ages in ages_by_path.items():
+        if is_noise_path(p):
+            out[p] = 0.0
+        else:
+            out[p] = heat_from_ages(ages, tau)
+    return out
+
+
+def build_tree(
+    ages_by_path: dict[str, list[int]],
+    mtime_by_path: dict[str, float],
+    heat_by_path: dict[str, float],
+) -> dict[str, Any]:
+    """Nested tree; leaves carry ages[] for client-side recompute."""
+    root: dict[str, Any] = {
+        "name": ".",
+        "path": "",
+        "is_dir": True,
+        "heat": 0.0,
+        "mtime": 0.0,
+        "ages": None,
+        "noise": False,
+        "children": {},
+    }
+
+    for path, ages in ages_by_path.items():
+        noise = is_noise_path(path)
+        h = 0.0 if noise else heat_by_path.get(path, 0.0)
+        mt = mtime_by_path.get(path, 0.0)
+        parts = Path(path).parts
+        node = root
+        for i, part in enumerate(parts):
+            is_last = i == len(parts) - 1
+            kids = node["children"]
+            if part not in kids:
+                kids[part] = {
+                    "name": part,
+                    "path": "/".join(parts[: i + 1]),
+                    "is_dir": not is_last,
+                    "heat": 0.0,
+                    "mtime": 0.0,
+                    "ages": None,
+                    "noise": False,
+                    "children": {} if not is_last else None,
+                }
+            child = kids[part]
+            if is_last:
+                child["is_dir"] = False
+                child["heat"] = h
+                child["mtime"] = mt
+                child["ages"] = list(ages)
+                child["noise"] = noise
+                child["children"] = None
+            else:
+                child["is_dir"] = True
+                if child["children"] is None:
+                    child["children"] = {}
+            node = child
+
+    def finalize(node: dict[str, Any]) -> tuple[float, float]:
+        kids = node.get("children")
+        if not kids:
+            # leaves: heat already 0 for noise; return 0 contrib for parent max
+            if node.get("noise"):
+                return 0.0, node["mtime"]
+            return node["heat"], node["mtime"]
+        max_h = 0.0
+        max_mt = 0.0
+        for child in kids.values():
+            ch, cmt = finalize(child)
+            # ch is already 0 for noise leaves / subtrees that only contain noise
+            if ch > max_h:
+                max_h = ch
+            if cmt > max_mt:
+                max_mt = cmt
+        node["heat"] = max_h
+        node["mtime"] = max_mt
+        return max_h, max_mt
+
+    finalize(root)
+    return root
+
+
+def children_sorted(node: dict[str, Any]) -> list[dict[str, Any]]:
+    kids = node.get("children") or {}
+    items = list(kids.values())
+    # folders first, then files; within each: mtime desc, name asc
+    items.sort(key=lambda n: (0 if n["is_dir"] else 1, -n["mtime"], n["name"].lower()))
+    return items
+
+
+# Viridis-like Y→G→B→purple anchors sampled from y-g-b-heatmap-grid.png
+_HEAT_ANCHORS_RGB: list[tuple[int, int, int]] = [
+    (253, 231, 37),  # #fde725 yellow (hot)
+    (227, 228, 24),
+    (199, 224, 32),
+    (171, 220, 50),
+    (143, 215, 68),
+    (117, 208, 84),
+    (93, 201, 99),
+    (71, 192, 111),
+    (53, 183, 121),
+    (40, 174, 128),
+    (32, 164, 134),
+    (31, 154, 138),
+    (33, 144, 140),
+    (36, 134, 142),
+    (40, 124, 142),
+    (44, 114, 142),
+    (49, 104, 142),
+    (53, 93, 141),
+    (59, 82, 139),
+    (64, 70, 136),
+    (68, 58, 131),
+    (71, 45, 123),
+    (72, 31, 113),
+    (71, 17, 99),
+    (68, 1, 84),  # #440154 purple (cold)
+]
+
+
+def _densify_palette(
+    anchors: list[tuple[int, int, int]], steps_per_segment: int = 8
+) -> list[tuple[int, int, int]]:
+    if len(anchors) < 2:
+        return list(anchors)
+    out: list[tuple[int, int, int]] = []
+    for i in range(len(anchors) - 1):
+        c0, c1 = anchors[i], anchors[i + 1]
+        for s in range(steps_per_segment):
+            u = s / steps_per_segment
+            out.append(
+                (
+                    int(round(c0[0] + (c1[0] - c0[0]) * u)),
+                    int(round(c0[1] + (c1[1] - c0[1]) * u)),
+                    int(round(c0[2] + (c1[2] - c0[2]) * u)),
+                )
+            )
+    out.append(anchors[-1])
+    return out
+
+
+HEAT_PALETTE_RGB: list[tuple[int, int, int]] = _densify_palette(
+    _HEAT_ANCHORS_RGB, steps_per_segment=8
+)
+
+
+def fmt_age(now: float, mtime: float) -> str:
+    if mtime <= 0:
+        return "never*"  # only initial commit (or unknown)
+    days = (now - mtime) / 86400.0
+    if days < 1:
+        hours = days * 24
+        if hours < 1:
+            return f"{int(days * 86400 // 60)}m ago"
+        return f"{hours:.0f}h ago"
+    if days < 14:
+        return f"{days:.1f}d ago"
+    return f"{days / 7:.1f}w ago"
+
+
+def tree_to_jsonable(node: dict[str, Any], now: float) -> dict[str, Any]:
+    kids = children_sorted(node) if node.get("children") else []
+    out: dict[str, Any] = {
+        "name": node["name"],
+        "path": node["path"],
+        "is_dir": node["is_dir"],
+        "heat": node["heat"],
+        "mtime": node["mtime"],
+        "age": fmt_age(now, node["mtime"]),
+        "noise": bool(node.get("noise")),
+        "children": [tree_to_jsonable(c, now) for c in kids] if kids else [],
+    }
+    if not node["is_dir"]:
+        out["ages"] = list(node.get("ages") or [])
+    return out
+
+
+def render_html(
+    tree: dict[str, Any],
+    *,
+    repo: Path,
+    half_life: float,
+    now: float,
+    n_touches: int,
+    n_files: int,
+    n_commits: int,
+    label: str | None = None,
+    git_root: Path | None = None,
+    scope_prefix: str = "",
+) -> str:
+    data = tree_to_jsonable(tree, now)
+    heat_max = max(float(data["heat"]), 0.0)
+    # pick nearest slider position for default
+    choices = list(HALF_LIFE_CHOICES)
+    default_hl = min(choices, key=lambda c: abs(c - half_life))
+    display = label or repo.name
+    meta = {
+        "repo": str(repo),
+        "git_root": str(git_root or repo),
+        "scope": scope_prefix.rstrip("/"),
+        "label": display,
+        "half_life": default_hl,
+        "half_life_choices": choices,
+        "unit": "commits",
+        "now": time.strftime("%Y-%m-%d %H:%M:%S %z", time.localtime(now)),
+        "n_touches": n_touches,
+        "n_files": n_files,
+        "n_commits": n_commits,
+        "heat_max": heat_max,
+        "zero_bg": ZERO_HEAT_BG,
+        "note": "initial commit excluded; heat 0 → #222; noise basenames ignored for dir max",
+    }
+    palette_js = json.dumps(HEAT_PALETTE_RGB)
+    payload = json.dumps({"meta": meta, "tree": data}, ensure_ascii=False)
+    payload = payload.replace("<", "\\u003c")
+
+    legend_stops = ",".join(
+        f"rgb({r},{g},{b})" for r, g, b in reversed(HEAT_PALETTE_RGB)
+    )
+    default_idx = choices.index(default_hl)
+
+    return f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>git-heat — {html.escape(display)}</title>
+<style>
+  :root {{
+    --bg: #0b1020;
+    --panel: #141b2d;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: #2a3548;
+    --row-w: 48rem;
+    --row-h-file: 1.65rem;
+    --row-h-dir: 2.05rem;
+    --nest-indent: 3.5rem;
+    --file-extra-indent: 0.55rem;
+    --file-right-inset: 8em;
+    --block-gap: 6px;
+    --grid-line: #000;
+    --zero-bg: {ZERO_HEAT_BG};
+    /* Soft dark code surface: lighter than pure black, low saturation */
+    --viewer-bg: #2a2f38;
+    --viewer-fg: #c5cad3;
+    --font-cell: "VictorMono NFM SemiBold", "VictorMono Nerd Font Mono",
+      "VictorMono NFM", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --code-lh: 1.2;
+    --code-fs: 0.82rem;
+  }}
+  * {{ box-sizing: border-box; }}
+  html, body {{ height: 100%; }}
+  body {{
+    margin: 0;
+    font: 13px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }}
+  header {{
+    padding: 0.55rem 1.25rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    flex: 0 0 auto;
+    z-index: 2;
+    max-height: none;
+    overflow: visible;
+    transition: padding 0.3s ease;
+  }}
+  header:hover,
+  header:focus-within {{
+    padding: 0.75rem 1.25rem;
+    max-height: 50vh;
+    overflow-y: auto;
+  }}
+  header h1 {{
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+  }}
+  header .meta {{
+    color: var(--muted);
+    font-size: 0.85rem;
+  }}
+  /* Collapsed by default: focus slider, legend, toolbar only on header hover */
+  .header-extras {{
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition: grid-template-rows 0.35s ease, opacity 0.25s ease;
+    pointer-events: none;
+  }}
+  .header-extras-inner {{
+    min-height: 0;
+    overflow: hidden;
+  }}
+  header:hover .header-extras,
+  header:focus-within .header-extras {{
+    grid-template-rows: 1fr;
+    opacity: 1;
+    pointer-events: auto;
+  }}
+  @media (hover: none) {{
+    /* Touch / no-hover: keep controls always available */
+    .header-extras {{
+      grid-template-rows: 1fr;
+      opacity: 1;
+      pointer-events: auto;
+    }}
+    header {{
+      padding: 0.75rem 1.25rem;
+      max-height: 50vh;
+      overflow-y: auto;
+    }}
+  }}
+  @media (prefers-reduced-motion: reduce) {{
+    header,
+    .header-extras {{
+      transition: none !important;
+    }}
+  }}
+  .legend {{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.65rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }}
+  .swatch {{
+    height: 12px;
+    width: 180px;
+    border: 1px solid #000;
+    background: linear-gradient(90deg, {legend_stops});
+  }}
+  .zero-swatch {{
+    display: inline-block;
+    width: 1.1rem;
+    height: 12px;
+    background: var(--zero-bg);
+    border: 1px solid #000;
+    vertical-align: middle;
+  }}
+  #hl-control {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 0.85rem;
+    padding: 0.65rem 0.75rem;
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-width: 42rem;
+  }}
+  #hl-control .hl-header {{
+    display: flex;
+    align-items: baseline;
+    gap: 0.65rem;
+  }}
+  #hl-control label {{
+    font-size: 0.85rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }}
+  #hl-control .hl-value {{
+    font-family: var(--font-cell);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+  }}
+  /* Slider + ticks share the same box so marks line up with thumb stops */
+  #hl-control .hl-track {{
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    width: 100%;
+  }}
+  #hl-slider {{
+    width: 100%;
+    margin: 0;
+    accent-color: #75d054;
+  }}
+  #hl-ends {{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }}
+  #hl-ticks {{
+    display: flex;
+    width: 100%;
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.75;
+  }}
+  /* Each tick centers under the corresponding range stop (thumb center).
+     range thumbs sit inset ~half thumb width; use equal flex cells with centered labels. */
+  #hl-ticks span {{
+    flex: 1 1 0;
+    text-align: center;
+  }}
+  #hl-ticks span:first-child {{ text-align: left; }}
+  #hl-ticks span:last-child {{ text-align: right; }}
+  #toolbar {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }}
+  button {{
+    background: #0f172a;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.3rem 0.65rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }}
+  button:hover {{ border-color: #64748b; }}
+
+  /* Two-pane workspace: heat tree left, file viewer right */
+  #workspace {{
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }}
+  #tree-pane {{
+    flex: 0 1 auto;
+    overflow: auto;
+    padding: 0.65rem 0.75rem 1.5rem;
+    min-width: 22rem;
+    max-width: min(52rem, 55vw);
+  }}
+  #viewer-pane {{
+    flex: 1 1 45%;
+    min-width: 18rem;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+    background: var(--viewer-bg);
+    min-height: 0;
+  }}
+  #viewer-header {{
+    flex: 0 0 auto;
+    padding: 0.55rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    font-family: var(--font-cell);
+    min-height: 2.6rem;
+  }}
+  #viewer-header .v-path {{
+    font-weight: 700;
+    font-size: 0.9rem;
+    word-break: break-all;
+  }}
+  #viewer-header .v-meta {{
+    color: var(--muted);
+    font-size: 0.75rem;
+    margin-top: 0.15rem;
+  }}
+  #viewer-body {{
+    flex: 1 1 auto;
+    overflow: hidden;
+    min-height: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }}
+  #viewer-empty, #viewer-error {{
+    padding: 1.5rem 1.25rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
+    max-width: 36rem;
+    overflow: auto;
+  }}
+  #viewer-empty code, #viewer-error code {{
+    font-family: var(--font-cell);
+    font-size: 0.85em;
+    color: #cbd5e1;
+  }}
+  /* Code + blame gutter (line age heatmap + line numbers).
+     ONE scrollport only: #viewer-code-wrap. Nested pre/code must not scroll
+     (overflow-x:auto on code forces overflow-y:auto and a second scrollbar). */
+  #viewer-code-wrap {{
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+    /* always show vertical scrollbar; reset scrollTop on file change in JS */
+    overflow-x: auto;
+    overflow-y: scroll;
+    align-items: flex-start;
+    background: var(--viewer-bg);
+  }}
+  #blame-gutter {{
+    flex: 0 0 auto;
+    min-width: 2.75em;
+    width: max(2.75em, calc(var(--blame-digits, 3) * 0.65em + 0.55em));
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: #000;
+    border-right: 1px solid #000;
+    padding: 0.85rem 0 2rem;
+    font-family: var(--font-cell);
+    font-size: var(--code-fs);
+    font-weight: 600;
+    line-height: var(--code-lh);
+    font-variant-numeric: tabular-nums;
+    overflow: visible;
+  }}
+  #blame-gutter .bl {{
+    height: calc(var(--code-fs) * var(--code-lh));
+    width: 100%;
+    cursor: default;
+    box-sizing: border-box;
+    border-bottom: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 0.35em 0 0.2em;
+    font-size: 0.72em;
+    line-height: 1;
+    user-select: none;
+  }}
+  #blame-gutter .bl:hover {{
+    outline: 1px solid #f8fafc66;
+    outline-offset: -1px;
+    z-index: 2;
+    position: relative;
+  }}
+  #viewer-code-wrap pre {{
+    margin: 0;
+    padding: 0.85rem 1rem 2rem 0.65rem;
+    font-family: var(--font-cell);
+    font-size: var(--code-fs);
+    font-weight: 600;
+    line-height: var(--code-lh);
+    tab-size: 4;
+    flex: 1 1 auto;
+    min-width: 0;
+    color: var(--viewer-fg);
+    background: transparent;
+    overflow: visible;
+  }}
+  #viewer-code-wrap pre code,
+  #viewer-code-wrap pre code.hljs {{
+    background: transparent !important;
+    padding: 0;
+    display: block;
+    overflow: visible !important; /* no nested scrollbars */
+    font-family: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }}
+
+  .grid {{
+    display: flex;
+    flex-direction: column;
+    width: var(--row-w);
+    border-top: 1px solid var(--grid-line);
+    border-left: 1px solid var(--grid-line);
+    border-right: 1px solid var(--grid-line);
+    background: var(--bg);
+  }}
+  .grid.root {{ margin-top: 0.15rem; }}
+  .cell-wrap {{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 0 0 auto;
+  }}
+  .cell {{
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--grid-line);
+    border-left: 1px solid var(--grid-line);
+    padding: 0 0.65rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.45rem;
+    overflow: hidden;
+    cursor: default;
+    user-select: none;
+    font-family: var(--font-cell);
+  }}
+  .cell.file {{
+    height: var(--row-h-file);
+    min-height: var(--row-h-file);
+    font-size: 1rem;
+    font-weight: 600;
+    border-right: 1px solid var(--grid-line);
+    cursor: pointer;
+  }}
+  .cell.file.selected {{
+    outline: 2px solid #f8fafc;
+    outline-offset: -2px;
+    z-index: 1;
+    filter: brightness(1.12);
+  }}
+  .cell.dir {{
+    height: var(--row-h-dir);
+    min-height: var(--row-h-dir);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.4s ease, filter 0.2s ease;
+  }}
+  .cell.dir.collapsed-dir {{ opacity: 0.5; }}
+  .cell.dir.expanded-dir {{ opacity: 1; }}
+  .cell:hover {{ filter: brightness(1.08); }}
+  .cell .name {{
+    font-size: inherit;
+    font-weight: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex: 1 1 auto;
+  }}
+  .cell .meta-line {{
+    font-size: 0.75em;
+    font-weight: inherit;
+    font-variant-numeric: tabular-nums;
+    opacity: 0.9;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }}
+  /* Expand/collapse: animate grid-template-rows (works without measuring height) */
+  .nest {{
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.4s ease;
+  }}
+  .cell-wrap.open > .nest {{
+    grid-template-rows: 1fr;
+  }}
+  .nest > .grid {{
+    width: 100%;
+    border: none;
+    min-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }}
+  .cell-wrap.open > .nest > .grid {{
+    opacity: 1;
+  }}
+  @media (prefers-reduced-motion: reduce) {{
+    .nest,
+    .nest > .grid,
+    .cell.dir {{
+      transition: none !important;
+    }}
+  }}
+  .block-gap {{
+    width: 100%;
+    height: var(--block-gap);
+    flex: 0 0 var(--block-gap);
+    background: #000;
+    border: none;
+  }}
+</style>
+<!-- Minimal base; colors overridden below for a quieter dark theme -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/base16/ashes.min.css"/>
+<style>
+  #viewer-code-wrap pre,
+  #viewer-code-wrap pre code,
+  #viewer-code-wrap pre code.hljs,
+  #viewer-code-wrap pre code.hljs * {{
+    font-family: "VictorMono NFM SemiBold", "VictorMono Nerd Font Mono",
+      "VictorMono NFM", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
+    font-weight: 600 !important;
+  }}
+  #viewer-header,
+  #viewer-header .v-path,
+  #viewer-header .v-meta {{
+    font-family: "VictorMono NFM SemiBold", "VictorMono Nerd Font Mono",
+      "VictorMono NFM", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 600;
+  }}
+  /*
+   * Subtle dark syntax: soft desaturated slate surface (lighter than pure black),
+   * token colors muted toward gray/slate rather than neon github-dark.
+   * Reference muted rgb(148,163,184) desaturated and stepped for roles.
+   */
+  #viewer-pane {{
+    background: #2a2f38;
+  }}
+  #viewer-code-wrap,
+  #viewer-code-wrap pre,
+  #viewer-code-wrap pre code.hljs {{
+    background: #2a2f38 !important;
+    color: #c5cad3 !important;
+  }}
+  #viewer-code-wrap pre,
+  #viewer-code-wrap pre code,
+  #viewer-code-wrap pre code.hljs {{
+    overflow: visible !important;
+  }}
+  #viewer-code-wrap pre code.hljs .hljs-comment,
+  #viewer-code-wrap pre code.hljs .hljs-quote {{
+    color: #7a8290 !important;
+    font-style: italic;
+  }}
+  #viewer-code-wrap pre code.hljs .hljs-keyword,
+  #viewer-code-wrap pre code.hljs .hljs-selector-tag,
+  #viewer-code-wrap pre code.hljs .hljs-literal,
+  #viewer-code-wrap pre code.hljs .hljs-section,
+  #viewer-code-wrap pre code.hljs .hljs-link {{
+    color: #9aa8bc !important;
+  }}
+  #viewer-code-wrap pre code.hljs .hljs-string,
+  #viewer-code-wrap pre code.hljs .hljs-doctag,
+  #viewer-code-wrap pre code.hljs .hljs-title,
+  #viewer-code-wrap pre code.hljs .hljs-name,
+  #viewer-code-wrap pre code.hljs .hljs-type,
+  #viewer-code-wrap pre code.hljs .hljs-attribute {{
+    color: #a8b59a !important;
+  }}
+  #viewer-code-wrap pre code.hljs .hljs-number,
+  #viewer-code-wrap pre code.hljs .hljs-symbol,
+  #viewer-code-wrap pre code.hljs .hljs-bullet {{
+    color: #b5a892 !important;
+  }}
+  #viewer-code-wrap pre code.hljs .hljs-built_in,
+  #viewer-code-wrap pre code.hljs .hljs-builtin-name,
+  #viewer-code-wrap pre code.hljs .hljs-meta,
+  #viewer-code-wrap pre code.hljs .hljs-template-tag,
+  #viewer-code-wrap pre code.hljs .hljs-template-variable {{
+    color: #9aafb8 !important;
+  }}
+  #viewer-code-wrap pre code.hljs .hljs-variable,
+  #viewer-code-wrap pre code.hljs .hljs-params,
+  #viewer-code-wrap pre code.hljs .hljs-attr,
+  #viewer-code-wrap pre code.hljs .hljs-property {{
+    color: #b8c0cc !important;
+  }}
+  #viewer-code-wrap pre code.hljs .hljs-deletion {{ color: #b08080 !important; }}
+  #viewer-code-wrap pre code.hljs .hljs-addition {{ color: #8fad8f !important; }}
+  #viewer-code-wrap pre code.hljs .hljs-emphasis {{ font-style: italic; }}
+  #viewer-code-wrap pre code.hljs .hljs-strong {{ font-weight: 700 !important; }}
+</style>
+</head>
+<body>
+<header title="Hover for focus slider, legend, and expand controls">
+  <h1>git-heat — {html.escape(display)}</h1>
+  <div class="meta" id="meta"></div>
+  <div class="header-extras">
+    <div class="header-extras-inner">
+      <div id="hl-control">
+        <div class="hl-header">
+          <label for="hl-slider">focus</label>
+          <span class="hl-value" id="hl-value"></span>
+        </div>
+        <div class="hl-track">
+          <input type="range" id="hl-slider" min="0" max="{len(choices) - 1}"
+                 step="1" value="{default_idx}"
+                 aria-label="history left, recent right (half-life in commits)"/>
+          <div id="hl-ends">
+            <span>← history (smoother)</span>
+            <span>recent (hotter) →</span>
+          </div>
+          <div id="hl-ticks" title="half-life in commits">
+            {"".join(f"<span>{c}</span>" for c in choices)}
+          </div>
+        </div>
+      </div>
+      <div class="legend">
+        <span>cold</span><div class="swatch" title="yellow→green→blue→purple"></div><span>hot</span>
+        <span style="margin-left:0.5rem"><span class="zero-swatch"></span> heat&nbsp;0 (initial-only, or noise: Cargo.toml / SOURCE_REV)</span>
+        <span style="margin-left:0.75rem">unit: commits · initial excluded · noise ignored for dir heat · click folder/file</span>
+      </div>
+      <div id="toolbar">
+        <button type="button" id="expand-1">Expand 1 level</button>
+        <button type="button" id="expand-all">Expand all</button>
+        <button type="button" id="collapse-all">Collapse all</button>
+      </div>
+    </div>
+  </div>
+</header>
+<div id="workspace">
+  <aside id="tree-pane">
+    <div class="grid root" id="root"></div>
+  </aside>
+  <section id="viewer-pane" aria-label="File viewer">
+    <div id="viewer-header">
+      <div class="v-path" id="viewer-path">No file selected</div>
+      <div class="v-meta" id="viewer-meta">Click a leaf in the heat map to open it here</div>
+    </div>
+    <div id="viewer-body">
+      <div id="viewer-empty">
+        Select a file from the tree. Left column: line numbers on a per-line
+        <em>git blame</em> age heatmap (hot = last touched recently; hover for SHA).
+        <br/><br/>
+        Prefer: <code>git-heat --html --serve</code> (needed for blame + file load).
+        <br/><br/>
+        Opening via <code>file://</code> cannot read sibling files in most browsers.
+      </div>
+      <div id="viewer-code-wrap" hidden>
+        <div id="blame-gutter" aria-hidden="true" title="git blame age"></div>
+        <pre id="viewer-pre"><code id="viewer-code" class="hljs"></code></pre>
+      </div>
+      <div id="viewer-error" hidden></div>
+    </div>
+  </section>
+</div>
+<script type="application/json" id="data">{payload}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/rust.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/toml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/markdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/shell.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/dockerfile.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/makefile.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/ruby.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/java.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/cpp.min.js"></script>
+<script>
+(function () {{
+  const PALETTE = {palette_js};
+  const ZERO_BG = '{ZERO_HEAT_BG}';
+  const MAX_VIEW_BYTES = 1.5 * 1024 * 1024;
+  const payload = JSON.parse(document.getElementById('data').textContent);
+  const meta = payload.meta;
+  const tree = payload.tree;
+  const choices = meta.half_life_choices;
+
+  let halfLife = meta.half_life;
+  let heatMax = 1;
+  let selectedPath = null;
+  let selectedCell = null;
+  let loadSeq = 0;
+
+  function tauFrom(hl) {{ return hl / Math.LN2; }}
+
+  /** Scale-invariant heat: touched every commit forever -> 2 at any tau.
+   *  raw = sum exp(-age/tau); scale by 2*(1 - exp(-1/tau)) so S(tau) cancels. */
+  function heatFromAges(ages, tau) {{
+    if (!ages || !ages.length || tau <= 0) return 0;
+    let raw = 0;
+    for (let i = 0; i < ages.length; i++) raw += Math.exp(-ages[i] / tau);
+    const r = Math.exp(-1 / tau);
+    return 2 * (1 - r) * raw;
+  }}
+
+  /** Recompute leaf heats from ages; roll max up dirs. Mutates tree.
+   *  noise leaves (Cargo.toml, SOURCE_REV): always heat 0, excluded from parent max. */
+  function recomputeTree(node, tau) {{
+    if (!node.is_dir) {{
+      if (node.noise) {{
+        node.heat = 0;
+        return 0; // do not contribute to parent directory heat
+      }}
+      node.heat = heatFromAges(node.ages || [], tau);
+      return node.heat;
+    }}
+    let maxH = 0;
+    const kids = node.children || [];
+    for (let i = 0; i < kids.length; i++) {{
+      const h = recomputeTree(kids[i], tau);
+      if (h > maxH) maxH = h;
+    }}
+    node.heat = maxH;
+    return maxH;
+  }}
+
+  function heatRGB(heat) {{
+    if (heat <= 0 || heatMax <= 0) return null; // zero → special bg
+    const t = Math.max(0, Math.min(1, heat / heatMax));
+    const x = (1 - t) * (PALETTE.length - 1);
+    if (x <= 0) return PALETTE[0].slice();
+    if (x >= PALETTE.length - 1) return PALETTE[PALETTE.length - 1].slice();
+    const i = Math.floor(x);
+    const u = x - i;
+    const c0 = PALETTE[i];
+    const c1 = PALETTE[i + 1];
+    return [
+      Math.round(c0[0] + (c1[0] - c0[0]) * u),
+      Math.round(c0[1] + (c1[1] - c0[1]) * u),
+      Math.round(c0[2] + (c1[2] - c0[2]) * u),
+    ];
+  }}
+
+  function textForBg(r, g, b) {{
+    const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    if (lum > 0.45) return 'rgb(15, 23, 42)';
+    const u = Math.max(0, Math.min(1, lum / 0.45));
+    const alpha = 0.30 + (0.50 - 0.30) * u;
+    return 'rgba(248, 250, 252, ' + alpha.toFixed(3) + ')';
+  }}
+
+  function applyHeatStyle(el, heat) {{
+    const rgb = heatRGB(heat);
+    if (!rgb) {{
+      el.style.background = ZERO_BG;
+      el.style.color = 'rgba(248, 250, 252, 0.35)';
+      return;
+    }}
+    const [r, g, b] = rgb;
+    el.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+    el.style.color = textForBg(r, g, b);
+  }}
+
+  function updateMeta() {{
+    const tau = tauFrom(halfLife);
+    const scopeBit = meta.scope ? (' · scope ' + meta.scope) : '';
+    document.getElementById('meta').textContent =
+      (meta.git_root || meta.repo) + scopeBit +
+      ' · half-life ' + halfLife + ' commits (tau=' + tau.toFixed(2) +
+      ') · ' + meta.n_commits + ' commits · ' + meta.n_files + ' paths · ' +
+      meta.n_touches + ' non-initial touches (repo) · ' + meta.now;
+    document.getElementById('hl-value').textContent =
+      't1/2 = ' + halfLife + ' commit' + (halfLife === 1 ? '' : 's');
+  }}
+
+  const root = document.getElementById('root');
+  const NEST_INDENT_REM = 3.5;
+  const FILE_EXTRA_INDENT_REM = 0.55;
+  const FILE_RIGHT_INSET = '8em';
+  /** path → {{ cell, metaLine }} for in-place heat updates */
+  const cellIndex = Object.create(null);
+
+  function blockGap() {{
+    const g = document.createElement('div');
+    g.className = 'block-gap';
+    g.setAttribute('aria-hidden', 'true');
+    return g;
+  }}
+
+  function applyBarGeometry(cell, depth, isDir) {{
+    const left = depth * NEST_INDENT_REM + (isDir ? 0 : FILE_EXTRA_INDENT_REM);
+    cell.style.marginLeft = left + 'rem';
+    if (isDir) {{
+      cell.style.marginRight = '0';
+      cell.style.width = 'calc(100% - ' + left + 'rem)';
+    }} else {{
+      cell.style.marginRight = FILE_RIGHT_INSET;
+      cell.style.width = 'calc(100% - ' + left + 'rem - ' + FILE_RIGHT_INSET + ')';
+    }}
+  }}
+
+  function setDirExpanded(cell, open) {{
+    if (!cell || !cell.classList.contains('dir')) return;
+    cell.classList.toggle('expanded-dir', open);
+    cell.classList.toggle('collapsed-dir', !open);
+  }}
+
+  function appendChildren(grid, children, childDepth) {{
+    let sawFile = false;
+    for (const child of children) {{
+      if (!child.is_dir && !sawFile) {{
+        grid.appendChild(blockGap());
+        sawFile = true;
+      }}
+      grid.appendChild(renderNode(child, childDepth));
+    }}
+    if (children.length) grid.appendChild(blockGap());
+  }}
+
+  const viewerPath = document.getElementById('viewer-path');
+  const viewerMeta = document.getElementById('viewer-meta');
+  const viewerEmpty = document.getElementById('viewer-empty');
+  const viewerError = document.getElementById('viewer-error');
+  const viewerCodeWrap = document.getElementById('viewer-code-wrap');
+  const blameGutter = document.getElementById('blame-gutter');
+  const viewerPre = document.getElementById('viewer-pre');
+  const viewerCode = document.getElementById('viewer-code');
+
+  const EXT_LANG = {{
+    rs: 'rust', py: 'python', pyi: 'python', js: 'javascript', mjs: 'javascript',
+    cjs: 'javascript', jsx: 'javascript', ts: 'typescript', tsx: 'typescript',
+    json: 'json', jsonc: 'json', yaml: 'yaml', yml: 'yaml', toml: 'toml',
+    md: 'markdown', markdown: 'markdown', sh: 'bash', bash: 'bash', zsh: 'bash',
+    fish: 'bash', css: 'css', scss: 'css', html: 'xml', htm: 'xml', xml: 'xml',
+    svg: 'xml', sql: 'sql', rb: 'ruby', go: 'go', java: 'java', c: 'c', h: 'c',
+    cc: 'cpp', cpp: 'cpp', cxx: 'cpp', hpp: 'cpp', hh: 'cpp', dockerfile: 'dockerfile',
+    mk: 'makefile', makefile: 'makefile', r: 'r', lua: 'lua', php: 'php',
+    swift: 'swift', kt: 'kotlin', kts: 'kotlin', cs: 'csharp', fs: 'fsharp',
+    ex: 'elixir', exs: 'elixir', erl: 'erlang', hs: 'haskell', ml: 'ocaml',
+    vim: 'vim', diff: 'diff', patch: 'diff', proto: 'protobuf', graphql: 'graphql',
+    conf: 'nginx', ini: 'ini', env: 'bash', txt: 'plaintext', log: 'plaintext',
+  }};
+
+  function langForPath(path) {{
+    const base = path.split('/').pop() || path;
+    const lower = base.toLowerCase();
+    if (lower === 'dockerfile' || lower.startsWith('dockerfile.')) return 'dockerfile';
+    if (lower === 'makefile' || lower === 'gnumakefile') return 'makefile';
+    if (lower === 'cargo.lock') return 'toml';
+    if (lower === 'cmakelists.txt') return 'cmake';
+    const dot = lower.lastIndexOf('.');
+    if (dot < 0) return null;
+    return EXT_LANG[lower.slice(dot + 1)] || null;
+  }}
+
+  function looksBinary(bytes) {{
+    const n = Math.min(bytes.length, 8000);
+    let weird = 0;
+    for (let i = 0; i < n; i++) {{
+      const b = bytes[i];
+      if (b === 0) return true;
+      if (b < 7 || (b > 14 && b < 32 && b !== 9 && b !== 10 && b !== 13)) weird++;
+    }}
+    return weird / n > 0.3;
+  }}
+
+  function showViewerState(kind) {{
+    viewerEmpty.hidden = kind !== 'empty';
+    viewerError.hidden = kind !== 'error';
+    viewerCodeWrap.hidden = kind !== 'code';
+  }}
+
+  function selectCell(cell) {{
+    if (selectedCell) selectedCell.classList.remove('selected');
+    selectedCell = cell;
+    if (cell) cell.classList.add('selected');
+  }}
+
+  function textColorForRgb(r, g, b) {{
+    // Same contrast rule as the tree heatmap: dark on yellow/green, light on blue/purple
+    const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    if (lum > 0.45) return 'rgb(15, 23, 42)';
+    const u = Math.max(0, Math.min(1, lum / 0.45));
+    const alpha = 0.30 + (0.50 - 0.30) * u; // 70% → 50% transparent white
+    return 'rgba(248, 250, 252, ' + alpha.toFixed(3) + ')';
+  }}
+
+  function renderLineGutter(nLines, blameLines) {{
+    blameGutter.innerHTML = '';
+    blameGutter.style.display = 'block';
+    const digits = String(Math.max(nLines, 1)).length;
+    blameGutter.style.setProperty('--blame-digits', String(digits));
+
+    // Scale only over non-initial lines so root-commit blanks don't pin the cold end
+    let ageMax = 1;
+    if (blameLines && blameLines.length) {{
+      ageMax = 0;
+      for (let i = 0; i < blameLines.length; i++) {{
+        if (blameLines[i].initial) continue;
+        if (blameLines[i].age > ageMax) ageMax = blameLines[i].age;
+      }}
+      if (ageMax < 1) ageMax = 1;
+    }}
+
+    // Same blank as outline heat-0 cells (initial-only / never)
+    const ZERO = ZERO_BG || '#222222';
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < nLines; i++) {{
+      const L = (blameLines && blameLines[i]) || null;
+      const el = document.createElement('div');
+      el.className = 'bl';
+      let r = 42, g = 47, b = 56; // soft viewer bg when no blame data
+      let useZero = false;
+      if (L) {{
+        // Earliest (root) commit → blank, like heat 0 on the tree
+        if (L.initial) {{
+          useZero = true;
+        }} else {{
+          // Color scale among non-initial lines only (young = hot)
+          const tHot = 1 - Math.max(0, Math.min(1, L.age / ageMax));
+          const x = (1 - tHot) * (PALETTE.length - 1);
+          if (x <= 0) {{ r = PALETTE[0][0]; g = PALETTE[0][1]; b = PALETTE[0][2]; }}
+          else if (x >= PALETTE.length - 1) {{
+            const c = PALETTE[PALETTE.length - 1];
+            r = c[0]; g = c[1]; b = c[2];
+          }} else {{
+            const ii = Math.floor(x);
+            const u = x - ii;
+            const c0 = PALETTE[ii], c1 = PALETTE[ii + 1];
+            r = Math.round(c0[0] + (c1[0] - c0[0]) * u);
+            g = Math.round(c0[1] + (c1[1] - c0[1]) * u);
+            b = Math.round(c0[2] + (c1[2] - c0[2]) * u);
+          }}
+        }}
+        const short = (L.sha || '').slice(0, 8);
+        const when = L.initial
+          ? 'initial commit'
+          : (L.age === 0 ? 'HEAD' : (L.age + ' commit' + (L.age === 1 ? '' : 's') + ' ago'));
+        el.title =
+          'L' + (i + 1) + ' · ' + short + ' · ' + when +
+          (L.author ? ' · ' + L.author : '') +
+          (L.summary ? ' · ' + L.summary : '') +
+          (L.sha ? '\\n' + L.sha : '');
+      }} else {{
+        el.title = 'L' + (i + 1);
+      }}
+      if (useZero) {{
+        el.style.background = ZERO;
+        // parse #rrggbb for contrast
+        const hx = ZERO.replace('#', '');
+        r = parseInt(hx.slice(0, 2), 16);
+        g = parseInt(hx.slice(2, 4), 16);
+        b = parseInt(hx.slice(4, 6), 16);
+      }} else {{
+        el.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+      }}
+      el.style.color = textColorForRgb(r, g, b);
+      el.textContent = String(i + 1);
+      frag.appendChild(el);
+    }}
+    blameGutter.appendChild(frag);
+  }}
+
+  async function fetchBlame(path) {{
+    try {{
+      const url = '/__git-heat__/blame?path=' + encodeURIComponent(path);
+      const res = await fetch(url, {{ cache: 'no-cache' }});
+      if (!res.ok) return null;
+      return await res.json();
+    }} catch (e) {{
+      return null;
+    }}
+  }}
+
+  async function openFile(path, node, cell) {{
+    selectedPath = path;
+    selectCell(cell);
+    const heat = node ? node.heat : 0;
+    const age = (node && node.age) || '—';
+    viewerPath.textContent = path;
+    viewerMeta.textContent = 'heat ' + heat.toFixed(3) + ' · ' + age + ' · loading…';
+    showViewerState('empty');
+    viewerEmpty.textContent = 'Loading ' + path + '…';
+    blameGutter.innerHTML = '';
+    viewerCodeWrap.scrollTop = 0;
+    viewerCodeWrap.scrollLeft = 0;
+
+    const seq = ++loadSeq;
+    try {{
+      if (location.protocol === 'file:') {{
+        throw new Error(
+          'Opened via file:// — browsers block reading repo files. ' +
+          'Use: git-heat --html --serve'
+        );
+      }}
+      const url = path.split('/').map(encodeURIComponent).join('/');
+      const res = await fetch(url, {{ cache: 'no-cache' }});
+      if (seq !== loadSeq) return;
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' for ' + path);
+      const buf = await res.arrayBuffer();
+      if (seq !== loadSeq) return;
+      if (buf.byteLength > MAX_VIEW_BYTES) {{
+        throw new Error(
+          'File is ' + (buf.byteLength / 1024 / 1024).toFixed(1) +
+          ' MiB (limit ' + (MAX_VIEW_BYTES / 1024 / 1024).toFixed(1) + ' MiB).'
+        );
+      }}
+      const bytes = new Uint8Array(buf);
+      if (looksBinary(bytes)) {{
+        throw new Error('Binary file (not shown).');
+      }}
+      let text = new TextDecoder('utf-8', {{ fatal: false }}).decode(bytes);
+      if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+
+      const lang = langForPath(path);
+      viewerCode.textContent = text;
+      viewerCode.className = 'hljs' + (lang ? ' language-' + lang : '');
+      if (window.hljs) {{
+        try {{
+          if (lang && hljs.getLanguage(lang)) {{
+            viewerCode.innerHTML = hljs.highlight(text, {{ language: lang, ignoreIllegals: true }}).value;
+          }} else {{
+            viewerCode.innerHTML = hljs.highlightAuto(text).value;
+          }}
+        }} catch (err) {{
+          viewerCode.textContent = text;
+        }}
+      }}
+      showViewerState('code');
+      viewerCodeWrap.scrollTop = 0;
+      viewerCodeWrap.scrollLeft = 0;
+
+      const nLines = text.length ? text.split('\\n').length : 0;
+      let blameNote = '';
+      const blame = await fetchBlame(path);
+      if (seq !== loadSeq) return;
+      let lines = null;
+      if (blame && blame.lines && blame.lines.length) {{
+        lines = blame.lines;
+        if (lines.length < nLines) {{
+          const last = lines[lines.length - 1] || {{ sha: '', age: 0, author: '', summary: '' }};
+          while (lines.length < nLines) lines = lines.concat([Object.assign({{}}, last)]);
+        }} else if (lines.length > nLines) {{
+          lines = lines.slice(0, nLines);
+        }}
+        blameNote = ' · blame';
+      }} else {{
+        blameNote = ' · no blame (use git-heat --serve)';
+      }}
+      renderLineGutter(nLines, lines);
+      viewerCodeWrap.scrollTop = 0;
+
+      viewerMeta.textContent =
+        'heat ' + heat.toFixed(3) + ' · ' + age +
+        ' · ' + nLines + ' lines · ' +
+        (lang || 'plain') +
+        ' · ' + (buf.byteLength < 1024
+          ? buf.byteLength + ' B'
+          : (buf.byteLength / 1024).toFixed(1) + ' KiB') +
+        blameNote;
+    }} catch (err) {{
+      if (seq !== loadSeq) return;
+      showViewerState('error');
+      viewerError.textContent = String(err && err.message ? err.message : err);
+      viewerMeta.textContent = 'heat ' + heat.toFixed(3) + ' · ' + age + ' · failed';
+    }}
+  }}
+
+  function renderNode(node, depth) {{
+    depth = depth || 0;
+    const wrap = document.createElement('div');
+    wrap.className = 'cell-wrap';
+
+    const cell = document.createElement('div');
+    const isDir = !!node.is_dir;
+    cell.className = 'cell ' + (isDir ? 'dir' : 'file');
+    applyHeatStyle(cell, node.heat);
+    applyBarGeometry(cell, depth, isDir);
+    const pathKey = node.path || '.';
+    cell.dataset.path = pathKey;
+    cell.title = pathKey + ' · heat ' + node.heat.toFixed(3) + ' · ' + (node.age || '—');
+
+    const hasKids = isDir && node.children && node.children.length;
+
+    const name = document.createElement('span');
+    name.className = 'name';
+    name.textContent = isDir
+      ? (node.path ? node.name + '/' : './')
+      : node.name;
+
+    const metaLine = document.createElement('span');
+    metaLine.className = 'meta-line';
+    metaLine.textContent = node.heat.toFixed(2) + ' · ' + (node.age || '—');
+
+    cell.appendChild(name);
+    cell.appendChild(metaLine);
+    wrap.appendChild(cell);
+    cellIndex[pathKey] = {{ cell: cell, metaLine: metaLine, node: node }};
+
+    if (hasKids) {{
+      setDirExpanded(cell, false);
+      const nest = document.createElement('div');
+      nest.className = 'nest';
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      appendChildren(grid, node.children, depth + 1);
+      nest.appendChild(grid);
+      wrap.appendChild(nest);
+
+      cell.addEventListener('click', function (e) {{
+        e.stopPropagation();
+        const willOpen = !wrap.classList.contains('open');
+        wrap.classList.toggle('open', willOpen);
+        setDirExpanded(cell, willOpen);
+      }});
+    }} else if (isDir) {{
+      setDirExpanded(cell, false);
+    }} else {{
+      cell.addEventListener('click', function (e) {{
+        e.stopPropagation();
+        openFile(pathKey, node, cell);
+      }});
+    }}
+    return wrap;
+  }}
+
+  function refreshHeats() {{
+    const tau = tauFrom(halfLife);
+    heatMax = Math.max(recomputeTree(tree, tau), 0);
+    // walk all indexed cells
+    for (const key of Object.keys(cellIndex)) {{
+      const entry = cellIndex[key];
+      const h = entry.node.heat;
+      applyHeatStyle(entry.cell, h);
+      const age = entry.node.age || '—';
+      entry.metaLine.textContent = h.toFixed(2) + ' · ' + age;
+      entry.cell.title = key + ' · heat ' + h.toFixed(3) + ' · ' + age;
+    }}
+    // keep viewer heat in sync if a file is open
+    if (selectedPath && cellIndex[selectedPath]) {{
+      const n = cellIndex[selectedPath].node;
+      const cur = viewerMeta.textContent || '';
+      const rest = cur.includes(' · ') ? cur.split(' · ').slice(2).join(' · ') : '';
+      viewerMeta.textContent =
+        'heat ' + n.heat.toFixed(3) + ' · ' + (n.age || '—') +
+        (rest ? ' · ' + rest : '');
+    }}
+    updateMeta();
+  }}
+
+  // initial compute + paint
+  recomputeTree(tree, tauFrom(halfLife));
+  heatMax = Math.max(tree.heat, 0);
+  if (tree.children && tree.children.length) {{
+    appendChildren(root, tree.children, 0);
+  }} else {{
+    root.appendChild(renderNode(tree, 0));
+  }}
+  updateMeta();
+
+  const slider = document.getElementById('hl-slider');
+  slider.addEventListener('input', function () {{
+    halfLife = choices[parseInt(slider.value, 10)];
+    refreshHeats();
+  }});
+
+  function setOpen(wrap, open) {{
+    const nest = wrap.querySelector(':scope > .nest');
+    const cell = wrap.querySelector(':scope > .cell.dir');
+    if (!nest) return;
+    wrap.classList.toggle('open', open);
+    setDirExpanded(cell, open);
+  }}
+
+  document.getElementById('collapse-all').addEventListener('click', function () {{
+    document.querySelectorAll('.cell-wrap').forEach(function (w) {{ setOpen(w, false); }});
+  }});
+  document.getElementById('expand-1').addEventListener('click', function () {{
+    document.querySelectorAll('#root > .cell-wrap').forEach(function (w) {{ setOpen(w, true); }});
+  }});
+  document.getElementById('expand-all').addEventListener('click', function () {{
+    document.querySelectorAll('.cell-wrap').forEach(function (w) {{ setOpen(w, true); }});
+  }});
+}})();
+</script>
+</body>
+</html>
+"""
+
+
+def find_git_root(path: Path) -> Path | None:
+    """Nearest git toplevel for path (file or directory)."""
+    probe = path if path.is_dir() else path.parent
+    try:
+        out = subprocess.check_output(
+            ["git", "-C", str(probe), "rev-parse", "--show-toplevel"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+        return Path(out).resolve()
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+
+
+def resolve_target(path: Path) -> tuple[Path, Path, str]:
+    """Map a user path to (git_root, scope_dir, scope_prefix).
+
+    scope_prefix is '' at repo root, or 'crates/foo/' for a subdirectory.
+    Paths in the heat map are relative to scope_dir so the HTML file viewer
+    can fetch them when served from that directory.
+    """
+    path = path.expanduser().resolve()
+    if not path.exists():
+        raise FileNotFoundError(f"path does not exist: {path}")
+    scope_dir = path if path.is_dir() else path.parent
+    root = find_git_root(scope_dir)
+    if root is None:
+        raise RuntimeError(f"not inside a git repository: {path}")
+    try:
+        rel = scope_dir.relative_to(root)
+    except ValueError as e:
+        raise RuntimeError(f"{scope_dir} is not under git root {root}") from e
+    if rel == Path("."):
+        return root, scope_dir, ""
+    prefix = str(rel).replace("\\", "/") + "/"
+    return root, scope_dir, prefix
+
+
+def filter_scope(
+    ages_by_path: dict[str, list[int]],
+    mtime_by_path: dict[str, float],
+    scope_prefix: str,
+) -> tuple[dict[str, list[int]], dict[str, float]]:
+    """Keep paths under scope_prefix; rewrite keys relative to that prefix."""
+    if not scope_prefix:
+        return ages_by_path, mtime_by_path
+    ages: dict[str, list[int]] = {}
+    mtime: dict[str, float] = {}
+    for path, a in ages_by_path.items():
+        if not path.startswith(scope_prefix):
+            continue
+        rel = path[len(scope_prefix) :]
+        if not rel or rel.endswith("/"):
+            continue
+        ages[rel] = a
+        mtime[rel] = mtime_by_path.get(path, 0.0)
+    return ages, mtime
+
+
+def commit_age_map(git_root: Path) -> dict[str, int]:
+    """sha -> commits behind HEAD (0 = HEAD)."""
+    out = subprocess.check_output(
+        ["git", "-C", str(git_root), "rev-list", "HEAD"],
+        text=True,
+        errors="replace",
+    )
+    return {h: i for i, h in enumerate(out.splitlines()) if h}
+
+
+def git_blame_lines(
+    git_root: Path, repo_rel_path: str, ages: dict[str, int] | None = None
+) -> list[dict[str, Any]]:
+    """Per-line blame metadata for repo_rel_path (path relative to git root).
+
+    Lines last touched only by the repository's earliest (root) commit are
+    flagged initial=True — same treatment as heat-0 in the outline heatmap.
+    """
+    if ages is None:
+        ages = commit_age_map(git_root)
+    # Root commit = oldest = largest age (or sole commit at age 0 if only one)
+    root_age = max(ages.values()) if ages else 0
+    root_shas = {h for h, a in ages.items() if a == root_age}
+    cmd = [
+        "git",
+        "-C",
+        str(git_root),
+        "blame",
+        "--line-porcelain",
+        "-w",
+        "HEAD",
+        "--",
+        repo_rel_path,
+    ]
+    try:
+        raw = subprocess.check_output(cmd, text=True, errors="replace", stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError:
+        return []
+
+    lines: list[dict[str, Any]] = []
+    cur_sha = ""
+    cur_author = ""
+    cur_summary = ""
+    cur_time = 0
+    for line in raw.splitlines():
+        if not line:
+            continue
+        if line.startswith("\t"):
+            sha = cur_sha
+            age = ages.get(sha, ages.get(sha[:40], 10**9))
+            is_initial = sha in root_shas or age == root_age
+            lines.append(
+                {
+                    "sha": sha,
+                    "age": age,
+                    "initial": is_initial,
+                    "author": cur_author,
+                    "summary": cur_summary,
+                    "time": cur_time,
+                }
+            )
+            continue
+        if len(line) >= 40 and all(c in "0123456789abcdef" for c in line[:40]):
+            # header: sha orig final [num]
+            parts = line.split()
+            cur_sha = parts[0]
+            continue
+        if line.startswith("author "):
+            cur_author = line[7:]
+        elif line.startswith("author-time "):
+            try:
+                cur_time = int(line[12:])
+            except ValueError:
+                cur_time = 0
+        elif line.startswith("summary "):
+            cur_summary = line[8:]
+    return lines
+
+
+def make_git_heat_handler(
+    serve_dir: Path, git_root: Path, scope_prefix: str
+) -> type:
+    """SimpleHTTPRequestHandler subclass with /__git-heat__/blame API."""
+    import http.server
+    import urllib.parse
+
+    ages_cache: dict[str, int] | None = None
+
+    class GitHeatHandler(http.server.SimpleHTTPRequestHandler):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, directory=str(serve_dir), **kwargs)
+
+        def log_message(self, fmt: str, *args: Any) -> None:
+            # quieter: skip static 200s for common assets if desired
+            sys.stderr.write("%s - %s\n" % (self.address_string(), fmt % args))
+
+        def do_GET(self) -> None:  # noqa: N802
+            nonlocal ages_cache
+            parsed = urllib.parse.urlparse(self.path)
+            if parsed.path.rstrip("/") == "/__git-heat__/blame":
+                qs = urllib.parse.parse_qs(parsed.query)
+                rel = (qs.get("path") or [""])[0]
+                rel = rel.lstrip("/")
+                # block traversal
+                if not rel or ".." in rel.split("/"):
+                    self.send_error(400, "bad path")
+                    return
+                repo_path = (scope_prefix + rel).replace("\\", "/")
+                try:
+                    if ages_cache is None:
+                        ages_cache = commit_age_map(git_root)
+                    blame = git_blame_lines(git_root, repo_path, ages_cache)
+                except Exception as e:
+                    body = json.dumps({"error": str(e), "lines": []}).encode()
+                    self.send_response(500)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(body)))
+                    self.end_headers()
+                    self.wfile.write(body)
+                    return
+                body = json.dumps({"path": rel, "repo_path": repo_path, "lines": blame}).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Cache-Control", "no-cache")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+                return
+            return super().do_GET()
+
+    return GitHeatHandler
+
+
+def main() -> int:
+    epilog = """\
+examples:
+  git-heat                              CLI ranking (cwd)
+  git-heat --html --serve               write + serve heatmap (port 8765)
+  git-heat ~/src/arch/asf --html        whole repository
+  git-heat crates/codegen --html        only that subdirectory
+  git-heat --half-life 3 --top 25 .     short memory, top paths
+  git-heat --noise Cargo.toml,Cargo.lock  extra noise basenames
+
+heat is scale-invariant: a path touched every commit forever → ~2 at any
+half-life. Focus slider (HTML) moves half-life from long/historical (left)
+to short/recent (right). File viewer requires HTTP (use --serve).
+
+home: ~/src/arch/firmatum/utils/code/git-heat-decay/
+"""
+    p = argparse.ArgumentParser(
+        prog="git-heat",
+        description=(
+            "Commit-decay heatmap for a git repo or subdirectory — CLI ranking "
+            "or interactive HTML tree with syntax-highlighted file viewer."
+        ),
+        epilog=epilog,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    p.add_argument(
+        "path",
+        nargs="?",
+        default=".",
+        help="git repo root or any subdirectory (default: cwd)",
+    )
+    p.add_argument(
+        "--half-life",
+        type=float,
+        default=float(DEFAULT_HALF_LIFE),
+        metavar="COMMITS",
+        help=(
+            f"default half-life in commits for CLI / initial HTML slider "
+            f"(default: {DEFAULT_HALF_LIFE}; choices "
+            f"{','.join(str(c) for c in reversed(HALF_LIFE_CHOICES))})"
+        ),
+    )
+    p.add_argument(
+        "--top",
+        type=int,
+        default=40,
+        metavar="N",
+        help="CLI: show top N paths (0 = all; default: 40)",
+    )
+    p.add_argument(
+        "--min-heat",
+        type=float,
+        default=0.0,
+        metavar="H",
+        help="CLI: omit paths with heat below H (default: 0)",
+    )
+    p.add_argument(
+        "--dirs",
+        action="store_true",
+        help="CLI: also list directories (max leaf heat)",
+    )
+    p.add_argument(
+        "--noise",
+        metavar="NAMES",
+        default="",
+        help=(
+            "comma-separated extra basenames treated as noise (heat 0, "
+            f"ignored for dir max). defaults already include: "
+            f"{', '.join(sorted(DEFAULT_NOISE_BASENAMES))}"
+        ),
+    )
+    p.add_argument(
+        "--html",
+        nargs="?",
+        const="git-heat.html",
+        default=None,
+        metavar="FILE",
+        help=(
+            "write interactive HTML heatmap (default name: git-heat.html "
+            "in the target directory)"
+        ),
+    )
+    p.add_argument(
+        "--serve",
+        type=int,
+        nargs="?",
+        const=8765,
+        default=None,
+        metavar="PORT",
+        help=(
+            "with --html: serve the target directory over HTTP so the file "
+            "viewer can load sources (default port: 8765); opens a browser"
+        ),
+    )
+    p.add_argument(
+        "--open",
+        action="store_true",
+        help="with --html (and not --serve): open the HTML file in the browser",
+    )
+    p.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version="git-heat 1.0.0",
+    )
+    args = p.parse_args()
+
+    # optional extra noise basenames for this run
+    noise = set(DEFAULT_NOISE_BASENAMES)
+    if args.noise.strip():
+        noise |= {n.strip() for n in args.noise.split(",") if n.strip()}
+    set_noise_basenames(noise)
+
+    try:
+        git_root, scope_dir, scope_prefix = resolve_target(Path(args.path))
+    except (FileNotFoundError, RuntimeError) as e:
+        print(f"git-heat: {e}", file=sys.stderr)
+        return 2
+
+    now = time.time()
+    commits = git_commit_touch_log(git_root)
+    if not commits:
+        print("git-heat: no commits with file touches found", file=sys.stderr)
+        return 1
+
+    ages_by_path, mtime_by_path, n_commits, n_touches = leaf_touch_data(commits)
+    ages_by_path, mtime_by_path = filter_scope(
+        ages_by_path, mtime_by_path, scope_prefix
+    )
+    if not ages_by_path:
+        where = scope_prefix or "(repo root)"
+        print(
+            f"git-heat: no paths under scope {where} in {git_root}",
+            file=sys.stderr,
+        )
+        return 1
+
+    heat_by_path = compute_leaf_heat(ages_by_path, args.half_life)
+    n_files = len(ages_by_path)
+    # display label: root name + optional scope
+    label = git_root.name if not scope_prefix else f"{git_root.name}/{scope_prefix.rstrip('/')}"
+
+    if args.html is not None:
+        out = Path(args.html)
+        if not out.is_absolute():
+            out = scope_dir / out
+        tree = build_tree(ages_by_path, mtime_by_path, heat_by_path)
+        # render_html uses repo name in title; pass scope_dir for local paths
+        html_doc = render_html(
+            tree,
+            repo=scope_dir,
+            half_life=args.half_life,
+            now=now,
+            n_touches=n_touches,
+            n_files=n_files,
+            n_commits=n_commits,
+            label=label,
+            git_root=git_root,
+            scope_prefix=scope_prefix,
+        )
+        out.write_text(html_doc, encoding="utf-8")
+        print(f"wrote {out}", file=sys.stderr)
+
+        if args.serve is not None:
+            import socketserver
+            import webbrowser
+
+            # Viewer fetches paths relative to the HTML's directory, which must
+            # be the scoped tree root (scope_dir), not e.g. /tmp.
+            serve_dir = scope_dir.resolve()
+            try:
+                rel = str(out.resolve().relative_to(serve_dir)).replace("\\", "/")
+            except ValueError:
+                print(
+                    "git-heat: --serve requires the HTML file to live under the "
+                    f"target directory ({serve_dir}).\n"
+                    "  omit FILE to write git-heat.html there, e.g.\n"
+                    f"  git-heat {args.path} --html --serve",
+                    file=sys.stderr,
+                )
+                return 2
+
+            port = int(args.serve)
+            handler_cls = make_git_heat_handler(serve_dir, git_root, scope_prefix)
+            socketserver.TCPServer.allow_reuse_address = True
+            with socketserver.TCPServer(("127.0.0.1", port), handler_cls) as httpd:
+                url = f"http://127.0.0.1:{port}/{rel}"
+                print(
+                    f"serving {serve_dir}  (git root {git_root}"
+                    f"{', scope ' + scope_prefix.rstrip('/') if scope_prefix else ''})"
+                    f"  · blame API /__git-heat__/blame",
+                    file=sys.stderr,
+                )
+                print(url)
+                try:
+                    webbrowser.open(url)
+                except Exception:
+                    pass
+                try:
+                    httpd.serve_forever()
+                except KeyboardInterrupt:
+                    print("\nstopped", file=sys.stderr)
+            return 0
+
+        if args.open:
+            import webbrowser
+            webbrowser.open(out.as_uri())
+
+        print(
+            f"# file viewer needs HTTP from the HTML's directory, e.g.\n"
+            f"#   git-heat {args.path} --html --serve\n"
+            f"#   cd {out.parent} && python3 -m http.server 8765\n"
+            f"#   open http://127.0.0.1:8765/{out.name}",
+            file=sys.stderr,
+        )
+        print(out)
+        return 0
+
+    heat = dict(heat_by_path)
+    mtime = dict(mtime_by_path)
+    if args.dirs:
+        dir_heat: dict[str, float] = defaultdict(float)
+        dir_mt: dict[str, float] = defaultdict(float)
+        for path, h in heat_by_path.items():
+            if is_noise_path(path):
+                continue
+            mt = mtime_by_path.get(path, 0.0)
+            parts = Path(path).parts
+            for i in range(1, len(parts)):
+                d = "/".join(parts[:i]) + "/"
+                if h > dir_heat[d]:
+                    dir_heat[d] = h
+                if mt > dir_mt[d]:
+                    dir_mt[d] = mt
+        for d, h in dir_heat.items():
+            heat[d] = h
+            mtime[d] = dir_mt[d]
+
+    ranked = sorted(
+        ((path, h) for path, h in heat.items() if h >= args.min_heat),
+        key=lambda x: (-x[1], x[0]),
+    )
+    if args.top > 0:
+        ranked = ranked[: args.top]
+
+    tau = args.half_life / math.log(2)
+    print(
+        f"# git-heat  {label}\n"
+        f"# git_root={git_root}"
+        f"{'  scope=' + scope_prefix.rstrip('/') if scope_prefix else ''}\n"
+        f"# half-life={args.half_life:g} commits  tau={tau:.3f}  "
+        f"now={time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(now))}\n"
+        f"# commits={n_commits}  paths={n_files}  "
+        f"non-initial touches (whole repo)={n_touches}\n"
+        f"# heat = 2*(1-e^(-1/tau))*sum exp(-age/tau); dir=max non-noise leaf\n"
+        f"# {'HEAT':>10}  PATH"
+    )
+    for path, h in ranked:
+        print(f"{h:10.4f}  {path}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

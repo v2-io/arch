@@ -1,0 +1,63 @@
+# git-heat
+
+Walkable **commit-decay heatmap** for any git repository or subdirectory.
+
+Each path gets a heat score from how recently (in *commits*, not wall time) it
+was touched. Interactive HTML shows a collapsible tree, a focus slider
+(historical ↔ recent), a syntax-highlighted file viewer, and a left **git-blame
+age gutter** (hot = line last changed recently; hover for SHA / author /
+summary). Blame requires `git-heat --html --serve` (custom handler at
+`/__git-heat__/blame`).
+
+## Install
+
+```sh
+# one-time (or after moves):
+ln -sfn ~/src/arch/firmatum/utils/code/git-heat-decay/git-heat ~/.local/bin/git-heat
+# ensure ~/.local/bin is on PATH
+```
+
+Requires: Python 3.10+, `git` on PATH. HTML viewer uses highlight.js from CDN
+and needs the page served over HTTP (`--serve`).
+
+## Usage
+
+```sh
+git-heat --help
+
+git-heat                              # CLI top paths for cwd's repo
+git-heat --html --serve               # write git-heat.html + serve + open browser
+git-heat ~/src/arch/asf --html        # whole repository
+git-heat crates/codegen --html        # only that subdirectory
+git-heat --half-life 3 --top 25 .     # short memory, ranking only
+git-heat --noise Cargo.toml,Cargo.lock
+```
+
+`path` may be any directory (or file) inside a git work tree. Heat is computed
+from the whole history, then **scoped** to that subdirectory; paths in the
+output are relative to the scope so the file viewer can fetch them when the
+HTML is served from that directory.
+
+## Heat model (brief)
+
+- Age unit: commits behind HEAD (HEAD touch = 0). Initial commit excluded.
+- `raw = Σ exp(-age / τ)`, `τ = half_life / ln(2)`
+- Scale-invariant: `heat = 2 · (1 − e^{−1/τ}) · raw`  
+  → touched every commit forever → **~2** at any half-life
+- Directory heat = max of non-noise leaves
+- Noise basenames (`Cargo.toml`, `SOURCE_REV` by default): heat 0, ignored for
+  parent max (override/extra with `--noise`)
+
+HTML focus slider: left = longer half-life (smoother / historical), right =
+shorter (hottest recent). Slider magnitude expansion (more log steps) is a
+planned follow-up.
+
+## Layout
+
+```
+git-heat-decay/
+  git-heat      # executable (python3)
+  README.md     # this file
+```
+
+Parent index: [`../README.md`](../README.md).
