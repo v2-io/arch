@@ -1,5 +1,7 @@
 # Grok-build terminology
 
+> **Provisional first pass.** Terminology cleaned late in the Aug 2026 compaction research session after several rounds of discovery — useful for getting the ball rolling, but **not independently re-verified** as a glossary. Expect gaps, soft edges, and later re-cuts. Treat as working substrate, not settled law. Companion compare (same status): [`../opencode-vs-grok-terminology.md`](../opencode-vs-grok-terminology.md).
+
 *Working glossary for how grok-build abstracts modern frontier agent models: multi-step tool use, reasoning blocks, synthetic “user” injections, compaction, and autonomous goal runs. Grounded in `xai-grok-sampling-types` / chat-state / shell, and the Aug 2026 compaction research in this folder.*
 
 Related: [`02-pre-and-post-compaction.md`](02-pre-and-post-compaction.md), [`03-post-compact-assembly.md`](03-post-compact-assembly.md).
