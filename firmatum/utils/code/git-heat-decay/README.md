@@ -6,8 +6,8 @@ Each path gets a heat score from how recently (in *commits*, not wall time) it
 was touched. Interactive HTML shows a collapsible tree, a focus slider
 (historical ↔ recent), a syntax-highlighted file viewer, and a left **git-blame
 age gutter** (hot = line last changed recently; hover for SHA / author /
-summary). Blame requires `git-heat --html --serve` (custom handler at
-`/__git-heat__/blame`).
+summary). Interactive viewer: `git-heat --serve` (HTML held in memory; no file
+unless you also pass `--html`). Blame API: `/__git-heat__/blame`.
 
 ## Install
 
@@ -17,8 +17,7 @@ ln -sfn ~/src/arch/firmatum/utils/code/git-heat-decay/git-heat ~/.local/bin/git-
 # ensure ~/.local/bin is on PATH
 ```
 
-Requires: Python 3.10+, `git` on PATH. HTML viewer uses highlight.js from CDN
-and needs the page served over HTTP (`--serve`).
+Requires: Python 3.10+, `git` on PATH. HTML viewer uses highlight.js from CDN.
 
 ## Usage
 
@@ -26,9 +25,11 @@ and needs the page served over HTTP (`--serve`).
 git-heat --help
 
 git-heat                              # CLI top paths for cwd's repo
-git-heat --html --serve               # write git-heat.html + serve + open browser
-git-heat ~/src/arch/asf --html        # whole repository
-git-heat crates/codegen --html        # only that subdirectory
+git-heat --serve                      # heatmap from memory (no file write)
+git-heat --html                       # write git-heat.html only
+git-heat --html --serve               # write file AND serve
+git-heat ~/src/arch/asf --serve       # whole repository
+git-heat crates/codegen --serve       # only that subdirectory
 git-heat --half-life 3 --top 25 .     # short memory, ranking only
 git-heat --noise Cargo.toml,Cargo.lock
 ```
