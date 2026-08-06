@@ -70,11 +70,11 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[orientation-scaffold]] | Orientation as a general scaffold with slot-in points for instance-specific SOPs |
+| drafted | form | form | [[orientation-scaffold]] | Orientation as a general scaffold with slot-in points for instance-specific SOPs |
 | drafted | form | form | [[orientation-gate]] | Where stakes warrant, free-read of the outline + a cheap check before write access — pass dies with the context (specimen: [[outline-skipping-failure]]) |
 | drafted | norm | norm | [[priming-discipline]] | Auditor-safe and verdict-bearing surfaces are declared and read in that order; attention is spendable and the spending is irreversible |
-| proposed | form | | [[role-activation]] | Natural role activation: what makes an instance work must ride its front-door composition, not accumulate accidentally across files and memories |
-| proposed | form | | [[work-coordination]] | Division of work over the atom grain: delegation, peer-voice briefs, harvester briefs, handoff routing (write-safety is ch. 13) |
+| drafted | form | form | [[role-activation]] | Natural role activation: what makes an instance work must ride its front-door composition, not accumulate accidentally across files and memories |
+| drafted | form | form | [[work-coordination]] | Division of work over the atom grain: delegation, peer-voice briefs, harvester briefs, handoff routing (write-safety is ch. 13) |
 | | | | --GAP-- | Onboarding for specific recurring roles (de-novo auditor, harvester, integrator, reviewer) with their differing read and priming needs |
 
 ### Chapter 6 — Releasing: tagging, versioning, & lifecycle
@@ -121,11 +121,12 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[experiential-reading]] | Predict → read → record the delta → wander → predict next: deep comprehension, causal-gap detection agents otherwise cannot do, wondering-notes as harvestable pedagogy |
-| proposed | form | | [[dag-vs-exposition]] | The dependency-DAG vs exposition-order tension as a pedagogical question, and what agents' silent self-repair hides from them |
-| proposed | form | | [[plain-language-briefs]] | Feynman-criterion briefs: a thoughtful non-specialist can re-derive the qualitative claim from the analog alone |
+| drafted | form | form | [[experiential-reading]] | Predict → read → record the delta → wander → predict next: deep comprehension, causal-gap detection agents otherwise cannot do, wondering-notes as harvestable pedagogy |
+| drafted | form | form | [[dag-vs-exposition]] | The dependency-DAG vs exposition-order tension as a pedagogical question, and what agents' silent self-repair hides from them |
+| drafted | form | form | [[plain-language-briefs]] | Feynman-criterion briefs: a thoughtful non-specialist can re-derive the qualitative claim from the analog alone |
+| proposed | form | | [[bridge-segments]] | The bridge/gloss segment kind and its pass criterion (three estate instances; inheritance-vs-convergence unsettled) |
 | drafted | form | form | [[pedagogy-layering]] | Mental model first, precision second; the analog must be isomorphic, not evocative — scaffolding that overclaims is worse than none |
-| | | | --GAP-- | Bridge/gloss segment kinds; misconception censuses harvested from wondering-notes; pedagogy's seam with onboarding (ch. 5) |
+| | | | --GAP-- | Misconception censuses harvested from wondering-notes; pedagogy's seam with onboarding (ch. 5) |
 
 ### Chapter 10 — Complex pipelines
 
@@ -168,17 +169,17 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[corpus-instruments]] | Instruments that watch the corpus: segment-stats, health checks, lint censuses — with the taught-blindness hazard (instruments report clean over what they were told to ignore) |
-| proposed | form | | [[hotness-methodology]] | Segment hotness / importance ranking methodology (consumed by ch. 2 views and ch. 5 orientation) |
-| proposed | form | | [[observation-stores]] | Record process features wide before weights are known; the model is a consumer (feeds ch. 8 calibration) |
+| drafted | form | form | [[corpus-instruments]] | Instruments that watch the corpus: segment-stats, health checks, lint censuses — with the taught-blindness hazard (instruments report clean over what they were told to ignore) |
+| drafted | form | form | [[hotness-methodology]] | Segment hotness / importance ranking methodology (consumed by ch. 2 views and ch. 5 orientation) |
+| drafted | form | form | [[observation-stores]] | Record process features wide before weights are known; the model is a consumer (feeds ch. 8 calibration) |
 | | | | --GAP-- | What a standard health report contains; metrology for views and for process (time-in-state, crossing rates) |
 
 ### Chapter 15 — Steward interface
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[steward-surfaces]] | What the steward actually reads: big-picture views over largely unread segments — by design, not neglect |
-| proposed | form | | [[authority-routing]] | Decision/escalation queues and delegated grants: authority routes without becoming a bottleneck |
+| drafted | form | form | [[steward-surfaces]] | What the steward actually reads: big-picture views over largely unread segments — by design, not neglect |
+| drafted | form | form | [[authority-routing]] | Decision/escalation queues and delegated grants: authority routes without becoming a bottleneck |
 | | | | --GAP-- | Where steward attention is genuinely load-bearing vs delegable; council patterns; the steward's own tracking surfaces |
 
 ---
@@ -208,6 +209,7 @@
 | drafted | obs | obs | [[retrofit-specimen]] | The autopax graft: three-day adoption in thin subsystems, Phase 3 (the integrity log) never started, framework absent when that subsystem was finally rebuilt (grounds ch. 11 sequencing) |
 | drafted | obs | obs | [[identity-regime-archaeology]] | Full account: ASF's TST component holds three identity regimes physically side by side — positional numbers, typed labels, slugs — with one claim traceable across all three (grounds [[slug-identity]]) |
 | drafted | obs | obs | [[navigation-relocation-specimen]] | Full account: the pre-outline argument for one-claim-per-file expected the exposition layer to become unnecessary; the corpus grew a richer authored one and regenerated the derived parts (grounds [[outline-as-organizing-principle]]) |
+| drafted | obs | obs | [[instrument-failure-census]] | Census of estate instruments that miscounted, went blind by configuration, or conflated a rule's statement with its enforcement (grounds [[corpus-instruments]]) |
 
 ---
 
