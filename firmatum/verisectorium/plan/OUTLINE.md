@@ -104,7 +104,7 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | survey | | [[strength-ladders]] | At least three incompatible strength ladders live in the wild; none is a superset — the adjudication this project owes |
+| drafted | survey | survey | [[strength-ladders]] | Five incompatible strength vocabularies live in the family; three non-redundant dimensions recur (strength / support-kind / ceiling) and grain varies clause→directory — the adjudication is owed, not made here |
 | proposed | form | | [[epistemic-axes]] | Strength × support-kind × convergence (independent failure modes) vs the single status scalar |
 | proposed | form | | [[confidence-calibration]] | Confidence bands and calibration language for claim corpora — candidate sources: vox-vera verbal-probability research (measured), comproprium precept practice (live), PROPRIUM VERA (a named slot with a sketch, unreviewed), ennaos research (reserved for joint session) |
 | drafted | form | form | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record, not the verdict, is the product |
@@ -113,7 +113,7 @@
 | drafted | form | form | [[verbal-label-calibration]] | A strength label is a word; read-spread is measurable per label and no ladder here has been calibrated — the estate applies this research to agent uncertainty, never to its own tier words |
 | drafted | form | form | [[verification-provenance]] | A dangling citation is a truth-status defect; "verified" is derived from events; gating is the deployment's call and evidence-grade is a second axis (specimen: [[gate-profile-divergence]]) |
 | proposed | form | | [[temporal-truth]] | Temporal truth factors: revisit criteria, expiry, re-grading records that predate their governance, check-resets on edit |
-| proposed | norm | | [[proxy-discipline]] | Proxies (outline rows, agent consensus, "verified against file F") locate work and cheap-screen it; they never settle a claim — the norm this corpus already practices unlegislated |
+| drafted | norm | norm | [[proxy-discipline]] | Proxies (indexes, registers, status labels, agent agreement) locate work and cheap-screen it; they never settle a claim — index-as-authority and verified-against-artifact are the named traps, both committed here |
 | | | | --GAP-- | Bayesian propagation across the dependency DAG (how a changed premise re-prices its dependents); special epistemic states |
 
 ### Chapter 9 — Pedagogy & causality
