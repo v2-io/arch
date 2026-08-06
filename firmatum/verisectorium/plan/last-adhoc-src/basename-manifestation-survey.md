@@ -20,7 +20,7 @@ Surveyed 2026-08-06 across `asf/`, `vivarium/`, `logos/`, `firmatum/relata/`, `f
 
 | Form | Live instances |
 |---|---|
-| Top-level `.md` *(deprecated)* | The overwhelming majority. ASF's root alone carries 25 such files: `TODO` · `PRACTICA` · `PROPOSALS` · `CHANGELOG` · `LOG` · `FINDINGS` · `LEXICON` · `NOTATION` · `OUTLINE` · … |
+| Top-level `.md` *(deprecated)* | The overwhelming majority. ASF's root alone carries **24** such files — 22 distinct, since three are symlinks to one SOP: `TODO` · `PRACTICA` · `PROPOSALS` · `CHANGELOG` · `LOG` · `FINDINGS` · `LEXICON` · `NOTATION` · `OUTLINE` · … |
 | Top-level `.udon` *(transitional)* | `vivarium/LEXICON.udon` (106 terms) |
 | `.un` *(a sixth form, not in the convention)* | This project: `PRACTICA.un` · `CHANGELOG.un` · `ONTOLOGY.un`. `.un` is glossed in the norms file as Udon Notation, implying the compliant form once schemas exist |
 | Compliant `BASENAME.<type>.udon` | `vivarium/DECISIONS.decision-log.udon` (1,697 lines, 160 decision blocks) — the only instance found |

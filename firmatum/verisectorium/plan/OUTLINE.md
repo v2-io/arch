@@ -43,17 +43,18 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[working-notes-sidecar]] | Working Notes is the ubiquitous per-atom sidecar — forward residue, not history-dump — present in nearly every instance under some name |
+| drafted | form | form | [[working-notes-sidecar]] | Working Notes is the ubiquitous per-atom sidecar — forward residue, not history-dump — present in nearly every instance under some name |
 | drafted | form | form | [[working-note-lifecycle]] | What earns a note is the easy half; retirement needs an occasion that actually arrives, and a drain attached to a stage nobody reaches does not drain |
 | drafted | form | form | [[state-flags-not-gates]] | Independent resettable state flags (explored / drafted / checked…), not a one-way promotion ladder (specimen: [[ladder-never-fired]]) |
-| proposed | form | | [[tracking-altitudes]] | Tracking layers by altitude: navigator → items → cross-cutting proposals; histories and archaeologies kept separate |
-| proposed | form | | [[sidecar-conventions]] | BASENAME / organic-expansion conventions: one callable name, many manifestations over time, sidecars as their own basenames |
+| drafted | form | form | [[tracking-altitudes]] | Tracking layers by altitude: navigator → items → cross-cutting proposals; histories and archaeologies kept separate |
+| drafted | form | form | [[sidecar-conventions]] | BASENAME / organic-expansion conventions: one callable name, many manifestations over time, sidecars as their own basenames |
 | drafted | form | form | [[decision-records]] | Decisions are their own artifact kind: confidence separate from content, load path named, revisit-when / expires-on carried, coupled hypothesis explicit where one exists |
 | drafted | form | form | [[warrant-over-authority]] | Warrant is structurally primary over authority — agents dogmatize whatever the schema makes first-class, so the schema must privilege the truth-serving column |
 | drafted | form | form | [[asked-and-answered]] | Open flags need asked-and-answered states so they stop repeat-billing every fresh agent |
-| proposed | form | | [[history-layer]] | History is a governed layer: changelog vs frozen archaeology, retired-name discipline, record-grain history verbs agents don't reach for unaided |
+| drafted | form | form | [[history-layer]] | History is a governed layer: changelog vs frozen archaeology, retired-name discipline, record-grain history verbs agents don't reach for unaided |
+| drafted | form | form | [[rule-grounds-and-posture]] | A rule carries two independent facts — why it exists and what posture is owed it — which lets process law be authoritative and defeasible at once |
 | drafted | emp | emp | [[name-collision-across-stores]] | Collision detection runs inside a store and is blind between them — four live referents named "vera", caught only by a hand-written table |
-| | | | --GAP-- | Terminology / lexicon / notation substores: per-term records, append-only decision events, generated views, bounded-context sharing across the estate — critical components, immature even in asf |
+| drafted | form | form | [[terminology-substore]] | Vocabulary is a second store by the claim-atom argument — own clock, fan-out, decision events, a graveyard that refuses; an underived vocabulary view becomes a proxy marked untrustworthy |
 
 ### Chapter 4 — Process II: flux, integration, & the real gates
 
@@ -63,7 +64,11 @@
 | drafted  | form             | form | [[integration-metabolism]]  | Integration is replacement, and integrated means disposable: the delete-test — landed or truly disposable, else not done, however many passes touched it                                                                    |
 | drafted  | form             | form | [[observable-crossings]]    | Layer crossings are recorded events — subject, act, criterion, actor, date — so backlog is a count, dispositions are auditable, and the criterion is named where bending it would show                                      |
 | drafted  | form             | form | [[layer-speeds]]            | Fast strata feed slow canon; rate failure and sensitivity failure are separate, early promotion is priced not forbidden, and separation can be bought on a cadence                                                          |
-| proposed | norm             |      | [[gates-need-destinations]] | A gate exists only where there is a destination — an assurance something qualifies to be moved or treated differently; everything else is state                                                                             |
+| drafted | norm | form | [[gates-need-destinations]] | A gate is an assurance attached to a destination; without one it is state with ceremony — fire at acts not dispositions, teeth are tooling, legitimate only where the record would otherwise lie |
+| drafted | form | form | [[strengthen-before-routing]] | A finding proposing a weakening is an investigation, not an edit; a no-go collapses the claim and the downgrade, and the no-go is canon, not a ghost |
+| drafted | form | form | [[adjudicator-not-confirmer]] | Independence at a crossing is structural, against the primary source, at the reversible/durable seam — a freshly written correction is the highest-risk artifact in the room |
+| drafted | form | form | [[honest-incompleteness-discharge]] | Honest tier + what would resolve it + remainder released is a complete discharge; strengthening is the promotion process, not the admission condition |
+| drafted | form | form | [[source-tree-graduation]] | Emptying a mined-out tree is governed, and the missing condition is provenance — a present-state delete-test cannot detect loss from an earlier pass |
 |          |                  |      | --GAP--                     | Whole-outline migration: moving an outline's worth of segments to a different verisectorium — the real gates plus "this snapshot is frozen history, superseded at …"; three partial estate answers not yet put side by side |
 
 ### Chapter 5 — Onboarding: orientation, coordination, & role activation
@@ -210,6 +215,11 @@
 | drafted | obs | obs | [[identity-regime-archaeology]] | Full account: ASF's TST component holds three identity regimes physically side by side — positional numbers, typed labels, slugs — with one claim traceable across all three (grounds [[slug-identity]]) |
 | drafted | obs | obs | [[navigation-relocation-specimen]] | Full account: the pre-outline argument for one-claim-per-file expected the exposition layer to become unnecessary; the corpus grew a richer authored one and regenerated the derived parts (grounds [[outline-as-organizing-principle]]) |
 | drafted | obs | obs | [[instrument-failure-census]] | Census of estate instruments that miscounted, went blind by configuration, or conflated a rule's statement with its enforcement (grounds [[corpus-instruments]]) |
+| drafted | obs | obs | [[sidecar-ubiquity-census]] | Working-note sidecar occupancy: 164/170 · 115/115 · 12/12, one corpus with six spellings of one position (grounds [[working-notes-sidecar]]) |
+| drafted | obs | obs | [[tracking-layer-census]] | The altitude ladder with sizes; 6 auditor-hidden / 3 auditor-safe / 4 priming-heavy surfaces (grounds [[tracking-altitudes]]) |
+| drafted | survey | survey | [[routing-sop-anatomy]] | Four rule tags · four completion states · four ghost-forms · thirteen dispositions · fifteen recorded scars (grounds the ch. 3/4 SOP claims) |
+| drafted | survey | survey | [[terminology-store-anatomy]] | 176 entries / 160 events / 149 dirs vs 106 terms / 94-line graveyard (grounds [[terminology-substore]]) |
+| drafted | survey | survey | [[basename-manifestation-survey]] | Five predicted BASENAME forms vs what is on disk; the partition affix running both directions (grounds [[sidecar-conventions]]) |
 
 ---
 

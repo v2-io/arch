@@ -37,6 +37,14 @@ Neither is fixed by writing better rules, because both agents read the same word
 
 **And the voice is a mechanism, not ornament — which is the claim most likely to be tidied away by someone improving the document.** Its own statement of this is worth carrying: *principles restated do not prevent the failures they name; pre-registered specifics plus an early external catch do.* A checklist rewrite of a scarred SOP would be a **less true document**, because it would predict its own compliance and be wrong. The instruction the estate leaves for its own future editors is the honest form of this — if the language reads as ornamental, edit it, but edit it *toward* more lived specificity, not toward flatter abstraction.
 
+## The live alternative, which this claim has to survive
+
+A second corpus in the same estate answers the same problem by **refusing the posture axis outright**. Its format document opens: *"Nothing in this document has authority beyond being true. A rule found false is corrected here, not obeyed."* — followed by the declaration that everything in it is proposed, not ratified.
+
+That is not a weaker version of the scheme above; it is a different answer, and it is coherent. It dissolves the *obey-first* problem by removing the obligation that creates it, at the cost of the thing obey-first buys: an agent's plausible-sounding pre-emptive exception now has nothing to push against, and a hard-won rule is defended only by whatever argument the reader can reconstruct in the moment. Which design is right plausibly depends on whether the corpus's rules mostly encode *coordination* (where the content is arbitrary and only agreement matters, so truth is the wrong test) or *scars* (where the reason is real but not visible from the rule's face).
+
+Worth noting that the same corpus inherits its conventions through a three-link chain — its format document ports by reference from a theory corpus, which ports from a third — so "correct it here rather than obey it" is being said about rules it did not author and cannot unilaterally fix upstream. Whether that is the position working or a tension it has not yet hit is unresolved, and it is the cheapest available test of both designs.
+
 ## Relation to decision records
 
 This is [[decision-records]]' structure applied to rules, and the mapping is close enough to be worth stating and one column short of exact. Grounds is the decision's **load path** — what the rule stands on, so a challenge can attack a leg rather than the whole. The scar is its **warrant**. What a decision record does not have is posture: *who may revise this, on what evidence*. That is a genuinely additional column, and it exists because a rule, unlike a claim, is something other agents will be asked to act under before they have grounds to evaluate it.
