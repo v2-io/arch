@@ -61,6 +61,15 @@
     present truth at honest strength, and **Working Notes** (expected on nearly
     every segment — forward residue, not history-dump). Epistemic marking style
     (section vs frontmatter vs inline) is deliberately open — see the ch. 1 gap.
+    Frontmatter carries `depends:` — the list of slugs this segment **genuinely
+    stands on** (definitional imports, logical antecedents, grounding specimens),
+    never mere mentions or see-alsos (those stay wikilinks in prose). Declare
+    `depends: []` explicitly when a segment is a root — silence and emptiness
+    are different facts. Forward deps on proposed-but-undrafted rows are allowed
+    (the row is the identity); a dep on a slug with no row anywhere is an error.
+    The atoms form a DAG; outline order may diverge from it deliberately
+    ([[appendix-placement]]) but the divergence must be *checkable*, which is
+    what the declaration is for.
 
   |segment[readable-claims-appendix-evidence] :status provisional
     Earned 2026-08-05 from steward review of the first obs batch ("almost impossible

@@ -1,6 +1,7 @@
 ---
 slug: first-principles-grounding
 type: disc
+depends: []
 ---
 
 # Honest first-principles grounding — how this project cites theory

@@ -1,6 +1,8 @@
 ---
 slug: appendix-placement
 type: form
+depends:
+  - dependency-order-tension
 ---
 
 # Appendices go at the bottom of the outline — even when they are dependencies in the DAG

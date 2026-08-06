@@ -1,6 +1,9 @@
 ---
 slug: substrate-independence
 type: form
+depends:
+  - slug-identity
+  - collision-staleness-detection
 ---
 
 # Substrate independence

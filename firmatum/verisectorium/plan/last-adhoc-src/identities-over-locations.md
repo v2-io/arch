@@ -1,6 +1,8 @@
 ---
 slug: identities-over-locations
 type: norm
+depends:
+  - provenance-rot-specimen
 ---
 
 # References carry identities, not locations

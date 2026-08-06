@@ -1,6 +1,7 @@
 ---
 slug: collision-staleness-detection
 type: form
+depends: []
 ---
 
 # Present-truth collision is a staleness detector

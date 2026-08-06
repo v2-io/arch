@@ -1,6 +1,7 @@
 ---
 slug: turnover-solution
 type: form
+depends: []
 ---
 
 # The pattern is a solution to 100% agentic turnover

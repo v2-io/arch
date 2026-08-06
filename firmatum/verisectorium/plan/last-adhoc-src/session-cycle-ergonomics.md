@@ -1,6 +1,8 @@
 ---
 slug: session-cycle-ergonomics
 type: form
+depends:
+  - turnover-solution
 ---
 
 # Session-cycle ergonomics

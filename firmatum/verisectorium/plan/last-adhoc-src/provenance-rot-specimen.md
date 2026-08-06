@@ -1,6 +1,7 @@
 ---
 slug: provenance-rot-specimen
 type: obs
+depends: []
 ---
 
 # The comproprium provenance-rot specimen
