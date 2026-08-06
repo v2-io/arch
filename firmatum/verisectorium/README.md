@@ -1,40 +1,28 @@
 # Verisectorium
 
-Working name (2026-08-05) for **outline + segments** structures: stable claim atoms (segments; slug = identity), an outline as exposition **view** (order, membership, view-local metadata), and optional FORMAT / linters / build projections.
+Working name (2026-08-05) for **outline + segments** structures: stable claim atoms (segments; slug = identity), an outline as exposition **view** (order, membership, view-local metadata), and optional FORMAT / linters / build projections — the pattern that keeps establishing itself because it is a **solution to 100% agentic turnover in highly complex, living creation projects**.
 
-The shape is portable across deployments (asf, vivarium, udon-needs, comproprium, …). Type vocabularies and gate profiles are per deployment.
+The shape is portable across deployments (asf, vivarium, udon-needs, comproprium, …). Type vocabularies and enforcement profiles are per deployment. This project exists to understand the pattern from first principles and deliver a standardized, customizable toolset for it.
+
+## Start here
+
+1. **[`plan/OUTLINE.md`](plan/OUTLINE.md)** — the canonical outline (Basics / Deep dives / Meta & implementation). The plan is itself kept as **the very last ad-hoc verisectorium** (segments in `plan/last-adhoc-src/`; local law in [`plan/ONTOLOGY.un`](plan/ONTOLOGY.un)) — used for its utility, deliberately **not** exemplary.
+2. **[`PRACTICA.un`](PRACTICA.un)** — active areas of work. **[`HANDOFF.md`](HANDOFF.md)** — where things actually stand at the last session boundary. **[`CHANGELOG.un`](CHANGELOG.un)** — history.
+3. **[`plan/INFLUX/00-INDEX.md`](plan/INFLUX/00-INDEX.md)** — the gathered evidence base (2026-08-05 estate-wide gather + live-state health reports), **unprocessed influx awaiting metabolism**. Copies carry provenance banners; they are not live authority — originals win on conflict.
 
 ## Layout
 
 ```text
 verisectorium/
-  README.md
-  notes/
-    00-INDEX.md           # inventory + reading orders
-    synthesis/            # outline+segments session maps
-    primary/              # cross-corpus generalization
-    asf/                  # founding FORMAT, proposals, build-design
-    udon-theory/          # claim landings + process outline
-    udon-analysis/        # logical model, living docs, corrections
-    instances/            # deployments spectrum + cousins + paper projects + planned
-    methodology/          # short memory notes (outline-as-view)
-    tribunal/             # epistemic tribunal (scattered historical strands)
-    vera/                 # PROPRIUM VERA + comproprium vera + buried research
+  README.md                 # you are here
+  PRACTICA.un               # strategic navigator (areas)
+  CHANGELOG.un              # history layer
+  HANDOFF.md                # session-boundary working surface
+  plan/
+    OUTLINE.md              # canonical outline — the front door for all plan work
+    ONTOLOGY.un             # this instance's local law (columns, slugs, states, gaps)
+    last-adhoc-src/         # plan segments (filename = slug)
+    INFLUX/                 # gathered notes awaiting processing (00-INDEX.md is the map)
+    .integrated/            # influx fully absorbed into segments
+    .archive/               # influx adjudicated as not-landing
 ```
-
-## Start here
-
-**[`plan/OUTLINE.md`](plan/OUTLINE.md)** — the canonical outline (Basics / Deep dives / Meta & implementation): the plan itself, kept as the very last ad-hoc verisectorium (segments in `plan/last-adhoc-src/` — used for utility, deliberately not exemplary). Then **[`notes/00-INDEX.md`](notes/00-INDEX.md)** for the gathered material.
-
-Syntheses (outline+segments):
-
-- [`notes/synthesis/scatter-inventory-2026-08-05.md`](notes/synthesis/scatter-inventory-2026-08-05.md)
-- [`notes/synthesis/asf-build-illuminated-model-2026-08-05.md`](notes/synthesis/asf-build-illuminated-model-2026-08-05.md)
-- [`notes/synthesis/relata-methods-for-verisectorium-2026-08-05.md`](notes/synthesis/relata-methods-for-verisectorium-2026-08-05.md) — relata methods that improve the synthesis
-
-Also gathered:
-
-- [`notes/tribunal/00-INDEX.md`](notes/tribunal/00-INDEX.md) — epistemic tribunal  
-- [`notes/vera/00-INDEX.md`](notes/vera/00-INDEX.md) — VERA / `vera`
-
-Copies and extracts under `notes/` are **not live authority** — provenance banners name the source path.
