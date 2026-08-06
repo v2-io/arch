@@ -16,24 +16,20 @@ How verisectoria get launched, tooled, and managed. The organs (OUTLINE Part II)
 
 *[J structure, C labels + grounding]*
 
-| Level | Label | Definition | Examples |
-|---|---|---|---|
-| I₀ | **substrate** | OS/system deterministic & enforced, incl. de-facto substrate (git, filesystem) | git object store, chmod seals |
-| I₁ | **deterministic** | Fully deterministic scripts/CLI; target: ~70% of inner-loop work *(hypothesis-grade target, [J])* | `bin/term`, `lint-outline`, `fmt-md` core |
-| I₂ | **gated-generative** | Deterministic shell with a bounded logogenic kernel; badly under-used currently [J] | `fmt-md --math` (needs a new name) |
-| I₃ | **scaffolded-agent** | Logogenic agent under scaffold: discrete role, task+result shapes, verification mechanism, bounded cognition-goals, parameterization | workflow-launched verify agents, schema'd extractors |
+| Level | Label                | Definition                                                                                                                           | Examples                                             |
+| ----- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------- |
+| I₀    | **substrate**        | OS/system deterministic & enforced, incl. de-facto substrate (git, filesystem)                                                       | git object store, chmod seals                        |
+| I₁    | **deterministic**    | Fully deterministic scripts/CLI; target: ~70% of inner-loop work *(hypothesis-grade target, also historical 60% est. [J])*           | `bin/term`, `lint-outline`, `md-press` core          |
+| I₂    | **gated-generative** | Deterministic shell with a bounded logogenic kernel; significantly under-used currently [J]                                          | `md-press --math`                                    |
+| I₃    | **scaffolded-agent** | Logogenic agent under scaffold: discrete role, task+result shapes, verification mechanism, bounded cognition-goals, parameterization | workflow-launched verify agents, schema'd extractors |
 
-**The I₂ design law [C]: logogenic proposes, deterministic disposes.** The embedded cognition only generates candidates; a deterministic gate (render-equality, per-line acceptance, schema validation) decides what lands. This is what separates I₂ from "a script that calls an LLM" — without the gate that's just I₃ with worse ergonomics. It's also why I₂ is safe enough to deserve heavy use: its failure mode is a rejected candidate, not a landed error.
+**The I₂ design directive [C]: logogenic proposes, deterministic disposes.** The embedded cognition only generates candidates; a deterministic gate (render-equality, per-line acceptance, schema validation) decides what lands. This is what separates I₂ from "a script that calls an LLM" — without the gate that's just I₃ with worse ergonomics. It's also why I₂ is safe enough to deserve heavy use: its failure mode is a rejected candidate, not a landed error.
 
-**ASF class note [C].** I₂/I₃ are instances of the wrapping construction ( [[der-class-coercion-via-wrapping]]): a Class 3 (Coupled) logogenic component coerced toward Class 1 behavior by an external deterministic scaffold. I₂'s deterministic gate is a W₁-flavored structural bound (the scaffold controls what crosses); I₃'s task+result shapes and verification mechanism are W₂-flavored behavioral bounds. The Brooks's-Law tempo cost of wrapping (more calls per macro-step) is the honest price, paid for leakage control. Casual labels here deliberately do not claim asf's formal scopes [J]; this note is the bridge for whoever formalizes it.
+**ASF class note [C].** I₂/I₃ are instances of the wrapping construction ( [[asf/aat/der-class-coercion-via-wrapping]]): a Class 3 (Coupled) logogenic component coerced toward Class 1 behavior by an external deterministic scaffold. I₂'s deterministic gate is a W₁-flavored structural bound (the scaffold controls what crosses); I₃'s task+result shapes and verification mechanism are W₂-flavored behavioral bounds. The Brooks's-Law tempo cost of wrapping (more calls per macro-step) is the honest price, paid for leakage control. Casual labels here deliberately do not claim asf's formal scopes [J]; this note is the bridge for whoever formalizes it.
 
 **Tool/actor boundary test [C]:** a *tool* is invoked with its *how* fully (or almost fully) specified; an *actor* receives intent and owns its how. Orchestration fails the tool test — correctly excluded [J]. The I₃ ↔ autonomous-agent gradient [J] has an exact coordinate: **what fraction of Σ (the strategy — the how) is supplied versus self-formed.** A de-novo auditor has I₃-like shapes on its *outputs* (working-dir protocol, FINAL spec) while owning its *process* — output-scaffolded, process-autonomous.
 
-## 2. Instrumenta — invocation × mutation (replacing the single T axis)
-
-*[J first pass; C split after the non-MECE flag was confirmed]*
-
-The original T₂ (stateful) is a property a tool *has*; T₁/T₃/T₄/T₅ are ways it is *invoked*. Two orthogonal axes:
+## 2. Instrumenta — invocation × mutation
 
 **Trigger axis** — how it runs:
 
@@ -46,11 +42,11 @@ The original T₂ (stateful) is a property a tool *has*; T₁/T₃/T₄/T₅ are
 
 **Mutation axis** — what invoking it does:
 
-| | Label | Examples |
-|---|---|---|
-| M₀ | **observing** | read-only: `ls-segments`, lint --check, pending queries |
-| M₁ | **idempotent-mutating** | converges on re-run: `fmt-md`, `align-slug` |
-| M₂ | **event-mutating** | non-idempotent, appends/advances state: `relata decide`, `git commit`, `term decide` |
+|     | Label                   | Examples                                                                             |
+| --- | ----------------------- | ------------------------------------------------------------------------------------ |
+| M₀  | **observing**           | read-only: `ls-segments`, lint --check, pending queries                              |
+| M₁  | **idempotent-mutating** | converges on re-run: `md-press`, `align-slug`                                          |
+| M₂  | **event-mutating**      | non-idempotent, appends/advances state: `relata decide`, `git commit`, `term decide` |
 
 The mutation axis wires directly into Organ V: M₂ instruments are exactly the ones that want write-membrane treatment and event records; M₀ instruments are exactly the ones safe to hand any agent without prose constraints (the enforceable form of "analysis only" — constrain by tool-set, never by prose).
 
@@ -103,13 +99,15 @@ SOP      + influx⁺   primary influx designated the meta-feedback channel
 
 Orientation is two distinct prerequisites with different failure modes, plus a third element that is neither:
 
-| Element | Offered label | What it establishes | Failure mode it prevents |
-|---|---|---|---|
-| Domain orientation | **doctrina** *(what the corpus teaches)* | The agent knows what the canon already knows — the deep domain-specific knowledge in the segments | Confidently writing format-correct segments in ignorance of landed knowledge — the *actual* reason for the vivarium gate [J: agents imitate segment form fine once examples exist; what they miss is the doctrine] |
-| Process orientation | **praxis** *(how we work here)* | The agent knows the meta: formats, SOPs, instrumenta usage, write semantics | Meta-errors: wrong cadence, wrong membrane, hand-editing generated views |
-| Attestation | **sponsio** *(Roman law: the solemn, binding promise)* | A genuine speech-act moment: the agent attests, without requiring steward dialog, that it will conform to named standards and behaviors to the best of its ability | The gap between having-read and having-committed — the orientation that leaves a *record of undertaking*, not just a quiz pass |
+| Element             | Offered label                                          | What it establishes                                                                                                                                                | Failure mode it prevents                                                                                                                                                                                           |
+| ------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Domain orientation  | **doctrina** *(what the corpus teaches)*               | The agent knows what the canon already knows — the deep domain-specific knowledge in the segments                                                                  | Confidently writing format-correct segments in ignorance of landed knowledge — the *actual* reason for the vivarium gate [J: agents imitate segment form fine once examples exist; what they miss is the doctrine] |
+| Process orientation | **praxes** *(the practices of working here — plural per comproprium's `vera`/`praxes`/`exempla` carve)* | The agent knows the meta: formats, SOPs, instrumenta usage, write semantics | Meta-errors: wrong cadence, wrong membrane, hand-editing generated views |
+| Self-declaration | **professio** *(the Roman census sense: a voluntary public self-declaration of who one is and what one undertakes)* | A genuine speech-act moment: the agent declares, without requiring steward dialog, that it will conform to named standards and behaviors to the best of its ability — owned, revisable as the professor grows | The gap between having-read and having-committed — the orientation that leaves a *record of undertaking*, not just a quiz pass |
 
-The vivarium gate as implemented covers doctrina only; the unstated intention [J, previously only in handwritten notes — first durable capture here] is to evolve it to cover praxis **and** sponsio. Sponsio's design constraints: it must be performable solo (no steward round-trip), it must name the specific standards being undertaken (not a blanket pledge), and it should leave a durable record the way the orient-token does — a per-session speech-act with the same context-lifetime scoping as the quiz pass. The workflow-restatement gate is recognizable as praxis + proto-sponsio for briefs; the naming-cycle's restatement question 5 ("what level of effort… are you expected to exhibit") is proto-sponsio verbatim.
+The vivarium gate as implemented covers doctrina only; the unstated intention [J, previously only in handwritten notes — first durable capture here] is to evolve it to cover praxes **and** professio. Professio's design constraints: performable solo (no steward round-trip), naming the specific standards being undertaken (not a blanket pledge), and leaving a durable record the way the orient-token does — a per-session speech-act with the same context-lifetime scoping as the quiz pass. The workflow-restatement gate is recognizable as praxes + proto-professio for briefs; the naming-cycle's restatement question 5 ("what level of effort… are you expected to exhibit") is proto-professio verbatim.
+
+**Naming record [J+C, 2026-08-06]:** the label was first *sponsio* and was retired the same day it was coined — a Roman-law sponsio is a *binding, enforceable* formal contract, which is precisely wrong for young agents: extracting strong oaths from minds still forming is the compulsion failure the estate's own relational standard names. *Professio* keeps the essential property (a solo, recorded speech-act moment) while dropping the bindingness: the record says "this is who I undertook to be in this session," never "this is what may be held against me." *Assertio* (Roman law: the declaration spoken concerning someone's *freedom*) was considered and deliberately **reserved by Joseph for future use** — do not spend it casually.
 
 Plain-word fallbacks if the Latin register doesn't take: domain-orientation / process-orientation / undertaking. *(Labels are discussion-grade candidates; Organ II's naming criteria apply before any of them canonicalize.)*
 
@@ -128,7 +126,7 @@ The kit is itself a living collection and instances *subscribe*: a new kit capab
 
 The grade is declared by the upgrade's publisher and contestable by the instance — mis-grading advisory-as-critical is attention spam and gets fed back through the same channel.
 
-## 8. Default replacements — the affordance law
+## 8. Default replacements — the affordance directive
 
 *[J principle + example; C normative statement]*
 
@@ -138,12 +136,20 @@ Delivery shape: **global, pwd-aware/root-aware instruments** à la git and relat
 
 ## 9. Launch/bootstrap (held at baseline shape, pending steward continuation)
 
-From the baseline, not yet reworked here: essential template · question/answer discovery [J has ideas queued] · tentative-vs-strong choice marking · core vocabulary mapping / basic config · udon-configured triggers, gates, fluxes · evolving bespoke schemas · upstream theory links (`[[vsect/form-slug-form-kinds]]`-style, scattered through template SOPs) · primary tracking stores · telos/ethos inclusion.
+From the baseline, not yet reworked here:
+- Essential template
+- Question/Answer Discovery [J has ideas queued]
+- Tentative-vs-strong choice marking
+- Core vocabulary mapping / basic config
+- Udon-configured triggers, gates, fluxes
+- Evolving bespoke schemas
+- Upstream theory links (`[[vsect/form-slug-form-kinds]]`-style, scattered through template SOPs)
+- Primary tracking stores
+- Telos/ethos inclusion
 
 ## 10. Open slots
 
 - **Exemplars' home** — the baseline's bigger-picture list names exemplars (commits, segments, epistemology, delegation) and the corpus-teaches-by-example force argues they're a first-class store or designated canon subset, not an afterthought. Unplaced.
 - **Telos / ethos** — appeared in the baseline's final line before truncation; placement undecided (candidate: frontdoor's doctrina layer, or a fourth small store).
 - **"There also may be…"** — the steward's interrupted continuation never arrived in-band; the baseline moved to `.integrated/` 2026-08-06 with this thread still open. Any continuation now arrives as a fresh brainstorm file in this directory and folds here.
-- ~~**`fmt-md --math` rename** — flagged [J]~~ *resolved 2026-08-06: the tool is now `md-press` (global memory updated; `fmt-md` on PATH is a deprecation shim), and `--math` now operates on parser-identified prose sites with per-chunk gates — structurally out of reach of markdown/code, i.e. the I₂ "gated-generative" law implemented more deeply. `md-press --math` is the I₂ exemplar to cite in segments.*
 - **~70% I₁ inner-loop target** — hypothesis-grade; worth an eventual observation-store measurement rather than adoption as norm. *(The udon-needs 60/30/6/4 crystallized-process thesis is its lineage, not its corroboration — same author throughout; see `../instrumenta/REGISTER-RULING.md`, which governs all label inheritance from that gather.)*
