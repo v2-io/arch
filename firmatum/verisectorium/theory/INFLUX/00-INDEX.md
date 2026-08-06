@@ -18,6 +18,7 @@ whose live originals are verified to exist.*
 | `tribunal/{synthesis-scatter, discovery-internal-architecture-2025-09-21, zoetica-tribunal-xml-template}` | Strand maps + two files whose live originals are UNVERIFIED — must not archive until a live home is confirmed |
 | `vera/{00-INDEX, synthesis-scatter}` | Gather maps, partially absorbed |
 | `asf-sops/` (13 files: agents, format, spikes, multi-agent, git-hygiene, sop-creation, audit + de-novo/routing, naming + methodology/principles, build-pipeline) | Copied 2026-08-06 at Joseph's direction (was a named absence below). Provenance-bannered, byte-verified against live sources. The prior caveat still binds: segments draft from the *live* `asf/doc/sop/` sources; these copies are reading/reference substrate |
+| `efflux/phanero-README.md` | Copied 2026-08-06: the publication-pipeline member's provisional seven-stage shape — feeds [[form-efflux-seams]]. The processing-flow doc (adjudication/backport seams) is deliberately *not* re-copied: live original at `~/src/neurips/neurips-reviews-responses/processing-flow.md` wins |
 | `00-INDEX.md` (this file) | Last to leave |
 
 ## Not copied at gather time (named absence, preserved)
