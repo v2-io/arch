@@ -50,19 +50,50 @@
     Expected types so far (guesses, see expected-type column):
     |type[def]    A definition — establishes vocabulary, carries no truth claim
     |type[form]   A formulation — a claim about how or why something works
+    |type[emp]    An empirical claim — readable, claim-first, grounded by evidence it
+                  cites (usually an appendix obs/survey); a chapter-level type
     |type[norm]   A decision about how we work here; not truth-apt; overturn expressly
-    |type[obs]    An observation — empirical, usually from the estate's instances
-    |type[survey] A comparative inventory across instances
+    |type[obs]    An observation — raw empirical material: specimens, counts, method;
+                  appendix-grade — grounds emp/form claims, is cited by them
+    |type[survey] A comparative inventory across instances; appendix-grade like obs
     |type[disc]   Discussion / orientation — no warrant of its own
     Format: not yet fixed. Expected sections: a one-line summary, a body stating
     present truth at honest strength, and **Working Notes** (expected on nearly
     every segment — forward residue, not history-dump). Epistemic marking style
     (section vs frontmatter vs inline) is deliberately open — see the ch. 1 gap.
 
+  |segment[readable-claims-appendix-evidence] :status provisional
+    Earned 2026-08-05 from steward review of the first obs batch ("almost impossible
+    for me to understand and I *lived* them"). Chapter-level segments are **readable
+    claims** — emp or form, stating what is true in plain language a front-to-back
+    reader can follow, per the respectful-pedagogy discipline (mental model first).
+    Raw material (obs/survey: specimens, counts, method detail) lives in the
+    **Appendices part** of the outline and is cited by the claims it grounds — even
+    though it is upstream in the dependency DAG. See [[appendix-placement]] for the
+    principle and [[path-provenance-rots]] + [[provenance-rot-specimen]] as the
+    worked exemplar pair (readable claim in chapter · full specimen in appendix).
+    Test for the split being right: the claim is understandable without the
+    appendix; the appendix carries the verification load without the claim.
+
+  |segment[influx-not-warrant] :status provisional
+    Earned 2026-08-05 from first drafting practice (obs/survey batch + same-day
+    rewrite after feedback). **plan/INFLUX/ is intake, not a citation store.**
+    Segment bodies state evidence directly (what was measured, on what date, by
+    what method) or cite **live** sources (paths that remain the source of truth
+    after influx is archived). Do not lean on influx filenames or informal
+    labels for those files ("field report", "generalization note",
+    "logical-model letter") as if they were durable warrants.
+    If unintegrated influx still sits behind a segment: put a Working Notes line
+    that names the influx path, marks it do-not-cite-as-warrant, and states that
+    this segment replaces those pointers. Goal: when INFLUX is fully
+    .integrated/ or .archive/, every segment body still stands.
+
   |cross-references
     [[slug]] everywhere — outline, segments, sidecars. No paths in references;
     the wikilink resolves by basename. Path-carrying provenance is known to rot
-    (see [[provenance-rot-specimen]]).
+    (see [[provenance-rot-specimen]]). Live *source* paths in Method sections
+    are allowed when the warrant is an external live tree (asf, vivarium, …)
+    — that is different from citing influx copies.
 
   |sidecars
     INFLUX/ holds gathered-but-unprocessed material (the 2026-08-05 notes gather).

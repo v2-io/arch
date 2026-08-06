@@ -23,7 +23,10 @@
   :why plan/INFLUX/ holds the full 2026-08-05 notes gather (shape + health of every
        estate instance) — the evidence base the plan segments will cite; unprocessed,
        it is exactly the drown-in-noise state verisectoria exist to end
-  :next Decide the processing discipline (likely: adjudicate per-note into segments /
-        .integrated/ / .archive per the ch. 4 metabolism) before touching volume
+  :next First dispatch in flight (fresh-eyes residue audit over the 12 drafted segments)
+  Discipline decided (Joseph, 2026-08-05): done means INFLUX is *empty* — everything in
+  .integrated (content has a home in segments) or .archive (not-landing / copy of live
+  authority). Method: a fresh agent reads the drafted segments FIRST, then overlapping
+  notes, reports residue the segments missed, records residue durably, then dispatches.
   Entry point: plan/INFLUX/00-INDEX.md. Provenance banners on copies name live sources;
   originals win on conflict.

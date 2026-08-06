@@ -9,22 +9,22 @@ type: survey
 
 ## Survey (instances observed)
 
-| Genre | What it orders / projects | Specimen |
+| Genre | What it orders / projects | Specimen (live path or role) |
 |---|---|---|
 | **Pedagogical / topological outline** | Claim reading order, often with gaps; may track deps | asf component `OUTLINE.md`; vivarium `core/OUTLINE.md` |
 | **Assembly manifest** | Which segments enter *this* build; can inject structure | neurips `OUT.*.md` (full vs 9-page); ASF outline as mono ingest input |
 | **Digest / filter view** | Subset of segments or sections (e.g. strip Working Notes) | asf `bin/build-markdown` recipes; `--public` monograph variant |
 | **Generated projection** | Regenerable surface over records | `LEXICON.md` from terminology; relata emit `.bib`; FINDINGS extracts |
-| **Narrative-order outline** | Story flow with connective prose | comproprium `the-chain.md` (field report: non-authoritative connective tissue) |
+| **Narrative-order outline** | Story flow with connective prose | comproprium `the-chain.md` (connective prose is not the claim store) |
 | **View over not-yet-existing segments** | Future work as structure | neurips `REVISION-OUTLINE.md`; OUTLINE `--GAP--` / missing rows |
 | **Adjudication / changelog outline** | Post-verification map of claims + residue | neurips `adjudicated/OUTLINE.md` |
 | **Trigger / harvest index** | Entry by failure mode or trigger | comproprium `by-trigger.outline.udon`; `GATHERING.md` as harvester brief |
-| **Starred / importance annotation** | Subset of outline rows for orientation | vivarium ★ rows + `orient-rank` (orientation-gate note) |
+| **Starred / importance annotation** | Subset of outline rows for orientation | vivarium ★ rows + `orient-rank` (see `ORIENT.md`) |
 | **Paper-section sequence** | Fixed venue skeleton | behavioral-floor / causal-language `src/NN-*.md` (order in filenames; no separate outline file) |
 
 ## Method
 
-- Synthesis from INFLUX shape gather + live-state field reports + build-issues survey (2026-08-05), not a fresh exhaustive file walk of every outline on disk.
+- Synthesis from known instances as of 2026-08-05 — **not** a fresh exhaustive walk of every outline-shaped file on disk.
 - Genres are **descriptive buckets**; a single file can mix genres (e.g. asf OUTLINE is pedagogical and assembly input).
 
 ## Strength and scope
@@ -36,4 +36,4 @@ type: survey
 ## Working Notes
 
 - Cross-ref: [[multiple-views]], [[view-edge-metadata]], [[outline-as-organizing-principle]].
-- Build-issues survey’s five “kit must answer” questions are the engineering half of this survey.
+- Unintegrated influx (do not cite as warrant): `plan/INFLUX/build/build-issues-survey-2026-08-05.md` (neurips multi-manifest detail); `plan/INFLUX/synthesis/live-state-field-reports-2026-08-05.md` (family-member roster). Specimens above should be checked live if a genre is load-bearing for a decision.

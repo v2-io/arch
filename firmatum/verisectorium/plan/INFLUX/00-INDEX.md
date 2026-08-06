@@ -4,6 +4,8 @@
 
 This tree is a **collation of copies and extracts**, not live authority. Prefer editing provenance sources when truth changes. HTML comment banners on copies record source path and date.
 
+> **Dispatch in progress (2026-08-05).** A first metabolism pass moved `udon-theory/` and `primary/` to [`../.archive/`](../.archive/) (verified byte-identical copies of live authority) and `synthesis/scatter-inventory-2026-08-05.md` to [`../.integrated/`](../.integrated/). Rows below are struck where the file has left. **Residue that no segment yet carries is registered in [`../INFLUX-DISPATCH-2026-08-05.md`](../INFLUX-DISPATCH-2026-08-05.md)** — read that before re-deriving anything from a dispatched note. Everything else here is still unadjudicated; most of the tree was not examined in that pass.
+
 ---
 
 ## Layout
@@ -12,9 +14,9 @@ This tree is a **collation of copies and extracts**, not live authority. Prefer 
 notes/
   00-INDEX.md                 ← you are here
   synthesis/                  ← session maps (outline+segments gather)
-  primary/                    ← cross-corpus generalization (2026-07)
+  primary/                    ← DISPATCHED → ../.archive/primary/ (copy of live arch/notes original)
   asf/                        ← founding instance: FORMAT, proposals, build-design
-  udon-theory/                ← claim-grade process landings + outline
+  udon-theory/                ← DISPATCHED → ../.archive/udon-theory/ (copies of live MOVED/udon/v2/theory/)
   udon-analysis/              ← logical model, living docs, TST corrections, audit SOP
   instances/                  ← sister FORMATs + deployments map + sample OUTLINE
   methodology/                ← short memory notes that name outline-as-view
@@ -28,13 +30,13 @@ notes/
 
 ### A. Model first
 
-1. [`synthesis/scatter-inventory-2026-08-05.md`](synthesis/scatter-inventory-2026-08-05.md)  
+1. ~~`synthesis/scatter-inventory-2026-08-05.md`~~ → [`../.integrated/synthesis/`](../.integrated/synthesis/)  
 2. [`synthesis/asf-build-illuminated-model-2026-08-05.md`](synthesis/asf-build-illuminated-model-2026-08-05.md)  
 3. [`asf/proposals-H-outline-as-view.md`](asf/proposals-H-outline-as-view.md) — outline = view; segments evergreen  
 4. [`asf/format-segment-conventions.md`](asf/format-segment-conventions.md) — founding schema  
-5. [`primary/cross-corpus-generalization-2026-07-23.md`](primary/cross-corpus-generalization-2026-07-23.md)  
+5. ~~`primary/cross-corpus-generalization-2026-07-23.md`~~ → archived; **cite the live original** `~/src/arch/notes/outline-segments-generalization-2026-07-23.md`  
 6. [`udon-analysis/tst-grounding.md`](udon-analysis/tst-grounding.md) Appendix A  
-7. [`udon-theory/form-present-truth-collision.udon`](udon-theory/form-present-truth-collision.udon) · [`form-identity-ordering-split.udon`](udon-theory/form-identity-ordering-split.udon) · [`norm-gap-as-discontinuity.udon`](udon-theory/norm-gap-as-discontinuity.udon)
+7. ~~`udon-theory/{form-present-truth-collision, form-identity-ordering-split, norm-gap-as-discontinuity}.udon`~~ → archived; **cite the live corpus** `~/src/MOVED/udon/v2/theory/src/`
 
 ### B. Build-illuminated model only
 
@@ -60,16 +62,16 @@ Start at [`vera/00-INDEX.md`](vera/00-INDEX.md) · map in [`vera/synthesis-scatt
 
 | File | What |
 |------|------|
-| `scatter-inventory-2026-08-05.md` | Estate-wide map: collations, landings, deployments, gaps |
+| ~~`scatter-inventory-2026-08-05.md`~~ | **→ `../.integrated/synthesis/`.** Estate-wide map: collations, landings, deployments, gaps. Residue R21–R22 |
 | `asf-build-illuminated-model-2026-08-05.md` | ASF level-2 + model insights encoded as build commitments |
 | `relata-methods-for-verisectorium-2026-08-05.md` | Comparative: relata epistemic methods that strengthen / correct / extend the outline+segments synthesis |
 | `live-state-field-reports-2026-08-05.md` | **Health** of the live instances (evening pass, two survey agents + first-hand verification): comproprium provenance red; ladder never run; tst half-migrated; udon-needs schema a generation ahead; what actually rots |
 
-### `primary/`
+### ~~`primary/`~~ — dispatched to `../.archive/primary/`
 
 | File | Source |
 |------|--------|
-| `cross-corpus-generalization-2026-07-23.md` | `arch/notes/outline-segments-generalization-2026-07-23.md` |
+| ~~`cross-corpus-generalization-2026-07-23.md`~~ | **Live original (cite this):** `~/src/arch/notes/outline-segments-generalization-2026-07-23.md` — verified byte-identical. Residue R12–R20 |
 
 ### `asf/`
 
@@ -87,7 +89,9 @@ Start at [`vera/00-INDEX.md`](vera/00-INDEX.md) · map in [`vera/synthesis-scatt
 | `theory-content-lifecycle-findings.md` | meta-process review cluster 01 |
 | `agents-sop-theory-structure-extract.md` | **extract** agents.sop Theory Structure / FO |
 
-### `udon-theory/`
+### ~~`udon-theory/`~~ — dispatched to `../.archive/udon-theory/`
+
+*All seven verified byte-identical to the live corpus at `~/src/MOVED/udon/v2/theory/` — **cite the live corpus**, not these. Residue R23–R25.*
 
 | File | Source |
 |------|--------|

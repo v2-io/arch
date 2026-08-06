@@ -5,37 +5,38 @@ type: obs
 
 # Lost-update hazard (multi-record file)
 
-**Summary.** When many records share one append-target file, concurrent writers can lose records without the loss appearing as a git conflict; the estate has named this on a live multi-record decision log shape.
+**Summary.** When many records share one file that writers update by read–modify–write, concurrent writers can drop each other’s records without git ever showing a merge conflict.
 
 ## Observation
 
-**Structural failure mode (classical lost update):**
+**Mechanism (standalone).** Let F be a file that holds many records. Two writers each:
 
-1. Agent A reads multi-record file F into memory, appends record X.
-2. Agent B reads F, appends Y, writes F.
-3. Agent A writes F from its older base + X → **Y is gone**.
-4. Git never saw a conflict between X and Y if both “appended” in memory; the second write clobbers the first’s sibling record. Absences do not show as content disagreements the way dual edits of the same line can.
+1. Read the whole of F.
+2. Append a new record in memory (X and Y respectively).
+3. Write F back.
 
-**Specimen named in estate analysis** (underlying-logical-model / doc-store cluster discussion, 2026-07-29 era; re-checked path existence 2026-08-05):
+If B’s write lands between A’s read and A’s write, A’s write restores a version that never contained Y. **Y is gone.** Git only compares the two final blobs of F if both commit; it does not surface “a record that existed after B’s write and disappeared after A’s write” as a line-level conflict when both parties intended only to append. The failure is classic lost update under non-atomic multi-record rewrite — the same shape as concurrent mbox append (hence Maildir-style one-file-per-key as a common repair).
 
-- Live path: `vivarium/DECISIONS.decision-log.udon` — multi-record decision log at corpus root (field report and logical-model discussions treat this class of file as the concurrent-append hazard surface).
-- Prior art analogy cited there: mbox vs Maildir (shared append vs one-file-per-key).
+**Specimen (placement, not an incident log).** As of **2026-08-05**, vivarium still keeps a multi-record decision log at:
 
-This drafting session **did not** re-simulate a dual-agent race; it re-confirmed the **file class still exists** and the **logical argument** is the same as classical concurrent read-modify-write.
+`vivarium/DECISIONS.decision-log.udon`
+
+Verified that day: path present; size ~556 KB (many records in one file). This drafting session **did not** re-run a dual-agent race against that file. The observation is: **the file shape that admits the mechanism is live in a production claim corpus**, so any concurrent multi-agent write path against that file inherits the hazard unless a single-writer membrane or per-key layout intervenes.
 
 ## Method
 
-- Mechanism: standard lost-update on non-atomic multi-record rewrite.
-- Estate naming: INFLUX `underlying-logical-model.md` + related acid-for-corpora discussion of multi-record write hazard.
-- Path check: vivarium `DECISIONS.decision-log.udon` present 2026-08-05.
+- Mechanism: concurrent read–modify–write of a multi-record file (standard concurrency failure mode).
+- Specimen check: filesystem presence and size of `DECISIONS.decision-log.udon` on 2026-08-05.
+- No measured incidence rate of lost records on that path.
 
 ## Strength and scope
 
-- Supports: **this failure mode is real for the file shape**; multi-agent claim corpora that pack many records into one growing file inherit it.
-- Does not support: measured incidence on that specific file; that all multi-record files are unsafe under single-writer membranes.
-- Honest strength: **structural observation + named specimen class**, not an incident log.
+- Supports: **the failure mode is real for multi-record shared files under concurrent RMW**; multi-agent corpora that use that shape need a write discipline that avoids it.
+- Does not support: how often vivarium has actually lost decision records; that every multi-record file is always unsafe under a single sequential writer.
+- Honest strength: **structural mechanism + live specimen of the shape**, not an incident log.
 
 ## Working Notes
 
-- Feeds [[partition-isolation]] / [[write-safety]]: per-key files or single-writer membranes are the usual repairs.
-- Maildir `link()`-fails-on-collision vs `rename()`-clobber detail is useful if we ever implement create-if-absent for event files.
+- Repairs: one file per key (or collision-free create); single-writer drain; or a primitive that fails loudly on “key already exists.”
+- Related undrafted: [[partition-isolation]], [[write-safety]].
+- Unintegrated influx behind earlier drafts of this topic (do not cite as warrant): `plan/INFLUX/udon-analysis/underlying-logical-model.md` and related document-store discussion. This segment replaces those pointers for the mechanism and specimen.

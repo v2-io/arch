@@ -3,38 +3,35 @@ slug: provenance-rot-specimen
 type: obs
 ---
 
-# Provenance rot specimen
+# Appendix: the comproprium provenance-rot specimen
 
-**Summary.** After a directory reorg on comproprium, outline slug references stayed intact while path-based quote provenance failed almost completely — a natural experiment for identity-without-path.
+*The full account of the week the comproprium corpus's quotation-provenance broke en masse while its slug references survived — the specimen behind [[path-provenance-rots]].*
 
-## Observation
+## What happened
 
-On 2026-08-05, `comproprium/bin/check-corpus` reported (re-run same day by this drafting session):
+Comproprium is a young precept corpus whose exempla quote Joseph and agents verbatim. Every quotation segment carries a `:from` field pointing at the primary source file, and the corpus ships a checker (`bin/check-corpus`) whose job is to confirm each quoted span still locates, character-for-character, in its primary — that is the corpus's falsifiability mechanism, and its FORMAT argues explicitly that spans must stay unnormalized *so the checker can find them*.
 
-- **57** segments in the corpus
-- **3 / 109** quoted spans located in a primary
-- **106** fails (span not found)
-- **5** forward references (expected by FORMAT, naming segments that should exist)
+On 2026-08-01, a routine tidying commit (`a40825f`, "Reorganize various ingest queues") moved the primaries: `.to-integrate/` became `.integrated/` plus two `INGEST/harvest-*` directories. Nobody rewrote the `:from` paths, and nobody taught the checker the new layout. Nothing failed at the time — the move was clean, the commit message mundane.
 
-The live-state field report (2026-08-05, first-hand ✔) attributes the mass failure to commit `a40825f` (“Reorganize various ingest queues”), which moved material from `.to-integrate/` into `.integrated/` and `INGEST/harvest-a|b/` **without** rewriting `:from` paths or teaching the checker new layouts.
+Four days later (2026-08-05, this project's founding survey) someone ran the checker: **106 of 109 quoted spans could no longer be located**. The corpus's one guarantee had been off for four days, silently, and the instrument that should have caught it was the thing the move had disabled.
 
-The same report records that **all 18** outline `#slug` references **survived** that move (slug identity, not path).
+The same survey checked the corpus's *other* reference class: the 18 slug references in its outline (`:see #slug` style, no paths). **All 18 still resolved.** Same corpus, same move, two reference designs, opposite outcomes.
 
-Re-run confirmation: the 3/109 · 106-fail totals still hold at drafting time; the mechanism (path-tied provenance vs slug identity) is what the specimen is about, not a one-day flake.
+## The numbers
 
-## Method
+| Measure | Value | As of |
+|---|---|---|
+| Segments in corpus | 57 | 2026-08-05, re-run at drafting |
+| Quoted spans locating in a primary | **3 / 109** | same run |
+| Span failures | **106** | same run |
+| Outline slug references surviving the move | **18 / 18** | first-hand survey, same day |
+| Breaking commit | `a40825f`, 2026-08-01 | comproprium git history |
 
-- Tool: `bin/check-corpus` under `proprium/comproprium/`
-- Contrast: outline cross-refs by slug vs quote spans keyed to primary paths
-- Cause: git history / field report on the reorg; not re-derived line-by-line here
+## Method & scope
 
-## Strength and scope
-
-- **What this supports:** path-as-provenance **can** fail silently under ordinary directory moves while slug identity does not — observed on one corpus, one reorg, one checker.
-- **What it does not support:** that all path provenance is always bad; that slug-only addressing solves every integrity problem; estate-wide rates outside comproprium.
-- Honest strength: **one clear specimen**, useful as design pressure (prefer layout-independent anchors: slug + section + span), not a universal law.
+Re-run `comproprium/bin/check-corpus` from the corpus root; read the breaking commit with `git show a40825f`. One corpus, one reorganization, one checker — a clear specimen, not a rate. It does not show that path provenance is always wrong or that slugs solve every integrity problem; it shows the two designs failing and surviving *the same ordinary event*.
 
 ## Working Notes
 
-- Repair options named in field report (not chosen here): repoint paths · teach checker layouts · make provenance layout-independent (slug/anchor-shaped, as orientation quiz already does).
-- Forward: when drafting [[slug-identity]], this obs is the primary specimen; keep the 3/109 numbers dated so re-runs can supersede them.
+- Repair options (none chosen yet, deliberately — the choice is precedent-setting for the whole pattern): repoint the paths · teach the checker the layouts · make provenance layout-independent (slug + section + word anchors, the address shape vivarium's orientation quiz already uses).
+- Keep the counts dated; a re-run supersedes them and the collision is the point.

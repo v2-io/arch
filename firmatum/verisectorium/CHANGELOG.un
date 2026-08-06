@@ -9,6 +9,29 @@
     What happened and why, past tense, with pointers by [[slug]] or path.
     No vanity narration; entries earn their lines.
 
+|entry[2026-08-05-influx-first-dispatch] :date <2026-08-05> :by claude (fresh-eyes agent)
+  :scope plan/INFLUX + plan/.archive + plan/.integrated + four segments' Working Notes
+  First metabolism pass on INFLUX: segments read first, then the overlapping notes, then
+  residue reported. Dispatched 9 of ~80 files. To .archive/: the seven `udon-theory/`
+  copies and `primary/cross-corpus-generalization-2026-07-23.md` — each **verified
+  byte-identical** to its live original (`MOVED/udon/v2/theory/`,
+  `arch/notes/outline-segments-generalization-2026-07-23.md`), so archive-shaped by
+  construction; the live corpora are the citable landings. To .integrated/:
+  `synthesis/scatter-inventory-2026-08-05.md` (map role discharged). Deliberately left in
+  INFLUX: `live-state-field-reports` and `instances/deployments.md` — both still carry
+  content with no segment home. Residue that no segment carries is registered as R1–R25 in
+  plan/INFLUX-DISPATCH-2026-08-05.md, routed by OUTLINE row rather than by source note so
+  later dispatches cannot orphan it; INFLUX/00-INDEX.md struck the departed rows.
+  Six field-report claims marked (scout) were re-verified first-hand and now hold ✔
+  (def-chronica 63% WN; lint-outline's `old-*` exemption; vivarium 0 GAP rows over 115
+  segments; asf 03/04 0 GAP rows; neurips-refs 7% vs logos-refs 72% verified; comproprium
+  51 unintegrated harvest segments), plus one new measurement: `stage` denormalization
+  drift across 01-aat-core is **0 mismatches in 168 comparisons**. Working-Notes residue
+  lines appended to [[collision-staleness-detection]], [[turnover-solution]],
+  [[substrate-independence]], [[coupling-confounding]] — no segment bodies touched.
+  Not examined: asf/, udon-analysis/, tribunal/, vera/, build/, methodology/, most of
+  instances/.
+
 |entry[2026-08-05-ch7-principles-segments] :date <2026-08-05> :by claude+forks
   :scope plan/last-adhoc-src + OUTLINE ch. 7 rows
   All five ch. 7 principles segments drafted: [[turnover-solution]],
@@ -21,6 +44,14 @@
   tier reports as-of dated. Fork friction report worth keeping: "Strength & grounds"
   smears evidence-kind and strength into prose — the axis-collapse udon-needs splits;
   route to the ch. 1 inner-section gap when worked.
+
+|entry[2026-08-05-obs-warrant-rewrite] :date <2026-08-05> :by grok
+  :scope plan/last-adhoc-src + ONTOLOGY.un
+  Rewrote obs/survey segments so bodies do not cite influx as warrant: standalone
+  mechanism + live paths/dates ([[lost-update-hazard]], [[outline-skipping-failure]],
+  [[provenance-rot-specimen]]); light hygiene on [[ladder-never-fired]],
+  [[view-genres]], [[type-vocabulary-locality]] (and earlier [[coupling-confounding]]).
+  Graduated the drafting norm into ONTOLOGY.un as |segment[influx-not-warrant].
 
 |entry[2026-08-05-first-obs-survey-segments] :date <2026-08-05> :by grok
   :scope plan/last-adhoc-src + OUTLINE rows
