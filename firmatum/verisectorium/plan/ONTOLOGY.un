@@ -74,6 +74,11 @@
     worked exemplar pair (readable claim in chapter · full specimen in appendix).
     Test for the split being right: the claim is understandable without the
     appendix; the appendix carries the verification load without the claim.
+    Placement is an **outline decision only** — a segment never says which part
+    of the outline it is in (no "Appendix:" titles, no "(appendix)" in cites);
+    asf's practice, adopted: appendix-ness lives in the view's chapter heading,
+    segments keep ordinary content titles. (Corrected 2026-08-05 after the first
+    exemplar violated this.)
 
   |segment[influx-not-warrant] :status provisional
     Earned 2026-08-05 from first drafting practice (obs/survey batch + same-day

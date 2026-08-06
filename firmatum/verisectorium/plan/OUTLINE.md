@@ -176,7 +176,7 @@
 
 ---
 
-## Appendices — specimens, observations, & surveys
+## *Appendices* Specimens & surveys
 
 *Raw supporting material, per [[appendix-placement]]: cited by the claims that stand on it, placed here so the chapters stay readable. Each appendix row is expected to be referenced by at least one chapter-level `emp`/`form` claim; rows below not yet referenced are awaiting their claim rewrite (grok pass in flight).*
 

@@ -13,7 +13,7 @@ A reference can carry its target's *name* or its target's *location*. Locations 
 
 This is why the pattern puts identity in a slug and *never* in a path or a position: not as a style preference, but because the two rot at completely different rates. It is also why a checker that verifies references is only as good as its resistance to this failure — a checker whose own lookups embed paths goes red (or worse, silently wrong) at the same moment the references do.
 
-The clean specimen: comproprium's reorganization this week broke **106 of 109** path-anchored quotation references in one commit, while **all 18** slug references in the same corpus survived untouched — and the corpus's own verification tool was disabled by the very move it existed to catch. Full account with counts, cause, and method: [[provenance-rot-specimen]] (appendix).
+The clean specimen: comproprium's reorganization this week broke **106 of 109** path-anchored quotation references in one commit, while **all 18** slug references in the same corpus survived untouched — and the corpus's own verification tool was disabled by the very move it existed to catch. Full account with counts, cause, and method: [[provenance-rot-specimen]].
 
 Design pressure this exerts: where provenance must locate something *inside* a target (a quoted span, a section), prefer layout-independent anchors — slug + section + a few words of the span — over paths; the estate already uses exactly that address shape successfully elsewhere (vivarium's orientation quiz).
 

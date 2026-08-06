@@ -15,6 +15,8 @@ The resolution is the appendix convention: supporting segments live at the botto
 
 Concretely, in this corpus: chapter-level segments are readable claims (`emp`, `form`) that a front-to-back reader can follow whole; the raw-material segments (`obs`, `survey`) sit in the Appendices part, cited from the claims they ground. A reader who trusts us never descends; a verifier descends exactly once per claim, to a named place.
 
+Because placement is a *view* decision, **the segment itself never announces it**: no "Appendix:" in a title, no "(appendix)" in a citation. Appendix-ness is written only in the outline (asf's form: `## *Appendices* <name>` chapter headings over ordinary content-titled segments), so the same segment can sit main-line in one view and appendix in another without editing it.
+
 Two disciplines keep the convention honest. The appendix segment must actually carry the verification load (the claim's numbers trace to it, not to prose in the claim), and the claim must actually be readable without it (if understanding — not just checking — requires the appendix, the split is wrong and the material belongs in the claim).
 
 ## Strength & grounds
