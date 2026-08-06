@@ -33,5 +33,5 @@ All five read first-hand 2026-08-05 in their live homes (asf FORMAT + terminolog
 
 ## Working Notes
 
-- Feeds [[epistemic-axes]] (undrafted) and the ch. 8 calibration cluster; [[verbal-label-calibration]] adds the orthogonal finding that whatever words are chosen, their read-meaning is uncalibrated.
+- Feeds [[epistemic-axes]] and the ch. 8 calibration cluster; [[verbal-label-calibration]] adds the orthogonal finding that whatever words are chosen, their read-meaning is uncalibrated.
 - TODO entry R-T7's strand-A frontmatter (confidence + decay-rate + derivation DAG, 2025) is a sixth vocabulary, unexamined — its numbers were demo values, but its *dimension choice* (temporal decay) appears in no live ladder and bears on [[temporal-truth]].
