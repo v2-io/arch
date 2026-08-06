@@ -9,6 +9,18 @@
     What happened and why, past tense, with pointers by [[slug]] or path.
     No vanity narration; entries earn their lines.
 
+|entry[2026-08-06-reset-worthiness-pass] :date <2026-08-06> :by claude (steward-granted reset)
+  :scope naming, navigation, telos, instruments — no segment bodies
+  The six "residue" registers consolidated into plan/TODO.md — the name change is
+  the substance: the remaining ~120 integration items are the-main-thing-to-do,
+  not leftovers; entry-ids stable, all citing references updated, verify-reports
+  and briefs tidied to plan/reports/. README gained a telos block (session success
+  = a truthful segment or an honestly discharged entry; the corpus reports its own
+  doneness; delete-test and proxy-discipline govern dispositions; orient delegated
+  agents to the telos before the task). check-plan now reports gap rows, INFLUX
+  count, and treats any .integrated content as a standing delete-test claim.
+  PRACTICA/HANDOFF rewritten to the honest state: integration ~half done.
+
 |entry[2026-08-06-integrated-delete-test-correction] :date <2026-08-06> :by joseph+claude
   :scope plan/.integrated (emptied), plan/INFLUX (16 files returned), ONTOLOGY
   Steward applied the delete-test and the dispatches failed it: .integrated/ held

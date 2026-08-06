@@ -4,6 +4,10 @@ Working name (2026-08-05) for **outline + segments** structures: stable claim at
 
 The shape is portable across deployments (asf, vivarium, udon-needs, comproprium, …). Type vocabularies and enforcement profiles are per deployment. This project exists to understand the pattern from first principles and deliver a standardized, customizable toolset for it.
 
+## Telos (read first)
+
+**Session success = a truthful segment drafted, corrected, or strengthened — or a TODO entry honestly discharged.** Not files moved, not directories emptied, not a completion narrative. The corpus itself reports how done it is (`plan/bin/check-plan`; the proposed-row count; `plan/TODO.md`'s undischarged entries) — read those numbers instead of narrating past them. Two laws govern every disposition: **the delete-test** (nothing is integrated unless all its information is landed or truly disposable — assume it disappears; [[integration-metabolism]]) and **proxy-discipline** (a register, an index, or an agent's report *locates* truth; it never settles it). When delegating: orient agents to this telos and the ONTOLOGY laws before the task — subagents optimize whatever finish-line they're handed, so hand them this one.
+
 ## Start here
 
 1. **[`plan/OUTLINE.md`](plan/OUTLINE.md)** — the canonical outline (Basics / Deep dives / Meta & implementation). The plan is itself kept as **the very last ad-hoc verisectorium** (segments in `plan/last-adhoc-src/`; local law in [`plan/ONTOLOGY.un`](plan/ONTOLOGY.un)) — used for its utility, deliberately **not** exemplary.

@@ -11,10 +11,12 @@
 
 ---
 
-## 2026-08-05 · joseph + claude → next session
+## 2026-08-06 · joseph + claude → next session
 
-Where things stand: front-door is `README.md` → `plan/OUTLINE.md` (the canonical outline; ~55 undrafted rows, 17 gaps) with local law in `plan/ONTOLOGY.un`. All gathered material sits in `plan/INFLUX/` (entry: `00-INDEX.md`) — treat as unprocessed influx with provenance banners; live sources win. Active areas in `PRACTICA.un`.
+**Where things actually stand** (read the instruments, not this prose: `plan/bin/check-plan` and `plan/TODO.md`): 52 segments drafted, 34 rows proposed, 18 gap rows, ~120 TODO entries undischarged, 16 files honestly in INFLUX, `.integrated/` **empty — correctly**. The notes integration is roughly **half done**; the drafted half is verified (quotes located, counts re-derived, live-source warrants).
 
-Mid-flight: nothing drafting yet — the outline conversion just landed. The two open discussions worth resuming with Joseph rather than deciding alone: the strength-ladder adjudication (ch. 8, [[strength-ladders]]) and the generator question-set (ch. 11 gap). The Open-questions block at the bottom of `plan/OUTLINE.md` is current.
+**The load-bearing lesson of 2026-08-06, learn it before dispatching anything:** a batch dispatch declared files integrated on the strength of TODO entries describing their remainders. Joseph's delete-test failed it — *nothing is integrated unless all of its information is landed or truly disposable; assume it disappears* — and the state was reverted. The law is now [[integration-metabolism]] + ONTOLOGY `|integrated-is-disposable`; the failure mode was proxy-substitution (register-about-the-information mistaken for information-landed). The README now carries the telos; orient delegated agents to it explicitly — the batch's subagents optimized "directory empty" because that was the finish-line they were handed.
 
-Context that isn't durable elsewhere: Joseph prefers parenthetical provenance reminders when shorthand terms land (G4, P(N), etc.) — much of the notes corpus was written with a conclusive authority that doesn't match his own still-figuring-it-out relationship to the material. The grok-authored notes coined terms he hasn't ratified; "verisectorium" itself is his, the rest is provisional. This instance is deliberately NOT exemplary (see OUTLINE preamble) — resist polishing it into one.
+**Mid-flight:** nothing running. Grok owes nine `depends:` declarations. The integration-SOP material (asf `doc/sop/{audit,spikes,multi-agent}.sop.md`) was never gathered — draft from live sources. VERA joint session waits on Joseph.
+
+**Context not yet durable elsewhere:** Joseph's register preference stands (parenthetical provenance reminders on shorthand). "Residue" as a term is retired — it framed the main work as leftovers; the queue is `plan/TODO.md`, ids (R/A/N/V/R-T…) stable and cited from segment Working Notes. The `template/` dir at the root is Joseph's, untouched. This instance remains deliberately non-exemplary — the failures are kept legible in CHANGELOG on purpose; they are part of what the plan is *for*.

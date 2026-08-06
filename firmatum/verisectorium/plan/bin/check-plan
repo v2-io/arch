@@ -117,6 +117,15 @@ for n in list(segs):
 
 n_drafted = sum(1 for s, _, _ in rows.values() if s == 'drafted')
 n_proposed = sum(1 for s, _, _ in rows.values() if s == 'proposed')
+n_gaps = sum(1 for line in open(OUTLINE) if '--GAP--' in line)
+# honesty counters: a corpus reporting zero absences is more likely blind than complete
+todo_path = os.path.join(PLAN, 'TODO.md')
+n_influx = sum(len(fs) for _, _, fs in os.walk(os.path.join(PLAN, 'INFLUX')))
+integ = [f for _, _, fs in os.walk(os.path.join(PLAN, '.integrated')) for f in fs]
+if integ:
+    print(f"\n  ⚠ .integrated/ holds {len(integ)} file(s) — each is a standing claim that")
+    print(  "    deleting it loses nothing; verify by delete-test, not by register entry")
 print(f"\n{len(segs)} segments · {len(rows)} outline rows "
-      f"({n_drafted} drafted, {n_proposed} proposed) · {warn_count} warnings")
+      f"({n_drafted} drafted, {n_proposed} proposed) · {n_gaps} gap rows · "
+      f"{n_influx} files in INFLUX · {warn_count} warnings")
 sys.exit(1 if warn_count and '--strict' in sys.argv else 0)

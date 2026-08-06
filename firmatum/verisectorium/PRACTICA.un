@@ -1,33 +1,36 @@
 ; PRACTICA — strategic navigator for verisectorium
-; Areas of active work, with priority. Items within areas belong closer to the work
-; (plan/OUTLINE.md rows, INFLUX indexes); this stays the top of the strategy DAG.
+; Areas of active work, with priority. Items within areas live in plan/TODO.md and
+; the outline's proposed rows; this stays the top of the strategy DAG.
 ; Vanilla udon, transitional (.un) per NORMS.md.
 
 |template
-  ; best current guess at an area record's shape — evolve freely
   |area[slug] :priority primary|secondary :state active|paused|done :opened <date>
     :why one line on why this area matters now
     :next the single most useful next act, if known
     Body: whatever orientation the area needs — kept short; deep material
-    belongs in plan/ segments or INFLUX notes, referenced by [[slug]].
+    belongs in plan/ segments or plan/TODO.md, referenced by [[slug]].
+
+|area[discharge-integration-todo] :priority primary :state active :opened <2026-08-06>
+  :why plan/TODO.md (~120 entries, ids stable) is the main remaining work of the
+       notes integration — it was misnamed "residue" and mistaken for done at
+       roughly half; the delete-test governs every source-file departure
+  :next Work entries by outline row, highest-leverage first (R12 retrofit evidence,
+        A12 assembly detail, V8 placement-over-quality, R-T7 strand-A comparison);
+        sources leave INFLUX only when their entries discharge
 
 |area[flesh-out-plan-outline] :priority primary :state active :opened <2026-08-05>
-  :why The plan outline (plan/OUTLINE.md) is the organizing principle for the whole
-       project; its ~55 undrafted rows and 17 gaps are the work
-  :next Draft the ch. 7 principles segments first — everything else claims to trace to them
-  Drafting segments into plan/last-adhoc-src/ per plan/ONTOLOGY.un conventions.
-  Prefer segments that other chapters' rows already cross-reference ([[turnover-solution]],
-  [[collision-staleness-detection]], [[state-flags-not-gates]]).
+  :why 34 rows remain proposed — steward probes showed process-law rows are the
+       least covered and the most load-bearing
+  :next Ch. 4 [[observable-crossings]] and the integration-SOP material (never
+        gathered — draft from live asf doc/sop/ sources); then ch. 11 instantiation
+  Telos and laws in README + plan/ONTOLOGY.un govern; orient any delegated agent
+  to them BEFORE the task (subagents optimize the finish-line they are handed).
 
-|area[plan-influx-processing] :priority primary :state active :opened <2026-08-05>
-  :why plan/INFLUX/ holds the full 2026-08-05 notes gather (shape + health of every
-       estate instance) — the evidence base the plan segments will cite; unprocessed,
-       it is exactly the drown-in-noise state verisectoria exist to end
-  :next Sweep the five residue registers (~120 items) for outline-shaping items; then
-        the two held syntheses; VERA joint session runs from residue-vera-*
-  Discipline decided (Joseph, 2026-08-05): done means INFLUX is *empty* — everything in
-  .integrated (content has a home in segments) or .archive (not-landing / copy of live
-  authority). Method: a fresh agent reads the drafted segments FIRST, then overlapping
-  notes, reports residue the segments missed, records residue durably, then dispatches.
-  Entry point: plan/INFLUX/00-INDEX.md. Provenance banners on copies name live sources;
-  originals win on conflict.
+|area[vera-joint-session] :priority secondary :state waiting-joseph :opened <2026-08-05>
+  :why Strands 1 and 3 (PROPRIUM VERA, ennaos) reserved for Joseph+lead review
+  :next Session runs from plan/reports/vera-*-inventory + plan/TODO.md V-items;
+        sources wait in plan/INFLUX/vera/
+
+|area[grok-depends-backlog] :priority secondary :state waiting-grok :opened <2026-08-06>
+  :why Nine pre-DAG-law segments lack depends: declarations (check-plan's 9 warnings)
+  :next Grok's pass; the convention is in plan/ONTOLOGY.un
