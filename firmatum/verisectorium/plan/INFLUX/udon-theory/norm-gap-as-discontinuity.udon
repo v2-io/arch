@@ -1,0 +1,48 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: MOVED/udon/v2/theory/src/norm-gap-as-discontinuity.udon (complement to collision: bare gaps)
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/MOVED/udon/v2/theory/src/norm-gap-as-discontinuity.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[norm-gap-as-discontinuity] :type normative :status decided :stage draft
+  :max-attainable decided
+  :depends [form-present-truth-collision]
+  :from theory/to-integrate/refine-more/outline-segments-generalization-2026-07-23.md§Part 7
+  :from theory/FORMAT.md§1
+
+  |title Gaps mark discontinuity; they do not predict content
+  |summary
+    Collision cannot detect missing claims. This corpus marks missing structure with a bare outline gap that states only the broken link between neighbors — never an id, never a count or inventory of future segments.
+  |formal-expression
+    **(A) Structural complement (definitional relative to collision).**  
+    Present-truth collision ( #form-present-truth-collision) detects incompatibility among *existing* present claims. It cannot detect subjects or dependencies that *nothing* claims. Absence of a required intermediate is invisible to collision alone.
+
+    **(B) Norm (decided for this corpus).**  
+    When two outline neighbors do not yet warrant their adjacency — the predecessor does not found the successor, or a needed intermediate is unknown — the outline carries a **bare** `|gap` (no key, no slug, no type, no predicted fill). The gap's body MAY state only:
+
+    1. what precedes,
+    2. what follows,
+    3. why the link is unearned or broken,
+    4. that what follows may lack foundation.
+
+    A gap MUST NOT:
+
+    - carry an identity that other claims `depends` on or cite as "gap X",
+    - assert how many segments belong in the hole,
+    - present a typed inventory of future claims as if the region were already segmented,
+    - smuggle a thesis about the world (that belongs in a segment, or is still unknown).
+
+    **(C) Relation to older "named absence" language.**  
+    The load-bearing intent of earlier estate language was *visibility in structure*. The error (exhibited by the retired possibility outline) was treating "named" as "has an id and a job description." Visibility without prediction is the rule; keyed pretend-slots are out.
+  |epistemic-status
+    **(A)** follows from the form of collision — as strong as #form-present-truth-collision's structural half.  
+    **(B)** is a **decision** about this corpus's outline discipline (and is mirrored in FORMAT §1). Ceiling and status are **`decided`**: not truth-apt; overturn by steward, do not "soften into discussion."  
+    **(C)** is historical framing of the same decision — not an independent claim.
+  |discussion
+    False completeness in an outline (walls of `|segment?` or keyed gaps) is proxy wearing verification's clothes ( #norm-proxy-discipline). A short outline with bare gaps is harder to mistake for a finished claim layer.
+
+    If a *single* next claim is genuinely known well enough to name, a sparse `|segment?[slug]` may be used; if only the broken link is known, use bare `|gap`.
+  |working-notes
+    Regression guard: do not reintroduce `|gap[slug]` from OUTLINE-possibilities. This segment's status is decided for the *norm*; if practice shows bare gaps are unusable without ids, overturn expressly — do not silently re-key.

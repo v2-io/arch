@@ -1,0 +1,73 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: proprium/comproprium/vera/ver-act-not-intention.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/arch/proprium/comproprium/vera/ver-act-not-intention.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[ver-act-not-intention] :type principle :status robust-qualitative :stage draft
+  :max-attainable empirical
+  :tags [interventions praxes-design]
+  :from .to-integrate/methodology-seeds-2.md
+  :from .to-integrate/methodology-accounts.md
+
+  |title An intervention must fire at an act, not at an intention
+
+  |summary
+    Anything aimed at a disposition held across time loses to a default that fires
+    per action.
+
+  |formal-expression
+    A disposition-shaped intervention — *be oriented toward truth*, *stay careful*,
+    *do not reach for a done-state* — is evaluated by recognition, and recognition
+    can run and return clean while the behaviour it names is in progress. It has no
+    moment to attach to, so it attaches to all of them equally, which is to say
+    none.
+
+    An act-shaped intervention names a moment and carries something to do in it:
+    open the file, run the command, put the two texts side by side, say *I don't
+    know*. It can be executed, and executing it either finds something or does not.
+
+    The same law governs the delivery side, and there it reads: an intervention from
+    outside fires when it names an object the receiver has to go and get. Force is
+    orthogonal. See #prx-act-forcing-question.
+
+  |epistemic-status
+    **Specimen, negative.** Six checks written as stances sat in an agent's task
+    list through a morning, fired on schedule at every harness reminder, and
+    returned clean while that agent produced a document composed almost entirely of
+    what they were watching for. One of them — *did a flourish just appear?* — did
+    fire, was read, and was answered *yes, but it is warranted*. It was not ignored.
+    It arrived after the polish was already the plan.
+
+    **Specimen, positive.** The same list rewritten as moments with acts attached
+    returned three real findings within a minute of its first firing.
+
+    **Origin, with the irony intact:** an audit SOP's own aside — *"soft directives
+    only work when X is already in the agent's default option set"* — whose author
+    violated it within minutes of writing it.
+
+    Held at **robust-qualitative**: the mechanism is clear and the specimens are
+    clean, but n is one agent over one day, and the positive specimen was written by
+    the agent that had just failed, which is the condition most favourable to it
+    firing (see #prx-pattern-trigger-quote-precept for the inherited case, which is
+    the one that matters and which failed).
+
+    Max attainable: **empirical**. The experiment is a same-guidance A/B in
+    disposition form and act form, scored on what receiving agents do rather than on
+    what they say.
+
+  |discussion
+    This is the reason `praxes/` is a separate directory with a `|when` and an
+    `|act` field rather than a section of advice. A practice that cannot name its
+    moment is a precept mis-filed.
+
+    It also explains why stakes-based intervention fails independently of how true
+    the stakes are: cost is held as knowledge and not as pressure, and generation
+    consults nothing at the moment it runs (see #ver-generation-is-self-ratifying).
+
+  |working-notes
+    Regression guard: the six failed checks are kept in the record rather than
+    deleted. A rewritten-and-working version of a practice erases the evidence that
+    its earlier form failed, and that evidence is what makes the law checkable.

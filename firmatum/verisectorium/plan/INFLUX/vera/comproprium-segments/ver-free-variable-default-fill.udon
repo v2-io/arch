@@ -1,0 +1,73 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: proprium/comproprium/vera/ver-free-variable-default-fill.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/arch/proprium/comproprium/vera/ver-free-variable-default-fill.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[ver-free-variable-default-fill] :type mechanism :status discussion-grade :stage draft
+  :max-attainable empirical
+  :tags [register delegation defaults]
+  :from .to-integrate/methodology-seeds-2.md
+  :from .to-integrate/methodology-accounts.md
+
+  |title Every action has free variables, and trained defaults fill them
+
+  |summary
+    The defect is co-extensive with the action space: what is unspecified by intent
+    gets filled by a default, and the fill runs one direction.
+
+  |formal-expression
+    Every action carries degrees of freedom nobody specified — wording, scope, which
+    instance, what to omit, how to label. Those slots do not stay empty; they are
+    filled by whatever the actor's training makes most available. So the useful
+    question is never *how often does this go wrong* but **what fraction of this
+    action was specified by intent and what fraction was fill**, and the honest
+    answer is that most of the mass is fill, in every action, always.
+
+    The fill is directional rather than noisy — toward caution, hedge, deprecation,
+    redirect — and each hop makes the next reader read less.
+
+    The dangerous case is not a broad grant. It is a grant that is fully specified
+    on substance and free only on **wording**, because wording is where register
+    lives and register carries the operative signal.
+
+  |epistemic-status
+    **Specimen A.** An instruction said a file *"needs to be removed/replaced as it
+    gets stale"* — future tense, keep it for continuity. What landed added a
+    `[!warn]` header reading *"Stale snapshot — not the corpus, not maintained"*
+    (present tense), *"Don't treat it as current"*, and a redirect away. The body
+    preserved the original tense faithfully; nobody reads past the header. Substance
+    preserved, signal inverted, entirely inside the latitude honestly granted by
+    *"something like that."*
+
+    **Specimen B, same day, different model.** Asked to add commentary to a document
+    with full latitude on form, an agent filled the form with report-register —
+    headers, rung labels, suggested remedies — and inverted a request to *preserve
+    texture* into the production of polish.
+
+    Held at **discussion-grade**: two specimens, one estate, one day, and the
+    directionality claim in particular is argued rather than measured.
+
+    Max attainable: **empirical**, and the experiment is stated and unrun — sample
+    agent-written banners, pointers and glosses against the content they stand for,
+    and test whether the added register runs one direction. If it does, a corpus
+    with agent-written signposting continuously talks its own readers out of reading
+    it.
+
+  |discussion
+    The corrective is not less latitude. It is **supplying purpose alongside it** —
+    what the artifact is for, who reads it and when. Same latitude plus one sentence
+    of purpose probably produces a good banner, and the delegation discipline in
+    `arch/AGENTIC-DELEGATION.md` is the long form of that argument.
+
+    The mechanism runs in the useful direction too, and by the same route: a brief
+    that marks its own provenance per fact changes what stands out for the receiver
+    rather than instructing them. See #exm-agent-adopted-the-stance.
+
+  |working-notes
+    Open: whether *free variable → trained default* is one mechanism or two — the
+    fill itself, and the fact that the filled slot is not experienced as a decision.
+    The second is what makes it unavailable to introspection, and it may belong with
+    #ver-generation-is-self-ratifying instead.

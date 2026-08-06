@@ -1,0 +1,73 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: MOVED/udon/v2/theory/UDON-THEORY-canon.outline.udon (chapter: Outline + segments — process for this corpus)
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/MOVED/udon/v2/theory/UDON-THEORY-canon.outline.udon
+  Do not edit here expecting to update the live original.
+-->
+
+; UDON-THEORY-canon — provisional canonical outline
+;
+; Conventions: FORMAT.md. Identity lives in the slug; ordering lives here.
+;
+; 2026-07-31: project-frame chapter and secondary-carried "AAT results" removed.
+; Those files were a sterilized paste of TST vocabulary (P* as "advantages,"
+; document scorecards, manufacture slogans) without identification structure,
+; primary derivation, or first-principles chain. Not demoted — deleted.
+; What remains is corpus process (arrangement) plus one demand-ranking
+; observation. Theory foundation for UDON is a bare gap until rebuilt from
+; AAT/TST primaries properly — not from plain-language compression of P1–P6.
+;
+; Row shapes: |segment[slug]… | gap (bare) | arc
+; Reordering costs nothing. Renaming a slug costs everything downstream.
+
+|outline[udon-theory-canon] :version 0.2-provisional :date 2026-07-31
+  :governed-by FORMAT.md
+  :segments-dir src/
+  :purpose Claims that resolve (or honestly bound) paths, schemas, dialects, value typing, and tooling — once they have a real foundation
+  :note Part I is not a foundation story yet. Arrangement norms are process. Demand ranking is evidence about a report. The theory root is open.
+
+  ; ===========================================================================
+  |part[why] :n I
+    :title What is standing (and what is not)
+    |arc
+      Only two kinds of content are present: (1) how *this* claim corpus is written
+      under agent turnover — process, not UDON theory; (2) what the demand report
+      ranks as customer. Everything that pretended to be a TST/AAT-rooted project
+      frame was removed. Do not re-add P*-slogan layers or scorecard tables without
+      a derivation that would survive ASF audit.
+
+    ; -------------------------------------------------------------------------
+    |chapter[arrangement] :title "Outline + segments — process for this corpus"
+      |arc
+        Corpus-authoring discipline. Not a substitute for domain theory.
+
+      |segment[intro-udon-theory].discussion :status discussion-grade :stage draft :max discussion-grade
+        Orientation only — no warrant
+      |segment[form-present-truth-collision].formulation :status heuristic :stage draft :max robust-qualitative
+        Present-truth can collide; append-only history need not
+      |segment[norm-gap-as-discontinuity].normative :status decided :stage draft :max decided
+        Bare gaps mark broken links; no id, no predicted fill
+      |segment[form-identity-ordering-split].formulation :status heuristic :stage draft :max robust-qualitative
+        Slug = identity; outline = order
+      |segment[norm-proxy-discipline].normative :status decided :stage draft :max decided
+        Proxies locate; they do not settle
+
+    ; -------------------------------------------------------------------------
+    |chapter[demand-anchor] :title "Demand ranking (not theory)"
+      |arc
+        One observation about the demand evidence base. Does not found paths, schema,
+        or dialects. Does not replace a first-principles root.
+
+      |segment[obs-mutation-customer].observation :status robust-qualitative :stage draft :max robust-qualitative
+        Demand report ranks schema-guarded structural mutation first; paths/schema/spans are its inputs
+
+    ; -------------------------------------------------------------------------
+    |gap
+      Precedes: corpus process norms and a demand ranking.
+      Follows: (nothing — no theory root yet).
+      Missing: a foundation that would connect agent/document work to AAT identification
+      structure (observation channels, intervention, tempo, persistence) the way ASF does —
+      with named premises, consequences, and transfer conditions — not a list of "advantages"
+      and not a scorecard of documents vs software slogans. Rebuild only from primaries under
+      ~/src/arch/asf/, or from original derivation here; do not reconstitute the deleted P* layer.

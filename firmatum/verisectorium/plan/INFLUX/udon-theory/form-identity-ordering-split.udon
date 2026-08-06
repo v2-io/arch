@@ -1,0 +1,36 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: MOVED/udon/v2/theory/src/form-identity-ordering-split.udon (distilled from generalization Part 1)
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/MOVED/udon/v2/theory/src/form-identity-ordering-split.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[form-identity-ordering-split] :type formulation :status heuristic :stage draft
+  :max-attainable robust-qualitative
+  :depends [intro-udon-theory]
+  :from theory/FORMAT.md§2
+  :from theory/to-integrate/refine-more/outline-segments-generalization-2026-07-23.md§Part 1
+
+  |title Identity and ordering are separable
+  |summary
+    The slug is the stable identity of a claim; the outline is the current exposition order. The two change under different authorities and at different rates — which is what lets claims harden independently of how the argument is arranged.
+  |formal-expression
+    **Formulation (identity–ordering split).** For a corpus of present-truth claims:
+
+    1. **Identity** is carried by a stable slug (filename = slug; no sequence numbers in names). Cross-references, dependencies, and citations use the slug.
+    2. **Ordering** is carried by an outline (or equivalent navigator) that lists slugs in exposition order. Reordering outline rows does not rename claims.
+    3. **Truth-status** moves when evidence moves (segment body and its `status` / `stage`). **Position** moves when pedagogy or dependency exposition moves (outline only).
+
+    The split does **not** require that claims form a proof-style partial order. Domains that need a `depends` DAG add it; domains that do not may omit it. Portability of the shape does not imply portability of every gate built on top of it.
+  |epistemic-status
+    **Status: `heuristic`.** Chosen because two authorities (evidence vs exposition) force two rates of change; collapsing them produces documented failure modes (renumbering breaks citations; reordering requires renames; `verified` meaning both "checked" and "solid").  
+    Support is repeated estate practice (ASF and vivarium FORMAT statements; tooling OUTLINE shape) — **coherence under shared authorship**, not multi-author corroboration.  
+    **Max attainable: `robust-qualitative`** if an independent corpus (different authorship) adopts the split and reports the same repair class. Not `exact`: no uniqueness proof that this is the only workable split.  
+    Competing formulations: path-encoded order (rename cascades); pure graph without outline (cold-start readers still need *some* exposition order — an outline is one answer, not the only one).
+  |discussion
+    Operational dress (Joseph, tooling outline notes): constituent claims harden or fix independently; organization and dependency chain reorganize independently.
+
+    Agent-handover: brief with *pointers* (slugs + outline position), not a compressed narrative of the whole argument. An outline of slugs is a pointer surface, not a substitute for segment bodies.
+  |working-notes
+    Raise status when a second authorship lineage is documented adopting this split.

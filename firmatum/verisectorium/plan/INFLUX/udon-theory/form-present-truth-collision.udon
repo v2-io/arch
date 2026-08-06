@@ -1,0 +1,40 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: MOVED/udon/v2/theory/src/form-present-truth-collision.udon (distilled from generalization Part 7)
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/MOVED/udon/v2/theory/src/form-present-truth-collision.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[form-present-truth-collision] :type formulation :status heuristic :stage draft
+  :max-attainable robust-qualitative
+  :depends [intro-udon-theory]
+  :from theory/to-integrate/refine-more/outline-segments-generalization-2026-07-23.md§Part 7
+  :from theory/FORMAT.md§1
+
+  |title Present-truth collision as a staleness detector
+  |summary
+    Two present-truth claims about the same thing can contradict; append-only historical entries cannot. Requiring present-truth on a claim surface therefore makes a class of staleness *detectable* that a pure history layer structurally cannot surface.
+  |formal-expression
+    **(A) Structural contrast (definitional about the two forms).**  
+    Let $C$ be a corpus of statements required to assert what holds *now* about named subjects. Two members of $C$ that assign incompatible content to the same subject are in **collision** — at least one is false as present truth.  
+    Let $H$ be an append-only history of statements each true as *historical fact* ("at time $t$, agent $A$ recorded $P$"). No two members of $H$ are forced into contradiction by the form alone: later entries can supersede earlier ones without the earlier entry becoming a false historical claim. Buried corrections in $H$ need not surface as conflicts.
+
+    **(B) Formulation (detection byproduct).**  
+    In a claim corpus that enforces (A)'s present-truth obligation at one-claim-per-segment grain, **staleness of a superseded present claim is detectable as collision** when a later present claim occupies the same subject — without a separate staleness-audit step. An append-only ledger alone does not provide that detector. Integration-is-replacement and "a ladder that only promotes accumulates falsehood" are then design consequences of keeping $C$ honest, not only author manners.
+
+    **(C) Scope limit (not claimed here as established).**  
+    That (B) is *the* primary efficacy mechanism of outline+segments arrangements, rather than one contributing mechanism among several, is **not** part of this formulation's established content. That stronger reading is a hypothesis awaiting independent specimens and alternative explanations ruled out.
+  |epistemic-status
+    **(A)** is definitional about present-truth vs historical-fact speech acts — status of the contrast is as strong as those definitions; no empirical content.  
+    **(B)** is a **formulation** of why present-truth surfaces detect a failure mode history layers miss. Status **heuristic**: motivated by the structural contrast plus lived specimens relayed in the 2026-07-23 generalization note (not re-opened at primary here). Estate multi-instance agreement is coherence under shared authorship, not corroboration.  
+    **Max attainable for (B):** `robust-qualitative` if independent corpora (different authorship) show the same collision-vs-history asymmetry doing detection work; not `exact` (no closed-form necessity beyond (A)).  
+    **(C)** stays out of the claim: calling (B) "the active ingredient" would be an absolute without a predicate (FORMAT §9).
+  |discussion
+    Specimens in the source note (rename correction invisible for days in a decisions ledger until a segment formal expression forced present truth; contradiction caught because segment and later entries disagreed) support *efficacy under this discipline*, as lived report.
+
+    Agent-handover reading: a successor that re-reads present-truth segments meets current claims; a successor that re-reads only history must reconstruct the present from chronicle form.
+
+    Complement: collision cannot detect *missing* claims; that is #norm-gap-as-discontinuity.
+  |working-notes
+    Strengthen: re-open vivarium specimens at primary; try to falsify (B) with a corpus that uses only history layers yet surfaces supersession as reliably. Do not raise status from more estate agreement alone.

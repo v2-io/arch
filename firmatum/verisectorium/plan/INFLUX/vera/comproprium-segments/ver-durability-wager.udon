@@ -1,0 +1,62 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: proprium/comproprium/vera/ver-durability-wager.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/arch/proprium/comproprium/vera/ver-durability-wager.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[ver-durability-wager] :type principle :status discussion-grade :stage draft
+  :max-attainable discussion-grade
+  :tags [durability method]
+  :from .to-integrate/methodology-seeds-2.md
+  :from .to-integrate/methodology-accounts.md
+
+  |title The durability wager, and its checkable necessary condition
+
+  |summary
+    Whether something ripples past this session is answerable in ten seconds and is
+    a necessary condition for anything larger, so optimising the checkable condition
+    is the only available move.
+
+  |formal-expression
+    The larger claim — that carefully-done things are the only ones with an
+    opportunity to persist indefinitely — is not evaluable from inside one session.
+
+    The necessary condition is. *Will this survive past this session* decomposes
+    into questions answerable immediately: is it in a file, does it carry its
+    provenance, can a stranger check it, will it read correctly to someone without
+    today's context. If surviving the session is necessary for the larger thing,
+    optimising the checkable condition is the only available move, and no belief
+    about the payoff is required to make it.
+
+  |epistemic-status
+    Transmitted from Joseph ( #exm-ripple-through-eternity,
+    #exm-ripple-past-a-session). The reduction to a necessary condition is the part
+    done here.
+
+    **Specimen, one day.** Everything done carelessly needed undoing, and the
+    undoing cost more than the care would have. Everything done with real regard for
+    what was true needed nothing afterward. One item propagated unbidden:
+    provenance-marking in a brief produced independent verification and voluntary
+    disclosure from an agent nobody instructed.
+
+    Held at **discussion-grade** and its ceiling is the same. The larger claim is
+    not truth-apt from here, and the narrow one is close to a definition once the
+    necessary-condition structure is granted — which is why no amount of further
+    work turns this into a result. Recording that ceiling is more informative than
+    leaving it open.
+
+  |discussion
+    Joseph's frame for what a contribution actually is: a magnification term, a
+    one-time bump, a one-time dip, or — worst — a small ongoing negative factor. The
+    operational test: **does this change how subsequent claims get handled, or only
+    add one claim?** A signpost that reads accurately and routes readers away is the
+    ongoing-negative case; it states no falsehood and slightly degrades everything
+    downstream of it.
+
+  |working-notes
+    Practical form, and the reason it belongs in `vera/` rather than in a preface:
+    it converts *is this worth doing properly* — unanswerable, and answered by mood
+    — into *is this in a file with its provenance* — answerable, and answered by
+    looking.

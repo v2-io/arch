@@ -1,0 +1,117 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: _ref/epistemic_tribunal/config/domains.yaml
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/_ref/epistemic_tribunal/config/domains.yaml
+  Do not edit here expecting to update the live original.
+-->
+
+# Domain Configuration for Epistemic Tribunal
+
+domains:
+  meta-epistemic:
+    name: "Meta-Epistemic"
+    description: "Core epistemological reasoning framework"
+    complexity_base: 0.5
+    default_stakes: "medium"
+    specialized_agents:
+      - investigator
+      - challenger
+      - analyst
+    document_categories:
+      - first_principles
+      - lexicon
+      - derived_principles
+      - mental_models
+      - empirical_findings
+    
+  software-development:
+    name: "Software Development"
+    description: "Software engineering and programming practices"
+    complexity_base: 0.6
+    default_stakes: "medium"
+    specialized_agents:
+      - investigator
+      - challenger
+    document_categories:
+      - derived_principles
+      - mental_models
+      - empirical_findings
+    
+  scientific:
+    name: "Scientific Research"
+    description: "Scientific methodology and research evaluation"
+    complexity_base: 0.8
+    default_stakes: "high"
+    specialized_agents:
+      - investigator
+      - challenger
+      - analyst
+    document_categories:
+      - first_principles
+      - derived_principles
+      - empirical_findings
+    
+  medical:
+    name: "Medical/Healthcare"
+    description: "Medical diagnosis and healthcare decision-making"
+    complexity_base: 0.9
+    default_stakes: "critical"
+    specialized_agents:
+      - investigator
+      - challenger
+      - analyst
+    document_categories:
+      - first_principles
+      - derived_principles
+      - empirical_findings
+    
+  legal:
+    name: "Legal Analysis"
+    description: "Legal reasoning and case analysis"
+    complexity_base: 0.8
+    default_stakes: "high"
+    specialized_agents:
+      - investigator
+      - challenger
+      - analyst
+    document_categories:
+      - first_principles
+      - derived_principles
+      - mental_models
+    
+  general:
+    name: "General Knowledge"
+    description: "General fact-checking and analysis"
+    complexity_base: 0.4
+    default_stakes: "low"
+    specialized_agents:
+      - investigator
+    document_categories:
+      - empirical_findings
+
+# Epistemic Mode Mappings by Domain
+epistemic_modes:
+  meta-epistemic:
+    primary: "probabilistic"
+    secondary: ["adversarial", "falsification"]
+  
+  software-development:
+    primary: "falsification"
+    secondary: ["adversarial", "diagnostic"]
+  
+  scientific:
+    primary: "falsification"
+    secondary: ["probabilistic", "formal"]
+  
+  medical:
+    primary: "diagnostic"
+    secondary: ["probabilistic", "adversarial"]
+  
+  legal:
+    primary: "adversarial"
+    secondary: ["diagnostic", "probabilistic"]
+  
+  general:
+    primary: "rapid"
+    secondary: ["adversarial"]

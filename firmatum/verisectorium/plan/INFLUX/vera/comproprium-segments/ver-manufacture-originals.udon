@@ -1,0 +1,77 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: proprium/comproprium/vera/ver-manufacture-originals.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/arch/proprium/comproprium/vera/ver-manufacture-originals.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[ver-manufacture-originals] :type principle :status robust-qualitative :stage draft
+  :max-attainable empirical
+  :tags [originals verification corpus-design]
+  :from .to-integrate/methodology-seeds-2.md
+  :from .to-integrate/methodology-accounts.md
+
+  |title Manufacture originals — a defect is only visible where one survives
+
+  |summary
+    Edits carry their own detector because a diff exists; first writings do not,
+    which makes the least-checkable material exactly what corpora are built from.
+
+  |formal-expression
+    A defect introduced by editing is detectable, because the pre-edit state exists
+    and the two can be compared. A defect present in a first writing has nothing to
+    be compared against, so no comparison can find it.
+
+    The consequence is uncomfortable and structural: the least-checkable material in
+    any corpus is fresh outlines, new convention files, and syntheses — which is
+    most of what agents produce, and precisely what corpora get built out of.
+
+    The move is therefore to *create* the comparison rather than to look harder:
+    keep the instruction beside the artifact, the pre-edit text, the brief that
+    produced the file, the prediction before the reading.
+
+  |epistemic-status
+    **Specimen.** Four of five defects caught in one session were caught by diffing
+    against a surviving original — an instruction against the banner that landed; a
+    verbatim text against the rewrite of it; a commit's stated intent against its
+    one-line repair; an earlier commit's finding against a later change. The fifth
+    was caught by the steward, out of knowledge no diff could supply.
+
+    **Specimen, corpus-scale.** The quotation segments in `exempla/` are extracted
+    from their primary programmatically and verified back against it. Four separate
+    defect classes were found that way in one evening — line-wrapping inside a
+    quote, collapsed interior whitespace, a hyphenated word split across lines, and
+    a substituted quote character — and none of them would have survived contact
+    with proofreading, because none of them changes how the text reads.
+
+    Held at **robust-qualitative**: the mechanism is close to definitional, and the
+    frequency claim behind *most of what agents produce* is not measured.
+
+  |discussion
+    Several practices in this estate already do this without naming it as one
+    mechanism: verbatim steward quotes beside assessments, per-segment audit
+    reflections, a text law that acts as a reconstruction detector, and the
+    collision property that makes two present-truth claims about one thing capable
+    of contradicting each other.
+
+    It is also why `exempla/` keeps accounts append-only with corrections chained
+    beneath (FORMAT D5). Chaining manufactures the original that makes the
+    correction checkable.
+
+  |working-notes
+    Recurrence, worth the tally rather than the shrug: the *same* defect class —
+    a nested `"…"` silently rewritten as `'…'` while quoting — occurred three times
+    in one evening, in three different segments, by one instance that had already
+    been corrected for it twice. Intention did not carry it across twenty minutes.
+    `bin/check-corpus` catches it in under a second and has now caught every
+    instance. This is #ver-act-not-intention measured on the author of
+    #ver-act-not-intention.
+
+    Forward: this corpus now has a committed checker (`bin/check-corpus`), which
+    closes the note that stood here. What it cannot check is whether a claim is
+    true, whether a status is honest, or whether a practice ever fired — and
+    pretending otherwise would make it a proxy wearing verification's clothes. Every
+    verification run so far has been ad hoc, and each one found real defects. A
+    script that re-locates every quoted span in every segment against its primary
+    would convert this principle from a habit into a property of the corpus.

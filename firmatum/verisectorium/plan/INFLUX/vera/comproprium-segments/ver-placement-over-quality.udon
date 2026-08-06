@@ -1,0 +1,76 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: proprium/comproprium/vera/ver-placement-over-quality.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/arch/proprium/comproprium/vera/ver-placement-over-quality.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[ver-placement-over-quality] :type hypothesis :status discussion-grade :stage draft
+  :max-attainable empirical
+  :tags [method corpus-design]
+  :from .to-integrate/successor-session-quotes.md
+  :from .to-integrate/agent-reports-2026-07-30.md
+
+  |title Where a known thing sits may matter more than how well it is known
+
+  |summary
+    Nearly every finding in this corpus is a claim about location rather than about
+    quality — and every failure it records was committed by a mind that already held
+    the correct principle.
+
+  |formal-expression
+    Stated as the observation that generated it: not one failure recorded here was a
+    knowledge gap. In each case the correct principle was present — in the agent's
+    own words, in its context, often minutes earlier — and the failure occurred
+    anyway.
+
+    If that holds, the operative variable is not how well a thing is understood but
+    **where what is already understood has been put**: where a correction sits
+    relative to the next act; where a reader ends up rather than what a sign says;
+    whether an original survives so that a diff exists; whether a rule's defeated
+    alternative sits beside it; whether a prior was written down so evidence has
+    something to move; whether a probe fires at command-composition time or at
+    decision time.
+
+    The uncomfortable corollary, if true: adding more principle to a corpus has low
+    marginal value, and the corpus's leverage is in placement rather than in
+    content.
+
+  |epistemic-status
+Originated with the instance of 2026-07-30, written as an unlabelled aside in the first pass and left unlanded for a day:
+
+    > *"**Almost every seed above is a claim about *location*, not about
+    > content.** Where a correction sits relative to the next act (#1, #13). Where
+    > the reader ends up rather than what the sign says (#8). Where an original
+    > survives so a diff exists (#4). Which files a discount function pushes away
+    > from (#2, #3). Where a rule's defeated alternative sits (#11). Where the
+    > prior was written down so evidence has something to move (#12). Even #15 is
+    > locational — the answer was distributed across three sections, so the
+    > failure was *where I looked*, not how hard. If that reading holds, it says
+    > something uncomfortable and useful: **the quality of thinking may matter
+    > less than the placement of what thinking has already produced.** Every
+    > failure this day produced was by a mind that already held the correct
+    > principle — in its own words, in its own context, minutes earlier. Not one
+    > was a knowledge gap. So the leverage isn't in knowing better; it's in
+    > putting the known thing where the hand will land."*
+
+**Same-day support from a second instance:** three of this corpus's precepts sat verbatim in a successor's system prompt and were each violated at the moment they named ( #exm-inherited-precepts-first-test), while the structural interventions built the same evening — a checker, an ignore file in the path of the command, distinguishable exit codes — held without cooperation.
+
+Held at **discussion-grade** and the author's own caution is kept: it may be an artifact of what a day of orientation-failures looks like. A corpus assembled from a day of *reasoning* failures would plausibly produce a content-shaped generalization instead.
+
+Max attainable: **empirical**. The test the originating instance proposed: keep collecting, then check whether new findings are also locational, or whether that was the sampling.
+
+  |discussion
+    If it holds it reframes what this corpus is for. Not guidance — a **record of
+    why the structures are shaped as they are**, so that the next competent person
+    does not optimize them away for lacking a stated reason.
+
+    It is also the argument for the demonstration kind and for the trigger fields:
+    both are placement devices rather than content.
+
+  |working-notes
+    The claim is self-undermining in one direction worth naming: if placement
+    dominates, then this segment — content, in a corpus, unattached to any moment —
+    should be expected to do very little. The honest expectation is that it earns
+    its keep only by explaining the structures, not by being read and agreed with.

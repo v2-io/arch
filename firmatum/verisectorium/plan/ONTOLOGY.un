@@ -1,0 +1,75 @@
+; ONTOLOGY — verisectorium-plan-specific decisions
+; Vanilla udon. Provisional throughout; this instance is the last ad-hoc one and is
+; deliberately trialing tradeoffs — decisions here are *its* law, not verisectorium law.
+; When a decision proves out (or fails), that datum routes to the plan segments (ch. 7/11).
+
+|ontology[verisectorium-plan] :date <2026-08-05> :status provisional
+  :governs plan/OUTLINE.md and plan/last-adhoc-src/
+
+  |summary
+    What our outline columns mean, where identity lives, what we call our segments,
+    and what shape a segment is expected to take. Eventually parts of this become schema.
+
+  |outline[columns] :of OUTLINE.md :order determinative
+    :assembly-column Tag
+    |column[state]
+      First column so it reads as the row's current condition at a glance.
+      Independent resettable flag, not a rung on a ladder. Initial vocabulary:
+      undrafted · drafted · checked. Expect additions (citations-check, prose-check, ...)
+      that reset when the segment is edited. Empty on gap rows.
+    |column[expected-type]
+      What we currently *guess* the segment's type will be, assigned at outline time,
+      before drafting. A prediction, deliberately kept once the real type is known,
+      so prediction-vs-actual is cheap data about outline-time foresight.
+    |column[type]
+      The actual type, filled at drafting time from the segment's own declaration.
+      Blank until then. Divergence from expected-type is information, not an error.
+    |column[tag]
+      The slug, as a wikilink: [[slug]]. This is the identity column and the
+      assembly manifest — build/assembly walks this column in outline order.
+      Filename in last-adhoc-src/ equals the slug. No numbers, no type prefixes
+      (a trialed divergence from asf's role-prefix convention — gathering data).
+      A literal --GAP-- here (with the other columns empty) marks a gap row.
+    |column[summary]
+      One-line summary of the segment. Called Summary, not Claim, until we know
+      what the ontology of segment kinds actually is here.
+
+  |gap-semantics
+    A --GAP-- row means: we do not know how many segments this region will
+    eventually be, but the Summary names the main topic or thing to establish.
+    Gaps carry no identity — nothing may depend on or cite a gap. If a single
+    next segment is genuinely known well enough to name, give it a real row.
+
+  |segment[expected-shape] :status sketchy
+    :dir last-adhoc-src/
+    :one-topic-per-file true
+    What we call them: **segments** (generic), atoms when speaking of the pattern.
+    Expected types so far (guesses, see expected-type column):
+    |type[def]    A definition — establishes vocabulary, carries no truth claim
+    |type[form]   A formulation — a claim about how or why something works
+    |type[norm]   A decision about how we work here; not truth-apt; overturn expressly
+    |type[obs]    An observation — empirical, usually from the estate's instances
+    |type[survey] A comparative inventory across instances
+    |type[disc]   Discussion / orientation — no warrant of its own
+    Format: not yet fixed. Expected sections: a one-line summary, a body stating
+    present truth at honest strength, and **Working Notes** (expected on nearly
+    every segment — forward residue, not history-dump). Epistemic marking style
+    (section vs frontmatter vs inline) is deliberately open — see the ch. 1 gap.
+
+  |cross-references
+    [[slug]] everywhere — outline, segments, sidecars. No paths in references;
+    the wikilink resolves by basename. Path-carrying provenance is known to rot
+    (see [[provenance-rot-specimen]]).
+
+  |sidecars
+    INFLUX/ holds gathered-but-unprocessed material (the 2026-08-05 notes gather).
+    .integrated/ and .archive/ receive processed influx per the usual estate
+    metabolism. PRACTICA / CHANGELOG / HANDOFF live at the verisectorium root
+    (one level up) and follow NORMS.md basename conventions.
+
+  |working-notes
+    - Whether expected-type/type prediction-tracking earns its cost: revisit after
+      the first ten drafts.
+    - Column vocabulary for state is a first guess; let real work grow it.
+    - This file is .un (transitional per NORMS.md) — becomes proper schema-bearing
+      udon when the schema machinery exists.

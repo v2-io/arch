@@ -1,0 +1,23 @@
+; CHANGELOG — verisectorium history layer
+; Append-only; newest first. Present truth lives in plan/ segments and OUTLINE —
+; this file records what happened, for the archaeologist.
+; Vanilla udon, transitional (.un) per NORMS.md.
+
+|template
+  |entry[<date>-slug] :date <date> :by who
+    :scope what part of the project this touched
+    What happened and why, past tense, with pointers by [[slug]] or path.
+    No vanity narration; entries earn their lines.
+
+|entry[2026-08-05-founding] :date <2026-08-05> :by joseph+claude
+  :scope whole project
+  Project founded. Notes gathered estate-wide (grok agent) and extended with live-state
+  health reports, vivarium orientation-gate and build-issues notes (claude). Concern
+  structure iterated to 15 chapters in three parts; converted to the canonical segment
+  outline at plan/OUTLINE.md — declared the very last ad-hoc verisectorium, trialing
+  tradeoffs (no slug type-prefixes, expected-vs-actual type columns, state-first,
+  wikilink tags). ONTOLOGY.un, PRACTICA, this changelog, HANDOFF created. notes/ moved
+  to plan/INFLUX/ awaiting processing; plan/.integrated and plan/.archive created empty.
+  Also adjudicated the tst-grounding report against ASF primaries (verdict: faithful;
+  the junk was its downstream P*-slogan compression, already deleted 2026-07-31 in udon
+  theory) — no banners needed.

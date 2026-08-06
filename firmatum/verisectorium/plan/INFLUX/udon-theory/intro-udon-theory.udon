@@ -1,0 +1,32 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: MOVED/udon/v2/theory/src/intro-udon-theory.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/MOVED/udon/v2/theory/src/intro-udon-theory.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[intro-udon-theory] :type discussion :status discussion-grade :stage draft
+  :max-attainable discussion-grade
+
+  |title Opening — what is standing
+  |summary
+    Orientation only. This corpus does not yet have a theory foundation; do not treat the outline as one.
+  |discussion
+    **Register.** No independent warrant. Pointers only.
+
+    **What exists.** (1) Process norms for how *this* claim layer is written under agent turnover. (2) One observation about what the demand report ranks highest. (3) A bare gap where a real theoretical root would go.
+
+    **What was removed.** A project-frame built from sterilized P1–P6 slogans, document scorecards, and "manufacture" hypotheses without identification structure or primary derivation. Deleted, not demoted.
+
+    **Reading.** FORMAT.md → outline → remaining `src/` files. Language floor remains `v2/current-0.9.1-spec/`. Demand floor remains `v2/udon-needs/02-tooling-needs/`. ASF primaries live under `~/src/arch/asf/` — any future foundation must be built from those (or original math), not from plain-language compression of property lists.
+
+    **Standing segments.**
+
+    | Topic | Segment | Status |
+    |---|---|---|
+    | Present-truth collision | #form-present-truth-collision | heuristic |
+    | Bare gaps | #norm-gap-as-discontinuity | decided |
+    | Identity / ordering | #form-identity-ordering-split | heuristic |
+    | Proxy discipline | #norm-proxy-discipline | decided |
+    | Demand ranking (mutation customer) | #obs-mutation-customer | robust-qualitative |

@@ -1,0 +1,76 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: _ref/epistemic_tribunal/documents/.../meta-epistemic-bounded-context.yaml
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/_ref/epistemic_tribunal/documents/lexicon/meta-epistemic-bounded-context.yaml
+  Do not edit here expecting to update the live original.
+-->
+
+bounded_context:
+  name: "Meta-Epistemic"
+  description: "Core epistemological reasoning framework"
+  version: "1.0.0"
+  domain: "meta-epistemic"
+  
+ubiquitous_language:
+  # Core Concepts
+  confidence:
+    definition: "Subjective probability of claim truth"
+    type: "float"
+    constraints: [0.0, 1.0]
+    usage: "Always paired with confidence_interval"
+    related: ["uncertainty", "credence", "probability"]
+    
+  confidence_interval:
+    definition: "Range containing true value with 95% probability"
+    type: "tuple[float, float]"
+    calculation: "Beta distribution credible interval"
+    interpretation: "Wider intervals indicate greater uncertainty"
+    
+  epistemic_friction:
+    definition: "Resistance to truth determination from systemic factors"
+    components:
+      - knowledge_gaps: "Missing information"
+      - incentive_misalignment: "Conflicting motivations"
+      - temporal_decay: "Information aging"
+      - adversarial_deception: "Intentional misleading"
+    measurement: "Composite score [0, 1]"
+    
+  adversarial_verification:
+    definition: "Truth-seeking through structured opposition"
+    process:
+      1: "Steel-man construction of opposing view"
+      2: "Alternative hypothesis generation"
+      3: "Falsification testing"
+      4: "Synthesis of conflicting perspectives"
+    origin: "Legal adversarial system"
+    
+  bayesian_update:
+    definition: "Confidence modification based on new evidence"
+    formula: "P(H|E) = P(E|H) * P(H) / P(E)"
+    implementation: "Beta-binomial conjugate updating"
+    
+context_boundaries:
+  internal_concepts:
+    - confidence_management
+    - evidence_evaluation
+    - adversarial_testing
+    - uncertainty_quantification
+    
+  external_interfaces:
+    - domain_specific_rules: "Requires translation layer"
+    - value_judgments: "Route to normative assessment"
+    - implementation_details: "Abstract from specifics"
+    
+anti_corruption_layer:
+  # Translation mappings for other domains
+  from_software_development:
+    "bug": "error_in_reasoning"
+    "code_review": "adversarial_verification"
+    "unit_test": "falsification_test"
+    "technical_debt": "accumulated_uncertainty"
+    
+  to_software_development:
+    "confidence": "reliability_score"
+    "falsification": "test_case"
+    "adversarial_verification": "peer_review"

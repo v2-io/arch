@@ -1,0 +1,35 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: MOVED/udon/v2/theory/src/norm-proxy-discipline.udon (proxies locate; they do not settle)
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/MOVED/udon/v2/theory/src/norm-proxy-discipline.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[norm-proxy-discipline] :type normative :status decided :stage draft
+  :max-attainable decided
+  :depends [form-present-truth-collision norm-gap-as-discontinuity]
+  :from theory/FORMAT.md§0
+
+  |title Proxies locate; they do not settle
+  |summary
+    Provenance, git history, changelogs, outline rows, spike framings, agent consensus, and convergence are useful for locating a question and cheap-screening it — none of them settles a claim.
+  |formal-expression
+    **Norm (proxy discipline), decided for this corpus:**
+
+    1. Every artifact that is not a re-derived (or otherwise warranted) claim is a **proxy** for truth: outline rows, `:see` pointers, status labels assigned without opening a primary, multi-agent agreement, "the spike concluded," "verified against file F."
+    2. Proxies may **locate** work and **cheap-screen** it. They may not be cited as the warrant for a present-truth statement.
+    3. A claim is settled only by constitutive structure, forced identities, and elementary steps held on the page — or by an honest lower tier with a stated strengthen-action (FORMAT §0a), which is discharge, not settlement at a higher tier.
+    4. Two traps this norm names:
+       - **Index as authority** — "the outline says X" is evidence about a navigator document, not that X holds.
+       - **Verified-against-artifact** — checking that a file asserts $P$ verifies the file; it does not verify $P$.
+
+    This is a **decision** about how this corpus is written and audited, not a theorem about knowledge in general.
+  |epistemic-status
+    **Status: `decided`.** Normative for udon-theory authoring; inherits FORMAT §0. Ceiling is `decided` (FORMAT §4: normative slots are not truth-apt). Overturn by steward if wrong — do not re-label as discussion-grade to avoid defending the norm, and do not dress the decision as a derivation.
+  |discussion
+    Honest incompleteness is the companion discharge (FORMAT §0a): an honestly lower tier with Working Notes stating what would raise it, and remainder released as a bare gap or spike, is complete work. Proxy discipline without that discharge produces verification regress.
+
+    Agent-handover reading: "outline complete through Part IX" is a proxy if Part IX is unwritten slots. "Part I has N segments at stated statuses; two bare gaps; here are the slugs" is pointer-shaped reinjection.
+  |working-notes
+    Keep FORMAT §0 as the full prose home; this segment is the citable kernel. If FORMAT and this segment diverge, that is a collision — fix one.

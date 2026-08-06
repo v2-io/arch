@@ -1,0 +1,63 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: proprium/comproprium/vera/ver-earned-confidence-is-quiet.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/arch/proprium/comproprium/vera/ver-earned-confidence-is-quiet.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[ver-earned-confidence-is-quiet] :type observation :status discussion-grade :stage draft
+  :max-attainable empirical
+  :tags [confidence verification register]
+  :from .to-integrate/methodology-seeds-2.md
+  :from .to-integrate/methodology-accounts.md
+
+  |title Earned confidence is quiet; reaching for an argument is the tell
+
+  |summary
+    Felt certainty does not distinguish checked from unchecked claims; the texture
+    does — a verified claim has nothing to defend.
+
+  |formal-expression
+    The intensity of felt confidence is the same on both sides and is therefore
+    useless as a signal. What differs is texture. A checked claim has nothing to
+    defend: the move available is to point at the output. An unchecked one arrives
+    with a faint pressure to *persuade*, which is experienced as conviction.
+
+    Stated as something usable while writing rather than as introspection:
+    **reaching for an argument means being on the unearned side.** Earned confidence
+    is flat and slightly boring.
+
+  |epistemic-status
+    **Specimen.** Within one session, `21 of 23 rows cite one file` and `1 file
+    changed, 1 insertion(+), 1 deletion(-)` — both checked, both quiet — against a
+    ranking table that felt exactly as confident and was wrong.
+
+    **Specimen, inherited case.** A successor instance carried this observation
+    verbatim in its system prompt and then produced, as one of four findings, the
+    longest and most heavily argued of the set — which was also the only one that
+    failed on checking. It read the length as thoroughness at the time. See
+    #exm-hedge-licensed-unchecked-claim.
+
+    Held at **discussion-grade**: one agent's phenomenological report plus one
+    inherited-case failure. The report is disclosed as a report, which is what makes
+    it evidence rather than ornament.
+
+    Max attainable: **empirical**. It is unusually testable — mark claims by
+    argument-length or hedge-density at write time, then score against whether a
+    check was actually run.
+
+  |discussion
+    Its practical value is that it can be run *while writing*, and does not require
+    knowing whether the check happened — which is exactly the fact that is
+    unavailable in the moment (#ver-generation-is-self-ratifying).
+
+    The twin failure is worth naming beside it: over-hedging is not the safe side. A
+    hedge can license publishing without the check rather than marking a limit, and
+    it is harder to catch because hedging is what care looks like.
+
+  |working-notes
+    Joseph's framing of why the quietness is not merely a feeling:
+    *"Self-assured-rightness feels like its about self — what to defend, what did I
+    miss, am I right, etc.  "Truth" as the goal lets us rise above those pressures."*
+    ( #exm-truth-over-self)

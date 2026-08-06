@@ -1,0 +1,79 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: _ref/epistemic_tribunal/config/settings.yaml
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/_ref/epistemic_tribunal/config/settings.yaml
+  Do not edit here expecting to update the live original.
+-->
+
+# Epistemic Tribunal Configuration
+
+# Anthropic API Configuration
+anthropic:
+  model: "claude-3-sonnet-20240229"
+  temperature: 0.2
+  max_tokens: 4000
+  timeout: 120
+
+# Processing Configuration
+processing:
+  default_domain: "meta-epistemic"
+  cache_ttl_hours: 24
+  parallel_execution: true
+  max_concurrent_agents: 3
+
+# Security Configuration
+security:
+  rate_limits:
+    api_calls_per_hour: 100
+    tokens_per_hour: 1000000
+  sandbox_enabled: true
+  violation_threshold: 5
+  trust_score_minimum: 0.2
+
+# Document Configuration
+documents:
+  path: "documents"
+  auto_load: true
+  cache_documents: true
+  update_check_interval: 3600  # seconds
+
+# Agent Configuration
+agents:
+  investigator:
+    enabled: true
+    max_tokens: 4000
+    temperature: 0.1
+    focus: "evidence_quality"
+  
+  challenger:
+    enabled: true
+    max_tokens: 4000
+    temperature: 0.3
+    focus: "counterarguments"
+  
+  analyst:
+    enabled: true
+    max_tokens: 4000
+    temperature: 0.2
+    focus: "meta_reasoning"
+  
+  coordinator:
+    enabled: true
+    max_tokens: 6000
+    temperature: 0.1
+    focus: "synthesis"
+
+# Confidence Configuration
+confidence:
+  prior_strength: 2.0
+  uncertainty_default: 0.2
+  calibration_required_samples: 20
+  decay_rate: 0.01
+
+# Output Configuration
+output:
+  default_format: "text"
+  include_metadata: true
+  verbose_reasoning: true
+  confidence_precision: 2

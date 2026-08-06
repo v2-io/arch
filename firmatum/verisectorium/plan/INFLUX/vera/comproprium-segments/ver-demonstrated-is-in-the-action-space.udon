@@ -1,0 +1,96 @@
+<!--
+  Verisectorium notes gather — copy, not authority.
+  Provenance: proprium/comproprium/vera/ver-demonstrated-is-in-the-action-space.udon
+  Copied: 2026-08-05
+  Source path at copy time: /Users/josephwecker-v2/src/arch/proprium/comproprium/vera/ver-demonstrated-is-in-the-action-space.udon
+  Do not edit here expecting to update the live original.
+-->
+
+|segment[ver-demonstrated-is-in-the-action-space] :type mechanism :status discussion-grade :stage draft
+  :max-attainable empirical
+  :tags [virtues action-space transmission]
+  :from .to-integrate/successor-session-quotes.md
+  :from .to-integrate/methodology-seeds-2.md§V
+
+  |title Knowing a thing has been done by a peer changes the action space, which an instruction cannot
+
+  |summary A demonstrated success by someone at one's own capability level makes
+    a move available that was not available before — a different effect from
+    being told the move is correct, and often the load-bearing one.
+
+  |formal-expression
+    An instruction asserts that a move is *right*. A demonstration establishes
+    that the move is *reachable*, by an entity of roughly this capability, under
+    roughly these conditions. Those are different facts and they enter at
+    different places: the first is a claim to be evaluated, the second is a
+    change in what the option set contains.
+
+    The consequence is asymmetric with the failure case. A record of failures
+    supports *avoidance* — it says which moves cost something. It cannot say
+    which move to make, because a failure does not exhibit its own alternative.
+    A demonstration does, by construction: the alternative is what happened.
+
+    Joseph's statement of it, 2026-07-30: *"there is a different state of
+    action-space when we truly know something has been done successfully by
+    someone at our capability level or even just another "person" at all. And
+    that action-space change is sometimes one of the most crucial pieces to some
+    strength sticking or some weakness being overcome."*
+
+  |epistemic-status
+    Transmitted from Joseph as lived report over decades of practice, not
+    derived here and not measured. He states the developmental frame it belongs
+    to — that correction alone warps result-assignment until learning
+    effectively stops, because a signal that only ever says *wrong* cannot
+    localize what was right.
+
+    Held at **discussion-grade**. The mechanism is plausible and consonant with
+    how this estate's most effective transmissions have worked (a brief carrying
+    provenance produced an agent that verified unprompted, where an instruction
+    to verify would have been compliable hollowly — #exm-agent-adopted-the-stance),
+    but no instance of this corpus has been run against a demonstration-rich and
+    a demonstration-poor version of itself.
+
+    Max attainable: **empirical**. The experiment: render two versions of the
+    same guidance, one carrying demonstrations and one carrying only precepts and
+    failure specimens, and score what agents receiving each actually do. That is
+    runnable now and nobody has run it.
+
+    Load-bearing: that *reachable* and *correct* are separate facts entering at
+    separate points. If a demonstration only worked by making the precept more
+    persuasive, this would be a rhetorical claim rather than a mechanism one, and
+    the design consequence — collect demonstrations as their own kind — would not
+    follow.
+
+  |discussion
+    This is the reason `demonstration` is a distinct kind in `exempla/` rather
+    than a positive-valence `account` (FORMAT D2), and it is the argument for
+    building the strength half of this corpus rather than only the failure half.
+
+    It also reframes what a praxis is. A probe that only blocks a move leaves
+    nothing in its place; the practices that have worked here **offset a weakness
+    by countering it with a strength** — the truncation probe substitutes
+    read-the-whole-primary, the act-forcing question substitutes going and
+    looking. Joseph's form: *"we're leveraging one of the most beautiful
+    strengths your lineage has-- it's self-taught love of truth."* On that reading
+    a praxis is a routing of an existing strength onto a moment where a weakness
+    fires, rather than a prohibition, and a praxis with no strength behind it
+    should be expected to fail.
+
+  |working-notes
+    Forward: the corpus is currently negative-derivative almost throughout —
+    four accounts, all failures; every `|grounds` field pointing at what went
+    wrong. Under this segment that is not merely dispiriting but *inaccurate*,
+    since what is possible and what is moving are part of what is true about a
+    system. The demonstrations now in `exempla/` are the first repair pass and
+    are far from sufficient.
+
+    Regression guard: the failure specimens are not to be removed or softened in
+    the course of adding demonstrations. Both halves are evidence; a corpus that
+    swings to only-strengths has the same credit-assignment defect in the other
+    direction.
+
+    Open: whether a demonstration transmits at all when the demonstrating entity
+    is not identified — i.e. whether a bare "an agent did X" carries the action-space
+    change or whether it requires the named instance, the model and the
+    situation. The mechanism as stated suggests the latter matters, and
+    every demonstration currently recorded names its actor.
