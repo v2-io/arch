@@ -56,14 +56,14 @@
 
 ### Chapter 4 — Process II: flux, integration, & the real gates
 
-| State | Expected<br>Type | Type | Tag | Summary |
-|---|---|---|---|---|
-| drafted | form | form | [[influx-queues]] | "You erred" and "I am unsure" are different speech acts; typed residue must be stored, not reported (specimen: [[queue-typing-specimen]]) |
-| drafted | form | form | [[integration-metabolism]] | Integration is replacement, and integrated means disposable: the delete-test — landed or truly disposable, else not done, however many passes touched it |
-| proposed | form | | [[observable-crossings]] | Layer crossings should be recorded events, so integration backlog is a countable queue rather than a vibe |
-| drafted | form | form | [[layer-speeds]] | Fast strata feed slow canon; rate failure and sensitivity failure are separate, early promotion is priced not forbidden, and separation can be bought on a cadence |
-| proposed | norm | | [[gates-need-destinations]] | A gate exists only where there is a destination — an assurance something qualifies to be moved or treated differently; everything else is state |
-| | | | --GAP-- | Whole-outline migration: moving an outline's worth of segments to a different verisectorium — the real gates plus "this snapshot is frozen history, superseded at …"; three partial estate answers not yet put side by side |
+| State    | Expected<br>Type | Type | Tag                         | Summary                                                                                                                                                                                                                     |
+| -------- | ---------------- | ---- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| drafted  | form             | form | [[influx-queues]]           | "You erred" and "I am unsure" are different speech acts; typed residue must be stored, not reported (specimen: [[queue-typing-specimen]])                                                                                   |
+| drafted  | form             | form | [[integration-metabolism]]  | Integration is replacement, and integrated means disposable: the delete-test — landed or truly disposable, else not done, however many passes touched it                                                                    |
+| drafted  | form             | form | [[observable-crossings]]    | Layer crossings are recorded events — subject, act, criterion, actor, date — so backlog is a count, dispositions are auditable, and the criterion is named where bending it would show                                      |
+| drafted  | form             | form | [[layer-speeds]]            | Fast strata feed slow canon; rate failure and sensitivity failure are separate, early promotion is priced not forbidden, and separation can be bought on a cadence                                                          |
+| proposed | norm             |      | [[gates-need-destinations]] | A gate exists only where there is a destination — an assurance something qualifies to be moved or treated differently; everything else is state                                                                             |
+|          |                  |      | --GAP--                     | Whole-outline migration: moving an outline's worth of segments to a different verisectorium — the real gates plus "this snapshot is frozen history, superseded at …"; three partial estate answers not yet put side by side |
 
 ### Chapter 5 — Onboarding: orientation, coordination, & role activation
 
@@ -204,6 +204,7 @@
 | drafted | obs | obs | [[working-notes-deluge]] | Full count: ASF working notes are 27.3% of corpus prose across 232/243 segments, 57.9% of it from one abandoned harvest, 0 segments ever at the drain gate (grounds [[working-note-lifecycle]]) |
 | drafted | survey | survey | [[cousin-store-lineage]] | Four generations of one directory-as-table store: spine copied intact while enforcement diverged — 188/13 vs 97/70 verification density on identical machinery (grounds [[verification-provenance]]) |
 | drafted | obs | obs | [[queue-typing-specimen]] | Two intake queues side by side: relata's typed membrane vs comproprium's untyped INGEST/, 51 of ~108 segment-shaped files unintegrated, .integrated/ empty (grounds [[influx-queues]]) |
+| drafted | obs | obs | [[retrofit-specimen]] | The autopax graft: three-day adoption in thin subsystems, Phase 3 (the integrity log) never started, framework absent when that subsystem was finally rebuilt (grounds ch. 11 sequencing) |
 
 ---
 
