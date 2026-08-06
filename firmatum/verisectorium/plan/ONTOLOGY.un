@@ -139,13 +139,20 @@
        this" silently become "this is verified." This distinction is exactly what
        erodes under turnover; state the remove.
 
-  |segment[integrated-means-remainder-registered] :status provisional
-    .integrated/ has no partial state, so the dispatch rule is: a file may move to
-    .integrated only when its landed content has a segment home AND its unlanded
-    remainder is registered in a residue file routed by outline row. "Integrated"
-    asserts the *pair*, not full absorption. (Earned from the orientation-gate
-    note: claim landed, five design points owed — filing it integrated would have
-    been true of the claim and false of the note.)
+  |segment[integrated-is-disposable] :status corrected
+    **The delete-test, which is the estate's actual law (Joseph, 2026-08-06):
+    nothing moves to .integrated/ unless all of its results and information are
+    truly disposable or already landed — once integrated, assume it disappears.**
+    A residue register is a TODO queue, not integration; registering a remainder
+    does not make the source disposable. .archive/ has its own delete-test: the
+    live original exists and is authoritative, so the copy loses nothing.
+    Anything failing both tests is NOT DONE and stays in INFLUX, however many
+    passes have touched it.
+    History, kept per integration-is-replacement: this norm replaces a deleted
+    2026-08-05 norm ("integrated-means-remainder-registered") that redefined
+    integrated to fit the dispatches instead of holding the dispatches to the
+    law — the softening move, caught by the steward via the delete-test on
+    2026-08-06, after which .integrated/ was emptied back to honest state.
 
   |cross-references
     [[slug]] everywhere — outline, segments, sidecars. No paths in references;

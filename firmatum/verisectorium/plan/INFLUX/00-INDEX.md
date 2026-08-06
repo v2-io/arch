@@ -1,20 +1,25 @@
 # Verisectorium INFLUX — index
 
-*Refreshed 2026-08-05 (post-batch, single-writer pass). The 2026-08-05 gather has been
-metabolized: five parallel integration chunks drafted segments, registered residue
-(see `plan/residue-*.md` + `plan/INFLUX-DISPATCH-2026-08-05.md`), and dispatched
-everything else to `plan/.integrated/` and `plan/.archive/`.*
+*Corrected 2026-08-06 after the steward applied the delete-test: .integrated/ had been
+used in a weaker sense than the law (nothing is integrated unless all of its results
+and information are truly disposable or already landed — assume it disappears). It is
+now empty; everything that failed the test is back here. .archive/ holds only copies
+whose live originals are verified to exist.*
 
-## Still here, and why
+## Here, and honestly not done
 
-| File | Why it remains |
+| File(s) | State |
 |---|---|
-| `synthesis/live-state-field-reports-2026-08-05.md` | Still residue-bearing (two dispatch passes concurred); health numbers not yet all carried by segments |
-| `instances/deployments.md` | Same — the instance-spectrum detail feeds ch. 11 [[instance-profiles]], not yet drafted |
-| `vera/ennaos-*.md` (2 files) | **Reserved for the Joseph+lead joint VERA session** — deliberately not archived so they surface rather than bury a third time |
-| `00-INDEX.md` (this file) | Archives when the last row above clears; its "Not copied" list is preserved as residue N41 |
+| `synthesis/live-state-field-reports-2026-08-05.md` | Residue-bearing; health numbers not all carried |
+| `instances/deployments.md` | Instance-spectrum detail feeds ch. 11, undrafted |
+| `vera/ennaos-*.md` (2) | Reserved for the Joseph+lead joint VERA session |
+| `synthesis/{scatter-inventory, asf-build-illuminated-model, relata-methods}` | Gather-native; only partially absorbed into segments — relata-methods' transfer map is the largest unabsorbed body |
+| `build/build-issues-survey`, `instances/{synthesis-missed-instances, vivarium-orientation-gate}` | Gather-native; each has named unabsorbed content (e.g. five orientation-gate design points) |
+| `tribunal/{synthesis-scatter, discovery-internal-architecture-2025-09-21, zoetica-tribunal-xml-template}` | Strand maps + two files whose live originals are UNVERIFIED — must not archive until a live home is confirmed |
+| `vera/{00-INDEX, synthesis-scatter}` | Gather maps, partially absorbed |
+| `00-INDEX.md` (this file) | Last to leave |
 
-## Not copied at gather time (preserved list — see residue N41)
+## Not copied at gather time (named absence, preserved)
 
 - Full doc-store report (~3500 lines) — §12.2 extract only
 - Full `PROPOSALS.md` / architectural-proposals portfolios — extracts only
@@ -22,3 +27,4 @@ everything else to `plan/.integrated/` and `plan/.archive/`.*
 - `_self/PRACTICA.md` stub only
 - Twin of the generalization note under `MOVED/udon/.../refine-more/`
 - Training-tree snapshots under `fmt-md/model/training/`
+- **asf `doc/sop/` integration SOPs (audit, spikes, multi-agent)** — never gathered; segments must draft from live sources

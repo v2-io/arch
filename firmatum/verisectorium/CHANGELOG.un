@@ -9,6 +9,20 @@
     What happened and why, past tense, with pointers by [[slug]] or path.
     No vanity narration; entries earn their lines.
 
+|entry[2026-08-06-integrated-delete-test-correction] :date <2026-08-06> :by joseph+claude
+  :scope plan/.integrated (emptied), plan/INFLUX (16 files returned), ONTOLOGY
+  Steward applied the delete-test and the dispatches failed it: .integrated/ held
+  gather-native files whose information was not fully landed, justified by a
+  2026-08-05 norm that redefined "integrated" to fit the dispatches. That norm is
+  deleted (not softened); replaced by |integrated-is-disposable — the estate law:
+  nothing is integrated unless truly disposable or landed; assume it disappears.
+  Copies with verified live originals moved to .archive (their honest bucket);
+  everything else returned to INFLUX. .integrated is now empty, which is the true
+  state: nothing has yet earned it. Steward probes also established the drafted
+  layer is ~60% of the notes' claims with the process-law rows (integration SOPs,
+  absence, DAG-order) the least covered — and the integration SOPs were never
+  gathered at all (added to the named-absence list).
+
 |entry[2026-08-05-influx-batch-integration] :date <2026-08-05> :by claude+5-opus-integrators+sonnet-verifiers+grok
   :scope whole project — INFLUX metabolized, 31 new segments, ONTOLOGY process law
   Five parallel opus integrators (asf+build / udon-analysis+syntheses / tribunal /
