@@ -102,6 +102,51 @@
     this segment replaces those pointers. Goal: when INFLUX is fully
     .integrated/ or .archive/, every segment body still stands.
 
+  |segment[parallel-batch-law] :status provisional
+    Earned 2026-08-05 from the five-way integration batch (two near-collisions on
+    new-slug creation; deps born "illegal" awaiting single-writer row placement).
+    - **Slug creation is the unprotected concurrency surface** — [[write-safety]]'s
+      hazard in the assembly namespace. During a parallel batch: check the outline
+      AND `ls last-adhoc-src/` immediately before Write; where possible, chunk
+      assignments by *claim/chapter* (chapter claims are never chunk-local) and let
+      appendix specimens stay chunk-local (they are measurements of your own
+      material). The lead reserves new slugs on request.
+    - **Dep-validity is evaluated at merge, not at draft time.** A depends: entry
+      naming a slug whose row is still in a drafter's proposed-rows report is
+      work-in-flight, not an error; the checker's mid-batch output must be read
+      accordingly. The error condition is a dep on a slug that no file, row, or
+      pending report anywhere names.
+    - **An appendix segment names its subject, never its consumers** — the citation
+      direction lives in the citing claims and in the outline rows. (Multi-consumer
+      appendices otherwise force a placement-is-outline-only violation.)
+
+  |segment[readable-claims-tripwire] :status provisional
+    The readable-claims norm was violated three more times the day it was minted,
+    by an agent that had read it — names don't fire; tripwires do. Mechanical
+    trigger, added 2026-08-05: **any table, and any number derived from counting
+    more than two things, is appendix-grade** — if one appears while drafting a
+    chapter claim, split the specimen out then and there.
+
+  |segment[provenance-registers] :status provisional
+    Three registers, not two (the third earned by the tribunal chunk):
+    1. **first-hand** — measured/read by this segment's author, dated;
+    2. **live-source** — cited to a path that remains authoritative (with the
+       caution that live trees move: the honest anchor for a moving tree is the
+       live path plus the retained .archive copy);
+    3. **inherited at a stated remove** — taken from a document that itself marks
+       its verification registers (e.g. sweep-verified vs training-recall); the
+       inheriting segment preserves those markers and never lets "a sweep verified
+       this" silently become "this is verified." This distinction is exactly what
+       erodes under turnover; state the remove.
+
+  |segment[integrated-means-remainder-registered] :status provisional
+    .integrated/ has no partial state, so the dispatch rule is: a file may move to
+    .integrated only when its landed content has a segment home AND its unlanded
+    remainder is registered in a residue file routed by outline row. "Integrated"
+    asserts the *pair*, not full absorption. (Earned from the orientation-gate
+    note: claim landed, five design points owed — filing it integrated would have
+    been true of the claim and false of the note.)
+
   |cross-references
     [[slug]] everywhere — outline, segments, sidecars. No paths in references;
     the wikilink resolves by basename. Path-carrying provenance is known to rot

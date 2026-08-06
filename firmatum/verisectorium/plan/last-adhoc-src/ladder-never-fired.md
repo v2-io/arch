@@ -3,39 +3,51 @@ slug: ladder-never-fired
 type: obs
 ---
 
-# Ladder never fired
+# The ladder that never finished
 
-**Summary.** The multi-gate promotion ladder (draft → deps-verified → claims-verified → format-clean → candidate, with Gate 4 emptying Working Notes) is documented widely and almost unused as a completed trajectory; flag-shaped stage values and daily landing dominate.
+*The full count of stage occupancy across vivarium and ASF on 2026-08-05 — the specimen grounding [[state-flags-not-gates]].*
 
-## Observation
+## What happened
 
-Re-checked **2026-08-05** on live frontmatter `stage:` lines:
+Nearly every mature claim corpus in the estate documents a **promotion ladder**: segments are supposed to climb through named stages (draft → deps-verified → claims-verified → format-clean → candidate, with Gate 4 requiring Working Notes empty at the top). The ladder is real prose — FORMAT, SOPs, audit instructions. Agents and humans talk about “promoting” and “gates.”
 
-| Instance | What was counted | Result |
+On 2026-08-05, as part of checking whether that process was *lived*, the stage field was counted on disk rather than assumed from the documentation.
+
+**Vivarium** is the most actively worked claim surface in the sample: 115 files under `core/src/`, all touched in recent weeks, FORMATs and gates fully articulated. Every one of them carries `stage: draft`. Not mostly draft — **all 115**. Nothing has left the first flag.
+
+**ASF** (all four components’ live `src/*.md`, excluding `old-*` archaeology) is the corpus with the richest ladder vocabulary in use:
+
+| `stage:` value | Count (2026-08-05) |
+|---|---|
+| draft | 200 |
+| deps-verified | 23 |
+| claims-verified | 18 |
+| exploratory | 2 |
+| format-clean | **0** |
+| candidate | **0** |
+
+So ASF *does* use mid-ladder flags. What it does **not** do is finish the documented trajectory: the terminus stages that Gate 4 was written for never appear. There is no population of segments sitting at “ready for external challenge with Working Notes gone.”
+
+The practical consequence is visible without a second instrument: work that *feels* most advanced still carries heavy Working Notes, because nothing ever gets the “empty the notes” gate as a real destination. Landing and refining continue; the ladder’s top rungs do not.
+
+## The numbers
+
+| Measure | Value | As of |
 |---|---|---|
-| vivarium `core/src` | 115 segment files | **115 × `stage: draft`** (100%) |
-| asf all four components `*/src/*.md` (non-`old-*`) | `stage:` lines | **200 draft · 23 deps-verified · 18 claims-verified · 2 exploratory** |
-| asf, top of ladder | `format-clean` / `candidate` as stage values | **0** in this pass |
+| vivarium segments | 115 | 2026-08-05 |
+| vivarium `stage: draft` | **115 / 115** | same |
+| asf live segments with a `stage:` line | 243 | same (sum of table) |
+| asf at `format-clean` or `candidate` | **0** | same |
+| asf at mid-ladder (deps- or claims-verified) | 41 | same |
 
-So:
+## Method & scope
 
-- vivarium (115 segments) has **never left draft** as a stage value in this count.
-- ASF has real mid-ladder occupancy (deps-verified / claims-verified) but **no** `format-clean` or `candidate` stages observed — the designed terminus of the ladder does not appear in stage values as used.
-- FORMAT’s Gate 4 (empty Working Notes at candidate) therefore has nothing to fire against in the stage field: nothing sits at that terminus.
+Shell count of `^stage:` lines under `vivarium/core/src/` and `asf/{01,02,03,04}-*/src/*.md` (excluding `old-*`), then `uniq -c`. One calendar day, two trees. This is **stage-field occupancy**, not an archaeology of every audit that ever ran Gate 1 by hand without updating frontmatter.
 
-## Method
-
-- Shell `grep` of `^stage:` under the listed trees; `uniq -c` (2026-08-05).
-- Does **not** include a full archaeology of every historical Gate 1–4 *practice* in spikes/audits — only **stage field occupancy** as a proxy for “ladder as lived process.”
-
-## Strength and scope
-
-- Supports: **ladder as designed terminus is not how work completes today**; flags/stages are used, full ascent is rare or absent on the trees counted.
-- Does not support: that promotion *work* never happens (ASF has deps-verified and claims-verified); that stages are useless; that Gate 1–3 never run as human practices without updating stage.
-- Honest strength: **strong for “full ladder unused as terminus”** on the trees counted; weaker for “gates never fire as human practices.”
+It shows: the full designed ladder is not how completion is recorded today; flags that *do* get written are mid-course, not terminal. It does **not** show that nobody ever checks dependencies or claims — only that the documented end-state is unused as a stage value on these trees.
 
 ## Working Notes
 
-- Feeds [[state-flags-not-gates]] once that formulation is drafted.
-- If later work populates `candidate` / `format-clean`, update or supersede this obs — the measurement is dated.
-- Unintegrated influx (do not cite as warrant): `plan/INFLUX/synthesis/live-state-field-reports-2026-08-05.md` headline 2 concurred; body warrant is the grep counts above.
+- Keep the table dated; a re-run that finds `candidate` segments collides productively with this obs.
+- Related undrafted: instruments that ignore `old-*` (taught blindness) live near [[corpus-instruments]], not here.
+- Unintegrated influx (do not cite as warrant): live-state field-report headline that first noticed vivarium’s 100% draft; the warrant is the grep above.

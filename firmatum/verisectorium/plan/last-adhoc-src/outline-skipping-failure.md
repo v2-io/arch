@@ -3,34 +3,35 @@ slug: outline-skipping-failure
 type: obs
 ---
 
-# Outline-skipping failure
+# Outline-skipping as a recurring failure mode
 
-**Summary.** Agents repeatedly treat segment files as the primary entry surface and skip or under-use the outline; several live instances treat this as a recurring, costly failure mode and have built gates or norms against it.
+*The full account of how multiple instances treat “agents open segments and skip the outline” as a known, costly pattern — the specimen grounding [[orientation-gate]] and feeding [[outline-as-organizing-principle]].*
 
-## Observation
+## What happens
 
-**Documented as a known failure mode (not a one-off anecdote):**
+A claim corpus’s outline is the front door: order, gaps, importance, the path a new mind is supposed to walk. Segment files are the rooms. Agents under task pressure open rooms — often the ones named in the prompt or the ones that look central — and treat the outline as optional documentation.
 
-1. **vivarium** — Live operator law in `vivarium/ORIENT.md` and `vivarium/CLAUDE.md` (orientation-gate sections): free-read is **outline first**, then ★ starred rows in outline order; agents habitually treat claim segments as “docs you skim after coding” and jump to code; the gate exists because *feeling* oriented (especially post-compaction) is not the substance of having walked the claim surface. Tools: `bin/try-me` / `bin/prove-me` seal `core/src` and issue an outline-driven quiz; pass is scoped to session + compaction generation.
-2. **asf de-novo audit** — Live instructions in `asf/doc/sop/audit.sop/de-novo.sop.md`: the OUTLINE’s linearized order is a **verification target** (topological claim about the dependency graph); skipping to “central” segments is treated as a failure mode for missing load-bearing appendix material and dependency-order breaks.
-3. **asf orientation defaults** — Live agents SOP (`asf/doc/sop/agents.sop.md`): “Read `01-aat-core/OUTLINE.md` first”; ordering lives in OUTLINE, not filenames — defaults that exist because free-form segment browsing is the default temptation.
-4. **comproprium** — Live `the-chain.md` and outline-first norms invent **narrative** and **importance** overlays on top of segment directories, which only pays if the directory alone is not a usable front door.
+That habit has a structural cost: dependency order and “what the corpus says is missing” live in the outline. Skipping it produces work on the wrong claims, audits that miss load-bearing appendices, and code or tools that never learn they are downstream of claims. Compaction makes it worse: after a long session the *feeling* of orientation remains while the free-read of the outline does not.
 
-**Cost (qualitative, named in those sources):** wasted work on wrong segments; audits that miss dependency breaks; code/instrument work that is not claim-governed; post-compaction false confidence.
+## Specimens (live mechanisms, not anecdotes alone)
 
-## Method
+**1. vivarium — enforced free-read.**  
+Live law in `vivarium/ORIENT.md` and `vivarium/CLAUDE.md`: free-read is **outline first**, then ★ starred rows in outline order; only then `bin/try-me` / `bin/prove-me` (seal `core/src`, quiz, commit token). The gate exists *because* agents treat segments as post-hoc docs and jump to code; the pass dies on compaction so false confidence cannot permanently unlock the tree.
 
-- Primary warrant: the live files listed above (ORIENT.md, CLAUDE.md, de-novo.sop.md, agents.sop.md), not secondary summaries.
-- **Not** measured: session-level frequency of outline-open vs segment-open.
+**2. asf — audit and orientation defaults.**  
+Live `asf/doc/sop/audit.sop/de-novo.sop.md`: the OUTLINE’s linearized order is a **verification target**; skipping to “central” segments is an explicit failure mode for missing dependency breaks and appendix load-bearing material. Live `asf/doc/sop/agents.sop.md`: read `01-aat-core/OUTLINE.md` first — ordering lives in the outline, not in filenames.
 
-## Strength and scope
+**3. comproprium — extra front doors.**  
+Live narrative outline (`the-chain.md`) and trigger outlines exist on top of segment directories — effort that only pays if a raw segment directory is not enough of a front door.
 
-- Supports: **the failure mode is recognized often enough that multiple independent mechanisms were built against it**.
-- Does not support: a frequency estimate; that every agent always skips; that outline-first is always optimal for every task type.
-- Honest strength: **recurring qualitative pattern with engineered countermeasures** — stronger than anecdote, weaker than measured incidence.
+## Method & scope
+
+- Warrant: the live files named above (paths under vivarium and asf), read as operator law / SOP.
+- **Not** measured: fraction of sessions that open the outline first (no systematic log).
+
+This shows the failure mode is **recognized and counter-engineered** in multiple places. It does not give a frequency rate.
 
 ## Working Notes
 
-- If incidence metrics ever appear (quiz fails after free-read, commit without orient token), put numbers in the body.
-- Related undrafted: [[outline-as-organizing-principle]], [[orientation-gate]].
-- Unintegrated influx (do not cite as warrant): `plan/INFLUX/instances/vivarium-orientation-gate.md` was a summary of the live ORIENT/CLAUDE material; this segment cites the live sources directly.
+- Incidence metrics (orient failures, commits without token) would upgrade this obs if they ever exist.
+- Unintegrated influx (do not cite as warrant): `plan/INFLUX/instances/vivarium-orientation-gate.md` summarizes ORIENT/CLAUDE; the live files are the sources.

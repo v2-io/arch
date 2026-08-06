@@ -51,6 +51,7 @@
 | drafted | form | form | [[warrant-over-authority]] | Warrant is structurally primary over authority — agents dogmatize whatever the schema makes first-class, so the schema must privilege the truth-serving column |
 | drafted | form | form | [[asked-and-answered]] | Open flags need asked-and-answered states so they stop repeat-billing every fresh agent |
 | proposed | form | | [[history-layer]] | History is a governed layer: changelog vs frozen archaeology, retired-name discipline, record-grain history verbs agents don't reach for unaided |
+| drafted | emp | emp | [[name-collision-across-stores]] | Collision detection runs inside a store and is blind between them — four live referents named "vera", caught only by a hand-written table |
 | | | | --GAP-- | Terminology / lexicon / notation substores: per-term records, append-only decision events, generated views, bounded-context sharing across the estate — critical components, immature even in asf |
 
 ### Chapter 4 — Process II: flux, integration, & the real gates
@@ -105,12 +106,14 @@
 |---|---|---|---|---|
 | proposed | survey | | [[strength-ladders]] | At least three incompatible strength ladders live in the wild; none is a superset — the adjudication this project owes |
 | proposed | form | | [[epistemic-axes]] | Strength × support-kind × convergence (independent failure modes) vs the single status scalar |
-| proposed | form | | [[confidence-calibration]] | Confidence bands and calibration language — the VERA lineage (PROPRIUM qualified truths, ennaos architecture research, vox-vera verbal probabilities, comproprium precepts) |
+| proposed | form | | [[confidence-calibration]] | Confidence bands and calibration language for claim corpora — candidate sources: vox-vera verbal-probability research (measured), comproprium precept practice (live), PROPRIUM VERA (a named slot with a sketch, unreviewed), ennaos research (reserved for joint session) |
 | drafted | form | form | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record, not the verdict, is the product |
 | drafted | form | form | [[discussion-probes]] | Ungrounded-but-plausible interpretive claims are worse than gaps — the paragraph-level probe: derives / hypothesis+falsifier / post-hoc nothing |
 | drafted | form | form | [[evidence-ledgers]] | One log-odds sum, priors held apart, absence ≠ refutation, correlated signals counted once, gate constants at one site with a defended chain |
+| drafted | form | form | [[verbal-label-calibration]] | A strength label is a word; read-spread is measurable per label and no ladder here has been calibrated — the estate applies this research to agent uncertainty, never to its own tier words |
 | drafted | form | form | [[verification-provenance]] | A dangling citation is a truth-status defect; "verified" is derived from events; gating is the deployment's call and evidence-grade is a second axis (specimen: [[gate-profile-divergence]]) |
 | proposed | form | | [[temporal-truth]] | Temporal truth factors: revisit criteria, expiry, re-grading records that predate their governance, check-resets on edit |
+| proposed | norm | | [[proxy-discipline]] | Proxies (outline rows, agent consensus, "verified against file F") locate work and cheap-screen it; they never settle a claim — the norm this corpus already practices unlegislated |
 | | | | --GAP-- | Bayesian propagation across the dependency DAG (how a changed premise re-prices its dependents); special epistemic states |
 
 ### Chapter 9 — Pedagogy & causality

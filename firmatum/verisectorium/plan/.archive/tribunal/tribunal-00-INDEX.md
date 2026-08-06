@@ -2,6 +2,12 @@
 
 *Gathered 2026-08-05 into verisectorium. Copies with provenance banners; not live authority.*
 
+> **Dispatched 2026-08-05 (same day).** Eight of the ten notes have been metabolized and moved: seven to `plan/.integrated/tribunal/`, one (`collaborative-cognition-synthesis.md`) to `plan/.archive/tribunal/`. The segments carrying their content, the per-file reasoning, and everything **not** carried are in [`../../residue-tribunal-2026-08-05.md`](../../residue-tribunal-2026-08-05.md) — read that, not the inventory below, for current state.
+>
+> **Still here, deliberately:** `ref-project-TECHNICAL_ANALYSIS.md` and `ref-documents/` — genuinely un-metabolized, and their content routes into ch. 8 rows (confidence calibration, temporal truth, epistemic axes) drafted by neither this pass nor, so far, anyone. Residue rows R-T7…R-T9 say what is in them. Every live original is verified to exist; cite those, never these copies.
+>
+> The inventory and reading order below are preserved as written at gather time and are now partly historical — file links to dispatched notes will not resolve from here.
+
 The name **epistemic tribunal** has been used for several related but non-identical things across ~2025-08 → 2026-07. This directory collates the main notes; the synthesis file maps the strands.
 
 ---
