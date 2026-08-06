@@ -10,7 +10,7 @@ depends: []
 
 ## The inventory
 
-**1. ASF's single `status:` scalar** (8 values: axiomatic · exact · robust-qualitative · heuristic · conditional · empirical · discussion-grade · sketch). One word carries the whole epistemic position. Strengths: compact, enforceable, deeply exercised (~285 live segments); the vocabulary is itself stored as adjudicated terminology entries with recorded rationale. What it drops: *how* the claim is supported and *what kind* of evidence — a `heuristic` from lived practice and a `heuristic` from one derivation-sketch read identically.
+**1. ASF's single `status:` scalar** (8 values: axiomatic · exact · robust-qualitative · heuristic · conditional · empirical · discussion-grade · sketch). One word carries the whole epistemic position. Strengths: compact, enforceable, deeply exercised (243 live segments as of 2026-08-06, excluding old-* archaeology); the vocabulary is itself stored as adjudicated terminology entries with recorded rationale. What it drops: *how* the claim is supported and *what kind* of evidence — a `heuristic` from lived practice and a `heuristic` from one derivation-sketch read identically.
 
 **2. udon-needs' three axes + convergence** (`register` × `support-kind` × `strength`, plus `convergent:` listing which independent evidence kinds agree, plus an embedded dated `verified:` event log). Strengths: the failure-mode-independence idea made machine-readable — agreement counts only across kinds that fail differently; support and strength can move independently, which is how the axes were discovered to be distinct. Costs: heavy frontmatter; free-text drift observed in its own `stage` values; 30 segments of exercise, one corpus.
 
