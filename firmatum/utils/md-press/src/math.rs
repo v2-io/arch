@@ -13,8 +13,13 @@ use std::process::{Command, Stdio};
 /// Greek singletons live in GREEK_LATEX; this is the operator/symbol set.
 const MATH_GLYPHS: &[char] = &[
     '‖', '→', '↦', '≤', '≥', '≠', '≈', '≡', '·', '×', '∈', '∉', '∞', '±', '∂', '∇', '∑', '∏',
-    '√', '⊂', '⊃', '⊆', '⊇', '∪', '∩', '𝒯', '𝒪', '𝒜', '𝒞', '𝓔', '𝓜',
+    '√', '⊂', '⊃', '⊆', '⊇', '∪', '∩', '∅', '¬', '𝒯', '𝒪', '𝒜', '𝒞', '𝓔', '𝓜',
 ];
+
+/// Script-capital glyphs and the ASCII letter each denotes — so a proposal's
+/// `\mathcal{O}` token-checks against an original that wrote `𝒪`.
+const SCRIPT_LETTERS: &[(char, char)] =
+    &[('𝒯', 'T'), ('𝒪', 'O'), ('𝒜', 'A'), ('𝒞', 'C'), ('𝓔', 'E'), ('𝓜', 'M')];
 
 const GREEK_LATEX: &[(char, &str)] = &[
     ('α', "\\alpha"),
@@ -24,16 +29,29 @@ const GREEK_LATEX: &[(char, &str)] = &[
     ('ε', "\\varepsilon"),
     ('η', "\\eta"),
     ('θ', "\\theta"),
+    ('ι', "\\iota"),
+    ('κ', "\\kappa"),
     ('λ', "\\lambda"),
     ('μ', "\\mu"),
     ('ν', "\\nu"),
     ('π', "\\pi"),
     ('ρ', "\\rho"),
+    ('ξ', "\\xi"),
     ('σ', "\\sigma"),
     ('τ', "\\tau"),
+    ('υ', "\\upsilon"),
     ('φ', "\\phi"),
+    ('χ', "\\chi"),
+    ('ψ', "\\psi"),
     ('ω', "\\omega"),
+    ('ζ', "\\zeta"),
+    ('Γ', "\\Gamma"),
+    ('Θ', "\\Theta"),
+    ('Λ', "\\Lambda"),
+    ('Ξ', "\\Xi"),
     ('Σ', "\\Sigma"),
+    ('Φ', "\\Phi"),
+    ('Ψ', "\\Psi"),
     ('Ω', "\\Omega"),
     ('Π', "\\Pi"),
     ('Δ', "\\Delta"),
@@ -256,7 +274,37 @@ pub fn preserves_prose(original: &str, proposal: &str) -> bool {
             .map(str::to_string)
             .collect()
     }
-    binding_words(&skeleton_original(original)) == binding_words(&skeleton_proposal(proposal))
+    if binding_words(&skeleton_original(original)) != binding_words(&skeleton_proposal(proposal)) {
+        return false;
+    }
+    // One-directional punctuation gate: the proposal may not introduce
+    // punctuation the original lacked (observed: the model turned "¬agency"
+    // into "$\lnot$-agency", minting a hyphen the word-token comparison
+    // cannot see). Losing punctuation into a math span is fine; gaining any
+    // outside one is not.
+    fn punct_counts(s: &str) -> std::collections::HashMap<char, usize> {
+        let mut m = std::collections::HashMap::new();
+        let mut in_math = false;
+        for c in s.chars() {
+            if c == '$' {
+                in_math = !in_math;
+                continue;
+            }
+            if !in_math
+                && !c.is_alphanumeric()
+                && !c.is_whitespace()
+                && !MATH_GLYPHS.contains(&c)
+                && !is_greek(c)
+            {
+                *m.entry(c).or_insert(0) += 1;
+            }
+        }
+        m
+    }
+    let orig_p = punct_counts(original);
+    punct_counts(proposal)
+        .iter()
+        .all(|(c, n)| orig_p.get(c).is_some_and(|o| o >= n))
 }
 
 /// Math-content consistency gate: nothing inside the proposal's `$…$`
@@ -279,6 +327,17 @@ pub fn math_content_consistent(original: &str, proposal: &str) -> bool {
         ("\\cdot", &['·', '*']),
         ("\\times", &['×']),
         ("\\in", &['∈']),
+        ("\\notin", &['∉']),
+        ("\\subset", &['⊂']),
+        ("\\supset", &['⊃']),
+        ("\\subseteq", &['⊆', '⊂']),
+        ("\\supseteq", &['⊇', '⊃']),
+        ("\\cup", &['∪']),
+        ("\\cap", &['∩']),
+        ("\\emptyset", &['∅']),
+        ("\\varnothing", &['∅']),
+        ("\\neg", &['¬']),
+        ("\\lnot", &['¬']),
         ("\\infty", &['∞']),
         ("\\ast", &['*', '∗']),
         ("\\approx", &['≈']),
@@ -353,38 +412,118 @@ pub fn math_content_consistent(original: &str, proposal: &str) -> bool {
     no_cmds
         .split(|c: char| !c.is_ascii_alphanumeric())
         .filter(|t| !t.is_empty())
-        .all(|t| original.contains(t))
+        .all(|t| {
+            original.contains(t)
+                || (t.len() == 1
+                    && SCRIPT_LETTERS.iter().any(|&(g, a)| {
+                        t == a.to_string() && original.contains(g)
+                    }))
+        })
 }
 
-/// Outcome of the math pass on one line.
+/// Deterministic `\(...\)` → `$...$` normalization (house delimiters),
+/// applied only when the interior itself indicates math — a LaTeX command
+/// or a math glyph / Greek letter. A plain parenthetical that happens to be
+/// written `\(...\)` is left alone, as is anything inside code or existing
+/// `$` spans.
+pub fn normalize_paren_math(text: &str) -> String {
+    fn interior_is_math(s: &str) -> bool {
+        let has_cmd = s
+            .as_bytes()
+            .windows(2)
+            .any(|w| w[0] == b'\\' && w[1].is_ascii_alphabetic());
+        if has_cmd || s.chars().any(|c| MATH_GLYPHS.contains(&c) || is_greek(c)) {
+            return true;
+        }
+        // subscript/superscript syntax is math even without commands (M_t)
+        if s.contains('_') || s.contains('^') {
+            return true;
+        }
+        // a short space-free identifier (h, a, M) is a variable, not prose —
+        // nobody writes a one-word parenthetical with \( \) delimiters
+        let t = s.trim();
+        !t.is_empty() && t.len() <= 3 && t.chars().all(|c| c.is_ascii_alphanumeric())
+    }
+    let mut out = String::with_capacity(text.len());
+    let mut in_code = false;
+    let mut in_math = false;
+    let mut i = 0;
+    while i < text.len() {
+        let rest = &text[i..];
+        let c = rest.chars().next().unwrap();
+        match c {
+            '`' if !in_math => in_code = !in_code,
+            '$' if !in_code => in_math = !in_math,
+            '\\' if !in_code && !in_math && rest.starts_with("\\(") => {
+                if let Some(rel) = rest[2..].find("\\)") {
+                    let interior = &rest[2..2 + rel];
+                    if !interior.contains('`') && !interior.contains('$') && interior_is_math(interior)
+                    {
+                        out.push('$');
+                        out.push_str(interior.trim());
+                        out.push('$');
+                        i += 2 + rel + 2;
+                        continue;
+                    }
+                }
+            }
+            _ => {}
+        }
+        out.push(c);
+        i += c.len_utf8();
+    }
+    out
+}
+
+/// Outcome of the math pass on one prose chunk.
 pub enum MathOutcome {
     Unchanged,
     Converted(String),
-    Flagged(String), // reason
+    /// The model stage failed its gates. `reason` says why; the text carries
+    /// any deterministic `\(...\)` normalization that already held (None
+    /// when nothing safe survived — the chunk stays byte-identical).
+    Flagged(String, Option<String>),
 }
 
-/// Run the full per-line pipeline against a model.
-pub fn promote_line(model: &str, line: &str) -> MathOutcome {
-    if !needs_math_pass(line) {
-        return MathOutcome::Unchanged;
+/// Full pipeline on one prose chunk (a paragraph line, heading, or table
+/// cell — the caller hands us parser-delimited prose, never raw markdown
+/// structure): deterministic `\(...\)` normalization, then the model pass
+/// under its three gates against the normalized base.
+pub fn promote_text(model: &str, text: &str) -> MathOutcome {
+    let base = normalize_paren_math(text);
+    let det = if base != text { Some(base.clone()) } else { None };
+    let settle = |reason: String| MathOutcome::Flagged(reason, det.clone());
+    if !needs_math_pass(&base) {
+        return match det {
+            Some(b) => MathOutcome::Converted(b),
+            None => MathOutcome::Unchanged,
+        };
     }
-    match propose(model, line) {
-        Err(e) => MathOutcome::Flagged(format!("model error: {e}")),
+    match propose(model, &base) {
+        Err(e) => settle(format!("model error: {e}")),
         Ok(raw) => {
             let candidate = postprocess(&raw);
-            if candidate == line {
-                MathOutcome::Unchanged
-            } else if !preserves_prose(line, &candidate) {
-                MathOutcome::Flagged("proposal altered prose; left unchanged".into())
-            } else if !math_content_consistent(line, &candidate) {
-                MathOutcome::Flagged("proposal invented math content; left unchanged".into())
+            if candidate == base {
+                match det {
+                    Some(b) => MathOutcome::Converted(b),
+                    None => MathOutcome::Unchanged,
+                }
+            } else if !preserves_prose(&base, &candidate) {
+                settle("proposal altered prose; left unchanged".into())
+            } else if !math_content_consistent(&base, &candidate) {
+                settle("proposal invented math content; left unchanged".into())
             } else if needs_math_pass(&candidate) {
-                MathOutcome::Flagged("residual unpromoted math after conversion".into())
+                settle("residual unpromoted math after conversion".into())
             } else {
                 MathOutcome::Converted(candidate)
             }
         }
     }
+}
+
+/// Back-compat name for the whole-line case.
+pub fn promote_line(model: &str, line: &str) -> MathOutcome {
+    promote_text(model, line)
 }
 
 /// Deterministic R19 fix: `$$` delimiters that already sit on their own

@@ -12,3 +12,5 @@ Input: note that P(o_t | C_<t) is associational
 Output: note that $P(o_t \vert C_{\lt t})$ is associational
 Input: from the Greek πρᾶξις (praxis), meaning action
 Output: from the Greek πρᾶξις (praxis), meaning action
+Input: closure under ∪ and ∩ fails when D ⊃ F
+Output: closure under $\cup$ and $\cap$ fails when $D \supset F$

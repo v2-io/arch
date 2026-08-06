@@ -36,12 +36,12 @@ fn invariants_hold_on_all_fixtures() {
     for dir in ["corpus", "asf-history/before", "asf-history/after"] {
         for path in md_files(&fixture_dir(dir)) {
             let input = fs::read_to_string(&path).unwrap();
-            let once = fmt_md::format(&input);
-            let twice = fmt_md::format(&once);
+            let once = md_press::format(&input);
+            let twice = md_press::format(&once);
             assert_eq!(once, twice, "not idempotent: {}", path.display());
             assert_eq!(
-                fmt_md::render_fingerprint(&input),
-                fmt_md::render_fingerprint(&once),
+                md_press::render_fingerprint(&input),
+                md_press::render_fingerprint(&once),
                 "render changed: {}",
                 path.display()
             );
@@ -69,7 +69,7 @@ fn ground_truth_score_report() {
             continue;
         }
         total += 1;
-        let got = fmt_md::format(&fs::read_to_string(&b).unwrap());
+        let got = md_press::format(&fs::read_to_string(&b).unwrap());
         let want = fs::read_to_string(&a).unwrap();
         if got == want {
             exact += 1;
@@ -104,7 +104,7 @@ fn random_wrap_recovery() {
     for path in md_files(&fixture_dir("asf-history/after")) {
         let clean = fs::read_to_string(&path).unwrap();
         // canonical baseline (some afters carry incumbent residuals):
-        let canon = fmt_md::format(&clean);
+        let canon = md_press::format(&clean);
         // wrap: split long prose lines at a word boundary near a random column
         let wrapped: String = canon
             .lines()
@@ -124,7 +124,7 @@ fn random_wrap_recovery() {
                             end -= 1;
                         }
                         match cur[..end].rfind(' ') {
-                            // avoid split points whose continuation fmt-md
+                            // avoid split points whose continuation md-press
                             // deliberately preserves (definitions, math-led
                             // lines) — recovery is non-unique there by design
                             Some(sp)
@@ -147,7 +147,7 @@ fn random_wrap_recovery() {
             .collect::<Vec<_>>()
             .join("\n")
             + if canon.ends_with('\n') { "\n" } else { "" };
-        let recovered = fmt_md::format(&wrapped);
+        let recovered = md_press::format(&wrapped);
         assert_eq!(
             recovered,
             canon,

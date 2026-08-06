@@ -1,4 +1,4 @@
-//! fmt-md — markdown canonicalizer for the archema program's house standards.
+//! md-press — markdown canonicalizer for the archema program's house standards.
 //!
 //! Phase 1–2 scope: deterministic, structure-aware unwrap of hard-wrapped
 //! prose (PLAN.md §Policy, ratified 2026-07-22): every prose paragraph
@@ -52,17 +52,61 @@ fn quote_depth<'a>(node: &'a AstNode<'a>) -> usize {
     d
 }
 
-fn collect_paras<'a>(root: &'a AstNode<'a>, out: &mut Vec<ProsePara>) {
+/// Where promotable prose lives on one *output* line, for the math pass.
+/// Derived from the same parse that drives the join engine, so code blocks,
+/// frontmatter, and HTML are structurally out of reach — they are never
+/// marked as sites at all.
+#[derive(Debug, Clone, PartialEq)]
+pub enum MathSite {
+    /// Not prose (code, frontmatter, table delimiter row, blank, …).
+    None,
+    /// The whole line is prose (paragraph or heading text).
+    Whole,
+    /// A table row; each range is one cell's content as a byte range into
+    /// the line (comrak sourcepos columns are byte offsets).
+    Cells(Vec<(usize, usize)>),
+}
+
+/// Per-*input*-line prose map gathered from the AST walk; translated to
+/// per-output-line `MathSite`s during emission.
+#[derive(Default)]
+struct ProseMap {
+    /// input lines fully covered by a single-line Paragraph or a Heading
+    whole: std::collections::HashSet<usize>,
+    /// input line -> table-cell byte ranges
+    cells: std::collections::HashMap<usize, Vec<(usize, usize)>>,
+}
+
+fn collect_paras<'a>(root: &'a AstNode<'a>, out: &mut Vec<ProsePara>, prose: &mut ProseMap) {
     for node in root.descendants() {
-        if let NodeValue::Paragraph = node.data.borrow().value {
-            let sp = node.data.borrow().sourcepos;
-            if sp.end.line > sp.start.line {
-                out.push(ProsePara {
-                    start: sp.start.line,
-                    end: sp.end.line,
-                    quote_depth: quote_depth(node),
-                });
+        match node.data.borrow().value {
+            NodeValue::Paragraph => {
+                let sp = node.data.borrow().sourcepos;
+                if sp.end.line > sp.start.line {
+                    out.push(ProsePara {
+                        start: sp.start.line,
+                        end: sp.end.line,
+                        quote_depth: quote_depth(node),
+                    });
+                } else {
+                    prose.whole.insert(sp.start.line);
+                }
             }
+            NodeValue::Heading(_) => {
+                let sp = node.data.borrow().sourcepos;
+                prose.whole.insert(sp.start.line);
+            }
+            NodeValue::TableCell => {
+                let sp = node.data.borrow().sourcepos;
+                if sp.start.line == sp.end.line && sp.end.column >= sp.start.column {
+                    prose
+                        .cells
+                        .entry(sp.start.line)
+                        .or_default()
+                        .push((sp.start.column - 1, sp.end.column));
+                }
+            }
+            _ => {}
         }
     }
 }
@@ -165,6 +209,9 @@ pub struct Classified {
     pub output: String,
     pub gate_output: String,
     pub notes: Vec<Note>,
+    /// One `MathSite` per line of `output`, from the same parse that drove
+    /// the join — the math pass promotes only at these sites.
+    pub math_sites: Vec<MathSite>,
 }
 
 /// Canonicalize: join every multi-line prose paragraph to one logical line.
@@ -172,6 +219,13 @@ pub struct Classified {
 /// (single-line paragraphs are not touched).
 pub fn format(input: &str) -> String {
     format_impl(input, None).output
+}
+
+/// Canonicalize without the classifier, returning the full `Classified`
+/// (the binary uses this so the math pass can see the prose sites even when
+/// the break classifier is unavailable).
+pub fn format_plain(input: &str) -> Classified {
+    format_impl(input, None)
 }
 
 /// Canonicalize with the break classifier consulted on every candidate join
@@ -192,7 +246,8 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
     let opts = options();
     let root = parse_document(&arena, input, &opts);
     let mut paras = Vec::new();
-    collect_paras(root, &mut paras);
+    let mut prose = ProseMap::default();
+    collect_paras(root, &mut paras, &mut prose);
     // comrak hoists footnote definitions in the AST, so traversal order is
     // not source order; sort by span and drop any overlap defensively
     // (not-joining is always the safe direction).
@@ -213,7 +268,20 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
     let mut notes: Vec<Note> = Vec::new();
     let mut out = String::with_capacity(input.len());
     let mut gate = String::with_capacity(input.len());
+    let mut sites: Vec<MathSite> = Vec::new();
     let mut joined_until: usize = 0; // 1-based line already consumed through
+
+    fn site_for(prose: &ProseMap, line_no: usize) -> MathSite {
+        if let Some(c) = prose.cells.get(&line_no) {
+            let mut c = c.clone();
+            c.sort_unstable();
+            MathSite::Cells(c)
+        } else if prose.whole.contains(&line_no) {
+            MathSite::Whole
+        } else {
+            MathSite::None
+        }
+    }
 
     macro_rules! emit {
         ($s:expr) => {{
@@ -226,6 +294,7 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
         // emit untouched lines before this paragraph
         for l in joined_until..para.start - 1 {
             emit!(lines[l]);
+            sites.push(site_for(&prose, l + 1));
         }
         // Partition the paragraph's lines into runs terminated by hard
         // line breaks (which are semantic, R8, and stay). Each run joins
@@ -249,6 +318,7 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
                 // intent-preserving break: flush the run before this line
                 emit!(&acc);
                 emit!(acc_eol);
+                sites.push(MathSite::Whole);
                 acc.clear();
                 run_first = true;
             }
@@ -281,6 +351,7 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
                             out.push_str(acc_eol);
                             gate.push_str(&acc);
                             gate.push_str(acc_eol);
+                            sites.push(MathSite::Whole);
                             if p < 0.85 {
                                 notes.push(Note {
                                     kept: true,
@@ -316,26 +387,30 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
             if solo && !is_para_last {
                 emit!(&acc);
                 emit!(acc_eol);
+                sites.push(MathSite::Whole);
                 acc.clear();
                 run_first = true;
             } else if has_hard_break(content) && !is_para_last {
                 // flush run, preserving the trailing break marker bytes
                 emit!(&acc);
                 emit!(acc_eol);
+                sites.push(MathSite::Whole);
                 acc.clear();
                 run_first = true;
             } else if is_para_last {
                 let t = acc.trim_end().to_string();
                 emit!(&t);
                 emit!(acc_eol);
+                sites.push(MathSite::Whole);
             }
         }
         joined_until = para.end;
     }
     for l in joined_until..lines.len() {
         emit!(lines[l]);
+        sites.push(site_for(&prose, l + 1));
     }
-    Classified { output: out, gate_output: gate, notes }
+    Classified { output: out, gate_output: gate, notes, math_sites: sites }
 }
 
 fn split_eol(raw: &str) -> (&str, &str) {

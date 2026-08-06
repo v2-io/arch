@@ -5,12 +5,12 @@
 //! Every render check passed — correctly, since the rendered document really
 //! was unchanged — so the only possible defence is a declared exclusion.
 
-use fmt_md::exclude::Excluder;
+use md_press::exclude::Excluder;
 use std::fs;
 use std::path::Path;
 
 fn scratch(name: &str) -> std::path::PathBuf {
-    let dir = std::env::temp_dir().join(format!("fmt-md-test-{name}"));
+    let dir = std::env::temp_dir().join(format!("md-press-test-{name}"));
     let _ = fs::remove_dir_all(&dir);
     fs::create_dir_all(&dir).unwrap();
     dir
@@ -26,7 +26,7 @@ fn write(path: &Path, body: &str) {
 #[test]
 fn ignore_file_excludes_matching_paths() {
     let root = scratch("basic");
-    write(&root.join(".fmt-mdignore"), "vault/raw/\n*.generated.md\n");
+    write(&root.join(".md-pressignore"), "vault/raw/\n*.generated.md\n");
     write(&root.join("vault/raw/session.md"), "x\ny\n");
     write(&root.join("vault/notes.md"), "x\ny\n");
     write(&root.join("thing.generated.md"), "x\ny\n");
@@ -42,7 +42,7 @@ fn ignore_file_excludes_matching_paths() {
 #[test]
 fn ignore_file_applies_from_any_ancestor() {
     let root = scratch("ancestor");
-    write(&root.join(".fmt-mdignore"), "**/frozen/**\n");
+    write(&root.join(".md-pressignore"), "**/frozen/**\n");
     write(&root.join("a/b/c/frozen/deep.md"), "x\ny\n");
     write(&root.join("a/b/c/live.md"), "x\ny\n");
 
@@ -54,7 +54,7 @@ fn ignore_file_applies_from_any_ancestor() {
 #[test]
 fn negation_can_readmit_a_file() {
     let root = scratch("negate");
-    write(&root.join(".fmt-mdignore"), "archive/\n!archive/README.md\n");
+    write(&root.join(".md-pressignore"), "archive/\n!archive/README.md\n");
     write(&root.join("archive/raw.md"), "x\ny\n");
     write(&root.join("archive/README.md"), "x\ny\n");
 
@@ -72,7 +72,7 @@ fn no_ignore_file_means_nothing_excluded() {
 }
 
 /// The incident itself, in miniature: a pasted shell script inside a list
-/// item is lazy paragraph continuation to CommonMark, so fmt-md joins it and
+/// item is lazy paragraph continuation to CommonMark, so md-press joins it and
 /// every render check agrees nothing changed. The damage is real and only
 /// exclusion prevents it — this test asserts both halves of that truth so
 /// neither is "fixed" by accident later.
@@ -87,7 +87,7 @@ for d in \"$UDON_SESS\"/*/; do
   echo \"$d\"
 done
 ";
-    let formatted = fmt_md::format(transcript);
+    let formatted = md_press::format(transcript);
     // it really does get joined ...
     assert_ne!(formatted, transcript, "expected the joiner to act here");
     assert!(
@@ -96,8 +96,8 @@ done
     );
     // ... and the render check cannot object, because nothing rendered differently
     assert_eq!(
-        fmt_md::render_fingerprint(transcript),
-        fmt_md::render_fingerprint(&formatted),
+        md_press::render_fingerprint(transcript),
+        md_press::render_fingerprint(&formatted),
         "render-equality is expected to hold; if this ever fails, the \
          justification for exclusions in exclude.rs needs rewriting"
     );
@@ -109,7 +109,7 @@ done
 
 #[test]
 fn udon_extension_is_recognized_regardless_of_case_or_directory() {
-    use fmt_md::exclude::foreign_language;
+    use md_press::exclude::foreign_language;
     assert_eq!(foreign_language(Path::new("OUTLINE.udon")), Some("udon"));
     assert_eq!(foreign_language(Path::new("a/b/c/spec.UDON")), Some("udon"));
     assert_eq!(
@@ -137,7 +137,7 @@ fn udon_attribute_damage_is_invisible_to_render_checks() {
   :date 2025-12-22
   :tags [udon notation design]
 ";
-    let formatted = fmt_md::format(doc);
+    let formatted = md_press::format(doc);
     assert_ne!(formatted, doc, "expected the joiner to act here");
     // Per CORE.md §6.4 a bare value runs to end of line, so once these share
     // a physical line `author` owns the ":date …" and ":tags …" text and the
@@ -150,8 +150,8 @@ fn udon_attribute_damage_is_invisible_to_render_checks() {
         "expected the attribute rows to be joined onto one line; got:\n{formatted}"
     );
     assert_eq!(
-        fmt_md::render_fingerprint(doc),
-        fmt_md::render_fingerprint(&formatted),
+        md_press::render_fingerprint(doc),
+        md_press::render_fingerprint(&formatted),
         "render-equality is expected to hold — that is precisely why the \
          .udon guard cannot be delegated to the gate (see exclude.rs)"
     );
@@ -168,14 +168,32 @@ fn udon_verbatim_blocks_are_flattened_without_objection() {
       def world, do: IO.puts(\"Hello from UDON\")
     end
 ";
-    let formatted = fmt_md::format(doc);
+    let formatted = md_press::format(doc);
     assert!(
         formatted.lines().count() < doc.lines().count(),
         "expected the verbatim block to collapse; got:\n{formatted}"
     );
     assert_eq!(
-        fmt_md::render_fingerprint(doc),
-        fmt_md::render_fingerprint(&formatted),
+        md_press::render_fingerprint(doc),
+        md_press::render_fingerprint(&formatted),
         "render-equality is expected to hold here too"
     );
+}
+
+#[test]
+fn legacy_fmt_mdignore_still_excludes() {
+    // Trees marked up before the 2026-08-06 rename carry .fmt-mdignore; an
+    // exclusion silently expiring because the tool changed its name would be
+    // the exact accident this module exists to prevent. Both names combine.
+    let root = scratch("legacy");
+    write(&root.join(".fmt-mdignore"), "transcripts/\n");
+    write(&root.join(".md-pressignore"), "*.generated.md\n");
+    write(&root.join("transcripts/raw.md"), "x\ny\n");
+    write(&root.join("out.generated.md"), "x\ny\n");
+    write(&root.join("prose.md"), "x\ny\n");
+
+    let mut ex = Excluder::new();
+    assert!(ex.excluded(&root.join("transcripts/raw.md")).is_some());
+    assert!(ex.excluded(&root.join("out.generated.md")).is_some());
+    assert!(ex.excluded(&root.join("prose.md")).is_none());
 }

@@ -1,6 +1,10 @@
-# fmt-md status
+# md-press status
 
-*Updated 2026-07-29 (the `.udon` guard); body otherwise as of 2026-07-22, end of founding session.*
+*Updated 2026-08-06 (renamed from `fmt-md`; parser-sited math pass); `.udon` guard 2026-07-29; body otherwise as of 2026-07-22, end of founding session.*
+
+## Renamed fmt-md → md-press (2026-08-06)
+
+Joseph's call, same session as the math-pass rework: still descriptive, pronounceable, memorable ("press" carries both the ironing and printing-press senses). Compat kept in two places: `.fmt-mdignore` files are honored equally and indefinitely alongside `.md-pressignore` (pinned by test — an exclusion must never expire because the tool changed its name), and `~/.cargo/bin/fmt-md` is a shim script that prints a deprecation notice to stderr and execs `md-press "$@"`, so stale instructions in older docs/memories keep working while telling their reader to update. Env vars renamed `FMT_MD_*` → `MD_PRESS_*`.
 
 ## The `.udon` guard (2026-07-29)
 
@@ -42,6 +46,18 @@ Deterministic join-all per the ratified policy — no statistics, no flags in th
 - Preserved breaks, each a crisp category: CommonMark hard breaks (trailing `  `/`\`); definition-looking continuations (`[^x]:`/`[x]:` — CommonMark parses them as lazy continuation but the author meant a definition, R15e); standalone eq-tags (`*[Definition (…)]*`); whole-line single-span math; equation-after-colon (line ending `:` announces the `$…`-led line that follows — the house pseudo-display idiom, recovered from the March pairs).
 - Footnote-definition hoisting in comrak's AST handled (spans sorted; overlaps dropped toward not-joining).
 - The binary refuses to write any file whose result would change the rendered document (built-in render-equality gate, exit 2 + report).
+
+## Math pass rework — parser-sited (2026-08-06)
+
+The math pass no longer scans raw output lines with its own fence toggle; it promotes only at **prose sites the unwrap parse identified** (`MathSite` per output line in `Classified`): whole paragraph/heading lines, or table cells individually (comrak sourcepos columns are byte offsets; verified by test). Code blocks, frontmatter, and HTML have no sites and are structurally out of reach — the ruling that motivated this (Joseph, 2026-08-06, on `asf-agent-scopes.md`): hand the model parser-delimited prose pieces, never markdown structure, and no second parse. Cells keep their padding (promotion runs on the trimmed interior) and a proposal may not change the line's `|` count.
+
+Same session, three gate/coverage fixes, each pinned by a test in `tests/math.rs`:
+
+- **Detector/consistency-map sync.** `⊃ ⊂ ⊆ ⊇ ∪ ∩ ∉ ∅ ¬` fired the detector but their LaTeX commands were missing from the consistency map, so a *correct* proposal could never pass. Map filled in; Greek table completed (κ ξ ζ χ ψ ι υ + capitals); script capitals (`𝒪` → `\mathcal{O}`) token-check via `SCRIPT_LETTERS`.
+- **Deterministic `\(…\)` → `$…$` normalization** (`normalize_paren_math`), applied before the model when the interior indicates math (LaTeX command, math glyph/Greek, `_`/`^`, or a short space-free identifier — `\(see above\)` stays prose). On a flagged line the deterministic part survives (`MathOutcome::Flagged` carries it); stderr says so.
+- **One-directional punctuation gate** in `preserves_prose` — the previously documented tolerance bit for real: the model turned `¬agency` into `$\lnot$-agency`, invisible to word-token comparison. A proposal may lose punctuation into a span but may not mint any outside one.
+
+One prompt example pair added (set operators — the model had been choosing `\succ` for `⊃`).
 
 ## Math pass (model-assisted, landed 2026-07-22 evening)
 
