@@ -32,9 +32,9 @@
 | drafted | form | form | [[multiple-views]] | A view is cheap and an atom is expensive — serve a new audience with a new view, and where a view will not fit, omit rather than fork |
 | drafted | form | form | [[selection-and-projection]] | A view performs two distinct operations — selecting which records appear and projecting which parts of each appear; the second is what makes records evergreen, and is the one that gets hardcoded |
 | drafted | form | form | [[view-edge-metadata]] | View-local metadata is an attribute of the membership edge; authored views are canonical about their own fields, generated ones about nothing (specimen: [[stage-denorm-zero-drift]]) |
-| proposed | form | | [[dependency-order-tension]] | When a view's order must validate against atom dependencies, and what an accepted violation is (relation-keyed exception stores) |
+| drafted | form | form | [[dependency-order-tension]] | Outline order and dependency order diverge legitimately — the check runs, intended inversions are relation-keyed records with cited reasons, staleness self-reports |
 | drafted | form | form | [[appendix-placement]] | Appendices sit at the bottom of the outline even when they are DAG dependencies — reader's path and verifier's path run opposite directions |
-| proposed | norm | | [[absence-as-structure]] | Missing structure is marked visibly (gap rows, residue stores, censuses) without predicting inventory — absence handling is what actually rots estate-wide |
+| drafted | norm | norm | [[absence-as-structure]] | Absence is marked in structure without predicting content: bare gaps, do-not-resurrect stores, named not-copied lists — unmarked is a hole, over-marked is false structure |
 | | | | --GAP-- | Hotness / importance ranking feeding the outline so study-order keeps outline flow (the view half lives here; methodology is [[hotness-methodology]], ch. 14) |
 | | | | --GAP-- | The estate layer: cross-instance references, many verisectoria per program, relocation without rot, concept coherence across members |
 
@@ -59,7 +59,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | drafted | form | form | [[influx-queues]] | "You erred" and "I am unsure" are different speech acts; typed residue must be stored, not reported (specimen: [[queue-typing-specimen]]) |
-| proposed | form | | [[integration-metabolism]] | Archive-everything-then-adjudicate-only-improvements: the cycle that ends rediscovery chaos and orders discoveries automatically |
+| drafted | form | form | [[integration-metabolism]] | Integration is replacement, and integrated means disposable: the delete-test — landed or truly disposable, else not done, however many passes touched it |
 | proposed | form | | [[observable-crossings]] | Layer crossings should be recorded events, so integration backlog is a countable queue rather than a vibe |
 | drafted | form | form | [[layer-speeds]] | Fast strata feed slow canon; rate failure and sensitivity failure are separate, early promotion is priced not forbidden, and separation can be bought on a cadence |
 | proposed | norm | | [[gates-need-destinations]] | A gate exists only where there is a destination — an assurance something qualifies to be moved or treated differently; everything else is state |
@@ -150,6 +150,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | drafted | form | form | [[derived-vs-authored]] | Derivedness is declared by construction (location, naming, banners, clobber guards) — the failure is not that someone edits a generated file, it is that the edit works for a while |
+| drafted | form | form | [[assembly-intermediate]] | Render to a durable intermediate before any final form — the assembled markdown is the citable artifact; every final form is one rendering of it |
 | drafted | form | form | [[multi-renderer-constraints]] | A second renderer narrows authorable notation to the intersection of targets; the rule must be recorded with its cause or the next careful author relaxes it |
 | proposed | form | | [[semantic-indexing]] | Search/discovery indexing wants declared boundaries: chunking, identity, and context that travels with a fragment |
 | | | | --GAP-- | Low-level lint/format mechanics (fmt-md, lint-md, render-equality gates); storage layouts; build-implementation surveys |
