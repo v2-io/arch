@@ -105,7 +105,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | drafted | survey | survey | [[strength-ladders]] | Five incompatible strength vocabularies live in the family; three non-redundant dimensions recur (strength / support-kind / ceiling) and grain varies clause→directory — the adjudication is owed, not made here |
-| proposed | form | | [[epistemic-axes]] | Strength × support-kind × convergence (independent failure modes) vs the single status scalar |
+| drafted | form | form | [[epistemic-axes]] | Strength, support-kind, and ceiling move independently; agreement raises strength only across independent failure modes; two labels earn separation where they route to different repairs |
 | proposed | form | | [[confidence-calibration]] | Confidence bands and calibration language for claim corpora — candidate sources: vox-vera verbal-probability research (measured), comproprium precept practice (live), PROPRIUM VERA (a named slot with a sketch, unreviewed), ennaos research (reserved for joint session) |
 | drafted | form | form | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record, not the verdict, is the product |
 | drafted | form | form | [[discussion-probes]] | Ungrounded-but-plausible interpretive claims are worse than gaps — the paragraph-level probe: derives / hypothesis+falsifier / post-hoc nothing |
