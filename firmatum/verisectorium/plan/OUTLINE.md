@@ -141,7 +141,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | proposed | form | | [[generator]] | Answer key questions → everything needed is built → point agents at it and let loose: the central deliverable |
-| proposed | norm | | [[derivation-not-templates]] | Every generated choice traces to a principle (ch. 7) — customization is derivation, not template-picking |
+| drafted | norm | norm | [[derivation-not-templates]] | Every generated choice traces to a principle and an answer — copying forms transmits shape; only derivation transmits fit |
 | proposed | form | | [[instance-profiles]] | Profiles over the Part I concerns: atom vocabulary, view set, state-flag set, flux membranes, orientation scaffold, release wiring |
 | | | | --GAP-- | The question-set itself; migration of existing ad-hoc instances (including this one) through the generator |
 
