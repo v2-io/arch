@@ -113,6 +113,8 @@ The vivarium gate as implemented covers doctrina only; the unstated intention [J
 
 Plain-word fallbacks if the Latin register doesn't take: domain-orientation / process-orientation / undertaking. *(Labels are discussion-grade candidates; Organ II's naming criteria apply before any of them canonicalize.)*
 
+**Evidence specimen (2026-08-06, single-estate, near-controlled).** The theory-misfire and the current founding were the same task on the same estate with the same model class; the operative difference was orientation depth — the misfire's lead read partially and by selection (its own disclosure records the SOPs never opened, theory met through summaries), the refounding was preceded by steward-directed full first-hand reading. The misfire's own agent, reviewing the refounded outline, attributed the categorical quality gap to "truly orienting instead of 'sufficient' orientation." Same-estate evidence, and the reviewer is not independent of the compared work — but it is the sharpest specimen yet for the doctrina claim, and for "sufficient-feeling orientation" being the trap the gate exists to catch.
+
 ## 7. Upgrade propagation — instances subscribe
 
 *[C mechanism, J-endorsed, + J's direct-line caveat]*
@@ -142,6 +144,6 @@ From the baseline, not yet reworked here: essential template · question/answer 
 
 - **Exemplars' home** — the baseline's bigger-picture list names exemplars (commits, segments, epistemology, delegation) and the corpus-teaches-by-example force argues they're a first-class store or designated canon subset, not an afterthought. Unplaced.
 - **Telos / ethos** — appeared in the baseline's final line before truncation; placement undecided (candidate: frontdoor's doctrina layer, or a fourth small store).
-- **"There also may be…"** — the steward's interrupted continuation; append to the baseline file when it arrives and fold here.
+- **"There also may be…"** — the steward's interrupted continuation never arrived in-band; the baseline moved to `.integrated/` 2026-08-06 with this thread still open. Any continuation now arrives as a fresh brainstorm file in this directory and folds here.
 - ~~**`fmt-md --math` rename** — flagged [J]~~ *resolved 2026-08-06: the tool is now `md-press` (global memory updated; `fmt-md` on PATH is a deprecation shim), and `--math` now operates on parser-identified prose sites with per-chunk gates — structurally out of reach of markdown/code, i.e. the I₂ "gated-generative" law implemented more deeply. `md-press --math` is the I₂ exemplar to cite in segments.*
 - **~70% I₁ inner-loop target** — hypothesis-grade; worth an eventual observation-store measurement rather than adoption as norm. *(The udon-needs 60/30/6/4 crystallized-process thesis is its lineage, not its corroboration — same author throughout; see `../instrumenta/REGISTER-RULING.md`, which governs all label inheritance from that gather.)*
