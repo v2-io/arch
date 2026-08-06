@@ -70,7 +70,7 @@
     Raw material (obs/survey: specimens, counts, method detail) lives in the
     **Appendices part** of the outline and is cited by the claims it grounds — even
     though it is upstream in the dependency DAG. See [[appendix-placement]] for the
-    principle and [[path-provenance-rots]] + [[provenance-rot-specimen]] as the
+    principle and [[identities-over-locations]] + [[provenance-rot-specimen]] as the
     worked exemplar pair (readable claim in chapter · full specimen in appendix).
     Test for the split being right: the claim is understandable without the
     appendix; the appendix carries the verification load without the claim.

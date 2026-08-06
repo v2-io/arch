@@ -5,7 +5,7 @@ type: obs
 
 # The comproprium provenance-rot specimen
 
-*The full account of the week the comproprium corpus's quotation-provenance broke en masse while its slug references survived — the specimen grounding [[path-provenance-rots]].*
+*The full account of the week the comproprium corpus's quotation-provenance broke en masse while its slug references survived — the specimen grounding [[identities-over-locations]].*
 
 ## What happened
 

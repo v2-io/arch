@@ -16,7 +16,7 @@
 | -------- | ---------------- | ---- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | proposed | def              |      | [[atom]]                        | An atom is a typed record with stable slug identity, a present-truth body, and declared companions                                                                      |
 | proposed | form             |      | [[slug-identity]]               | Slug = identity is the pattern's one proven move-proof invariant; identity never carries order or path                                                                  |
-| drafted  | emp              | emp  | [[path-provenance-rots]]        | Path-carrying provenance rots silently under ordinary reorganization; slug identity survives (specimen: [[provenance-rot-specimen]])                                    |
+| drafted  | emp              | norm | [[identities-over-locations]]   | References carry identities (slug / slug+section+span), never paths, positions, or presentation numbers (specimen: [[provenance-rot-specimen]])                         |
 | proposed | form             |      | [[atom-as-cluster]]             | An atom is a cluster: body + working notes + events + companions, on different clocks                                                                                   |
 | proposed | form             |      | [[write-semantics-declaration]] | Write semantics (integration-is-replacement vs append-only) is a per-type declaration, not a corpus-wide law                                                            |
 | proposed | form             |      | [[atom-grain-parallelism]]      | Atom grain is chosen partly for parallelism: fact-grain atoms with their own confidence bands enable delegation and piecewise truth-propagation                         |
@@ -182,7 +182,7 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| drafted | obs | obs | [[provenance-rot-specimen]] | Full account: comproprium reorg broke 106/109 path-anchored spans, 18/18 slug refs survived; the checker was disabled by the move it existed to catch (grounds [[path-provenance-rots]]) |
+| drafted | obs | obs | [[provenance-rot-specimen]] | Full account: comproprium reorg broke 106/109 path-anchored spans, 18/18 slug refs survived; the checker was disabled by the move it existed to catch (grounds [[identities-over-locations]]) |
 | drafted | obs | obs | [[ladder-never-fired]] | The four-gate promotion ladder has never fired anywhere in the estate; flag-shaped mechanisms are used daily |
 | drafted | obs | obs | [[type-vocabulary-locality]] | The shape is portable; the type vocabulary is not, and should not be |
 | drafted | survey | survey | [[view-genres]] | The view family observed live: pedagogical outlines, build manifests, narrative views, views over not-yet-existing segments, nested outlines |
