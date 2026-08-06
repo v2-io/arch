@@ -123,7 +123,7 @@
 | proposed | form | | [[experiential-reading]] | Predict → read → record the delta → wander → predict next: deep comprehension, causal-gap detection agents otherwise cannot do, wondering-notes as harvestable pedagogy |
 | proposed | form | | [[dag-vs-exposition]] | The dependency-DAG vs exposition-order tension as a pedagogical question, and what agents' silent self-repair hides from them |
 | proposed | form | | [[plain-language-briefs]] | Feynman-criterion briefs: a thoughtful non-specialist can re-derive the qualitative claim from the analog alone |
-| proposed | form | | [[pedagogy-layering]] | Respectful pedagogy: mental model first, precision second; the analog must be isomorphic, not merely evocative |
+| drafted | form | form | [[pedagogy-layering]] | Mental model first, precision second; the analog must be isomorphic, not evocative — scaffolding that overclaims is worse than none |
 | | | | --GAP-- | Bridge/gloss segment kinds; misconception censuses harvested from wondering-notes; pedagogy's seam with onboarding (ch. 5) |
 
 ### Chapter 10 — Complex pipelines
