@@ -43,12 +43,12 @@
 |---|---|---|---|---|
 | proposed | form | | [[working-notes-sidecar]] | Working Notes is the ubiquitous per-atom sidecar — forward residue, not history-dump — present in nearly every instance under some name |
 | proposed | norm | | [[working-note-lifecycle]] | What earns a note, how notes retire, and why retirement backlog is where steady-state is won or lost |
-| proposed | form | | [[state-flags-not-gates]] | Independent resettable state flags (explored / drafted / checked / citations-check…, resetting on edit), in service of Truth: editing a verified segment is careful *and* an advancement |
+| drafted | form | form | [[state-flags-not-gates]] | Independent resettable state flags (explored / drafted / checked…), not a one-way promotion ladder (specimen: [[ladder-never-fired]]) |
 | proposed | form | | [[tracking-altitudes]] | Tracking layers by altitude: navigator → items → cross-cutting proposals; histories and archaeologies kept separate |
 | proposed | form | | [[sidecar-conventions]] | BASENAME / organic-expansion conventions: one callable name, many manifestations over time, sidecars as their own basenames |
-| proposed | form | | [[decision-records]] | Decisions are their own artifact kind: decision distinct from confidence, load-bearing arguments named, revisit-when / expires-on carried |
-| proposed | form | | [[warrant-over-authority]] | Warrant is structurally primary over authority — agents dogmatize whatever the schema makes first-class, so the schema must privilege the truth-serving column |
-| proposed | form | | [[asked-and-answered]] | Open flags need asked-and-answered states so they stop repeat-billing every fresh agent |
+| drafted | form | form | [[decision-records]] | Decisions are their own artifact kind: confidence separate from content, load path named, revisit-when / expires-on carried, coupled hypothesis explicit where one exists |
+| drafted | form | form | [[warrant-over-authority]] | Warrant is structurally primary over authority — agents dogmatize whatever the schema makes first-class, so the schema must privilege the truth-serving column |
+| drafted | form | form | [[asked-and-answered]] | Open flags need asked-and-answered states so they stop repeat-billing every fresh agent |
 | proposed | form | | [[history-layer]] | History is a governed layer: changelog vs frozen archaeology, retired-name discipline, record-grain history verbs agents don't reach for unaided |
 | | | | --GAP-- | Terminology / lexicon / notation substores: per-term records, append-only decision events, generated views, bounded-context sharing across the estate — critical components, immature even in asf |
 
@@ -68,7 +68,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | proposed | form | | [[orientation-scaffold]] | Orientation as a general scaffold with slot-in points for instance-specific SOPs |
-| proposed | form | | [[orientation-gate]] | Enforced orientation where it matters: outline-first free-read, quiz-for-commit-token, passes scoped to session + compaction generation |
+| drafted | form | form | [[orientation-gate]] | Where stakes warrant, free-read of the outline + a cheap check before write access — pass dies with the context (specimen: [[outline-skipping-failure]]) |
 | proposed | norm | | [[priming-discipline]] | Auditor-safe vs priming-heavy surfaces are declared and kept separate (README-auditor pattern, de-novo audit instructions) |
 | proposed | form | | [[role-activation]] | Natural role activation: what makes an instance work must ride its front-door composition, not accumulate accidentally across files and memories |
 | proposed | form | | [[work-coordination]] | Division of work over the atom grain: delegation, peer-voice briefs, harvester briefs, handoff routing (write-safety is ch. 13) |
@@ -105,7 +105,8 @@
 | proposed | survey | | [[strength-ladders]] | At least three incompatible strength ladders live in the wild; none is a superset — the adjudication this project owes |
 | proposed | form | | [[epistemic-axes]] | Strength × support-kind × convergence (independent failure modes) vs the single status scalar |
 | proposed | form | | [[confidence-calibration]] | Confidence bands and calibration language — the VERA lineage (PROPRIUM qualified truths, ennaos architecture research, vox-vera verbal probabilities, comproprium precepts) |
-| proposed | form | | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record as the product |
+| drafted | form | form | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record, not the verdict, is the product |
+| drafted | form | form | [[discussion-probes]] | Ungrounded-but-plausible interpretive claims are worse than gaps — the paragraph-level probe: derives / hypothesis+falsifier / post-hoc nothing |
 | proposed | form | | [[evidence-ledgers]] | Weight-of-evidence discipline: priors vs likelihoods, soft refutation, absence ≠ conflict, correlated signals are one channel |
 | proposed | form | | [[verification-provenance]] | Verification machinery: span-locates-in-primary, empirica-style contracts (a dangling cite is a truth-status defect), standing support audits |
 | proposed | form | | [[temporal-truth]] | Temporal truth factors: revisit criteria, expiry, re-grading records that predate their governance, check-resets on edit |
@@ -153,7 +154,7 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[write-safety]] | Atomic single-placement writes (safe_write and its durable-rename caveats); collision-free event filenames; membranes as the serialization points |
+| drafted | form | form | [[write-safety]] | One record per placement + atomic replace; no concurrent RMW of multi-record files without a membrane (specimen: [[lost-update-hazard]]) |
 | proposed | form | | [[partition-isolation]] | Isolation by partition: layouts declared safe or unsafe for concurrent writers; per-key files make writers filesystem-disjoint |
 | | | | --GAP-- | Same-key contention as surfaced judgment; single-writer membranes; what the git layer does and does not catch |
 
@@ -183,12 +184,15 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | drafted | obs | obs | [[provenance-rot-specimen]] | Full account: comproprium reorg broke 106/109 path-anchored spans, 18/18 slug refs survived; the checker was disabled by the move it existed to catch (grounds [[identities-over-locations]]) |
-| drafted | obs | obs | [[ladder-never-fired]] | The four-gate promotion ladder has never fired anywhere in the estate; flag-shaped mechanisms are used daily |
+| drafted | obs | obs | [[ladder-never-fired]] | Full count: vivarium 115/115 draft; ASF mid-ladder but 0 format-clean/candidate (grounds [[state-flags-not-gates]]) |
 | drafted | obs | obs | [[type-vocabulary-locality]] | The shape is portable; the type vocabulary is not, and should not be |
 | drafted | survey | survey | [[view-genres]] | The view family observed live: pedagogical outlines, build manifests, narrative views, views over not-yet-existing segments, nested outlines |
-| drafted | obs | obs | [[outline-skipping-failure]] | Agents skipping the outline to read segments directly is a recurring failure mode with a known cost |
-| drafted | obs | obs | [[lost-update-hazard]] | Multi-record files under concurrent append lose updates silently, and the loss never reaches git — the DECISIONS-ledger specimen |
+| drafted | obs | obs | [[outline-skipping-failure]] | Full account: vivarium gate + asf audit/orientation SOPs treat outline-skip as known failure (grounds [[orientation-gate]]) |
+| drafted | obs | obs | [[lost-update-hazard]] | Full account: concurrent RMW of multi-record files drops records without a git merge conflict (grounds [[write-safety]]; specimen vivarium DECISIONS log) |
 | drafted | obs | obs | [[coupling-confounding]] | Co-change measurement is confounded by the layout it would justify; only directional asymmetries carry causal weight |
+| drafted | survey | survey | [[tribunal-strand-survey]] | Four distinct designs called "the epistemic tribunal," separately citable — they share a name and a motive, not a design |
+| drafted | survey | survey | [[rationale-capture-survey]] | Design-rationale prior art (IBIS/SEURAT/ADR) with verification registers preserved, and the capture-problem corpse (grounds [[decision-records]], [[tribunal-record]]) |
+| drafted | obs | obs | [[authority-flag-specimen]] | Full account: an agent's eager provenance check aimed at the wrong column, re-raised by several agents, on a record predating its governance (grounds [[warrant-over-authority]], [[asked-and-answered]]) |
 
 ---
 
