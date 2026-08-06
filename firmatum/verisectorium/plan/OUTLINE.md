@@ -80,8 +80,8 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[lifecycle-events]] | Tagging, versioning, checkpointing; freeze-and-supersede as a first-class lifecycle event |
-| proposed | form | | [[living-after-publication]] | Publication is a projection with gates at flux points, not an exit — submitted papers stay living through revisions and backports |
+| drafted | form | form | [[lifecycle-events]] | Tags, checkpoints, and freeze-and-supersede are collection-scale events wanting one recorded form — a freeze without a successor pointer is how estates get half-alive twins |
+| drafted | form | form | [[living-after-publication]] | Publication freezes a rendering, not the atoms — reviewer adjudication, revision, and backport are segment-shaped work arriving after the gate |
 | drafted | form | form | [[pipeline-seams]] | Publication is a loop meeting the corpus at three crossings — outbound rendering, inbound adjudication, and the backport queue (which nothing has yet crossed) |
 | | | | --GAP-- | Ad-hoc views on demand; snapshot semantics; what a released artifact promises about its source segments |
 
