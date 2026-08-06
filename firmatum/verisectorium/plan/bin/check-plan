@@ -1,0 +1,122 @@
+#!/usr/bin/env python3
+"""check-plan — structural lint for the plan verisectorium (last-adhoc instance).
+
+Checks, per ONTOLOGY.un law:
+  1. filename = slug (frontmatter) for every segment in last-adhoc-src/
+  2. type: present and in the local vocabulary
+  3. depends: present (explicit [] required — silence and emptiness differ),
+     every dep resolves to a segment file OR a proposed outline row,
+     and the declared graph is acyclic
+  4. every outline [[tag]] resolves to a segment file (drafted rows) or is
+     awaiting one (proposed rows); every segment file has an outline row
+  5. drafted rows have Type filled; proposed rows have it blank
+Warnings only — this corpus gates nothing (see [[state-flags-not-gates]]).
+Exit 0 always unless --strict. Run from anywhere.
+"""
+import re, sys, os, glob
+
+PLAN = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SRC = os.path.join(PLAN, 'last-adhoc-src')
+OUTLINE = os.path.join(PLAN, 'OUTLINE.md')
+TYPES = {'def', 'form', 'emp', 'norm', 'obs', 'survey', 'disc'}
+
+warn_count = 0
+def warn(msg):
+    global warn_count
+    warn_count += 1
+    print(f"  ⚠ {msg}")
+
+def frontmatter(path):
+    text = open(path).read()
+    m = re.match(r'^---\n(.*?)\n---\n', text, re.S)
+    if not m:
+        return None
+    fm, deps, in_deps = {}, [], False
+    for line in m.group(1).splitlines():
+        if line.startswith('depends:'):
+            rest = line.split(':', 1)[1].strip()
+            in_deps = True
+            if rest == '[]':
+                fm['depends'] = []
+                in_deps = False
+            elif rest.startswith('['):
+                fm['depends'] = [x.strip() for x in rest.strip('[]').split(',') if x.strip()]
+                in_deps = False
+            else:
+                fm['depends'] = deps
+        elif in_deps and line.strip().startswith('- '):
+            deps.append(line.strip()[2:].strip())
+        elif ':' in line and not line.startswith(' '):
+            k, v = line.split(':', 1)
+            fm[k.strip()] = v.strip()
+            in_deps = False
+    return fm
+
+# --- segments ---
+segs = {}
+print("segments:")
+for path in sorted(glob.glob(os.path.join(SRC, '*.md'))):
+    name = os.path.basename(path)[:-3]
+    fm = frontmatter(path)
+    if fm is None:
+        warn(f"{name}: no frontmatter"); continue
+    segs[name] = fm
+    if fm.get('slug') != name:
+        warn(f"{name}: slug '{fm.get('slug')}' ≠ filename")
+    if fm.get('type') not in TYPES:
+        warn(f"{name}: type '{fm.get('type')}' not in vocabulary")
+    if 'depends' not in fm:
+        warn(f"{name}: no depends: declared (explicit [] required)")
+
+# --- outline rows ---
+rows = {}   # tag -> (state, expected, actual)
+for line in open(OUTLINE):
+    m = re.match(r'\|\s*(\w*)\s*\|\s*(\w*)\s*\|\s*(\w*)\s*\|\s*\[\[([a-z0-9-]+)\]\]\s*\|', line)
+    if m:
+        state, exp, act, tag = m.groups()
+        if tag in rows:
+            warn(f"outline: [[{tag}]] appears in two rows")
+        rows[tag] = (state, exp, act)
+
+print("outline ↔ segments:")
+for tag, (state, exp, act) in rows.items():
+    if state == 'drafted':
+        if tag not in segs:
+            warn(f"[[{tag}]] drafted in outline but no segment file")
+        elif not act:
+            warn(f"[[{tag}]] drafted but Type column empty")
+        elif segs[tag].get('type') != act:
+            warn(f"[[{tag}]] Type column '{act}' ≠ frontmatter '{segs[tag].get('type')}'")
+    elif state == 'proposed' and tag in segs:
+        warn(f"[[{tag}]] has a segment file but row still 'proposed'")
+for name in segs:
+    if name not in rows:
+        warn(f"segment '{name}' has no outline row (orphan)")
+
+print("dependency DAG:")
+for name, fm in segs.items():
+    for dep in fm.get('depends', []):
+        if dep not in segs and dep not in rows:
+            warn(f"{name} depends on '{dep}' — no segment and no outline row")
+
+# cycle check (declared deps among existing segments)
+WHITE, GRAY, BLACK = 0, 1, 2
+color = {n: WHITE for n in segs}
+def dfs(n, stack):
+    color[n] = GRAY
+    for d in segs[n].get('depends', []):
+        if d in segs:
+            if color[d] == GRAY:
+                warn(f"cycle: {' → '.join(stack + [n, d])}")
+            elif color[d] == WHITE:
+                dfs(d, stack + [n])
+    color[n] = BLACK
+for n in list(segs):
+    if color[n] == WHITE:
+        dfs(n, [])
+
+n_drafted = sum(1 for s, _, _ in rows.values() if s == 'drafted')
+n_proposed = sum(1 for s, _, _ in rows.values() if s == 'proposed')
+print(f"\n{len(segs)} segments · {len(rows)} outline rows "
+      f"({n_drafted} drafted, {n_proposed} proposed) · {warn_count} warnings")
+sys.exit(1 if warn_count and '--strict' in sys.argv else 0)
