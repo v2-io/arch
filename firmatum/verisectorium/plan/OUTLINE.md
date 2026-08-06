@@ -81,7 +81,7 @@
 |---|---|---|---|---|
 | proposed | form | | [[lifecycle-events]] | Tagging, versioning, checkpointing; freeze-and-supersede as a first-class lifecycle event |
 | proposed | form | | [[living-after-publication]] | Publication is a projection with gates at flux points, not an exit — submitted papers stay living through revisions and backports |
-| proposed | form | | [[pipeline-seams]] | Publishing pipelines (phanero stages) meet the verisectorium at seams/fluxes; what crosses each seam is an adjudicated package |
+| drafted | form | form | [[pipeline-seams]] | Publication is a loop meeting the corpus at three crossings — outbound rendering, inbound adjudication, and the backport queue (which nothing has yet crossed) |
 | | | | --GAP-- | Ad-hoc views on demand; snapshot semantics; what a released artifact promises about its source segments |
 
 ---
@@ -198,6 +198,8 @@
 | drafted | obs | obs | [[gate-profile-divergence]] | One store design, two enforcement regimes: 13/188 vs 70/97 verification coverage on identical machinery (grounds [[verification-provenance]]) |
 | drafted | survey | survey | [[build-forced-commitments]] | Four live pipelines and which model commitments assembly forced each to make (grounds [[multiple-views]], [[selection-and-projection]], [[derived-vs-authored]], [[multi-renderer-constraints]]) |
 | drafted | obs | obs | [[working-notes-deluge]] | Full count: ASF working notes are 27.3% of corpus prose across 232/243 segments, 57.9% of it from one abandoned harvest, 0 segments ever at the drain gate (grounds [[working-note-lifecycle]]) |
+| drafted | survey | survey | [[cousin-store-lineage]] | Four generations of one directory-as-table store: spine copied intact while enforcement diverged — 188/13 vs 97/70 verification density on identical machinery (grounds [[verification-provenance]]) |
+| drafted | obs | obs | [[queue-typing-specimen]] | Two intake queues side by side: relata's typed membrane vs comproprium's untyped INGEST/, 51 of ~108 segment-shaped files unintegrated, .integrated/ empty (grounds [[influx-queues]]) |
 
 ---
 
