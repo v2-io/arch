@@ -175,6 +175,57 @@
 
 ---
 
+## *Part* Deployment Components
+
+*The realization stratum. Part II distills principles the bespoke deployments already lived; this Part carries their **complement** — the components present in zero existing deployments, which is why every launch has been bespoke and why instance-building keeps competing with instance-filling. Provenance is correspondingly weaker: nearly everything here descends from the 2026-08-06 steward brainstorms (`INFLUX/steward-brainstorms/realization-model-v1.md`, which stays live until these rows draft into segments — its texture is not yet fully carried by rows) and from the instrumenta gather, whose labels are governed by `INFLUX/instrumenta/REGISTER-RULING.md`. Rows here are deliberately gappier and more provisional than Part II's; that is honest, not deficient. One load-bearing bridge law is proposed at [[form-canon-praxes-projection]]: deployed instances' praxes are* views over this theory's canon *— defer-don't-fork at program scale — which is how the theoretical canon seeds instance praxes rather than being restated into drift by them.*
+
+### *Chapter* Instrumenta
+
+| Expected<br>Type | Tag | Claim | Max | State |
+|------|-----|-------|-----|-------|
+| Formulation | [[form-instrumenta-cognition]] | The cognition axis: I₀ substrate (OS/git-enforced) · I₁ deterministic · I₂ **gated-generative** (bounded logogenic kernel under a deterministic gate — the law: *logogenic proposes, deterministic disposes*; `md-press --math` as exemplar) · I₃ scaffolded-agent (discrete role, task+result shapes, verification, parameterization); I₂/I₃ read as wrapping-construction instances ( [[asf/aat/der-class-coercion-via-wrapping]]) with tempo cost as the honest price | decided | proposed |
+| Formulation | [[form-instrumenta-invocation]] | Two orthogonal axes replace a single timing scale: **trigger** (invoked / state-triggered / time-triggered / continual) × **mutation** (M₀ observing / M₁ idempotent-mutating / M₂ event-mutating); M₂ is exactly what wants membrane + events, M₀ exactly what is safely delegable by tool-set | decided | proposed |
+| Hypothesis | [[claim-deterministic-share]] | ~70% of inner-loop work belongs at I₁ (fully deterministic); lineage: the steward's earlier 60/30/6/4 crystallized-process thesis, self-adjudicated — same-author coherence, unmeasured (REGISTER-RULING applies) | empirical | proposed |
+| Normative | [[norm-affordance-default]] | Make the right thing the easiest thing: for every high-frequency manual file operation, ship the deliberate affordance (relata-not-hand-edited-bibs; `term`-not-hand-edited-lexicon; observing verbs like `ls-segments` with canon order, orphans shown, flags/counts); generic read/write is the fallback, never the interface; delivery as global pwd-aware instruments à la git/relata | decided | proposed |
+| Formulation | [[form-tool-actor-boundary]] | A tool is invoked with its *how* (essentially) fully specified; an actor receives intent and owns its how — the I₃↔autonomous gradient is the fraction of strategy supplied vs self-formed; orchestration falls outside tool-hood by this test | decided | proposed |
+
+### *Chapter* Actors & Delegation
+
+| Expected<br>Type | Tag | Claim | Max | State |
+|------|-----|-------|-----|-------|
+| Definition | [[def-actor-roles]] | A_steward (accountable; not always present; fiat marked as fiat) · A_coord (concurrent session agents; defining property: **valve access**, the direct steward line) · A_delegate (self-actuated, owns its how, communicates through artifacts and the coord) | axiomatic | proposed |
+| Formulation | [[form-promotion-lattice]] | Promotion is a ladder of deliberation-space grants: I₃ → A_delegate (grant the how) → A_coord (grant the line); positions, not essences — the same agent may occupy different positions in one day; the delegation *register* is the estate-wide discipline, referenced not restated | decided | proposed |
+
+### *Chapter* Store Anatomy
+
+| Expected<br>Type | Tag | Claim | Max | State |
+|------|-----|-------|-----|-------|
+| Formulation | [[form-store-triplet]] | Every instance is at least three stores under one meta-process: canon+influx⁺ · lexicon+influx* · SOP+influx⁺ — with designated influxes: canon's primary = **base material**, SOP's = the **feedback channel** ( [[post-self-governance]] realized) plus the **upgrade channel** | decided | proposed |
+| Formulation | [[form-base-material]] | The founding influx shape: payload-sidecars with **inferred items, one per doc** (NORMS.md's `:item-from-payload?` + auto-template); this corpus's own founding gather as the worked case | decided | proposed |
+| Formulation | [[form-lexicon-realization]] | The lexicon is every store's embedded co-evolving foundation (DDD ubiquitous bounded vocabulary made structural): first-class layout in every instance, term-marking as `[[term/x\|x]]` locally / `#instance/term/x` cross-member; note the direction asymmetry — canon's outline is authored over atoms, lexicon's is generated from them | decided | proposed |
+| Formulation | [[form-sop-realization]] | SOPs are a verisectorium, one level deep, terminating at self-governance-via-own-influx; the observed serving forms (SOP files, prompts, memories, CLAUDE fanouts, in-chat directives, accidental prescriptive phrases, example-implication) are **views over a norm population that currently has no store** — the diagnosis of every scattered-norm symptom; lookup wants a corpus verb | decided | proposed |
+| Formulation | [[form-canon-praxes-projection]] | Instance praxes are *views over the theory canon* with local deltas declared — never restatements; defer-don't-fork lifted to program scale, preventing per-instance SOP drift by construction *(fresh this session; the least-tested load-bearing claim in this Part)* | decided | proposed |
+
+### *Chapter* Orientation Machinery
+
+| Expected<br>Type | Tag | Claim | Max | State |
+|------|-----|-------|-----|-------|
+| Formulation | [[form-orientation-triple]] | Orientation is three distinct elements: **doctrina** (knowing what the canon already knows — the actual reason for gating; agents imitate form once exemplars exist but miss landed domain knowledge) · **praxes** (knowing how work happens here) · **professio** (below); the misfire/refounding contrast is the sharpest specimen for doctrina's primacy | decided | proposed |
+| Formulation | [[form-professio]] | A voluntary, solo-performable, recorded self-declaration: the agent names the specific standards it undertakes for this session, scoped to context lifetime like the orient-token; *owned and revisable, never extracted* — sponsio was retired as too binding for young minds (compulsion failure), assertio deliberately reserved by the steward | decided | proposed |
+| Discussion | [[disc-telos-ethos-placement]] | Where telos and ethos live in a deployed instance — candidate: the frontdoor's doctrina layer (the telos read-first pattern this instance's own README exercises) vs a small fourth store; open | discussion-grade | proposed |
+
+### *Chapter* Launch & Lifecycle
+
+| Expected<br>Type | Tag | Claim | Max | State |
+|------|-----|-------|-----|-------|
+| Formulation | [[form-kit-questionnaire]] | Launch by question/answer discovery: answer key questions → working instance generated; tentative-vs-strong choice marking; core vocabulary mapping *(the steward holds substantial unexteriorized design here — the richest pending brainstorm in the program)* | decided | proposed |
+| Formulation | [[form-exemplar-seeds]] | Exemplary seed atoms are a first-class kit deliverable — the corpus teaches by example harder than by rule, so a template with three beautiful atoms governs behavior more than any FORMAT file *(resolves the exemplars-home open slot)* | decided | proposed |
+| Formulation | [[form-upgrade-propagation]] | Instances subscribe: kit capabilities arrive as influx items on the instance's own SOP membrane, adjudicated locally (adopt / adapt / decline-with-record); two grades — advisory (queued) vs compat-critical (surfaced at frontdoor until dispositioned); publisher-declared, instance-contestable | decided | proposed |
+| Formulation | [[form-config-schema]] | Primary configuration in udon where it fits config shape; schemas per component start bespoke/ad-hoc and evolve toward declared; the instance's tracking stores named at launch | decided | proposed |
+| Formulation | [[form-emission-chain]] | Efflux realization — deliberately thin placeholder: phanero's seven venue-facing stages and the adjudication/backport seam (processing-flow pattern) as the two known chains; deep design deferred until phanero matures ( [[form-efflux-seams]] carries the organ-level law) | decided | proposed |
+
+---
+
 ## *Working Notes (outline-level)*
 
 - **Conventions this outline sets by example (2026-08-06, Joseph-directed):** `State` not `Stage` (states describe; stages ratchet); `proposed` not `missing` (a forward state on a living trajectory, not a defect against a finished whole — and it *is* the typed-absence dialect); `Expected Type` not `Type` (for undrafted segments the type is a prediction drafting may overturn); no `§` column (never earned its place); `[[wikilink]]` cross-references not `#slug` (the `#` form was the worst of all worlds — not an Obsidian tag, not a link, renders poorly); `Max` ceiling column per udon-theory FORMAT §4 (assignable from claim-kind before drafting; a ceiling beside `proposed` is a route). Ceiling rule used here: formulations and normatives cap at `decided` (choices are not truth-apt); hypotheses/observations/empiricals cap at `empirical`; discussions at `discussion-grade`; deriveds judged per-claim. On edit of any drafted segment: reset its checks as appropriate and/or launch a separate agent to re-verify — checks are resettable states, not ratchets.

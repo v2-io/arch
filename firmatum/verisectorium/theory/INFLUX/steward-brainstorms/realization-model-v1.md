@@ -80,7 +80,13 @@ A serving-form obligation follows: the many serving surfaces (memories, CLAUDE f
 canon    + influx⁺   primary influx designated "base material" — the
                      pre-verisectorium substrate the instance is founded on
                      (gathers, notes, prior corpora), plus ordinary influxes
-                     (spike→canon, audit→canon) as needed
+                     (spike→canon, audit→canon) as needed.
+                     [J closing point, 2026-08-06]: the base-material influx
+                     is almost always **payload-sidecars with inferred items,
+                     one item per doc** — NORMS.md's INFLUX draft already
+                     encodes this (`:item-from-payload? true` +
+                     `:item-auto-template` minting an item per payload path),
+                     and this corpus's own founding gather is the worked case
 lexicon  + influx*   terms / lexicon entries; influx optional
 SOP      + influx⁺   primary influx designated the meta-feedback channel
                      (post-self-governance realized), and — possibly as a

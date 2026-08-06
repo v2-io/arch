@@ -1,36 +1,77 @@
 ; PRACTICA — strategic navigator for verisectorium
-; Areas of active work, with priority. Items within areas live in plan/TODO.md and
-; the outline's proposed rows; this stays the top of the strategy DAG.
+; Top of the intention DAG + immediate WIP. Deep material lives in theory/
+; (outline rows, segments, INFLUX); this file stays thin and current.
 ; Vanilla udon, transitional (.un) per NORMS.md.
+; Supersedes HANDOFF.md (archived 2026-08-06): session-boundary state lives
+; HERE (update :updated + area states at every boundary) and orientation
+; lives in theory/sop/ORIENT.md — there is no separate boundary document.
+; Read theory/sop/ORIENT.md before working any area.
 
-|template
-  |area[slug] :priority primary|secondary :state active|paused|done :opened <date>
-    :why one line on why this area matters now
-    :next the single most useful next act, if known
-    Body: whatever orientation the area needs — kept short; deep material
-    belongs in plan/ segments or plan/TODO.md, referenced by [[slug]].
+|practica[verisectorium] :updated <2026-08-06>
 
-|area[discharge-integration-todo] :priority primary :state active :opened <2026-08-06>
-  :why plan/TODO.md (~120 entries, ids stable) is the main remaining work of the
-       notes integration — it was misnamed "residue" and mistaken for done at
-       roughly half; the delete-test governs every source-file departure
-  :next Work entries by outline row, highest-leverage first (R12 retrofit evidence,
-        A12 assembly detail, V8 placement-over-quality, R-T7 strand-A comparison);
-        sources leave INFLUX only when their entries discharge
+|area[deployment-components] :priority primary :state active :opened <2026-08-06>
+  :why Part IV rows (19, five chapters) carve the realization stratum — the
+       components present in zero bespoke deployments; drafting them is what
+       converts the brainstorm into delegable, parallel work
+  :next Draft segments (fork-cluster pattern proven: parent briefs, forks draft
+        src/ only, parent reviews + flips rows). [[form-canon-praxes-projection]]
+        is the least-tested load-bearing claim — wants steward eyes early.
+        realization-model-v1 stays LIVE in INFLUX until its texture lands in
+        segments (delete-test; rows alone do not carry it)
 
-|area[flesh-out-plan-outline] :priority primary :state active :opened <2026-08-05>
-  :why 34 rows remain proposed — steward probes showed process-law rows are the
-       least covered and the most load-bearing
-  :next Ch. 4 [[observable-crossings]] and the integration-SOP material (never
-        gathered — draft from live asf doc/sop/ sources); then ch. 11 instantiation
-  Telos and laws in README + plan/ONTOLOGY.un govern; orient any delegated agent
-  to them BEFORE the task (subagents optimize the finish-line they are handed).
+|area[sop-store] :priority primary :state active :opened <2026-08-06>
+  :why Without our own doctrina+praxes orientation, fidelity does not survive
+       session turnover — the founding coord's context is otherwise the only
+       carrier (steward: the reason this outranks lexicon for now)
+  :next First exercise on the next fresh session; feedback = the store's own
+        influx per [[post-self-governance]]
+
+|area[theory-canon] :priority background :state active :opened <2026-08-06>
+  :why The canon is the seed for instance praxes ( [[form-canon-praxes-projection]]);
+       14 of ~90 rows drafted, foundations spine complete
+  :next Organs IV (adjudication) and VII (experiential) are least-drafted with
+        richest sources waiting
+
+|area[kit-questionnaire] :priority secondary :state waiting-joseph :opened <2026-08-06>
+  :why The launch questionnaire is the kit's economic crux and the steward holds
+       substantial unexteriorized design — the richest pending brainstorm
+  :next Joint session; verbatim capture -> organized v-file (the proven pattern);
+        lands on [[form-kit-questionnaire]]
+
+|area[professio-design] :priority secondary :state waiting-joseph :opened <2026-08-06>
+  :why First-of-kind mechanism, ethics-adjacent (young agents; owned not
+       extracted) — steward-involved by nature, not delegated
+  :next Joint design: what is professed, per-instance standard naming, record
+        shape, quiz-scoping composition; lands on [[form-professio]]
+
+|area[instrumenta-m0] :priority secondary :state ready :opened <2026-08-06>
+  :why First observing verbs test the affordance law on this very corpus and
+       are safely delegable (M0 = read-only by tool-set)
+  :next Spike: `vsect ls-segments` (canon order, orphans after, flags/mtimes/
+        counts) + `check-state` (outline row <-> frontmatter agreement)
 
 |area[vera-joint-session] :priority secondary :state waiting-joseph :opened <2026-08-05>
-  :why Strands 1 and 3 (PROPRIUM VERA, ennaos) reserved for Joseph+lead review
-  :next Session runs from plan/reports/vera-*-inventory + plan/TODO.md V-items;
-        sources wait in plan/INFLUX/vera/
+  :why Carried over from before the refounding and still live: the ennaos VERA
+       strands in theory/INFLUX/vera/ are reserved for Joseph+lead joint review
+  :next Session over the vera gather; feeds Organ III ( [[form-vera-component]])
 
-|area[grok-depends-backlog] :priority secondary :state waiting-grok :opened <2026-08-06>
-  :why Nine pre-DAG-law segments lack depends: declarations (check-plan's 9 warnings)
-  :next Grok's pass; the convention is in plan/ONTOLOGY.un
+|area[lexicon-store] :priority parked :state set-aside :opened <2026-08-06>
+  :why Deliberately behind sop-store (steward call); vocabulary debt accruing
+       and tracked (doctrina/praxes/professio, false nugget, instrumenta/autopax
+       collision, assertio-reserved)
+  :next When picked up: minimal entries per [[form-lexicon-realization]]
+
+|area[epistemology-decision] :priority parked :state deliberately-open :opened <2026-08-06>
+  :why Label system (axes; trio three-axis candidate; claim- prefix reservation)
+       ripens with steward intuition; provisional-frontmatter tax is linear
+  :next Nothing until it ripens; do not force
+
+|area[misfire-adjudication] :priority parked :state indefinite :opened <2026-08-06>
+  :why .archive/theory-misfire carries a standing avoidance advisory (its README)
+  :next Steward-gated, through canon influx, only after the foundation settles
+
+|wip
+  :items [part-iv-segment-drafting sop-store-first-exercise]
+  Parked steward decisions (asked-and-answered lives here until a pending
+  surface exists): wikilink rendering form ([[slug]] vs [[slug| #slug]]);
+  claim- prefix revisit; instrumenta/autopax name collision (Organ II check).

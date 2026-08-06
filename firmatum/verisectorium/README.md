@@ -10,6 +10,7 @@ The shape is portable across deployments (asf, vivarium, relata, comproprium, �
 
 ## Start here
 
+0. **[`theory/sop/ORIENT.md`](theory/sop/ORIENT.md)** — the orientation front door: doctrina, praxes, professio. Read it before substantive work; the numbered items below are its doctrina sequence.
 1. **[`theory/OUTLINE.md`](theory/OUTLINE.md)** — the canonical outline of the theory (Foundations / the Nine Organs / the Process Dual). Its outline-level Working Notes carry the live conventions, open decisions, and their lineage — they are part of the front door, not an appendix.
 2. **[`theory/src/`](theory/src/)** — drafted segments (filename = slug; form-kind prefixes per the outline's conventions).
 3. **[`theory/INFLUX/00-INDEX.md`](theory/INFLUX/00-INDEX.md)** — the gathered evidence base (2026-08-05 estate-wide gather + live-state health reports + asf SOPs + the instrumenta gather + steward brainstorms), **reading substrate, not live authority** — copies carry provenance banners; originals win on conflict, and segments draft from live sources.
@@ -19,11 +20,11 @@ The shape is portable across deployments (asf, vivarium, relata, comproprium, �
 ```text
 verisectorium/
   README.md                 # you are here
-  HANDOFF.md                # session-boundary working surface (newest first)
-  PRACTICA.un               # strategic navigator — predates the 2026-08-06 restart; refresh pending
-  CHANGELOG.un              # history layer — same note
+  PRACTICA.un               # strategic navigator + session-boundary state (replaced HANDOFF)
+  CHANGELOG.un              # history layer — predates the restart; refresh pending
   template/                 # Joseph's; untouched
   theory/
+    sop/ORIENT.md           # orientation front door (the SOP store's seed)
     OUTLINE.md              # canonical outline — the front door for all theory work
     src/                    # drafted segments
     INFLUX/                 # gathered evidence (00-INDEX.md is the map)
