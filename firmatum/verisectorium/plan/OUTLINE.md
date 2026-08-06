@@ -29,7 +29,8 @@
 |---|---|---|---|---|
 | proposed | form | | [[outline-as-organizing-principle]] | The outline is the organizing principle and front-door, not an index — it carries importance, flow, and the glue |
 | proposed | form | | [[outline-as-cognition]] | Reordering and gap-declaring in the outline is critical thinking about the bigger picture — cognition agents cannot perform over concatenated segments |
-| proposed | form | | [[multiple-views]] | Multiple views per substrate, at different rigor levels for different needs, sharing one atom set |
+| drafted | form | form | [[multiple-views]] | A view is cheap and an atom is expensive — serve a new audience with a new view, and where a view will not fit, omit rather than fork |
+| drafted | form | form | [[selection-and-projection]] | A view performs two distinct operations — selecting which records appear and projecting which parts of each appear; the second is what makes records evergreen, and is the one that gets hardcoded |
 | drafted | form | form | [[view-edge-metadata]] | View-local metadata is an attribute of the membership edge; authored views are canonical about their own fields, generated ones about nothing (specimen: [[stage-denorm-zero-drift]]) |
 | proposed | form | | [[dependency-order-tension]] | When a view's order must validate against atom dependencies, and what an accepted violation is (relation-keyed exception stores) |
 | drafted | form | form | [[appendix-placement]] | Appendices sit at the bottom of the outline even when they are DAG dependencies — reader's path and verifier's path run opposite directions |
@@ -42,7 +43,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | proposed | form | | [[working-notes-sidecar]] | Working Notes is the ubiquitous per-atom sidecar — forward residue, not history-dump — present in nearly every instance under some name |
-| proposed | norm | | [[working-note-lifecycle]] | What earns a note, how notes retire, and why retirement backlog is where steady-state is won or lost |
+| drafted | form | form | [[working-note-lifecycle]] | What earns a note is the easy half; retirement needs an occasion that actually arrives, and a drain attached to a stage nobody reaches does not drain |
 | drafted | form | form | [[state-flags-not-gates]] | Independent resettable state flags (explored / drafted / checked…), not a one-way promotion ladder (specimen: [[ladder-never-fired]]) |
 | proposed | form | | [[tracking-altitudes]] | Tracking layers by altitude: navigator → items → cross-cutting proposals; histories and archaeologies kept separate |
 | proposed | form | | [[sidecar-conventions]] | BASENAME / organic-expansion conventions: one callable name, many manifestations over time, sidecars as their own basenames |
@@ -145,8 +146,8 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[derived-vs-authored]] | Derived artifacts are declared derived by construction (clobber guards, naming conventions, banners) — never hand-editable-looking |
-| proposed | form | | [[multi-renderer-constraints]] | One source feeding several renderers imposes notation constraints on the substrate (the single-`$` class of rules) |
+| drafted | form | form | [[derived-vs-authored]] | Derivedness is declared by construction (location, naming, banners, clobber guards) — the failure is not that someone edits a generated file, it is that the edit works for a while |
+| drafted | form | form | [[multi-renderer-constraints]] | A second renderer narrows authorable notation to the intersection of targets; the rule must be recorded with its cause or the next careful author relaxes it |
 | proposed | form | | [[semantic-indexing]] | Search/discovery indexing wants declared boundaries: chunking, identity, and context that travels with a fragment |
 | | | | --GAP-- | Low-level lint/format mechanics (fmt-md, lint-md, render-equality gates); storage layouts; build-implementation surveys |
 
@@ -195,6 +196,8 @@
 | drafted | obs | obs | [[authority-flag-specimen]] | Full account: an agent's eager provenance check aimed at the wrong column, re-raised by several agents, on a record predating its governance (grounds [[warrant-over-authority]], [[asked-and-answered]]) |
 | drafted | obs | obs | [[stage-denorm-zero-drift]] | ASF's checked-but-untrusted duplicated `stage`: 0 mismatches over 168 compared rows (grounds [[view-edge-metadata]]) |
 | drafted | obs | obs | [[gate-profile-divergence]] | One store design, two enforcement regimes: 13/188 vs 70/97 verification coverage on identical machinery (grounds [[verification-provenance]]) |
+| drafted | survey | survey | [[build-forced-commitments]] | Four live pipelines and which model commitments assembly forced each to make (grounds [[multiple-views]], [[selection-and-projection]], [[derived-vs-authored]], [[multi-renderer-constraints]]) |
+| drafted | obs | obs | [[working-notes-deluge]] | Full count: ASF working notes are 27.3% of corpus prose across 232/243 segments, 57.9% of it from one abandoned harvest, 0 segments ever at the drain gate (grounds [[working-note-lifecycle]]) |
 
 ---
 
