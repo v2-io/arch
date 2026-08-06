@@ -9,7 +9,7 @@ type: disc
 
 ## Discussion
 
-**What the theory actually supplies today** (each at its stated tier, from the 2026-08-05 adjudication of the tst-grounding exploration report against the ASF primaries):
+**What the theory actually supplies today** (each at its stated tier, verified first-hand against the live ASF segments — `~/src/arch/asf/` — on 2026-08-05):
 
 - **The pay-early/pay-late asymmetry.** `#der-dual-optimization` (`conditional`): comprehension cost compounds per-reader while implementation cost does not; the turnover multiplier $k$ equals the session count for fully-turning-over agents. This is the strongest single import — it is why structure paid at authoring time is not symmetric with normalization paid at read time.
 - **Layered strata.** `#der-multi-timescale-stability` (`exact`, for continuous dynamics): rate *separation* stabilizes stacked layers; the two pathologies — slow layer acting at fast tempo, slow layer too sensitive to fast transients — are one theorem's two conditions violated separately. **The premises assume continuous dynamics; document edits are jumps** — a gap on AAT's own open list. Only the qualitative structure transfers; exporting the closed-form threshold to documents would be a false claim.
@@ -18,7 +18,7 @@ type: disc
 
 **What the theory does not supply**: any apparatus for schemas or checking, for canonicity or present-truth (collision has no TST analogue — [[collision-staleness-detection]] ), for removal/contraction, or for reader-observability. Claims in those regions stand on estate evidence and their own arguments, and must not borrow the theory's voice.
 
-**The cautionary record, kept on purpose.** In 2026-07 a downstream compression of exactly this material — P1–P6 restated as "advantages," document scorecards, "manufacture" slogans, without identification structure or derivation — was deleted from the udon theory corpus, not demoted (`INFLUX/udon-theory/theory-canon.outline.udon` carries the verdict; the deletion note orders rebuilding *only* from ASF primaries). Separately, the estate's own review found "TST is our grounding here, from first principles" overstating a discussion-grade corollary by roughly two tiers. The norm this history earns: **name the segment, report its tier, or don't invoke the theory.** A hedge does not license the citation; the tier does.
+**The cautionary record, kept on purpose.** In 2026-07 a downstream compression of exactly this material — P1–P6 restated as "advantages," document scorecards, "manufacture" slogans, without identification structure or derivation — was deleted from the udon theory corpus, not demoted — the verdict is recorded in that corpus's own live canon outline and intro segment (`udon/v2/theory/`: "sterilized paste of TST vocabulary … without identification structure, primary derivation, or first-principles chain"; the deletion note orders rebuilding *only* from ASF primaries). Separately, the estate's own review found "TST is our grounding here, from first principles" overstating a discussion-grade corollary by roughly two tiers. The norm this history earns: **name the segment, report its tier, or don't invoke the theory.** A hedge does not license the citation; the tier does.
 
 ## Strength & grounds
 
