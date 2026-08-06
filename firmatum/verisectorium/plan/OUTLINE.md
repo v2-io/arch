@@ -14,21 +14,22 @@
 
 | State    | Expected<br>Type | Type | Tag                             | Summary                                                                                                                                                                 |
 | -------- | ---------------- | ---- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| proposed | def              |      | [[atom]]                        | An atom is a typed record with stable slug identity, a present-truth body, and declared companions                                                                      |
-| proposed | form             |      | [[slug-identity]]               | Slug = identity is the pattern's one proven move-proof invariant; identity never carries order or path                                                                  |
+| drafted | def | def | [[atom]] | An atom is a typed record with stable slug identity, a present-truth body, and declared companions |
+| drafted | form | form | [[slug-identity]] | Slug = identity is the pattern's one proven move-proof invariant; identity never carries order or path |
 | drafted  | emp              | norm | [[identities-over-locations]]   | References carry identities (slug / slug+section+span), never paths, positions, or presentation numbers (specimen: [[provenance-rot-specimen]])                         |
 | drafted | form | form | [[atom-as-cluster]] | An atom is a cluster — body, working notes, events, companions — on different clocks; layout and visibility are separate questions, and events are forced by two independent constraints |
 | drafted | form | form | [[write-semantics-declaration]] | Replace-vs-append is a per-type declaration, not a corpus-wide law; role (record mapping) and regime (write rules) are two axes that must stay apart |
-| proposed | form             |      | [[atom-grain-parallelism]]      | Atom grain is chosen partly for parallelism: fact-grain atoms with their own confidence bands enable delegation and piecewise truth-propagation                         |
+| drafted | form | form | [[atom-grain-parallelism]] | Atom grain is chosen partly for parallelism: fact-grain atoms with their own confidence bands enable delegation and piecewise truth-propagation |
+| drafted | form | form | [[rename-survival-and-families]] | Stable identity is not permanent identity: retired names resolve forever as aliases, and same-claim-different-expression siblings are linked by a mechanical test, never merged |
 |          |                  |      | --GAP--                         | Inner-section schema: cadence vocabularies; section-vs-frontmatter epistemics (the vivarium / udon-needs principled disagreement); machine-readable qualifier placement |
-|          |                  |      | --GAP--                         | Restatements, families, aliases, and same-claim-different-expression links (rename survival; sibling claims linked, never silently merged)                              |
+|          |                  |      | --GAP--                         | Remaining family questions beyond [[rename-survival-and-families]]: cross-store family links; family views                              |
 
 ### Chapter 2 — Order: high-level structure, outlines, & projections
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[outline-as-organizing-principle]] | The outline is the organizing principle and front-door, not an index — it carries importance, flow, and the glue |
-| proposed | form | | [[outline-as-cognition]] | Reordering and gap-declaring in the outline is critical thinking about the bigger picture — cognition agents cannot perform over concatenated segments |
+| drafted | form | form | [[outline-as-organizing-principle]] | The outline is the organizing principle and front-door, not an index — it carries importance, flow, and the glue |
+| drafted | form | form | [[outline-as-cognition]] | Reordering, deleting and gap-declaring in the outline is how thinking about the whole gets done — and the results of that thinking have no expressible form outside a view |
 | drafted | form | form | [[multiple-views]] | A view is cheap and an atom is expensive — serve a new audience with a new view, and where a view will not fit, omit rather than fork |
 | drafted | form | form | [[selection-and-projection]] | A view performs two distinct operations — selecting which records appear and projecting which parts of each appear; the second is what makes records evergreen, and is the one that gets hardcoded |
 | drafted | form | form | [[view-edge-metadata]] | View-local metadata is an attribute of the membership edge; authored views are canonical about their own fields, generated ones about nothing (specimen: [[stage-denorm-zero-drift]]) |
@@ -205,6 +206,8 @@
 | drafted | survey | survey | [[cousin-store-lineage]] | Four generations of one directory-as-table store: spine copied intact while enforcement diverged — 188/13 vs 97/70 verification density on identical machinery (grounds [[verification-provenance]]) |
 | drafted | obs | obs | [[queue-typing-specimen]] | Two intake queues side by side: relata's typed membrane vs comproprium's untyped INGEST/, 51 of ~108 segment-shaped files unintegrated, .integrated/ empty (grounds [[influx-queues]]) |
 | drafted | obs | obs | [[retrofit-specimen]] | The autopax graft: three-day adoption in thin subsystems, Phase 3 (the integrity log) never started, framework absent when that subsystem was finally rebuilt (grounds ch. 11 sequencing) |
+| drafted | obs | obs | [[identity-regime-archaeology]] | Full account: ASF's TST component holds three identity regimes physically side by side — positional numbers, typed labels, slugs — with one claim traceable across all three (grounds [[slug-identity]]) |
+| drafted | obs | obs | [[navigation-relocation-specimen]] | Full account: the pre-outline argument for one-claim-per-file expected the exposition layer to become unnecessary; the corpus grew a richer authored one and regenerated the derived parts (grounds [[outline-as-organizing-principle]]) |
 
 ---
 
