@@ -15,8 +15,11 @@
     |column[state]
       First column so it reads as the row's current condition at a glance.
       Independent resettable flag, not a rung on a ladder. Initial vocabulary:
-      undrafted · drafted · checked. Expect additions (citations-check, prose-check, ...)
+      proposed · drafted · checked. Expect additions (citations-check, prose-check, ...)
       that reset when the segment is edited. Empty on gap rows.
+      `proposed` means: this row is a first iteration of putting the topic on the
+      outline — the row itself is still up for revision — not a definitive segment
+      merely awaiting its draft.
     |column[expected-type]
       What we currently *guess* the segment's type will be, assigned at outline time,
       before drafting. A prediction, deliberately kept once the real type is known,

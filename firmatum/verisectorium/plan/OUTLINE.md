@@ -2,7 +2,7 @@
 
 *2026-08-05 (Joseph + Claude). This is the outline of **the very last ad-hoc verisectorium**: we use the pattern here for its plain utility in launching the project — deliberately NOT as an exemplary or reference instance. The segments directory is named [`last-adhoc-src/`](last-adhoc-src/) on purpose. When the principled instantiation machinery (ch. 11) exists, this instance is a natural candidate for migration through exactly the process ch. 4's migration gap describes. This instance also deliberately trials some tradeoff variations (no type prefixes on slugs; expected-vs-actual type columns; state first) — it is gathering data.*
 
-*Local conventions live in [`ONTOLOGY.un`](ONTOLOGY.un) — column meanings, slug/assembly rules, gap semantics, expected segment shape. Short form: filename = slug in `last-adhoc-src/`, ordering lives here, cross-references use [[slug]], `state` is an independent flag starting `undrafted`, and a `--GAP--` in the Tag column means we don't know how many segments that region will eventually be — the Summary names the main topic or thing to establish.*
+*Local conventions live in [`ONTOLOGY.un`](ONTOLOGY.un) — column meanings, slug/assembly rules, gap semantics, expected segment shape. Short form: filename = slug in `last-adhoc-src/`, ordering lives here, cross-references use [[slug]], `state` is an independent flag starting `proposed` (first iteration of the row on the outline — not definitive-and-awaiting-draft), and a `--GAP--` in the Tag column means we don't know how many segments that region will eventually be — the Summary names the main topic or thing to establish.*
 
 *Verisectorium: the recognition that one pattern keeps establishing itself between Joseph and agents because it is a **solution to 100% agentic turnover in highly complex, living creation projects** — and that its principles stand no matter the substrate. Gathered material awaiting processing: [`INFLUX/00-INDEX.md`](INFLUX/00-INDEX.md).*
 
@@ -12,30 +12,30 @@
 
 ### Chapter 1 — Atom: segments, records, & their inner structure
 
-| State | Expected<br>Type | Type | Tag | Summary |
-|---|---|---|---|---|
-| undrafted | def | | [[atom]] | An atom is a typed record with stable slug identity, a present-truth body, and declared companions |
-| undrafted | form | | [[slug-identity]] | Slug = identity is the pattern's one proven move-proof invariant; identity never carries order or path |
-| undrafted | obs | | [[provenance-rot-specimen]] | The comproprium directory move: 0/18 slug refs broke, 106/109 path-provenance spans broke — the natural experiment |
-| undrafted | form | | [[atom-as-cluster]] | An atom is a cluster: body + working notes + events + companions, on different clocks |
-| undrafted | form | | [[write-semantics-declaration]] | Write semantics (integration-is-replacement vs append-only) is a per-type declaration, not a corpus-wide law |
-| undrafted | form | | [[atom-grain-parallelism]] | Atom grain is chosen partly for parallelism: fact-grain atoms with their own confidence bands enable delegation and piecewise truth-propagation |
-| undrafted | obs | | [[type-vocabulary-locality]] | The shape is portable; the type vocabulary is not, and should not be |
-| | | | --GAP-- | Inner-section schema: cadence vocabularies; section-vs-frontmatter epistemics (the vivarium / udon-needs principled disagreement); machine-readable qualifier placement |
-| | | | --GAP-- | Restatements, families, aliases, and same-claim-different-expression links (rename survival; sibling claims linked, never silently merged) |
+| State    | Expected<br>Type | Type | Tag                             | Summary                                                                                                                                                                 |
+| -------- | ---------------- | ---- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| proposed | def              |      | [[atom]]                        | An atom is a typed record with stable slug identity, a present-truth body, and declared companions                                                                      |
+| proposed | form             |      | [[slug-identity]]               | Slug = identity is the pattern's one proven move-proof invariant; identity never carries order or path                                                                  |
+| proposed | obs              |      | [[provenance-rot-specimen]]     | The comproprium directory move: 0/18 slug refs broke, 106/109 path-provenance spans broke — the natural experiment                                                      |
+| proposed | form             |      | [[atom-as-cluster]]             | An atom is a cluster: body + working notes + events + companions, on different clocks                                                                                   |
+| proposed | form             |      | [[write-semantics-declaration]] | Write semantics (integration-is-replacement vs append-only) is a per-type declaration, not a corpus-wide law                                                            |
+| proposed | form             |      | [[atom-grain-parallelism]]      | Atom grain is chosen partly for parallelism: fact-grain atoms with their own confidence bands enable delegation and piecewise truth-propagation                         |
+| proposed | obs              |      | [[type-vocabulary-locality]]    | The shape is portable; the type vocabulary is not, and should not be                                                                                                    |
+|          |                  |      | --GAP--                         | Inner-section schema: cadence vocabularies; section-vs-frontmatter epistemics (the vivarium / udon-needs principled disagreement); machine-readable qualifier placement |
+|          |                  |      | --GAP--                         | Restatements, families, aliases, and same-claim-different-expression links (rename survival; sibling claims linked, never silently merged)                              |
 
 ### Chapter 2 — Order: high-level structure, outlines, & projections
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[outline-as-organizing-principle]] | The outline is the organizing principle and front-door, not an index — it carries importance, flow, and the glue |
-| undrafted | obs | | [[outline-skipping-failure]] | Agents skipping the outline to read segments directly is a recurring failure mode with a known cost |
-| undrafted | form | | [[outline-as-cognition]] | Reordering and gap-declaring in the outline is critical thinking about the bigger picture — cognition agents cannot perform over concatenated segments |
-| undrafted | form | | [[multiple-views]] | Multiple views per substrate, at different rigor levels for different needs, sharing one atom set |
-| undrafted | survey | | [[view-genres]] | The view family observed live: pedagogical outlines, build manifests, narrative views, views over not-yet-existing segments, nested outlines |
-| undrafted | form | | [[view-edge-metadata]] | View-local metadata (glosses, §-numbers, hotness marks, rendering directives) is data on the membership edge, not on the record |
-| undrafted | form | | [[dependency-order-tension]] | When a view's order must validate against atom dependencies, and what an accepted violation is (relation-keyed exception stores) |
-| undrafted | norm | | [[absence-as-structure]] | Missing structure is marked visibly (gap rows, residue stores, censuses) without predicting inventory — absence handling is what actually rots estate-wide |
+| proposed | form | | [[outline-as-organizing-principle]] | The outline is the organizing principle and front-door, not an index — it carries importance, flow, and the glue |
+| proposed | obs | | [[outline-skipping-failure]] | Agents skipping the outline to read segments directly is a recurring failure mode with a known cost |
+| proposed | form | | [[outline-as-cognition]] | Reordering and gap-declaring in the outline is critical thinking about the bigger picture — cognition agents cannot perform over concatenated segments |
+| proposed | form | | [[multiple-views]] | Multiple views per substrate, at different rigor levels for different needs, sharing one atom set |
+| proposed | survey | | [[view-genres]] | The view family observed live: pedagogical outlines, build manifests, narrative views, views over not-yet-existing segments, nested outlines |
+| proposed | form | | [[view-edge-metadata]] | View-local metadata (glosses, §-numbers, hotness marks, rendering directives) is data on the membership edge, not on the record |
+| proposed | form | | [[dependency-order-tension]] | When a view's order must validate against atom dependencies, and what an accepted violation is (relation-keyed exception stores) |
+| proposed | norm | | [[absence-as-structure]] | Missing structure is marked visibly (gap rows, residue stores, censuses) without predicting inventory — absence handling is what actually rots estate-wide |
 | | | | --GAP-- | Hotness / importance ranking feeding the outline so study-order keeps outline flow (the view half lives here; methodology is [[hotness-methodology]], ch. 14) |
 | | | | --GAP-- | The estate layer: cross-instance references, many verisectoria per program, relocation without rot, concept coherence across members |
 
@@ -43,47 +43,47 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[working-notes-sidecar]] | Working Notes is the ubiquitous per-atom sidecar — forward residue, not history-dump — present in nearly every instance under some name |
-| undrafted | norm | | [[working-note-lifecycle]] | What earns a note, how notes retire, and why retirement backlog is where steady-state is won or lost |
-| undrafted | form | | [[state-flags-not-gates]] | Independent resettable state flags (explored / drafted / checked / citations-check…, resetting on edit), in service of Truth: editing a verified segment is careful *and* an advancement |
-| undrafted | obs | | [[ladder-never-fired]] | The four-gate promotion ladder has never fired anywhere in the estate; flag-shaped mechanisms are used daily |
-| undrafted | form | | [[tracking-altitudes]] | Tracking layers by altitude: navigator → items → cross-cutting proposals; histories and archaeologies kept separate |
-| undrafted | form | | [[sidecar-conventions]] | BASENAME / organic-expansion conventions: one callable name, many manifestations over time, sidecars as their own basenames |
-| undrafted | form | | [[decision-records]] | Decisions are their own artifact kind: decision distinct from confidence, load-bearing arguments named, revisit-when / expires-on carried |
-| undrafted | form | | [[warrant-over-authority]] | Warrant is structurally primary over authority — agents dogmatize whatever the schema makes first-class, so the schema must privilege the truth-serving column |
-| undrafted | form | | [[asked-and-answered]] | Open flags need asked-and-answered states so they stop repeat-billing every fresh agent |
-| undrafted | form | | [[history-layer]] | History is a governed layer: changelog vs frozen archaeology, retired-name discipline, record-grain history verbs agents don't reach for unaided |
+| proposed | form | | [[working-notes-sidecar]] | Working Notes is the ubiquitous per-atom sidecar — forward residue, not history-dump — present in nearly every instance under some name |
+| proposed | norm | | [[working-note-lifecycle]] | What earns a note, how notes retire, and why retirement backlog is where steady-state is won or lost |
+| proposed | form | | [[state-flags-not-gates]] | Independent resettable state flags (explored / drafted / checked / citations-check…, resetting on edit), in service of Truth: editing a verified segment is careful *and* an advancement |
+| proposed | obs | | [[ladder-never-fired]] | The four-gate promotion ladder has never fired anywhere in the estate; flag-shaped mechanisms are used daily |
+| proposed | form | | [[tracking-altitudes]] | Tracking layers by altitude: navigator → items → cross-cutting proposals; histories and archaeologies kept separate |
+| proposed | form | | [[sidecar-conventions]] | BASENAME / organic-expansion conventions: one callable name, many manifestations over time, sidecars as their own basenames |
+| proposed | form | | [[decision-records]] | Decisions are their own artifact kind: decision distinct from confidence, load-bearing arguments named, revisit-when / expires-on carried |
+| proposed | form | | [[warrant-over-authority]] | Warrant is structurally primary over authority — agents dogmatize whatever the schema makes first-class, so the schema must privilege the truth-serving column |
+| proposed | form | | [[asked-and-answered]] | Open flags need asked-and-answered states so they stop repeat-billing every fresh agent |
+| proposed | form | | [[history-layer]] | History is a governed layer: changelog vs frozen archaeology, retired-name discipline, record-grain history verbs agents don't reach for unaided |
 | | | | --GAP-- | Terminology / lexicon / notation substores: per-term records, append-only decision events, generated views, bounded-context sharing across the estate — critical components, immature even in asf |
 
 ### Chapter 4 — Process II: flux, integration, & the real gates
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[influx-queues]] | Ingestion queues with typed residue: promoted / rejected / needs-review are distinct speech acts that must not collapse |
-| undrafted | form | | [[integration-metabolism]] | Archive-everything-then-adjudicate-only-improvements: the cycle that ends rediscovery chaos and orders discoveries automatically |
-| undrafted | form | | [[observable-crossings]] | Layer crossings should be recorded events, so integration backlog is a countable queue rather than a vibe |
-| undrafted | form | | [[layer-speeds]] | Fast exploration strata feed slow canon; adjudication lives at the crossings; speed/adjudication profiles differ per verisectorium |
-| undrafted | norm | | [[gates-need-destinations]] | A gate exists only where there is a destination — an assurance something qualifies to be moved or treated differently; everything else is state |
+| proposed | form | | [[influx-queues]] | Ingestion queues with typed residue: promoted / rejected / needs-review are distinct speech acts that must not collapse |
+| proposed | form | | [[integration-metabolism]] | Archive-everything-then-adjudicate-only-improvements: the cycle that ends rediscovery chaos and orders discoveries automatically |
+| proposed | form | | [[observable-crossings]] | Layer crossings should be recorded events, so integration backlog is a countable queue rather than a vibe |
+| proposed | form | | [[layer-speeds]] | Fast exploration strata feed slow canon; adjudication lives at the crossings; speed/adjudication profiles differ per verisectorium |
+| proposed | norm | | [[gates-need-destinations]] | A gate exists only where there is a destination — an assurance something qualifies to be moved or treated differently; everything else is state |
 | | | | --GAP-- | Whole-outline migration: moving an outline's worth of segments to a different verisectorium — the real gates plus "this snapshot is frozen history, superseded at …"; three partial estate answers not yet put side by side |
 
 ### Chapter 5 — Onboarding: orientation, coordination, & role activation
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[orientation-scaffold]] | Orientation as a general scaffold with slot-in points for instance-specific SOPs |
-| undrafted | form | | [[orientation-gate]] | Enforced orientation where it matters: outline-first free-read, quiz-for-commit-token, passes scoped to session + compaction generation |
-| undrafted | norm | | [[priming-discipline]] | Auditor-safe vs priming-heavy surfaces are declared and kept separate (README-auditor pattern, de-novo audit instructions) |
-| undrafted | form | | [[role-activation]] | Natural role activation: what makes an instance work must ride its front-door composition, not accumulate accidentally across files and memories |
-| undrafted | form | | [[work-coordination]] | Division of work over the atom grain: delegation, peer-voice briefs, harvester briefs, handoff routing (write-safety is ch. 13) |
+| proposed | form | | [[orientation-scaffold]] | Orientation as a general scaffold with slot-in points for instance-specific SOPs |
+| proposed | form | | [[orientation-gate]] | Enforced orientation where it matters: outline-first free-read, quiz-for-commit-token, passes scoped to session + compaction generation |
+| proposed | norm | | [[priming-discipline]] | Auditor-safe vs priming-heavy surfaces are declared and kept separate (README-auditor pattern, de-novo audit instructions) |
+| proposed | form | | [[role-activation]] | Natural role activation: what makes an instance work must ride its front-door composition, not accumulate accidentally across files and memories |
+| proposed | form | | [[work-coordination]] | Division of work over the atom grain: delegation, peer-voice briefs, harvester briefs, handoff routing (write-safety is ch. 13) |
 | | | | --GAP-- | Onboarding for specific recurring roles (de-novo auditor, harvester, integrator, reviewer) with their differing read and priming needs |
 
 ### Chapter 6 — Releasing: tagging, versioning, & lifecycle
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[lifecycle-events]] | Tagging, versioning, checkpointing; freeze-and-supersede as a first-class lifecycle event |
-| undrafted | form | | [[living-after-publication]] | Publication is a projection with gates at flux points, not an exit — submitted papers stay living through revisions and backports |
-| undrafted | form | | [[pipeline-seams]] | Publishing pipelines (phanero stages) meet the verisectorium at seams/fluxes; what crosses each seam is an adjudicated package |
+| proposed | form | | [[lifecycle-events]] | Tagging, versioning, checkpointing; freeze-and-supersede as a first-class lifecycle event |
+| proposed | form | | [[living-after-publication]] | Publication is a projection with gates at flux points, not an exit — submitted papers stay living through revisions and backports |
+| proposed | form | | [[pipeline-seams]] | Publishing pipelines (phanero stages) meet the verisectorium at seams/fluxes; what crosses each seam is an adjudicated package |
 | | | | --GAP-- | Ad-hoc views on demand; snapshot semantics; what a released artifact promises about its source segments |
 
 ---
@@ -94,34 +94,34 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[turnover-solution]] | The pattern is a solution to 100% agentic turnover in complex living projects — the core claim, stated precisely |
-| undrafted | form | | [[session-cycle-ergonomics]] | Agents get concrete start/work/finish cycles without the completion ethos infecting the never-finishable whole |
-| undrafted | form | | [[collision-staleness-detection]] | Present-truth statements can collide; append-only history cannot — collision is the staleness detector |
-| undrafted | disc | | [[first-principles-grounding]] | Honest AAT/TST grounding: identification conditions and transfer obligations at stated tiers — never sloganized compression (the deleted-P*-layer cautionary record) |
-| undrafted | form | | [[substrate-independence]] | The principles stand regardless of implementation technology (markdown, udon, …) |
+| proposed | form | | [[turnover-solution]] | The pattern is a solution to 100% agentic turnover in complex living projects — the core claim, stated precisely |
+| proposed | form | | [[session-cycle-ergonomics]] | Agents get concrete start/work/finish cycles without the completion ethos infecting the never-finishable whole |
+| proposed | form | | [[collision-staleness-detection]] | Present-truth statements can collide; append-only history cannot — collision is the staleness detector |
+| proposed | disc | | [[first-principles-grounding]] | Honest AAT/TST grounding: identification conditions and transfer obligations at stated tiers — never sloganized compression (the deleted-P*-layer cautionary record) |
+| proposed | form | | [[substrate-independence]] | The principles stand regardless of implementation technology (markdown, udon, …) |
 | | | | --GAP-- | Why it works even applied ad-hoc and unevenly — the latent-need account; which properties carry most of the effect |
 
 ### Chapter 8 — Truth & judgment
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | survey | | [[strength-ladders]] | At least three incompatible strength ladders live in the wild; none is a superset — the adjudication this project owes |
-| undrafted | form | | [[epistemic-axes]] | Strength × support-kind × convergence (independent failure modes) vs the single status scalar |
-| undrafted | form | | [[confidence-calibration]] | Confidence bands and calibration language — the VERA lineage (PROPRIUM qualified truths, ennaos architecture research, vox-vera verbal probabilities, comproprium precepts) |
-| undrafted | form | | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record as the product |
-| undrafted | form | | [[evidence-ledgers]] | Weight-of-evidence discipline: priors vs likelihoods, soft refutation, absence ≠ conflict, correlated signals are one channel |
-| undrafted | form | | [[verification-provenance]] | Verification machinery: span-locates-in-primary, empirica-style contracts (a dangling cite is a truth-status defect), standing support audits |
-| undrafted | form | | [[temporal-truth]] | Temporal truth factors: revisit criteria, expiry, re-grading records that predate their governance, check-resets on edit |
+| proposed | survey | | [[strength-ladders]] | At least three incompatible strength ladders live in the wild; none is a superset — the adjudication this project owes |
+| proposed | form | | [[epistemic-axes]] | Strength × support-kind × convergence (independent failure modes) vs the single status scalar |
+| proposed | form | | [[confidence-calibration]] | Confidence bands and calibration language — the VERA lineage (PROPRIUM qualified truths, ennaos architecture research, vox-vera verbal probabilities, comproprium precepts) |
+| proposed | form | | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record as the product |
+| proposed | form | | [[evidence-ledgers]] | Weight-of-evidence discipline: priors vs likelihoods, soft refutation, absence ≠ conflict, correlated signals are one channel |
+| proposed | form | | [[verification-provenance]] | Verification machinery: span-locates-in-primary, empirica-style contracts (a dangling cite is a truth-status defect), standing support audits |
+| proposed | form | | [[temporal-truth]] | Temporal truth factors: revisit criteria, expiry, re-grading records that predate their governance, check-resets on edit |
 | | | | --GAP-- | Bayesian propagation across the dependency DAG (how a changed premise re-prices its dependents); special epistemic states |
 
 ### Chapter 9 — Pedagogy & causality
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[experiential-reading]] | Predict → read → record the delta → wander → predict next: deep comprehension, causal-gap detection agents otherwise cannot do, wondering-notes as harvestable pedagogy |
-| undrafted | form | | [[dag-vs-exposition]] | The dependency-DAG vs exposition-order tension as a pedagogical question, and what agents' silent self-repair hides from them |
-| undrafted | form | | [[plain-language-briefs]] | Feynman-criterion briefs: a thoughtful non-specialist can re-derive the qualitative claim from the analog alone |
-| undrafted | form | | [[pedagogy-layering]] | Respectful pedagogy: mental model first, precision second; the analog must be isomorphic, not merely evocative |
+| proposed | form | | [[experiential-reading]] | Predict → read → record the delta → wander → predict next: deep comprehension, causal-gap detection agents otherwise cannot do, wondering-notes as harvestable pedagogy |
+| proposed | form | | [[dag-vs-exposition]] | The dependency-DAG vs exposition-order tension as a pedagogical question, and what agents' silent self-repair hides from them |
+| proposed | form | | [[plain-language-briefs]] | Feynman-criterion briefs: a thoughtful non-specialist can re-derive the qualitative claim from the analog alone |
+| proposed | form | | [[pedagogy-layering]] | Respectful pedagogy: mental model first, precision second; the analog must be isomorphic, not merely evocative |
 | | | | --GAP-- | Bridge/gloss segment kinds; misconception censuses harvested from wondering-notes; pedagogy's seam with onboarding (ch. 5) |
 
 ### Chapter 10 — Complex pipelines
@@ -138,45 +138,45 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[generator]] | Answer key questions → everything needed is built → point agents at it and let loose: the central deliverable |
-| undrafted | norm | | [[derivation-not-templates]] | Every generated choice traces to a principle (ch. 7) — customization is derivation, not template-picking |
-| undrafted | form | | [[instance-profiles]] | Profiles over the Part I concerns: atom vocabulary, view set, state-flag set, flux membranes, orientation scaffold, release wiring |
+| proposed | form | | [[generator]] | Answer key questions → everything needed is built → point agents at it and let loose: the central deliverable |
+| proposed | norm | | [[derivation-not-templates]] | Every generated choice traces to a principle (ch. 7) — customization is derivation, not template-picking |
+| proposed | form | | [[instance-profiles]] | Profiles over the Part I concerns: atom vocabulary, view set, state-flag set, flux membranes, orientation scaffold, release wiring |
 | | | | --GAP-- | The question-set itself; migration of existing ad-hoc instances (including this one) through the generator |
 
 ### Chapter 12 — Publishing & rendering mechanics
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[derived-vs-authored]] | Derived artifacts are declared derived by construction (clobber guards, naming conventions, banners) — never hand-editable-looking |
-| undrafted | form | | [[multi-renderer-constraints]] | One source feeding several renderers imposes notation constraints on the substrate (the single-`$` class of rules) |
-| undrafted | form | | [[semantic-indexing]] | Search/discovery indexing wants declared boundaries: chunking, identity, and context that travels with a fragment |
+| proposed | form | | [[derived-vs-authored]] | Derived artifacts are declared derived by construction (clobber guards, naming conventions, banners) — never hand-editable-looking |
+| proposed | form | | [[multi-renderer-constraints]] | One source feeding several renderers imposes notation constraints on the substrate (the single-`$` class of rules) |
+| proposed | form | | [[semantic-indexing]] | Search/discovery indexing wants declared boundaries: chunking, identity, and context that travels with a fragment |
 | | | | --GAP-- | Low-level lint/format mechanics (fmt-md, lint-md, render-equality gates); storage layouts; build-implementation surveys |
 
 ### Chapter 13 — Concurrency mechanics
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[write-safety]] | Atomic single-placement writes (safe_write and its durable-rename caveats); collision-free event filenames; membranes as the serialization points |
-| undrafted | obs | | [[lost-update-hazard]] | Multi-record files under concurrent append lose updates silently, and the loss never reaches git — the DECISIONS-ledger specimen |
-| undrafted | form | | [[partition-isolation]] | Isolation by partition: layouts declared safe or unsafe for concurrent writers; per-key files make writers filesystem-disjoint |
+| proposed | form | | [[write-safety]] | Atomic single-placement writes (safe_write and its durable-rename caveats); collision-free event filenames; membranes as the serialization points |
+| proposed | obs | | [[lost-update-hazard]] | Multi-record files under concurrent append lose updates silently, and the loss never reaches git — the DECISIONS-ledger specimen |
+| proposed | form | | [[partition-isolation]] | Isolation by partition: layouts declared safe or unsafe for concurrent writers; per-key files make writers filesystem-disjoint |
 | | | | --GAP-- | Same-key contention as surfaced judgment; single-writer membranes; what the git layer does and does not catch |
 
 ### Chapter 14 — Metrology
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[corpus-instruments]] | Instruments that watch the corpus: segment-stats, health checks, lint censuses — with the taught-blindness hazard (instruments report clean over what they were told to ignore) |
-| undrafted | form | | [[hotness-methodology]] | Segment hotness / importance ranking methodology (consumed by ch. 2 views and ch. 5 orientation) |
-| undrafted | form | | [[observation-stores]] | Record process features wide before weights are known; the model is a consumer (feeds ch. 8 calibration) |
-| undrafted | obs | | [[coupling-confounding]] | Co-change measurement is confounded by the layout it would justify; only directional asymmetries carry causal weight |
+| proposed | form | | [[corpus-instruments]] | Instruments that watch the corpus: segment-stats, health checks, lint censuses — with the taught-blindness hazard (instruments report clean over what they were told to ignore) |
+| proposed | form | | [[hotness-methodology]] | Segment hotness / importance ranking methodology (consumed by ch. 2 views and ch. 5 orientation) |
+| proposed | form | | [[observation-stores]] | Record process features wide before weights are known; the model is a consumer (feeds ch. 8 calibration) |
+| proposed | obs | | [[coupling-confounding]] | Co-change measurement is confounded by the layout it would justify; only directional asymmetries carry causal weight |
 | | | | --GAP-- | What a standard health report contains; metrology for views and for process (time-in-state, crossing rates) |
 
 ### Chapter 15 — Steward interface
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| undrafted | form | | [[steward-surfaces]] | What the steward actually reads: big-picture views over largely unread segments — by design, not neglect |
-| undrafted | form | | [[authority-routing]] | Decision/escalation queues and delegated grants: authority routes without becoming a bottleneck |
+| proposed | form | | [[steward-surfaces]] | What the steward actually reads: big-picture views over largely unread segments — by design, not neglect |
+| proposed | form | | [[authority-routing]] | Decision/escalation queues and delegated grants: authority routes without becoming a bottleneck |
 | | | | --GAP-- | Where steward attention is genuinely load-bearing vs delegable; council patterns; the steward's own tracking surfaces |
 
 ---
