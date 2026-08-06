@@ -16,11 +16,11 @@
 | -------- | ---------------- | ---- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | proposed | def              |      | [[atom]]                        | An atom is a typed record with stable slug identity, a present-truth body, and declared companions                                                                      |
 | proposed | form             |      | [[slug-identity]]               | Slug = identity is the pattern's one proven move-proof invariant; identity never carries order or path                                                                  |
-| proposed | obs              |      | [[provenance-rot-specimen]]     | The comproprium directory move: 0/18 slug refs broke, 106/109 path-provenance spans broke — the natural experiment                                                      |
+| drafted  | obs              | obs  | [[provenance-rot-specimen]]     | The comproprium directory move: 0/18 slug refs broke, 106/109 path-provenance spans broke — the natural experiment                                                      |
 | proposed | form             |      | [[atom-as-cluster]]             | An atom is a cluster: body + working notes + events + companions, on different clocks                                                                                   |
 | proposed | form             |      | [[write-semantics-declaration]] | Write semantics (integration-is-replacement vs append-only) is a per-type declaration, not a corpus-wide law                                                            |
 | proposed | form             |      | [[atom-grain-parallelism]]      | Atom grain is chosen partly for parallelism: fact-grain atoms with their own confidence bands enable delegation and piecewise truth-propagation                         |
-| proposed | obs              |      | [[type-vocabulary-locality]]    | The shape is portable; the type vocabulary is not, and should not be                                                                                                    |
+| drafted  | obs              | obs  | [[type-vocabulary-locality]]    | The shape is portable; the type vocabulary is not, and should not be                                                                                                    |
 |          |                  |      | --GAP--                         | Inner-section schema: cadence vocabularies; section-vs-frontmatter epistemics (the vivarium / udon-needs principled disagreement); machine-readable qualifier placement |
 |          |                  |      | --GAP--                         | Restatements, families, aliases, and same-claim-different-expression links (rename survival; sibling claims linked, never silently merged)                              |
 
@@ -29,10 +29,10 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | proposed | form | | [[outline-as-organizing-principle]] | The outline is the organizing principle and front-door, not an index — it carries importance, flow, and the glue |
-| proposed | obs | | [[outline-skipping-failure]] | Agents skipping the outline to read segments directly is a recurring failure mode with a known cost |
+| drafted | obs | obs | [[outline-skipping-failure]] | Agents skipping the outline to read segments directly is a recurring failure mode with a known cost |
 | proposed | form | | [[outline-as-cognition]] | Reordering and gap-declaring in the outline is critical thinking about the bigger picture — cognition agents cannot perform over concatenated segments |
 | proposed | form | | [[multiple-views]] | Multiple views per substrate, at different rigor levels for different needs, sharing one atom set |
-| proposed | survey | | [[view-genres]] | The view family observed live: pedagogical outlines, build manifests, narrative views, views over not-yet-existing segments, nested outlines |
+| drafted | survey | survey | [[view-genres]] | The view family observed live: pedagogical outlines, build manifests, narrative views, views over not-yet-existing segments, nested outlines |
 | proposed | form | | [[view-edge-metadata]] | View-local metadata (glosses, §-numbers, hotness marks, rendering directives) is data on the membership edge, not on the record |
 | proposed | form | | [[dependency-order-tension]] | When a view's order must validate against atom dependencies, and what an accepted violation is (relation-keyed exception stores) |
 | proposed | norm | | [[absence-as-structure]] | Missing structure is marked visibly (gap rows, residue stores, censuses) without predicting inventory — absence handling is what actually rots estate-wide |
@@ -46,7 +46,7 @@
 | proposed | form | | [[working-notes-sidecar]] | Working Notes is the ubiquitous per-atom sidecar — forward residue, not history-dump — present in nearly every instance under some name |
 | proposed | norm | | [[working-note-lifecycle]] | What earns a note, how notes retire, and why retirement backlog is where steady-state is won or lost |
 | proposed | form | | [[state-flags-not-gates]] | Independent resettable state flags (explored / drafted / checked / citations-check…, resetting on edit), in service of Truth: editing a verified segment is careful *and* an advancement |
-| proposed | obs | | [[ladder-never-fired]] | The four-gate promotion ladder has never fired anywhere in the estate; flag-shaped mechanisms are used daily |
+| drafted | obs | obs | [[ladder-never-fired]] | The four-gate promotion ladder has never fired anywhere in the estate; flag-shaped mechanisms are used daily |
 | proposed | form | | [[tracking-altitudes]] | Tracking layers by altitude: navigator → items → cross-cutting proposals; histories and archaeologies kept separate |
 | proposed | form | | [[sidecar-conventions]] | BASENAME / organic-expansion conventions: one callable name, many manifestations over time, sidecars as their own basenames |
 | proposed | form | | [[decision-records]] | Decisions are their own artifact kind: decision distinct from confidence, load-bearing arguments named, revisit-when / expires-on carried |
@@ -94,11 +94,11 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[turnover-solution]] | The pattern is a solution to 100% agentic turnover in complex living projects — the core claim, stated precisely |
-| proposed | form | | [[session-cycle-ergonomics]] | Agents get concrete start/work/finish cycles without the completion ethos infecting the never-finishable whole |
-| proposed | form | | [[collision-staleness-detection]] | Present-truth statements can collide; append-only history cannot — collision is the staleness detector |
-| proposed | disc | | [[first-principles-grounding]] | Honest AAT/TST grounding: identification conditions and transfer obligations at stated tiers — never sloganized compression (the deleted-P*-layer cautionary record) |
-| proposed | form | | [[substrate-independence]] | The principles stand regardless of implementation technology (markdown, udon, …) |
+| drafted | form | form | [[turnover-solution]] | The pattern is a solution to 100% agentic turnover in complex living projects — the core claim, stated precisely |
+| drafted | form | form | [[session-cycle-ergonomics]] | Agents get concrete start/work/finish cycles without the completion ethos infecting the never-finishable whole |
+| drafted | form | form | [[collision-staleness-detection]] | Present-truth statements can collide; append-only history cannot — collision is the staleness detector |
+| drafted | disc | disc | [[first-principles-grounding]] | Honest AAT/TST grounding: identification conditions and transfer obligations at stated tiers — never sloganized compression (the deleted-P*-layer cautionary record) |
+| drafted | form | form | [[substrate-independence]] | The principles stand regardless of implementation technology (markdown, udon, …) |
 | | | | --GAP-- | Why it works even applied ad-hoc and unevenly — the latent-need account; which properties carry most of the effect |
 
 ### Chapter 8 — Truth & judgment
@@ -157,7 +157,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | proposed | form | | [[write-safety]] | Atomic single-placement writes (safe_write and its durable-rename caveats); collision-free event filenames; membranes as the serialization points |
-| proposed | obs | | [[lost-update-hazard]] | Multi-record files under concurrent append lose updates silently, and the loss never reaches git — the DECISIONS-ledger specimen |
+| drafted | obs | obs | [[lost-update-hazard]] | Multi-record files under concurrent append lose updates silently, and the loss never reaches git — the DECISIONS-ledger specimen |
 | proposed | form | | [[partition-isolation]] | Isolation by partition: layouts declared safe or unsafe for concurrent writers; per-key files make writers filesystem-disjoint |
 | | | | --GAP-- | Same-key contention as surfaced judgment; single-writer membranes; what the git layer does and does not catch |
 
@@ -168,7 +168,7 @@
 | proposed | form | | [[corpus-instruments]] | Instruments that watch the corpus: segment-stats, health checks, lint censuses — with the taught-blindness hazard (instruments report clean over what they were told to ignore) |
 | proposed | form | | [[hotness-methodology]] | Segment hotness / importance ranking methodology (consumed by ch. 2 views and ch. 5 orientation) |
 | proposed | form | | [[observation-stores]] | Record process features wide before weights are known; the model is a consumer (feeds ch. 8 calibration) |
-| proposed | obs | | [[coupling-confounding]] | Co-change measurement is confounded by the layout it would justify; only directional asymmetries carry causal weight |
+| drafted | obs | obs | [[coupling-confounding]] | Co-change measurement is confounded by the layout it would justify; only directional asymmetries carry causal weight |
 | | | | --GAP-- | What a standard health report contains; metrology for views and for process (time-in-state, crossing rates) |
 
 ### Chapter 15 — Steward interface

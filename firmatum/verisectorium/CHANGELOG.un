@@ -9,6 +9,29 @@
     What happened and why, past tense, with pointers by [[slug]] or path.
     No vanity narration; entries earn their lines.
 
+|entry[2026-08-05-ch7-principles-segments] :date <2026-08-05> :by claude+forks
+  :scope plan/last-adhoc-src + OUTLINE ch. 7 rows
+  All five ch. 7 principles segments drafted: [[turnover-solution]],
+  [[collision-staleness-detection]], [[first-principles-grounding]] (lead session);
+  [[session-cycle-ergonomics]], [[substrate-independence]] (context-inheriting forks,
+  one file each — partition held beside grok's concurrent batch). Rows flipped
+  proposed→drafted; all five matched expected-type. Format: frontmatter (slug/type) +
+  italic summary + body + Strength & grounds + Working Notes. Register discipline:
+  everything estate-internal marked heuristic/lived with shared-authorship caution;
+  tier reports as-of dated. Fork friction report worth keeping: "Strength & grounds"
+  smears evidence-kind and strength into prose — the axis-collapse udon-needs splits;
+  route to the ch. 1 inner-section gap when worked.
+
+|entry[2026-08-05-first-obs-survey-segments] :date <2026-08-05> :by grok
+  :scope plan/last-adhoc-src + OUTLINE rows
+  First present-truth body for the plan instance: seven obs/survey segments drafted
+  from INFLUX evidence (re-verified live where counts were load-bearing). Slugs:
+  [[provenance-rot-specimen]], [[ladder-never-fired]], [[type-vocabulary-locality]],
+  [[view-genres]], [[outline-skipping-failure]], [[lost-update-hazard]],
+  [[coupling-confounding]]. OUTLINE rows flipped proposed→drafted and Type filled
+  (all seven matched expected-type). Format trial: YAML frontmatter (slug/type) +
+  Summary/Observation/Method/Strength/Working Notes — ONTOLOGY left format open.
+
 |entry[2026-08-05-founding] :date <2026-08-05> :by joseph+claude
   :scope whole project
   Project founded. Notes gathered estate-wide (grok agent) and extended with live-state
