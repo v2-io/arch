@@ -17,8 +17,8 @@
 | proposed | def              |      | [[atom]]                        | An atom is a typed record with stable slug identity, a present-truth body, and declared companions                                                                      |
 | proposed | form             |      | [[slug-identity]]               | Slug = identity is the pattern's one proven move-proof invariant; identity never carries order or path                                                                  |
 | drafted  | emp              | norm | [[identities-over-locations]]   | References carry identities (slug / slug+section+span), never paths, positions, or presentation numbers (specimen: [[provenance-rot-specimen]])                         |
-| proposed | form             |      | [[atom-as-cluster]]             | An atom is a cluster: body + working notes + events + companions, on different clocks                                                                                   |
-| proposed | form             |      | [[write-semantics-declaration]] | Write semantics (integration-is-replacement vs append-only) is a per-type declaration, not a corpus-wide law                                                            |
+| drafted | form | form | [[atom-as-cluster]] | An atom is a cluster — body, working notes, events, companions — on different clocks; layout and visibility are separate questions, and events are forced by two independent constraints |
+| drafted | form | form | [[write-semantics-declaration]] | Replace-vs-append is a per-type declaration, not a corpus-wide law; role (record mapping) and regime (write rules) are two axes that must stay apart |
 | proposed | form             |      | [[atom-grain-parallelism]]      | Atom grain is chosen partly for parallelism: fact-grain atoms with their own confidence bands enable delegation and piecewise truth-propagation                         |
 |          |                  |      | --GAP--                         | Inner-section schema: cadence vocabularies; section-vs-frontmatter epistemics (the vivarium / udon-needs principled disagreement); machine-readable qualifier placement |
 |          |                  |      | --GAP--                         | Restatements, families, aliases, and same-claim-different-expression links (rename survival; sibling claims linked, never silently merged)                              |
@@ -30,7 +30,7 @@
 | proposed | form | | [[outline-as-organizing-principle]] | The outline is the organizing principle and front-door, not an index — it carries importance, flow, and the glue |
 | proposed | form | | [[outline-as-cognition]] | Reordering and gap-declaring in the outline is critical thinking about the bigger picture — cognition agents cannot perform over concatenated segments |
 | proposed | form | | [[multiple-views]] | Multiple views per substrate, at different rigor levels for different needs, sharing one atom set |
-| proposed | form | | [[view-edge-metadata]] | View-local metadata (glosses, §-numbers, hotness marks, rendering directives) is data on the membership edge, not on the record |
+| drafted | form | form | [[view-edge-metadata]] | View-local metadata is an attribute of the membership edge; authored views are canonical about their own fields, generated ones about nothing (specimen: [[stage-denorm-zero-drift]]) |
 | proposed | form | | [[dependency-order-tension]] | When a view's order must validate against atom dependencies, and what an accepted violation is (relation-keyed exception stores) |
 | drafted | form | form | [[appendix-placement]] | Appendices sit at the bottom of the outline even when they are DAG dependencies — reader's path and verifier's path run opposite directions |
 | proposed | norm | | [[absence-as-structure]] | Missing structure is marked visibly (gap rows, residue stores, censuses) without predicting inventory — absence handling is what actually rots estate-wide |
@@ -56,10 +56,10 @@
 
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
-| proposed | form | | [[influx-queues]] | Ingestion queues with typed residue: promoted / rejected / needs-review are distinct speech acts that must not collapse |
+| drafted | form | form | [[influx-queues]] | "You erred" and "I am unsure" are different speech acts; typed residue must be stored, not reported (specimen: [[queue-typing-specimen]]) |
 | proposed | form | | [[integration-metabolism]] | Archive-everything-then-adjudicate-only-improvements: the cycle that ends rediscovery chaos and orders discoveries automatically |
 | proposed | form | | [[observable-crossings]] | Layer crossings should be recorded events, so integration backlog is a countable queue rather than a vibe |
-| proposed | form | | [[layer-speeds]] | Fast exploration strata feed slow canon; adjudication lives at the crossings; speed/adjudication profiles differ per verisectorium |
+| drafted | form | form | [[layer-speeds]] | Fast strata feed slow canon; rate failure and sensitivity failure are separate, early promotion is priced not forbidden, and separation can be bought on a cadence |
 | proposed | norm | | [[gates-need-destinations]] | A gate exists only where there is a destination — an assurance something qualifies to be moved or treated differently; everything else is state |
 | | | | --GAP-- | Whole-outline migration: moving an outline's worth of segments to a different verisectorium — the real gates plus "this snapshot is frozen history, superseded at …"; three partial estate answers not yet put side by side |
 
@@ -69,7 +69,7 @@
 |---|---|---|---|---|
 | proposed | form | | [[orientation-scaffold]] | Orientation as a general scaffold with slot-in points for instance-specific SOPs |
 | drafted | form | form | [[orientation-gate]] | Where stakes warrant, free-read of the outline + a cheap check before write access — pass dies with the context (specimen: [[outline-skipping-failure]]) |
-| proposed | norm | | [[priming-discipline]] | Auditor-safe vs priming-heavy surfaces are declared and kept separate (README-auditor pattern, de-novo audit instructions) |
+| drafted | norm | norm | [[priming-discipline]] | Auditor-safe and verdict-bearing surfaces are declared and read in that order; attention is spendable and the spending is irreversible |
 | proposed | form | | [[role-activation]] | Natural role activation: what makes an instance work must ride its front-door composition, not accumulate accidentally across files and memories |
 | proposed | form | | [[work-coordination]] | Division of work over the atom grain: delegation, peer-voice briefs, harvester briefs, handoff routing (write-safety is ch. 13) |
 | | | | --GAP-- | Onboarding for specific recurring roles (de-novo auditor, harvester, integrator, reviewer) with their differing read and priming needs |
@@ -107,8 +107,8 @@
 | proposed | form | | [[confidence-calibration]] | Confidence bands and calibration language — the VERA lineage (PROPRIUM qualified truths, ennaos architecture research, vox-vera verbal probabilities, comproprium precepts) |
 | drafted | form | form | [[tribunal-record]] | Tribunal processes: typed voices with independent failure modes; the durable deliberation record, not the verdict, is the product |
 | drafted | form | form | [[discussion-probes]] | Ungrounded-but-plausible interpretive claims are worse than gaps — the paragraph-level probe: derives / hypothesis+falsifier / post-hoc nothing |
-| proposed | form | | [[evidence-ledgers]] | Weight-of-evidence discipline: priors vs likelihoods, soft refutation, absence ≠ conflict, correlated signals are one channel |
-| proposed | form | | [[verification-provenance]] | Verification machinery: span-locates-in-primary, empirica-style contracts (a dangling cite is a truth-status defect), standing support audits |
+| drafted | form | form | [[evidence-ledgers]] | One log-odds sum, priors held apart, absence ≠ refutation, correlated signals counted once, gate constants at one site with a defended chain |
+| drafted | form | form | [[verification-provenance]] | A dangling citation is a truth-status defect; "verified" is derived from events; gating is the deployment's call and evidence-grade is a second axis (specimen: [[gate-profile-divergence]]) |
 | proposed | form | | [[temporal-truth]] | Temporal truth factors: revisit criteria, expiry, re-grading records that predate their governance, check-resets on edit |
 | | | | --GAP-- | Bayesian propagation across the dependency DAG (how a changed premise re-prices its dependents); special epistemic states |
 
@@ -155,7 +155,7 @@
 | State | Expected<br>Type | Type | Tag | Summary |
 |---|---|---|---|---|
 | drafted | form | form | [[write-safety]] | One record per placement + atomic replace; no concurrent RMW of multi-record files without a membrane (specimen: [[lost-update-hazard]]) |
-| proposed | form | | [[partition-isolation]] | Isolation by partition: layouts declared safe or unsafe for concurrent writers; per-key files make writers filesystem-disjoint |
+| drafted | form | form | [[partition-isolation]] | Isolation comes from layout, not locks; the git-conflict reassurance is structurally false for multi-record files, so record mapping must be declared |
 | | | | --GAP-- | Same-key contention as surfaced judgment; single-writer membranes; what the git layer does and does not catch |
 
 ### Chapter 14 — Metrology
@@ -193,6 +193,8 @@
 | drafted | survey | survey | [[tribunal-strand-survey]] | Four distinct designs called "the epistemic tribunal," separately citable — they share a name and a motive, not a design |
 | drafted | survey | survey | [[rationale-capture-survey]] | Design-rationale prior art (IBIS/SEURAT/ADR) with verification registers preserved, and the capture-problem corpse (grounds [[decision-records]], [[tribunal-record]]) |
 | drafted | obs | obs | [[authority-flag-specimen]] | Full account: an agent's eager provenance check aimed at the wrong column, re-raised by several agents, on a record predating its governance (grounds [[warrant-over-authority]], [[asked-and-answered]]) |
+| drafted | obs | obs | [[stage-denorm-zero-drift]] | ASF's checked-but-untrusted duplicated `stage`: 0 mismatches over 168 compared rows (grounds [[view-edge-metadata]]) |
+| drafted | obs | obs | [[gate-profile-divergence]] | One store design, two enforcement regimes: 13/188 vs 70/97 verification coverage on identical machinery (grounds [[verification-provenance]]) |
 
 ---
 
