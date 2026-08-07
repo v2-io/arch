@@ -71,7 +71,13 @@
   :next Steward-gated, through canon influx, only after the foundation settles
 
 |wip
-  :items [part-iv-segment-drafting sop-store-first-exercise udon-paths-demand-routing]
+  :items [part-iv-segment-drafting sop-store-first-exercise]
+  udon-paths-demand-routing: DISCHARGED 2026-08-07 — the demand was delivered
+  as a working instance: firmatum/udon/v2/paths/ is verisectorium deployment
+  #2 (full birth-set: outline+src, terms, sop/ORIENT+CLAUDE wiring, INFLUX,
+  CHANGELOG, PRACTICA), founded by this session's coord at Joseph's request.
+  Its lived feedback already patched the kit twice (history-layer-required-
+  from-birth; host-vs-kit tracking-dialect question for the questionnaire).
   New thread 2026-08-06 (late): instance naming / address paths brainstorm captured
   at theory/INFLUX/steward-brainstorms/instance-naming-and-paths-2026-08-06.md —
   steward's own call: pause local design, nail down udon paths/references instead
