@@ -21,7 +21,7 @@ The shape is portable across deployments (asf, vivarium, relata, comproprium, â€
 verisectorium/
   README.md                 # you are here
   PRACTICA.un               # strategic navigator + session-boundary state (replaced HANDOFF)
-  CHANGELOG.un              # history layer â€” predates the restart; refresh pending
+  CHANGELOG.md              # history layer (newest first)
   template/                 # Joseph's; untouched
   theory/
     sop/ORIENT.md           # orientation front door (the SOP store's seed)

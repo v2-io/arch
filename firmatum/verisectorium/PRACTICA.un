@@ -7,7 +7,7 @@
 ; lives in theory/sop/ORIENT.md — there is no separate boundary document.
 ; Read theory/sop/ORIENT.md before working any area.
 
-|practica[verisectorium] :updated <2026-08-06>
+|practica[verisectorium] :updated <2026-08-07>
 
 |area[deployment-components] :priority primary :state active :opened <2026-08-06>
   :why Part IV rows (19, five chapters) carve the realization stratum — the
@@ -20,6 +20,7 @@
         segments (delete-test; rows alone do not carry it)
 
 |area[sop-store] :priority primary :state active :opened <2026-08-06>
+  ; 2026-08-07: ORIENT gained the where-records-land rule; CHANGELOG.md founded per the history-layer-from-birth patch
   :why Without our own doctrina+praxes orientation, fidelity does not survive
        session turnover — the founding coord's context is otherwise the only
        carrier (steward: the reason this outranks lexicon for now)
@@ -33,6 +34,7 @@
         richest sources waiting
 
 |area[kit-questionnaire] :priority secondary :state waiting-joseph :opened <2026-08-06>
+  ; first two questionnaire items now evidenced: host-vs-kit tracking dialect (paths founding); CHANGELOG seed in essential template
   :why The launch questionnaire is the kit's economic crux and the steward holds
        substantial unexteriorized design — the richest pending brainstorm
   :next Joint session; verbatim capture -> organized v-file (the proven pattern);
