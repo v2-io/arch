@@ -56,6 +56,8 @@ Definitional, with the load-bearing content being the *laws the definitions carr
 
 ## Working Notes
 
+- Steward-primary articulation located after drafting (DISCUSSION-THOUGHTS.udon O2, 2026-07-28): the delete-test verbatim, plus a formulation this segment should absorb on next touch — the two objectives in tension: *"don't remove it so it must be rederived, and don't obscure it with low-signal noise that essentially drowns it."* The tension is why sidecar layout is hard rather than merely unbuilt; [[form-crumb-routing]] resolves it per-record.
+
 - Frontmatter schema provisional pending the epistemology decision (see OUTLINE working notes).
 - Open: whether `.integrated/` retention is itself per-store law or universal. Current practice keeps the files (archive-preserves, search-space shrinks — [[claim-dispatch-compounds]]); a store could conceivably declare true deletion with history-layer-only retention, and nothing here forbids it, but no instance does.
 - Open: the graduation record's *form* — per-item verification events versus a manifest with attestation versus the bounded-guarantee prose form. Candidate resolution rides [[form-decision-records]]' schema family.

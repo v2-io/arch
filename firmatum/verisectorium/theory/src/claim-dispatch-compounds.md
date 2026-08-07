@@ -45,6 +45,8 @@ Two halves at two tiers, deliberately not averaged. The **linear half** is *deri
 
 ## Working Notes
 
+- Steward-primary reinforcement located after drafting (DISCUSSION-THOUGHTS.udon O16, 2026-07-29): body-breadcrumbs named as collision-surface contamination and the instinct behind them as *pre-paid capture energy mis-routed* — [[form-crumb-routing]] is the constructive complement to this claim's prohibition (the crumb is routed to the event trail, not suppressed).
+
 - Frontmatter schema provisional pending the epistemology decision.
 - Evidence-action (per [[form-max-attainable]]): the observation store ( [[form-observation-store]]) could instrument this cheaply — per-session time-to-first-relevant-find on influx surfaces, residue counts over time, and re-billing events (a settled question re-adjudicated) as the false-nugget signature. A measured drain-rate-vs-residue curve on one instance would raise the bifurcation half to `empirical`.
 - Open: whether "false nugget" deserves its own named atom under Organ IV (it is an adjudication hazard, not only a flux one) or stays a mechanism inside this claim. Watch whether other segments need to cite it independently.
