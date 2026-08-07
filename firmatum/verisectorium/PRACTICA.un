@@ -71,7 +71,12 @@
   :next Steward-gated, through canon influx, only after the foundation settles
 
 |wip
-  :items [part-iv-segment-drafting sop-store-first-exercise]
+  :items [part-iv-segment-drafting sop-store-first-exercise udon-paths-demand-routing]
+  New thread 2026-08-06 (late): instance naming / address paths brainstorm captured
+  at theory/INFLUX/steward-brainstorms/instance-naming-and-paths-2026-08-06.md —
+  steward's own call: pause local design, nail down udon paths/references instead
+  (four partial specs of one thing now exist: NORMS BASENAME, trio cross-member
+  scheme, [[form-addressing]], this brainstorm). Route as demand to udon.
   Parked steward decisions (asked-and-answered lives here until a pending
   surface exists): wikilink rendering form ([[slug]] vs [[slug| #slug]]);
   claim- prefix revisit; instrumenta/autopax name collision (Organ II check).
