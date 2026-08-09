@@ -10,16 +10,8 @@
 |practica[verisectorium] :updated <2026-08-09>
 
 |area[deployment-template] :priority primary :state active :opened <2026-08-09>
-  :why template/ is the kit's concrete deliverable: a blank-slate instance
-       (from the udon paths copy, stripped + genericized) with the new
-       process-state axis (override / template / proposed) and the directive
-       epistemic register (proposed / ratified / ruled, current as freshness)
-       exercised in sop/SOP.outline.md
-  :next Steward review of the seeded dir-orient / dir-disposition and the two
-        enums (both status: proposed); fill the sop outline --GAP-- with
-        theory-segment rows (verisectorium's side, not deployments');
-        ref-verisectorium-tools content; open question recorded: are
-        ratified/ruled epistemic status or process state?
+  :why template/ is the kit's concrete deliverable: a blank-slate instance (from the udon paths copy, stripped + genericized) with the new process-state axis (override / template / proposed) and the directive epistemic register (proposed / ratified / ruled, current as freshness) exercised in sop/SOP.outline.md
+  :next Steward review of the seeded dir-orient / dir-disposition and the two enums (both status: proposed); fill the sop outline --GAP-- with theory-segment rows (verisectorium's side, not deployments'); ref-verisectorium-tools content; open question recorded: are ratified/ruled epistemic status or process state?
 
 |area[deployment-components] :priority primary :state active :opened <2026-08-06>
   :why Part IV rows (19, five chapters) carve the realization stratum — the

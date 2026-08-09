@@ -1,12 +1,8 @@
 ; DECISIONS — present-truth ledger
     One entry per decision: what holds, why (short), decided-by, date, cite.
-    Append or expressly overturn; never silently rewrite. Lower entries
-    supersede earlier ones. History and deliberation live in CHANGELOG.md
-    and the cited records -- this file stays thin.
+    Append or expressly overturn; never silently rewrite. Lower entries supersede earlier ones. History and deliberation live in CHANGELOG.md and the cited records -- this file stays thin.
 
-    Cite decisions by slugged link, never bare ordinal: identifiers that
-    will be *read* carry their referent's name
-    (e.g. [[DECISIONS#d1-some-slug|D1 some-slug]]).
+    Cite decisions by slugged link, never bare ordinal: identifiers that will be *read* carry their referent's name (e.g. [[DECISIONS#d1-some-slug|D1 some-slug]]).
 
     decided-by vocabulary:
       steward    - steward made the call; agent or council ratified
@@ -17,8 +13,7 @@
       proposed   - from steward or any agent; not blocking anything yet
       transition - rejected but still existing somewhere; defacto-but-being-fixed
 
-; Deploy-time seed -- fill the [placeholders], then uncomment by deleting
-    this comment line and outdenting the block:
+; Deploy-time seed -- fill the [placeholders], then uncomment by deleting this comment line and outdenting the block:
   |decision[decided-by-vocabulary]
     :holds The seven-value decided-by vocabulary above governs this ledger.
     :why The weight of a decision is who stood behind it and how.
