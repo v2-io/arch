@@ -222,17 +222,9 @@ And a second-order catch (2026-07-28, udon session `f9626a5b-81b8-4555-94d0-5532
 
 ---
 
-## 11. Correlated signals as one channel — evidence-ledgers.md and proxy-discipline.md (verisectorium archive, `.archive/theory-misfire/last-adhoc-src/`)
+## 11. [SET ASIDE per steward rule 2026-08-09] Correlated-signals-as-one-channel restatements in the misfire archive
 
-`~/src/arch/firmatum/verisectorium/.archive/theory-misfire/last-adhoc-src/evidence-ledgers.md` (already inside this repo's archive, worth citing since it pre-states the "one channel" idea independently before the udon lock vocabulary landed):
-
-> **(D) Correlated signals are one channel.** Two observations derived from the same source contribute one term, not two. This is the discipline that multi-agent review most reliably violates: three agents from one session with one brief and one disposition, or an outline row plus a frontmatter field plus a reviewer's impression all tracing to the same original judgment, present as convergence and are one observation wearing three hats. The rule to run before combining anything: *do these signals share a generative source?* A convergence lock should be armed only by support of at least two kinds with genuinely independent failure modes; agreement within one kind raises confidence without arming it.
-
-`~/src/arch/firmatum/verisectorium/.archive/theory-misfire/last-adhoc-src/proxy-discipline.md`:
-
-> Multi-agent agreement is the subtlest proxy: several capable agents concurring feels like corroboration and is often one channel wearing several badges — shared brief, shared sources, shared training priors. Agreement locates a good candidate; independent failure modes settle it.
-
----
+Two `.archive/theory-misfire/last-adhoc-src/` files (`evidence-ledgers.md`, `proxy-discipline.md`) restate the one-channel/failure-mode-independence discipline in this corpus's voice. Chronology check (coordinator): the misfire drafts date to 2026-08-06 — *after* the udon convergent lock (2026-07-22, quoted in §2) — so contrary to this sweep's first-draft guess they do not "pre-state" the idea; they restate it. Misfire-origin phrasings set aside per steward rule 2026-08-09; the upstream lock spec in §2 (`method-evidence-tiers.md` + the epistemology SYNTHESIS) carries everything load-bearing.
 
 ## 12. Disconfirmed confident consensus — the Model-S / Cluster B case (asf, 2026-05-15/16)
 
@@ -246,9 +238,7 @@ Landed as durable canon-adjacent doctrine, `~/src/agentic-systems/doc/audit-rout
 
 > Calibration, recorded so it is not inherited as bias: peer-agent confidence that a strengthening *will* succeed is as unreliable as pessimism that it will fail. A cluster adjudication confidently predicted the Model-S maximal-inequality strengthening "is standard textbook, should not fail." The hard spike disconfirmed it (→ a no-go). The prediction is recorded as disconfirmed in the spike and the segment Working Notes so it is not re-attempted on the strength of the optimism. *Run the hard spike; do not relay the optimism.*
 
-Same case, restated as a general-purpose rule in verisectorium's own archive, `~/src/arch/firmatum/verisectorium/.archive/theory-misfire/last-adhoc-src/routing-sop-anatomy.md` (2026-08-06):
-
-> **Peer-agent optimism is as unreliable as pessimism.** A cluster adjudication confidently predicted a strengthening "is standard textbook, should not fail"; the hard spike disconfirmed it into a no-go. The prediction is recorded *as disconfirmed*, in both the spike and the segment's notes, so it is not re-attempted on the strength of the optimism. The rule drawn: *run the hard spike; do not relay the optimism.*
+*(A general-purpose restatement of the same case also exists in the misfire archive (`routing-sop-anatomy.md`, 2026-08-06) — redundant with the upstream doctrine quoted directly above; set aside per steward rule 2026-08-09.)*
 
 Live in-session articulation of the same finding, `~/.claude.bak.2026-05-18/.../e7a5c540-d49e-4869-80e4-0f653adf0379.jsonl` (2026-05-16):
 
@@ -260,9 +250,7 @@ Contrast case, same file family — where independence-checked convergence held 
 >
 > The accumulation-type confound is no longer a hypothesis about one fuzzy question. **Three independent investigations, opened the same day from different starting points, each performed the identical ∂→𝒜→Σ move and each found a fuzzy-or-mistyped object resolve under it:** …
 
-This pairs directly with the "index label is unreliable in both directions" finding recorded in the same verisectorium archive file:
-
-> **The convenience label is unreliable in both directions.** In a two-spike diagnostic pilot the index label was wrong in **both** cases and in **opposite** directions — understated for one, accurate for the other only by accidentally encoding an external block. The first-hand read was therefore budgeted as mandatory per slice rather than as a spot-check.
+This pairs directly with the "INDEX label wrong in both directions" scar recorded in the live upstream (`spikes.sop.md` Refinement 1, 2026-05-17 — quoted in full in the sibling `label-lies-about-status.md` slice): the convenience-label is unreliable in both directions, and the first-hand read is budgeted as mandatory per slice, not as a spot-check.
 
 ---
 
