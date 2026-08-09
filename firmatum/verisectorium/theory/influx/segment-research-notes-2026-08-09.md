@@ -20,7 +20,8 @@
 | `asf/doc/sop/audit.sop/routing.sop.md` (407 l) | READ whole 2026-08-09 |
 | `asf/doc/sop/audit.sop/de-novo.sop.md` (702 l) | READ whole 2026-08-09 |
 | `asf/msc/meta-process-review-2026-07-07/PROCESS-MAP-v0.udon` | READ whole 2026-08-09 |
-| same dir: findings/reflections (esp. 02 audit-and-spike, 07 decision-routing) | not yet |
+| same dir: 07-decision-routing findings + reflection | READ whole 2026-08-09 |
+| same dir: 02-audit-and-spike findings + reflection (and others as needed) | not yet |
 | vivarium `bin/orient-*` + its gate claim segment | not yet |
 | relata (pending / coverage / verification / resolution ladder / corpus verbs) | not yet |
 | udon `v2/theory/to-integrate/primary/DISCUSSION-THOUGHTS.udon` (whole, not just O2/O16) | not yet |
@@ -65,6 +66,16 @@
 - **[[form-steward-model]]:** model-of-joseph is a designed process — turning agents' *instinctive resonance-detection* into recorded accumulating knowledge; same shape as every heal: stop the leakage, comb the backlog. Interliminal cluster is deliberately NOT DAG-wired — always-on in any steward dialog.
 - Health vocabulary observed in the wild (not enum-ized in the map, worth carrying as specimens): healthy / broken / absent / stalled / latent / whim-triggered / under-fed / under-used / stale-prone / opportunistic / nascent / aspirational / mixed / "infra-healthy, decision-stalled" / "outward healthy, return broken" — free-text health with structured drain is the working cut.
 - De-novo audits establish **lower bounds, never completeness** — named in-map; pairs with the §3.6 zero-findings discipline.
+
+## From 07-decision-routing findings + reflection (READ)
+
+- **The reframing diagnostic for [[claim-decision-surfacing]]:** the steward's "I have no idea what they're talking about" is NOT lost context — checked per-blocker, context is *"almost always reconstructible but un-assembled"*; the pain is being handed a pointer or a wall instead of a brief. Therefore: *"the fix is an assembly step, and assembly is only cheap while the context is hot — it must happen in the cycle that produces the fork, by the agent who holds it, not deferred to when Joseph asks and the agent is gone."*
+- **The valve's failure anatomy for [[form-steward-valve]]:** built 2026-06-02 as the single escape-valve, leaked within ~4 weeks (0 of 6 July forks reached it; verified by grep). Three verified causes: (i) manual-mirror intake with no forcing function — agents faithfully marked home trackers, skipped the mirror every time ("the discipline that exists is not the discipline the valve needs"); (ii) pointer-only by design — an index cannot solve a briefing failure; a stale mirror is *worse than absent because it looks authoritative*; (iii) valve-vs-home-tracker label drift. The valve *processed* what reached it — "the failure is purely at the intake seam."
+- **The brief schema (§6a, eight fields):** DECISION one-sentence-as-choice · WHY-IT'S-YOURS (one of four criteria: irreversible | authoring-voice | cross-project | provenance-check — filters false escalations) · CONTEXT-RECONSTRUCTED 3–5 sentences assuming zero scrollback (the load-bearing field; can't-write-in-5 is itself signal: not ripe or needs splitting) · OPTIONS with one-line consequences · RECOMMENDATION+CONFIDENCE mandatory ("'your call' with no recommendation is executor-mode abdication") · HONEST UNCERTAINTY (what would change the recommendation) · REVERSIBILITY+BLAST-RADIUS · POINTERS last and supplementary, never the substance.
+- **Intake forcing function:** couple to cycle-close (same move as execute-the-safe-subset-in-the-same-cycle) + a mechanical check greping "needs Joseph" markers against valve entries — make the leak a loud signal instead of silent staleness. Batched gates get one standing brief with a *default recommendation* (ratify/redirect, never from-scratch over 22 items). **Decided-is-not-terminal:** ratified decisions reopen (the B-2 case); the mechanism needs a re-open path whose brief states *what changed since he last decided*.
+- **Anti-patterns:** brief degrading back to a pointer reintroduces the disease; brief becoming a wall (the era-artifact C1–C5 doc: "rich and correct and *unreadable as a decision surface* because it was written as a working doc"); recommendation omitted.
+- **Existence proofs, not aspiration:** the estate already produces excellent briefs ad hoc (the SP-30 spike package; the PROPOSALS SP-schema) — "the capability exists; the standard slot and the routing do not." MP-07.1–07.6 give the process carve with per-step health (detection healthy at mark-in-home, broken at escalate; reservation discipline the strongest-running; surfacing the missing layer).
+- Register note: the findings file itself models the honest form — §6f states the failure model rests on testimony + verified structure, "a design proposal, not a validated intervention," with the false-positive risk named.
 
 ## Cross-cutting early shape-observations (mine, held loosely)
 
