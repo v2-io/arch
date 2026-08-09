@@ -1,0 +1,38 @@
+; TERM.term.un — verisectorium terminology-entry template
+; (re-cut 2026-08-08: the survey-driven field-coverage template failed the
+; steward glance test against a ~20-line 2022 sketch — lexicon-middleman's
+; episode.yml — whose shape is now the spine. Lesson, kept for the record:
+; the survey optimized best-construct-per-field; the target was best-entry-
+; whole, read by the steward who combs it. 90% payload, 10% apparatus.
+; The prior field-coverage template survives in git history as a quarry.)
+;
+; ACCEPTANCE TEST (five-second glance): a steward reading a term they have
+; never seen knows what to call it, what not to call it, what it is, and
+; what must be true of it — before any apparatus appears.
+;
+; SHAPE — above the fold, in order:
+;   :word / :alternates / :synonyms / :avoid   — say-this-not-that, flat.
+;       :avoid is negative prescription; a rename's old designation goes here.
+;   |quote      — evocative grounding, ONLY where one earns its place  {0,1}
+;   <body>      — THE definition: one sentence, sibling terms as [[term/x]]
+;   |invariants — plain-English bullets that ARE the relations: prose that
+;       carries structure, in a small controlled-phrasing set the diagram
+;       tools parse ("Is a kind of [[term/X]]" → containment; "Every <w> is
+;       exactly one of [[A]] or [[B]]" → partition; "Mutually exclusive:
+;       [[A]] | [[B]] | …" → disjoint; "Is the dual of" → pair-binding;
+;       "Belongs to" → part-of; "Has|<Verb> exactly one|at most one|one or
+;       more|zero or more [[term/X]]" → typed edge {1,1}|{0,1}|{1,N}|{0,N};
+;       "… exactly one of: a | b | c" → closed manner enum; leading
+;       "(pending <slugged cite>)" → suspended, visible, non-structural).
+;       Free prose is welcome beside these; it is kept, just not graphed.
+;       The one blur the phrasings must never permit: IS-A vs MADE-OF.
+;
+; Below the fold, each defended by one sentence of demand:
+;   :status settled|carved|open|weak|deprecated  — the steward-comb state
+;   :defined-by <segment> :anchor <span>         — the projection authority
+;       (definition text is a generated projection of the defining segment's
+;       tagged span; the entry's naming metadata is native)
+;   |note :audience maintainer / |open           — workflow; never rendered
+;
+; An instance may narrow this further (see the paths instance's
+; terms/TERM.term.un, the first live cut of this shape).
