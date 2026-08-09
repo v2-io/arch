@@ -6,14 +6,14 @@ The shape is portable across deployments (asf, vivarium, relata, comproprium, �
 
 ## Telos (read first)
 
-**Session success = a truthful segment drafted, corrected, or strengthened — or an open item honestly discharged.** Not files moved, not directories emptied, not a completion narrative. The corpus reports its own state (the OUTLINE's `State` column; the INFLUX index) — read those instead of narrating past them. Two laws govern every disposition: **the delete-test** (nothing is integrated unless all its information is landed or truly disposable — assume it disappears) and **proxy-discipline** (a register, an index, or an agent's report *locates* truth; it never settles it). When delegating: orient agents to this telos before the task — subagents optimize whatever finish-line they're handed, so hand them this one.
+**Session success = a truthful segment drafted, corrected, or strengthened — or an open item honestly discharged.** Not files moved, not directories emptied, not a completion narrative. The corpus reports its own state (the OUTLINE's `State` column; the influx index) — read those instead of narrating past them. Two laws govern every disposition: **the delete-test** (nothing is integrated unless all its information is landed or truly disposable — assume it disappears) and **proxy-discipline** (a register, an index, or an agent's report *locates* truth; it never settles it). When delegating: orient agents to this telos before the task — subagents optimize whatever finish-line they're handed, so hand them this one.
 
 ## Start here
 
 0. **[`theory/sop/ORIENT.md`](theory/sop/ORIENT.md)** — the orientation front door: doctrina, praxes, professio. Read it before substantive work; the numbered items below are its doctrina sequence.
 1. **[`theory/OUTLINE.md`](theory/OUTLINE.md)** — the canonical outline of the theory (Foundations / the Nine Organs / the Process Dual). Its outline-level Working Notes carry the live conventions, open decisions, and their lineage — they are part of the front door, not an appendix.
 2. **[`theory/src/`](theory/src/)** — drafted segments (filename = slug; form-kind prefixes per the outline's conventions).
-3. **[`theory/INFLUX/00-INDEX.md`](theory/INFLUX/00-INDEX.md)** — the gathered evidence base (2026-08-05 estate-wide gather + live-state health reports + asf SOPs + the instrumenta gather + steward brainstorms), **reading substrate, not live authority** — copies carry provenance banners; originals win on conflict, and segments draft from live sources.
+3. **[`theory/influx/00-INDEX.md`](theory/influx/00-INDEX.md)** — the gathered evidence base (2026-08-05 estate-wide gather + live-state health reports + asf SOPs + the instrumenta gather + steward brainstorms), **reading substrate, not live authority** — copies carry provenance banners; originals win on conflict, and segments draft from live sources.
 
 ## Layout
 
@@ -22,12 +22,12 @@ verisectorium/
   README.md                 # you are here
   PRACTICA.un               # strategic navigator + session-boundary state (replaced HANDOFF)
   CHANGELOG.md              # history layer (newest first)
-  template/                 # Joseph's; untouched
+  template/                 # the deployment template: blank-slate instance (sop store, tracking skeletons, NAME-ME surfaces)
   theory/
     sop/ORIENT.md           # orientation front door (the SOP store's seed)
     OUTLINE.md              # canonical outline — the front door for all theory work
     src/                    # drafted segments
-    INFLUX/                 # gathered evidence (00-INDEX.md is the map)
+    influx/                 # gathered evidence (00-INDEX.md is the map)
       steward-brainstorms/  # verbatim steward baselines + iterated working drafts
       instrumenta/          # udon-needs tooling gather — REGISTER-RULING.md governs its labels
       asf-sops/             # the 13 asf SOPs, provenance-bannered copies

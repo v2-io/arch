@@ -11,7 +11,7 @@ Read, in this order, *before* substantive work:
 1. [`../../README.md`](../../README.md) — the telos first. Session success = a truthful segment drafted, corrected, or strengthened, or an item honestly discharged. Two laws govern every disposition: the **delete-test** and **proxy-discipline**.
 2. [`../OUTLINE.md`](../OUTLINE.md) — whole, including its **Working Notes**, which carry the live conventions *with their lineage* (State-not-Stage; proposed-not-missing; Expected-Type-as-prediction; Max ceilings; form-kind-only slug prefixes; the type-honesty register; the open decisions). The Working Notes are front door, not appendix.
 3. The **drafted segments** (`../src/`, the rows marked `drafted`) — read them as the corpus's exemplars; they teach harder than any rule here. If time forces selection, the foundations four (`post-living-collection`, `post-total-turnover`, `def-verisectorium`, `claim-comprehension-economics`) plus `form-state-flags-not-gates` carry the most.
-4. [`../INFLUX/00-INDEX.md`](../INFLUX/00-INDEX.md) — what evidence exists, what state it is in. Copies are reading substrate, never authority; **segments draft from live sources**. `INFLUX/instrumenta/REGISTER-RULING.md` governs every label in that gather.
+4. [`../influx/00-INDEX.md`](../influx/00-INDEX.md) — what evidence exists, what state it is in. Copies are reading substrate, never authority; **segments draft from live sources**. `influx/instrumenta/REGISTER-RULING.md` governs every label in that gather.
 5. [`../../PRACTICA.un`](../../PRACTICA.un) — where work stands now.
 
 Experiential reading ( [[form-experiential-reading]]) is the recommended mode for step 3: one segment at a time, predict → read → diff → wander. It is slower and that is the point.
@@ -32,6 +32,6 @@ Before substantive work, having done 1 and 2, write a few sentences — in your 
 
 ## Feedback channel (this store's influx)
 
-Per [[post-self-governance]], participant feedback is the *only* amendment channel for this file and its successors. If anything here confused you, fought the reality in front of you, or proved wrong: record it — a note appended under this heading, or a file in `sop/INFLUX/` — and if it is urgent, surface it to the steward. Front-line confusion is the re-truthification signal, not noise.
+Per [[post-self-governance]], participant feedback is the *only* amendment channel for this file and its successors. If anything here confused you, fought the reality in front of you, or proved wrong: record it — a note appended under this heading, or a file in `sop/influx/` — and if it is urgent, surface it to the steward. Front-line confusion is the re-truthification signal, not noise.
 
 *(none yet)*
