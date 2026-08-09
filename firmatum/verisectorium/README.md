@@ -20,7 +20,7 @@ The shape is portable across deployments (asf, vivarium, relata, comproprium, â€
 ```text
 verisectorium/
   README.md                 # you are here
-  PRACTICA.un               # strategic navigator + session-boundary state (replaced HANDOFF)
+  PRACTICA.ud               # strategic navigator + session-boundary state (replaced HANDOFF)
   CHANGELOG.md              # history layer (newest first)
   template/                 # the deployment template: blank-slate instance (sop store, tracking skeletons, NAME-ME surfaces)
   theory/

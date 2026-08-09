@@ -12,7 +12,7 @@ Read, in this order, *before* substantive work:
 2. [`../OUTLINE.md`](../OUTLINE.md) — whole, including its **Working Notes**, which carry the live conventions *with their lineage* (State-not-Stage; proposed-not-missing; Expected-Type-as-prediction; Max ceilings; form-kind-only slug prefixes; the type-honesty register; the open decisions). The Working Notes are front door, not appendix.
 3. The **drafted segments** (`../src/`, the rows marked `drafted`) — read them as the corpus's exemplars; they teach harder than any rule here. If time forces selection, the foundations four (`post-living-collection`, `post-total-turnover`, `def-verisectorium`, `claim-comprehension-economics`) plus `form-state-flags-not-gates` carry the most.
 4. [`../influx/00-INDEX.md`](../influx/00-INDEX.md) — what evidence exists, what state it is in. Copies are reading substrate, never authority; **segments draft from live sources**. `influx/instrumenta/REGISTER-RULING.md` governs every label in that gather.
-5. [`../../PRACTICA.un`](../../PRACTICA.un) — where work stands now.
+5. [`../../PRACTICA.ud`](../../PRACTICA.ud) — where work stands now.
 
 Experiential reading ( [[form-experiential-reading]]) is the recommended mode for step 3: one segment at a time, predict → read → diff → wander. It is slower and that is the point.
 
@@ -23,7 +23,7 @@ Experiential reading ( [[form-experiential-reading]]) is the recommended mode fo
 - **The outline is the parent's surface.** When drafting is delegated (the proven pattern: forks draft 2–3 segments each, writing *only* their own `src/` files, no commits), the coordinating agent reviews, flips `State` rows, and commits — agents edit, parent commits. On edit of any drafted segment: reset its checks as appropriate and/or launch a separate re-verify — checks are resettable states, never ratchets.
 - **Dispatch truly** ( [[claim-dispatch-compounds]]): items leave live surfaces only through the delete-test, into `.integrated/` (content landed) or `.archive/` (consciously set down, reason recorded) — never breadcrumbed. Half-dispatch is the residue attractor.
 - **Steward relationship:** Joseph holds the valve. Genuine forks go to him as real briefs (context + options + recommendation + honest uncertainty); his brainstorms are captured **verbatim first** (frozen baseline), organized second (iterated v-file); his fiat is marked as fiat. Delegation happens in peer voice — the estate discipline in `~/src/arch/AGENTIC-DELEGATION.md` binds here as everywhere.
-- **Where records land:** present truth → segments/OUTLINE; process rules → this file; state → PRACTICA.un; what-happened-and-why → `../../CHANGELOG.md` — never headers, preambles, or segment bodies (route the record; don't carve it into the nearest surface).
+- **Where records land:** present truth → segments/OUTLINE; process rules → this file; state → PRACTICA.ud; what-happened-and-why → `../../CHANGELOG.md` — never headers, preambles, or segment bodies (route the record; don't carve it into the nearest surface).
 - **Commits:** one attributable thing per commit, batching plan stated first, heredoc messages; this corpus's history is studied by future agents.
 
 ## 3. Professio — declare yourself

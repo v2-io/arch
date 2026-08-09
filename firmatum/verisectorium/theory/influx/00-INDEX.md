@@ -15,8 +15,8 @@
 | `vera/{00-INDEX, synthesis-scatter}` | Gather maps, partially absorbed |
 | `asf-sops/` (13 files: agents, format, spikes, multi-agent, git-hygiene, sop-creation, audit + de-novo/routing, naming + methodology/principles, build-pipeline) | Copied 2026-08-06 at Joseph's direction (was a named absence below). Provenance-bannered, byte-verified against live sources. The prior caveat still binds: segments draft from the *live* `asf/doc/sop/` sources; these copies are reading/reference substrate |
 | `efflux/phanero-README.md` | Copied 2026-08-06: the publication-pipeline member's provisional seven-stage shape — feeds [[form-efflux-seams]]. The processing-flow doc (adjudication/backport seams) is deliberately *not* re-copied: live original at `~/src/neurips/neurips-reviews-responses/processing-flow.md` wins |
-| `terminology-survey.md` | Steward-dropped report on lexicon/terms (2026-08); to be considered together with `TERM.term.un` below |
-| `TERM.term.un` | The retired terminology-entry template (moved here from `template/` 2026-08-09 — the `term` noun is retired in favor of `def`/definition/lexicon). Carries the steward-reviewed entry-shape re-cut (episode.yml spine, invariants-as-parsed-prose, five-second glance test); to be adjudicated with `terminology-survey.md` into the def-entry schema. The udon paths instance's live `def/` entries are the current best evidence for the recommended form |
+| `terminology-survey.md` | Steward-dropped report on lexicon/terms (2026-08); to be considered together with `TERM.term.ud` below |
+| `TERM.term.ud` (renamed from `.un` per the suffix default) | The retired terminology-entry template (moved here from `template/` 2026-08-09 — the `term` noun is retired in favor of `def`/definition/lexicon). Carries the steward-reviewed entry-shape re-cut (episode.yml spine, invariants-as-parsed-prose, five-second glance test); to be adjudicated with `terminology-survey.md` into the def-entry schema. The udon paths instance's live `def/` entries are the current best evidence for the recommended form |
 | `00-INDEX.md` (this file) | Last to leave |
 
 ## Not copied at gather time (named absence, preserved)

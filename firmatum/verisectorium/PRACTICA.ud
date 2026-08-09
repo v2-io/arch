@@ -1,7 +1,7 @@
 ; PRACTICA — strategic navigator for verisectorium
 ; Top of the intention DAG + immediate WIP. Deep material lives in theory/
 ; (outline rows, segments, influx); this file stays thin and current.
-; Vanilla udon, transitional (.un) per NORMS.md.
+; Vanilla udon (.ud default suffix per the 2026-08-09 convention).
 ; Supersedes HANDOFF.md (archived 2026-08-06): session-boundary state lives
 ; HERE (update :updated + area states at every boundary) and orientation
 ; lives in theory/sop/ORIENT.md — there is no separate boundary document.
