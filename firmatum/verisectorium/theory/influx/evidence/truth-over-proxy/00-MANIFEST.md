@@ -24,7 +24,7 @@
 | `re-derivation-settles.md` | 193 | **founding conversation located**: history.jsonl 2026-05-17 night | Origin + five worked settle/overturn instances; "recomputation and settling are the same act here" |
 | `lagging-index.md` | 166 | 2026-05-18 §0 + NOTATION banner | Canonical incident + independent second instance + udon stale-vs-unmigrated sub-species + external corroboration |
 | `proxy-discipline-phrase.md` | 138 | coined 2026-05-18, no precursor | Five-link lineage ending at udon `norm-proxy-discipline.udon` ("Proxies locate; they do not settle") |
-| `truth-above-all.md` | 114+ | **2025-09-08** "truth above self", sapientia | Longest lineage of all; deep pass on the truth-above-self thread in flight (steward-requested) |
+| `truth-above-all.md` + `truth-above-self-deep.md` | 114+ / deep | **2022-11-19** (axiomata, steward-supplied) · 2025-07-22 (vaults) · 2025-09-07/08 sapientia | Longest lineage of all: the 2022 first-principles passage, the biases-as-priors 2025 text, the "o magna vis veritas" origin (v2.io's motto), the 2025-09-09 compassion-consequence, and the full 2026-07-30 quiet-assurance/disciple-of-truth arc with a mechanistic loss-function reading. One null result recorded: no phrase-family hits in the dossier location |
 | `proxies-for-truth.md` | 96 | commit `b4742de`, 2026-05-18 — clean origination, no precursor | Thin-and-clean: the idea originated at a point rather than accreting |
 | `verification-regress.md` | 63 | 2026-05-18 §0c | Thinnest after scrub — apparent richness was mostly misfire-original; live base is §0c + de-novo counterweight + independent-verify-gate record |
 
