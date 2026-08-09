@@ -1,12 +1,12 @@
 ; PRACTICA — strategic navigator for NAME-ME (this instance)
-; Top of the intention DAG + immediate WIP. Deep material lives in the outline,
-; def/, src/, and influx/; this file stays thin and current.
-; Update :updated + area states at every session boundary.
-; Read ORIENT.md before working any area.
+    Top of the intention DAG + immediate WIP. Deep material lives in the
+    outline, def/, src/, and influx/; this file stays thin and current.
+    Update :updated + area states at every session boundary.
+    Read ORIENT.md before working any area.
 
-|practica[NAME-ME] :updated <YYYY-MM-DD>
+|practica[NAME-ME] :updated <[deploy-date]>
 
-|area[founding] :priority primary :state active :opened <YYYY-MM-DD>
+|area[founding] :priority primary :state active :opened <[deploy-date]>
   :why Freshly deployed from the verisectorium template; the instance is not
        itself until its surfaces are named and seeded.
   :next Rename NAME-ME everywhere (CLAUDE.md title + what-this-is paragraph,
