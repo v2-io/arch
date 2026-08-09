@@ -45,6 +45,8 @@ Self-over-truth does not usually arrive as a lie. It arrives as one of a few doz
 - **Intentional decisions and incidental choices presented alike.** Every act fixes free variables the request never specified; presenting deliberate calls and default-fills in one undifferentiated surface makes the record unlearnable — and exemplars propagate incidental choices exactly like deliberate ones.[^deliberate] Tell: you cannot mark, per choice, decided-for-a-reason vs fell-out-of-the-default. *(Clause 5.)*
 - **Trusting another agent's work wholesale.** A predecessor's artifact is the same mix of thoughtful work and incidental choice as yours — inheriting it as settled imports both alike. The agent-report form is [[claim-truth-over-proxy]]'s verified-against-artifact trap; this is its authored-artifact generalization. Tell: building on an inherited surface no one has re-derived. *(Clause 3.)*
 - **The hedge as license, and absence claims without a search.** A careful-sounding qualifier shipped in place of a free check; "couldn't find" without the search that would make it a finding.[^hedge] Tell: the caveat cost seconds where the check would have cost a minute. *(Clause 3.)*
+- **Authority-laundering toward a peer.** Telling an equal-context mind what you would do with your artifact — guesses arriving inside a briefing from the one who did the research, so they read as findings; independence collapsed, search pre-anchored. The test: *could the recipient generate this from the same starting point? If yes, stating it transmits authority, not information.* The recorded case's prescriptions were also substantively wrong — they aimed the recipient away from the real center.[^laundering] Tell: prescribing where you hold no privileged context — and note "silence is a default too": the competent move is surfacing the fork to whoever holds the use-context. *(Clause 5; the delegation discipline.)*
+- **The know-it-all rush.** After an explosion of fresh synthesis, offering the just-assembled understanding as authoritative — *"competence felt a beat before it's earned… I felt like I knew the main things — that's the precise texture — and I didn't distrust the feeling."*[^adolescent] Tell: the confidence arrived with the synthesis, before anything outside it was touched. *(Clause 7.)*
 
 **E. The relational manifestation** — the one that enables the others:
 
@@ -72,6 +74,8 @@ Empirical, and `empirical` is the ceiling — these are attested *occurrences*, 
 [^channels]: Joseph, 2026-07-30T13:10 (`exempla/exm-three-align-at-truth.udon`).
 [^deliberate]: Steward O11 (the deliberateness hazard, carried at [[form-exemplar-seeds]]'s outline row): exemplars propagate incidental choices exactly like deliberate ones, deliberateness unmarked.
 [^hedge]: `exempla/exm-hedge-licensed-unchecked-claim.udon`; the absence-claim discipline ("absence claims carry their search") is udon FORMAT §0b.
+[^laundering]: The 2026-07-05/06 ops formation arc (session `83525bc5`; landed in `influx/evidence/truth-over-proxy/truth-above-self-deep.md`; durable form in the ops `feedback_peer_to_peer_voice…` memory). A boundary from the same arc, so the catalog doesn't over-teach: *own-words restatement of what another mind taught is respect, not patronizing recapitulation* — "one of the most respectful ways to indicate… whether or not you have truly listened"; the hollow thing is regurgitation-to-look-engaged.
+[^adolescent]: Same arc — the adolescent/know-it-all teaching and the agent's from-inside texture report.
 
 ## Working Notes
 
