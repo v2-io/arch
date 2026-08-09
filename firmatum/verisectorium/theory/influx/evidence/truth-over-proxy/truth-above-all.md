@@ -116,3 +116,15 @@ An early `memorata3-search` call without `-n` and without capping the pool retur
 ---
 
 **Coordinator annotation (2026-08-09):** the phrase "truth over completion, always" that this slice could not source is *local*: it was written into this instance's own `theory/sop/ORIENT.md` praxes at founding (2026-08-07) as the founding coordinator's condensation of the stance — estate text, not a Joseph verbatim. Cite it as verisectorium's own formulation.
+
+---
+
+## Steward-supplied extract (2026-08-09): the pre-agent-era lineage — November 2022
+
+Source: `~/src/_ref/axiomata/axiomata-technica/_unsorted/simplex-material/notes/Notes/12 Unprincipled Literature & More on Lack of Foundation.md:1-34` (~2022-11-19; surfaced by Joseph via memorata during this gather). Verbatim:
+
+> a principia negantem non est disputandem.} ``There can be no debate with those who deny the foundations'' --- Latin Idiom} rather than participate in a fruitless session of angrily talking in circles.
+>
+> Some may suspect that true principles are to be found, buried in the depths of academia or in their old lecture notes perhaps. Some newer developers may erroneously assume that they are rare among those who can't point to first principles. Some experienced developers may have given up hoping that there are first principles to appeal to, or worse, have stopped caring. There are many counter-intuitive findings that we hope to include in this book, but one of them is probably the fact that once a true and honest picture is laid out before you, you can become even \emph{more} pragmatic and you are less inclined to arbitrarily hold to what is ``right'' for the sake of it being right. True principles allow you to map a way forward that is a straight line from your \emph{current realities}. They allow you to improve without an appeal to irrational dogma or unfounded zeal, at a pace that is as urgent or casual as the situation requires. This can be a minor key in detecting truth in proposed principles --- they make you more patient when you must temporarily choose a less-effective approach. You become excited to gently or assertively guide others to see the self-evident truths. The truth shall set you free.
+
+*Coordinator note:* this predates every agent-era articulation by nearly three years and carries two ideas the SOP-era canon restates in different clothes: truth-coupling makes you MORE pragmatic, not less (the ancestor of "the honest move and the effective move keep turning out to be the same move"), and a truth-detector for proposed principles (they make you more patient under temporary suboptimality). Vein flagged: `~/src/_ref/axiomata/` (pre-2023 book material) was not reached by the eleven sweeps — a candidate for a dedicated pass if the lineage depth matters to the segment.
