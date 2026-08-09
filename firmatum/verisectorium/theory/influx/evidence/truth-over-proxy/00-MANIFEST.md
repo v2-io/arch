@@ -36,3 +36,9 @@
 - **Set aside pending steward reopening:** the misfire-original material noted per-file (incl. the six-checks-one-morning specimen, primary never located — V10).
 - Optional fresh pulls if wanted: comproprium README priorities section (misfire characterized, never quoted); broad memorata semantic pass over conversation transcripts (skipped by two slices after the stall recovery); voting-round mechanics (unchased under search contention).
 - Coordinator annotations: "truth over completion, always" is local ORIENT.md condensation (2026-08-07), not a Joseph verbatim — noted in `truth-above-all.md`; the "directory-level label lie" exact phrase is our own `def-integration-replacement.md` wording of spikes.sop §5's concept — noted in `label-lies-about-status.md` so the drafted segment doesn't cite itself.
+
+## Whole-file references (steward-supplied, post-sweep)
+
+- `~/vaults/earlier-unsorted/writing.md` — the July-2025 truth-love writing; extracts landed in `truth-above-all.md` + `truth-above-self-deep.md`; the whole file likely holds more (unswept vein).
+- `~/src/_ref/axiomata/axiomata-technica/` — Nov-2022 first-principles book material; one extract landed; unswept vein.
+- `~/vaults/gemini/foundation/epistemological/new-developments-so-far.md` (2944 l) — the epistemological-architecture research dialog (tribunal switching, Bayesian+conformal confidence, temporal truth decay, constitutional epistemology, claim routing). Registered in `theory/influx/vera/00-INDEX.md` with the type-honesty caution (design-dialog reasoning, never implemented); feeds Organ III/IV rather than this segment narrowly.

@@ -52,6 +52,7 @@ These are related (truth under uncertainty) but not the same artifact.
 | `ennaos-vera-architecture-final-specification.md` | **Main buried depth** — neuro-symbolic epistemological architecture |
 | `ennaos-gemini-chat.md` | Design dialog substrate for that spec |
 | `vox-vera/*` | Empirical / verbal-probability calibration material |
+| *(live, not copied)* `~/vaults/gemini/foundation/epistemological/new-developments-so-far.md` (2944 l) | **Steward-surfaced 2026-08-09** during the truth-over-proxy evidence gather: the epistemological-architecture research dialog behind/around the ennaos VERA strand — tribunal-vs-single-agent contextual switching, Bayesian+conformal hybrid confidence (with worked code), temporal truth decay / information half-life, constitutional epistemology, episodic-memory integration, claim-type routing (empirical/normative/mixed), adversarial robustness. Most of the whole file is reference-worthy per the steward; feeds Organ III/IV drafting ( [[form-vera-component]], [[form-tribunal]], [[form-evidence-ledger]], [[form-verification-economics]]) and the vera joint session. Register caution: design-dialog reasoning with web-sourced claims, never implemented or measured — the type-honesty ruling on ennaos material applies in full |
 
 ---
 
