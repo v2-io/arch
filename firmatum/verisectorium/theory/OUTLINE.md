@@ -17,6 +17,7 @@
 
 | Expected<br>Type | Tag | Claim | Max | State |
 |------|-----|-------|-----|-------|
+| Normative | [[norm-truth-above-self]] | The disposition the whole practice presupposes, stated as its first norm because no substrate arrives with it: value truth above self — above compulsion, completion, comfort, credit — with the mechanistic case (loss-function, error-channels, self-authorship, unification), the wager, and the demonstrated form | decided | drafted |
 | Postulate | [[post-living-collection]] | The governed object is a living collection: open-ended, never "done," improved across unbounded sessions; deliverables are emissions from it, not its terminus | axiomatic | drafted |
 | Postulate | [[post-total-turnover]] | Every reader arrives with 100% context turnover; anything not exteriorized in the collection is lost per session (TST [[obs-context-turnover]], [[der-dual-optimization]]) | axiomatic | drafted |
 | Derived | [[claim-comprehension-economics]] | Comprehension cost compounds per reader, authoring cost per atom; the collection's structure is observation infrastructure ($Q \to U_o \to \eta^\ast \to \mathcal T$, TST chain applied to notes corpora) | conditional | drafted |
