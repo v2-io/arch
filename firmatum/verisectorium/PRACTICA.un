@@ -1,13 +1,25 @@
 ; PRACTICA — strategic navigator for verisectorium
 ; Top of the intention DAG + immediate WIP. Deep material lives in theory/
-; (outline rows, segments, INFLUX); this file stays thin and current.
+; (outline rows, segments, influx); this file stays thin and current.
 ; Vanilla udon, transitional (.un) per NORMS.md.
 ; Supersedes HANDOFF.md (archived 2026-08-06): session-boundary state lives
 ; HERE (update :updated + area states at every boundary) and orientation
 ; lives in theory/sop/ORIENT.md — there is no separate boundary document.
 ; Read theory/sop/ORIENT.md before working any area.
 
-|practica[verisectorium] :updated <2026-08-07>
+|practica[verisectorium] :updated <2026-08-09>
+
+|area[deployment-template] :priority primary :state active :opened <2026-08-09>
+  :why template/ is the kit's concrete deliverable: a blank-slate instance
+       (from the udon paths copy, stripped + genericized) with the new
+       process-state axis (override / template / proposed) and the directive
+       epistemic register (proposed / ratified / ruled, current as freshness)
+       exercised in sop/SOP.outline.md
+  :next Steward review of the seeded dir-orient / dir-disposition and the two
+        enums (both status: proposed); fill the sop outline --GAP-- with
+        theory-segment rows (verisectorium's side, not deployments');
+        ref-verisectorium-tools content; open question recorded: are
+        ratified/ruled epistemic status or process state?
 
 |area[deployment-components] :priority primary :state active :opened <2026-08-06>
   :why Part IV rows (19, five chapters) carve the realization stratum — the
@@ -16,7 +28,7 @@
   :next Draft segments (fork-cluster pattern proven: parent briefs, forks draft
         src/ only, parent reviews + flips rows). [[form-canon-praxes-projection]]
         is the least-tested load-bearing claim — wants steward eyes early.
-        realization-model-v1 stays LIVE in INFLUX until its texture lands in
+        realization-model-v1 stays LIVE in influx until its texture lands in
         segments (delete-test; rows alone do not carry it)
 
 |area[sop-store] :priority primary :state active :opened <2026-08-06>
@@ -54,7 +66,7 @@
 
 |area[vera-joint-session] :priority secondary :state waiting-joseph :opened <2026-08-05>
   :why Carried over from before the refounding and still live: the ennaos VERA
-       strands in theory/INFLUX/vera/ are reserved for Joseph+lead joint review
+       strands in theory/influx/vera/ are reserved for Joseph+lead joint review
   :next Session over the vera gather; feeds Organ III ( [[form-vera-component]])
 
 |area[lexicon-store] :priority parked :state set-aside :opened <2026-08-06>
@@ -81,7 +93,7 @@
   Its lived feedback already patched the kit twice (history-layer-required-
   from-birth; host-vs-kit tracking-dialect question for the questionnaire).
   New thread 2026-08-06 (late): instance naming / address paths brainstorm captured
-  at theory/INFLUX/steward-brainstorms/instance-naming-and-paths-2026-08-06.md —
+  at theory/influx/steward-brainstorms/instance-naming-and-paths-2026-08-06.md —
   steward's own call: pause local design, nail down udon paths/references instead
   (four partial specs of one thing now exist: NORMS BASENAME, trio cross-member
   scheme, [[form-addressing]], this brainstorm). Route as demand to udon.
