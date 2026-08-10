@@ -13,7 +13,19 @@ Read, in this order, *before* substantive work:
 1. [`../../CLAUDE.md`](../../CLAUDE.md) — the front door: the layout table and priorities. (It imports this file; if you arrived through it, done.)
 2. [`../../README.md`](../../README.md) — the telos. Session success = a truthful segment drafted, corrected, or strengthened, or an item honestly discharged. Two laws govern every disposition: the **delete-test** and **proxy-discipline**.
 3. [`../OUTLINE.md`](../OUTLINE.md) — whole, including its **Working Notes**, which carry the live conventions *with their lineage* (State-not-Stage; proposed-not-missing; Expected-Type-as-prediction; Max ceilings; form-kind-only slug prefixes; the type-honesty register; the open decisions). The Working Notes are front door, not appendix.
-4. The **drafted segments** (`../src/`, the rows marked `drafted`) — read them as the corpus's exemplars; they teach harder than any rule here. If time forces selection, the foundations four (`post-living-collection`, `post-total-turnover`, `def-verisectorium`, `claim-comprehension-economics`) plus `form-state-flags-not-gates` carry the most. Experiential reading ( [[form-experiential-reading]]) is the recommended mode: one segment at a time, predict → read → diff → wander. It is slower and that is the point.
+4. The **drafted segments** — read them as the corpus's exemplars; they teach harder than any rule here. All of them, whole. Experiential reading ( [[form-experiential-reading]]) is the recommended mode: one segment at a time, predict → read → diff → wander. It is slower and that is the point. The drafted set as of 2026-08-09 (23; freshness check: `grep -l 'state: \[drafted\]' ../src/*.md` — trust the grep over this list if they diverge, then fix the list):
+   - *Foundations:* [[norm-truth-above-self]] · [[obs-truth-failure-manifestations]] · [[post-living-collection]] · [[post-total-turnover]] · [[claim-comprehension-economics]] · [[def-verisectorium]]
+   - *I Corpus:* [[def-atom]] · [[def-atom-cluster]] · [[form-slug-form-kinds]]
+   - *II Vocabulary:* [[post-names-are-interface]] · [[claim-naming-criteria]]
+   - *III Veritas:* [[form-state-flags-not-gates]]
+   - *IV Adjudication:* [[claim-strengthen-first]] · [[claim-truth-over-proxy]]
+   - *V Flux:* [[form-influx-membrane]] · [[def-integration-replacement]] · [[claim-dispatch-compounds]] · [[claim-clocked-drains]]
+   - *VI Views:* [[claim-outline-as-view]]
+   - *VII Experiential:* [[form-experiential-reading]]
+   - *VIII Stewardship:* [[claim-decision-surfacing]] · [[form-steward-valve]]
+   - *Process Dual:* [[form-process-map]]
+
+   The remaining `pre-drafted` files in `../src/` are stubs carrying Working Notes only — cautions and context banked for their future drafters; do not cite them as drafted segments.
 5. [`../influx/00-INDEX.md`](../influx/00-INDEX.md) — what evidence exists, what state it is in. Copies are reading substrate, never authority; **segments draft from live sources**.
 6. [`../../PRACTICA.ud`](../../PRACTICA.ud) — where work stands now.
 
