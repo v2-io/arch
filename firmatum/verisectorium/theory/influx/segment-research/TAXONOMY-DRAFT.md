@@ -61,7 +61,7 @@ Note that these are ordered by increasing ((something)), ((etc.)).
 
 
 ## Working Notes
-- The generative-law candidate (kinds distinct iff failure mode + adjudication instrument differ — the two-repairs test generalized) and the axes-first spine: proposed in-dialog 2026-08-10, not yet worked through its stress tests. Details and everything downstream of it: `pre-taxonomy-synthesis.md`.
+- The kind-individuation heuristic ("do these fail differently and get repaired differently?" — design-register precedent in comproprium FORMAT + the trio anti-collapse test) is under discussion at hypothesis tier. Its earlier "generative law" form was retracted 2026-08-10 after the steward's challenge: the "iff" was an unsourced strengthening whose necessity half deleted the Exposition family until caught. Details: `pre-taxonomy-synthesis.md` §A; failure anatomy in the sop influx.
 - "Concern" is deliberately the wider word: a family's defining concerns may include things that aren't axes (write semantics, say) — only axes get the full MECE-states treatment. If the two vocabularies turn out to coincide in practice, consolidate to one name then.
 - Proposed: As entries settle they draft into real segments and this file's entries become pointers — the draft must not become the permanent home (delete-test applies here too).
 - Proposed: Discussion rounds tracked in PRACTICA's `segment-taxonomy` area.

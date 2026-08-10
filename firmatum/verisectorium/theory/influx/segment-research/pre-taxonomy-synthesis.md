@@ -10,14 +10,11 @@ Under total turnover ( [[post-total-turnover]]), the theory's core promise is *e
 
 **Register discipline (steward, 2026-08-10):** every wild instance is an evolved/evolving guess with inertia; the survey supplies a distribution, never a verdict. Axes are the stable convergent layer (support-kinds reinvented independently; the event layer four generations old); kind lists are the volatile layer.
 
-## A. The generative law *(candidate — must survive B/D's stress tests)*
+## A. The kind-individuation heuristic *(hypothesis — re-registered 2026-08-10 after steward challenge)*
 
-> Two kinds are distinct **iff** they differ in failure mode and adjudication instrument (the two-repairs test, generalized from comproprium FORMAT + the trio support-kinds).
+**The question worth asking** when a kind split or merge is proposed: *do the two fail differently, and are they repaired/adjudicated differently?* Difference-in-repair is good grounds for distinguishing two kinds — this much has two same-estate design-register precedents (comproprium FORMAT's kind separation; the trio evidence-tiers "anti-collapse test": two support-kinds are worth distinguishing only when they route to different repairs). Same-author design conventions: coherence, not corroboration.
 
-A kind is then an equivalence class of axis-applicability; the taxonomy is a **menu + minting rule**, never a closed list. A proposed new kind earns its place by exhibiting a failure-mode/instrument pair no existing kind has.
-
-- Stress test 1 — the def straddle: *(open — see E1)*
-- Stress test 2 — the exposition family (no instrument "by declaration"): *(open — see E2)*
+**Retraction on record:** the first fill stated this as a "generative law" — *distinct iff failure mode + adjudication instrument differ* — with "must survive stress tests" framing. The "iff" was this session's addition, claimed by neither source: the sources support *sufficiency* (different repairs → worth distinguishing); the invented *necessity* half licensed "no instrument → not a kind" and deleted the Exposition family — the estate's largest by count — until the steward caught it. The failure anatomy is banked at `../../sop/influx/survey-census-and-law-filter-2026-08-10.md`. Whether anything law-like is recoverable here (e.g. as a minting *prompt* in the kind-declaration schema, with population facts always able to overrule it) is an open discussion item, not a premise.
 
 ## B. The kind-declaration schema (what any kind must declare)
 
