@@ -1,6 +1,6 @@
 # CHANGELOG — history layer (newest first)
 
-*What happened and why. Present truth lives in theory/ (segments + OUTLINE); process rules in theory/sop/ORIENT.md; state in PRACTICA.un. The misfire-era CHANGELOG.un is archived beside the rest of that attempt's record.*
+*What happened and why. Present truth lives in theory/ (segments + OUTLINE); process rules in theory/sop/ORIENT.md; state in PRACTICA.ud. The misfire-era CHANGELOG.un is archived beside the rest of that attempt's record.*
 
 ## 2026-08-09 (evening) — instance front door + full orientation + template repair (steward + coord)
 
