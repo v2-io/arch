@@ -36,6 +36,16 @@ Heuristic, with `robust-qualitative` attainable and `robust-qualitative` the cei
 
 ## Discussion
 
+**The founding night, as it happened.** The law was not designed; it was spoken mid-crisis, in three turns across one evening (2026-05-17, the spike-integration session), and the SOP prose is a next-day distillation of these:[^history-0517]
+
+> This sounds very much like the agent that was integrating the spike discovered a mistake in the spike and successfully refuted it. That's why I'm going to insist we really, really have the mathematics nailed down completely here and rederive the truth of the truth independently right now.
+
+> Exactly-- underlying *CORE* principle: You have to care about the theory's *TRUTH* more than anything else-- provinance and things like that are only mild proxies. [sic]
+
+> Also-- don't trust NOTATION.md as the theory often drifts away from it (spike findings and new segments don't remember to update NOTATION)
+
+The sequence matters: a live refutation forced the re-derivation, the re-derivation surfaced the principle, and the principle immediately named its first proxy. Everything in this segment is that evening, generalized.
+
 **Why the law is structural for a verisectorium, not imported etiquette.** Under [[post-total-turnover]] every reader reconstructs the collection from its artifacts — so artifacts are the *only* interface, proxies are what a reader meets first and mostly, and the temptation to settle by them is permanent rather than occasional. The same postulate explains the drift: proxies are denormalizations maintained by hands that turn over, while the primaries change under them. A verisectorium therefore cannot choose between proxies and truth — it runs on proxies — it can only keep the *settling* function pinned to primaries and re-derivation. That is the whole content of the corpus's second governing law, and it is why the delete-test ( [[def-integration-replacement]]) and this claim are stated together at the front door: a register *about* information is this claim's central object.
 
 **What proxy-discipline is *for*.** The estate's gate machinery — the decisive test, the regression axis, the independent-verify gate (adjudicator ≠ confirmer), strengthen-first — is all proxy-discipline: *"machinery for not fooling ourselves with the cheaper proxies. They serve §0; when any of them is in tension with re-derived truth, truth wins and the proxy-rule is the thing that gets re-truthified."*[^spikes-0] The constructive direction follows: since proxies cannot be eliminated, engineer them to drift less or to declare their drift — derived-not-hand-maintained views ( [[form-generated-views]]), verification as an append-only re-checkable event log ( [[form-evidence-ledger]]),[^relata-verif] and indexes that report their own staleness instead of silently under-answering (fail loud beats silent drift).[^fail-loud]
