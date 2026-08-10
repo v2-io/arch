@@ -61,7 +61,10 @@
   ─────────────────────────────────────────────────────────────
    process-state:  pre-drafted / drafted / checks…   — resettable flags, reset-on-edit
    event layer:    append-only trail (verifications, decisions) ──projects──► status cells
-                                                        (shipped only in relata so far)
+                                     (CORRECTED 2026-08-10, two dives independently: live in
+                                      neurips/refs verifications/ [the lineage root — four
+                                      generations old], all 30 udon-needs chapters' verified:
+                                      lists, and terminology's decision events — not relata-only)
 ```
 
 ## The taxonomy question this map opens
