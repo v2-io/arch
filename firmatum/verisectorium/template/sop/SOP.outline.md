@@ -16,9 +16,9 @@ In addition to feedback from agents here, `sop/influx/` will capture Verisectori
 | proposed      | directive             | [[dir-domain-disposition]]   | Additional disposition for this specific project            |                     | ruled           |
 | proposed      | directive             | [[dir-orient-src]]           | The initial *doctrina* needed: crucial def & src segments   |                     | ruled-current   |
 | proposed      | directive             | [[dir-orient-docs]]          | Other core domain documents to read in prescribed way (required reading) |            | ruled-current   |
-| template      | reference             | [[ref-verisectorium-tools]]  | The tools Verisectorium ships / makes available — maintained upstream as they evolve |  | current |
+| template      | reference             | [[ref-verisectorium-tools]]  | The tools Verisectorium ships / makes available — maintained upstream as they evolve; built vs planned split honestly | proposed | current |
 | proposed      | directive             | [[dir-essential-tools]]      | This instance's tools with normative usage that needs to be followed |            | ruled-current   |
-| override      | reference             | [[ref-hazards]]              | Named hazards, so nobody re-learns them (seeded empty; every instance accrues its own) |  | current |
+| override      | reference             | [[ref-hazards]]              | Named hazards, so nobody re-learns them (seeded empty; every instance accrues its own) | proposed | current |
 | proposed      | reference             | [[ref-available-tools]]      | Other tools to be used situationally or for convenience     |                     | current         |
 | proposed      | reference             | [[ref-resources]]            | Contextual primaries: read situationally on a trigger — whole, at the moment of use, keyed to `ref/` |  | current         |
 | **--GAP--**   | discussion |          | --Register/epistemology discipline for agents working here (which label system, how strength is held, how the ladders reconcile) — parked on the steward's open epistemology decision (theory OUTLINE.md working notes); not filled by the segments below, which cover corpus/naming/flux discipline instead-- |  |  |
