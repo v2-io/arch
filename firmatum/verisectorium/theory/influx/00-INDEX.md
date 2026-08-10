@@ -17,6 +17,7 @@
 | `efflux/phanero-README.md` | Copied 2026-08-06: the publication-pipeline member's provisional seven-stage shape — feeds [[form-efflux-seams]]. The processing-flow doc (adjudication/backport seams) is deliberately *not* re-copied: live original at `~/src/neurips/neurips-reviews-responses/processing-flow.md` wins |
 | `terminology-survey.md` | Steward-dropped report on lexicon/terms (2026-08); to be considered together with `TERM.term.ud` below |
 | `TERM.term.ud` (renamed from `.un` per the suffix default) | The retired terminology-entry template (moved here from `template/` 2026-08-09 — the `term` noun is retired in favor of `def`/definition/lexicon). Carries the steward-reviewed entry-shape re-cut (episode.yml spine, invariants-as-parsed-prose, five-second glance test); to be adjudicated with `terminology-survey.md` into the def-entry schema. The udon paths instance's live `def/` entries are the current best evidence for the recommended form |
+| `segment-research/epistemic-map.md` | New surface (2026-08-10): the registers/ladders synthesis + segment-kind taxonomy seed, steward-corrected in-dialog; the estate-wide segment-kind survey lands beside it |
 | `00-INDEX.md` (this file) | Last to leave |
 
 ## Not copied at gather time (named absence, preserved)
