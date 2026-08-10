@@ -18,12 +18,13 @@ Seeded from the verisectorium template (state: `override`) — copied at deploym
 Read, in this order, *before* substantive work:
 
 1. `CLAUDE.md` (the front door — the layout table and priorities).
-2. This file, whole, plus [[dir-disposition]].
+2. This file, whole, plus [[dir-disposition]] and `sop/SOP.outline.md` — the sop store's own canon view; its Working Notes carry the state and register enums everything here speaks.
 3. `LEXICON.md` — generated from `def/`; the vocabulary everything else speaks.
 4. `NAME-ME.outline.md` whole, Working Notes included — the canon view over `def/` and `src/`.
-5. The `def/` segments, then the `src/` segments the outline marks drafted. Experiential reading is the recommended mode: predict → read → diff → wander.
+5. The `def/` segments, then the `src/` segments the outline marks drafted — and any `pre-drafted` stubs, whole (they are short: Working Notes only, banking a prior session's cautions and context; skipping them re-loses exactly what they exist to keep — just never cite them as drafted). Experiential reading is the recommended mode: predict → read → diff → wander.
 6. *(domain primers and core documents — [[dir-orient-docs]] carries these once drafted)*
-7. `PRACTICA.ud` — where work stands now.
+7. `ls` the influx surfaces (`influx/00-INDEX.md`, `sop/influx/`) so you know what is waiting; read items when `PRACTICA.ud` or your work touches their subject, not wholesale.
+8. `PRACTICA.ud` — where work stands now.
 
 **Contextual primaries** ( [[ref-resources]] — read on their trigger, whole, at the moment of use, never from a synthesis; `ref/` holds the stable pointers):
 
