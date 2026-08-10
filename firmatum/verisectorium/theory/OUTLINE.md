@@ -128,7 +128,7 @@
 
 | Expected<br>Type | Tag | Claim | Max | State |
 |------|-----|-------|-----|-------|
-| Formulation | [[form-experiential-reading]] | Predict → read one atom → diff against expectation → wander → predict next: deep comprehension, causal-gap detection agents otherwise cannot perform (workflow-level causal masking), and pedagogical gold as byproduct (de-novo SOP; the three-property account) | decided | proposed |
+| Formulation | [[form-experiential-reading]] | Predict → read one atom → diff against expectation → wander → predict next: deep comprehension, causal-gap detection agents otherwise cannot perform (workflow-level causal masking), and pedagogical gold as byproduct (de-novo SOP; the three-property account, 2026-08-05 spine dialog) | decided | drafted |
 | Formulation | [[form-orientation-gate]] | Orientation as verifiable precondition scoped to a context lifetime; quiz units addressed prospectively by the same anchors provenance uses; misses convert to targeted reading (vivarium gate); the workflow-restatement gate is the same mechanism applied to briefs rather than corpora | decided | proposed |
 | Formulation | [[form-corpus-verbs]] | Agent interfaces speak corpus verbs (show / pending / decide / verify), not file paths; layout opaque by construction — the estate's strongest adoption evidence that bowl verbs beat better file tools (relata transfer) | decided | proposed |
 | Formulation | [[form-front-door]] | The front-door layer: what loads always (disposition, index) vs on-demand (procedure), de-novo priming discipline (auditor-safe vs priming-heavy surfaces), and the currently-scattered carriers gathered into one designed organ | decided | proposed |
