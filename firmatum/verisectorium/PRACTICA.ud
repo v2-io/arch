@@ -13,7 +13,26 @@
   :why template/ is the kit's concrete deliverable: a blank-slate instance (from the udon paths copy, stripped + genericized) with the new process-state axis (override / template / proposed) and the directive epistemic register (proposed / ratified / ruled, current as freshness) exercised in sop/SOP.outline.md
   ; 2026-08-09 evening: ref-verisectorium-tools + ref-hazards seeded (rows had asserted files that didn't exist); influx/00-INDEX.md manifest added; dir-orient inherited the theory ORIENT's orientation lessons
   ; 2026-08-09 evening: ratified/ruled RESOLVED (steward): the directive register is an *authority* register (third axis, named honestly) sharing the Epistemic Status column; process-state stays pure ownership
-  :next Steward review of the seeded dir-orient / dir-disposition, the process-state enum, and the new ref seeds (marked supported 2026-08-10: trusted, not fully reviewed — revisit-friendly); fill the sop outline --GAP-- with theory-segment rows (verisectorium's side, not deployments')
+  ; Gap analysis (coord, 2026-08-10, steward-requested banking) — what a deployment
+  ; of today's template would miss, in three buckets:
+  ;   BLOCKED ON TAXONOMY (correctly waiting): exemplar seed atoms (def/+src/ ship
+  ;     empty — the biggest single gap per form-exemplar-seeds); frontmatter schema
+  ;     (provisional; known state: conflation of process+maintenance ships as a
+  ;     defect); the sop outline --GAP-- row (parked on epistemology decision)
+  ;   NOT BUILT YET (only hands block): bin/ instruments (LEXICON generator is a
+  ;     promise with no generator; no observing verbs; every praxis enforced by
+  ;     diligence alone); UPGRADE DETECTION (un-ratification-on-upstream-change has
+  ;     no detector — no version marker/hash/manifest of template-state files; top
+  ;     operational priority); proposed-row directives are bare rows (no skeletons);
+  ;     processes not born clocked (influx starts as an unclocked queue — the
+  ;     diagnosed estate failure); no valve seed / brief schema; no per-store
+  ;     write-semantics or enforcement-profile declaration; deploy is hand-surgery
+  ;     (rename NAME-ME across ~5 files; questionnaire unexteriorized)
+  ;   FINE TO ACCRUE (named absence): efflux seams; quiz machinery beyond professio;
+  ;     salience/study-ranking; audience-safety splits
+  ; Paths survived these gaps because its founding coord carried the discipline in
+  ; context — exactly what the kit exists to not depend on.
+  :next Steward review of the seeded dir-orient / dir-disposition, the process-state enum, and the new ref seeds (marked supported 2026-08-10: trusted, not fully reviewed — revisit-friendly); fill the sop outline --GAP-- with theory-segment rows (verisectorium's side, not deployments'); work the NOT-BUILT bucket as taxonomy rounds free capacity (upgrade detection first)
 
 |area[segment-taxonomy] :priority primary :state active :opened <2026-08-10>
   :why Steward call: nail down an official segment-kind taxonomy + orthogonal
