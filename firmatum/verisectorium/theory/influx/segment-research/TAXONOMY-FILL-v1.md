@@ -77,14 +77,17 @@ Note that these are ordered by increasing weight of backing — same execute/rev
 | 2 | `supported` | Supported | trusted, provisional | steward/council trusts it as actionable-for-net-good without full review; easiest revisit | required rung |
 | 3 | `ratified` | Ratified (steward/council) | approved, adopted | reviewed and stood behind after a real read | required rung |
 | 4 | `ruled` | Ruled (steward/council) | fiat, decreed | an exercise of reserved authority; fiat marked as fiat | required rung |
+| — | `rejected` | Rejected | declined, asked-and-answered | proposed and turned down — with reason and what-would-reopen recorded, so the question is never re-billed | terminal (off-ladder) |
+| — | `superseded` | Superseded | overturned, replaced | was in force, expressly replaced by a later decision; carries the pointer to its successor | terminal (off-ladder) |
 | — | `defacto` | De-facto | unratified-in-use | operating as decided without ever being decided; recorded so the record exists | honesty state (off-ladder) |
-| — | `transition` | Transition | being-fixed | rejected but still present somewhere; defacto-being-repaired | honesty state (off-ladder) |
+| — | `transition` | Transition | being-fixed | rejected or superseded but still present somewhere — a terminal state whose cleanup is unfinished | honesty state (off-ladder) |
 
 ###### Usage, Standard Operating Procedures, and Mix Variations
 
 - Authority is **projected, never hand-set**: the cell is a denorm of the latest decision event (ledger primary; DECISIONS' decided-by vocabulary and this ladder are one vocabulary by design).
 - A record's authority **ceiling derives from ownership**: target-maintained records can reach `ruled` locally; kit-maintained copies cap at `ratified` (you can ratify adopting what you don't own, not rule its text); an upstream change temporarily un-ratifies the copy.
 - Composes with Evidence, never substitutes: on truth-apt content authority governs *adoption*, evidence governs *truth* — a `ruled` assertion is still `heuristic` if that's where its evidence sits.
+- **The terminals are the anti-re-billing machinery**: `rejected` requires its reason + reopen-condition (decided-is-not-terminal — a re-open brief states *what changed*); `superseded` requires its successor pointer (kin to prohibitions' replace-with). Neither is deletion: both keep the record answering "was this ever considered?" at zero search cost, and `transition` is exactly one of them caught mid-cleanup.
 
 ##### Efficacy
 
