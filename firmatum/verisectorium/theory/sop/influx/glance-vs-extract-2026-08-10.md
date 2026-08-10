@@ -12,3 +12,9 @@
 - **Extracting** (bulk harvest, feeding files to agents, provenance sweeps): the flood guards apply — `rg -l` first, small `-n`, redirect big output to files.
 
 Teaching only the second half produces exactly the failure the steward caught: an agent that guards floods it will never see while losing the serendipity channel that glancing exists for.
+
+## Addendum (same day): the same correction, one level up — delegation vs direct reading under a 1M window
+
+Minutes after the praxis above landed, the coord fanned four survey agents across the estate — and the steward named the larger instance of the same reflex: *"a whole lot of work and indirection and hazards of multiple chains of summary… when you could just do `rg -i -. -C3 '…'` and let the harness worry about overflow. Especially in the case where you have 1mil context window and you are specifically instantiated to see all of the details while being able to keep the big picture in mind."*
+
+The delegable-discovery boundary (judgment stays home; discovery fans out) was calibrated for bounded context windows. Under a 1M-window coordinator, the economics invert for judgment-adjacent survey work: direct `-C3` browsing of live trees is lossless primary contact at trivial cost, while each delegation hop adds a summary in the proxy chain — the exact shape the estate's 2026-07-18 method-deficiency scar records ("built on summaries with the primary files unread"). What delegation still buys honestly: wall-clock parallelism, and *locator maps* into territory too large even for a big window. The praxis: **agent reports from survey fan-outs are maps, not synthesis inputs** — the synthesizing mind browses the primaries the maps point at, first-hand, before drafting anything from them. (This is [[claim-truth-over-proxy]] applied to one's own subagents.)
