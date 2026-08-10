@@ -24,7 +24,7 @@
 - 
 -
 
-### (provisional) Full Axis / Orthogonal Atom Concern Taxonomy
+### Full Axis / Orthogonal Atom Concern Taxonomy
 
 #### Overview
 
@@ -32,15 +32,27 @@
 | ------------ | --- | ----------- | ------------- | -------------- | ---------- |
 |              |     |             |               |                |            |
 
-
 #### Principled Fields, Usage/SOPs, & Variations
-**[Axis]**:  
-  **Primary MECE States**:  
-    Note that these are ordered by increasing [something] ([etc.]).  
-      - [state-one]  
-      - [state-two]
 
-### (provisional) Family, Kinds, Synonyms, and Concerns/Fields
+*((This first is a template we can remove after we have a few exemplars in hand))*
+##### ((The Axis)):
+
+###### Primary MECE States
+
+Note that these are ordered by increasing ((something)), ((etc.)).  
+((Can be one or more of table, list, or even ascii diagram or mermaid diagram when appropriate))
+
+| Rank | Tag/Key | State | Synonyms | Description | Importance |
+| ---- | ------- | ----- | -------- | ----------- | ---------- |
+|      |         |       |          |             |            |
+|      |         |       |          |             |            |
+*((note that an individual states' synonyms and importance -- variations on just that value -- are not the full story of "Usage/SOPs/Variations" from the heading. The section below here talks about how the things might vary in relation to which elements are adopted by a project or in relation to other Axes/Concerns, and so forth and so on.))*
+
+###### Usage, Standard Operating Procedures, and Mix Variations
+
+- ...
+
+### Family, Kinds, Synonyms, and Concerns/Fields
 
 | Family/Kind | Synonyms | Universal Axes | Defining Axes | Additional Axes |
 | ----------- | -------- | -------------- | ------------- | --------------- |
@@ -49,10 +61,8 @@
 
 
 ## Working Notes
-### Under discussion
 - The generative-law candidate (kinds distinct iff failure mode + adjudication instrument differ — the two-repairs test generalized) and the axes-first spine: proposed in-dialog 2026-08-10, not yet worked through its stress tests. Details and everything downstream of it: `pre-taxonomy-synthesis.md`.
-
-### Misc
 - "Concern" is deliberately the wider word: a family's defining concerns may include things that aren't axes (write semantics, say) — only axes get the full MECE-states treatment. If the two vocabularies turn out to coincide in practice, consolidate to one name then.
 - Proposed: As entries settle they draft into real segments and this file's entries become pointers — the draft must not become the permanent home (delete-test applies here too).
 - Proposed: Discussion rounds tracked in PRACTICA's `segment-taxonomy` area.
+- If these Per-Axis sections start fleshing out a lot and there's more than a handful, they will probably turn into their own theory segments instead of continuing in this 'one-shot' provisional spot.
