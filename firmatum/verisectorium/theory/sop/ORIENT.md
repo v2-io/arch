@@ -25,9 +25,11 @@ Read, in this order, *before* substantive work:
    - *VIII Stewardship:* [[claim-decision-surfacing]] · [[form-steward-valve]]
    - *Process Dual:* [[form-process-map]]
 
-   The remaining `pre-drafted` files in `../src/` are stubs carrying Working Notes only — cautions and context banked for their future drafters; do not cite them as drafted segments.
-5. [`../influx/00-INDEX.md`](../influx/00-INDEX.md) — what evidence exists, what state it is in. Copies are reading substrate, never authority; **segments draft from live sources**.
-6. [`../../PRACTICA.ud`](../../PRACTICA.ud) — where work stands now.
+   Then the **`pre-drafted` stubs** — the remaining 12 files in `../src/`, read whole too (they are short: Working Notes only). They bank drafting cautions and a prior coordinator's read-context that turnover would otherwise destroy; skipping them re-loses exactly what they exist to keep. Do not cite them as drafted segments.
+5. **This store's own influx** (`influx/` beside this file) — read every item; they carry method feedback (the evidence-gather mechanics, the delivery-seam lessons, the term-template re-cut) that is praxis-in-waiting, and a fresh mind is their adjudication audience.
+6. **The template's sop store** (`../../template/sop/SOP.outline.md` + its two authored directives, `dir-disposition` and `dir-orient`; the rest of `template/sop/src/` symlinks into `../src/`, already read) — this instance maintains the template, so its enums (process-state: proposed/template/override; directive register: proposed/ratified/ruled + current) and its praxis projection are part of what a session here must know.
+7. [`../influx/00-INDEX.md`](../influx/00-INDEX.md) — what evidence exists, what state it is in. Copies are reading substrate, never authority; **segments draft from live sources**.
+8. [`../../PRACTICA.ud`](../../PRACTICA.ud) — where work stands now.
 
 **Contextual primaries** — read on their trigger, whole, at the moment of use, never from a synthesis:
 
