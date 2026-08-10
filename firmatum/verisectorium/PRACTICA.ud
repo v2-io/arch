@@ -26,6 +26,16 @@
   ;   (ask "what SHOULD fail/adjudicate?" per kind; survey = completeness
   ;   backstop only, never a filter — the exposition loss + repair, see sop
   ;   influx survey-census-and-law-filter note)
+  ; Leverage ranking (first-pass thought, 2026-08-10 — NOT authoritative/definitive):
+  ;   1 Exposition roles (discussion first — likely subdivides; then intro,
+  ;     abstract, primer/learning-aid, walkthrough, narrative) — majority family,
+  ;     two axes hang on it;  2 Definitions (straddle = sharpest type test; gates
+  ;     lexicon store + template def/ + paths);  3 Norms & Directives (template
+  ;     sop store shipping now; densest axis intersection);  4 Questions
+  ;     (completes authority lifecycle; touched every session);  5 Accounts
+  ;     (unique register; evidence/exempla flows);  6 Instruments (small round,
+  ;     total reach);  7 Practices (one question);  8 the grounded four's
+  ;     per-kind nuance — Assertions' waits on Evidence (steward-paced)
   :next Forcing-function rounds over FILL-v1's ~ cells, in order: (1) Exposition
         per-role (biggest debt, majority family — coord proposes, dialog
         settles); (2) instrument rounds for Practices/Accounts/Questions/
