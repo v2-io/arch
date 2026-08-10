@@ -15,6 +15,18 @@
   ; 2026-08-09 evening: ratified/ruled RESOLVED (steward): the directive register is an *authority* register (third axis, named honestly) sharing the Epistemic Status column; process-state stays pure ownership
   :next Steward review of the seeded dir-orient / dir-disposition, the process-state enum, and the new ref seeds (marked supported 2026-08-10: trusted, not fully reviewed — revisit-friendly); fill the sop outline --GAP-- with theory-segment rows (verisectorium's side, not deployments')
 
+|area[segment-taxonomy] :priority primary :state active :opened <2026-08-10>
+  :why Steward call: nail down an official segment-kind taxonomy + orthogonal
+       state/status/max axes, principled by the wild population rather than any
+       one instance's inertia ("every instance is an evolved/evolving guess").
+       Feeds def-epistemic-axes, form-slug-form-kinds, disc-ladder-reconciliation,
+       obs-instance-spectrum, and the template's GAP row.
+  :next Discussion rounds over influx/segment-research/synthesis-v0 (11 families,
+        18 candidate axes, failure-mode+instrument as candidate generative law;
+        agenda in its section 5). Four dive maps + coord primary browses (marked)
+        are the substrate; chase asf's old naming/epistemology discussions before
+        re-litigating what they already rejected. Four dive forks holding the line.
+
 |area[deployment-components] :priority primary :state active :opened <2026-08-06>
   :why Part IV rows (19, five chapters) carve the realization stratum — the
        components present in zero bespoke deployments; drafting them is what
