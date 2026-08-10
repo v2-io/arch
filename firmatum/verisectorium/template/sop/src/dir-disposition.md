@@ -1,7 +1,7 @@
 ---
 slug: dir-disposition
 form: directive
-status: proposed
+status: supported
 max: ratified
 state: [template]
 depends: []

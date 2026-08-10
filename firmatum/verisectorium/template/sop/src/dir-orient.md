@@ -1,7 +1,7 @@
 ---
 slug: dir-orient
 form: directive
-status: proposed
+status: supported
 max: ruled
 state: [override]
 depends: []

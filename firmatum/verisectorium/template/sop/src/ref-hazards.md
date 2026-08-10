@@ -1,7 +1,7 @@
 ---
 slug: ref-hazards
 form: reference
-status: proposed
+status: supported
 max: current
 state: [override]
 depends: []

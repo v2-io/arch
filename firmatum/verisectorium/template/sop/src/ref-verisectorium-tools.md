@@ -1,7 +1,7 @@
 ---
 slug: ref-verisectorium-tools
 form: reference
-status: proposed
+status: supported
 max: current
 state: [template]
 depends: []
