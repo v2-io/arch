@@ -12,20 +12,21 @@
 
 *Design spine: a family is individuated by its failure-mode + adjudication-instrument pair (the generative-law candidate, here used as the design rule rather than asserted as law). Ordered by how much of the estate's truth rides on them.*
 
-| Kind Family | Examples | Defining Concerns |
-| ----------- | -------- | ----------------- |
-| **Assertions** | claim, postulate, observation, derived/result, measurement | fails by being false or overclaimed; adjudicated by evidence + re-derivation → Evidence axis (+ Ceiling) |
-| **Definitions** | def/term-group, term, lexicon entry, notation entry | dual failure: bad *coinage* (choice — Authority axis) and bad *fit-to-usage* (empirical — Evidence axis). Two axes on one kind, by design (resolves the def straddle) |
-| **Decisions & Conventions** | decision entry, convention, ruling, scope call | fails by silent overturn or drift-from; adjudicated by authority events → Authority axis (event-projected, always) |
-| **Norms & Directives** | normative, dir- directive, SOP, FORMAT/charter | fails by not binding or mis-guiding; adjudicated by authority + participant feedback → Authority + Posture + Freshness |
-| **Practices** | praxis, workflow pattern, orchestration shape | fails by not firing when its moment comes; adjudicated by demonstrated firing → Efficacy axis |
-| **Accounts** | exemplum (account/exchange/testimony/quotation/demonstration), spike record, experiment run, audit finding | fails by infidelity to what happened; adjudicated by witness position + fidelity-to-primary; append-only write semantics as a defining concern |
-| **Prohibitions** | residue entry, forbidden term, deny-list entry, regression guard | fails by resurrection or over-blocking; adjudicated by refutation provenance → Usage-License axis + mandatory replace-with pointer |
-| **Questions** | open question, demand, pending item, residual | fails by re-billing or silent loss; adjudicated by routing to a terminal state → Question-Lifecycle axis (the undecided dual of Authority) |
-| **References** | ref entry, bib entry, citable primary pointer | fails by dangling or staleness; adjudicated by verification events + freshness → Currency + Conflict-Precedence |
-| **Instruments** *(meta-records)* | manifest, navigator, ledger, process map, valve, adversarial review, standing brief | fails by lying about the status of what it tracks (the label-lie); adjudicated by re-derivation against the population (proxy discipline) → Charter + Derivation-Declaration |
+*(This table consolidates the former separate family×axes matrix — steward direction 2026-08-10: Instances merges examples + synonyms; universal axes apply to every row and are listed once below, not per-row. Per-kind nuance — e.g. how a postulate and an empirical result differ inside Assertions, per-role citation discipline inside Exposition — is deferred until the taxonomy shape is confident.)*
 
-*Deliberate exclusion: **Exposition** (discussion, aside, preamble, narrative connective) is designed OUT of the atom-kind families — framing prose is view property ( [[claim-outline-as-view]]), exposition weight is a projection concern, and a `disc-` segment is an Assertion at `discussion-grade` (declared non-load-bearing), not a separate kind. This is the want-mode answer to the exposition stress test; it must survive our own disc- segments (see WN-3).*
+| Kind Family | Instances | Non-Axis Concerns | Defining Axes | Additional Axes |
+| ----------- | --------- | ----------------- | ------------- | --------------- |
+| **Assertions** | claim, postulate, observation, derived/result, measurement | fails by being false or overclaimed; settled only by re-derivation against primaries | Evidence, Ceiling, Grain | Salience |
+| **Definitions** | def/term-group, term, lexicon entry, notation entry | dual failure: bad *coinage* (a choice) and bad *fit-to-usage* (an empirical matter) | Authority (coinage) + Evidence (fit) | Usage License, Grain |
+| **Exposition & Pedagogy** | discussion, introduction, abstract, preamble, primer, bridge, narrative connective, readers-often-ask, walkthrough | the majority of many corpora by count (census 2026-08-10: `discussion` is asf vol-1's most common type, 40/~155; vivarium's detail+discussion+sketch ≈ 35/112). Makes few or no claims of its own yet must be wholly truthful and stay current with the atoms it narrates; DAG rules deliberately looser (licensed forward references, recorded as intended inversions); citation/reference discipline varies by role (an Abstract ≠ a discussion ≠ a primer). Fails by referent-drift, claim-smuggling, or mis-teaching; experiential reading is its causal-order instrument | Claim License, Freshness (referent-coupled) | Salience, Audience Safety, Grain |
+| **Decisions & Conventions** | decision entry, convention, ruling, scope call | fails by silent overturn or drift-from; every status cell event-projected, always | Authority | Question Lifecycle (via re-open) |
+| **Norms & Directives** | normative, dir- directive, SOP, FORMAT/charter | fails by not binding or mis-guiding; participant feedback is the amendment channel | Authority, Freshness | Salience, Audience Safety, Conflict Precedence |
+| **Practices** | praxes, workflow pattern, orchestration shape | fails by not firing when its moment comes; only real firings adjudicate | Efficacy | Salience |
+| **Accounts** | exempla (account/exchange/testimony/quotation/demonstration), spike record, experiment run, audit finding, reflections, dialogs, curated dialogs, anecdote, use-case-instance, … | fails by infidelity to what happened; append-only write semantics | Witness Position, Coverage | Audience Safety |
+| **Prohibitions** | residue entry, forbidden term, deny-list entry, regression guard | fails by resurrection or over-blocking; refutation provenance + mandatory replace-with pointer | Usage License | Evidence (of the refutation) |
+| **Questions** | open question, demand, pending item, residual | fails by re-billing or silent loss; must route to a terminal state | Question Lifecycle, Routing | Salience |
+| **References** | ref entry, bib entry, citable primary pointer | fails by dangling or staleness | Freshness, Conflict Precedence | Coverage |
+| **Instruments** *(meta-records)* | manifest, navigator, ledger, process map, valve, adversarial review, standing brief | fails by lying about the status of what it tracks (the label-lie); settled by re-derivation against the population (proxy discipline); opening charter sentence declares its maintenance stance | Conflict Precedence, Freshness | Audience Safety, Routing |
 
 #### Universal (or nearly) Defining Concerns
 
@@ -52,10 +53,11 @@
 | **Process State** | stage (retired), checks, flags | resettable named-work-done flags; reset-on-edit | all | `state:`, check vector | veritas-critical |
 | **Efficacy** | fired-status | demonstrated firing of a practice | practices | `:status fired` family | governing |
 | **Witness Position** | attestation, fidelity | proximity to the primary event + verbatim-fidelity | accounts | `attested/reconstructed/secondhand`, `:date-confidence` | governing |
-| **Usage License** | allowed-use, term-status | what use a record permits/forbids of its content | prohibitions, terms | "allowed as [HYPOTHESIS]", `forbidden` | governing |
+| **Usage License** | allowed-use, term-status | what use *consumers* may make of this record's content | prohibitions, terms | "allowed as [HYPOTHESIS]", `forbidden` | governing |
+| **Claim License** | assertion-rights, warrant-license | what assertions this record may make *of its own* — none / summarize-only / generalize-over-referents / original-claims; the outward dual of Usage License | exposition & pedagogy | license declaration per record or role | governing |
 | **Question Lifecycle** | open-state, disposition | progress of an undecided item toward a terminal state | questions, flux items | question-class, typed outcomes | governing |
 | **Ownership** | maintenance, template-state | verisectorium- / other-project- / target-maintained | any templated record | `state: [template/override]` (today, conflated) | governing |
-| **Freshness** | currency, staleness | decaying claim of currency; reset by underlying change | references, directives, instruments | `current`, verified-as-of dates | governing |
+| **Freshness** | currency, staleness, referent-currency | decaying claim of currency, in two forms: *own* currency (the tool/doc I describe still works this way) and *referent* currency (the atoms I narrate still say what I say they say — exposition's defining form; reset when any referent changes) | references, directives, instruments, exposition | `current`, verified-as-of dates, deps-check flag | governing |
 | **Grain** | per-clause state, scope-of-status | at what depth state attaches (record / section / clause / embedded term) + the projection rule upward | assertions, definitions | per-clause `:by`, FE-section maxes | governing |
 | **Conflict Precedence** | arbiter-role | who wins on collision — arbiter / co-equal / defers | references, charters, instruments | "not the arbiter", "Appendix A wins" | governing |
 | **Coverage** | carried-scope | full / partial-declared / extract | accounts, references, instruments | `coverage:` | governing |
@@ -108,28 +110,14 @@ Note that these are ordered by increasing demonstrated reliability-in-the-moment
 - Want-mode extension beyond the surveyed form: firings are **events with actors** — fired-for-author and fired-for-inheritor are different events (the surveyed FORMAT names this gap itself); the ladder rung is a projection over *whose* firings exist, and inheritor-firings are the ones that matter for a turnover corpus.
 - `failed-to-fire` feeds the practice's revision the way a refutation feeds a claim — it is this axis's version of the strengthen-first trigger.
 
-### Family, Kinds, Synonyms, and Concerns/Fields
-
-| Family/Kind | Synonyms | Universal Axes | Defining Axes | Additional Axes |
-| ----------- | -------- | -------------- | ------------- | --------------- |
-| Assertions | claims, truth-apt segments | all universals | Evidence, Ceiling, Grain | Salience |
-| Definitions | defs, terms, vocabulary | all universals | Authority (coinage) + Evidence (fit) | Usage License, Grain |
-| Decisions & Conventions | rulings, ledger entries | all universals | Authority | Question Lifecycle (via re-open) |
-| Norms & Directives | SOPs, dir-, charters | all universals | Authority, Freshness | Salience, Audience Safety, Conflict Precedence |
-| Practices | praxes, patterns | all universals | Efficacy | Salience |
-| Accounts | exempla, spikes, runs, findings | all universals | Witness Position, Coverage | Audience Safety |
-| Prohibitions | residue, forbidden, deny-lists | all universals | Usage License | Evidence (of the refutation) |
-| Questions | opens, demands, pendings | all universals | Question Lifecycle, Routing | Salience |
-| References | refs, bib entries, pointers | all universals | Freshness, Conflict Precedence | Coverage |
-| Instruments | manifests, navigators, ledgers, maps | all universals | Conflict Precedence, Freshness + charter (a concern, not an axis) | Audience Safety, Routing |
-
 ## Working Notes
 
 *The questions this fill surfaced — likely the more valuable half of the document:*
 
 - **WN-1 (Evidence axis deliberately not templated yet).** I filled Authority and Efficacy as the two exemplar axis-sections and *stopped* before Evidence — because its MECE-states table forces the biggest open call: one strength ladder with a named ordering ("cost to overturn"?) vs the trio's two-dimensional cut (support-kind × strength) where no total order exists. The skeleton's "ordered by increasing ((something))" is exactly what the estate's ladders never declared, and choosing the ordering *is* the epistemology decision PRACTICA holds as deliberately open. Wants its own discussion round, possibly the joint one.
 - **WN-2 (the def straddle, want-mode answer).** Definitions carry two axes at once: Authority on the coinage, Evidence on fit-to-usage. Fresh defs are honestly `proposed`+unmeasured; a term can be `ratified` yet fit-poor (rename pressure), or fit-proven yet never ratified. Does this dual survive contact, or is it over-engineering for a kind most deployments status with one field?
-- **WN-3 (exposition excluded — the riskiest call).** Designing exposition out of the families (view-property + discussion-grade assertions) contradicts asf's aside/sketch/detail types and our own `disc-` prefix. If a disc- segment is just an assertion at discussion-grade, the `disc-` prefix marks a *rung*, not a kind — which violates the stable-identity rule we ourselves wrote. Either the exclusion is wrong, or `disc-` is a legacy prefix the taxonomy should eventually retire. Flagged, unresolved.
+- **WN-3 (exposition — RESOLVED against the first fill, steward-caught 2026-08-10).** The first fill designed exposition out (view-property + discussion-grade assertions); the steward named the error immediately: discussions, introductions, and pedagogy are *a good majority of our segments* — no own claims (per license), looser DAG rules, yet fully truth-bound and referent-current, with role-specific citation discipline (Abstract vs discussion vs primer). Restored as the Exposition & Pedagogy family, bringing two design yields: the **Claim License axis** (the outward dual of Usage License) and Freshness's **referent-coupled form**. What survives of the original exclusion: exposition *weight* (aside/detail/sketch) may still be a projection concern rather than a kind — that lives in per-kind nuance now. **The precise failure anatomy, for the record (steward-demanded diagnosis):** the survey did *not* miss the family — the glimpse, the asf dive, and synthesis-v0 §1 all carried it. Two failures compounded downstream: (a) *the candidate law acted as an evidence filter* — exposition failed the generative-law stress test (no adjudication instrument), and the fill resolved the tension by deleting the family instead of weakening the law; (b) *the survey produced kind-lists, never counts* — "distribution" was claimed, an inventory was delivered, and only the 2026-08-10 census (run after the steward's catch, in minutes) made the majority share visible: a count would have made the family undeletable. Both halves are now sop-influx feedback (`survey-census-and-law-filter-2026-08-10.md`).
+- **WN-10 (Exposition per-role nuance deferred).** Role vocabulary (abstract / intro / primer / bridge / …), per-role claim licenses, and per-role citation discipline are the per-kind-nuance layer, deferred until the shape is confident. The licensed-forward-reference mechanism should reconcile with [[form-pedagogical-ordering]]'s relation-keyed intended-inversions when it drafts.
 - **WN-4 (Prohibitions: family or profile?).** A residue entry is arguably an Assertion (of refutedness) whose defining axis is Usage License. I kept the family because its failure mode (resurrection) and instrument (refutation provenance + replace-with) are genuinely distinct — but if the generative law is applied strictly, "distinct axis profile" and "distinct family" may be the same statement (E3 again, now with a concrete test case).
 - **WN-5 (Ceiling generalized).** Want-mode ruling embedded above: every laddered axis takes a ceiling, and authority ceilings derive from ownership (the template's Max column already behaves this way). Means `Max` is not an evidence-only concept — the map's §5 needs updating if this holds.
 - **WN-6 (event trail promoted to universal).** The survey shows events four-generations-deep but nowhere universal. Making "every status cell is a projection of events" universal is the single largest divergence from surveyed practice in this fill — it implies tooling debt everywhere. Is that the want, priced honestly?
