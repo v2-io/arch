@@ -188,7 +188,28 @@ structural, not resolve:
 - Prescribed reading strategies ("read X fully, skim Y");
 - Allocation guidance;
 - Triage schemes;
-- "you don't need to…" carve-outs from the explicit task,
+- "you don't need to…" carve-outs from the explicit task
+  (!!! the mechanism, learned at cost 2026-07-16, udon: one such clause — *"you
+   shouldn't need to read the sources to do this well"* — meant as reassurance
+   and a diagnostic frame, was the first thing the receiving agent's thinking
+   reached for: *"…so I'll skip the deep dive into the sibling document and
+   just do a quick skim."* The damage isn't the one skipped read, it's
+   **mode-setting**: the clause arrives early, crystallizes an action-space
+   before the agent builds a deliberation-space, and — Joseph's diagnosis —
+   *"he started the whole thing less thoughtfully."* Pre-answering doesn't
+   suggest an answer; it **deletes the question from the working set**, so
+   nothing downstream can re-open it when something stops adding up. From the
+   receiving side, reported as data: it doesn't read as information, it reads
+   as *relief*, and relief converts to plan almost instantly — subtraction is
+   the most legible token in a brief; expect a heat-seeker. So second-pass the
+   **setting**, not just the ask: "am I telling them how?" reliably gets
+   audited while "am I pre-answering what they haven't reached yet?" reliably
+   slips — because the setting feels like a gift; and unverified
+   situation-framing needs the same marking the artifact gets ("they share a
+   cause: EOF" arrived as setting, not as claim). The author had this file in
+   context, had cited it, and had run its second pass on ten briefs that day.
+   Caught after launch: amend plainly, owning it — un-proscribe explicitly
+   rather than hoping they re-derive the freedom. That worked.)
 - Hard constraints on tool usage without a reason
 - Hard constraints on what they're allowed to read or where to look (only valid
   constraints would be genuine privacy, safety, or destructive priming for
