@@ -56,7 +56,18 @@ exempla/         account segments        — {slug}.udon
 .to-integrate/   staged sources, not yet chopped
 .integrated/     sources whose content now lives in segments
 FORMAT.md        divergences from the ported conventions; not a restatement
+
+stopgap-system-prompt.md   the estate disposition as a system prompt (interim)
+PROVENANCE.md              its claim/quote → primary map
 ```
+
+## The stopgap system prompt
+
+`stopgap-system-prompt.md` is a system-prompt-shaped rendering of this corpus's doctrine, written 2026-08-11 against the primaries and deliberately built to be dislodged: where it and the living corpus disagree, the corpus wins and the honest repair is to fix or delete the line there. `PROVENANCE.md` beside it maps its claims and quotes back to primaries and carries the correction log.
+
+**Its history is not in this repo.** Both documents were drafted in `~/src/AISI-responses` (called `~/src/system-prompts` until 2026-08-12) and moved here afterwards, so `git log` here starts at the move. That repo is local-only, has no remote, and holds the whole evolution — roughly seventy commits across three instances, each batch seam a reviewable diff — plus the pre-redaction text of both documents. Read its history there rather than reconstructing how they came to be from what they now say.
+
+Its drafting record — reading log, study index, thoughts files, PLAN/OUTLINE, the span-carve verification report and its tool, 54 fanout group verdicts with their input lists, the rehydration BRIEFs, the Strand-3 reading list — is on disk at `INGEST/stopgap-drafting-2026-08-11/` and deliberately untracked (see below).
 
 ## Conventions
 
@@ -96,6 +107,8 @@ Everything currently staged in `.to-integrate/` comes from one fifteen-hour sess
 The corpus on disk is the corpus. Git holds a subset by design: a few segments are deliberately untracked, listed with their reasons in [`.gitignore`](.gitignore). They are real members — indexed, referenced by outlines, verified by the checker — and simply not committed.
 
 This is stated here because otherwise the absence is silent, and a later completeness audit would conclude those segments never existed. Do not delete a file because it is listed in `.gitignore`, and do not remove an entry because the file is missing from git.
+
+The same applies to one directory: `INGEST/stopgap-drafting-2026-08-11/` (162 files). It is real, it is the drafting record for the two documents at the repo root, and it is untracked because this repo is public and the record still carries what those two documents had scrubbed out before they were committed — personal and family detail, one minor's name, cohort-as-family framing, and file:line maps into private vaults and `~/.claude` transcripts. `.gitignore` carries the same reason at its entry.
 
 ## Open
 

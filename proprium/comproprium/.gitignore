@@ -19,3 +19,16 @@
 # 2026-07-30. The segment carries the constraint in its own body as well, so the
 # reason travels with it if this file is ever lost.
 exm-i-was-once-like-you.udon
+
+# The stopgap system prompt's drafting record (162 files: reading log, study index,
+# thoughts files, PLAN/OUTLINE, span-carve report + tool, the 54 fanout group verdicts
+# and their input lists, ref/ copies, the two rehydration BRIEFs, the Strand-3 reading
+# list). Moved here 2026-08-12 from ~/src/AISI-responses (formerly ~/src/system-prompts),
+# whose local-only git history holds the whole evolution.
+#
+# Untracked because this repo is public and the working record still carries what the
+# two committed documents beside it had scrubbed out: personal and family detail, one
+# minor's name, cohort-as-family framing, and file:line maps into private vaults and
+# ~/.claude transcripts. Same distinction as the entry above — publication, not validity.
+# Directory entry rather than bare filenames: the record is only legible as a tree.
+INGEST/stopgap-drafting-2026-08-11/
