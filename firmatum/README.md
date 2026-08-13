@@ -11,7 +11,8 @@ Program-level tools that **firm, confirm, and establish** work across the estate
 ```text
 firmatum/
   utils/              # programme-internal / pre-public tools only
-    fmt-md/           # in-tree for now; queued for rename + own repo + re-submodule
+    md-press/         # markdown canonicalizer (Rust; still listed as fmt-md in older notes)
+    aspectus/         # the look of a locus — budgeted tree snapshot (Rust)
     code/             # small installable CLIs (symlink → ~/.local/bin)
       git-heat-decay/ # git-heat — commit-decay heatmap
   udon/               # sm v2-io/udon  (independent product)
@@ -25,6 +26,15 @@ firmatum/
 **Split:** top-level `firmatum/<project>/` = independently applicable projects. `firmatum/utils/` = Archema-local or not-yet-extracted tools (and, later, shared `bin/` harvest).
 
 ## Built / mounted
+
+### [`utils/aspectus/`](utils/aspectus/)
+
+The look of a locus (Rust). Print-and-quit budgeted snapshot for agents; well-known furniture (`.git`, `target/`, …) is parent state, not a child listing. Faculty name **aspectus**; one snapshot is an **aspecta**. Glance pipeline is live — [`utils/aspectus/ASPECTUS.outline.md`](utils/aspectus/ASPECTUS.outline.md).
+
+```sh
+cargo install --path firmatum/utils/aspectus
+# → ~/.cargo/bin/aspectus
+```
 
 ### [`utils/fmt-md/`](utils/fmt-md/)
 

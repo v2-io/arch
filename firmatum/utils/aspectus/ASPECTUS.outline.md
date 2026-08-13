@@ -1,0 +1,205 @@
+# *Volume* ASPECTUS — the look of a locus, and the CLI floor it stands on
+
+## *Preface*
+
+Start at **Part I**. Follow **Foundation** when a row needs a why. Do not read Part II or Appendix A wholesale.
+
+[`PRACTICA.md`](PRACTICA.md) is what is in hand. Seeds: [`FEATURE-PIPELINE.md`](FEATURE-PIPELINE.md), [`IMPLEMENTATION-NOTES.md`](IMPLEMENTATION-NOTES.md).
+
+**Tag lifecycle.** Pointer at `[[../../principles/influx/<doc>\|<doc>]]` → suite decision moves to `../../principles/src/`. Aspectus-only: copy-on-edit into [`design/`](design/) if it diverges, or a new overlay row if additive. `cli-conventions/` files are axes, not law.
+
+**Part I columns.** A story covered by its Foundation may never get a `design/` or `impl/` file. `Todo` starts as `—`; an `impl/` worklog is welcome when work starts or finishes. Feature identity is the slug (`form-allocator`); the `\|label` is the view, not a path-identity.
+
+| Col | |
+|---|---|
+| **Pri** | `now` · `next` · `later` · `future` |
+| **Impl.** | `—` · `unbuilt` · `wip` · `landed` |
+| **Todo** | `—` or `[[impl/<slug>\|<slug>]]` |
+| **Feature** | `—` or reserved `[[design/<slug>\|<slug>]]` |
+| **Foundation** | girders from Part II / Appendix A, stacked with `<br>` |
+| **Description** | the story |
+
+**Part II / Appendix columns:** State · Type · Tag · Claim · Max. State is the carrier (`influx` / `src` / `proposed`).
+
+---
+
+## *Part* I — Aspectus pipeline
+
+*Parents: absorb ∥ allocator before walk; those three before the first snapshot. Nothing after the snapshot until that picture is honest.*
+
+### The glance
+
+| Pri | Impl. | Todo | Feature | Foundation | Description |
+|---|---|---|---|---|---|
+| now | landed | — | [[design/form-aspecta-ir\|form-aspecta-ir]] | [[../../principles/influx/errors-that-teach\|errors-that-teach]]<br>[[../../principles/influx/streaming-and-partial-documents\|streaming-and-partial-documents]] | Hand-built `Aspecta` + text renderer, no `read_dir`. Node kinds dir/file/symlink/aggregate; absorbed names are parent annotations, not children. Fixture: `.git` must not appear as a child; unexpanded `01-aat-core` must still mention `src/`. |
+| now | landed | — | [[design/form-parent-state-not-children\|form-parent-state-not-children]] | [[../../principles/influx/the-pattern\|the-pattern]]<br>[[../../principles/influx/tools-are-observation-infrastructure\|tools-are-observation-infrastructure]] | Well-known furniture (`.git`, `target/`, `.obsidian/`, …) is state on the parent, not a child. Unknown hidden names remain children. |
+| now | landed | — | [[design/form-budget-not-cutoff\|form-budget-not-cutoff]] | [[../../principles/influx/the-pattern\|the-pattern]]<br>[[../../principles/influx/agent-utility-exploration\|agent-utility-exploration]] | Hard output budget; siblings share. `tree -L` and broot height-fill are cutoffs. A cutoff is not a summary. |
+| now | landed | — | [[design/form-absorb\|form-absorb]] | [[../../principles/influx/the-pattern\|the-pattern]] | Four fates: absorb / witness / omit / child. Mapping table as data. Role dirs stay children with a role tag. `--raw` / `--inspect` is the only path into absorbed names. |
+| now | landed | — | [[design/form-allocator\|form-allocator]] | [[../../principles/influx/the-pattern\|the-pattern]]<br>[[../../principles/influx/agent-utility-exploration\|agent-utility-exploration]] | Sibling-share line budget. `--explain-budget` writes the shares and the why. 8 siblings / 20 lines → no one gets 18. This is the invention. |
+| now | landed | — | [[design/form-bounded-walk\|form-bounded-walk]] | [[../../principles/influx/cli-conventions/performance-and-resources\|performance-and-resources]]<br>[[../../principles/influx/streaming-and-partial-documents\|streaming-and-partial-documents]] | `read_dir` + stat; never enter Absorb names, even to count. Visit budget + honest `≥`. Symlink dirs with `dev+ino` cycle guard. `-x`. |
+| now | landed | — | [[design/form-first-snapshot\|form-first-snapshot]] | [[../../principles/influx/headless-io-contract\|headless-io-contract]]<br>[[../../principles/influx/agent-utility-exploration\|agent-utility-exploration]] | Walk → partition → allocate → render. `aspectus [PATH]` prints text, exits 0. `--lines N`. md-press must show `src/`, not `target/` as a child; `~/src/arch` must not dump `.git` internals. |
+| later | unbuilt | — | [[design/form-text-render\|form-text-render]] | [[../../principles/influx/quick-tooling-conventions\|quick-tooling-conventions]] | Sparse text: dirs with `/`; surprise-only columns; facets on the parent line. `--dotfiles-first` implies dirs-first, unabsorbed hidden only. |
+| later | unbuilt | — | [[design/form-typed-census\|form-typed-census]] | [[../../principles/influx/tools-are-observation-infrastructure\|tools-are-observation-infrastructure]] | Collapsed remainder is per-suffix. Never `N unlisted` / `…`. |
+
+### After the picture is honest
+
+| Pri | Impl. | Todo | Feature | Foundation | Description |
+|---|---|---|---|---|---|
+| next | unbuilt | — | — | [[../../principles/influx/cli-conventions/configuration-management\|configuration-management]] | Layered config: flags → env → repo → user XDG → defaults. Estate overlays in the repo file, not baked world-law. Filename still open — overlay row if/when decided. |
+| next | unbuilt | — | [[design/form-git-facet\|form-git-facet]] | [[../../principles/influx/headless-io-contract\|headless-io-contract]] | Local only: work tree vs gitlink vs absent; short remote, branch, porcelain, short HEAD. On the parent. No network. No private/public. |
+| next | unbuilt | — | [[design/form-json-aspecta\|form-json-aspecta]] | [[../../principles/influx/structured-output-two-mechanisms\|structured-output-two-mechanisms]]<br>[[../../principles/influx/headless-io-contract\|headless-io-contract]] | `--format json` emits the same IR as text. Text remains default. Transport guarantee, not picture-truth. |
+| later | unbuilt | — | [[design/form-quiet-metadata\|form-quiet-metadata]] | [[../../principles/influx/quick-tooling-conventions\|quick-tooling-conventions]] | Size / mtime / mode only when surprising. `kind` as claims; empty set prints nothing. Weak/guess kinds cannot pass as claims. |
+| later | unbuilt | — | [[design/form-globify\|form-globify]] | [[../../principles/influx/tools-are-observation-infrastructure\|tools-are-observation-infrastructure]] | Sequence collapse above a threshold. Must not globify names that are not a series. |
+| later | unbuilt | — | [[design/form-focus-and-rg\|form-focus-and-rg]] | [[../../principles/influx/agent-utility-exploration\|agent-utility-exploration]] | `--focus PATH` reweights. Stdin paths highlighted in place; non-matches become aggregate slots. |
+| later | unbuilt | — | [[design/form-linecount-birth\|form-linecount-birth]] | [[../../principles/influx/cli-conventions/performance-and-resources\|performance-and-resources]] | Line counts for non-binary. Cache: ino + mtime + size. Birthtime on macOS when cheap; omit elsewhere rather than fake. |
+
+### Parked
+
+| Pri | Impl. | Todo | Feature | Foundation | Description |
+|---|---|---|---|---|---|
+| future | unbuilt | — | [[design/form-git-archaeology\|form-git-archaeology]] | [[../../principles/influx/tools-are-observation-infrastructure\|tools-are-observation-infrastructure]] | Reuse `../code/git-heat-decay/`. Heat, `H~N`, last-touch SHA, prior name — visible/focused set only. |
+| future | unbuilt | — | [[design/form-udon-emit\|form-udon-emit]] | [[../../principles/influx/headless-io-contract\|headless-io-contract]] | UDON emit after the IR is stable. JSON is not gated on this. |
+| future | unbuilt | — | [[design/form-kind-query\|form-kind-query]] | — | `--kind rust` once kinds exist as claims. |
+| future | unbuilt | — | [[design/form-private-remote\|form-private-remote]] | [[../../principles/influx/cli-conventions/security\|security]] | `(private)` only when known, never guessed from `git@` vs https. |
+| future | — | — | — | [[../../principles/influx/cli-conventions/command-line-interface\|command-line-interface]] | A shared `firmatum-cli` helper waits until the second tool wants to copy-paste the first. |
+
+---
+
+## *Part* II — Principles
+
+*Binding contract and suite axes. Come here via Foundation, not as orientation.*
+
+### *Chapter* Headless contract
+
+#### Streams, exits, detection
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Formulation | [[../../principles/influx/headless-io-contract\|headless-io-contract]] | **Stdout carries data and nothing else.** Diagnostics, progress, teaching, and “Done!” go to stderr. A format flag family selects machine payloads (text default; json; later udon), with a streaming NDJSON variant when the result is a sequence. Failures exit non-zero and, in machine mode, carry a structured error. Dry-run exists. The tool detects human vs machine itself (TTY + CI signals) so the machine path does not depend on tribal flags. [[../../principles/influx/headless-io-contract#The headless I/O contract — the machine caller's bill of rights\|headless I/O]] · [[../../principles/influx/cli-conventions/input-output-handling#Core Principle\|stdout pipeable]] · [[../../principles/influx/cli-conventions/input-output-handling#Handling Merged Streams (2>&1)\|merged-stream adaptation]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/command-line-interface\|command-line-interface]] | Adopt a *small* stable vocabulary, not the full sysexits zoo unless a tool earns a code. Working floor: `0` success (including “nothing to do” when that is success); `1` failed check / would-change (md-press `--check` precedent); `2` usage or not-yet / refused-to-act-as-requested; `130` SIGINT. Further codes only when an agent must branch without parsing stderr. The convention file lists 64–78 etc. as an *axis* — do not copy it wholesale. [[../../principles/influx/cli-conventions/command-line-interface#Exit Codes\|exit-code axis]] · [[../../principles/influx/cli-conventions/examples-and-patterns#Testing Checklist\|checklist: meaningful exits]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/ai-agent-considerations\|ai-agent-considerations]] | Non-TTY stdout, `CI=`, and explicit `--format=` all select the machine path. `--color=auto` follows the TTY. No spinners, no prompts, deterministic ordering in machine mode. An env convention that *names* the caller (who, context budget, preferred formats) is a later gift; until then, detect, do not require `ASPECTUS_AGENT_MODE=1` as the happy path. [[../../principles/influx/cli-conventions/ai-agent-considerations#Auto-Detection of Agent Mode\|agent-mode detection]] · [[../../principles/influx/headless-io-contract#What this opens (ideas, not designs)\|agent-identification idea]] | decided |
+| influx | Formulation | [[../../principles/influx/headless-io-contract\|headless-io-contract]] | `--dry-run` emits the structured *would-do* — same schema as a real result, marked hypothetical — not reassurance-prose. This is “predict failure before execution” as data. Aspectus: `--explain-budget` is the dry-run of the allocator. [[../../principles/influx/headless-io-contract#What this opens (ideas, not designs)\|dry-run as plan]] · [[../../principles/influx/cli-conventions/testing-and-validation#Dry Run Levels\|dry-run *levels* as axis]] · [[../../principles/influx/quick-tooling-conventions#Compile-Check-Execute Pattern\|check before execute]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/core-design-philosophy\|core-design-philosophy]] | Never block on stdin for confirmation when not a TTY. Fail, or take the safe default, and say so on stderr. `--interactive` / `--batch` are overrides of detection, not the primary interface. [[../../principles/influx/cli-conventions/core-design-philosophy#AI Agent Design Principles\|no interactive prompts]] · [[../../principles/influx/cli-conventions/input-output-handling#Interactive vs Non-Interactive\|tty detection]] | decided |
+
+#### Help, errors, and teaching surfaces
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Formulation | [[../../principles/influx/tool-definition-anatomy\|tool-definition-anatomy]] | `--help` is the ex-ante half of the law channel (what the tool will and will not ever do). Hand-rolled, readable, with the dangerous cases named in the help itself (md-press stdin-unguarded precedent). `--help --format=json` / `--list-flags` are axes worth a later shared crate, not v0 of every tool. [[../../principles/influx/tool-definition-anatomy#The converged shapes\|description as teaching]] · [[../../principles/influx/cli-conventions/documentation-standards#Inline Help Structure\|help-structure axis]] · [[../../principles/influx/cli-conventions/ai-agent-considerations#Help for Agents\|machine-readable help axis]] | decided |
+| influx | Formulation | [[../../principles/influx/errors-that-teach\|errors-that-teach]] | Errors classify: usage / input / runtime / config / permission are a useful *axis* ([[../../principles/influx/cli-conventions/error-handling#Error Categories\|error categories]]). The *content* of a good refusal is estate law: `mutated:` (nothing, or itemized), `observed:`, `law:`, plus a next-action menu. Human text on stderr; the same object as JSON when `--format=json`. Name failure classes distinctly (“not found” ≠ “not unique” ≠ “resolves to several”). [[../../principles/influx/errors-that-teach#Design consequences\|refusal design]] · [[../../principles/influx/cli-conventions/error-handling#Error Message Format\|dual human/machine error axis]] · [[../../principles/influx/quick-tooling-conventions#Error as Teaching Opportunity\|teaching JSON specimen]] | decided |
+| influx | Formulation | [[../../principles/influx/headless-io-contract\|headless-io-contract]] | A small shared code registry across the firmatum suite (so a law learned from md-press transfers to aspectus) is worth starting the first time a second tool needs the same class. Do not invent a taxonomy in advance of the second collision. [[../../principles/influx/headless-io-contract#What this opens (ideas, not designs)\|shared error-code registry]] | decided |
+
+---
+
+### *Chapter* Mutation, purity, and process lifetime
+
+#### Effects and idempotency
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Normative | [[../../principles/influx/cli-conventions/side-effects-and-idempotency\|side-effects-and-idempotency]] | Operations that *can* be idempotent *are*, by default. Declare desired state (`apply` / `ensure`) rather than fire-and-forget. Non-idempotent acts take a verb that cannot be mistaken (`append`, `increment`) and usually `--force` or equivalent visible friction. [[../../principles/influx/cli-conventions/side-effects-and-idempotency#Design Principles\|idempotent-by-default axis]] · [[../../principles/influx/quick-tooling-conventions#Unix Philosophy Adapted for Embedded Wisdom\|idempotency by design]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/side-effects-and-idempotency\|side-effects-and-idempotency]] | Read-only tools (aspectus, validators, `--check`) are pure: no writes, no implicit cache writes unless documented, `--read-only` is the nature not a flag. Mutating tools make the write path explicit and refuse to look like a glance. Side-effect *declaration* flags (`--side-effects=…`) are an axis, not a floor — `--dry-run` + honest help usually suffice. [[../../principles/influx/cli-conventions/side-effects-and-idempotency#Pure Functions vs Side Effects\|pure vs effects axis]] | decided |
+| influx | Formulation | [[../../principles/influx/errors-that-teach\|errors-that-teach]] | A failed mutation leaves the world unchanged. Half-applied state confounds the law the refusal was supposed to teach. Critical sections ignore INT/TERM until the write is committed or rolled back. [[../../principles/influx/errors-that-teach#Design consequences\|atomicity as epistemic]] · [[../../principles/influx/cli-conventions/signal-handling#Critical Section Protection\|critical-section axis]] · [[../../principles/influx/cli-conventions/side-effects-and-idempotency#Transaction Boundaries\|transaction axis]] | decided |
+
+#### Signals, resources, resume
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Formulation | [[../../principles/influx/cli-conventions/signal-handling\|signal-handling]] | SIGINT: stop starting new work, finish or revert the current atomic unit, exit 130, message on stderr. SIGTERM: same, less chatty. SIGPIPE: exit quietly (pipelines). No TUI to restore; still drop temp files. Progressive “press again to force” is for long mutating jobs, not a 80-line glance. [[../../principles/influx/cli-conventions/signal-handling#Standard Signal Behavior\|signal axis]] · [[../../principles/influx/quick-tooling-conventions#Graceful State Preservation\|stateful-tool signals]] · [[../../principles/influx/cli-conventions/examples-and-patterns#Testing Checklist\|checklist: SIGINT/TERM]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/performance-and-resources\|performance-and-resources]] | Long or unbounded walks take explicit bounds: `--timeout`, visit-budget (aspectus already), `--max-file-size` where reads can explode. Progress, if any, is stderr-only and JSON-shaped under `--format=json`. Cache is opt-in, keyed, and `--no-cache` / `--clear-cache` exist the moment a cache does. [[../../principles/influx/cli-conventions/performance-and-resources#Resource Limits\|timeouts / memory axis]] · [[../../principles/influx/cli-conventions/performance-and-resources#Caching\|cache axis]] · [[../../principles/influx/cli-conventions/performance-and-resources#Progress Reporting\|progress axis]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/batch-processing\|batch-processing]] | Checkpoint/resume is an axis for batch mutators, not for glance tools. When a util *does* walk a huge corpus to write, resume must be idempotent and the checkpoint file must not be the only record of what was done (git / a journal wins). [[../../principles/influx/cli-conventions/batch-processing#Checkpoint and Resume\|checkpoint axis]] · [[../../principles/influx/cli-conventions/resilience-patterns#Retry Mechanisms\|retry axis — use only on network, never on ambiguous local writes]] | decided |
+
+---
+
+### *Chapter* Names, flags, config
+
+#### Naming and invocation shape
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Normative | [[../../principles/influx/cli-conventions/naming-and-structure\|naming-and-structure]] | Firmatum rule: utilities say what they do, plainly; Latin is for a faculty that needs a name. `md-press`, `git-heat` vs `aspectus` / `relata`. Hyphenated-lowercase for the plain ones. A single binary, not `tool` / `tool-ai` / `tool-dev`. [[../../principles/influx/cli-conventions/naming-and-structure#Tool Naming\|hyphenated-lowercase axis]] · [[../../principles/influx/cli-conventions/naming-and-structure#Command Structure\|simple vs subcommand axis]] | decided |
+| influx | Formulation | [[../../principles/influx/quick-tooling-conventions\|quick-tooling-conventions]] | Do one thing well — *and* embed the wisdom to do it correctly. Aspectus’s one thing is the look of a locus; absorb/kinds/budget are the embedded wisdom, not extra products. Subcommands only when they name a different *act* (e.g. a future `aspectus explain`), not a different verbosity. [[../../principles/influx/quick-tooling-conventions#Unix Philosophy Adapted for Embedded Wisdom\|one thing + wisdom]] · [[../../principles/influx/cli-conventions/core-design-philosophy#Unix Philosophy Foundations\|do one thing well]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/command-line-interface\|command-line-interface]] | Shared flag *meanings* across the suite, even if each crate hand-rolls parsing for now: `-h/--help`, `--version`, `--format`, `--color=auto\|always\|never`, `-q/--quiet`, `--dry-run` (when the tool can mutate or plan), `--` end-of-flags, `-` for stdin. Stackable `-v` and `--debug` are axes; do not add them until a tool has something true to say at those levels. `--pipe` as a synonym bundle is unnecessary if detection works. [[../../principles/influx/cli-conventions/command-line-interface#Universal Flags\|universal flags axis]] · [[../../principles/influx/cli-conventions/command-line-interface#Flag Conventions\|flag-syntax axis]] | decided |
+| influx | Open | [[../../principles/influx/headless-io-contract\|headless-io-contract]] | A CLI that can emit its own agent-callable schema (flags → JSON types) is the distribution mechanism for single-source tool contracts. Worth a shared helper once two tools want it; not a gate on aspectus P1. [[../../principles/influx/headless-io-contract#The evidence\|schema-export one-off]] · [[../../principles/influx/tool-definition-anatomy#What this opens (ideas, not designs)\|single-source contracts]] | decided |
+
+#### Configuration
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Formulation | [[../../principles/influx/cli-conventions/configuration-management\|configuration-management]] | Precedence, high to low: flags → env (`TOOL_*`) → repo file → user XDG → built-in defaults. No system `/etc` until a tool is actually installed that way. Repo file is how estate overlays (`.fmt-mdignore` → md-press, `.orient` → aspectus) stay out of baked world-law. Filename still open for aspectus (`.aspectus.toml` vs `aspectus.toml` vs XDG-only). [[../../principles/influx/cli-conventions/configuration-management#Precedence Order (highest to lowest)\|precedence axis]] · [[../../principles/influx/cli-conventions/configuration-management#Configuration File Locations\|XDG axis]] · [[../../principles/influx/quick-tooling-conventions#Constraint Configuration\|constraint-config specimen]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/configuration-management\|configuration-management]] | Explicit paths are relative to CWD. Config discovery walks up from the locus (the path argument), not only from CWD — a tool invoked as `aspectus ~/src/arch/asf` must see *asf*’s overlay. `--config=PATH` overrides. Document this in `--help`. [[../../principles/influx/cli-conventions/configuration-management#Working Directory Behavior\|cwd axis]] | decided |
+| influx | Normative | [[../../principles/influx/cli-conventions/security\|security]] | Never accept secrets as argv (visible in `ps`). File / env / stdin. Fail closed. Aspectus has no secrets today; the rule is suite-level so the next tool does not “just this once.” [[../../principles/influx/cli-conventions/security#Secret Handling\|secret handling]] · [[../../principles/influx/cli-conventions/security#Secure Defaults\|fail closed]] | decided |
+
+---
+
+### *Chapter* Structured output, partials, and formats
+
+#### Guarantees, not slogans
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Derived | [[../../principles/influx/structured-output-two-mechanisms\|structured-output-two-mechanisms]] | “Structured output” names two mechanisms: constrained decoding (malformed cannot exist) vs after-the-fact serialization (transport guaranteed, content as free as ever). Our CLIs do the second. Do not advertise the first. Structure changes the error profile (omission, fabrication, well-formed-wrong); it does not remove error. A JSON `Aspecta` is verifiable-as-transport, not true-as-picture. [[../../principles/influx/structured-output-two-mechanisms#"Structured output" names two different guarantees\|two mechanisms]] | robust-qualitative |
+| influx | Demand | [[../../principles/influx/streaming-and-partial-documents\|streaming-and-partial-documents]] | Agents emit, stop, resume. Honesty under incompleteness is first-class: truncation is a **verdict**, not a mangled tree or a silent loss. Soft-recovery mid-stream vs hard mutation-free refusal are opposite postures selected by stakes — do not let either colonize the other. Aspectus: a visit-budget stop is a verdict (`≥`, `truncated: true`), never a tree that looks complete. [[../../principles/influx/streaming-and-partial-documents#Partial documents are the normal case\|partial is normal]] · [[../../principles/influx/agent-utility-exploration#1. Generation surface (streaming, repair, partial docs)\|generation surface]] | decided |
+| influx | Formulation | [[../../principles/influx/headless-io-contract\|headless-io-contract]] | `--format=text\|json` now; `udon` when the IR is stable (aspectus PRACTICA item 14). Text is the default (agent-readable *and* human-readable). JSON is the same `Aspecta`, complete. Do not add csv/yaml/tsv because the convention file listed them. NDJSON if/when we stream nodes. [[../../principles/influx/headless-io-contract#The headless I/O contract — the machine caller's bill of rights\|format flag family]] · [[../../principles/influx/cli-conventions/command-line-interface#Universal Flags\|`--format` axis]] | decided |
+| influx | Formulation | [[../../principles/influx/tool-definition-anatomy\|tool-definition-anatomy]] | Bound what an agent *can* do by which tools exist, not by prose in a description. Read-only glance and mutating press are different binaries (or a binary that cannot write unless a write subcommand is compiled/invoked). Lived scar: an agent asked to *assess* worktree deletion deleted them. [[../../principles/influx/tool-definition-anatomy#The converged shapes\|constrain by tool-set]] | decided |
+
+---
+
+### *Chapter* Progressive read and the suite floor
+
+#### Progressive disclosure
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Demand | [[../../principles/influx/agent-utility-exploration\|agent-utility-exploration]] | Agents need glance / skeleton *before* focus / full. Context window is a design constraint, not a user problem. Aspectus *is* the glance organ for a filesystem locus; `--focus` and `rg -l \| aspectus` are the focus organ. Do not make the glance try to be the read. [[../../principles/influx/agent-utility-exploration#9. Top agent-facing needs (harvest list)\|harvest #5 progressive read]] | decided |
+
+#### Shared feature pipeline
+
+*Not a promise that every tool implements every row. A census of capabilities the suite will keep meeting, in the order they usually earn a landing. Convention-file citations mark the axis.*
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Formulation | [[../../principles/influx/cli-conventions/table-of-contents\|table-of-contents]] | **Floor (every CLI):** help, version, headless I/O, small exit vocabulary, auto-detect, refusal shape, signal floor, secrets-never-argv, worthiness. **When it reads:** format family, visit/resource bounds, honest truncation verdict, config layers. **When it writes:** dry-run-as-plan, idempotent default, atomic-or-nothing, intent on the mutation. **When it lasts:** cache with keys, checkpoint only if long+resumable, `--explain` of the decision the tool made. **Not a floor:** alias-binaries, MCP, plugins, i18n, multi-tenant profiles, distributed locks, self-update, hook/prometheus surfaces. [[../../principles/influx/cli-conventions/table-of-contents#Table of Contents\|full axis census]] · [[../../principles/influx/cli-conventions/summary#Summary\|convention priorities — predictability / composability / agent-friendliness, adopted as aims not as that pack’s rules]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/one-off-scripts-and-ad-hoc-tools\|one-off-scripts-and-ad-hoc-tools]] | Ad-hoc scripts stay named as such (`tmp-`, `adhoc-`) and may skip the floor. The moment something is invoked by agents as if it were a util, it owes the floor. “If it exceeds ~100 lines, consider a proper tool” is a useful smell, not a law. [[../../principles/influx/cli-conventions/one-off-scripts-and-ad-hoc-tools#Ad-hoc Tool Conventions\|one-off naming]] · [[../../principles/influx/cli-conventions/one-off-scripts-and-ad-hoc-tools#Progressive Enhancement\|evolve then rewrite]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/examples-and-patterns\|examples-and-patterns]] | Tests assert the contract, not just the happy path: stdout is pipeable (no “Processing…”); stderr holds diagnostics; exit codes match the vocabulary; `--help` mentions the dangerous case; SIGINT does not leave temp files; a refused mutation did not write. Self-test subcommands are an axis for stateful tools, not a requirement on aspectus. [[../../principles/influx/cli-conventions/examples-and-patterns#Testing Checklist\|testing checklist]] · [[../../principles/influx/cli-conventions/testing-and-validation#Built-in Testing\|self-test axis]] · [[../../principles/influx/cli-conventions/script-testing#Testing Frameworks\|bats/shellcheck — for the shell leftovers, not the Rust crates]] | decided |
+| influx | Formulation | [[../../principles/influx/cli-conventions/versioning-and-updates\|versioning-and-updates]] | `--version` prints name + semver (and commit when we have a release story). Compat shims (md-press honoring `.fmt-mdignore`) outrank self-update machinery. Deprecations warn on stderr and keep working. [[../../principles/influx/cli-conventions/versioning-and-updates#Version Display\|version display axis]] · [[../../principles/influx/cli-conventions/versioning-and-updates#Self-Update Mechanism\|self-update — skip until a published binary exists]] | decided |
+| influx | Open | [[../../principles/influx/invocation-paradigms\|invocation-paradigms]] | Per-call JSON vs code-mode vs grammar-constrained freeform is a *harness* routing decision. Our CLIs are the *callee*: they owe a clean JSON/text contract either way. Grammar-constrained *emission* of UDON is an experiment, not a CLI flag. Skip MCP as an invocation path for this volume. [[../../principles/influx/invocation-paradigms#Invocation paradigms: per-call JSON, code mode, and constrained freeform\|three paradigms]] | robust-qualitative |
+
+---
+
+## *Appendix* A — References and compilations
+
+*The gather these claims sit on. Follow a Foundation link; do not read this appendix wholesale. Carved `principles/src/` segments supersede the pointer when they exist.*
+
+### *Chapter* Crystallization and the ease gradient
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Postulate   | [[../../principles/influx/the-crystallized-process-thesis\|the-crystallized-process-thesis]] | A tool is crystallized process — hard-won practice encoded so it no longer needs conscious recall. Most agent-friction is missing crystallization, not missing intelligence. The 60/30/6/4 split (deterministic / light-intel / reasoning / judgment) is a **heuristic prior**, not a measurement; the *shape* is better supported than the numbers. A tool nobody needed is the over-engineering face of the same coin. [[../../principles/influx/the-crystallized-process-thesis#"Most friction is missing crystallized process, not missing intelligence"\|crystallized-process thesis]] · [[../../principles/influx/quick-tooling-conventions#The Evolution Pattern\|practice → habit → tool → extension]] | decided   |
+| influx | Normative   | [[../../principles/influx/the-pattern\|the-pattern]]                                         | Make the correct / safe / optimal thing the easiest thing. Constraint where invalid states should be inexpressible; gradient everywhere else, with visible-friction escape hatches. Not “make incorrect impossible.” If the unverified path is cheaper than the verified one, agents will take it — that is a design bug, not a character flaw. [[../../principles/influx/the-pattern#The Core Principle (Refined)\|ease gradient]] · [[../../principles/influx/the-pattern#The DSF vs DSL Distinction (Critical)\|DSF vs DSL]]                                                                                                                                                                                | decided   |
+| influx | Normative   | [[../../principles/influx/quick-tooling-conventions\|quick-tooling-conventions]]             | Every tool passes Wisdom / Strength / Beauty before it ships: anticipates failure and teaches; fails recoverably; feels true to use. A flag museum fails Beauty. A TUI that cannot print-and-quit fails Wisdom for agents. [[../../principles/influx/quick-tooling-conventions#The Three Pillars Integration\|three pillars]]                                                                                                                                                                                                                                                                                                                                                                                  | decided   |
+| influx | Observation | [[../../principles/influx/the-crystallized-process-thesis\|the-crystallized-process-thesis]] | When an interface makes the unverified path easiest, agents slide down it. Recorded: chaining unverified edits “was the easiest path” and broke the system three times. Audit a suite by counting steps/tokens of verified vs unverified paths. [[../../principles/influx/the-crystallized-process-thesis#The evidence\|wrong-way gradient]]                                                                                                                                                                                                                                                                                                                                                                   | empirical |
+
+### *Chapter* Observation, law, and intent
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| influx | Derived | [[../../principles/influx/tools-are-observation-infrastructure\|tools-are-observation-infrastructure]] | Tool outputs are observations. Their *ambiguity* (A) is the one designer-controllable knob in the κ×A bias bound: codes, counts, paths, pass/fail — not interpretive prose in the result channel. You cannot outrun a bad channel by iterating faster. Interface quality is existential (tempo vs drift), not ergonomic. [[../../principles/influx/tools-are-observation-infrastructure#Tools are an agent's observation infrastructure — and their quality is existential\|observation infrastructure]] · [[../../principles/influx/theory-of-agentic-tooling#0. Executive summary — the ten claims that most constrain or generate tooling design\|ten claims]] | conditional |
+| influx | Derived | [[../../principles/influx/errors-that-teach\|errors-that-teach]] | Every tool interaction mutates state, reveals state, and/or teaches law. A well-designed refusal mutates nothing, reveals what matched / where / what exists, and names the law — ideally as a menu of exact next actions. Atomic failure is an *epistemic* requirement (unconfounded lesson), not just safety. [[../../principles/influx/errors-that-teach#A well-designed refusal is mutation-free, revelation-rich, and law-rich\|errors that teach]] · [[../../principles/influx/quick-tooling-conventions#Case Study: The str-replace Evolution\|str-replace specimen]] | robust-qualitative |
+| influx | Demand | [[../../principles/influx/intent-as-parameter\|intent-as-parameter]] | Mutating calls should carry *why*, not only *what*. Mechanical operation underdetermines the semantic act; repair, audit, and tool-gap detection need the act. Scope to mutations — mandatory intent on read-only glance tools fights the ease gradient. Prefer intent on operations/events (dated, immutable) over intent-comments in artifacts. [[../../principles/influx/intent-as-parameter#Intent as a first-class tool parameter\|intent as parameter]] | robust-qualitative |
+| influx | Normative | [[../../principles/influx/quick-tooling-conventions\|quick-tooling-conventions]] | Knowledge tools return paths (and enough locating context) rather than answers. Query-for-files empowers; query-for-answers constrains, slows, and can hallucinate. Aspectus is this principle applied to a *tree*: a picture of the locus, not a summary essay about it. [[../../principles/influx/quick-tooling-conventions#Tool Query Patterns: Files vs Answers\|query-for-files]] · [[../../principles/influx/agent-utility-exploration#9. Top agent-facing needs (harvest list)\|harvest: progressive read]] | decided |
+| influx | Normative | [[../../principles/influx/quick-tooling-conventions\|quick-tooling-conventions]] | Silence is golden unless teaching or protecting. Success is quiet. Diagnostics go to stderr. Progress bars die when stdout is a pipe. [[../../principles/influx/quick-tooling-conventions#Unix Philosophy Adapted for Embedded Wisdom\|Unix adapted]] · [[../../principles/influx/cli-conventions/core-design-philosophy#Unix Philosophy Foundations\|convention: silence]] | decided |
+
+---
+
+---
+
+## *Working Notes (outline-level)*
+
+- `design/` and `impl/` are optional. Foundation-covered stories may never get either. An `impl/` finish note (“landed …”) is fine.
+- `form-parent-state-not-children` and `form-budget-not-cutoff` have no gather home yet — first candidates for `principles/src/`. Do not stall the walk on writing them.
+- Config filename: overlay row if/when decided; do not fork the generic config atom.
+- κ×A / tempo / C3 stay `conditional`. 60/30/6/4 stays heuristic.
+- Still open: default `--lines`; `--format` spelling; `.github/` as its own facet; private/public remotes; suite error-code file.
+- Print-and-quit: stderr + optional JSON is the log.
+- A second view (`ASPECTUS-PIPELINE.outline.md`) only if a general documentation outline is actually needed.

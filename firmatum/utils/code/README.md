@@ -16,4 +16,5 @@ See each tool’s README for install and usage.
 
 | Command | Path | Notes |
 |---------|------|--------|
-| **`fmt-md`** | [`../fmt-md/`](../fmt-md/) | Markdown unwrap / canonicalize (Rust; `cargo install --path …`) |
+| **`md-press`** | [`../md-press/`](../md-press/) | Markdown unwrap / canonicalize (Rust; `cargo install --path …`) |
+| **`aspectus`** | [`../aspectus/`](../aspectus/) | Budgeted locus snapshot (Rust) — see `ASPECTUS.outline.md` |
