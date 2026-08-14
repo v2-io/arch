@@ -306,6 +306,16 @@ fn weight(n: &Node) -> u32 {
     }
 }
 
+/// Lines this node would spend if fully rendered: the ceiling a share can
+/// actually use. A share past capacity is waste the allocator must not park.
+fn capacity(n: &Node) -> usize {
+    let mut c = 1 + usize::from(n.omitted.is_some());
+    for k in &n.children {
+        c += capacity(k);
+    }
+    c
+}
+
 /// `budget` includes this node's own line. `0` means no line limit.
 pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
     if budget == 0 {
@@ -367,16 +377,53 @@ pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
     }
     let extra = remain - n;
     let mut shares = vec![1usize; n];
+    let mut unspent = 0usize;
     if extra > 0 {
-        let mut dirs: Vec<usize> = (0..n).filter(|&i| node.children[i].is_dir).collect();
-        if dirs.is_empty() {
-            dirs = (0..n).collect();
+        // Round-robin, one line at a time, only to children that can still
+        // use one (capacity not yet met) — a share a child cannot spend
+        // flows on to siblings that can, until the budget or the tree is
+        // exhausted. Fair: a big dir absorbs extra only after every sibling
+        // has all it can use. Pure function of tree + budget.
+        let caps: Vec<usize> = node.children.iter().map(capacity).collect();
+        // A share of exactly 2 is a dead value for a dir with 2+ children:
+        // its recursion folds to a census spending 1 and wastes the other
+        // line. The useful step for such a dir is 1 → 3.
+        let need2: Vec<bool> = node.children.iter().map(|c| c.children.len() >= 2).collect();
+        let mut left = extra;
+        let mut progressed = true;
+        while left > 0 && progressed {
+            progressed = false;
+            for i in 0..n {
+                if left == 0 {
+                    break;
+                }
+                if shares[i] >= caps[i] {
+                    continue;
+                }
+                if shares[i] == 1 && need2[i] {
+                    if left >= 2 {
+                        shares[i] += 2;
+                        left -= 2;
+                        progressed = true;
+                    }
+                } else {
+                    shares[i] += 1;
+                    left -= 1;
+                    progressed = true;
+                }
+            }
         }
-        for i in 0..extra {
-            shares[dirs[i % dirs.len()]] += 1;
-        }
+        unspent = left;
     }
-    explain.push(format!("{}: budget {budget}, remain {remain}, shares {shares:?}", node.name));
+    explain.push(format!(
+        "{}: budget {budget}, remain {remain}, shares {shares:?}{}",
+        node.name,
+        if unspent > 0 {
+            format!(", unspent {unspent} (tree exhausted)")
+        } else {
+            String::new()
+        }
+    ));
     for (c, s) in node.children.iter_mut().zip(shares) {
         apply_budget(c, s, explain);
     }

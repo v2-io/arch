@@ -125,6 +125,77 @@ fn dir_with_only_its_own_line_censuses_on_the_name() {
     );
 }
 
+/// `small/` (2 files) and `deep/` (10 files) under the root.
+fn fixture_uneven() -> (PathBuf, PathBuf) {
+    let n = SEQ.fetch_add(1, Ordering::SeqCst);
+    let dir = std::env::temp_dir().join(format!(
+        "aspectus-redis-{}-{}-{}",
+        std::process::id(),
+        n,
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    fs::create_dir_all(dir.join("small")).unwrap();
+    for i in 0..2 {
+        File::create(dir.join(format!("small/s{i}.md"))).unwrap();
+    }
+    fs::create_dir_all(dir.join("deep")).unwrap();
+    for i in 0..10 {
+        File::create(dir.join(format!("deep/d{i}.rs"))).unwrap();
+    }
+    let xdg = std::env::temp_dir().join(format!(
+        "aspectus-redis-xdg-{}-{}",
+        std::process::id(),
+        n
+    ));
+    fs::create_dir_all(xdg.join("aspectus")).unwrap();
+    (dir, xdg)
+}
+
+#[test]
+fn share_a_child_cannot_use_flows_to_one_that_can() {
+    let (dir, xdg) = fixture_uneven();
+    // 12 lines: header + small(3 = itself + 2 files) + deep. An even split
+    // would park lines on small; they belong to deep's children.
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "2", "--lines", "12"]);
+    assert_eq!(c, 0, "{e}");
+    assert_eq!(o.lines().count(), 12, "capacity exists, so spend it all: {o}");
+    assert!(o.contains("s0.md") && o.contains("s1.md"), "{o}");
+    let deep_files = o.matches(".rs").count() - o.matches("[+").count(); // names, not census buckets
+    assert!(
+        o.matches("d").count() > 0 && o.contains("d0.rs"),
+        "deep gets the surplus: {o} ({deep_files})"
+    );
+}
+
+#[test]
+fn budget_beyond_the_tree_is_named_unspent_not_lost() {
+    let (dir, xdg) = fixture_uneven();
+    // Capacity of the whole look is 15 lines; 40 exceeds it.
+    let (c, o, e) = run(
+        &dir,
+        &xdg,
+        &["--depth", "2", "--lines", "40", "--explain-budget"],
+    );
+    assert_eq!(c, 0);
+    assert!(!o.contains("[+"), "everything fits, nothing omitted: {o}");
+    assert!(e.contains("unspent"), "explain names the unspent lines: {e}");
+}
+
+#[test]
+fn redistribution_is_deterministic() {
+    let (dir, xdg) = fixture_uneven();
+    let (_, o1, _) = run(&dir, &xdg, &["--depth", "2", "--lines", "9"]);
+    let (_, o2, _) = run(&dir, &xdg, &["--depth", "2", "--lines", "9"]);
+    assert_eq!(
+        o1.lines().skip(1).collect::<Vec<_>>(),
+        o2.lines().skip(1).collect::<Vec<_>>(),
+        "same tree + same budget = same look below the header"
+    );
+}
+
 #[test]
 fn unlimited_lines_zero_lists_all() {
     let (dir, xdg) = fixture_many_files();
