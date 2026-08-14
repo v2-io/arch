@@ -1,5 +1,7 @@
 # First efflux — from the three aspectus designs
 
+> [!note] 2026-08-14: three atoms in this record — [[form-config-precedence]], [[norm-config-walks-from-locus]], [[norm-overlays-are-config]] — were rewritten after [[norm-caller-tunes-the-channel]] was carved (the original carve had inherited "repo file / locus walk" from the convention pack against the decided caller-stack design). The tables below describe the atoms *as first carved*; the atoms themselves are current truth.
+
 `src/` did not exist until this. Demand set: the Foundations tables in [[../../utils/aspectus/design/help-verb|help-verb]], [[../../utils/aspectus/design/two-level|two-level]], [[../../utils/aspectus/design/config|config]], plus the sibling clause those rows already use in the same breath.
 
 Influx stays gather. Status on every atom is the influx/outline type (`formulation` / `normative` / `demand`) and `state: influx`. Landing here is not a promotion. The *carve* (what we bind vs leftover axis) is the one already decided in [[../../utils/aspectus/ASPECTUS.outline.md|ASPECTUS.outline]] Part II.
