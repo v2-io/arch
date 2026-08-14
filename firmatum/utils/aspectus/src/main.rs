@@ -21,7 +21,7 @@ const COMMANDS: &[(&str, &str)] = &[
 const OPTIONS: &[(&str, &str)] = &[
     ("--", "end of flags"),
     ("--config PATH", "use this file as user-home for this run"),
-    ("--caller KEY", "select the agent-type overlay"),
+    ("--caller KEY", "agent-type for configuration selection"),
     ("--lines N", "line budget including the root (default 80)"),
     (
         "--visit N",

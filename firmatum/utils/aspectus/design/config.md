@@ -54,7 +54,7 @@ Do not invent a harness taxonomy in this row. The flag’s value is a key; files
 | 2 | No locus file | `aspectus ~/src/arch/asf` does **not** read a file from `asf/` or any parent of the locus. | Fixture tree with a decoy overlay at the locus; show does not name it; values do not change. |
 | 3 | User-home | The user-home file, if present, applies regardless of CWD or PATH. | Run from `/tmp` on a nested PATH; user-home keys apply. |
 | 4 | `--config=PATH` | That file is user-home for this run. | Explicit file wins over the real user-home file. |
-| 5 | Agent-type | Kind is classified; if a caller flag is present, it selects the agent-type overlay. | Human TTY vs piped vs `--caller=…` produce different winning layers in `config` show. |
+| 5 | Agent-type | Kind is classified; if a caller flag is present, it is the agent-type for configuration selection. | Human TTY vs piped vs `--caller=…` produce different winning layers in `config` show. |
 | 6 | Show | `aspectus config` prints, on **stdout**, which layers were consulted, which existed, which won. Exit 0. | No files: show names `defaults` only. |
 | 7 | No file is fine | Missing layers are not an error. Defaults apply. Show lists them as absent. | Clean home: exit 0, show says defaults. |
 | 8 | Help | Help lists `config`, `--config`, and the caller flag once this row ships. Examples updated in the same commit. | Help snapshot. |
