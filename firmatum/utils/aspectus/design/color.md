@@ -11,4 +11,4 @@ This is how **any** look is painted — two-level, n-level, later columns — no
 | `--color=auto` follows stdout TTY | [[../../../principles/src/norm-color-follows-tty\|norm-color-follows-tty]] · [[../../../principles/src/form-shared-flags\|form-shared-flags]] |
 | TTY changes presentation, not which stream | [[../../../principles/src/norm-stdout-is-data\|norm-stdout-is-data]] |
 
-What gets which color (dirs vs files vs furniture) waits on this row’s design when we implement it. Do not ship the flag until it colors.
+Shipped: directories (including the root line and the `/`) are bold blue. Files stay unpainted. Furniture colors wait on furniture.

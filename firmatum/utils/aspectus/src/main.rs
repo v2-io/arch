@@ -3,6 +3,7 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use aspectus::color::Mode as ColorMode;
 use aspectus::config::{render_show, resolve, CALLER_FLAG};
 
 /// One source: every accepted flag/verb is named here and printed in help.
@@ -19,6 +20,10 @@ const OPTIONS: &[(&str, &str)] = &[
     ("--", "end of flags"),
     ("--config PATH", "use this file as user-home for this run"),
     ("--caller KEY", "agent-type for configuration selection"),
+    (
+        "--color=auto|always|never",
+        "color directories when stdout is a TTY (auto)",
+    ),
 ];
 
 fn help_page() -> String {
@@ -96,6 +101,7 @@ struct ConfigArgs {
 
 struct ShowArgs {
     path: PathBuf,
+    color: ColorMode,
 }
 
 enum Refusal {
@@ -136,6 +142,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut config_cmd = false;
     let mut user_home_override = None;
     let mut caller = None;
+    let mut color = ColorMode::Auto;
     let mut end_flags = false;
     let mut args = argv.into_iter().peekable();
 
@@ -166,6 +173,20 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             s if s.starts_with("--caller=") => {
                 caller = Some(s[9..].to_string());
             }
+            "--color" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--color needs auto, always, or never".into()))?;
+                color = ColorMode::parse(&v).ok_or_else(|| {
+                    Refusal::Usage(format!("--color needs auto, always, or never (got {v})"))
+                })?;
+            }
+            s if s.starts_with("--color=") => {
+                let v = &s[8..];
+                color = ColorMode::parse(v).ok_or_else(|| {
+                    Refusal::Usage(format!("--color needs auto, always, or never (got {v})"))
+                })?;
+            }
             "--" => end_flags = true,
             s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
             s => take_positional(&mut path, s.to_string())?,
@@ -190,7 +211,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         Some(p) => classify_positional(p)?,
     };
 
-    Ok(Cmd::Show(ShowArgs { path }))
+    Ok(Cmd::Show(ShowArgs { path, color }))
 }
 
 fn take_positional(path: &mut Option<String>, token: String) -> Result<(), Refusal> {
@@ -250,7 +271,10 @@ enum ShowErr {
 fn show(args: ShowArgs) -> Result<(), ShowErr> {
     let locus = aspectus::two_level::resolve_locus(&args.path);
     let (name, kids) = aspectus::two_level::list(&locus).map_err(|e| map_io(&locus, e))?;
-    print!("{}", aspectus::two_level::render(&name, &kids));
+    print!(
+        "{}",
+        aspectus::two_level::render(&name, &kids, args.color.active())
+    );
     Ok(())
 }
 

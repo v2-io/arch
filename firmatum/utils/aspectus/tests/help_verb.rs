@@ -153,6 +153,7 @@ fn help_lists_every_accepted_flag() {
         "--version",
         "--config",
         "--caller",
+        "--color",
         "-h",
         "-v",
         "config",
@@ -165,8 +166,6 @@ fn help_lists_every_accepted_flag() {
         "--show-all",
         "--inspect",
         "--no-one-fs",
-        "--color",
-        "--color=auto",
     ] {
         let (c, _, e) = run(&[gone]);
         assert_eq!(c, 2, "{gone} should be unknown, got {e}");

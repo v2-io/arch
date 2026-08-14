@@ -41,11 +41,12 @@ pub fn list(path: impl AsRef<Path>) -> io::Result<(String, Vec<Entry>)> {
     Ok((name, kids))
 }
 
-pub fn render(name: &str, kids: &[Entry]) -> String {
+pub fn render(name: &str, kids: &[Entry], color: bool) -> String {
     let mut root = name.to_string();
     if !root.ends_with('/') {
         root.push('/');
     }
+    let root = crate::color::dir(&root, color);
     if kids.is_empty() {
         return format!("{root}\n");
     }
@@ -56,6 +57,9 @@ pub fn render(name: &str, kids: &[Entry]) -> String {
         let mut n = k.name.clone();
         if k.is_dir && !n.ends_with('/') {
             n.push('/');
+        }
+        if k.is_dir {
+            n = crate::color::dir(&n, color);
         }
         lines.push(format!("{branch}{n}"));
     }

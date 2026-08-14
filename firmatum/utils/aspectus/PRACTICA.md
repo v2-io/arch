@@ -6,7 +6,7 @@ Start at Part I. Follow Foundation for a why. Seeds: [`IMPLEMENTATION-NOTES.md`]
 
 ## Now
 
-Part I `next` for the first glance slice is empty: Help, Config, and Two-level have landed. Next planned stories wait (n-level, summarization, furniture plugins, …).
+Part I landed: Help, Config, Two-level, Color. Next planned: overview-invariants, n-level, summarization, furniture, …
 
 The first-snapshot walk/absorb/allocator is **not** in the product. The binary is help, version, config, and the two-level look.
 
