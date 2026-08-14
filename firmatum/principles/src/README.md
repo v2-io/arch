@@ -11,10 +11,18 @@ One atom, one clause, one file. Atoms are cited from utility outlines (first con
 
 ## Decision provenance (the honest part)
 
-Every atom carries a provenance line naming its ground. Three grades exist in this corpus, and they are not the same:
+Every atom carries a provenance line naming its ground. Authority is a **different axis** from evidence strength (the verisectorium reconciliation: norms and formulations are not truth-apt the way claims are — they are *decided*, and the weight of a decision is who stood behind it and how). This corpus uses the verisectorium template's decided-by vocabulary (`verisectorium/template/DECISIONS.ud`):
 
-1. **Steward-verbatim** — the clause restates something Joseph said or ratified in the recorded dialog (e.g. the caller-stack config decision). Strongest.
-2. **Carved-under-explicit-grant** — Joseph asked for the carve ("I vote you promote…", "feel free to rewrite…") and an agent authored the text; he has not necessarily read the result (e.g. the 2026-08-14 caller/channel and SIGNA atoms, and the config-atom rewrites).
-3. **Agent-carved-under-general-grant** — carved during working sessions without a specific ask; flagged for revisit when it collides with anything (this is how the original repo-file config atoms went wrong in 2026-08 — carved from a convention pack against a decision already made, and worn as `decided` until the collision surfaced).
+| decided-by | meaning |
+|---|---|
+| `steward` | steward made the call; agent or council ratified |
+| `ratified` | agent made the call; steward ratified |
+| `council` | agent call after red-teaming + unified validation from other agents |
+| `supported` | agent call with provisional steward support; easier revisit |
+| `defacto` | "decided" without really being decided; recorded so the record exists |
+| `proposed` | from steward or any agent; not blocking anything yet |
+| `transition` | rejected but still existing somewhere; defacto-but-being-fixed |
 
-When an atom's clause collides with steward words, the words win and the atom gets rewritten — a `decided` mark is never a defense against the primary. If an atom's body lacks a provenance grade you can identify, treat it as grade 3 until traced.
+Current honest placement of this corpus: the caller-stack config clauses restate steward words (`steward`); the 2026-08-14 carves (caller-key, channel-tuning, SIGNA pair, config-atom rewrites) were authored under explicit grants he has not read line-by-line (`supported`); anything carved in working sessions without a specific ask is `defacto` until traced (the original repo-file config atoms were exactly this, worn as `decided` until they collided with a decision already made).
+
+When an atom's clause collides with steward words, the words win and the atom gets rewritten — no decided-by value is a defense against the primary. An atom whose provenance you cannot grade is `defacto`.
