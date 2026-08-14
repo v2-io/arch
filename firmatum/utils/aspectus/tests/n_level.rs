@@ -65,10 +65,9 @@ fn depth_1_is_children_only() {
     assert!(o.contains("a/"), "{o}");
     assert!(o.contains('f'), "{o}");
     assert!(!o.contains("inside.txt"), "depth 1 has no grandchildren: {o}");
-    assert!(!o.contains("deep.txt"), "{o}");
     assert!(
-        o.contains('[') && o.contains("dir"),
-        "unexpanded a/ must census, not look empty: {o}"
+        o.contains("[b/"),
+        "unexpanded a/ must census, not look empty (name form at n=1): {o}"
     );
     assert!(!o.contains("unlisted"), "{o}");
     assert!(!o.contains("…"), "{o}");
@@ -81,10 +80,13 @@ fn depth_2_includes_grandchildren() {
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("inside.txt"), "{o}");
     assert!(o.contains("b/"), "{o}");
-    assert!(!o.contains("deep.txt"), "depth 2 stops at grandchildren: {o}");
     assert!(
-        o.contains(".txt"),
-        "unexpanded b/ must census its file: {o}"
+        !o.lines().any(|l| l.trim_start_matches(['│', ' ', '├', '└', '─']).starts_with("deep.txt")),
+        "depth 2 stops at grandchildren — deep.txt gets no line of its own: {o}"
+    );
+    assert!(
+        o.contains("[deep.txt]"),
+        "unexpanded b/ censuses its one file by name: {o}"
     );
 }
 
@@ -94,7 +96,7 @@ fn default_without_user_config_is_depth_2() {
     let (c, o, e) = run(&dir, &xdg, &[]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("inside.txt"), "{o}");
-    assert!(!o.contains("deep.txt"), "{o}");
+    assert!(!o.contains("deep.txt/"), "{o}");
 }
 
 #[test]

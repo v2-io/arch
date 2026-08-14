@@ -36,10 +36,10 @@ The walk stays on the starting filesystem by default; `--no-one-fs` follows moun
 
 ## Open
 
-- **Cycle-mark and mount-mark spelling** (`[cycle -> path]`? `[other fs]`?) — Joseph ratifies; one constant each.
-- **Diamond (non-cycle revisit):** two links reaching the same directory on *different* paths. Expanding both is honest but can double-spend budget and double-count [[mass|Mass]]; expanding the first and marking the second (`[seen above]`?) is cheap but asymmetric. Leaning: expand both in the look, but mass/deep aggregates count each `(dev,ino)` once. Not decided.
-- **Symlink whose target is on another filesystem:** does the one-fs default stop it? The default's purpose (don't wander into `/Volumes`, network mounts) argues yes for *recursion*, target string still shown. Not decided; whichever way, marked, never silent.
-- Whether `--no-one-fs` rides the caller stack like other look-shape settings (leaning yes, like `depth`/`lines`/`walk`).
+- ~~Mark spellings~~ **Shipped provisionally: `[cycle]` and `[other fs]`** (one constant each, `src/columns.rs`) — Joseph ratifies. The target string beside `[cycle]` already says where the loop goes.
+- ~~**Diamond**~~ **Shipped as the leaning:** both expand in the look; mass/deep aggregates count each `(dev,ino)` once.
+- ~~**Cross-fs symlink target**~~ **Shipped as the leaning:** the one-fs default stops *recursion*, target string shown, `[other fs]` marked.
+- ~~Caller stack~~ **Shipped:** config `one-fs = on|off` on the stack; `--no-one-fs` is the flag spelling of `off`.
 
 ## Not in this row
 

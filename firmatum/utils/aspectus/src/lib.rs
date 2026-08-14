@@ -7,6 +7,8 @@ pub mod columns;
 pub mod config;
 pub mod furniture;
 pub mod git;
+pub mod heat;
+pub mod kind;
 pub mod github;
 pub mod n_level;
 pub mod overview;

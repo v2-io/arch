@@ -27,29 +27,50 @@ pub enum TimeFmt {
     Epoch,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum LineFmt {
+    Physical,
+    NonBlank,
+}
+
 /// The selection for one look, already arbitrated by config.
 #[derive(Debug, Clone, Copy)]
 pub struct Cols {
+    pub line_count: bool,
     pub size: bool,
     pub mtime: bool,
+    /// The `score · age` right-cluster (design/heat.md); in-repo only by
+    /// nature — outside git no node has heat and the column is silent.
+    pub heat: bool,
     pub size_fmt: SizeFmt,
     pub mtime_fmt: TimeFmt,
+    pub line_fmt: LineFmt,
+    /// The look's own stamp time (secs) — ages are relative to the look,
+    /// not to each render.
+    pub now: i64,
 }
 
 impl Default for Cols {
     fn default() -> Self {
         Cols {
+            line_count: true,
             size: false,
             mtime: false,
+            heat: true,
             size_fmt: SizeFmt::Human,
             mtime_fmt: TimeFmt::Iso8601,
+            line_fmt: LineFmt::Physical,
+            now: 0,
         }
     }
 }
 
 impl Cols {
     fn active(&self) -> usize {
-        usize::from(self.size) + usize::from(self.mtime)
+        usize::from(self.line_count)
+            + usize::from(self.size)
+            + usize::from(self.mtime)
+            + usize::from(self.heat)
     }
 }
 
@@ -190,10 +211,37 @@ fn paint(rows: Vec<Row>, color: bool, ncols: usize) -> String {
     out
 }
 
-/// The column cells for one node, in lattice order (size, mtime). A fact
-/// with nothing to say for this line yields an empty cell.
+/// Human-relative age (`13.6d ago`) — the delta register for aliveness
+/// (design/heat.md affordances; git-heat's shipped look).
+pub fn rel_age(now: i64, then: i64) -> String {
+    let d = now - then;
+    if d < 0 {
+        return "future".to_string();
+    }
+    let d = d as f64;
+    if d < 3600.0 {
+        format!("{}m ago", (d / 60.0) as u64)
+    } else if d < 172_800.0 {
+        format!("{:.1}h ago", d / 3600.0)
+    } else if d < 1_209_600.0 {
+        format!("{:.1}d ago", d / 86_400.0)
+    } else if d < 4_838_400.0 {
+        format!("{:.1}w ago", d / 604_800.0)
+    } else if d < 63_113_904.0 {
+        format!("{:.1}mo ago", d / 2_629_746.0)
+    } else {
+        format!("{:.1}y ago", d / 31_556_952.0)
+    }
+}
+
+/// The column cells for one node, in lattice order (line-count, size,
+/// mtime, then the heat cluster at the far right). A fact with nothing to
+/// say for this line yields an empty cell.
 fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
     let mut cells = Vec::with_capacity(cols.active());
+    if cols.line_count {
+        cells.push(n.lines.map(|l| l.to_string()).unwrap_or_default());
+    }
     if cols.size {
         cells.push(n.size.map(|s| fmt_size(s, cols.size_fmt)).unwrap_or_default());
     }
@@ -203,6 +251,14 @@ fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
                 .map(|t| fmt_mtime(t, cols.mtime_fmt))
                 .unwrap_or_default(),
         );
+    }
+    if cols.heat {
+        // Two aliveness facts as one glance-stop: `1.01 · 13.6d ago`.
+        cells.push(match (n.heat, n.mtime) {
+            (Some(h), Some(t)) => format!("{h:.2} · {}", rel_age(cols.now, t)),
+            (Some(h), None) => format!("{h:.2}"),
+            _ => String::new(),
+        });
     }
     cells
 }
@@ -225,6 +281,15 @@ fn info_marks(n: &Node) -> Vec<String> {
     let mut parts = Vec::new();
     if n.denied {
         parts.push("[denied]".to_string());
+    }
+    if n.cycle {
+        // A link back to a place already being expanded on this path —
+        // recursion refused, never a hang (spelling awaits ratification).
+        parts.push("[cycle]".to_string());
+    }
+    if n.other_fs {
+        // A filesystem boundary, not an empty dir, stopped the walk here.
+        parts.push("[other fs]".to_string());
     }
     if n.iter_err {
         parts.push("[unreadable: io]".to_string());
@@ -257,6 +322,17 @@ fn rest_of(n: &Node) -> String {
         let extra = c.render();
         if !extra.is_empty() {
             parts.push(extra);
+        }
+        // Mass's headline number: subtree text lines on the unexpanded
+        // dir's line (files already live in the census's dir bucket).
+        if let Some(m) = &n.mass
+            && m.lines > 0
+        {
+            let mark = if m.bounded { "≥" } else { "≈" };
+            parts.push(format!(
+                "{mark}{} lines",
+                crate::n_level::group_lines(m.lines)
+            ));
         }
     }
     parts.extend(state_marks(n));
@@ -302,7 +378,7 @@ fn emit(
     cols: &Cols,
     out: &mut Vec<Row>,
 ) {
-    let has_om = omitted.map(|c| c.total > 0).unwrap_or(false);
+    let has_om = omitted.map(|c| !c.is_empty()).unwrap_or(false);
     let total = kids.len() + usize::from(has_om);
     for (i, k) in kids.iter().enumerate() {
         let last = i + 1 == total;

@@ -14,7 +14,11 @@ Joseph:
 
 so a glance at `asf/` *calibrates the agent's sense of how much it has not seen* before it spends a single read. An agent that says "oriented" after 5 of 300 segments failed because nothing in its glance carried the 300.
 
-## Shape (to design when the row opens)
+## Shipped (2026-08-14, Wave C)
+
+Weight = descendant files + text lines (the mass unit), computed bottom-up on every dir and by a dedicated deep walk at cutoffs — furniture excluded, `(dev,ino)` counted once, cycle-guarded, one-fs. Rendered *through the census* (design/dir-census.md, same-day rework): the dir bucket carries deep files (`[dir×4 ≈338f · md×2]`), the subtree's text lines follow it (`≈61k lines`) — the deep file total is computable from the census so it does not print twice. `≥` under any bound (walk cut, denied, mount stop, mass name-cap 500k, unreadable text); read-budget overflow estimates lines from size, still `≈`. Gitignored bodies still count until [[gitignore-bodies|that row]] lands — the furniture map catches the big offenders (`target/`, …) today. Details: impl/mass.md.
+
+## Shape (as first sketched)
 
 - **What counts as weight:** descendant file count first; total lines of non-binary files when [[linecount|Line counts]] exist; maybe bytes. Which of these prints, and when (always on dirs at a cutoff? quiet when small?), is lattice work — `size`'s "which number" nuance applies.
 - **Honesty under bounds:** mass wants a deep walk; the [[walk-bound|walk bound]] refuses one. A mass computed under a bound prints `≥`; an unbounded mass is exact until the tree changes. This is the row where [[cache|Cache]] pays first — deep mass is the expensive derived fact that makes revisits cheap.

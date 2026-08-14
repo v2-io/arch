@@ -52,11 +52,17 @@ const OPTIONS: &[(&str, &str)] = &[
     (
         "--sort KEY",
         "display order: recency (default; mtime, newest first), name, \
-         size; -KEY reverses. Unbuilt lattice keys are refused by name",
+         size, line-count, heat; -KEY reverses. Unbuilt lattice keys \
+         are refused by name",
     ),
     (
         "--dotfiles-first",
         "group dot-names before the rest (dirs still first)",
+    ),
+    (
+        "--no-one-fs",
+        "follow mount points; the default stays on the starting \
+         filesystem and marks a mount [other fs]",
     ),
 ];
 
@@ -119,6 +125,31 @@ fn help_page() -> String {
            aspectus --depth 3 --lines 120 PATH\n\
            aspectus --walk 500 PATH    (huge tree: expand less, count all)\n\
            aspectus --inspect git PATH (see inside .git as ordinary children)\n\
+         \n\
+         Non-binary files show a line count (binary shows none, never 0);\n\
+         kind comes from a suffix-map extendable via config key `kinds`\n\
+         (`SUFFIX:text|binary`, `!SUFFIX` to drop). An unexpanded directory\n\
+         carries a census of what it held — [dir×3 \u{2248}120f \u{b7} md\u{d7}31] — with\n\
+         subdirectories as containers whose deep file-count (mass) leads,\n\
+         and the subtree's text lines after it (\u{2248}61k lines): a glance\n\
+         calibrates how much has not been seen. \u{2265} marks a floor; a\n\
+         single concealed name shows the name. The look reads file content\n\
+         only up to a budget (config `reads`, bytes); past it, deep line\n\
+         totals are estimated (\u{2248}) and per-file counts omitted \u{2014} the\n\
+         glance stays fast, and says how it degraded.\n\
+         \n\
+         Inside a git repo each visible line carries the aliveness cluster\n\
+         `score \u{b7} age` (commit-decay heat, git-heat's model, half-life 7\n\
+         commits via config `heat.half-life`; age is the mtime delta).\n\
+         Outside git, no heat is claimed. `--sort heat` orders by it;\n\
+         config `recency-source = git` makes the default recency sort use\n\
+         git last-touch where known.\n\
+         \n\
+         Symlinked directories are followed and recursed like real ones\n\
+         (facts are the target's; `-> target` says how it got here). A\n\
+         cycle prints [cycle] instead of hanging. The walk stays on the\n\
+         starting filesystem; a mount point shows [other fs] and stops\n\
+         there unless --no-one-fs.\n\
          \n\
          Well-known names are furniture: state on their parent line, not\n\
          children of the look. A git work tree does not list .git — the\n\
@@ -335,6 +366,9 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             "--dotfiles-first" => {
                 flag_vals.insert("dotfiles-first".into(), "on".into());
             }
+            "--no-one-fs" => {
+                flag_vals.insert("one-fs".into(), "off".into());
+            }
             "--explain-budget" => explain = true,
             "--show-all" => show_all = true,
             "--inspect" => {
@@ -490,9 +524,39 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         show_all: args.show_all,
         inspect: args.inspect,
     };
+    let kinds = match cfg.won.get("kinds") {
+        Some((rules, _)) => aspectus::kind::Map::with_config(rules),
+        None => aspectus::kind::Map::shipped(),
+    };
+    let one_fs = match cfg.won.get("one-fs").map(|(v, _)| v.as_str()) {
+        None | Some("on") => true,
+        Some("off") => false,
+        Some(v) => return Err(ShowErr::Other(format!("one-fs is on or off (got {v})"))),
+    };
+    let read_budget: u64 = cfg
+        .won
+        .get("reads")
+        .and_then(|(v, _)| v.parse().ok())
+        .unwrap_or(64 * 1024 * 1024);
     let mut walk = aspectus::n_level::WalkBudget::new(walk_bound);
-    let mut tree = aspectus::n_level::gather(&locus, depth, &mut walk, &map, &view)
+    let mut ctx = aspectus::n_level::LookCtx::new(
+        &map,
+        &view,
+        &kinds,
+        cols.line_fmt == aspectus::columns::LineFmt::NonBlank,
+        one_fs,
+        read_budget,
+    );
+    let mut tree = aspectus::n_level::gather(&abs, depth, &mut walk, &mut ctx)
         .map_err(|e| map_io(&locus, e))?;
+    if cols.heat || order.key == aspectus::sort::Key::Heat || order.recency_git {
+        let half_life: f64 = cfg
+            .won
+            .get("heat.half-life")
+            .and_then(|(v, _)| v.parse().ok())
+            .unwrap_or(aspectus::heat::DEFAULT_HALF_LIFE);
+        aspectus::heat::annotate(&mut tree, &abs, half_life);
+    }
     let lines: usize = cfg
         .won
         .get("lines")
@@ -526,7 +590,13 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         }
     }
     let root = abs.to_string_lossy();
-    let stamp = aspectus::overview::stamp_utc(std::time::SystemTime::now());
+    let now = std::time::SystemTime::now();
+    let stamp = aspectus::overview::stamp_utc(now);
+    let mut cols = cols;
+    cols.now = now
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs() as i64)
+        .unwrap_or(0);
     print!(
         "{}",
         aspectus::columns::render(&root, &tree, args.color.active(), &stamp, &cols)
@@ -539,7 +609,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
 fn resolve_look(
     cfg: &aspectus::config::Resolved,
 ) -> Result<(aspectus::sort::Order, aspectus::columns::Cols), ShowErr> {
-    use aspectus::columns::{Cols, SizeFmt, TimeFmt};
+    use aspectus::columns::{Cols, LineFmt, SizeFmt, TimeFmt};
     use aspectus::sort::{self, KeyErr, Order};
 
     let (sort_val, sort_layer) = cfg
@@ -568,10 +638,20 @@ fn resolve_look(
             )))
         }
     };
+    let recency_git = match cfg.won.get("recency-source").map(|(v, _)| v.as_str()) {
+        None | Some("mtime") => false,
+        Some("git") => true,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "recency-source is mtime or git (got {v})"
+            )))
+        }
+    };
     let order = Order {
         key,
         rev,
         dotfiles_first,
+        recency_git,
     };
 
     let col_state = |key: &str| -> Result<&str, ShowErr> {
@@ -585,6 +665,8 @@ fn resolve_look(
     };
     let size_state = col_state("columns.size")?;
     let mtime_state = col_state("columns.mtime")?;
+    let lc_state = col_state("columns.line-count")?;
+    let heat_state = col_state("columns.heat")?;
     // An explicitly asked sort key implies its column (the order is a
     // claim; the evidence belongs on the line) — unless the caller said
     // off. The recency *default* does not: position already carries the
@@ -595,6 +677,8 @@ fn resolve_look(
     };
     let size = size_state == "on" || implied(sort::Key::Size, size_state);
     let mtime = mtime_state == "on" || implied(sort::Key::Mtime, mtime_state);
+    let line_count = lc_state == "on" || implied(sort::Key::LineCount, lc_state);
+    let heat = heat_state == "on" || implied(sort::Key::Heat, heat_state);
 
     let size_fmt = match cfg.won.get("format.size").map(|(v, _)| v.as_str()) {
         None | Some("human") => SizeFmt::Human,
@@ -614,13 +698,26 @@ fn resolve_look(
             )))
         }
     };
+    let line_fmt = match cfg.won.get("format.line-count").map(|(v, _)| v.as_str()) {
+        None | Some("physical") => LineFmt::Physical,
+        Some("non-blank") => LineFmt::NonBlank,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "format.line-count is physical or non-blank (got {v}; signa not built yet)"
+            )))
+        }
+    };
     Ok((
         order,
         Cols {
+            line_count,
             size,
             mtime,
+            heat,
             size_fmt,
             mtime_fmt,
+            line_fmt,
+            now: 0,
         },
     ))
 }

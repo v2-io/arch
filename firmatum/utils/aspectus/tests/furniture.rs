@@ -159,7 +159,7 @@ fn non_name_material_lands_at_one_tab_stop() {
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
     let cols: Vec<usize> = o
         .lines()
-        .filter(|l| l.contains("[1: 1 dir]"))
+        .filter(|l| l.contains("[inner/"))
         .map(|l| l.chars().position(|c| c == '[').unwrap())
         .collect();
     assert_eq!(cols.len(), 2, "{o}");

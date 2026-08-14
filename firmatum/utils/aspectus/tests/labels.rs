@@ -81,5 +81,5 @@ fn cutoff_dirs_still_claim_their_kinds() {
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
     let proj = o.lines().find(|l| l.contains("proj/")).unwrap();
     assert!(proj.contains("[kind: build, rust]"), "{o}");
-    assert!(proj.contains("[1: 1 .toml]"), "census counts children of the look only: {o}");
+    assert!(proj.contains("[Cargo.toml]"), "census counts children of the look only: {o}");
 }

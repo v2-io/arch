@@ -161,7 +161,8 @@ fn config_sets_order_flag_wins() {
 #[test]
 fn unbuilt_key_refused_with_menu() {
     let (dir, xdg) = fixture();
-    let (c, _, e) = run(&dir, &xdg, &["--sort", "heat"]);
+    // heat landed; created is still an unbuilt lattice sort fact.
+    let (c, _, e) = run(&dir, &xdg, &["--sort", "created"]);
     assert_eq!(c, 2);
     assert!(e.contains("not built"), "class named: {e}");
     assert!(
@@ -196,7 +197,7 @@ fn tight_budget_keeps_the_newest() {
         "newest survive: {o}"
     );
     assert!(!o.contains("a.md"), "oldest folds into the census: {o}");
-    assert!(o.contains("[+5"), "{o}");
+    assert!(o.contains("[+ md×5]"), "{o}");
 }
 
 /// An explicitly asked key puts its evidence on the line; the recency

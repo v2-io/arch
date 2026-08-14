@@ -101,7 +101,9 @@ fn denied_dir_at_depth_cutoff_is_not_an_empty_census() {
     // It must not print a census claiming knowledge it does not have.
     assert_eq!(line.matches('[').count(), 1, "census on a denied dir: {o}");
     // open/ still censuses.
-    assert!(o.contains("[1: 1 .txt]"), "{o}");
+    // Census, reworked form: a census that would conceal exactly one
+    // cheap name shows the name (design/dir-census.md).
+    assert!(o.contains("[a.txt]"), "{o}");
 }
 
 #[test]

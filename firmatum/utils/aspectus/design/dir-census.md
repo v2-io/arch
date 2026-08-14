@@ -25,7 +25,7 @@ Principles, each earning its glyphs:
 5. **`+` unifies to one meaning: "unlisted."** The leaf census (leftover *siblings*) keeps its `+` prefix — `[+ md×5 · txt×2]` on its own closing line; a dir's own census needs no `+` because position (on the dir's line) already says "below this." One glyph, one law; position disambiguates beside-vs-below.
 6. Buckets sort: dirs/containers first (mass-descending), then suffixes count-descending, `·` separators.
 
-Empty directories print no census. Everything else (walk marks, `≥` on bounded counts, denied) composes unchanged.
+Empty directories print no census. *(Shipped 2026-08-14 with Wave C mass — one render function, `Census::render` in `src/n_level.rs`; `≥ ` inside the bracket marks bounded membership, empty-container `≈0f` suppressed, name-length cap 24. All cheap to move.)* Everything else (walk marks, `≥` on bounded counts, denied) composes unchanged.
 
 ## Foundations
 

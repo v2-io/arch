@@ -17,6 +17,8 @@ pub enum Key {
     Name,
     Size,
     Mtime,
+    LineCount,
+    Heat,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -25,6 +27,9 @@ pub struct Order {
     /// `-KEY`: the key's natural direction reversed.
     pub rev: bool,
     pub dotfiles_first: bool,
+    /// Recency reads git last-touch where heat's log pass covered a path,
+    /// mtime elsewhere (config `recency-source = git`; design/sort.md).
+    pub recency_git: bool,
 }
 
 impl Default for Order {
@@ -33,24 +38,24 @@ impl Default for Order {
             key: Key::Mtime,
             rev: false,
             dotfiles_first: false,
+            recency_git: false,
         }
     }
 }
 
 /// Keys built today, as the refusal menu names them.
-pub const BUILT: &[&str] = &["recency (mtime, the default)", "name", "size"];
+pub const BUILT: &[&str] =
+    &["recency (mtime, the default)", "name", "size", "line-count", "heat"];
 
 /// Lattice `sort = Y` facts whose obtain is not built yet — asking for one
 /// is a refusal naming the class, never a silent fallback sort.
 pub const UNBUILT: &[&str] = &[
-    "line-count",
     "created",
     "filetype",
     "filekind",
     "child-count",
     "initial-sha",
     "latest-sha",
-    "heat",
     "last-look",
     "mentions",
     "preeminence",
@@ -75,6 +80,8 @@ pub fn parse_key(s: &str) -> Result<(Key, bool), KeyErr> {
         "name" => Ok((Key::Name, rev)),
         "size" => Ok((Key::Size, rev)),
         "recency" | "mtime" | "modified" => Ok((Key::Mtime, rev)),
+        "line-count" | "lines" => Ok((Key::LineCount, rev)),
+        "heat" => Ok((Key::Heat, rev)),
         k if UNBUILT.contains(&k) => Err(KeyErr::Unbuilt(k.to_string())),
         k => Err(KeyErr::Unknown(k.to_string())),
     }
@@ -120,7 +127,31 @@ pub fn key_cmp(a: &Node, b: &Node, o: &Order) -> std::cmp::Ordering {
     match o.key {
         Key::Name => Ordering::Equal, // name is the tiebreak; nothing extra
         Key::Size => magnitude(a.size, b.size, o.rev),
-        Key::Mtime => magnitude(a.mtime, b.mtime, o.rev),
+        Key::Mtime => magnitude(recency(a, o), recency(b, o), o.rev),
+        Key::LineCount => magnitude(a.lines, b.lines, o.rev),
+        Key::Heat => magnitude(
+            a.heat.map(f64::to_bits_ordered),
+            b.heat.map(f64::to_bits_ordered),
+            o.rev,
+        ),
+    }
+}
+
+fn recency(n: &Node, o: &Order) -> Option<i64> {
+    if o.recency_git {
+        n.git_ts.or(n.mtime)
+    } else {
+        n.mtime
+    }
+}
+
+/// Order-preserving bits for non-negative heat scores.
+trait BitsOrdered {
+    fn to_bits_ordered(self) -> u64;
+}
+impl BitsOrdered for f64 {
+    fn to_bits_ordered(self) -> u64 {
+        self.max(0.0).to_bits()
     }
 }
 

@@ -68,8 +68,23 @@ pub fn defaults() -> BTreeMap<String, String> {
     // wave), quiet facts render nothing unless asked (`on`).
     m.insert("columns.size".into(), "quiet".into());
     m.insert("columns.mtime".into(), "quiet".into());
+    m.insert("columns.line-count".into(), "on".into());
+    m.insert("columns.heat".into(), "on".into());
     m.insert("format.size".into(), "human".into());
     m.insert("format.mtime".into(), "iso-8601".into());
+    m.insert("format.line-count".into(), "physical".into());
+    // Links/one-fs (design/links-and-fs.md): stay on the starting
+    // filesystem; --no-one-fs follows mounts. Rides the stack like depth.
+    m.insert("one-fs".into(), "on".into());
+    // Recency source for the default sort inside repos (design/sort.md):
+    // mtime today; `git` uses last-touch where heat's log pass covers.
+    m.insert("recency-source".into(), "mtime".into());
+    // Heat model half-life in commits (design/heat.md; git-heat default).
+    m.insert("heat.half-life".into(), "7".into());
+    // Bytes of file content the look may read for line counts before the
+    // honest degraded forms take over (estimated mass `≈`, absent per-file
+    // counts). 0 = unlimited.
+    m.insert("reads".into(), "67108864".into());
     m
 }
 
@@ -123,8 +138,16 @@ pub fn env_values() -> BTreeMap<String, String> {
         ("ASPECTUS_DOTFILES_FIRST", "dotfiles-first"),
         ("ASPECTUS_COLUMNS_SIZE", "columns.size"),
         ("ASPECTUS_COLUMNS_MTIME", "columns.mtime"),
+        ("ASPECTUS_COLUMNS_LINE_COUNT", "columns.line-count"),
+        ("ASPECTUS_COLUMNS_HEAT", "columns.heat"),
         ("ASPECTUS_FORMAT_SIZE", "format.size"),
         ("ASPECTUS_FORMAT_MTIME", "format.mtime"),
+        ("ASPECTUS_FORMAT_LINE_COUNT", "format.line-count"),
+        ("ASPECTUS_KINDS", "kinds"),
+        ("ASPECTUS_ONE_FS", "one-fs"),
+        ("ASPECTUS_RECENCY_SOURCE", "recency-source"),
+        ("ASPECTUS_HEAT_HALF_LIFE", "heat.half-life"),
+        ("ASPECTUS_READS", "reads"),
     ] {
         if let Ok(v) = env::var(var)
             && !v.is_empty() {

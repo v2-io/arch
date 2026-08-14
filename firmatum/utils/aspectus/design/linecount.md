@@ -39,9 +39,9 @@ The pipeline row carries a small sibling fact: **btime** (created), per its latt
 
 ## Open
 
-- **Unknown suffix / no suffix:** count (optimistic, risks reading big binaries) vs omit (quiet, undercounts `LICENSE`, `Makefile`)? Leaning: the suffix-map ships with the well-known extensionless text names, and a cheap null-byte sniff on the first block decides the rest — but "not magic" was the lattice's word for *kind*, so whether sniffing is acceptable here is Joseph's call.
-- **Cost bound:** the [[walk-bound|walk bound]] bounds stats, not reads. An uncached count of a huge look multiplies I/O. Does line-count need its own read-budget/`--max-file-size` style bound (Resources names the axis), or is ON-by-default only tenable once Cache lands? Honest options: ship ON and slow, ship QUIET-until-cache, or bound reads and mark unread files. Not decided here; this is the one place the lattice's ON may need Joseph to re-weigh.
-- Whether a very large single file's count renders full (`61234`) or grouped (`61k`) in text — format nuance, one constant.
+- ~~**Unknown suffix / no suffix**~~ **Shipped as the leaning (2026-08-14):** the map carries the well-known extensionless text names; a null-byte sniff of the first 1KB decides the rest, count-vs-omit only (never a rendered kind word). Joseph ratifies or reverses.
+- ~~**Cost bound**~~ **Shipped: a read budget** (config `reads`, bytes, default 64MB, 0 = unlimited). Visible files are read even past it — the look's own lines stay exact; the deep [[mass|Mass]] walk is where it bites, degrading to size-based estimation marked `≈`. The lattice's ON survives with the glance staying fast (~0.4s warm on ~/src/arch with heat, ~0.3s without).
+- ~~Full vs grouped~~ — per-file counts render full; grouping is the mass channel's.
 
 ## Not in this row
 

@@ -60,7 +60,7 @@ fn unbounded_walk_is_exact() {
     let (dir, xdg) = fixture();
     let (c, o, e) = run(&dir, &xdg, &["--walk", "0", "--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("[20: 20 .txt]"), "exact census, no ≥: {o}");
+    assert!(o.contains("[txt×20]"), "exact census, no ≥: {o}");
     assert!(!o.contains('≥'), "{o}");
     assert!(!o.contains("[walk bound]"), "{o}");
 }
@@ -82,8 +82,8 @@ fn bound_keeps_level_membership_exact() {
     // census at the cutoff; `top.txt` falls to an exact remainder.
     let (c, o, e) = run(&dir, &xdg, &["--walk", "1", "--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("[20: 20 .txt]"), "census stays exact: {o}");
-    assert!(o.contains("[+1: 1 .txt]"), "unspent sibling is counted: {o}");
+    assert!(o.contains("[txt×20]"), "census stays exact: {o}");
+    assert!(o.contains("[+ "), "unspent sibling remainder keeps the + form: {o}");
     assert!(o.contains("[walk bound]"), "the cut is said: {o}");
     assert!(!o.contains('≥'), "nothing is unknown, so no floor-mark: {o}");
 }
@@ -95,7 +95,7 @@ fn bound_cutting_a_listing_marks_the_dir() {
     // statted — they stay fully counted, and the dir line confesses.
     let (c, o, e) = run(&dir, &xdg, &["--walk", "1", "--depth", "2"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("[20: 20 .txt]"), "membership still total: {o}");
+    assert!(o.contains("[txt×20]"), "membership still total: {o}");
     assert!(o.contains("[walk bound]"), "a cut listing must confess: {o}");
     assert!(!o.contains("file-00.txt"), "no children were expanded: {o}");
 }
