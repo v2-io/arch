@@ -49,6 +49,15 @@ const OPTIONS: &[(&str, &str)] = &[
         "--inspect KIND",
         "list furniture of one kind as children (git, build, …); repeatable",
     ),
+    (
+        "--sort KEY",
+        "display order: recency (default; mtime, newest first), name, \
+         size; -KEY reverses. Unbuilt lattice keys are refused by name",
+    ),
+    (
+        "--dotfiles-first",
+        "group dot-names before the rest (dirs still first)",
+    ),
 ];
 
 fn help_page() -> String {
@@ -81,8 +90,13 @@ fn help_page() -> String {
          is how the place looks right now.\n\
          \n\
          Default: the absolute path of the place, two generations down\n\
-         (children and grandchildren), then it exits. The header includes\n\
-         the time of the look (UTC).\n\
+         (children and grandchildren), then it exits. The header is two\n\
+         lines: the UTC time of the look, then the absolute root.\n\
+         \n\
+         Children are ordered by recency (newest first, directories\n\
+         first) so calling again shows what moved, at the top. Under a\n\
+         tight --lines the recently-changed also survive. --sort name\n\
+         restores alphabetical.\n\
          \n\
          Commands:\n",
         ver = version_line()
@@ -120,7 +134,15 @@ fn help_page() -> String {
          census, a walk-bound cut keeps the full name count and says\n\
          [walk bound], a count that hides an unreadable place is marked \u{2265},\n\
          and a directory it could not read says [denied] rather than\n\
-         printing as empty.\n",
+         printing as empty.\n\
+         \n\
+         Facts beyond the defaults (size, mtime, ...) have no flags of\n\
+         their own; ask through config on the caller stack, e.g.\n\
+         columns.size = on, format.mtime = epoch, sort = -size (env:\n\
+         ASPECTUS_COLUMNS_SIZE, ...). Column values align at computed\n\
+         tab-stops -- a function of the tree, never terminal width, so\n\
+         two looks of the same tree stay diffable. `aspectus config`\n\
+         lists every fact with its state, ask, and format.\n",
     );
     out
 }
@@ -161,6 +183,9 @@ enum Refusal {
     UnknownOption(String),
     UnknownVerb(String),
     Usage(String),
+    /// `--size` etc. — a real lattice fact, refused a flag; the message
+    /// names the config path (design/columns.md subfeature 3).
+    FactAsk(String, String),
 }
 
 impl Refusal {
@@ -169,22 +194,37 @@ impl Refusal {
             Refusal::UnknownOption(_) => "unknown option",
             Refusal::UnknownVerb(_) => "unknown verb",
             Refusal::Usage(_) => "usage",
+            Refusal::FactAsk(_, _) => "no flag for fact",
         }
     }
 
     fn token(&self) -> &str {
         match self {
-            Refusal::UnknownOption(t) | Refusal::UnknownVerb(t) | Refusal::Usage(t) => t,
+            Refusal::UnknownOption(t)
+            | Refusal::UnknownVerb(t)
+            | Refusal::Usage(t)
+            | Refusal::FactAsk(t, _) => t,
         }
     }
 
     fn write_stderr(&self) {
-        let _ = writeln!(
-            io::stderr(),
-            "aspectus: {} {}\n  next: aspectus help",
-            self.class(),
-            self.token()
-        );
+        match self {
+            Refusal::FactAsk(t, ask) => {
+                let _ = writeln!(
+                    io::stderr(),
+                    "aspectus: {} {t}\n  {ask}\n  next: aspectus help",
+                    self.class()
+                );
+            }
+            _ => {
+                let _ = writeln!(
+                    io::stderr(),
+                    "aspectus: {} {}\n  next: aspectus help",
+                    self.class(),
+                    self.token()
+                );
+            }
+        }
     }
 }
 
@@ -283,6 +323,18 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 parse_walk(v)?;
                 flag_vals.insert("walk".into(), v.to_string());
             }
+            "--sort" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--sort needs a key (recency, name, size)".into()))?;
+                flag_vals.insert("sort".into(), v);
+            }
+            s if s.starts_with("--sort=") => {
+                flag_vals.insert("sort".into(), s[7..].to_string());
+            }
+            "--dotfiles-first" => {
+                flag_vals.insert("dotfiles-first".into(), "on".into());
+            }
             "--explain-budget" => explain = true,
             "--show-all" => show_all = true,
             "--inspect" => {
@@ -295,7 +347,12 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 inspect.push(s[10..].to_string());
             }
             "--" => end_flags = true,
-            s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
+            s if s.starts_with('-') => {
+                if let Some(ask) = aspectus::facts::flag_refusal(s) {
+                    return Err(Refusal::FactAsk(s.to_string(), ask));
+                }
+                return Err(Refusal::UnknownOption(s.to_string()));
+            }
             s => take_positional(&mut path, s.to_string())?,
         }
     }
@@ -384,6 +441,7 @@ fn main() -> ExitCode {
                 c.flag_vals,
             );
             print!("{}", render_show(&res));
+            print!("{}", aspectus::facts::inventory(&res));
             ExitCode::SUCCESS
         }
         Ok(Cmd::Show(args)) => match show(args) {
@@ -423,6 +481,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(10_000);
     let abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
+    let (order, cols) = resolve_look(&cfg)?;
     let map = match cfg.won.get("furniture") {
         Some((rules, _)) => aspectus::furniture::Map::with_config(rules),
         None => aspectus::furniture::Map::shipped(),
@@ -451,7 +510,16 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
             "walk: bound {walk_bound} reached; some dirs not expanded, marked [walk bound]"
         ));
     }
-    aspectus::n_level::apply_budget(&mut tree, lines, &mut why);
+    // The header is two lines (stamp, then root — overview invariants);
+    // the tree keeps the rest, the root line counted inside its budget.
+    let tree_budget = if lines == 0 { 0 } else { (lines - 1).max(1) };
+    if lines > 0 {
+        why.push(format!(
+            "header: stamp line costs 1 of --lines {lines}; {tree_budget} left (root line included)"
+        ));
+    }
+    aspectus::n_level::apply_budget(&mut tree, tree_budget, &order, &mut why);
+    aspectus::sort::apply(&mut tree, &order);
     if args.explain {
         for line in &why {
             let _ = writeln!(io::stderr(), "{line}");
@@ -461,9 +529,100 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     let stamp = aspectus::overview::stamp_utc(std::time::SystemTime::now());
     print!(
         "{}",
-        aspectus::n_level::render(&root, &tree, args.color.active(), &stamp)
+        aspectus::columns::render(&root, &tree, args.color.active(), &stamp, &cols)
     );
     Ok(())
+}
+
+/// Selection and order from the resolved caller stack (design/columns.md,
+/// design/sort.md). Refusals name the class and the menu.
+fn resolve_look(
+    cfg: &aspectus::config::Resolved,
+) -> Result<(aspectus::sort::Order, aspectus::columns::Cols), ShowErr> {
+    use aspectus::columns::{Cols, SizeFmt, TimeFmt};
+    use aspectus::sort::{self, KeyErr, Order};
+
+    let (sort_val, sort_layer) = cfg
+        .won
+        .get("sort")
+        .map(|(v, l)| (v.as_str(), *l))
+        .unwrap_or(("recency", "defaults"));
+    let (key, rev) = sort::parse_key(sort_val).map_err(|e| {
+        ShowErr::Other(match e {
+            KeyErr::Unbuilt(k) => format!(
+                "sort key not built yet: {k}\n  built keys: {}\n  next: aspectus help",
+                sort::BUILT.join(", ")
+            ),
+            KeyErr::Unknown(k) => format!(
+                "not a sortable fact: {k}\n  built keys: {}\n  next: aspectus help",
+                sort::BUILT.join(", ")
+            ),
+        })
+    })?;
+    let dotfiles_first = match cfg.won.get("dotfiles-first").map(|(v, _)| v.as_str()) {
+        None | Some("off") => false,
+        Some("on") => true,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "dotfiles-first is on or off (got {v})"
+            )))
+        }
+    };
+    let order = Order {
+        key,
+        rev,
+        dotfiles_first,
+    };
+
+    let col_state = |key: &str| -> Result<&str, ShowErr> {
+        match cfg.won.get(key).map(|(v, _)| v.as_str()) {
+            None => Ok("quiet"),
+            Some(v @ ("on" | "off" | "quiet")) => Ok(v),
+            Some(v) => Err(ShowErr::Other(format!(
+                "{key} is on, off, or quiet (got {v})"
+            ))),
+        }
+    };
+    let size_state = col_state("columns.size")?;
+    let mtime_state = col_state("columns.mtime")?;
+    // An explicitly asked sort key implies its column (the order is a
+    // claim; the evidence belongs on the line) — unless the caller said
+    // off. The recency *default* does not: position already carries the
+    // signal, the value stays quiet (design/sort.md, design/columns.md).
+    let explicit_sort = sort_layer != "defaults";
+    let implied = |k: sort::Key, state: &str| {
+        explicit_sort && order.key == k && state != "off"
+    };
+    let size = size_state == "on" || implied(sort::Key::Size, size_state);
+    let mtime = mtime_state == "on" || implied(sort::Key::Mtime, mtime_state);
+
+    let size_fmt = match cfg.won.get("format.size").map(|(v, _)| v.as_str()) {
+        None | Some("human") => SizeFmt::Human,
+        Some("bytes") => SizeFmt::Bytes,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "format.size is human or bytes (got {v}; log not built yet)"
+            )))
+        }
+    };
+    let mtime_fmt = match cfg.won.get("format.mtime").map(|(v, _)| v.as_str()) {
+        None | Some("iso-8601") => TimeFmt::Iso8601,
+        Some("epoch") => TimeFmt::Epoch,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "format.mtime is iso-8601 or epoch (got {v}; rfc-3339, pattern, signa not built yet)"
+            )))
+        }
+    };
+    Ok((
+        order,
+        Cols {
+            size,
+            mtime,
+            size_fmt,
+            mtime_fmt,
+        },
+    ))
 }
 
 fn map_io(path: &Path, e: std::io::Error) -> ShowErr {

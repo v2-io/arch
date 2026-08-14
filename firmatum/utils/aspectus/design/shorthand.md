@@ -1,6 +1,6 @@
 # Shorthand — placement classes and glyph columns
 
-*Seeded 2026-08-14 from Joseph's direction, verbatim below. Not yet a row; the columns wave absorbs the placement vocabulary now, the glyph vocabulary matures with use.*
+*Seeded 2026-08-14 from Joseph's direction, verbatim below. Not yet a row; the columns wave absorbed the placement vocabulary the same day (`src/facts.rs::Placement` — decoration / near-right / far-right render; far-left / near-left / glyph-block are declared seams), the glyph vocabulary matures with use.*
 
 > "there are probably lots of 'columns' that could/should be either decoration on the name (e.g., '/' and symlink targets etc.), a 'real actual column' aligned either far left pre-hierarchy, immediate-left indented w children, immediate-right like overflow etc. is now, and far-right-aligned full columns — OR a sort of symbolic/glyph column/columns similar to the displays for permissions, and keeping in mind that we have all of unicode glyphs to give affordances with etc. (and, like the time-delta, you can decide ★★★ means one thing while ✫ means something else while ✭ means a third thing, etc. etc. — I'm sure there are a *lot* of glyphs that will give affordances and that are pipe safe etc. etc. that more than make up for lack of colors)"
 
@@ -19,9 +19,9 @@
 
 Like `rwxr-xr-x`: a compact block where *position* carries which fact and *glyph* carries its value — learnable once, then read at a glance. SIGNA proved the mechanism for time; this generalizes it: distinct-but-related glyphs (`★★★` vs `✫` vs `✭`) can carry graded or categorically different meanings, and the pipe-safe Unicode range is large enough that glyph affordances "more than make up for lack of colors" in the no-TTY look. Candidate tenants: heat grade, git letter, kind class, molten/working-surface mark, denied/bound marks. Vocabulary must be: deterministic, taught in `--help` (the law channel), stable across releases once learned (a learned glyph is an interface), and always absent-not-faked when the fact is unobtainable.
 
-## Per-kind edge offset (from the git-heat screenshots)
+## Per-kind edge offset (from the git-heat screenshots) — noted, not yet built
 
-Joseph, same day: *"I pull the far right column in for normal files vs directories — even at the fastest glance it's clear to me how much of the screen is talking about directories vs normal files."* The right-edge *position* itself is a kind channel: dirs' fact-cluster ends at one column, files' at another (pulled in), so the silhouette of the look answers "how much of this screen is directories" before a single name is read. Generalization: a placement class may carry **per-kind tab-stops** — alignment not to one column but to one column *per node kind* — turning the ragged edge into information instead of noise. Deterministic like all alignment (function of content + caller state).
+Joseph, same day: *"I pull the far right column in for normal files vs directories — even at the fastest glance it's clear to me how much of the screen is talking about directories vs normal files."* The right-edge *position* itself is a kind channel: dirs' fact-cluster ends at one column, files' at another (pulled in), so the silhouette of the look answers "how much of this screen is directories" before a single name is read. Generalization: a placement class may carry **per-kind tab-stops** — alignment not to one column but to one column *per node kind* — turning the ragged edge into information instead of noise. Deterministic like all alignment (function of content + caller state). *Status:* the shipped far-right cluster is left-anchored at the tab-stop, so its right edge already varies with content; the clean kind-channel wants the cluster right-anchored first — deferred to the wave that reworks the cluster (heat/phenom-format natural), recorded in `impl/columns.md`.
 
 ## Open
 

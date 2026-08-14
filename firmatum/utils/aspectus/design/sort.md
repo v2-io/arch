@@ -14,9 +14,9 @@ Name comparison is bytewise/codepoint (what ships today in `src/n_level.rs`), no
 
 Sort is **per-level**: children order within their parent. It never moves a node across parents, and the leftover-siblings census `[+N: …]` is always the last line of its level.
 
-## What sort does not decide: survival
+## What sort does not decide: survival — but survival follows the key within weights
 
-Under a tight budget the allocator also makes an ordering decision — *which* children survive to be listed (today: dir-weight, then name, coinciding with the display order). That choice is **weight** (its own lattice office), not sort. The coincidence is worth keeping while it is free, but this row claims only display order; if a caller sorts by mtime, whether the survivors are the newest or still the weighted set is the allocator's law ([[balanced|Balanced summarization]] + Focus/weight), stated there. See Open.
+Under a tight budget the allocator also decides *which* children survive to be listed. That choice is **weight** (its own lattice office), not sort — but the keep-choice ranks **key-within-weights** (shipped with the recency default, 2026-08-14): dir-weight first, then the sort key, then name. This is what makes the recency affordance real — the recently-changed *survive* a small `--lines`, not merely sort high among survivors. When importance/Focus weights land they slot in ahead of the key ([[balanced|Balanced summarization]]).
 
 ## Foundations (clauses)
 
@@ -30,7 +30,7 @@ Under a tight budget the allocator also makes an ordering decision — *which* c
 
 | # | Sub | Behavior | Test |
 |---|---|---|---|
-| 1 | Default | Dirs first, then name (codepoint), every level. | Fixture with mixed case, dotfiles, dirs; stable across runs and in a pipe. |
+| 1 | Default | Dirs first, then recency (newest first), then name tiebreak, every level. | Fixture with set mtimes; stable across runs and in a pipe. |
 | 2 | Dotfiles-first | Dot-names group before the rest; dirs-first still holds. | `.b/ a/ .x f` orders `.b/ a/ .x f`. |
 | 3 | Key from lattice | Order by an implemented `sort=Y` fact; descending available for magnitudes. | Sort by mtime: newest per the chosen direction; tiebreak by name on equal mtimes. |
 | 4 | Unbuilt key refused | A `sort=Y` fact not yet implemented → exit 2, class named, menu of available keys. | Ask for heat before Heat lands. |
@@ -41,9 +41,9 @@ Under a tight budget the allocator also makes an ordering decision — *which* c
 
 ## Open
 
-- **Flag spelling / compose surface.** `--sort mtime`? Direction (`--sort -mtime` vs `:desc`)? Shared grammar with [[columns|Columns]]' compose ask — one decision for both (lattice's own open question: does `--sort` exist, or config-only?). `--dotfiles-first` as its own flag is Joseph's verbatim ask and should survive whatever the compose spelling becomes. Not decided.
-- **Sorting by a hidden fact.** Order by mtime while mtime's column is `OFF`: the reader sees an order it cannot verify. Does asking for a sort key imply its column `ON` (leaning: yes — the order is a claim, and the evidence should be on the line), or stay independent? Not decided.
-- **Survival under budget.** When a non-default key is asked, does the allocator's keep-choice follow the key, the weights, or key-within-weights? The recency default's whole affordance ("obvious even with a small `--lines`") implies survivors follow the key — the recently-changed must *survive*, not just sort high. Leaning key-within-weights (importance still protects README); steward-implied, confirm at landing.
+- ~~**Flag spelling.**~~ **Shipped provisionally (2026-08-14, Joseph ratifies):** `--sort KEY` + config `sort` on one stack, flag wins; each key has a natural direction (name A→Z, recency newest-first, size largest-first) and a leading `-` reverses it. `--dotfiles-first` is its own flag (verbatim ask) and survives whatever the compose spelling becomes. Columns stayed config-only — if a shared compose grammar ever lands, `--sort`'s spelling should be re-examined with it.
+- ~~**Sorting by a hidden fact.**~~ **Shipped as the leaning, scoped by the mtime-quiet steer:** an *explicitly asked* key implies its column `on` (the order is a claim; evidence on the line) unless the caller set it `off`; the recency *default* implies nothing — position carries the signal.
+- ~~**Survival under budget.**~~ **Decided: key-within-weights** (see §Survival above).
 - **Grouping toggles.** Is dirs-first itself defeatable (`--no-dirs-first`), or is it law? Origin implies it is the norm; nothing recorded says it is immovable. Not decided.
 
 ## Not in this row

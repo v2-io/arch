@@ -55,7 +55,8 @@ fn workflows_count_on_the_parent() {
     let (c, o, e) = run(&dir, &[]);
     assert_eq!(c, 0, "{e}");
     assert!(!o.contains(".github"), "{o}");
-    let root = o.lines().next().unwrap();
+    // Root is the second line: the stamp has its own line above it.
+    let root = o.lines().nth(1).unwrap();
     assert!(root.contains("[github: 2 workflows]"), "{o}");
     assert!(root.contains("github"), "{o}");
 }

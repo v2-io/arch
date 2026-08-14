@@ -63,6 +63,16 @@ pub struct Node {
     pub kinds: Vec<String>,
     /// Specialized-furniture facets, already phrased (`git: br<main> @…`).
     pub facets: Vec<String>,
+    /// Modification time, seconds since the epoch. The stat is already
+    /// paid; recency is the default sort key (design/sort.md).
+    pub mtime: Option<i64>,
+    /// `st_size`, plain files only — a dir's own st_size is not a fact a
+    /// reader wants; the du-like number is Mass's office.
+    pub size: Option<u64>,
+    /// Symlink target as the link states it (INFO, lattice `ON`).
+    pub link: Option<String>,
+    /// The target does not resolve to anything that exists.
+    pub link_broken: bool,
 }
 
 /// Counts names statted. `None` = unbounded.
@@ -186,10 +196,33 @@ fn gather_at(
         .file_name()
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_else(|| path.display().to_string());
+    let mtime = meta
+        .modified()
+        .ok()
+        .map(|t| match t.duration_since(std::time::UNIX_EPOCH) {
+            Ok(d) => d.as_secs() as i64,
+            Err(e) => -(e.duration().as_secs() as i64),
+        });
     if !is_dir {
+        let size = meta.is_file().then_some(meta.len());
+        let (link, link_broken) = if meta.file_type().is_symlink() {
+            match fs::read_link(path) {
+                Ok(t) => (
+                    Some(t.to_string_lossy().into_owned()),
+                    !path.exists(), // follows the link; false = dangling
+                ),
+                Err(_) => (None, false),
+            }
+        } else {
+            (None, false)
+        };
         return Ok(Node {
             name,
             is_dir: false,
+            mtime,
+            size,
+            link,
+            link_broken,
             ..Node::default()
         });
     }
@@ -198,6 +231,7 @@ fn gather_at(
             name,
             is_dir: true,
             denied: true,
+            mtime,
             ..Node::default()
         });
     };
@@ -242,6 +276,7 @@ fn gather_at(
             iter_err,
             kinds,
             facets,
+            mtime,
             ..Node::default()
         });
     }
@@ -266,6 +301,7 @@ fn gather_at(
                     iter_err,
                     kinds: kinds.clone(),
                     facets: facets.clone(),
+                    mtime,
                     ..Node::default()
                 });
             }
@@ -278,6 +314,7 @@ fn gather_at(
                 iter_err,
                 kinds: kinds.clone(),
                 facets: facets.clone(),
+                mtime,
                 ..Node::default()
             });
         }
@@ -302,6 +339,7 @@ fn gather_at(
         iter_err,
         kinds,
         facets,
+        mtime,
         ..Node::default()
     })
 }
@@ -378,7 +416,18 @@ fn capacity(n: &Node) -> usize {
 }
 
 /// `budget` includes this node's own line. `0` means no line limit.
-pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
+///
+/// `order` is the caller's sort — survival is key-within-weights
+/// (design/sort.md): weight still ranks first (a dir outweighs a file,
+/// importance later), the sort key ranks within a weight class, name
+/// breaks ties. Under the recency default this is what makes a re-call
+/// with a small `--lines` show what moved.
+pub fn apply_budget(
+    node: &mut Node,
+    budget: usize,
+    order: &crate::sort::Order,
+    explain: &mut Vec<String>,
+) {
     if budget == 0 {
         return;
     }
@@ -405,13 +454,14 @@ pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
             fold_children_into_dir_census(node);
             return;
         }
-        let mut order: Vec<usize> = (0..n).collect();
-        order.sort_by(|&a, &b| {
+        let mut rank: Vec<usize> = (0..n).collect();
+        rank.sort_by(|&a, &b| {
             weight(&node.children[b])
                 .cmp(&weight(&node.children[a]))
+                .then_with(|| crate::sort::key_cmp(&node.children[a], &node.children[b], order))
                 .then_with(|| node.children[a].name.cmp(&node.children[b].name))
         });
-        let keep: Vec<usize> = order.iter().copied().take(show).collect();
+        let keep: Vec<usize> = rank.iter().copied().take(show).collect();
         let drop: Vec<Node> = node
             .children
             .iter()
@@ -432,7 +482,7 @@ pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
             drop.len()
         ));
         for c in &mut node.children {
-            apply_budget(c, 1, explain);
+            apply_budget(c, 1, order, explain);
         }
         return;
     }
@@ -486,7 +536,7 @@ pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
         }
     ));
     for (c, s) in node.children.iter_mut().zip(shares) {
-        apply_budget(c, s, explain);
+        apply_budget(c, s, order, explain);
     }
 }
 
@@ -497,168 +547,5 @@ fn suffix_label(name: &str) -> String {
             format!(".{ext}")
         }
         _ => "other".to_string(),
-    }
-}
-
-/// The gathering spot for what this place *is*: specialized facets first,
-/// then the kind list (src/def-furniture.md). Empty claims print nothing.
-fn state_marks(n: &Node) -> String {
-    let mut s = String::new();
-    for f in &n.facets {
-        s.push_str(&format!("  [{f}]"));
-    }
-    if !n.kinds.is_empty() {
-        s.push_str(&format!("  [kind: {}]", n.kinds.join(", ")));
-    }
-    s
-}
-
-/// INFO to hang on a name: the walk's confession about this line.
-fn info_marks(n: &Node) -> String {
-    let mut s = String::new();
-    if n.denied {
-        s.push_str("  [denied]");
-    }
-    if n.iter_err {
-        s.push_str("  [unreadable: io]");
-    }
-    // Membership stays exact under a cut, so the census carries no `≥`;
-    // the mark is what says this dir was cut short of the requested depth.
-    if n.cut {
-        s.push_str("  [walk bound]");
-    }
-    s
-}
-
-/// One printed line, before alignment: the name material (indent + branch +
-/// name) and the non-name material that lands at the look's tab stop.
-struct Row {
-    /// Tree glyphs and branch, uncolored.
-    left_prefix: String,
-    /// The name itself (trailing `/` on dirs), uncolored.
-    name: String,
-    color_dir: bool,
-    /// Censuses, facets, kind spot, look-marks — `"  "`-joined, or empty.
-    right: String,
-}
-
-impl Row {
-    fn name_width(&self) -> usize {
-        self.left_prefix.chars().count() + self.name.chars().count()
-    }
-}
-
-/// Non-name material lands at a computed pseudo-tab-stop: a pure function
-/// of the look's content (longest name column, capped), never terminal
-/// width (design/columns.md, alignment decided 2026-08-14). A name past
-/// the cap goes ragged on its own line only.
-const STOP_CAP: usize = 48;
-const GAP: usize = 2;
-
-fn paint(rows: Vec<Row>, color: bool) -> String {
-    let stop = rows
-        .iter()
-        .filter(|r| !r.right.is_empty())
-        .map(|r| r.name_width() + GAP)
-        .max()
-        .unwrap_or(0)
-        .min(STOP_CAP);
-    let mut out = String::new();
-    for r in rows {
-        out.push_str(&r.left_prefix);
-        let painted = if r.color_dir {
-            crate::color::dir(&r.name, color)
-        } else {
-            r.name.clone()
-        };
-        out.push_str(&painted);
-        if !r.right.is_empty() {
-            let w = r.name_width();
-            let pad = if w + GAP <= stop { stop - w } else { GAP };
-            out.push_str(&" ".repeat(pad));
-            out.push_str(&r.right);
-        }
-        out.push('\n');
-    }
-    out
-}
-
-/// The non-name material for one node: dir census, facets, kind spot, marks.
-fn right_of(n: &Node) -> String {
-    let mut parts = Vec::new();
-    if let Some(c) = &n.leftover {
-        let extra = c.render();
-        if !extra.is_empty() {
-            parts.push(extra);
-        }
-    }
-    let state = state_marks(n);
-    if !state.is_empty() {
-        parts.push(state.trim_start().to_string());
-    }
-    let marks = info_marks(n);
-    if !marks.is_empty() {
-        parts.push(marks.trim_start().to_string());
-    }
-    parts.join("  ")
-}
-
-pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str) -> String {
-    let mut root = root_path.to_string();
-    if tree.is_dir && !root.ends_with('/') {
-        root.push('/');
-    }
-    let root_right = {
-        let rest = right_of(tree);
-        if rest.is_empty() {
-            stamp.to_string()
-        } else {
-            format!("{stamp}  {rest}")
-        }
-    };
-    let mut rows = vec![Row {
-        left_prefix: String::new(),
-        name: root,
-        color_dir: true,
-        right: root_right,
-    }];
-    emit(&tree.children, tree.omitted.as_ref(), "", &mut rows);
-    paint(rows, color)
-}
-
-fn emit(kids: &[Node], omitted: Option<&Census>, prefix: &str, out: &mut Vec<Row>) {
-    let has_om = omitted.map(|c| c.total > 0).unwrap_or(false);
-    let total = kids.len() + usize::from(has_om);
-    for (i, k) in kids.iter().enumerate() {
-        let last = i + 1 == total;
-        let branch = if last { "└── " } else { "├── " };
-        let mut n = k.name.clone();
-        if k.is_dir && !n.ends_with('/') {
-            n.push('/');
-        }
-        out.push(Row {
-            left_prefix: format!("{prefix}{branch}"),
-            name: n,
-            color_dir: k.is_dir,
-            right: right_of(k),
-        });
-        if !k.children.is_empty() || k.omitted.is_some() {
-            let next = if last {
-                format!("{prefix}    ")
-            } else {
-                format!("{prefix}│   ")
-            };
-            emit(&k.children, k.omitted.as_ref(), &next, out);
-        }
-    }
-    if has_om
-        && let Some(c) = omitted
-    {
-        out.push(Row {
-            left_prefix: format!("{prefix}└── "),
-            name: c.render_plus(),
-            color_dir: false,
-            right: String::new(),
-        });
     }
 }

@@ -38,8 +38,8 @@ Same tree + same caller state ⇒ byte-identical look. Consequences this row mus
 | # | Sub | Behavior | Test |
 |---|---|---|---|
 | 1 | Defaults from lattice | With no config, exactly the lattice `ON` facts show; `OFF` facts do not. | Fresh home: name, filekind info, child-count, git letter behavior per lattice; no size, no mtime. |
-| 2 | Per-fact override | Config can turn a fact `ON`/`OFF`; a flag overrides config. | `columns.size = on` in user-home shows size; `--no-size` (or the compose equivalent) wins over it. |
-| 3 | Own flags per lattice | `--size` exists; a lattice `NO` fact has no flag and the unrecognized-option refusal names the config path. | `aspectus --owner` → exit 2, refusal mentions config. |
+| 2 | Per-fact override | Config can turn a fact `ON`/`OFF`/`QUIET`; a higher stack layer wins. | `columns.size = on` in user-home shows size; env `ASPECTUS_COLUMNS_SIZE=off` wins over it. |
+| 3 | No own fact-flags | No fact has its own flag (`COMPOSE` and `NO` alike); trying `--size` / `--owner` refuses naming the config path (or "not built yet"). | `aspectus --owner` → exit 2, refusal mentions `columns.owner`. |
 | 4 | Format override | `format.size = bytes` renders bytes; default renders human. | Fixture with a known file size. |
 | 5 | One line | Any column set yields the same line *count* for the same tree and budget. | Same fixture, `--lines 20`, with and without size: identical shape, differing only within lines. |
 | 6 | Determinism | Two runs, same tree, same config: byte-identical stdout, wide or narrow terminal, piped or not (color aside). | Diff two runs under different `COLUMNS`/pty. |
@@ -47,10 +47,10 @@ Same tree + same caller state ⇒ byte-identical look. Consequences this row mus
 
 ## Open
 
-- **The compose surface.** Does `--columns=size,mtime` exist, or are `COMPOSE` facts named only in config? (Lattice's own open question.) One decision, shared with [[sort|Sort]] — if a compose grammar exists, the two asks should speak it identically. Not decided; Joseph ratifies.
+- **The compose surface.** Partially resolved by shipping (2026-08-14, Joseph ratifies): `COMPOSE` facts are asked through config keys (`columns.FACT = on/off/quiet`, `format.FACT = …`, env `ASPECTUS_COLUMNS_*`) — no per-fact flags, and no `--columns=…` flag yet. Sort shipped a `--sort KEY` flag; whether a shared compose *flag* grammar ever exists (and re-spells both) is still open.
 - ~~**Alignment.**~~ **Decided (steward, 2026-08-14): align.** Joseph's empirical finding: *"all modern agents, including locally run small ones, LOVE column alignment"* — so the non-name material (columns, INFO, furniture facets, censuses, overflow marks) lands at **computed pseudo-tab-stops**: a good column position calculated per look from the content (deterministic — a pure function of tree + caller state, never terminal width), scattered-to-the-right raggedness refused. The diff-noise cost is accepted knowingly: structural diffing (JSON, the after-image) is the real diff channel; the text look optimizes for the reader it has. git-heat's shipped look is the visual prior art: name left, a compact right-aligned fact cluster (`0.50 · 13.6d ago`) at one consistent column — separable at a glance because position carries meaning.
-- **Side of the name.** `ls -l` puts columns left of the name; the origin sketches hang everything right. Not decided; one constant.
-- **Sorting by a hidden fact** (asked for order by a fact whose column is `OFF`) — does it imply the column `ON`? Lives in [[sort|Sort]]'s Open; noted here because the answer changes selection.
+- ~~**Side of the name.**~~ **Shipped: right of the name** (far-right cells past the tab-stop, per design/shorthand.md's placement classes — which supersede this binary; far-left/near-left are declared seams if a fact ever wants the other side).
+- ~~**Sorting by a hidden fact**~~ — decided in [[sort|Sort]]: an explicitly asked key implies its column `on` (unless set `off`); the recency default does not.
 
 ## Not in this row
 

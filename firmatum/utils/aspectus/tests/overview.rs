@@ -38,19 +38,22 @@ fn header_is_absolute_path_and_utc_stamp() {
     assert_eq!(out.status.code(), Some(0));
     assert!(out.stderr.is_empty(), "{:?}", String::from_utf8_lossy(&out.stderr));
     let stdout = String::from_utf8_lossy(&out.stdout);
-    let first = stdout.lines().next().expect("header");
-    let abs = std::path::absolute(&dir).unwrap();
-    assert!(
-        first.starts_with(&format!("{}", abs.display()))
-            || first.contains(&abs.to_string_lossy().to_string()),
-        "absolute root on header: {first}"
-    );
-    assert!(!first.starts_with("./"), "{first}");
-    let stamp = first.rsplit_once("  ").map(|(_, s)| s).expect("stamp");
+    // Two-line header (decided 2026-08-14): stamp first, then the root —
+    // so the root line sits directly above its children.
+    let mut lines = stdout.lines();
+    let stamp = lines.next().expect("stamp line");
+    let root = lines.next().expect("root line");
     assert!(
         stamp.len() == 20 && stamp.ends_with('Z') && stamp.contains('T'),
-        "ISO-8601 UTC stamp: {stamp:?}"
+        "ISO-8601 UTC stamp on its own first line: {stamp:?}"
     );
+    let abs = std::path::absolute(&dir).unwrap();
+    assert!(
+        root.starts_with(&format!("{}", abs.display()))
+            || root.contains(&abs.to_string_lossy().to_string()),
+        "absolute root on its own line: {root}"
+    );
+    assert!(!root.starts_with("./"), "{root}");
 }
 
 #[test]
@@ -65,7 +68,7 @@ fn named_path_also_absolute() {
         .unwrap();
     assert_eq!(out.status.code(), Some(0));
     let stdout = String::from_utf8_lossy(&out.stdout);
-    let first = stdout.lines().next().unwrap();
+    let root = stdout.lines().nth(1).unwrap();
     let abs = std::path::absolute(&dir).unwrap();
-    assert!(first.contains(&*abs.to_string_lossy()), "{first}");
+    assert!(root.contains(&*abs.to_string_lossy()), "{root}");
 }

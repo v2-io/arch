@@ -59,7 +59,7 @@ fn default_cwd_two_levels() {
     let abs = std::path::absolute(&dir).unwrap();
     let abs_s = abs.to_string_lossy();
     assert!(
-        o.lines().next().unwrap_or("").contains(abs_s.as_ref()),
+        o.lines().nth(1).unwrap_or("").contains(abs_s.as_ref()),
         "absolute root: {o}"
     );
     assert!(!o.starts_with("./"), "{o}");
@@ -103,7 +103,7 @@ fn named_path_from_parent() {
     assert!(e.is_empty(), "{e:?}");
     let abs = std::path::absolute(&dir).unwrap();
     assert!(
-        o.lines().next().unwrap_or("").contains(&*abs.to_string_lossy()),
+        o.lines().nth(1).unwrap_or("").contains(&*abs.to_string_lossy()),
         "absolute root: {o}"
     );
     assert!(o.contains("a/"), "{o}");

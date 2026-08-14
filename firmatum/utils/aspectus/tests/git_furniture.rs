@@ -83,7 +83,8 @@ fn work_tree_facts_on_the_parent_line() {
     let (c, o, e) = run(&dir, &[]);
     assert_eq!(c, 0, "{e}");
     assert!(!o.contains(".git/"), ".git is furniture: {o}");
-    let root = o.lines().next().unwrap();
+    // Root is the second line: the stamp has its own line above it.
+    let root = o.lines().nth(1).unwrap();
     assert!(root.contains("[git: "), "{o}");
     assert!(root.contains("remote<github.com/v2-io/example>"), "{o}");
     assert!(root.contains("br<main>"), "{o}");

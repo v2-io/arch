@@ -91,7 +91,8 @@ fn hidden_names_do_not_join_censuses() {
     // Depth 1: .mystery/ is unexpanded but target/ etc. must not be counted
     // anywhere — 2 dirs would be a silent lie; the kind spot carries them.
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
-    let root = o.lines().next().unwrap();
+    // Root is the second line: the stamp has its own line above it.
+    let root = o.lines().nth(1).unwrap();
     assert!(!root.contains("3 dir"), "hidden dirs joined the picture: {o}");
     assert!(o.contains("[kind: agents, build, python]"), "{o}");
 }

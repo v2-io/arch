@@ -35,11 +35,10 @@ pub struct Resolved {
 }
 
 pub fn xdg_config_home() -> PathBuf {
-    if let Ok(p) = env::var("XDG_CONFIG_HOME") {
-        if !p.is_empty() {
+    if let Ok(p) = env::var("XDG_CONFIG_HOME")
+        && !p.is_empty() {
             return PathBuf::from(p);
         }
-    }
     let home = env::var("HOME").unwrap_or_else(|_| ".".into());
     PathBuf::from(home).join(".config")
 }
@@ -61,6 +60,16 @@ pub fn defaults() -> BTreeMap<String, String> {
     m.insert("lines".into(), DEFAULT_LINES.to_string());
     m.insert("depth".into(), DEFAULT_DEPTH.to_string());
     m.insert("walk".into(), DEFAULT_WALK.to_string());
+    // Sort (design/sort.md): recency = mtime, newest first, dirs first.
+    m.insert("sort".into(), "recency".into());
+    m.insert("dotfiles-first".into(), "off".into());
+    // Lattice defaults for the built column facts (design/aspect-lattice.md):
+    // quiet = only when it surprises; until the quiet law lands (its own
+    // wave), quiet facts render nothing unless asked (`on`).
+    m.insert("columns.size".into(), "quiet".into());
+    m.insert("columns.mtime".into(), "quiet".into());
+    m.insert("format.size".into(), "human".into());
+    m.insert("format.mtime".into(), "iso-8601".into());
     m
 }
 
@@ -92,25 +101,35 @@ fn load_path(path: &Path) -> (bool, BTreeMap<String, String>) {
 
 pub fn env_values() -> BTreeMap<String, String> {
     let mut m = BTreeMap::new();
-    if let Ok(v) = env::var("ASPECTUS_LINES") {
-        if !v.is_empty() {
+    if let Ok(v) = env::var("ASPECTUS_LINES")
+        && !v.is_empty() {
             m.insert("lines".into(), v);
         }
-    }
-    if let Ok(v) = env::var("ASPECTUS_DEPTH") {
-        if !v.is_empty() {
+    if let Ok(v) = env::var("ASPECTUS_DEPTH")
+        && !v.is_empty() {
             m.insert("depth".into(), v);
         }
-    }
-    if let Ok(v) = env::var("ASPECTUS_WALK") {
-        if !v.is_empty() {
+    if let Ok(v) = env::var("ASPECTUS_WALK")
+        && !v.is_empty() {
             m.insert("walk".into(), v);
         }
-    }
-    if let Ok(v) = env::var("ASPECTUS_FURNITURE") {
-        if !v.is_empty() {
+    if let Ok(v) = env::var("ASPECTUS_FURNITURE")
+        && !v.is_empty() {
             m.insert("furniture".into(), v);
         }
+    // Same keys the config files speak, one env spelling each.
+    for (var, key) in [
+        ("ASPECTUS_SORT", "sort"),
+        ("ASPECTUS_DOTFILES_FIRST", "dotfiles-first"),
+        ("ASPECTUS_COLUMNS_SIZE", "columns.size"),
+        ("ASPECTUS_COLUMNS_MTIME", "columns.mtime"),
+        ("ASPECTUS_FORMAT_SIZE", "format.size"),
+        ("ASPECTUS_FORMAT_MTIME", "format.mtime"),
+    ] {
+        if let Ok(v) = env::var(var)
+            && !v.is_empty() {
+                m.insert(key.into(), v);
+            }
     }
     m
 }

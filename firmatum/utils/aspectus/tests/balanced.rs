@@ -113,7 +113,9 @@ fn dir_with_only_its_own_line_censuses_on_the_name() {
         .unwrap();
     let xdg = std::env::temp_dir().join(format!("aspectus-fold-xdg-{}-{}", std::process::id(), n));
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "3", "--lines", "3"]);
+    // Header is two lines (stamp, root) since 2026-08-14; 4 leaves the
+    // same one-line budget for autocolors/ this test is about.
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "3", "--lines", "4"]);
     assert_eq!(c, 0, "{e}");
     assert!(
         o.contains("autocolors/") && o.contains('['),
