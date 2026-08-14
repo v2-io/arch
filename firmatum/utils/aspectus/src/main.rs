@@ -159,7 +159,13 @@ fn help_page() -> String {
          commit-decay heat (git-heat's model, half-life 7 commits via\n\
          config `heat.half-life`) on a 0\u{2013}~2 scale \u{2014} not a size \u{2014}\n\
          counting in commits; the age is the mtime delta, counting in\n\
-         wall-clock. Two clocks, one glance-stop.\n\
+         wall-clock. Two clocks, one glance-stop. The score decays in\n\
+         commits behind *that repo's* HEAD, so it is comparable within a\n\
+         repo, not across repos -- at a multi-repo root a dormant repo's\n\
+         concentrated last commits can outscore a busy one; the paired\n\
+         age (and the recency sort) is the cross-repo signal. A line\n\
+         git knows but does not score still carries its age in the\n\
+         cluster (` \u{b7} 6m ago`) -- the score absent, never faked.\n\
          Outside git, no heat is claimed. `--sort heat` orders by it;\n\
          config `recency-source = git` makes the default recency sort use\n\
          git last-touch where known. The same log pass carries the sha\n\
@@ -223,8 +229,11 @@ fn help_page() -> String {
          always speak); owner when neither you nor the level's majority;\n\
          the file-kind word when a file differs from its level's plurality\n\
          (the binary among the .md). Usual is silent: 644 among 644s,\n\
-         owner-you, an old mtime print nothing. Norms come from the full\n\
-         level, so --lines cannot flicker them. One dial scales the\n\
+         owner-you, an old mtime print nothing. Sibling norms (size,\n\
+         perms, owner, kind) come from the full level, so --lines cannot\n\
+         flicker them; mtime alone is an absolute window -- recent vs\n\
+         now, not vs siblings -- so a freshly-made tree speaks it on\n\
+         every line. One dial scales the\n\
          statistical thresholds: config quiet.sensitivity (default 1.0;\n\
          higher = harder to surprise), per-fact quiet.sensitivity.size /\n\
          .mtime. Convention laws (setuid, root-owner) never scale.\n\
@@ -252,6 +261,12 @@ fn help_page() -> String {
          default to the relative form (`2.2h ago`) \u{2014} one time register\n\
          with the heat cluster's age; config format.mtime = iso-8601 or\n\
          epoch restores the absolute spellings (JSON always iso-8601).\n\
+         \n\
+         Every look ends with a feedback footer: this tool is critical\n\
+         but new and unproven -- submit feedback, anomalies, issues, or\n\
+         confusion (with the command and cwd) to the bottom of\n\
+         arch/firmatum/utils/aspectus/inbox.md. In JSON the same\n\
+         solicitation is the top-level `feedback` field.\n\
          \n\
          Facts beyond the defaults (size, mtime, ...) have no flags of\n\
          their own; ask through config on the caller stack, e.g.\n\
@@ -632,6 +647,7 @@ fn main() -> ExitCode {
             );
             print!("{}", render_show(&res));
             print!("{}", aspectus::facts::inventory(&res));
+            println!("\n{}", aspectus::overview::FEEDBACK_FOOTER);
             ExitCode::SUCCESS
         }
         Ok(Cmd::Show(args)) => match show(args) {
@@ -865,6 +881,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         ));
     }
     why.append(&mut why_alloc);
+    why.push("footer: feedback solicitation rides below the look, outside --lines".into());
     aspectus::sort::apply(&mut tree, &order);
     if args.explain {
         for line in &why {

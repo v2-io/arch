@@ -467,7 +467,8 @@ fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
         // a quiet mtime speaking beside it would say the same thing twice
         // (format-consistency steer, 2026-08-14). An explicit `on` still
         // renders everywhere — a full column asked for is a full column.
-        let redundant = cols.heat && n.heat.is_some() && n.mtime.is_some();
+        let redundant =
+            cols.heat && n.mtime.is_some() && (n.heat.is_some() || n.git_ts.is_some());
         cells.push(when(
             cols.mtime,
             n.q.mtime && !redundant,
@@ -482,9 +483,17 @@ fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
     }
     if cols.heat {
         // Two aliveness facts as one glance-stop: `1.01 · 13.6d ago`.
+        // A git-known line without a score (noise basename, history says
+        // nothing hot) still carries its age in the cluster — score
+        // honestly absent, the age in the one time register — so quiet's
+        // mtime never re-speaks it in a stray column (close audit
+        // 2026-08-14: the silenced Cargo.toml had become the loudest row).
         cells.push(match (n.heat, n.mtime) {
             (Some(h), Some(t)) => format!("{h:.2} · {}", rel_age(cols.now, t)),
             (Some(h), None) => format!("{h:.2}"),
+            (None, Some(t)) if n.git_ts.is_some() => {
+                format!(" · {}", rel_age(cols.now, t))
+            }
             _ => String::new(),
         });
     }
@@ -744,7 +753,15 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         });
     }
     emit(&tree.children, tree.omitted.as_ref(), "", cols, &mut rows);
-    paint(rows, color, ncols, cols.cluster_idx())
+    let mut out = paint(rows, color, ncols, cols.cluster_idx());
+    // The steward's feedback footer (verbatim; overview.rs). Not tree
+    // content, so it costs no --lines — the budget governs the look of
+    // the place, and this is the tool speaking about itself (dimmed on a
+    // TTY like the headings line).
+    out.push('\n');
+    out.push_str(&crate::color::dim(crate::overview::FEEDBACK_FOOTER, color));
+    out.push('\n');
+    out
 }
 
 fn emit(

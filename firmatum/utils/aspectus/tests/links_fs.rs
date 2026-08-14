@@ -124,7 +124,9 @@ fn diamond_is_deterministic() {
     let (_, o2, _) = run(&dir, &xdg, &["--depth", "2"]);
     let tail = |s: &str| s.lines().skip(1).collect::<Vec<_>>().join("\n");
     assert_eq!(tail(&o1), tail(&o2));
-    assert_eq!(o1.matches("x.md").count(), 3, "real + both links expand: {o1}");
+    // "── x.md" not bare "x.md": the feedback footer's inbox.md
+    // (2026-08-14) contains that substring.
+    assert_eq!(o1.matches("── x.md").count(), 3, "real + both links expand: {o1}");
 }
 
 /// Subfeature 9: an unexpanded symlinked dir still gets a dir census.

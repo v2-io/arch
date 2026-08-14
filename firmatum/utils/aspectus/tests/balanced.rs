@@ -170,7 +170,9 @@ fn share_a_child_cannot_use_flows_to_one_that_can() {
     // would park lines on small; they belong to deep's children.
     let (c, o, e) = run(&dir, &xdg, &["--depth", "2", "--lines", "12"]);
     assert_eq!(c, 0, "{e}");
-    assert_eq!(o.lines().count(), 12, "capacity exists, so spend it all: {o}");
+    // +2 since the feedback footer (steward, 2026-08-14): blank + footer
+    // ride below the look, outside --lines.
+    assert_eq!(o.lines().count(), 14, "capacity exists, so spend it all: {o}");
     assert!(o.contains("s0.md") && o.contains("s1.md"), "{o}");
     let deep_files = o.matches(".rs").count() - o.matches("[+").count(); // names, not census buckets
     assert!(

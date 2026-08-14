@@ -2,7 +2,6 @@
 //! the unprimed testers found, pinned through the real binary.
 
 use std::fs::{self, File};
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -202,4 +201,43 @@ fn gitlink_names_its_gitdir() {
         g.contains("gitdir: ../elsewhere/modules/x"),
         "the gitlink says where it points: {g}"
     );
+}
+
+/// Close-audit tranche (2026-08-14): a hidden-furniture count that hit its
+/// cap is a `≥` floor, and JSON `truncated` must see it — the code had
+/// missed what impl/json.md already promised.
+#[test]
+fn truncated_sees_hidden_furniture_floor() {
+    let (dir, xdg) = fresh("trunchid");
+    // A huge hidden furniture dir: the 20k-name hidden-count cap trips,
+    // has_counts comes back bounded, truncated must say so.
+    fs::create_dir_all(dir.join(".archive")).unwrap();
+    for i in 0..25_000 {
+        File::create(dir.join(format!(".archive/f{i}"))).unwrap();
+    }
+    fs::write(dir.join("a.md"), "x\n").unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains("\"bounded\":true"), "the floor is data: {o}");
+    assert!(o.contains("\"truncated\":true"), "and truncated sees it: {o}");
+}
+
+/// The steward's feedback footer (verbatim ask, 2026-08-14) rides every
+/// look — text below the tree outside --lines, JSON as the `feedback`
+/// field, `config` too; `version` keeps its one-line contract.
+#[test]
+fn feedback_footer_rides_every_output() {
+    let (dir, xdg) = fresh("footer");
+    fs::write(dir.join("a.md"), "x\n").unwrap();
+    let probe = "unproven tool";
+    let (_, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert!(o.lines().last().unwrap().contains(probe), "text look: {o}");
+    let (_, j, _) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
+    assert!(j.contains("\"feedback\":\"*(This is a critical"), "json field: {j}");
+    let (_, cfg, _) = run(&dir, &xdg, &[], &["config"]);
+    assert!(cfg.contains(probe), "config output: {cfg}");
+    let (_, v, _) = run(&dir, &xdg, &[], &["version"]);
+    assert_eq!(v.lines().count(), 1, "version stays one line: {v}");
+    let (_, h, _) = run(&dir, &xdg, &[], &["help"]);
+    assert!(h.contains("inbox.md"), "help mentions it: {h}");
 }

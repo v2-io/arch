@@ -304,7 +304,11 @@ impl ReadMeter {
 /// ratio made an unread directory's total depend on *what else* this walk
 /// had read, which is exactly the flag-to-flag instability the hallway
 /// testers caught (hardening 2026-08-14). `≈`→`~` marks it estimated.
-const EST_BYTES_PER_LINE: u64 = 32;
+/// 64 is calibrated against real estate trees (close audit 2026-08-14;
+/// the prior 32 overestimated 2–3×): measured B/line — asf ≈100,
+/// vivarium ≈110, firmatum ≈66, memorata ≈58 (md-press-unwrapped prose
+/// runs ≈110–125; dense code ≈40–60). Basis recorded in design/mass.md.
+const EST_BYTES_PER_LINE: u64 = 64;
 
 pub fn est_lines(size: u64) -> u64 {
     size / EST_BYTES_PER_LINE

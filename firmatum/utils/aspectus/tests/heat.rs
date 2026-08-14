@@ -103,9 +103,15 @@ fn heat_cluster_in_repo() {
     assert!(hot.contains("· 0"), "score paired with an age: {hot:?}");
     assert!(hot.contains("ago"), "human-relative age: {hot:?}");
     let cold = line_of(&o, "cold.md");
-    // "· 0" is the cluster's own shape; plain "ago" may now also be the
-    // quiet mtime speaking in its relative default (2026-08-14).
-    assert!(!cold.contains("· 0"), "initial-commit-only file claims no heat: {cold:?}");
+    // Since the close-audit tranche (2026-08-14) a git-known unscored
+    // line carries its age in the cluster (` · 0m ago`) — the score half
+    // stays blank, never faked. No digits may precede cold's `·`.
+    let (before, _) = cold.rsplit_once('·').expect("age in the cluster: {cold:?}");
+    let after_name = before.rsplit("cold.md").next().unwrap();
+    assert!(
+        !after_name.chars().any(|c| c.is_ascii_digit()) || after_name.trim().parse::<u64>().is_ok(),
+        "no score claimed (a bare line-count cell is fine): {cold:?}"
+    );
 }
 
 #[test]
@@ -119,23 +125,40 @@ fn no_heat_outside_git() {
     assert!(!o.contains('·'), "no aliveness cluster outside git: {o}");
 }
 
+/// Close-audit tranche (2026-08-14): `Cargo.toml` left the noise set (it
+/// carries dependency intent; git-heat's pair was tuned for auto-stamped
+/// repos). `SOURCE_REV` stays noise — no score, but its age still rides
+/// the cluster so the silenced file cannot become the loudest row.
 #[test]
-fn noise_basenames_claim_nothing() {
+fn noise_is_source_rev_and_cargo_toml_scores() {
     let (dir, xdg) = fresh("noise");
     git(&dir, &["init", "-q"]);
     fs::write(dir.join("Cargo.toml"), "[package]\n").unwrap();
+    fs::write(dir.join("SOURCE_REV"), "0\n").unwrap();
     fs::write(dir.join("real.rs"), "fn a() {}\n").unwrap();
     git(&dir, &["add", "."]);
     git(&dir, &["commit", "-qm", "initial"]);
     for i in 0..3 {
         fs::write(dir.join("Cargo.toml"), format!("[package] # {i}\n")).unwrap();
+        fs::write(dir.join("SOURCE_REV"), format!("{i}\n")).unwrap();
         fs::write(dir.join("real.rs"), format!("fn a() {{}} // {i}\n")).unwrap();
         git(&dir, &["add", "."]);
         git(&dir, &["commit", "-qm", "churn"]);
     }
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(!line_of(&o, "Cargo.toml").contains('·'), "noise basename, heat 0 → silent: {o}");
+    assert!(
+        line_of(&o, "Cargo.toml").contains("· 0"),
+        "intent scores now: {o}"
+    );
+    let sr = line_of(&o, "SOURCE_REV");
+    let (before, after) = sr.rsplit_once('·').expect("age still rides the cluster: {o}");
+    assert!(after.contains("ago"), "{sr:?}");
+    let after_name = before.rsplit("SOURCE_REV").next().unwrap();
+    assert!(
+        !after_name.contains("0."),
+        "no score for noise: {sr:?}"
+    );
     assert!(line_of(&o, "real.rs").contains("· 0"), "{o}");
 }
 

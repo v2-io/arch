@@ -274,7 +274,9 @@ fn headings_charge_the_budget() {
     for n in 4..8 {
         let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", &n.to_string()]);
         assert_eq!(c, 0, "{e}");
-        assert!(o.lines().count() <= n, "--lines {n} holds: {o}");
+        // The feedback footer (steward, 2026-08-14) rides outside --lines:
+        // blank + footer, two lines the budget does not govern.
+        assert!(o.lines().count() <= n + 2, "--lines {n} holds: {o}");
     }
 }
 

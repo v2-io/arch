@@ -1,0 +1,15 @@
+# close-tranche — finish note (0.1.8)
+
+*The safe subset of `audit/de-novo-close-2026-08-14.md`'s five verified findings, plus Joseph's feedback-footer ask. Suite 231 green; nothing committed.*
+
+1. **JSON `truncated` sees the hidden-furniture floor** (audit §3, straight bug): `json.rs::truncated()` gained the `has_counts` bounded clause the impl note already promised. Pinned: `hardening.rs::truncated_sees_hidden_furniture_floor`.
+
+2. **`Cargo.toml` left heat's noise set** (audit §2): git-heat's `{Cargo.toml, SOURCE_REV}` was tuned for auto-version-stamped repos (SOURCE_REV is the tell); in a general glance a toml edit is dependency *intent*. `SOURCE_REV` stays; `Cargo.lock` deliberately not added (per-tree noise belongs to the config-map merge the design flags). The self-defeat fixed structurally: a **git-known unscored line now carries its age in the cluster** (` · 6m ago`, score blank — absent, never faked) and the quiet-mtime redundancy guard covers it, so a "silenced" file can no longer become the level's loudest row and no stray `mtime` heading appears. Untracked files in a repo still speak quiet mtime separately — genuinely no git facts, and fresh-untracked *is* surprising. Departure + rationale recorded in `design/heat.md` §Open; test rewritten (`heat.rs::noise_is_source_rev_and_cargo_toml_scores`).
+
+3. **Mass estimator recalibrated 32 → 64 B/line** (audit §4), from fresh measurement rather than the audit's suggested 48: asf ≈100, vivarium ≈110, firmatum ≈66, memorata ≈58 B/line (md-press-unwrapped prose ≈110–125; dense code ≈40–60). Verified drift on the audit's own specimen: `memorata/` ≈28k/~29k/~29k across depths 1–3 (was 28k/37k/44k). Basis recorded in `design/mass.md` §Mass-mark.
+
+4. **Quiet mtime help overspell fixed** (audit §5): help now scopes sibling norms to size/perms/owner/kind and names mtime an absolute window ("recent vs now, not vs siblings — a freshly-made tree speaks it on every line"). The level-uniformity-damper idea stays unshipped (design-grade).
+
+5. **Heat repo-relativity** (audit §1, their top finding): claim scope shipped honestly — help and `design/heat.md`'s model section now say *comparable within a repo, not across repos*, with the dormant-repo-outranks-busy-one mechanism explained. The structural fix (normalize / suppress / per-repo scope) is **not** designed here; the whole finding + options + a cheap-mark proposal (`[heat: per-repo scale]` when a heat sort's comparison set spans repos — proposal only) recorded in `design/heat.md` §Open for Joseph.
+
+**Feedback footer** (steward ask, verbatim wording): rides every look — text as the dimmed last line **outside `--lines`** (the budget governs the look of the place; the footer is the tool speaking about itself; `--explain-budget` says so), JSON as top-level `feedback`, `aspectus config` too. `version` keeps its one-line contract; help *mentions* the inbox instead of carrying the footer. Pinned: `hardening.rs::feedback_footer_rides_every_output`. Test-fold ripples: two line-count assertions +2 with dated comments; one scrape learned that the footer's `inbox.md` contains the substring `x.md`.

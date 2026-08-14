@@ -1,4 +1,10 @@
-//! Header facts that locate a look: absolute root, time of the look.
+//! Header facts that locate a look: absolute root, time of the look —
+//! and the steward's feedback footer every output carries.
+
+/// Joseph's wording, verbatim (2026-08-14), italics markers included.
+/// Rides every look (text and JSON), `aspectus config` too; not the
+/// one-line `version` contract, and help *mentions* it instead.
+pub const FEEDBACK_FOOTER: &str = "*(This is a critical but new and unproven tool. Please immediately submit any feedback, anomalies, issues, or confusion you encounter, along with the command and cwd, to the bottom of arch/firmatum/utils/aspectus/inbox.md)*";
 
 use std::io;
 use std::path::{Path, PathBuf};

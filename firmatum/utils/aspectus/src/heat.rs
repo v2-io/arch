@@ -20,7 +20,14 @@ pub const DEFAULT_HALF_LIFE: f64 = 7.0;
 const LOG_CAP: usize = 400;
 /// Bytes of `git log` output read per repo before the tail is dropped.
 const LOG_BYTE_CAP: u64 = 4 * 1024 * 1024;
-const NOISE_BASENAMES: &[&str] = &["Cargo.toml", "SOURCE_REV"];
+/// Departure from git-heat's shipped pair (close audit 2026-08-14):
+/// git-heat's `{Cargo.toml, SOURCE_REV}` was tuned for repos with
+/// mechanical per-commit version stamps — there Cargo.toml churned
+/// automatically. In a general tree-glance a Cargo.toml edit is
+/// dependency *intent*, exactly a where-is-work-alive fact, so it keeps
+/// its heat here. Per-tree noise belongs to the config-map merge
+/// design/heat.md already flags; ratification Joseph's.
+const NOISE_BASENAMES: &[&str] = &["SOURCE_REV"];
 
 fn is_noise(path: &str) -> bool {
     let base = path.rsplit('/').next().unwrap_or(path);

@@ -94,6 +94,8 @@ fn order_untouched_when_loose() {
     let names: Vec<&str> = o
         .lines()
         .skip(2)
+        // Tree rows only — the feedback footer (2026-08-14) is below.
+        .filter(|l| l.contains("── "))
         .filter_map(|l| l.rsplit("── ").next())
         .map(|s| s.split_whitespace().next().unwrap_or(""))
         .collect();

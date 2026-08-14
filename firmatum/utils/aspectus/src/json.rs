@@ -289,6 +289,10 @@ fn truncated(n: &Node) -> bool {
         || n.other_fs
         || n.leftover.as_ref().is_some_and(|c| c.bounded)
         || (n.leftover.is_some() && n.mass.as_ref().is_some_and(|m| m.bounded))
+        // A hidden-furniture count that hit its cap is a `≥` floor like
+        // any other (close audit 2026-08-14: the code missed what the
+        // impl note already promised).
+        || n.has_counts.iter().any(|(_, _, bounded)| *bounded)
         || n.children.iter().any(truncated)
 }
 
@@ -300,6 +304,9 @@ pub fn render(root: &str, stamp: &str, tree: &Node) -> String {
     o.str("time", stamp);
     o.str("root", root);
     o.raw("truncated", if truncated(tree) { "true" } else { "false" });
+    // The steward's feedback solicitation — a fact about the tool's
+    // status; machine callers deserve it too (verbatim, overview.rs).
+    o.str("feedback", crate::overview::FEEDBACK_FOOTER);
     o.raw("tree", &node_obj(tree));
     let mut out = o.done();
     out.push('\n');
