@@ -6,6 +6,7 @@
 
 | Model element | Carried from | External warrant (at the sweeps' own grades) | What is mine |
 |---|---|---|---|
+| Evidence row's unranked support-kinds | GUM Type A/B (verified-via-convergent-secondaries) — previously uncredited; repaired per 04-EXERCISE-AUDIT | — | crediting only |
 | §0.1 kind-gates-vocabulary | trio register-fixes-strength; ennaos `claim_type ⊥ epistemic_status`; the outline's def-epistemic-axes row | L1: CEBM (recalled-table), IPCC (primary-verified), GRADE per-outcome | nothing — carried whole |
 | §0.2 events-as-substrate | four-generation estate lineage (neurips/refs → terminology → udon-needs → relata); VERA core principle | L5: GRADE signed domains (primary-verified), Wikidata P2241, ADR | the "assignment-warrant" phrase joining udon FORMAT's who-may-assign rule to the event tuple |
 | §0.3 failure-and-repair forcing function | steward's 2026-08-10 redemption of the retracted iff-law; comproprium README's three-directory law; trio anti-collapse test | — (internal; design-register) | nothing — carried, with the retraction history kept attached |
@@ -44,6 +45,8 @@
 - 2026-08-14 (steward probe: "Disposition seems so rare or narrow…"): the narrowness is structural and real — Disposition is the one row denominating no strength (a question has ripeness, routing, and a closer, not a rung). Re-glossed as **the degenerate currency**: the limiting case where a kind's entire state is universal machinery + who-may-close. Kept as a row on consequence: question-kinds are the estate's least-atomized, highest-traffic record class (OPEN.md, the for-joseph queue, PRACTICA waits, audit routing), un-atomization is why re-billing is endemic, and the anti-re-billing machinery attaches only if declared. Collision cleaned in the same pass: "demand" removed from Disposition's examples — a udon-needs-style demand is Conviction-priced.
 
 - 2026-08-14 (steward probe: "did it *work*? Did it actually distill truth?" — on the hadith-science imports): honest ledger recorded — one genuinely generative clause (cross-record corroboration on accounts), two corroborative-or-ornamental citations (typed chain-breaks cited but unused; off-ladder terminal already multiply-sourced) — and the probe itself caught a conflation in the Fidelity row: the upgrade-path raises the account's credibility column, not its witness position; row corrected to keep the two columns separate. Standing lesson logged: cited prior art is ornament; *exercised* prior art is an instrument — and exotic vocabulary stays in the provenance trail, not the working terms (fails communal-imagination locally).
+
+- 2026-08-14 (04-EXERCISE-AUDIT lands): three error-repairs applied (Q5 halo overclaim softened to necessary-not-sufficient; Q6 gains the invention-until-safety-case-follow-up label the sweeps demanded; GUM credited). Remaining audit verdicts — cuts to provenance trail, re-attachments (P2241, ADR, FCI, legal not-proven), the GRADE-EtD fetch-verify, VIM verification/validation vocabulary — are the successor's worklist, with 04 as the map. Audit's closing pattern, kept: ornaments cluster where elements were already fully internally warranted — decoration accretes where least needed.
 
 ## Reading-state honesty for this distillation
 
