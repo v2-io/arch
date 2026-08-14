@@ -6,15 +6,9 @@ Start at Part I. Follow Foundation for a why. Seeds: [`IMPLEMENTATION-NOTES.md`]
 
 ## Now
 
-**The glance** (Part I). Order: [`design/build-order.md`](design/build-order.md).
+Part I `next`: **Config**, then **Two-level look**. Help & Version has landed (`impl/help-verb.md`).
 
-The name table and the line-sharing can be written together. The walk needs the name table so it does not enter `.git` or `target`. The command that prints needs those three. Do not add config, JSON, git-on-the-line, or extra columns until the default print (a) does not list `.git` or `target` as children and (b) still names what it did not expand.
-
-- [x] IR + text renderer, broot-failure fixture
-- [x] parent-as-state + absorb four fates
-- [x] sibling-share allocator + `--explain-budget`
-- [x] bounded walk (never enter absorbed names)
-- [x] first snapshot — md-press shows `src/`; `~/src/arch` does not dump `.git`
+[`design/build-order.md`](design/build-order.md) still describes the *first snapshot* (absorb + line-share). That crate work exists. It is not the Part I order. Config comes before Two-level. Two-level lists `.git` as a child; furniture absorb is a later row.
 
 ## Standing
 
