@@ -17,6 +17,8 @@ A glance surface is **observation infrastructure**, and its quality is existenti
 
 **The governing principle:** minimum surprise from the tool; maximum surprisal per glyph in the look. Its two inseparable duties (Joseph): *turn unknown-unknowns into unknowns* — mass, censuses, denial marks, so the reader's sense of what it has NOT seen is calibrated — *and show the place as a living, evolving system* — recency, heat, movement, so the glance answers "where is this alive" in the same pass.
 
+**And the mode of use the duties imply** (Joseph, on the field praxis that formed): the glance is **perceptual, not interrogative**. Using it to check a specific claim is derivative — even a falsified absence-claim is still "a perceived known" being verified. *"The bigger thing that aspectus gives is 'where are your unknowns' — which means being used not as a check for something specific, but a 'look at the landscape before asking it a question' — hence 'anywhere you go; and if not, why are you choosing to put your hand in someplace without looking first?'"* The look precedes the question the way perception precedes reach; a question formed before looking is shaped by priors, and the landscape reshapes which questions exist. This is the eyes-not-oracle distinction at the level of *when*: the query-for-files law says what the tool returns; this says the glance comes before you know what you'd query for.
+
 ## The channels — the physical media a text look owns
 
 A token-reading mind has no retina, but a text surface has independent information channels, each with its own carrying capacity, cost, and natural tenants. Spending them deliberately is the whole craft:
