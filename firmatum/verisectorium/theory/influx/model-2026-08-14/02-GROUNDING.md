@@ -1,0 +1,40 @@
+# Grounding — provenance per element, divergences, and the forks for the steward
+
+*Register: proposed. Element-by-element: carried (whose), synthesized (mine), and open. Same-author caution binds every internal trace; external traces carry the sweeps' own verification grades, not upgraded.*
+
+## Per-element provenance
+
+| Model element | Carried from | External warrant (at the sweeps' own grades) | What is mine |
+|---|---|---|---|
+| §0.1 kind-gates-vocabulary | trio register-fixes-strength; ennaos `claim_type ⊥ epistemic_status`; the outline's def-epistemic-axes row | L1: CEBM (recalled-table), IPCC (primary-verified), GRADE per-outcome | nothing — carried whole |
+| §0.2 events-as-substrate | four-generation estate lineage (neurips/refs → terminology → udon-needs → relata); VERA core principle | L5: GRADE signed domains (primary-verified), Wikidata P2241, ADR | the "assignment-warrant" phrase joining udon FORMAT's who-may-assign rule to the event tuple |
+| §0.3 failure-and-repair forcing function | steward's 2026-08-10 redemption of the retracted iff-law; comproprium README's three-directory law; trio anti-collapse test | — (internal; design-register) | nothing — carried, with the retraction history kept attached |
+| §1 currency spine | the families of TAXONOMY-FILL-v1 §Overview + comproprium D2/D4 + REASSEMBLED-MODEL's five tracks | tracks 1–5's backers as annotated there | **the synthesis**: collapsing families/tracks into *currencies-of-denomination*, with the claim that write-semantics and ladder-shape follow from currency. This is the model's main proposal and its main exposure |
+| Groundedness coordinate | **the steward's March-2026 sketch**, verbatim scale | kin to NUSAP pedigree (medium) and GRADE start-by-kind, but the *decided-things* application appears novel to this estate | its placement as Backing's second coordinate, and the laundering claim |
+| Fidelity currency | comproprium D4/D5 (witness ladder, append-only) | hadith isnād/matn + corroboration-upgrade (verified-via-secondary); journalism license-vs-corroboration | the "proximity cannot be improved by work" phrasing |
+| Efficacy currency | comproprium praxes ladder + the author-vs-inheritor gap its own FORMAT names | Miller knows/does (verified-via-secondary); FCI/normalized gain (formula verified) | elevating author≠inheritor from open-question to the axis's defining note |
+| Disposition currency | OPEN.md question-classes; form-pending-surface row; asked-and-answered praxis | legal not-proven ≠ refuted (moderate-high substance) | naming it a currency |
+| Currency/freshness | NOTATION self-disclaimer; form-generated-views; the tracking-register feedback; exposition's referent-coupled freshness (FILL WN-3) | L4 lifecycle convergence (four primary-verified systems); SKOS compound-error | unifying own- vs referent-currency as one currency with two forms |
+| §2 eight questions | pre-taxonomy-synthesis §B schema; kit-questionnaire row; de-novo-auditor criterion (steward verbatim) | L8 grader-escalation (Wikipedia three tiers, primary-verified) | Q5 (movers/warrant) and Q8 (certification) as first-class questions; the derivation ordering |
+| §3 universal machinery | the drafted theory segments, near-verbatim in compressed form | as cited in each segment | selection only |
+| §4 certification | L8 + independent-verify gate + VIM NOTE 5 + orientation-gate | TRL event-gating (secondary); proof-assistant kernel/`sorry` (recalled) | the three-consequence framing; "a certificate that cannot decay is a label-lie in waiting" |
+| §5 inculcation loop | sketch lower half; crystallized-process thesis (REGISTER-RULING applies); comproprium caught-disciplines-become-mechanisms; the repair-shape ordering | — | the four-rung naming aligned to the sketch's conscious→habitual→reflexive→instinctive, and "rung declared = honest reliability statement" |
+
+## Divergences from existing influx artifacts (deliberate, argued)
+
+1. **vs TAXONOMY-FILL-v1's eleven families:** the families survive as *presentation*, but the model demotes them from primitive to derived — a family is a currency-composition profile. Test case the FILL itself flagged (WN-4, prohibitions): under this model "distinct axis profile" and "distinct family" *are* the same statement, which resolves E3 in the profile direction. The FILL's working-map (FM?/Instr? grades) remains the live discussion queue and is untouched by this.
+2. **vs REASSEMBLED-MODEL's five tracks:** tracks 2–5 map onto currencies/universal-machinery directly. Track 1 (**Standing**) is deliberately *not* a currency here: misfire/power questions ("did this validly come into being as its declared kind?") recur across every currency, so the model places standing in §2-Q5's warrant clause + §4's grader requirements rather than as a parallel track. This is a real divergence and may be wrong — Austin/Hohfeld/Daubert converge on validity-of-origin as orthogonal, and if per-record standing state is ever needed (chain-of-custody-style), the track should be restored. Flagged, not buried.
+3. **vs the epistemic-map's Axis 0:** the carve (truth-apt / choices / directives / references / decisions) is recoverable as currency groupings; what the map lacked and this adds: fidelity/efficacy/disposition as first-class, groundedness on decided things, and grain/edges as dimensions.
+4. **vs ennaos VERA's one-node-type pole:** held open, and partially dissolved per the 2026-08-10 reflection — where kind lives (ontology vs property) is an enforcement-profile question. The model is neutral: currencies can gate axes as metadata (VERA-style) or as directories (comproprium-style); what is *not* negotiable under §0.1 is that the gating exists.
+
+## The forks that are the steward's (laid out, not resolved)
+
+- **F1 — the Evidence MECE table** (the deliberately-open epistemology decision). The model's contribution is only the observation (2026-08-10 reflection, carried): the four candidate ingredients — named channels (GRADE-shaped), evidence ledger (relata's shipped WoE), interval width (credal), calibration-from-events — do not compete; they read as a **maturity ramp** (channels → ledger → width → calibration), which would let the decision ripen in stages instead of a cliff. Offered, not settled; the ordering ("cost to overturn"?) remains the genuinely open call.
+- **F2 — Standing as track vs clause** (divergence 2 above).
+- **F3 — ladder reconciliation across the estate** (scalar / three-axis / rung-tags): under this model the reconciliation object is per-currency, which shrinks the problem — the incompatible ladders are all Evidence-currency dialects; Fidelity/Efficacy/Backing ladders never collided. Whether that reframing survives contact is checkable against disc-ladder-reconciliation's specimens.
+- **F4 — the `claim-` prefix reservation** — untouched by this model except that "assertion" is the currency word, which may or may not inform the revisit.
+- **F5 — groundedness mechanics**: is the foundation scale assessed per decision-event (a field on the event) or per record (a cell)? Sketch is silent; both are workable; per-event composes better with §0.2.
+
+## Reading-state honesty for this distillation
+
+Formed from the ingest enumerated in 00-README. Named unread at time of writing: the quarantined four (by design; see 03); asf's spikes/routing/de-novo SOPs first-hand this session (read-by-transmission through the 2026-08-09 coord's recorded whole-reads and dense verbatim quotation in drafted segments); the ~280 unsampled asf segments; the vaults gemini epistemological dialog (steward-flagged, 2944 l); the udon-needs reports layer. Any of these can overturn elements above; the most exposed elements are the currency synthesis (§1) and the Standing demotion (divergence 2).
