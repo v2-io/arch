@@ -30,11 +30,11 @@ const OPTIONS: &[(&str, &str)] = &[
     ("--explain-budget", "shares and why, on stderr"),
     (
         "--show-all",
-        "also list .git, target/, and other well-known guts",
+        "show .git, target/, and other otherwise hidden areas",
     ),
     (
-        "--inspect [KIND]",
-        "same, or only KIND (git, build, …)",
+        "--inspect KIND",
+        "show KIND directories and files",
     ),
     ("--no-one-fs", "follow mounts (default is one filesystem)"),
     (
@@ -208,13 +208,13 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             "--show-all" => inspect = Some("*".into()),
             "--no-one-fs" => one_fs = false,
             "--inspect" => {
-                if let Some(n) = args.peek() {
-                    if !n.starts_with('-') {
-                        inspect = Some(args.next().unwrap());
-                        continue;
-                    }
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--inspect needs a KIND".into()))?;
+                if v.starts_with('-') {
+                    return Err(Refusal::Usage("--inspect needs a KIND".into()));
                 }
-                inspect = Some("*".into());
+                inspect = Some(v);
             }
             "--lines" => {
                 let v = args
