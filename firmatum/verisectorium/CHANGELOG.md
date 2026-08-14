@@ -31,3 +31,9 @@
 ## 2026-08-06 — refounding day (founding coord + steward)
 
 - Theory refounded whole at `theory/` after the prior attempt was set aside to `.archive/theory-misfire/` (standing avoidance advisory in its README). Outline: nine organs × process dual; conventions set by example and exercised under fire same-day (State-not-Stage, proposed, Expected Type, Max ceilings, wikilinks, form-kind-only slug prefixes, flags-not-gates, type-honesty register). Fourteen segments drafted (four by the coord, ten by forks). INFLUX grew the asf SOPs, the instrumenta gather (REGISTER-RULING governs its labels), phanero, and the steward brainstorms; realization-model-v1 is the live iteration surface. Orientation-depth evidence specimen recorded (misfire vs refounding as near-controlled comparison).
+
+## 2026-08-14 (coord session, Fable)
+- Epistemology/segment-features session: coord produced four synthesis files in `theory/influx/segment-research/` (foundation-axis, distilled-model, asf-implications, securing-contract) — then Joseph caught the root failure: the frame gelled after ~7 of 40+ relevant primaries, and all later reading assimilated into it as diffs. All four bannered as premature-synthesis testimony, withheld-by-design from de-novo passes.
+- Steward's March-2026 epistemic-foundation-scale sketch landed as a primary (`sketch-2026-03-epistemic-foundation-scale.jpeg`).
+- `NOTE-TO-SUCCESSOR-2026-08-14.md` written at Joseph's direction: the model-of-record work goes to a fresh agent doing ingest-everything-first-then-distill. Commit a9e5450.
+- Lesson for the sop-influx (banked here until the successor or steward routes it): deciding-ready-before-orienting is the root; the felt click of coherence is the danger moment; accounting tables from tool logs, not felt-state.
