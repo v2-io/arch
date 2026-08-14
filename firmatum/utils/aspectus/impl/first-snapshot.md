@@ -1,5 +1,8 @@
 # first-snapshot — finish note
 
+> [!note] **History, not the binary.** This describes the retired first-snapshot code; none of it is in the current crate (`impl/README.md`). "Landed" below is past-tense of that snapshot.
+
+
 *Landed. Source: `src/main.rs`, `Cargo.toml`. Test: `walk_render_names_src_not_target_as_child`. Also ran the binary on md-press, this crate, and `~/src/arch`.*
 
 `aspectus [PATH]` walks, applies the table, shares lines, prints text, exits 0.
