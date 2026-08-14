@@ -43,7 +43,7 @@ const OPTIONS: &[(&str, &str)] = &[
 
 fn help_page() -> String {
     let mut out = format!(
-        "{ver} — the look of a locus\n\
+        "{ver} — print-and-quit glance at a directory tree\n\
          \n\
          usage: aspectus [PATH]\n\
                 aspectus help\n\
@@ -52,14 +52,14 @@ fn help_page() -> String {
                 aspectus [-h|--help]\n\
                 aspectus [-v|--version]\n\
          \n\
-         aspectus is the faculty of looking at a locus: a place of action\n\
-         (a project, sandbox, machine). You run it on a path. One print is\n\
-         an aspecta — the seen-things of that place, right now. It is a\n\
-         picture, not an essay, and not the place itself.\n\
+         Run it on a path (or the current directory). It prints the place and\n\
+         its immediate children, then exits. That print is an aspecta: the\n\
+         seen-things of the place, right now — a picture, not an essay.\n\
          \n\
-         The default look is two levels: the place and its immediate children,\n\
-         then it exits. It is not a TUI. It is not ls. It is not carta (who\n\
-         the place is) and not conspectus (what a mind is shown).\n\
+         The place it looks at is a locus (a project, sandbox, machine —\n\
+         wherever you are acting). aspectus is the looking; it does not\n\
+         implement the place. It is not a TUI and not ls. It is not who the\n\
+         place is (carta) and not what a mind is shown (conspectus).\n\
          \n\
          Commands:\n",
         ver = version_line()

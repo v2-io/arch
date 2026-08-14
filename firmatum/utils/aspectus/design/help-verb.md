@@ -39,9 +39,7 @@ Aspectus describes itself. That is the data of this invocation.
 
 ## Help page
 
-Help is the law channel: it must say what the tool *is*, not only its flags. The first line is the same version line as `aspectus version`. The “what it is” block carries the defs (faculty, locus, aspecta, picture-not-essay, two-level default, not a TUI / not carta / not conspectus). Shape: usage → what it is → commands → options → examples.
-
-A two-line slogan is not this page.
+Help is the law channel: it must say what the tool *does* in words a first-time reader already has. The first line is the version plus a plain gloss (`print-and-quit glance at a directory tree`). *Locus* and *aspecta* are introduced after that, not as the slogan. Shape: usage → what it is → commands → options → examples.
 
 ## Version line
 
