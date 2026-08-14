@@ -41,16 +41,17 @@ pub fn list(path: impl AsRef<Path>) -> io::Result<(String, Vec<Entry>)> {
     Ok((name, kids))
 }
 
-pub fn render(name: &str, kids: &[Entry], color: bool) -> String {
+pub fn render(name: &str, kids: &[Entry], color: bool, stamp: &str) -> String {
     let mut root = name.to_string();
     if !root.ends_with('/') {
         root.push('/');
     }
     let root = crate::color::dir(&root, color);
+    let header = format!("{root}  {stamp}");
     if kids.is_empty() {
-        return format!("{root}\n");
+        return format!("{header}\n");
     }
-    let mut lines = vec![root];
+    let mut lines = vec![header];
     for (i, k) in kids.iter().enumerate() {
         let last = i + 1 == kids.len();
         let branch = if last { "└── " } else { "├── " };

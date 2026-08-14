@@ -56,8 +56,13 @@ fn default_cwd_two_levels() {
     let (c, o, e) = run_in(&dir, &[]);
     assert_eq!(c, 0, "{e}");
     assert!(e.is_empty(), "success is quiet: {e:?}");
-    let base = dir.file_name().unwrap().to_string_lossy();
-    assert!(o.contains(&format!("{base}/")), "root name: {o}");
+    let abs = std::path::absolute(&dir).unwrap();
+    let abs_s = abs.to_string_lossy();
+    assert!(
+        o.lines().next().unwrap_or("").contains(abs_s.as_ref()),
+        "absolute root: {o}"
+    );
+    assert!(!o.starts_with("./"), "{o}");
     assert!(o.contains("a/"), "{o}");
     assert!(o.contains(".hidden"), "{o}");
     assert!(o.contains('f'), "{o}");
@@ -68,11 +73,21 @@ fn default_cwd_two_levels() {
 }
 
 #[test]
-fn twice_identical() {
+fn twice_same_tree() {
     let dir = fixture();
     let (_, a, _) = run_in(&dir, &[]);
     let (_, b, _) = run_in(&dir, &[]);
-    assert_eq!(a, b);
+    assert_eq!(strip_stamp(&a), strip_stamp(&b));
+}
+
+fn strip_stamp(s: &str) -> String {
+    let mut lines = s.lines();
+    let first = lines.next().unwrap_or("");
+    let first = first.rsplit_once("  ").map(|(p, _)| p).unwrap_or(first);
+    std::iter::once(first)
+        .chain(lines)
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 #[test]
@@ -83,7 +98,11 @@ fn named_path_from_parent() {
     let (c, o, e) = run_in(parent, &[&name]);
     assert_eq!(c, 0, "{e}");
     assert!(e.is_empty(), "{e:?}");
-    assert!(o.contains(&format!("{name}/")), "{o}");
+    let abs = std::path::absolute(&dir).unwrap();
+    assert!(
+        o.lines().next().unwrap_or("").contains(&*abs.to_string_lossy()),
+        "absolute root: {o}"
+    );
     assert!(o.contains("a/"), "{o}");
     assert!(!o.contains("inside.txt"), "{o}");
 }

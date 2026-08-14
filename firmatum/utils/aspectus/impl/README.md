@@ -12,5 +12,6 @@ Not present-truth of the design — that is [`../design/`](../design/) or the Fo
 | [`config`](config.md) | caller stack + `aspectus config` |
 | [`two-level`](two-level.md) | default look |
 | [`color`](color.md) | `--color=auto\|always\|never`; dirs blue |
+| [`overview-invariants`](overview-invariants.md) | absolute root + UTC stamp |
 
 First-snapshot notes (`absorb`, `allocator`, `bounded-walk`, `budget-not-cutoff`, `aspecta-ir`, `parent-state-not-children`, `first-snapshot`) describe code that is **not** in the crate. Keep them as history. Do not treat them as the binary.

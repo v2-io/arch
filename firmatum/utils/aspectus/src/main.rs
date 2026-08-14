@@ -55,7 +55,8 @@ fn help_page() -> String {
          is shown). It is not percepta (ongoing status and health). aspectus\n\
          is how the place looks right now.\n\
          \n\
-         Default: the place and its immediate children, then it exits.\n\
+         Default: the absolute path of the place and its immediate children,\n\
+         then it exits. The header includes the time of the look (UTC).\n\
          \n\
          Commands:\n",
         ver = version_line()
@@ -270,10 +271,13 @@ enum ShowErr {
 
 fn show(args: ShowArgs) -> Result<(), ShowErr> {
     let locus = aspectus::two_level::resolve_locus(&args.path);
-    let (name, kids) = aspectus::two_level::list(&locus).map_err(|e| map_io(&locus, e))?;
+    let abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
+    let (_, kids) = aspectus::two_level::list(&locus).map_err(|e| map_io(&locus, e))?;
+    let root = abs.to_string_lossy();
+    let stamp = aspectus::overview::stamp_utc(std::time::SystemTime::now());
     print!(
         "{}",
-        aspectus::two_level::render(&name, &kids, args.color.active())
+        aspectus::two_level::render(&root, &kids, args.color.active(), &stamp)
     );
     Ok(())
 }
