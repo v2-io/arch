@@ -12,7 +12,20 @@ Three duties, in order:
 
 "Which facts *may* a line carry, and how do I ask" is itself part of the story. `aspectus config` already shows what won; the fact inventory with current state (`ON`/`OFF`/`QUIET`, format in effect) belongs on that surface (or a sibling of it), on stdout, so an agent can learn the asks without reading source. Help teaches the shape once; it does not enumerate every fact.
 
-## Line budget
+## Column headings (decided 2026-08-14 — three independent arrivals, the third being Joseph hitting `767`/`1.01` cold: "I see zero column headings")
+
+The look carries a **headings line** for its fact columns, in the header block, aligned over the columns it names (right-aligned like them, dimmed if color is on):
+
+```
+2026-08-14T20:46:18Z
+1.01 · 10.0d ago  [git: …]  [has: …]
+/Users/josephwecker-v2/src/arch/vivarium/
+                                        lines   heat · age
+├── bin/                                          1.01 · 12.8d ago
+│   ├── prove-me                         767      1.01 · 13.6d ago
+```
+
+One line, spent once per look, teaching every numeric column below it — the eyes doc's earned-glyphs test passed by the whole-look teaching it buys. It charges the budget like the other header lines. Only columns actually present in this look get headings; a look with no fact columns has no headings line. Deterministic like everything (function of the column set, not the terminal). Heading words are interface vocabulary (`lines`, `heat · age` — spellings Joseph ratifies before they ossify).
 
 A line with more columns is still **one line**. `--lines` counts lines, not width; turning a column on does not change the allocator's arithmetic. (Whether width ever becomes a second budget is not claimed here — no office for it exists in the lattice. If it is ever wanted, it is a new office, not a reinterpretation of `--lines`.)
 
