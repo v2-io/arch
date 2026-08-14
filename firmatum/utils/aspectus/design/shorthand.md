@@ -19,6 +19,10 @@
 
 Like `rwxr-xr-x`: a compact block where *position* carries which fact and *glyph* carries its value — learnable once, then read at a glance. SIGNA proved the mechanism for time; this generalizes it: distinct-but-related glyphs (`★★★` vs `✫` vs `✭`) can carry graded or categorically different meanings, and the pipe-safe Unicode range is large enough that glyph affordances "more than make up for lack of colors" in the no-TTY look. Candidate tenants: heat grade, git letter, kind class, molten/working-surface mark, denied/bound marks. Vocabulary must be: deterministic, taught in `--help` (the law channel), stable across releases once learned (a learned glyph is an interface), and always absent-not-faked when the fact is unobtainable.
 
+## Per-kind edge offset (from the git-heat screenshots)
+
+Joseph, same day: *"I pull the far right column in for normal files vs directories — even at the fastest glance it's clear to me how much of the screen is talking about directories vs normal files."* The right-edge *position* itself is a kind channel: dirs' fact-cluster ends at one column, files' at another (pulled in), so the silhouette of the look answers "how much of this screen is directories" before a single name is read. Generalization: a placement class may carry **per-kind tab-stops** — alignment not to one column but to one column *per node kind* — turning the ragged edge into information instead of noise. Deterministic like all alignment (function of content + caller state).
+
 ## Open
 
 - Which facts earn glyph-block slots first, and the block's position (far-left leading candidate — it survives narrow terminals and reads columnar like `ls -l`).
