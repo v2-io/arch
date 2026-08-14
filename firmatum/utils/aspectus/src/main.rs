@@ -30,6 +30,11 @@ const OPTIONS: &[(&str, &str)] = &[
         "--depth N",
         "generations below the root (default 2; 0 = no limit)",
     ),
+    (
+        "--lines N",
+        "line budget for the whole look (default 80; 0 = no limit)",
+    ),
+    ("--explain-budget", "how lines were shared, on stderr"),
 ];
 
 fn help_page() -> String {
@@ -114,6 +119,7 @@ struct ShowArgs {
     user_home_override: Option<PathBuf>,
     caller: Option<String>,
     flag_vals: BTreeMap<String, String>,
+    explain: bool,
 }
 
 enum Refusal {
@@ -156,6 +162,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut caller = None;
     let mut color = ColorMode::Auto;
     let mut flag_vals = BTreeMap::new();
+    let mut explain = false;
     let mut end_flags = false;
     let mut args = argv.into_iter().peekable();
 
@@ -212,6 +219,19 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 parse_depth(v)?;
                 flag_vals.insert("depth".into(), v.to_string());
             }
+            "--lines" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--lines needs a number".into()))?;
+                parse_lines(&v)?;
+                flag_vals.insert("lines".into(), v);
+            }
+            s if s.starts_with("--lines=") => {
+                let v = &s[8..];
+                parse_lines(v)?;
+                flag_vals.insert("lines".into(), v.to_string());
+            }
+            "--explain-budget" => explain = true,
             "--" => end_flags = true,
             s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
             s => take_positional(&mut path, s.to_string())?,
@@ -243,7 +263,13 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         user_home_override,
         caller,
         flag_vals,
+        explain,
     }))
+}
+
+fn parse_lines(s: &str) -> Result<u32, Refusal> {
+    s.parse::<u32>()
+        .map_err(|_| Refusal::Usage(format!("--lines needs a number (got {s})")))
 }
 
 fn parse_depth(s: &str) -> Result<u32, Refusal> {
@@ -322,7 +348,19 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(2);
     let abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
-    let tree = aspectus::n_level::gather(&locus, depth).map_err(|e| map_io(&locus, e))?;
+    let mut tree = aspectus::n_level::gather(&locus, depth).map_err(|e| map_io(&locus, e))?;
+    let lines: usize = cfg
+        .won
+        .get("lines")
+        .and_then(|(v, _)| v.parse().ok())
+        .unwrap_or(80);
+    let mut why = Vec::new();
+    aspectus::n_level::apply_budget(&mut tree, lines, &mut why);
+    if args.explain {
+        for line in &why {
+            let _ = writeln!(io::stderr(), "{line}");
+        }
+    }
     let root = abs.to_string_lossy();
     let stamp = aspectus::overview::stamp_utc(std::time::SystemTime::now());
     print!(

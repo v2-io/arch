@@ -14,6 +14,14 @@ pub struct Census {
 
 impl Census {
     pub fn render(&self) -> String {
+        self.render_inner(false)
+    }
+
+    pub fn render_plus(&self) -> String {
+        self.render_inner(true)
+    }
+
+    fn render_inner(&self, plus: bool) -> String {
         if self.total == 0 {
             return String::new();
         }
@@ -22,7 +30,12 @@ impl Census {
             .iter()
             .map(|(k, n)| format!("{n} {k}"))
             .collect();
-        format!("[{}: {}]", self.total, parts.join(", "))
+        let n = if plus {
+            format!("+{}", self.total)
+        } else {
+            self.total.to_string()
+        };
+        format!("[{n}: {}]", parts.join(", "))
     }
 }
 
@@ -33,6 +46,8 @@ pub struct Node {
     pub children: Vec<Node>,
     /// Set when we stopped expanding this directory (depth cutoff).
     pub leftover: Option<Census>,
+    /// Siblings not listed because the line budget ran out.
+    pub omitted: Option<Census>,
 }
 
 /// `depth` is how many generations below the root to print. `0` = no limit.
@@ -54,6 +69,7 @@ fn gather_at(path: &Path, remain: Option<u32>) -> io::Result<Node> {
             is_dir: false,
             children: Vec::new(),
             leftover: None,
+            omitted: None,
         });
     }
     if remain == Some(0) {
@@ -67,6 +83,7 @@ fn gather_at(path: &Path, remain: Option<u32>) -> io::Result<Node> {
             } else {
                 Some(leftover)
             },
+            omitted: None,
         });
     }
     let child_remain = remain.map(|n| n.saturating_sub(1));
@@ -93,7 +110,99 @@ fn gather_at(path: &Path, remain: Option<u32>) -> io::Result<Node> {
         is_dir: true,
         children,
         leftover: None,
+        omitted: None,
     })
+}
+
+fn label_node(n: &Node) -> String {
+    if n.is_dir {
+        "dir".into()
+    } else {
+        suffix_label(&n.name)
+    }
+}
+
+fn census_nodes(nodes: &[Node]) -> Census {
+    let mut buckets: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
+    for n in nodes {
+        *buckets.entry(label_node(n)).or_insert(0) += 1;
+    }
+    let mut buckets: Vec<(String, usize)> = buckets.into_iter().collect();
+    buckets.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    Census {
+        total: nodes.len(),
+        buckets,
+    }
+}
+
+fn weight(n: &Node) -> u32 {
+    if n.is_dir {
+        4
+    } else {
+        1
+    }
+}
+
+/// `budget` includes this node's own line. `0` means no line limit.
+pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
+    if budget == 0 {
+        return;
+    }
+    let n = node.children.len();
+    if n == 0 {
+        return;
+    }
+    let remain = budget.saturating_sub(1);
+    if remain == 0 {
+        explain.push(format!("{}: all {n} children omitted (budget 1)", node.name));
+        node.omitted = Some(census_nodes(&node.children));
+        node.children.clear();
+        return;
+    }
+    if remain < n {
+        let show = remain.saturating_sub(1);
+        let mut order: Vec<usize> = (0..n).collect();
+        order.sort_by(|&a, &b| {
+            weight(&node.children[b])
+                .cmp(&weight(&node.children[a]))
+                .then_with(|| node.children[a].name.cmp(&node.children[b].name))
+        });
+        let keep: Vec<usize> = order.iter().copied().take(show).collect();
+        let drop: Vec<Node> = node
+            .children
+            .iter()
+            .enumerate()
+            .filter(|(i, _)| !keep.contains(i))
+            .map(|(_, c)| c.clone())
+            .collect();
+        node.children = keep.iter().map(|&i| node.children[i].clone()).collect();
+        node.omitted = Some(census_nodes(&drop));
+        explain.push(format!(
+            "{}: listed {} / {n}, omitted {}",
+            node.name,
+            node.children.len(),
+            drop.len()
+        ));
+        for c in &mut node.children {
+            apply_budget(c, 1, explain);
+        }
+        return;
+    }
+    let extra = remain - n;
+    let mut shares = vec![1usize; n];
+    if extra > 0 {
+        let mut dirs: Vec<usize> = (0..n).filter(|&i| node.children[i].is_dir).collect();
+        if dirs.is_empty() {
+            dirs = (0..n).collect();
+        }
+        for i in 0..extra {
+            shares[dirs[i % dirs.len()]] += 1;
+        }
+    }
+    explain.push(format!("{}: budget {budget}, remain {remain}, shares {shares:?}", node.name));
+    for (c, s) in node.children.iter_mut().zip(shares) {
+        apply_budget(c, s, explain);
+    }
 }
 
 fn census_dir(path: &Path) -> io::Result<Census> {
@@ -145,19 +254,27 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str) -> String 
     }
     let root = crate::color::dir(&root, color);
     let header = format!("{root}  {stamp}");
-    if tree.children.is_empty() {
+    if tree.children.is_empty() && tree.omitted.is_none() {
         return format!("{header}\n");
     }
     let mut lines = vec![header];
-    emit(&tree.children, "", color, &mut lines);
+    emit(&tree.children, tree.omitted.as_ref(), "", color, &mut lines);
     let mut s = lines.join("\n");
     s.push('\n');
     s
 }
 
-fn emit(kids: &[Node], prefix: &str, color: bool, out: &mut Vec<String>) {
+fn emit(
+    kids: &[Node],
+    omitted: Option<&Census>,
+    prefix: &str,
+    color: bool,
+    out: &mut Vec<String>,
+) {
+    let has_om = omitted.map(|c| c.total > 0).unwrap_or(false);
+    let total = kids.len() + usize::from(has_om);
     for (i, k) in kids.iter().enumerate() {
-        let last = i + 1 == kids.len();
+        let last = i + 1 == total;
         let branch = if last { "└── " } else { "├── " };
         let mut n = k.name.clone();
         if k.is_dir && !n.ends_with('/') {
@@ -173,13 +290,18 @@ fn emit(kids: &[Node], prefix: &str, color: bool, out: &mut Vec<String>) {
             }
         }
         out.push(format!("{prefix}{branch}{n}"));
-        if !k.children.is_empty() {
+        if !k.children.is_empty() || k.omitted.is_some() {
             let next = if last {
                 format!("{prefix}    ")
             } else {
                 format!("{prefix}│   ")
             };
-            emit(&k.children, &next, color, out);
+            emit(&k.children, k.omitted.as_ref(), &next, color, out);
+        }
+    }
+    if has_om {
+        if let Some(c) = omitted {
+            out.push(format!("{prefix}└── {}", c.render_plus()));
         }
     }
 }

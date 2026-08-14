@@ -6,7 +6,7 @@ Start at Part I. Follow Foundation for a why. Seeds: [`IMPLEMENTATION-NOTES.md`]
 
 ## Now
 
-Part I landed through dir-census at the depth cutoff. Next planned: leaf-census / balanced (`--lines`), furniture, …
+Part I landed through balanced / leaf-census. Next planned: walk-bound, columns, furniture, …
 
 The first-snapshot walk/absorb/allocator is **not** in the product. The binary is help, version, config, and the two-level look.
 
