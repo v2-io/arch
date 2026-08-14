@@ -4,4 +4,4 @@ The canon view now lives with its first consumer:
 
 **[`../utils/aspectus/ASPECTUS.outline.md`](../utils/aspectus/ASPECTUS.outline.md)**
 
-Suite-shared segments, when a second util needs them, efflux to [`src/`](src/) (not created until the first efflux). Influx stay here as gather, not authority: [`influx/`](influx/).
+Suite-shared segments efflux to [`src/`](src/) on first need. First efflux: [`src/EFFLUX-from-aspectus.md`](src/EFFLUX-from-aspectus.md). Influx stays gather, not authority: [`influx/`](influx/).
