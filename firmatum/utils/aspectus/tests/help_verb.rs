@@ -154,7 +154,7 @@ fn help_lists_every_accepted_flag() {
         "--lines",
         "--visit",
         "--explain-budget",
-        "--raw",
+        "--show-all",
         "--inspect",
         "--no-one-fs",
         "--config",

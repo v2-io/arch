@@ -4,6 +4,6 @@ A git work tree does not list `.git` as a child. The parent line can say what gi
 
 A **submodule** is the same furniture. Nested `.git` (dir or gitlink) is absorbed the same way; the parent line of that child directory can carry the same facts. It is not a second kind and not a child you open to discover it is a repo.
 
-`--raw` / `--inspect git` is the only way into `.git`.
+`--show-all` / `--inspect git` lists `.git` when you ask.
 
 Related, specialized: [[github|GitHub]] for `.github/` (workflows, not objects). Gitignore / gitattributes names can be map rows, or hang on this plugin — undecided, not a third kind.

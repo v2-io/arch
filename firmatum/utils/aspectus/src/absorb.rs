@@ -87,7 +87,7 @@ pub fn absorb_kind(f: Fate) -> Option<&'static str> {
     }
 }
 
-/// Inspect filter: `None` means all absorbed names become children (`--raw`
+/// Inspect filter: `None` means all hidden guts become children (`--show-all`
 /// / bare `--inspect`). `Some(k)` means only that kind is opened.
 pub fn absorb_is_visible(f: Fate, inspect: Option<&str>) -> bool {
     match f {
@@ -117,7 +117,7 @@ pub struct Partition {
 
 /// Split a directory listing into the four fates.
 /// `inspect`: `None` = default (absorb stays parent state); `Some("*")` =
-/// `--raw`; `Some(kind)` = `--inspect kind`.
+/// `--show-all`; `Some(kind)` = `--inspect kind`.
 pub fn partition(
     entries: impl IntoIterator<Item = (String, bool)>,
     inspect: Option<&str>,

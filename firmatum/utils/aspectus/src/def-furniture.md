@@ -6,6 +6,6 @@
 
 A name the map (or a plugin) does not know is not furniture. It is just a child. You might look in it.
 
-`--raw` / `--inspect` is how you enter furniture when you mean to. The default look cannot wander in.
+`--show-all` / `--inspect` lists those names when you ask. The default look does not.
 
 Furniture is not **carta**. Carta is who the place is, standing identity. Furniture is the implementation guts that, once recognized, should not crowd the picture.

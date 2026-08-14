@@ -1,6 +1,6 @@
 # Furniture
 
-Well-known guts are not children. The default look cannot wander in. `--raw` / `--inspect` is the only way in.
+Well-known guts are not children. The default look does not list them. `--show-all` / `--inspect` lists them when you ask.
 
 Most furniture is **not code**. It is a **map**: a glob (or gitignore-like pattern) → a furniture name, and whether that name is absorbed (folded onto the parent, not listed) or omitted (not listed, not mentioned). `.archive`, `.trash`, `__pycache__`, `.DS_Store`, `target/`, `.obsidian/`, `.claude/` — the same mechanism. A default map ships; user-home config extends or overrides it (caller stack, not a file in the project).
 

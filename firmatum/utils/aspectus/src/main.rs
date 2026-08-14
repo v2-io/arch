@@ -28,10 +28,13 @@ const OPTIONS: &[(&str, &str)] = &[
         "max directory entries to process (default 400)",
     ),
     ("--explain-budget", "shares and why, on stderr"),
-    ("--raw", "open absorbed names (.git, target/, …)"),
+    (
+        "--show-all",
+        "also list .git, target/, and other well-known guts",
+    ),
     (
         "--inspect [KIND]",
-        "open absorbed names, or only KIND (git, build, …)",
+        "same, or only KIND (git, build, …)",
     ),
     ("-x", "stay on one filesystem (default)"),
     ("--no-one-fs", "follow mounts"),
@@ -203,7 +206,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 caller = Some(s[9..].to_string());
             }
             "--explain-budget" => explain = true,
-            "--raw" => inspect = Some("*".into()),
+            "--show-all" => inspect = Some("*".into()),
             "-x" => one_fs = true,
             "--no-one-fs" => one_fs = false,
             "--inspect" => {

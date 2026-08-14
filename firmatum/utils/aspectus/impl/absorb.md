@@ -4,7 +4,7 @@
 
 Static name table. First match wins. No config file. Each row is a basename, exact or `README` prefix, and one outcome: do not list (and stamp a label on the directory), list (and maybe stamp a label), drop (`.DS_Store`), or list with a tag (`(archive)`, `(trash)`).
 
-`--raw` / `--inspect` / `--inspect KIND` turn “do not list” names into ordinary children so the walk will enter them.
+`--show-all` / `--inspect` / `--inspect KIND` turn “do not list” names into ordinary children so the walk will enter them.
 
 | Name | What happens |
 |---|---|

@@ -14,7 +14,7 @@ pub struct WalkOptions {
     pub visit_budget: usize,
     /// Stay on the starting filesystem (`-x`).
     pub one_filesystem: bool,
-    /// `None` = default (do not open absorb). `Some("*")` = `--raw`.
+    /// `None` = default (do not list furniture). `Some("*")` = `--show-all`.
     /// `Some(kind)` = `--inspect kind`.
     pub inspect: Option<String>,
 }

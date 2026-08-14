@@ -162,10 +162,10 @@ fn raw_is_the_only_way_into_git() {
     let opened = walk(&root, raw).unwrap();
     assert!(
         opened.aspecta.node.children.iter().any(|c| c.name == ".git"),
-        " --raw must list .git as a child"
+        " --show-all must list .git as a child"
     );
     assert!(
         opened.stats.dirs_opened.iter().any(|p| p.ends_with(".git")),
-        " --raw must open .git"
+        " --show-all must list .git"
     );
 }
