@@ -8,7 +8,7 @@ Generic rows in [`../ASPECTUS.outline.md`](../ASPECTUS.outline.md) point at `../
 - aspectus **diverges** (copy-on-edit from influx/src), or
 - aspectus is **additive** (a new outline row: `[[design/<nuance>\|<nuance>]]`).
 
-Filename = slug = identity. Form-kind prefix only.
+Filename = slug = identity. Plain story names (`absorb`, `allocator`). Do not prefix `form-` — that is a principle form-kind, not a design note in this crate.
 
 **Coding is not gated on a file here.** Seeds: [`../FEATURE-PIPELINE.md`](../FEATURE-PIPELINE.md), [`../IMPLEMENTATION-NOTES.md`](../IMPLEMENTATION-NOTES.md), the influx Tag.
 
