@@ -19,6 +19,13 @@
 - **Mark in place; don't reorder.** `--mark-outline` stars hot segments *in outline order* because "agents free-read by outline order, not rank order" — the exact philosophy of aspectus Focus ("matches stay in place; surroundings are not thrown away") independently arrived at. Heat in the look marks hot lines where they stand; it does not resort the tree unless Sort is asked for heat.
 - Its docstring's humility is worth inheriting verbatim: *"This is deliberately imperfect. Equal-weight CDF-normalized factors are good enough to move with confidence; rebalance when we have evidence."*
 
-## Aspectus scope
+## Visual affordances (from git-heat's shipped look, Joseph's screenshots 2026-08-14)
+
+What makes the git-heat view legible at a glance, transferable to the text look:
+
+- **The `score · age` cluster**: heat and recency paired as one compact unit, right-aligned at a consistent column — two aliveness facts read as one glance-stop (`1.01 · 13.6d ago`). When aspectus shows heat, pairing it with the mtime delta in one cluster is the proven rendering.
+- **Human-relative ages with auto-chosen units** (`13.6d ago`, `2.2w ago`, `3.5w ago`) — the *delta* register for recency, distinct from the ISO *timestamp* register; a plain-form sibling of SIGNA for the same fact, and the natural `format` option for mtime-as-aliveness.
+- **Color as the magnitude channel** (viridis-like ramp per row): on a TTY, heat color is a whole extra channel costing zero glyphs — a natural later extension of [[color|Color]] (which currently only paints dirs). Machine path unaffected (color never survives a pipe under auto).
+- **Hot-first within an expanded dir** in the git-heat view is its fixed sort; in aspectus that is just [[sort|Sort]] asked for key=heat — not a heat-row invention.
 
 Visible set only (never a reason to widen the walk); omit outside git; `signa`-density is the natural text format (lattice). Obtain is one log pass per repo — cache-keyed by HEAD, which makes it the second-cheapest cache client after mass. Whether aspectus *shells to* `git-heat`, imports its model, or reimplements the ~40-line core is the implementer's call — the model constants above are the law either way.
