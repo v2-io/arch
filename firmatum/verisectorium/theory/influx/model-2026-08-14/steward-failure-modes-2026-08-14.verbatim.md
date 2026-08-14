@@ -48,3 +48,30 @@
 > And all of these may hit different limits... or something... I think this is where the ontology has always tripped me up, because there are these orthogonal avenues toward truth, and the truth of the claim is orthogonal to the utility of the claim at its current truth level, and the the truth level itself is something like the max(orthogonal evidence lines)....
 
 *(One truncation preserved as received: "Evidence miscalibration (lack of correct mapping of " — the line ended mid-thought in the original; flagged for a backtrack rather than completed by the scribe.)*
+
+---
+
+## Burst 2 — Evidence backtrack + max/gcd note + Backing (2026-08-14)
+
+> Ah, indeed--- I think I was going to type Lack of correct mapping of statistical results to confidence ranges and claim. Or something like that.
+>
+> And max(lines) vs gcd(all-lines) or something might be two very worthwhile but distinct patterns/metrics to know about in aggregate....
+>
+> OK. For backing you already got some good and subtle ones, like drift and masquerading as derivation.
+> Backing, though, is usually shorthand for a few different states altogether:
+>   - Who is accountable for this decision? (who gets to "own" it and potentially fix it if it's challenged or wrong)
+>   - Who *knows* about this decision? (which is usually a proxy for "Who understands and is ready to act on this decision?")
+>   - (related) Who has been given the opportunity to give feedback and a vote of support/non-support on this decision?
+>   - On what grounds was this decision predicated?
+>     - What explicit assumptions
+>     - What implicit assumptions (need to be made explicit ideally, but it is sometimes not apparent until later, hence adding it to this list)
+>     - What would make this decision *require* a revisit/review?
+>   - What is the path for revisiting this decision?
+> (for example, a "ruled" by Josph implies Joseph might have a reason that wasn't stated. "ratified" means he thought through it and would like to know if someone feels differently. "supported" means he had no objections at that time. All very different statements about who knows, what kind of grounds there are, and what the remediation is.)
+>
+> The error/failure modes are many, but some of the most common:
+>   - Agents substituting authority for thoughtfulness
+>   - Agents assuming more than the decision assumes (e.g., assume that it was ruled some time ago and that therefore backwards compatibility with that ruling is critical, without realizing that that's based on the assumption that there are deployments using the old ruling or something that would be disrupted or caught off guard, which is often not the case).
+>   -
+
+*(Final dangling "  -" preserved as received — burst may continue.)*
