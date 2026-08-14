@@ -8,6 +8,14 @@ This file represents current authoritative source of truth and it needs to be ma
 
 Seeds: [`FEATURE-PIPELINE.md`](FEATURE-PIPELINE.md), [`IMPLEMENTATION-NOTES.md`](IMPLEMENTATION-NOTES.md) (to be retired when transmitted to outline and segments properly). ⚠ The seeds carry agent interpolation and vocabulary Joseph did **not** decide — check claims against ORIGIN-DISCUSSION before inheriting them.
 
+#### Standing rituals (session + consolidation)
+
+- **First command of any aspectus session: `aspectus .`** — the tool orients its own workshop (and dogfoods itself before you touch it).
+- **Check [`inbox.md`](inbox.md) each session** — the footer solicits feedback from every user; entries arrive as reproducible specimens (command + cwd). Route each into the pipeline/audit flow, keep the surface clean.
+- **Every consolidation seam**: review → commit → **bump the patch version in the same commit** → `cargo build --release && cp target/release/aspectus ~/.cargo/bin/aspectus` — an improvement not on PATH might as well not exist (a stale install once ran invisible for six hours; the `+sha[.dirty] (built …)` stamp exists so that can't hide again — note `.dirty` reflects the whole arch repo, not the crate).
+- **Dogfood on the real trees before committing** any look-changing seam: `~/src/arch`, `asf`, `vivarium`, `~/src` (the density gauntlet). A reproducible specimen (exact command + what it showed) is the currency for corrections.
+- Testimony from unprimed users is primary demand evidence — preserve it verbatim in [`audit/`](audit/), route findings to owners in the same cycle.
+
 ### Segments:
 
 #### Pipeline (Part I below)
