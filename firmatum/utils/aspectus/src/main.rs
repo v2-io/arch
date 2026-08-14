@@ -19,10 +19,6 @@ const OPTIONS: &[(&str, &str)] = &[
     ("--", "end of flags"),
     ("--config PATH", "use this file as user-home for this run"),
     ("--caller KEY", "agent-type for configuration selection"),
-    (
-        "--color=auto|always|never",
-        "color only if stdout is a TTY (auto)",
-    ),
 ];
 
 fn help_page() -> String {
@@ -170,14 +166,6 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             s if s.starts_with("--caller=") => {
                 caller = Some(s[9..].to_string());
             }
-            "--color" => {
-                if let Some(n) = args.peek() {
-                    if matches!(n.as_str(), "auto" | "always" | "never") {
-                        let _ = args.next();
-                    }
-                }
-            }
-            s if s.starts_with("--color=") => {}
             "--" => end_flags = true,
             s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
             s => take_positional(&mut path, s.to_string())?,

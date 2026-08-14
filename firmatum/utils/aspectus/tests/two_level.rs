@@ -101,15 +101,6 @@ fn dirs_marked_files_not() {
 }
 
 #[test]
-fn pipe_color_auto_has_no_csi() {
-    let dir = fixture();
-    let (c, o, e) = run_in(&dir, &["--color=auto"]);
-    assert_eq!(c, 0, "{e}");
-    assert!(!o.contains('\u{1b}'), "CSI in piped auto: {o:?}");
-    assert!(!o.contains("\x1b["), "{o:?}");
-}
-
-#[test]
 fn missing_path_not_found() {
     let (c, o, e) = run_in(Path::new("/"), &["/no/such/aspectus-locus"]);
     assert_eq!(c, 2);

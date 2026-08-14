@@ -48,4 +48,4 @@ No sizes, no dates, no git letters. Those wait.
 
 ## Not in this row
 
-Nth-level tree, Summarization, Balanced summarization, furniture, `-x`, visit cap, JSON.
+Nth-level tree, Summarization, Balanced summarization, furniture, visit cap, JSON. Color (`--color=auto`) is specified here and **not shipped** — do not list a flag that does nothing.
