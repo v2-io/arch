@@ -3,10 +3,7 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use aspectus::budget::{allocate_shares, explain};
 use aspectus::config::{render_show, resolve, CALLER_FLAG};
-use aspectus::render::render_text;
-use aspectus::walk::{walk, WalkOptions};
 
 /// One source: every accepted flag/verb is named here and printed in help.
 const COMMANDS: &[(&str, &str)] = &[
@@ -22,21 +19,6 @@ const OPTIONS: &[(&str, &str)] = &[
     ("--", "end of flags"),
     ("--config PATH", "use this file as user-home for this run"),
     ("--caller KEY", "agent-type for configuration selection"),
-    ("--lines N", "line budget including the root (default 80)"),
-    (
-        "--visit N",
-        "max directory entries to process (default 400)",
-    ),
-    ("--explain-budget", "shares and why, on stderr"),
-    (
-        "--show-all",
-        "show .git, target/, and other otherwise hidden areas",
-    ),
-    (
-        "--inspect KIND",
-        "show KIND directories and files",
-    ),
-    ("--no-one-fs", "follow mounts (default is one filesystem)"),
     (
         "--color=auto|always|never",
         "color only if stdout is a TTY (auto)",
@@ -114,20 +96,10 @@ enum Cmd {
 struct ConfigArgs {
     user_home_override: Option<PathBuf>,
     caller: Option<String>,
-    flag_lines: Option<u32>,
 }
 
 struct ShowArgs {
     path: PathBuf,
-    lines: usize,
-    visit: usize,
-    explain: bool,
-    inspect: Option<String>,
-    one_fs: bool,
-    #[allow(dead_code)]
-    user_home_override: Option<PathBuf>,
-    #[allow(dead_code)]
-    caller: Option<String>,
 }
 
 enum Refusal {
@@ -163,17 +135,11 @@ impl Refusal {
 
 fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut path = None;
-    let mut lines = 80usize;
-    let mut visit = 400usize;
-    let mut explain = false;
-    let mut inspect = None;
-    let mut one_fs = true;
     let mut help = false;
     let mut version = false;
     let mut config_cmd = false;
     let mut user_home_override = None;
     let mut caller = None;
-    let mut lines_set = false;
     let mut end_flags = false;
     let mut args = argv.into_iter().peekable();
 
@@ -204,51 +170,6 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             s if s.starts_with("--caller=") => {
                 caller = Some(s[9..].to_string());
             }
-            "--explain-budget" => explain = true,
-            "--show-all" => inspect = Some("*".into()),
-            "--no-one-fs" => one_fs = false,
-            "--inspect" => {
-                let v = args
-                    .next()
-                    .ok_or_else(|| Refusal::Usage("--inspect needs a KIND".into()))?;
-                if v.starts_with('-') {
-                    return Err(Refusal::Usage("--inspect needs a KIND".into()));
-                }
-                inspect = Some(v);
-            }
-            "--lines" => {
-                let v = args
-                    .next()
-                    .ok_or_else(|| Refusal::Usage("--lines needs a number".into()))?;
-                lines = v
-                    .parse()
-                    .map_err(|_| Refusal::Usage(format!("bad --lines {v}")))?;
-                lines_set = true;
-            }
-            "--visit" => {
-                let v = args
-                    .next()
-                    .ok_or_else(|| Refusal::Usage("--visit needs a number".into()))?;
-                visit = v
-                    .parse()
-                    .map_err(|_| Refusal::Usage(format!("bad --visit {v}")))?;
-            }
-            s if s.starts_with("--lines=") => {
-                let v = &s[8..];
-                lines = v
-                    .parse()
-                    .map_err(|_| Refusal::Usage(format!("bad --lines {v}")))?;
-                lines_set = true;
-            }
-            s if s.starts_with("--visit=") => {
-                let v = &s[8..];
-                visit = v
-                    .parse()
-                    .map_err(|_| Refusal::Usage(format!("bad --visit {v}")))?;
-            }
-            s if s.starts_with("--inspect=") => {
-                inspect = Some(s[10..].to_string());
-            }
             "--color" => {
                 if let Some(n) = args.peek() {
                     if matches!(n.as_str(), "auto" | "always" | "never") {
@@ -273,11 +194,6 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         return Ok(Cmd::Config(ConfigArgs {
             user_home_override,
             caller,
-            flag_lines: if lines_set {
-                Some(lines as u32)
-            } else {
-                None
-            },
         }));
     }
 
@@ -286,16 +202,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         Some(p) => classify_positional(p)?,
     };
 
-    Ok(Cmd::Show(ShowArgs {
-        path,
-        lines,
-        visit,
-        explain,
-        inspect,
-        one_fs,
-        user_home_override,
-        caller,
-    }))
+    Ok(Cmd::Show(ShowArgs { path }))
 }
 
 fn take_positional(path: &mut Option<String>, token: String) -> Result<(), Refusal> {
@@ -306,8 +213,6 @@ fn take_positional(path: &mut Option<String>, token: String) -> Result<(), Refus
     Ok(())
 }
 
-/// After flags: reserved verbs already handled. A token that is not an
-/// existing path and does not look like a path is an unknown verb.
 fn classify_positional(token: String) -> Result<PathBuf, Refusal> {
     let p = Path::new(&token);
     if p.exists() || token.contains('/') || token.starts_with('.') {
@@ -331,11 +236,7 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         Ok(Cmd::Config(c)) => {
-            let res = resolve(
-                c.user_home_override.as_deref(),
-                c.caller.as_deref(),
-                c.flag_lines,
-            );
+            let res = resolve(c.user_home_override.as_deref(), c.caller.as_deref(), None);
             print!("{}", render_show(&res));
             ExitCode::SUCCESS
         }
@@ -359,27 +260,6 @@ enum ShowErr {
 }
 
 fn show(args: ShowArgs) -> Result<(), ShowErr> {
-    let deep = args.inspect.is_some() || args.explain;
-    if deep {
-        let opts = WalkOptions {
-            visit_budget: args.visit,
-            one_filesystem: args.one_fs,
-            inspect: args.inspect,
-        };
-        let result = walk(&args.path, opts).map_err(|e| map_io(&args.path, e))?;
-        if args.explain {
-            let alloc = allocate_shares(&result.aspecta.node.children, args.lines);
-            let _ = write!(
-                io::stderr(),
-                "{}",
-                explain(&result.aspecta.node.children, &alloc, args.lines)
-            );
-        }
-        let picture = render_text(&result.aspecta.node, args.lines);
-        print!("{picture}");
-        return Ok(());
-    }
-
     let locus = aspectus::two_level::resolve_locus(&args.path);
     let (name, kids) = aspectus::two_level::list(&locus).map_err(|e| map_io(&locus, e))?;
     print!("{}", aspectus::two_level::render(&name, &kids));

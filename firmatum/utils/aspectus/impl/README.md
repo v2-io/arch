@@ -8,10 +8,8 @@ Not present-truth of the design — that is [`../design/`](../design/) or the Fo
 
 | Slug | |
 |---|---|
-| [`aspecta-ir`](aspecta-ir.md) | in-memory tree + text print |
-| [`parent-state-not-children`](parent-state-not-children.md) | furniture on the directory line |
-| [`budget-not-cutoff`](budget-not-cutoff.md) | line cap, siblings share |
-| [`absorb`](absorb.md) | name table |
-| [`allocator`](allocator.md) | how remaining lines are split |
-| [`bounded-walk`](bounded-walk.md) | walk that does not enter furniture |
-| [`first-snapshot`](first-snapshot.md) | CLI, install, version |
+| [`help-verb`](help-verb.md) | help / version / refusals |
+| [`config`](config.md) | caller stack + `aspectus config` |
+| [`two-level`](two-level.md) | default look |
+
+First-snapshot notes (`absorb`, `allocator`, `bounded-walk`, `budget-not-cutoff`, `aspecta-ir`, `parent-state-not-children`, `first-snapshot`) describe code that is **not** in the crate. Keep them as history. Do not treat them as the binary.

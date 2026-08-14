@@ -151,12 +151,6 @@ fn help_lists_every_accepted_flag() {
     for needle in [
         "--help",
         "--version",
-        "--lines",
-        "--visit",
-        "--explain-budget",
-        "--show-all",
-        "--inspect",
-        "--no-one-fs",
         "--config",
         "--caller",
         "--color",
@@ -166,6 +160,9 @@ fn help_lists_every_accepted_flag() {
     ] {
         assert!(page.contains(needle), "help missing {needle}");
     }
-    let (c, _, e) = run(&["--lines", "10", "--visit", "20", "--no-one-fs"]);
-    assert_ne!(c, 2, "accepted flags must not refuse: {e}");
+    for gone in ["--lines", "--visit", "--show-all", "--inspect", "--no-one-fs"] {
+        let (c, _, e) = run(&[gone]);
+        assert_eq!(c, 2, "{gone} should be unknown, got {e}");
+        assert!(e.contains("unknown option"), "{gone}: {e}");
+    }
 }

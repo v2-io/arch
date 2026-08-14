@@ -138,7 +138,7 @@ fn config_flag_substitutes_user_home() {
 }
 
 #[test]
-fn env_beats_user_home_flag_beats_env() {
+fn env_beats_user_home() {
     let xdg = fresh_xdg();
     fs::write(xdg.join("aspectus/aspectus.toml"), "lines = 11\n").unwrap();
 
@@ -147,14 +147,6 @@ fn env_beats_user_home_flag_beats_env() {
     assert!(o.contains("lines = 33"), "env should win: {o}");
     assert!(o.contains("(env)"), "{o}");
 
-    let (c, o, e) = run_with_xdg_env(
-        &xdg,
-        &[("ASPECTUS_LINES", "33")],
-        &["config", "--lines", "44"],
-    );
-    assert_eq!(c, 0, "{e}");
-    assert!(o.contains("lines = 44"), "flag should win: {o}");
-    assert!(o.contains("(flags)"), "{o}");
 }
 
 #[test]

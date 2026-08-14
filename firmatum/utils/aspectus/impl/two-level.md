@@ -4,6 +4,6 @@
 
 Default `aspectus` / `aspectus PATH` prints the place and its immediate children. No grandchildren. `.` / `..` are not children. Dirs marked `/`. Hidden names, including `.git/`, are listed. Order: directories first, then name. Success is quiet. Missing path: class `not found`, exit 2, not a help menu.
 
-This picture does **not** hide furniture. `--show-all` / `--inspect` / `--explain-budget` still use the older deep walk.
+This is the only look the binary prints. The first-snapshot walk/absorb/budget code is not in the crate.
 
 Help Examples now include `aspectus` and `aspectus PATH`.

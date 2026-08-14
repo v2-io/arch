@@ -8,7 +8,7 @@ Start at Part I. Follow Foundation for a why. Seeds: [`IMPLEMENTATION-NOTES.md`]
 
 Part I `next` for the first glance slice is empty: Help, Config, and Two-level have landed. Next planned stories wait (n-level, summarization, furniture plugins, …).
 
-[`design/build-order.md`](design/build-order.md) still describes the *first snapshot* (absorb + line-share). That crate work exists. It is not the Part I order. Config comes before Two-level. Two-level lists `.git` as a child; furniture absorb is a later row.
+The first-snapshot walk/absorb/allocator is **not** in the product. The binary is help, version, config, and the two-level look.
 
 ## Standing
 
