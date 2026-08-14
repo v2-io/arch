@@ -61,6 +61,9 @@ Marks: `Y` in scope · `INFO` hangs on the name · `ON`/`OFF`/`QUIET` default ·
 | cloud | INFO | QUIET | Y | — | NO | evicted* | — | — | — | — | — | Evicted/not-hydrated only; omit where the FS has no such bit. |
 | linkcount | Y | OFF | Y | — | NO | n* | — | — | — | — | — | Quiet candidate = nlink>1, but OFF entirely until someone wants it. |
 | filesystem | — | OFF | — | — | COMPOSE | — | — | — | — | NO | — | Already `--no-one-fs`; not a column. |
+| mentions (inbound refs) | Y | OFF | Y | Y | COMPOSE | n* / recent | — | Y | — | NO | Y | **From orient-rank** (`hotness_mention`, generalized from slug-corpus to any tree): how often other files in the locus reference this name/link. Obtain is a grep-scale pass; cache-keyed. Quiet = referenced-much-more-than-siblings. |
+| preeminence (dependents) | Y | OFF | Y | Y | COMPOSE | n* | — | Y | — | NO | Y | **From orient-rank**: transitive inbound-dependency count — what would notice if this changed. Needs a per-kind link/dep extractor (wikilinks, imports — config/plugin map, kin to furniture's). The comprehension-priority signal. |
+| working-surface | INFO | QUIET | Y | Y | NO | mark* | Y (count) | Y (count) | — | NO | Y | **From orient-rank** (molten residue): file carries live working markers (Working Notes, TODO/OPEN sections — config-defined patterns) × recency. Quiet: marks only where present. Census form: `3 molten` beneath an unexpanded subtree. |
 
 ## Reasoning (the departures, so corrections can target the why)
 
@@ -73,6 +76,7 @@ Marks: `Y` in scope · `INFO` hangs on the name · `ON`/`OFF`/`QUIET` default ·
 7. **git letter gains census forms** (`3 dirty` below) — churn visibility for unexpanded subtrees; the same office mass uses, applied to aliveness.
 8. **important-files as pure weight** — it was a row wanting a column; it never was one (the pipeline row already said "Sort is Sort's; this row does not own order" — its office is allocator survival).
 9. **Rows merged**: initial/latest-sha (one obtain family), owner/group (one law). Rows added: denied, walk marks (shipped look-facts belong in the grid), important, last-look delta (was `last-look`).
+10. **orient-rank factors adopted as facts** (Joseph, 2026-08-14: "feel free to use vivarium's ideas — all tuned specifically for orientation = comprehension — as new columns/aspects"): mentions, preeminence, working-surface — generalized from the slug-corpus originals (`arch/vivarium/bin/orient-rank`) to any tree via config/plugin link-extractors. All OFF/compose + quiet-capable + weight-eligible: they are comprehension-priority signals, and together with heat/freshness/importance they are the factor set orient-rank already combines (rank-CDF + geometric mean — see [[heat|Heat]] for the composition prior art). None spends default glyphs until it earns them by lived use.
 
 ## Open (play)
 
