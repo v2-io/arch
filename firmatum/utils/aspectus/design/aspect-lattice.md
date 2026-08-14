@@ -2,66 +2,82 @@
 
 How a **fact** may enter the one look (`aspectus` / `aspectus PATH`). Not a verb table. Verbs stay `help`, `version`, implicit **show** (and later only a new *act*: `config` already, maybe `snapshot` / `invalidate-cache`).
 
-This grid is **very provisional**. It is **orthogonal to implementation priorities** — order of work lives on the Part I pipeline, not here. It is **not a replacement for more detailed design**: a cell is a claim that an office exists, not the story, fixtures, or law of that office. Size is the specimen. A blank or `—` means we have not claimed that office for that fact. `flag` is here so we can **refuse** own flags.
+**Status of this grid:** first *reasoned* pass, 2026-08-14 — reworked cell-by-cell by the coordinating agent as end-user under Joseph's explicit grant ("redo the lattice cells to be more the tool you and other agents will want and need"), from the original agent-guessed grid he had partially corrected. Decided-by: `supported` — Joseph corrects on contact; the §Reasoning section says why each departure was made so his corrections can target the reasoning, not just the cell. It remains **orthogonal to implementation priorities** and **not a replacement for a row's own design**: a cell is a claim that an office exists, not the story, fixtures, or law of that office.
 
-[[config|Config]] is the first arbitrator of these cells (which facts are `ON` / `OFF` / `QUIET`, which format is starred). Caller stack, not a file in the project — so a given agent’s look does not drift when the tree does.
+[[config|Config]] is the first arbitrator of these cells (which facts are `ON` / `OFF` / `QUIET`, which format is starred). Caller stack, not a file in the project — so a given agent's look does not drift when the tree does.
+
+## The governing principle (why the cells lean the way they do)
+
+**Minimum surprise from the tool; maximum surprisal per glyph in the look.** Every default-ON cell must earn the tokens it spends for a cold agent reader; everything else waits for surprise (QUIET) or an ask (config/compose). Corollaries applied throughout:
+
+- **Almost no own flags.** A glance tool with a flag museum fails Beauty. Facts are asked for through config and one shared compose surface ([[columns|Columns]]/[[sort|Sort]] grammar, spelling open); own flags exist only for the look's *shape* (`--depth`, `--lines`, `--walk`) and suite floor (`--color`, `--config`, `--caller`, `--format` later).
+- **The reader's units are lines and kinds, not bytes.** For the text-dominated loci this tool serves, line-count is the honest mass unit; byte size earns its place only at magnitude outliers (quiet) and in deep aggregates.
+- **Aliveness beats ownership.** Recency (mtime, heat, last-look) answers "where is the action" — the second question every cold agent asks after "what is this place." Identity facts (owner/group/perms) matter only as anomalies.
+- **Aggregates are the mission.** The census family (dir census, leaf census, and [[mass|Mass]] = the deep aggregates) is what fixes "SURPRISE! this directory is far more than you thought" — so aggregate offices get filled generously, column offices stingily.
 
 ## Offices (columns of the grid)
 
 | Office | In the look |
 |---|---|
-| **column** | Where the fact *sits* on the line: `Y` = a column; `INFO` = to the right of the name (symlink target, furniture, prior name, aggregates, …). |
+| **column** | Where the fact *sits* on the line: `Y` = a column; `INFO` = to the right of the name (symlink target, furniture facet, prior name, aggregates, …). |
 | **default** | In the default look: `ON` · `OFF` · `QUIET` (in the look only when it surprises). |
-| **quiet** | This fact *can* appear only when it surprises (the old Quiet-columns, per fact). |
-| **sort** | May be the order key. |
-| **flag** | `Y` = own flag (`--size`). `COMPOSE` = only via a shared ask (`--columns`, `--sort`). `NO` = we do not want one. |
-| **format** | Rendering options for this fact. `*` marks the default. `pattern` means a user/config strftime (or equivalent). |
-| **dir-census** | An unexpanded directory reports this about *itself* (how many children, of what kinds). |
+| **quiet** | This fact *can* appear only when it surprises (per-fact law lives with [[quiet-columns|Quiet]]: cold baseline = place norms; warm = caller after-image). |
+| **sort** | May be the order key ([[sort|Sort]]). |
+| **flag** | `Y` = own flag. `COMPOSE` = via the shared ask only. `NO` = refused a flag (refusal names the config path). |
+| **format** | Rendering options, `*` default. `pattern` = user strftime-like. `signa` = [[phenom-format|SIGNA]] glyphs (perceived magnitude). |
+| **dir-census** | An unexpanded directory reports this about *itself* (shallow: its own children). |
+| **deep-agg** | The recursive aggregate below a line ([[mass|Mass]]'s office — cache-backed, `≈`/`≥`-honest, furniture excluded). |
 | **leaf-census** | Leftover *files* at a level report this (`[+47: 31 .bak]`). |
 | **filter** | May *cut* the look. Dangerous for a glance; Focus is weight, not cut. |
-| **weight** | May reweight the allocator (Focus, heat, maybe size). Not sort. |
+| **weight** | May reweight the allocator (Focus, heat, importance). Not sort. |
 | **unique** | What only this fact has — which quantity, absence, obtain cost, … |
 
-Marks: `Y` in scope · `INFO` hangs on the name · `Y + INFO` both · `ON` / `OFF` / `QUIET` default · `COMPOSE` shared ask only · `NO` refused · `*` format default · `—` not this fact.
+Marks: `Y` in scope · `INFO` hangs on the name · `ON`/`OFF`/`QUIET` default · `COMPOSE` shared ask only · `NO` refused · `*` format default · `—` not this fact.
 
 ## Lattice
 
-| Fact | column | default | quiet | sort | flag | format | dir-census | leaf-census | filter | weight | unique |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| name | Y | ON | — | Y | NO | basename* / relative / absolute | — | — | — | — | Always on. Default sort. The name itself, not INFO. Perspective root is an [[overview-invariants\|overview invariant]], not this cell. |
-| size | Y | OFF | Y | Y | Y | human* / bytes / log | Y | Y | NO | Y | **Which:** file `st_size` ≠ allocated (sparse / APFS clone) ≠ recursive du. Dir-census size is a walk; furniture / gitignored bodies must not silently join it. Leaf-census is the leftover files’ `\| 2.1M`. JSON is always bytes. |
-| modified (=mtime) | Y | OFF | Y | Y | Y | iso-8601* / rfc-3339 / rfc-2822 / odbc / epoch / pattern | — | — | NO | — | Quiet = recent vs siblings / now. |
-| created (btime / crtime) | Y | OFF | Y | Y | Y | iso-8601* / rfc-3339 / rfc-2822 / odbc / epoch / pattern | — | — | NO | — | **Absence:** omit on Linux (and anywhere cheap getattrlist is missing). Never fake as mtime. |
-| line-count | Y | ON | Y | Y | COMPOSE | physical* / non-blank | Y | Y | NO | — | Non-binary only (text, md, udon, source, …). Obtain is a read; cache by ino+mtime+size. Binary: omit, never `0`. |
-| filetype (suffix) | Y | OFF | — | Y | NO | suffix* / bare | — | Y | Y | Y | Remainder census by suffix. Globify hangs here. Not MIME-from-magic. Suffix is already in the name; a type *column* is OFF until asked. |
-| filekind (text / image / binary / dir / (other) file / link / …) | Y + INFO | ON | — | Y | NO | word* / slash / both | — | Y | — | — | Kind from a suffix map in config (not magic). INFO is the `/` on directories. Column is the word (`text`, `image`, …). Dirs-first lives on **sort**. |
-| kind (of the place) | INFO | ON | — | — | NO | facet* / first-line | — | — | Y | — | The parent line's gathering spot for what the place *is*: `[kind: git, rust, …]` plus specialized facets (`[git: remote (private) br stat]`). Parent state, not a column. Plugins: [[furniture/git\|Git]] / [[furniture/github\|GitHub]]; the rest is the furniture map (furniture *feeds* this fact). Filter is `--kind`, not a cut of children. |
-| permissions | Y | QUIET | Y | — | NO | octal* / symbolic / octal+flags | — | — | — | — | Quiet = not usual (`644` file / `755` dir). Flags = append-only / immutable / uchg when set. |
-| owner | Y | QUIET | Y | — | NO | name* / uid | — | — | — | — | Quiet = not you / not usual. |
-| group | Y | OFF | Y | — | NO | name* / gid | — | — | — | — | Same as owner. |
-| cloud | INFO | QUIET | Y | — | NO | evicted* / hydrated | — | — | — | — | Evicted / not hydrated. Omit where the FS has no such bit. |
-| linkcount | Y | OFF | Y | — | NO | n* | — | — | — | — | Quiet = nlink > 1. |
-| filesystem | — | OFF | — | — | COMPOSE | — | — | — | NO | — | Already `--no-one-fs` on [[links-and-fs\|Links]] (default is one filesystem). Not a column. |
-| child-count | INFO | ON | — | Y | NO | n* / n+shown | Y | Y | — | — | How many children, shown or not. Broot’s gap. Distinct from size. Critical differentiating feature. Hangs on the directory name. |
-| git letter | Y | ON | Y | — | NO | letter* / porcelain | — | — | — | — | Dirty only. Clean prints nothing. |
-| initial-sha | Y | OFF | — | Y | NO | short* / H~N / full | — | — | NO | — | Introducing commit. Outside a repo: omit. Lives with [[../ASPECTUS.outline#heat\|Heat]], not a second universe. |
-| latest-sha | Y | OFF | — | Y | NO | short* / full | — | — | NO | — | Last-touch sha. Same obtain family as heat. Omit outside git. |
-| heat | Y | OFF | Y | Y | COMPOSE | score* / bar | Y | — | NO | Y | Commit-decay, visible set only. Weight is the office it earns first. |
-| prior name | INFO | QUIET | Y | — | NO | was* | — | — | — | — | Only if recently renamed. |
-| symlink target | INFO | ON | — | — | NO | target* / target+type | — | — | — | — | Plus broken. Cycle does not hang. [[links-and-fs\|Links]]. |
-| denied | INFO | ON | — | — | NO | — | — | — | — | — | Could not stat. A fact about the look, not the inode. |
-| last-look | INFO | OFF | Y | Y | COMPOSE | marker* / delta | — | — | NO | Y | Delta of other facts (size changed, mtime newer), not a new inode field. Identity of a look is still open (uid / ino+mtime / cache key). |
+| Fact | column | default | quiet | sort | flag | format | dir-census | deep-agg | leaf-census | filter | weight | unique |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| name | Y | ON | — | Y | NO | basename* / relative / absolute | — | — | — | — | — | Always on. Default sort. Perspective root is an [[overview-invariants\|overview invariant]], not this cell. |
+| child-count | (census) | ON | — | Y | NO | n* | Y | Y | Y | — | — | **Unified with the census** (the old open question, answered): child-count *is* the `N` of a census; an expanded dir shows its children, an unexpanded one shows `[N: …]`. No separate INFO. Deep form is mass's file-count. |
+| line-count | Y | ON | Y | Y | COMPOSE | physical* / non-blank / signa | Y | Y | Y | NO | — | **The mass unit for text loci.** Non-binary only; binary omits, never `0`. Obtain is a read; cache by ino+mtime+size. Deep-agg (`≈61k lines`) is [[mass\|Mass]]'s headline number. |
+| modified (mtime) | Y | QUIET | Y | Y | COMPOSE | iso-8601* / rfc-3339 / epoch / pattern / signa | **Y (newest-below)** | **Y (newest-below)** | — | NO | Y | **Aliveness.** Quiet = recent vs siblings/now (warm baseline: newer than the caller's last look). The dir-census/deep-agg form is *newest mtime beneath* — "where is the action" for an unexpanded subtree. `signa` renders the delta as perceived elapsed time. |
+| size | Y | QUIET | Y | Y | COMPOSE | human* / bytes / log | Y | Y | Y | NO | Y | Quiet = magnitude outlier among siblings (the 400MB file in `src/`). **Which:** `st_size` ≠ allocated ≠ recursive du; deep-agg is the du-like walk, `≈` under cache/bounds; furniture/gitignored bodies never silently join it. JSON always bytes. |
+| created (btime) | Y | OFF | Y | Y | COMPOSE | iso-8601* / epoch / pattern / signa | — | — | — | NO | — | Omit where the FS can't say (Linux w/o statx btime). Never fake as mtime. |
+| filetype (suffix) | (census) | ON | — | Y | NO | suffix* / bare | Y | Y | Y | Y | — | Lives in the censuses (`170 .md`), not as a per-line column — the suffix is already in the name. Globify hangs here. Not MIME-from-magic. |
+| filekind (text/image/binary/dir/link) | INFO | QUIET | Y | Y | NO | word* | — | Y | Y | — | — | **Demoted from ON-column**: the `/` on dirs and the suffix carry kind for free; the *word* appears only when kind surprises (a binary in a source dir; a huge image among .md). Kind from a config suffix-map, not magic. |
+| kind (of the place) | INFO | ON | — | — | NO | facet* / first-line | — | — | — | Y | — | The parent line's gathering spot: `[kind: git, rust, …]` + specialized facets (`[git: remote (private) br stat]`). Furniture *feeds* this fact. Filter is `--kind`, not a cut of children. |
+| git letter | Y | ON | Y | — | NO | letter* / porcelain | Y (dirty-count) | Y (dirty-count) | — | — | Y | Dirty only; clean prints nothing. Census form: `3 dirty` beneath an unexpanded subtree — churn visibility without expansion. Weight: dirty files are likely Focus targets. |
+| heat | Y | OFF | Y | Y | COMPOSE | score* / signa | Y | Y | — | NO | Y | Commit-decay, visible set only. Weight is the office it earns first. `signa` density is the natural rendering. |
+| initial-sha / latest-sha | Y | OFF | — | Y | COMPOSE | short* / H~N / full | — | — | — | NO | — | One row now: both are Heat-family obtains, compose-only, omit outside git. |
+| prior name | INFO | QUIET | Y | — | NO | was* | — | — | — | — | — | Only if recently renamed. |
+| symlink target | INFO | ON | — | — | NO | target* / target+type | — | — | — | — | — | Plus broken. Followed-and-recursed per origin ([[links-and-fs\|Links]] row); cycle does not hang. |
+| denied | INFO | ON | — | — | NO | denied* / denied+class | Y (`≥` effect) | Y (`≥` effect) | — | — | — | A fact about the look, not the inode. Not quietable — existence-honesty ([[denied\|Denied]], shipped). |
+| walk/bound marks | INFO | ON | — | — | NO | `≥` / `[walk bound]` | Y | Y | Y | — | — | Also look-facts, shipped. Not quietable. |
+| important (witness files) | (weight) | ON | — | — | NO | — | — | — | — | — | Y | README etc. (config-defined): an allocator **weight**, not a column — they survive tight budgets ([[important-files\|Important files]]). READMEs may also lend the dir a title ([[readme-title\|README title]]). |
+| last-look delta | INFO | QUIET | Y | Y | COMPOSE | marker* / delta / signa | Y (changed-count) | Y (changed-count) | — | NO | Y | Delta of other facts vs the caller's after-image. Quiet by nature: unchanged prints nothing. `signa` for the elapsed-time half. Identity of a look still open ([[cache\|Cache]]). |
+| permissions | Y | QUIET | Y | — | NO | octal* / symbolic / octal+flags | — | — | — | — | — | Quiet = not usual (`644`/`755`); flags = append-only / immutable / uchg when set. |
+| owner / group | Y | QUIET | Y | — | NO | name* / id | — | — | — | — | — | One row now: quiet = not-you / not-usual. Never a default column. |
+| cloud | INFO | QUIET | Y | — | NO | evicted* | — | — | — | — | — | Evicted/not-hydrated only; omit where the FS has no such bit. |
+| linkcount | Y | OFF | Y | — | NO | n* | — | — | — | — | — | Quiet candidate = nlink>1, but OFF entirely until someone wants it. |
+| filesystem | — | OFF | — | — | COMPOSE | — | — | — | — | NO | — | Already `--no-one-fs`; not a column. |
 
-## What this is for
+## Reasoning (the departures, so corrections can target the why)
 
-- **Columns**, **Sort**, and **Quiet-columns** in Part I are views of this grid, not three separate inventions.
-- A new fact starts as a row with most offices `—` or `NO`. It earns cells; it does not get a flag by existing.
-- `unique` is where “size is not one number” lives, so we do not invent a new office for every nuance.
-- `default=QUIET` is the default *mode* of a fact that also has `quiet=Y`. `default=ON` + `quiet=Y` means it is in the default look, but still hushes when there is nothing to say (git letter).
+1. **Flag museum dissolved.** Every per-fact `flag: Y` (size, mtime, created) became `COMPOSE`. An agent asks for facts through config (standing preference) or the compose surface (one grammar, shared with Sort); own flags are reserved for look-shape. If one fact ever proves flag-worthy by lived frequency, promote it *then* — demand-evidence, not anticipation.
+2. **mtime ON→QUIET, but census-promoted.** A timestamp on every line is the classic `ls -l` habit and mostly noise; *recent* mtime is signal. Meanwhile "newest-below" on unexpanded dirs is new and answers where-is-the-action at zero expansion cost — the aliveness analog of mass.
+3. **filekind demoted, filetype census-only.** Both were spending default glyphs on what the name already says. The kind *word* survives as surprise (binary-in-source is exactly worth a glyph).
+4. **child-count unified with census** — the grid's own open question, answered the obvious way.
+5. **deep-agg added as an office.** Mass was designed ([[mass|Mass]]) after this grid was drafted; it is not one fact but an *office* several facts have (line-count, size, file-count, newest-mtime, dirty-count, changed-count). Naming the office keeps mass from becoming a parallel universe.
+6. **SIGNA joined the format vocabulary** (mtime/created/heat/last-look) per [[phenom-format|phenom-format]] — always paired with a plain form, never in JSON.
+7. **git letter gains census forms** (`3 dirty` below) — churn visibility for unexpanded subtrees; the same office mass uses, applied to aliveness.
+8. **important-files as pure weight** — it was a row wanting a column; it never was one (the pipeline row already said "Sort is Sort's; this row does not own order" — its office is allocator survival).
+9. **Rows merged**: initial/latest-sha (one obtain family), owner/group (one law). Rows added: denied, walk marks (shipped look-facts belong in the grid), important, last-look delta (was `last-look`).
 
 ## Open (play)
 
-- Is `weight` an office or only unique-to-heat/focus?
-- Does `--columns` / `--sort` exist as the *compose* surface, or do we name facts only in config?
-- Child-count vs dir-census vs leaf-census: three names, or is child-count just the `n` of dir-census?
-- Move the `*` on size (`human*` vs `bytes*`) if the text look should default to bytes. JSON is bytes either way.
+- Compose grammar spelling (shared with [[columns|Columns]]/[[sort|Sort]]) — Joseph ratifies.
+- Whether `weight` merges Focus/heat/importance into one declared office algebra or stays per-fact `unique` notes.
+- `deep-agg` staleness marks: `≈` (cached, may drift) vs `≥` (bounded/denied) are different honesties — rendering distinction to nail in [[mass|Mass]]/[[cache|Cache]].
+- Single-entry census display (`env/ [1: 1 other]` → show the name?) — open in [[dir-census|Dir census]], Joseph's call.
+- Whether `quiet` thresholds are per-fact config keys or one sensitivity dial.
