@@ -129,6 +129,15 @@ fn missing_path_not_found() {
 }
 
 #[test]
+fn after_end_of_flags_everything_is_a_path() {
+    // `aspectus -- nosuchthing` is a missing path, not an unknown verb.
+    let (c, _o, e) = run_in(Path::new("/"), &["--", "nosuchthing-aspectus"]);
+    assert_eq!(c, 2);
+    assert!(e.contains("not found"), "after -- it is a path: {e}");
+    assert!(!e.contains("unknown verb"), "{e}");
+}
+
+#[test]
 fn help_examples_include_glance() {
     let (_, o, _) = run_in(Path::new("/"), &["help"]);
     assert!(

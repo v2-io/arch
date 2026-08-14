@@ -34,7 +34,13 @@ const OPTIONS: &[(&str, &str)] = &[
         "--lines N",
         "line budget for the whole look (default 80; 0 = no limit)",
     ),
-    ("--explain-budget", "how lines were shared, on stderr"),
+    (
+        "--walk N",
+        "stat and expand at most N names; names past the bound still \
+         count in censuses, and a cut dir says [walk bound] \
+         (default 10000; 0 = no bound)",
+    ),
+    ("--explain-budget", "how lines and the walk were spent, on stderr"),
 ];
 
 fn help_page() -> String {
@@ -87,7 +93,15 @@ fn help_page() -> String {
            aspectus version\n\
            aspectus config\n\
            aspectus\n\
-           aspectus PATH\n",
+           aspectus PATH\n\
+           aspectus --depth 3 --lines 120 PATH\n\
+           aspectus --walk 500 PATH    (huge tree: expand less, count all)\n\
+         \n\
+         The look never lies by omission: an unexpanded directory carries a\n\
+         census, a walk-bound cut keeps the full name count and says\n\
+         [walk bound], a count that hides an unreadable place is marked \u{2265},\n\
+         and a directory it could not read says [denied] rather than\n\
+         printing as empty.\n",
     );
     out
 }
@@ -164,11 +178,14 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut flag_vals = BTreeMap::new();
     let mut explain = false;
     let mut end_flags = false;
+    // After `--` everything is a path — never re-read as a verb.
+    let mut path_is_literal = false;
     let mut args = argv.into_iter().peekable();
 
     while let Some(a) = args.next() {
         if end_flags {
             take_positional(&mut path, a)?;
+            path_is_literal = true;
             continue;
         }
         match a.as_str() {
@@ -231,6 +248,18 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 parse_lines(v)?;
                 flag_vals.insert("lines".into(), v.to_string());
             }
+            "--walk" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--walk needs a number".into()))?;
+                parse_walk(&v)?;
+                flag_vals.insert("walk".into(), v);
+            }
+            s if s.starts_with("--walk=") => {
+                let v = &s[7..];
+                parse_walk(v)?;
+                flag_vals.insert("walk".into(), v.to_string());
+            }
             "--explain-budget" => explain = true,
             "--" => end_flags = true,
             s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
@@ -254,6 +283,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
 
     let path = match path {
         None => PathBuf::from("."),
+        Some(p) if path_is_literal => PathBuf::from(p),
         Some(p) => classify_positional(p)?,
     };
 
@@ -275,6 +305,11 @@ fn parse_lines(s: &str) -> Result<u32, Refusal> {
 fn parse_depth(s: &str) -> Result<u32, Refusal> {
     s.parse::<u32>()
         .map_err(|_| Refusal::Usage(format!("--depth needs a number (got {s})")))
+}
+
+fn parse_walk(s: &str) -> Result<u64, Refusal> {
+    s.parse::<u64>()
+        .map_err(|_| Refusal::Usage(format!("--walk needs a number (got {s})")))
 }
 
 fn take_positional(path: &mut Option<String>, token: String) -> Result<(), Refusal> {
@@ -347,14 +382,26 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         .get("depth")
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(2);
+    let walk_bound: u64 = cfg
+        .won
+        .get("walk")
+        .and_then(|(v, _)| v.parse().ok())
+        .unwrap_or(10_000);
     let abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
-    let mut tree = aspectus::n_level::gather(&locus, depth).map_err(|e| map_io(&locus, e))?;
+    let mut walk = aspectus::n_level::WalkBudget::new(walk_bound);
+    let mut tree =
+        aspectus::n_level::gather(&locus, depth, &mut walk).map_err(|e| map_io(&locus, e))?;
     let lines: usize = cfg
         .won
         .get("lines")
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(80);
     let mut why = Vec::new();
+    if walk.tripped {
+        why.push(format!(
+            "walk: bound {walk_bound} reached; some dirs not expanded, marked [walk bound]"
+        ));
+    }
     aspectus::n_level::apply_budget(&mut tree, lines, &mut why);
     if args.explain {
         for line in &why {

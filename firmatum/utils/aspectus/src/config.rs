@@ -18,6 +18,7 @@ pub const CALLER_FLAG: &str = "--caller";
 
 const DEFAULT_LINES: u32 = 80;
 const DEFAULT_DEPTH: u32 = 2;
+const DEFAULT_WALK: u64 = 10_000;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Layer {
@@ -59,6 +60,7 @@ pub fn defaults() -> BTreeMap<String, String> {
     let mut m = BTreeMap::new();
     m.insert("lines".into(), DEFAULT_LINES.to_string());
     m.insert("depth".into(), DEFAULT_DEPTH.to_string());
+    m.insert("walk".into(), DEFAULT_WALK.to_string());
     m
 }
 
@@ -98,6 +100,11 @@ pub fn env_values() -> BTreeMap<String, String> {
     if let Ok(v) = env::var("ASPECTUS_DEPTH") {
         if !v.is_empty() {
             m.insert("depth".into(), v);
+        }
+    }
+    if let Ok(v) = env::var("ASPECTUS_WALK") {
+        if !v.is_empty() {
+            m.insert("walk".into(), v);
         }
     }
     m

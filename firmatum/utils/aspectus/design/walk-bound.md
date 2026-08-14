@@ -1,9 +1,15 @@
 # Walk bound
 
-Walking a huge tree stops after N names looked-at and says so. This is not the line budget: `--lines` is how much we *print*; this is how many names we will even *stat*.
+Walking a huge tree stops statting after N names and says so. This is not the line budget: `--lines` is how much we *print*; this is how many names we will even *stat*.
 
-- An aggregate cut short by the bound is marked `≥` — a bounded census, count, or [[mass|mass]] never prints as exact, and never enters the [[cache|cache]] as exact.
-- A directory the bound never entered is treated like a depth cutoff: its line says what is known, honestly partial.
+- **The bound is on stat+recurse, never on name enumeration.** A readdir of names is nearly free; stat is what explodes. Every directory the walk opens gets its *complete* name list (and so an exact census from readdir type-hints) — level membership is never readdir-order roulette, and the census — the honesty device — costs no budget and cannot drain the budget it reports on. (Both halves audit-confirmed: the first snapshot of this row dropped `src/` from the crate's own root at defaults, and ~9,800 of 10,000 charges had gone into a `target/debug/deps` *census*; `audit/de-novo-2026-08-14.md` findings 1 and the coordinator's asf dogfood.)
+- The budget is spent in sorted order (dirs first, then name), so *which* names get expanded is deterministic: first-N-in-sort-order. The bounded-look determinism carve-out this leaves: none for membership, none for expansion choice; a look under a bound is byte-identical on an unchanged tree.
+- When the budget runs out at a level: names already expanded stay; the remainder falls into the existing census machinery with **exact** counts — a dir census `[N: …]` when nothing at the level was listed, a leaf census `[+N: …]` after some were. The cut dir itself says `[walk bound]` (INFO on the name, same office as [[denied|Denied]]'s mark) — without it, a budget cutoff would be indistinguishable from an honest depth cutoff.
+- `≥` on an aggregate now means *genuinely unknown*: an aggregate hiding a [[denied|denied]] place, or a readdir that itself errored mid-iteration — never a mere budget cut, whose counts stay exact.
 - The bound rides the caller stack like `lines` and `depth`.
 
-**Flag spelling open.** The first snapshot used `--visit N` (default 400) — a spelling Joseph read cold and did not understand ("I don't know what --visit … means", [[../ORIGIN-DISCUSSION.md|origin]]). Pick a name that teaches itself (`--max-stat`? `--walk N`?) when this lands; do not inherit `--visit` by default.
+**Open — spend order across levels.** Within a level the spend is sorted; across levels the walk is still depth-first, so with a deep `--depth` an early-sorted deep dir (`target/` sorts before `tests/`) can exhaust the budget before shallow high-value names get their stat (audit finding 3; independently raised in the 2026-08-14 landing review). A breadth-ish spend (all shallower levels statted before deeper ones) may serve the glance better. Two independent findings behind it; big enough to be its own row — not decided here.
+
+**Flag spelling: `--walk N`** (config key `walk`, `ASPECTUS_WALK`; default 10000, `0` = no bound). The first snapshot used `--visit N` (default 400) — a spelling Joseph read cold and did not understand ("I don't know what --visit … means", [[../ORIGIN-DISCUSSION.md|origin]]); `--visit` was not inherited. `--walk` matches this row's own name and the help line does the teaching. Default is bounded: an unbounded default is exactly how the first snapshot walked every `.fingerprint` in a `target/`. Spelling is Joseph's to re-ratify.
+
+`--explain-budget` names the stop on stderr; without it, the marks in the look are the whole confession (success stays quiet). What a partial look (containing `[walk bound]`/`[denied]`) should *exit* with is an open exit-vocabulary question (audit finding 4), not decided here — today it exits 0.

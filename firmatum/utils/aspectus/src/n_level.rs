@@ -10,6 +10,9 @@ pub struct Census {
     pub total: usize,
     /// (label, count), already sorted for display.
     pub buckets: Vec<(String, usize)>,
+    /// The count is a floor, not a fact: the walk stopped (bound or denied
+    /// child) before every name was seen. Renders as `≥`.
+    pub bounded: bool,
 }
 
 impl Census {
@@ -30,16 +33,17 @@ impl Census {
             .iter()
             .map(|(k, n)| format!("{n} {k}"))
             .collect();
+        let geq = if self.bounded { "≥" } else { "" };
         let n = if plus {
-            format!("+{}", self.total)
+            format!("+{geq}{}", self.total)
         } else {
-            self.total.to_string()
+            format!("{geq}{}", self.total)
         };
         format!("[{n}: {}]", parts.join(", "))
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Node {
     pub name: String,
     pub is_dir: bool,
@@ -48,15 +52,113 @@ pub struct Node {
     pub leftover: Option<Census>,
     /// Siblings not listed because the line budget ran out.
     pub omitted: Option<Census>,
+    /// The walk could not read this dir (or stat this name): `[denied]`.
+    pub denied: bool,
+    /// The walk bound stopped enumeration here before every name was seen.
+    pub cut: bool,
+    /// An entry mid-iteration errored; this dir's listing may be missing names.
+    pub iter_err: bool,
+}
+
+/// Counts names statted. `None` = unbounded.
+///
+/// The bound is on stat+recurse — "how many names we will even stat"
+/// (design/walk-bound.md) — never on name enumeration: a readdir of names
+/// is nearly free, and level membership must be total, not readdir-order
+/// roulette. Censuses are built from readdir type-hints and cost nothing,
+/// so the honesty device cannot drain the budget it reports on.
+#[derive(Debug, Default)]
+pub struct WalkBudget {
+    remaining: Option<u64>,
+    pub tripped: bool,
+    pub statted: u64,
+}
+
+impl WalkBudget {
+    /// `bound` of 0 means no bound.
+    pub fn new(bound: u64) -> Self {
+        WalkBudget {
+            remaining: if bound == 0 { None } else { Some(bound) },
+            tripped: false,
+            statted: 0,
+        }
+    }
+
+    /// Charge one stat.
+    fn charge(&mut self) {
+        self.statted += 1;
+        if let Some(n) = &mut self.remaining {
+            *n = n.saturating_sub(1);
+        }
+    }
+
+    /// Nothing left to spend on stat/recurse; a cut it causes sets `tripped`.
+    fn exhausted(&self) -> bool {
+        self.remaining == Some(0)
+    }
 }
 
 /// `depth` is how many generations below the root to print. `0` = no limit.
-pub fn gather(path: &Path, depth: u32) -> io::Result<Node> {
+pub fn gather(path: &Path, depth: u32, walk: &mut WalkBudget) -> io::Result<Node> {
     let remain = if depth == 0 { None } else { Some(depth) };
-    gather_at(path, remain)
+    gather_at(path, remain, walk)
 }
 
-fn gather_at(path: &Path, remain: Option<u32>) -> io::Result<Node> {
+/// One name as readdir reported it, before any stat.
+struct Entry {
+    name: String,
+    /// From the readdir file-type hint — no stat spent.
+    is_dir: bool,
+}
+
+/// All of a directory's names, free of the budget and never cut short:
+/// level membership is total, or the whole dir is denied (`None`).
+fn enumerate(path: &Path) -> Option<(Vec<Entry>, bool)> {
+    let rd = fs::read_dir(path).ok()?;
+    let mut entries = Vec::new();
+    let mut iter_err = false;
+    for ent in rd {
+        let Ok(ent) = ent else {
+            iter_err = true;
+            continue;
+        };
+        let os = ent.file_name();
+        if os == "." || os == ".." {
+            continue;
+        }
+        entries.push(Entry {
+            name: os.to_string_lossy().into_owned(),
+            is_dir: ent.file_type().map(|t| t.is_dir()).unwrap_or(false),
+        });
+    }
+    entries.sort_by(|a, b| match (a.is_dir, b.is_dir) {
+        (true, false) => std::cmp::Ordering::Less,
+        (false, true) => std::cmp::Ordering::Greater,
+        _ => a.name.cmp(&b.name),
+    });
+    Some((entries, iter_err))
+}
+
+fn census_entries(entries: &[Entry], iter_err: bool) -> Census {
+    let mut buckets: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
+    for e in entries {
+        let label = if e.is_dir {
+            "dir".to_string()
+        } else {
+            suffix_label(&e.name)
+        };
+        *buckets.entry(label).or_insert(0) += 1;
+    }
+    let mut buckets: Vec<(String, usize)> = buckets.into_iter().collect();
+    buckets.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    Census {
+        total: entries.len(),
+        buckets,
+        bounded: iter_err,
+    }
+}
+
+fn gather_at(path: &Path, remain: Option<u32>, walk: &mut WalkBudget) -> io::Result<Node> {
     let meta = fs::symlink_metadata(path)?;
     let is_dir = meta.is_dir();
     let name = path
@@ -67,50 +169,79 @@ fn gather_at(path: &Path, remain: Option<u32>) -> io::Result<Node> {
         return Ok(Node {
             name,
             is_dir: false,
-            children: Vec::new(),
-            leftover: None,
-            omitted: None,
+            ..Node::default()
         });
     }
-    if remain == Some(0) {
-        let leftover = census_dir(path)?;
+    let Some((entries, iter_err)) = enumerate(path) else {
         return Ok(Node {
             name,
             is_dir: true,
-            children: Vec::new(),
-            leftover: if leftover.total == 0 {
-                None
-            } else {
-                Some(leftover)
-            },
-            omitted: None,
+            denied: true,
+            ..Node::default()
+        });
+    };
+    if remain == Some(0) {
+        let census = census_entries(&entries, iter_err);
+        return Ok(Node {
+            name,
+            is_dir: true,
+            leftover: if census.total == 0 { None } else { Some(census) },
+            iter_err,
+            ..Node::default()
         });
     }
+    // Spend the remaining budget on stat+recurse, in sorted order — which
+    // subtrees get expanded is deterministic, not readdir roulette.
     let child_remain = remain.map(|n| n.saturating_sub(1));
     let mut children = Vec::new();
-    if let Ok(rd) = fs::read_dir(path) {
-        for ent in rd {
-            let ent = ent?;
-            let os = ent.file_name();
-            if os == "." || os == ".." {
-                continue;
+    let mut cut = false;
+    for (i, ent) in entries.iter().enumerate() {
+        if walk.exhausted() {
+            walk.tripped = true;
+            cut = true;
+            let rest = census_entries(&entries[i..], false);
+            if children.is_empty() {
+                // Nothing was listed at this level: the whole membership
+                // sits on this dir's own line, like a depth cutoff.
+                return Ok(Node {
+                    name,
+                    is_dir: true,
+                    leftover: Some(rest),
+                    cut,
+                    iter_err,
+                    ..Node::default()
+                });
             }
-            let child_path = path.join(&os);
-            let kid = gather_at(&child_path, child_remain)?;
-            children.push(kid);
+            return Ok(Node {
+                name,
+                is_dir: true,
+                children,
+                omitted: Some(rest),
+                cut,
+                iter_err,
+                ..Node::default()
+            });
         }
+        walk.charge();
+        let child_path = path.join(&ent.name);
+        let kid = match gather_at(&child_path, child_remain, walk) {
+            Ok(kid) => kid,
+            Err(_) => Node {
+                name: ent.name.clone(),
+                is_dir: ent.is_dir,
+                denied: true,
+                ..Node::default()
+            },
+        };
+        children.push(kid);
     }
-    children.sort_by(|a, b| match (a.is_dir, b.is_dir) {
-        (true, false) => std::cmp::Ordering::Less,
-        (false, true) => std::cmp::Ordering::Greater,
-        _ => a.name.cmp(&b.name),
-    });
     Ok(Node {
         name,
         is_dir: true,
         children,
-        leftover: None,
-        omitted: None,
+        cut,
+        iter_err,
+        ..Node::default()
     })
 }
 
@@ -122,13 +253,35 @@ fn label_node(n: &Node) -> String {
     }
 }
 
+/// Two censuses of disjoint name-sets become one. `bounded` is sticky.
+fn merge_census(a: Census, b: Census) -> Census {
+    let mut buckets: std::collections::BTreeMap<String, usize> = a.buckets.into_iter().collect();
+    for (k, n) in b.buckets {
+        *buckets.entry(k).or_insert(0) += n;
+    }
+    let mut buckets: Vec<(String, usize)> = buckets.into_iter().collect();
+    buckets.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
+    Census {
+        total: a.total + b.total,
+        buckets,
+        bounded: a.bounded || b.bounded,
+    }
+}
+
 fn fold_children_into_dir_census(node: &mut Node) {
-    if node.children.is_empty() {
+    if node.children.is_empty() && node.omitted.is_none() {
         return;
     }
-    node.leftover = Some(census_nodes(&node.children));
+    let mut census = census_nodes(&node.children);
+    // A denied dir folded out of sight: the count of names is exact, but the
+    // aggregate hides an unreadable place — the parent's census is marked
+    // incomplete (design/denied.md).
+    census.bounded = node.children.iter().any(|c| c.denied);
+    if let Some(om) = node.omitted.take() {
+        census = merge_census(census, om);
+    }
+    node.leftover = Some(census);
     node.children.clear();
-    node.omitted = None;
 }
 
 fn census_nodes(nodes: &[Node]) -> Census {
@@ -141,6 +294,7 @@ fn census_nodes(nodes: &[Node]) -> Census {
     Census {
         total: nodes.len(),
         buckets,
+        bounded: false,
     }
 }
 
@@ -195,7 +349,11 @@ pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
             .map(|(_, c)| c.clone())
             .collect();
         node.children = keep.iter().map(|&i| node.children[i].clone()).collect();
-        node.omitted = Some(census_nodes(&drop));
+        let mut om = census_nodes(&drop);
+        if let Some(prev) = node.omitted.take() {
+            om = merge_census(om, prev);
+        }
+        node.omitted = Some(om);
         explain.push(format!(
             "{}: listed {} / {n}, omitted {}",
             node.name,
@@ -224,38 +382,6 @@ pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
     }
 }
 
-fn census_dir(path: &Path) -> io::Result<Census> {
-    let mut buckets: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
-    let mut total = 0usize;
-    let rd = match fs::read_dir(path) {
-        Ok(rd) => rd,
-        Err(_) => {
-            return Ok(Census {
-                total: 0,
-                buckets: Vec::new(),
-            });
-        }
-    };
-    for ent in rd {
-        let ent = ent?;
-        let os = ent.file_name();
-        if os == "." || os == ".." {
-            continue;
-        }
-        total += 1;
-        let is_dir = ent.file_type().map(|t| t.is_dir()).unwrap_or(false);
-        let label = if is_dir {
-            "dir".to_string()
-        } else {
-            suffix_label(&os.to_string_lossy())
-        };
-        *buckets.entry(label).or_insert(0) += 1;
-    }
-    let mut buckets: Vec<(String, usize)> = buckets.into_iter().collect();
-    buckets.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));
-    Ok(Census { total, buckets })
-}
-
 fn suffix_label(name: &str) -> String {
     let base = name.rsplit('/').next().unwrap_or(name);
     match base.rsplit_once('.') {
@@ -266,13 +392,37 @@ fn suffix_label(name: &str) -> String {
     }
 }
 
+/// INFO to hang on a name: the walk's confession about this line.
+fn info_marks(n: &Node) -> String {
+    let mut s = String::new();
+    if n.denied {
+        s.push_str("  [denied]");
+    }
+    if n.iter_err {
+        s.push_str("  [unreadable: io]");
+    }
+    // Membership stays exact under a cut, so the census carries no `≥`;
+    // the mark is what says this dir was cut short of the requested depth.
+    if n.cut {
+        s.push_str("  [walk bound]");
+    }
+    s
+}
+
 pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str) -> String {
     let mut root = root_path.to_string();
     if tree.is_dir && !root.ends_with('/') {
         root.push('/');
     }
     let root = crate::color::dir(&root, color);
-    let header = format!("{root}  {stamp}");
+    let mut root_census = String::new();
+    if let Some(c) = &tree.leftover {
+        let extra = c.render();
+        if !extra.is_empty() {
+            root_census = format!("  {extra}");
+        }
+    }
+    let header = format!("{root}  {stamp}{root_census}{}", info_marks(tree));
     if tree.children.is_empty() && tree.omitted.is_none() {
         return format!("{header}\n");
     }
@@ -308,6 +458,7 @@ fn emit(
                 n = format!("{n}  {extra}");
             }
         }
+        n.push_str(&info_marks(k));
         out.push(format!("{prefix}{branch}{n}"));
         if !k.children.is_empty() || k.omitted.is_some() {
             let next = if last {
