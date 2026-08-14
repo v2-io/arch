@@ -150,9 +150,13 @@ fn help_lists_every_accepted_flag() {
         "--raw",
         "--inspect",
         "--no-one-fs",
+        "--config",
+        "--caller",
+        "--color",
         "-x",
         "-h",
         "-v",
+        "config",
     ] {
         assert!(page.contains(needle), "help missing {needle}");
     }

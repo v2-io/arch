@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use aspectus::budget::{allocate_shares, explain};
+use aspectus::config::{render_show, resolve, CALLER_FLAG};
 use aspectus::render::render_text;
 use aspectus::walk::{walk, WalkOptions};
 
@@ -14,7 +15,10 @@ const VERBS_AND_FLAGS: &[(&str, &str)] = &[
         "version, -v, --version",
         "name + semver; +sha if not a tagged release",
     ),
+    ("config", "show which config layers were consulted"),
     ("--", "end of flags"),
+    ("--config PATH", "use this file as user-home for this run"),
+    ("--caller KEY", "select the agent-type overlay"),
     ("--lines N", "line budget including the root (default 80)"),
     (
         "--visit N",
@@ -28,6 +32,7 @@ const VERBS_AND_FLAGS: &[(&str, &str)] = &[
     ),
     ("-x", "stay on one filesystem (default)"),
     ("--no-one-fs", "follow mounts"),
+    ("--color=auto|always|never", "color only if stdout is a TTY (auto)"),
 ];
 
 fn help_page() -> String {
@@ -49,7 +54,10 @@ fn help_page() -> String {
         "\n\
          Examples:\n\
            aspectus help\n\
-           aspectus version\n",
+           aspectus version\n\
+           aspectus config\n\
+           aspectus\n\
+           aspectus PATH\n",
     );
     out
 }
@@ -65,7 +73,14 @@ fn version_line() -> String {
 enum Cmd {
     Help,
     Version,
+    Config(ConfigArgs),
     Show(ShowArgs),
+}
+
+struct ConfigArgs {
+    user_home_override: Option<PathBuf>,
+    caller: Option<String>,
+    flag_lines: Option<u32>,
 }
 
 struct ShowArgs {
@@ -75,6 +90,10 @@ struct ShowArgs {
     explain: bool,
     inspect: Option<String>,
     one_fs: bool,
+    #[allow(dead_code)]
+    user_home_override: Option<PathBuf>,
+    #[allow(dead_code)]
+    caller: Option<String>,
 }
 
 enum Refusal {
@@ -117,6 +136,10 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut one_fs = true;
     let mut help = false;
     let mut version = false;
+    let mut config_cmd = false;
+    let mut user_home_override = None;
+    let mut caller = None;
+    let mut lines_set = false;
     let mut end_flags = false;
     let mut args = argv.into_iter().peekable();
 
@@ -128,6 +151,25 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         match a.as_str() {
             "help" | "-h" | "--help" => help = true,
             "version" | "-v" | "--version" => version = true,
+            "config" => config_cmd = true,
+            "--config" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--config needs a path".into()))?;
+                user_home_override = Some(PathBuf::from(v));
+            }
+            s if s.starts_with("--config=") => {
+                user_home_override = Some(PathBuf::from(&s[9..]));
+            }
+            s if s == CALLER_FLAG => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--caller needs a key".into()))?;
+                caller = Some(v);
+            }
+            s if s.starts_with("--caller=") => {
+                caller = Some(s[9..].to_string());
+            }
             "--explain-budget" => explain = true,
             "--raw" => inspect = Some("*".into()),
             "-x" => one_fs = true,
@@ -148,6 +190,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 lines = v
                     .parse()
                     .map_err(|_| Refusal::Usage(format!("bad --lines {v}")))?;
+                lines_set = true;
             }
             "--visit" => {
                 let v = args
@@ -162,6 +205,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 lines = v
                     .parse()
                     .map_err(|_| Refusal::Usage(format!("bad --lines {v}")))?;
+                lines_set = true;
             }
             s if s.starts_with("--visit=") => {
                 let v = &s[8..];
@@ -172,6 +216,14 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             s if s.starts_with("--inspect=") => {
                 inspect = Some(s[10..].to_string());
             }
+            "--color" => {
+                if let Some(n) = args.peek() {
+                    if matches!(n.as_str(), "auto" | "always" | "never") {
+                        let _ = args.next();
+                    }
+                }
+            }
+            s if s.starts_with("--color=") => {}
             "--" => end_flags = true,
             s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
             s => take_positional(&mut path, s.to_string())?,
@@ -183,6 +235,17 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     }
     if version {
         return Ok(Cmd::Version);
+    }
+    if config_cmd {
+        return Ok(Cmd::Config(ConfigArgs {
+            user_home_override,
+            caller,
+            flag_lines: if lines_set {
+                Some(lines as u32)
+            } else {
+                None
+            },
+        }));
     }
 
     let path = match path {
@@ -197,6 +260,8 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         explain,
         inspect,
         one_fs,
+        user_home_override,
+        caller,
     }))
 }
 
@@ -232,9 +297,22 @@ fn main() -> ExitCode {
             println!("{}", version_line());
             ExitCode::SUCCESS
         }
+        Ok(Cmd::Config(c)) => {
+            let res = resolve(
+                c.user_home_override.as_deref(),
+                c.caller.as_deref(),
+                c.flag_lines,
+            );
+            print!("{}", render_show(&res));
+            ExitCode::SUCCESS
+        }
         Ok(Cmd::Show(args)) => match show(args) {
             Ok(()) => ExitCode::SUCCESS,
-            Err(e) => {
+            Err(ShowErr::NotFound(p)) => {
+                let _ = writeln!(io::stderr(), "aspectus: not found {p}");
+                ExitCode::from(2)
+            }
+            Err(ShowErr::Other(e)) => {
                 let _ = writeln!(io::stderr(), "aspectus: {e}");
                 ExitCode::from(2)
             }
@@ -242,24 +320,43 @@ fn main() -> ExitCode {
     }
 }
 
-fn show(args: ShowArgs) -> Result<(), String> {
-    let opts = WalkOptions {
-        visit_budget: args.visit,
-        one_filesystem: args.one_fs,
-        inspect: args.inspect,
-    };
-    let result = walk(&args.path, opts).map_err(|e| format!("{}: {e}", args.path.display()))?;
+enum ShowErr {
+    NotFound(String),
+    Other(String),
+}
 
-    if args.explain {
-        let alloc = allocate_shares(&result.aspecta.node.children, args.lines);
-        let _ = write!(
-            io::stderr(),
-            "{}",
-            explain(&result.aspecta.node.children, &alloc, args.lines)
-        );
+fn show(args: ShowArgs) -> Result<(), ShowErr> {
+    let deep = args.inspect.is_some() || args.explain;
+    if deep {
+        let opts = WalkOptions {
+            visit_budget: args.visit,
+            one_filesystem: args.one_fs,
+            inspect: args.inspect,
+        };
+        let result = walk(&args.path, opts).map_err(|e| map_io(&args.path, e))?;
+        if args.explain {
+            let alloc = allocate_shares(&result.aspecta.node.children, args.lines);
+            let _ = write!(
+                io::stderr(),
+                "{}",
+                explain(&result.aspecta.node.children, &alloc, args.lines)
+            );
+        }
+        let picture = render_text(&result.aspecta.node, args.lines);
+        print!("{picture}");
+        return Ok(());
     }
 
-    let picture = render_text(&result.aspecta.node, args.lines);
-    print!("{picture}");
+    let locus = aspectus::two_level::resolve_locus(&args.path);
+    let (name, kids) = aspectus::two_level::list(&locus).map_err(|e| map_io(&locus, e))?;
+    print!("{}", aspectus::two_level::render(&name, &kids));
     Ok(())
+}
+
+fn map_io(path: &Path, e: std::io::Error) -> ShowErr {
+    if e.kind() == std::io::ErrorKind::NotFound {
+        ShowErr::NotFound(path.display().to_string())
+    } else {
+        ShowErr::Other(format!("{}: {e}", path.display()))
+    }
 }

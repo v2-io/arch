@@ -5,8 +5,10 @@
 
 pub mod absorb;
 pub mod budget;
+pub mod config;
 pub mod ir;
 pub mod render;
+pub mod two_level;
 pub mod walk;
 
 pub use absorb::{fate, partition, Fate};
