@@ -25,6 +25,10 @@ pub enum SizeFmt {
 pub enum TimeFmt {
     Iso8601,
     Epoch,
+    /// Age relative to the look's stamp (`2.2h ago`) — the default text
+    /// spelling, so mtime and the heat cluster's age read as one register
+    /// (format-consistency steer, 2026-08-14; JSON stays iso-8601).
+    Relative,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -171,8 +175,9 @@ fn fmt_owner(n: &Node, f: OwnerFmt) -> Option<String> {
     Some(user)
 }
 
-fn fmt_mtime(secs: i64, f: TimeFmt) -> String {
+fn fmt_mtime(secs: i64, f: TimeFmt, now: i64) -> String {
     match f {
+        TimeFmt::Relative => rel_age(now, secs),
         TimeFmt::Epoch => secs.to_string(),
         TimeFmt::Iso8601 => {
             if secs < 0 {
@@ -204,6 +209,10 @@ struct Row {
     cells: Vec<String>,
     /// Near-right: censuses, facets, kind spot, look-marks.
     rest: String,
+    /// The headings line (design/columns.md §Column headings): its cells
+    /// name columns instead of carrying values; painted dim, dropped when
+    /// no value column below it exists, excluded from value widths.
+    heading: bool,
 }
 
 impl Row {
@@ -232,16 +241,36 @@ fn paint(rows: Vec<Row>, color: bool, ncols: usize) -> String {
         .max()
         .unwrap_or(0)
         .min(STOP_CAP);
-    let widths: Vec<usize> = (0..ncols)
+    // A column exists only where a *value* row fills it; the headings line
+    // never conjures a column (it teaches, it does not claim).
+    let value_widths: Vec<usize> = (0..ncols)
         .map(|i| {
             rows.iter()
+                .filter(|r| !r.heading)
                 .map(|r| r.cells.get(i).map(|c| c.chars().count()).unwrap_or(0))
                 .max()
                 .unwrap_or(0)
         })
         .collect();
+    let any_column = value_widths.iter().any(|&w| w > 0);
+    let widths: Vec<usize> = (0..ncols)
+        .map(|i| {
+            if value_widths[i] == 0 {
+                return 0;
+            }
+            rows.iter()
+                .filter(|r| r.heading)
+                .map(|r| r.cells.get(i).map(|c| c.chars().count()).unwrap_or(0))
+                .max()
+                .unwrap_or(0)
+                .max(value_widths[i])
+        })
+        .collect();
     let mut out = String::new();
     for r in rows {
+        if r.heading && !any_column {
+            continue; // no fact columns in this look — no headings line
+        }
         let mut line = String::new();
         line.push_str(&r.left_prefix);
         let painted = if r.color_dir {
@@ -267,7 +296,11 @@ fn paint(rows: Vec<Row>, color: bool, ncols: usize) -> String {
                 let cell = r.cells.get(i).map(String::as_str).unwrap_or("");
                 let cw = cell.chars().count();
                 line.push_str(&" ".repeat(width - cw));
-                line.push_str(cell);
+                if r.heading {
+                    line.push_str(&crate::color::dim(cell, color));
+                } else {
+                    line.push_str(cell);
+                }
             }
             if !r.rest.is_empty() {
                 if !first {
@@ -345,10 +378,15 @@ fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
         ));
     }
     if cols.mtime.claims_column() {
+        // The heat cluster already carries this line's mtime as `· age`;
+        // a quiet mtime speaking beside it would say the same thing twice
+        // (format-consistency steer, 2026-08-14). An explicit `on` still
+        // renders everywhere — a full column asked for is a full column.
+        let redundant = cols.heat && n.heat.is_some() && n.mtime.is_some();
         cells.push(when(
             cols.mtime,
-            n.q.mtime,
-            n.mtime.map(|t| fmt_mtime(t, cols.mtime_fmt)),
+            n.q.mtime && !redundant,
+            n.mtime.map(|t| fmt_mtime(t, cols.mtime_fmt, cols.now)),
         ));
     }
     if cols.heat {
@@ -360,6 +398,44 @@ fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
         });
     }
     cells
+}
+
+/// Heading words per active column, in `cells_of` order (design/columns.md
+/// §Column headings; spellings provisional until Joseph ratifies).
+fn heading_cells(cols: &Cols) -> Vec<String> {
+    let mut cells = Vec::with_capacity(cols.active());
+    if cols.line_count {
+        cells.push("lines".to_string());
+    }
+    if cols.perms.claims_column() {
+        cells.push("perms".to_string());
+    }
+    if cols.owner.claims_column() {
+        cells.push("owner".to_string());
+    }
+    if cols.size.claims_column() {
+        cells.push("size".to_string());
+    }
+    if cols.mtime.claims_column() {
+        cells.push("mtime".to_string());
+    }
+    if cols.heat {
+        cells.push("heat · age".to_string());
+    }
+    cells
+}
+
+/// Will this look carry a headings line? True when any node below the root
+/// gives any fact column a value. The budget path calls this on the
+/// *budgeted* tree (a second allocation pass pays for the line only when
+/// it actually renders); paint applies the same predicate via widths.
+pub fn headings_expected(tree: &Node, cols: &Cols) -> bool {
+    fn any_cell(n: &Node, cols: &Cols) -> bool {
+        n.children.iter().any(|c| {
+            cells_of(c, cols).iter().any(|s| !s.is_empty()) || any_cell(c, cols)
+        })
+    }
+    cols.active() > 0 && any_cell(tree, cols)
 }
 
 /// The gathering spot for what this place *holds*: specialized facets
@@ -374,7 +450,22 @@ fn state_marks(n: &Node) -> Vec<String> {
         parts.push(format!("[{f}]"));
     }
     if !n.kinds.is_empty() {
-        parts.push(format!("[has: {}]", n.kinds.join(", ")));
+        // A hidden dir's magnitude rides its kind word — presence
+        // survives hiding (`archive ≈127f`, design/furniture.md).
+        let words: Vec<String> = n
+            .kinds
+            .iter()
+            .map(|k| {
+                match n.has_counts.iter().find(|(hk, _, _)| hk == k) {
+                    Some((_, files, bounded)) => {
+                        let mark = if *bounded { "≥" } else { "≈" };
+                        format!("{k} {mark}{files}f")
+                    }
+                    None => k.clone(),
+                }
+            })
+            .collect();
+        parts.push(format!("[has: {}]", words.join(", ")));
     }
     parts
 }
@@ -436,9 +527,9 @@ fn rest_of(n: &Node) -> String {
         if let Some(m) = &n.mass
             && m.lines > 0
         {
-            let mark = if m.bounded { "≥" } else { "≈" };
             parts.push(format!(
-                "{mark}{} lines",
+                "{}{} lines",
+                m.mark(),
                 crate::n_level::group_lines(m.lines)
             ));
         }
@@ -449,12 +540,28 @@ fn rest_of(n: &Node) -> String {
 }
 
 /// The root's own facts, pre-joined for the header facts line. Empty when
-/// the root has nothing to say.
+/// the root has nothing to say. A file root gets no headings line below,
+/// so its unitless numbers carry their column word here (`767 lines`,
+/// `heat 1.01 · …` — the bare-`0`/`767` first-contact fix, 2026-08-14);
+/// a directory root's cluster stays bare per the headings specimen.
 pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
-    let mut parts: Vec<String> = cells_of(tree, cols)
-        .into_iter()
-        .filter(|c| !c.is_empty())
-        .collect();
+    let cells = cells_of(tree, cols);
+    let mut parts: Vec<String> = if tree.is_dir {
+        cells.into_iter().filter(|c| !c.is_empty()).collect()
+    } else {
+        let labels = heading_cells(cols);
+        cells
+            .into_iter()
+            .zip(labels)
+            .filter(|(c, _)| !c.is_empty())
+            .map(|(c, label)| match label.as_str() {
+                "lines" => format!("{c} lines"),
+                "perms" => format!("perms {c}"),
+                "heat · age" => format!("heat {c}"),
+                _ => c, // sizes, owners, ages already say what they are
+            })
+            .collect()
+    };
     let rest = rest_of(tree);
     if !rest.is_empty() {
         parts.push(rest);
@@ -479,6 +586,7 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         color_dir: false,
         cells: vec![String::new(); ncols],
         rest: String::new(),
+        heading: false,
     };
     let mut rows = vec![plain(stamp.to_string())];
     let facts = root_facts_line(tree, cols);
@@ -493,7 +601,22 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         color_dir: true,
         cells: vec![String::new(); ncols],
         rest: String::new(),
+        heading: false,
     });
+    // The headings line, directly above the children it teaches (design/
+    // columns.md §Column headings). paint drops it when no fact column
+    // below carries a value.
+    if ncols > 0 && (!tree.children.is_empty() || tree.omitted.is_some()) {
+        rows.push(Row {
+            left_prefix: String::new(),
+            name: String::new(),
+            deco: String::new(),
+            color_dir: false,
+            cells: heading_cells(cols),
+            rest: String::new(),
+            heading: true,
+        });
+    }
     emit(&tree.children, tree.omitted.as_ref(), "", cols, &mut rows);
     paint(rows, color, ncols)
 }
@@ -521,6 +644,7 @@ fn emit(
             color_dir: k.is_dir,
             cells: cells_of(k, cols),
             rest: rest_of(k),
+            heading: false,
         });
         if !k.children.is_empty() || k.omitted.is_some() {
             let next = if last {
@@ -541,6 +665,7 @@ fn emit(
             color_dir: false,
             cells: vec![String::new(); cols.active()],
             rest: String::new(),
+            heading: false,
         });
     }
 }

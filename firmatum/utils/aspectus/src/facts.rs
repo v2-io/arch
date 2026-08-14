@@ -62,7 +62,7 @@ pub const FACTS: &[Fact] = &[
     Fact { key: "name", place: Placement::Decoration, default: "on", toggle: None, formats: "basename*", built: true },
     Fact { key: "child-count", place: Placement::NearRight, default: "on", toggle: None, formats: "n*", built: true },
     Fact { key: "line-count", place: Placement::FarRight, default: "on", toggle: Some("columns.line-count"), formats: "physical* / non-blank", built: true },
-    Fact { key: "mtime", place: Placement::FarRight, default: "quiet", toggle: Some("columns.mtime"), formats: "iso-8601* / epoch", built: true },
+    Fact { key: "mtime", place: Placement::FarRight, default: "quiet", toggle: Some("columns.mtime"), formats: "relative* / iso-8601 / epoch", built: true },
     Fact { key: "size", place: Placement::FarRight, default: "quiet", toggle: Some("columns.size"), formats: "human* / bytes", built: true },
     Fact { key: "created", place: Placement::FarRight, default: "off", toggle: Some("columns.created"), formats: "iso-8601* / epoch", built: false },
     Fact { key: "filetype", place: Placement::NearRight, default: "on", toggle: None, formats: "suffix*", built: true },

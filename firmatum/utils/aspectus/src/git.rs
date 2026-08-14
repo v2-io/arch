@@ -12,6 +12,61 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+/// Fill git facets across the visible tree in one bounded-parallel pass
+/// (hardening 2026-08-14: the per-repo porcelain subprocess was a serial
+/// ~2.4s on a multi-repo ~/src walk). A node gets the facet when its
+/// kinds claim `git` and a real `.git` entry exists there; the facet
+/// inserts at position 0 so the order stays [git, github, …].
+pub fn annotate(node: &mut crate::n_level::Node, abs: &Path) {
+    fn collect(n: &crate::n_level::Node, abs: &Path, out: &mut Vec<PathBuf>) {
+        if n.is_dir && n.kinds.iter().any(|k| k == "git") && abs.join(".git").exists() {
+            out.push(abs.to_path_buf());
+        }
+        for c in &n.children {
+            collect(c, &abs.join(&c.name), out);
+        }
+    }
+    fn assign(
+        n: &mut crate::n_level::Node,
+        abs: &Path,
+        facets: &std::collections::HashMap<PathBuf, String>,
+    ) {
+        if let Some(f) = facets.get(abs) {
+            n.facets.insert(0, f.clone());
+        }
+        for c in &mut n.children {
+            let child_abs = abs.join(&c.name);
+            assign(c, &child_abs, facets);
+        }
+    }
+    let mut paths = Vec::new();
+    collect(node, abs, &mut paths);
+    if paths.is_empty() {
+        return;
+    }
+    let facets: std::collections::HashMap<PathBuf, String> = std::thread::scope(|s| {
+        let paths = &paths;
+        let threads = crate::n_level::POOL_THREADS.min(paths.len());
+        let handles: Vec<_> = (0..threads)
+            .map(|t| {
+                s.spawn(move || {
+                    paths
+                        .iter()
+                        .enumerate()
+                        .filter(|(i, _)| i % threads == t)
+                        .filter_map(|(_, p)| facet(p).map(|f| (p.clone(), f)))
+                        .collect::<Vec<_>>()
+                })
+            })
+            .collect();
+        handles
+            .into_iter()
+            .flat_map(|h| h.join().expect("git facet worker"))
+            .collect()
+    });
+    assign(node, abs, &facets);
+}
+
 /// The facet for a directory whose children include `.git`, e.g.
 /// `git: remote<github.com/v2-io/x> br<main> @1a2b3c4 dirty<3>`.
 /// `None` when the `.git` there is not readable as a repo.

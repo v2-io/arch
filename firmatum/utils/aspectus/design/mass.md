@@ -18,6 +18,16 @@ so a glance at `asf/` *calibrates the agent's sense of how much it has not seen*
 
 Weight = descendant files + text lines (the mass unit), computed bottom-up on every dir and by a dedicated deep walk at cutoffs — furniture excluded, `(dev,ino)` counted once, cycle-guarded, one-fs. Rendered *through the census* (design/dir-census.md, same-day rework): the dir bucket carries deep files (`[dir×4 ≈338f · md×2]`), the subtree's text lines follow it (`≈61k lines`) — the deep file total is computable from the census so it does not print twice. `≥` under any bound (walk cut, denied, mount stop, mass name-cap 500k, unreadable text); read-budget overflow estimates lines from size, still `≈`. Gitignored bodies still count until [[gitignore-bodies|that row]] lands — the furniture map catches the big offenders (`target/`, …) today. Details: impl/mass.md.
 
+## Mass-mark distinction (proposed 2026-08-14, hardening pass — Joseph ratifies the glyphs)
+
+The hallway testers caught `≈` doing two jobs: rounding an *exact* count for the census channel (`61,234` → `≈61k`) and flagging a *budget-estimate* whose value genuinely depends on this walk's read budget ("directory line-totals unstable across flags… trust the file, distrust the directory total" — grok). One glyph for both meant an exact count and a walk-relative guess wore the same face, and the guess's instability discredited the exact ones. Implemented leaning, three marks by precedence:
+
+- `≥` — a floor (walk bound, denied, mount stop, name cap): unchanged.
+- `~` — **estimated**: some lines under this aggregate were inferred from size (constant 32 B/line) because the read budget ran out. Walk-relative by nature; the mark now confesses it.
+- `≈` — exact count, grouped for the eye. Stable across flags for the same tree.
+
+Two stabilizers landed with it: the estimator's bytes-per-line is a constant (the old look-observed ratio made a dir's total depend on what else the walk read first), and each depth-cutoff subtree gets a deterministic *share* of the read budget in the parallel deep phase, so `--inspect git` spending reads inside `.git` no longer starves a sibling's total.
+
 ## Shape (as first sketched)
 
 - **What counts as weight:** descendant file count first; total lines of non-binary files when [[linecount|Line counts]] exist; maybe bytes. Which of these prints, and when (always on dirs at a cutoff? quiet when small?), is lattice work — `size`'s "which number" nuance applies.

@@ -235,6 +235,72 @@ fn config_shows_fact_inventory() {
     assert!(size_row.contains(" on"), "state is current, not default: {size_row}");
 }
 
+/// The column-headings line (design/columns.md §Column headings): dimmed
+/// (plain when uncolored), right-aligned over the fact columns, above the
+/// first child; absent when no fact column renders; budget-true.
+#[test]
+fn headings_line_names_the_columns() {
+    let (dir, xdg) = fixture();
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    let lines: Vec<&str> = o.lines().collect();
+    let h = lines.iter().position(|l| l.trim_start().starts_with("lines")).unwrap();
+    assert!(lines[h + 1].starts_with('├') || lines[h + 1].starts_with('└'),
+        "headings sit directly above the children: {o}");
+    // Right edge of the heading aligns with the column's values (right-
+    // aligned like them): a.md is one unterminated line -> value "1".
+    // Char positions, not byte offsets — the tree glyphs are multibyte.
+    let chars_to = |l: &str, byte: usize| l[..byte].chars().count();
+    let head_end = chars_to(lines[h], lines[h].find("lines").unwrap()) + "lines".len();
+    let a_line = lines.iter().find(|l| l.contains("a.md")).unwrap();
+    let val_end = chars_to(a_line, a_line.rfind('1').unwrap()) + 1;
+    assert_eq!(head_end, val_end, "heading right-aligns over its column: {o}");
+}
+
+/// No fact columns ⇒ no headings line (an all-off look stays bare).
+#[test]
+fn headings_absent_without_columns() {
+    let (dir, xdg) = fixture();
+    user_home(&xdg, "columns.line-count = off\ncolumns.heat = off\n");
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(!o.contains("lines"), "no headings without columns: {o}");
+}
+
+/// The headings line is charged to --lines: total output never exceeds it.
+#[test]
+fn headings_charge_the_budget() {
+    let (dir, xdg) = fixture();
+    for n in 4..8 {
+        let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", &n.to_string()]);
+        assert_eq!(c, 0, "{e}");
+        assert!(o.lines().count() <= n, "--lines {n} holds: {o}");
+    }
+}
+
+/// A file argument has no headings line below, so its header facts carry
+/// their column words (`N lines`) instead of bare numbers.
+#[test]
+fn file_root_facts_are_labeled() {
+    let (dir, xdg) = fixture();
+    let (c, o, e) = run(&dir, &xdg, &[], &["a.md"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains("1 lines"), "labeled line count on the facts line: {o}");
+}
+
+/// mtime's default text form is relative — one register with heat's age —
+/// and a quiet mtime stays silent where the heat cluster already says it.
+#[test]
+fn mtime_defaults_to_relative_age() {
+    let (dir, xdg) = fixture();
+    user_home(&xdg, "columns.mtime = on\n");
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    assert_eq!(o.matches('Z').count(), 1, "stamp is the only ISO time: {o}");
+    let a_line = o.lines().find(|l| l.contains("a.md")).unwrap();
+    assert!(a_line.contains("ago"), "relative age spelled: {a_line}");
+}
+
 /// Symlink target is decoration on the name (lattice INFO ON; shorthand
 /// decoration class); broken says so.
 #[test]

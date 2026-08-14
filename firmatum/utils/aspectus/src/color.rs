@@ -3,6 +3,7 @@
 use std::io::{self, IsTerminal};
 
 const DIR: &str = "\x1b[01;34m";
+const DIM: &str = "\x1b[2m";
 const RESET: &str = "\x1b[0m";
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -37,5 +38,14 @@ pub fn dir(name: &str, on: bool) -> String {
         format!("{DIR}{name}{RESET}")
     } else {
         name.to_string()
+    }
+}
+
+/// Dimmed text (the headings line). Empty stays empty — no stray codes.
+pub fn dim(s: &str, on: bool) -> String {
+    if on && !s.is_empty() {
+        format!("{DIM}{s}{RESET}")
+    } else {
+        s.to_string()
     }
 }

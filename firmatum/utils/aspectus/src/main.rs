@@ -13,7 +13,8 @@ const COMMANDS: &[(&str, &str)] = &[
     ("help, -h, --help", "this page (includes the version line)"),
     (
         "version, -v, --version",
-        "one line: name + semver; +sha if not a tagged release",
+        "one line: name + semver; +sha[.dirty] if not a tagged release, \
+         and the build's UTC time",
     ),
     ("config", "show which config layers were consulted and what won"),
 ];
@@ -32,7 +33,9 @@ const OPTIONS: &[(&str, &str)] = &[
     ),
     (
         "--lines N",
-        "line budget for the whole look (default 80; 0 = no limit)",
+        "line budget for the whole look (default 80; 0 = no limit). \
+         A non-empty root's honest floor is 3 lines — stamp, the root's \
+         facts/census, path — so 1 and 2 overshoot rather than omit",
     ),
     (
         "--walk N",
@@ -132,7 +135,9 @@ fn help_page() -> String {
            aspectus PATH\n\
            aspectus --depth 3 --lines 120 PATH\n\
            aspectus --walk 500 PATH    (huge tree: expand less, count all)\n\
-           aspectus --inspect git PATH (see inside .git as ordinary children)\n\
+           aspectus --inspect git PATH (see inside .git as ordinary children;\n\
+                                        a submodule's gitlink .git instead\n\
+                                        names its gitdir)\n\
            aspectus --format json PATH (the same look, as data)\n\
          \n\
          Non-binary files show a line count (binary shows none, never 0);\n\
@@ -141,15 +146,20 @@ fn help_page() -> String {
          carries a census of what it held — [dir×3 \u{2248}120f \u{b7} md\u{d7}31] — with\n\
          subdirectories as containers whose deep file-count (mass) leads,\n\
          and the subtree's text lines after it (\u{2248}61k lines): a glance\n\
-         calibrates how much has not been seen. \u{2265} marks a floor; a\n\
-         single concealed name shows the name. The look reads file content\n\
-         only up to a budget (config `reads`, bytes); past it, deep line\n\
-         totals are estimated (\u{2248}) and per-file counts omitted \u{2014} the\n\
-         glance stays fast, and says how it degraded.\n\
+         calibrates how much has not been seen. \u{2248} is an exact count\n\
+         grouped for the eye; \u{2265} marks a floor; a single concealed name\n\
+         shows the name. The look reads file content only up to a budget\n\
+         (config `reads`, bytes); past it, deep line totals are estimated\n\
+         from sizes and marked ~ (this walk's estimate, not a property of\n\
+         the directory) and per-file counts are omitted \u{2014} the glance\n\
+         stays fast, and says how it degraded.\n\
          \n\
          Inside a git repo each visible line carries the aliveness cluster\n\
-         `score \u{b7} age` (commit-decay heat, git-heat's model, half-life 7\n\
-         commits via config `heat.half-life`; age is the mtime delta).\n\
+         `score \u{b7} age` under the `heat \u{b7} age` heading: the score is\n\
+         commit-decay heat (git-heat's model, half-life 7 commits via\n\
+         config `heat.half-life`) on a 0\u{2013}~2 scale \u{2014} not a size \u{2014}\n\
+         counting in commits; the age is the mtime delta, counting in\n\
+         wall-clock. Two clocks, one glance-stop.\n\
          Outside git, no heat is claimed. `--sort heat` orders by it;\n\
          config `recency-source = git` makes the default recency sort use\n\
          git last-touch where known.\n\
@@ -205,6 +215,14 @@ fn help_page() -> String {
          JSON carries the underlying facts (mode, uid, mtime, ...)\n\
          either way. Refusals in machine mode are JSON on stderr.\n\
          \n\
+         A dimmed headings line sits under the root path, right-aligned\n\
+         over the fact columns it names (`lines   heat \u{b7} age`), so the\n\
+         numbers below it are never bare. It appears only when fact\n\
+         columns do, and costs one header line of the budget. mtime cells\n\
+         default to the relative form (`2.2h ago`) \u{2014} one time register\n\
+         with the heat cluster's age; config format.mtime = iso-8601 or\n\
+         epoch restores the absolute spellings (JSON always iso-8601).\n\
+         \n\
          Facts beyond the defaults (size, mtime, ...) have no flags of\n\
          their own; ask through config on the caller stack, e.g.\n\
          columns.size = on, format.mtime = epoch, sort = -size (env:\n\
@@ -218,10 +236,20 @@ fn help_page() -> String {
 
 fn version_line() -> String {
     let ver = env!("CARGO_PKG_VERSION");
-    match option_env!("ASPECTUS_GIT_SHA") {
+    let mut line = match option_env!("ASPECTUS_GIT_SHA") {
+        // `sha` may carry a `.dirty` suffix — uncommitted state at build
+        // time (a stale install was invisible without it, 2026-08-14).
         Some(sha) if !sha.is_empty() => format!("aspectus {ver}+{sha}"),
         _ => format!("aspectus {ver}"),
+    };
+    if let Some(epoch) = option_env!("ASPECTUS_BUILD_EPOCH")
+        && let Ok(secs) = epoch.parse::<u64>()
+        && secs > 0
+    {
+        let t = std::time::UNIX_EPOCH + std::time::Duration::from_secs(secs);
+        line.push_str(&format!(" (built {})", aspectus::overview::stamp_utc(t)));
     }
+    line
 }
 
 enum Cmd {
@@ -447,6 +475,16 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     if version {
         return Ok(Cmd::Version);
     }
+    // An explicitly named config file that does not exist is a refusal,
+    // not a silent `absent` layer — the caller pointed at something.
+    if let Some(p) = &user_home_override
+        && !p.exists()
+    {
+        return Err(Refusal::Usage(format!(
+            "--config file not found: {}",
+            p.display()
+        )));
+    }
     if config_cmd {
         return Ok(Cmd::Config(ConfigArgs {
             user_home_override,
@@ -619,6 +657,17 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         Some((rules, _)) => aspectus::furniture::Map::with_config(rules),
         None => aspectus::furniture::Map::shipped(),
     };
+    // An unknown --inspect kind used to exit 0 silently — "the flags I
+    // would use to debug the tool lie by being fine" (grok, 2026-08-14).
+    // Refuse by name, with the menu.
+    for k in &args.inspect {
+        if !map.known_kinds().iter().any(|known| known == k) {
+            return Err(ShowErr::Other(format!(
+                "not a furniture kind this map knows: {k}\n  kinds: {}\n  next: aspectus help",
+                map.known_kinds().join(", ")
+            )));
+        }
+    }
     let view = aspectus::furniture::View {
         show_all: args.show_all,
         inspect: args.inspect,
@@ -648,6 +697,11 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     );
     let mut tree = aspectus::n_level::gather(&abs, depth, &mut walk, &mut ctx)
         .map_err(|e| map_io(&locus, e))?;
+    // Post-gather parallel phases (hardening 2026-08-14): deep mass over
+    // cutoff subtrees, then git facets (porcelain per repo).
+    aspectus::n_level::deep_phase(&mut tree, &abs, &mut ctx);
+    aspectus::n_level::hidden_phase(&mut tree, &abs);
+    aspectus::git::annotate(&mut tree, &abs);
     if cols.heat || order.key == aspectus::sort::Key::Heat || order.recency_git {
         let half_life: f64 = cfg
             .won
@@ -718,12 +772,31 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     cols.now = now_secs;
     let header = 1 + usize::from(!aspectus::columns::root_facts_line(&tree, &cols).is_empty());
     let tree_budget = if lines == 0 { 0 } else { lines.saturating_sub(header).max(1) };
+    // The headings line costs a header line only when it actually renders,
+    // which depends on what survives the budget — so allocate, look, and
+    // when headings landed, re-allocate one line tighter (the tighter tree
+    // either still earns its headings line, total exactly --lines, or
+    // loses every column and comes in one under — never over).
+    let mut why_alloc = Vec::new();
+    let pre = tree.clone();
+    aspectus::n_level::apply_budget(&mut tree, tree_budget, &order, &mut why_alloc);
+    let mut headed = aspectus::columns::headings_expected(&tree, &cols);
+    if lines > 0 && headed && tree_budget > 1 {
+        let tighter = tree_budget - 1;
+        let mut t2 = pre;
+        why_alloc.clear();
+        aspectus::n_level::apply_budget(&mut t2, tighter, &order, &mut why_alloc);
+        tree = t2;
+        headed = aspectus::columns::headings_expected(&tree, &cols);
+    }
     if lines > 0 {
         why.push(format!(
-            "header: {header} line(s) cost of --lines {lines}; {tree_budget} left (root line included)"
+            "header: {} line(s) (stamp, root facts, column headings as rendered) \
+             cost of --lines {lines} (root line inside the tree's share)",
+            header + usize::from(headed)
         ));
     }
-    aspectus::n_level::apply_budget(&mut tree, tree_budget, &order, &mut why);
+    why.append(&mut why_alloc);
     aspectus::sort::apply(&mut tree, &order);
     if args.explain {
         for line in &why {
@@ -848,11 +921,12 @@ fn resolve_look(
         }
     };
     let mtime_fmt = match cfg.won.get("format.mtime").map(|(v, _)| v.as_str()) {
-        None | Some("iso-8601") => TimeFmt::Iso8601,
+        None | Some("relative") => TimeFmt::Relative,
+        Some("iso-8601") => TimeFmt::Iso8601,
         Some("epoch") => TimeFmt::Epoch,
         Some(v) => {
             return Err(ShowErr::Other(format!(
-                "format.mtime is iso-8601 or epoch (got {v}; rfc-3339, pattern, signa not built yet)"
+                "format.mtime is relative, iso-8601, or epoch (got {v}; rfc-3339, pattern, signa not built yet)"
             )))
         }
     };

@@ -73,8 +73,11 @@ fn root_facts_get_their_own_line_path_stays_bare() {
     let _stamp = lines.next().unwrap();
     let facts = lines.next().unwrap();
     let path = lines.next().unwrap();
+    // mtime's default form is relative now ("0m ago", 2026-08-14); the
+    // claim under test is only that the facts line is its own line and
+    // the path line stays bare.
     assert!(
-        facts.ends_with('Z') && !facts.contains('/'),
+        facts.contains("ago") && !facts.contains('/'),
         "root facts on their own line: {facts:?}"
     );
     // (cwd-resolved roots may gain the /private prefix on macOS — compare

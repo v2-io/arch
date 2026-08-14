@@ -56,7 +56,9 @@ fn run(dir: &Path, xdg: &Path, args: &[&str]) -> (i32, String, String) {
 #[test]
 fn tight_lines_has_plus_census_not_ellipsis() {
     let (dir, xdg) = fixture_many_files();
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "5"]);
+    // 6, not 5: the column-headings line (2026-08-14) costs one header
+    // line whenever a fact column renders, and the .txt line-counts do.
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "6"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("[+"), "leaf leftover uses + : {o}");
     assert!(o.contains(".txt"), "{o}");
@@ -67,7 +69,8 @@ fn tight_lines_has_plus_census_not_ellipsis() {
 #[test]
 fn first_child_does_not_eat_the_budget() {
     let (dir, xdg) = fixture_many_files();
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "6"]);
+    // 7, not 6: one line goes to the column headings (2026-08-14).
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "7"]);
     assert_eq!(c, 0, "{e}");
     let listed_txt = o.matches(".txt").count();
     assert!(

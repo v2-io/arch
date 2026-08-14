@@ -163,7 +163,12 @@ fn node_obj(n: &Node) -> String {
         o.str("mtime", &iso(t));
     }
     if let Some(h) = n.heat {
-        o.raw("heat", &format!("{h}"));
+        // Four decimals, trailing zeros trimmed: 0.35220434162551345 was
+        // spurious precision for a decayed sum (grok, 2026-08-14) — the
+        // text look shows two; four keeps machine sort-stability margin.
+        let s = format!("{h:.4}");
+        let s = s.trim_end_matches('0').trim_end_matches('.');
+        o.raw("heat", if s.is_empty() { "0" } else { s });
     }
     // The `[has: …]` contents-claim (lattice row `has`; renamed from
     // `kind` the same day this schema was born, so the field follows).
@@ -175,6 +180,23 @@ fn node_obj(n: &Node) -> String {
                 o.buf.push(',');
             }
             esc(k, &mut o.buf);
+        }
+        o.buf.push(']');
+    }
+    // Hidden furniture magnitudes (presence survives hiding): additive
+    // beside `has`, keyed by the claiming kind.
+    if !n.has_counts.is_empty() {
+        o.key("hidden");
+        o.buf.push('[');
+        for (i, (k, files, bounded)) in n.has_counts.iter().enumerate() {
+            if i > 0 {
+                o.buf.push(',');
+            }
+            let mut h = Obj::new();
+            h.str("kind", k);
+            h.raw("files", &files.to_string());
+            h.bool_true("bounded", *bounded);
+            o.buf.push_str(&h.done());
         }
         o.buf.push(']');
     }

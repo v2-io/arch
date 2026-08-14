@@ -66,10 +66,12 @@ fn run(dir: &Path, xdg: &Path, args: &[&str]) -> (i32, String, String) {
 
 fn names_in_order(o: &str) -> Vec<String> {
     o.lines()
-        // Header: stamp, the root's facts line when it has any, then the
-        // bare root path (starts with /).
+        // Header: stamp, the root's facts line when it has any, the bare
+        // root path (starts with /), and the column-headings line
+        // (2026-08-14) — child lines are the branch-glyph ones.
         .skip_while(|l| !l.starts_with('/'))
         .skip(1)
+        .filter(|l| l.contains("── "))
         .filter(|l| !l.contains("[+"))
         .filter_map(|l| {
             l.rsplit("── ")
@@ -198,8 +200,9 @@ fn tight_budget_keeps_the_newest() {
         let name = format!("{}.md", (b'a' + i) as char);
         touch(&dir, &name, 1_700_000_000 + u64::from(i) * 100);
     }
-    // stamp + root + 3 files + [+5 census] = 6 lines.
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "6"]);
+    // stamp + headings + root + 3 files + [+5 census] = 7 lines
+    // (the column-headings line, 2026-08-14, costs one when columns render).
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "7"]);
     assert_eq!(c, 0, "{e}");
     assert!(
         o.contains("h.md") && o.contains("g.md") && o.contains("f.md"),
@@ -219,7 +222,8 @@ fn explicit_sort_key_implies_its_column() {
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1", "--sort", "size"]);
     assert!(o.contains("1B"), "size evidence on the line: {o}");
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1", "--sort", "recency"]);
-    assert!(o.matches('Z').count() > 1, "mtime evidence when asked: {o}");
+    // The implied mtime column speaks in the relative default (2026-08-14).
+    assert!(o.matches("ago").count() > 1, "mtime evidence when asked: {o}");
 }
 
 /// Total order: byte-identical across runs regardless of creation order.

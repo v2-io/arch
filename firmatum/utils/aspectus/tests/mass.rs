@@ -119,8 +119,9 @@ fn binary_only_subtree_claims_no_lines() {
     assert!(line.contains("[a.png]"), "single name shows: {o}");
 }
 
-/// Past the read budget, deep line totals are estimated — still `≈`,
-/// never silence and never a stall.
+/// Past the read budget, deep line totals are estimated and marked `~`
+/// (walk-relative estimate; `≈` now means exact-but-grouped — mass-mark
+/// distinction, 2026-08-14) — never silence and never a stall.
 #[test]
 fn read_budget_estimates_marked() {
     let (dir, xdg) = fresh("budget");
@@ -136,7 +137,7 @@ fn read_budget_estimates_marked() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let line = o.lines().find(|l| l.contains("deep/")).expect(&o);
-    assert!(line.contains("≈") && line.contains("lines"), "estimated, marked: {o}");
+    assert!(line.contains("~") && line.contains("lines"), "estimated, marked: {o}");
 }
 
 #[test]

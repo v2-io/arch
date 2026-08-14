@@ -26,6 +26,20 @@ impl Mass {
         self.est |= other.est;
         self.bounded |= other.bounded;
     }
+
+    /// The honesty mark this aggregate has earned (mass-mark proposal,
+    /// design/mass.md, 2026-08-14): `≥` floor beats `~` estimated beats
+    /// `≈` exact-but-grouped — an estimate is a property of *this walk's*
+    /// read budget, and the mark now says so.
+    pub fn mark(&self) -> &'static str {
+        if self.bounded {
+            "≥"
+        } else if self.est {
+            "~"
+        } else {
+            "≈"
+        }
+    }
 }
 
 /// Group a line total for the census channel: `61234` → `61k`.
@@ -93,6 +107,8 @@ impl Census {
             };
             let mass = match self.dir_files {
                 // An empty container's zero adds nothing the name lacks.
+                // File counts are never budget-estimated (only lines are),
+                // so the figure earns ≥ or ≈, never ~.
                 Some(m) if m.files > 0 || m.bounded => {
                     let mark = if m.bounded { "≥" } else { "≈" };
                     format!(" {mark}{}f", m.files)
@@ -134,6 +150,13 @@ pub struct Node {
     pub iter_err: bool,
     /// Kinds claimed on this line's gathering spot: `[has: git, rust, …]`.
     pub kinds: Vec<String>,
+    /// Hidden furniture dirs here, as (claiming kind, name) — walk-time
+    /// record; the deep phase turns it into `has_counts`.
+    pub hidden_dirs: Vec<(String, String)>,
+    /// Deep file-count of hidden furniture per kind: (kind, files,
+    /// bounded). Presence survives hiding — `[has: archive ≈127f, …]`
+    /// (design/furniture.md leaning, implemented 2026-08-14).
+    pub has_counts: Vec<(String, u64, bool)>,
     /// Specialized-furniture facets, already phrased (`git: br<main> @…`).
     pub facets: Vec<String>,
     /// Modification time, seconds since the epoch (symlinks: the target's).
@@ -218,8 +241,6 @@ impl WalkBudget {
 #[derive(Debug)]
 pub struct ReadMeter {
     remaining: Option<u64>,
-    bytes_counted: u64,
-    lines_counted: u64,
 }
 
 impl ReadMeter {
@@ -227,9 +248,13 @@ impl ReadMeter {
     pub fn new(budget: u64) -> Self {
         ReadMeter {
             remaining: if budget == 0 { None } else { Some(budget) },
-            bytes_counted: 0,
-            lines_counted: 0,
         }
+    }
+
+    /// From an already-optional remainder (`None` = unlimited) — the deep
+    /// phase splits one budget into per-subtree shares this way.
+    fn with(remaining: Option<u64>) -> Self {
+        ReadMeter { remaining }
     }
 
     fn can_read(&self, size: u64) -> bool {
@@ -239,24 +264,35 @@ impl ReadMeter {
         }
     }
 
-    fn charge(&mut self, bytes: u64, lines: u64) {
+    fn charge(&mut self, bytes: u64) {
         if let Some(r) = &mut self.remaining {
             *r = r.saturating_sub(bytes);
         }
-        self.bytes_counted += bytes;
-        self.lines_counted += lines;
-    }
-
-    /// Estimated lines for an unread file, from the look's own observed
-    /// bytes-per-line (fallback 32).
-    fn estimate(&self, size: u64) -> u64 {
-        let bpl = self
-            .bytes_counted
-            .checked_div(self.lines_counted)
-            .map_or(32, |b| b.max(1));
-        size / bpl
     }
 }
+
+/// Estimated lines for an unread text file. A constant bytes-per-line so
+/// the estimate is a function of the file alone — the earlier look-observed
+/// ratio made an unread directory's total depend on *what else* this walk
+/// had read, which is exactly the flag-to-flag instability the hallway
+/// testers caught (hardening 2026-08-14). `≈`→`~` marks it estimated.
+const EST_BYTES_PER_LINE: u64 = 32;
+
+pub fn est_lines(size: u64) -> u64 {
+    size / EST_BYTES_PER_LINE
+}
+
+/// A visible file this small is counted even past the read budget — the
+/// look's own lines deserve real numbers when they are cheap. Bigger
+/// visible files degrade like the deep walk (count absent, mass `~`):
+/// the old unconditional visible read slurped multi-GB files whole
+/// (measured 2.8 GB resident on ~/src, hardening 2026-08-14).
+const VISIBLE_READ_FLOOR: u64 = 256 * 1024;
+
+/// Bytes sniffed to decide text-vs-binary for unknown suffixes. The sniff
+/// used to read the whole file first; a bounded read keeps unknown big
+/// binaries from eating the budget (and memory) before judgment.
+const SNIFF_BYTES: usize = 1024;
 
 /// Names deep-mass will visit per look before declaring the floor (`≥`).
 const MASS_NAME_CAP: u64 = 500_000;
@@ -318,9 +354,10 @@ fn count_file(path: &Path, size: u64, ctx: &mut LookCtx) -> Count {
     count_file_at(path, size, ctx, false)
 }
 
-/// `visible` files (lines of the look itself) are read even past the
-/// budget — the degraded forms belong to the unseen deep walk, not to the
-/// glance's own lines. The read is still charged.
+/// `visible` files (lines of the look itself) get a small exemption from
+/// the budget (`VISIBLE_READ_FLOOR`); past that everything degrades the
+/// same honest way. Unknown suffixes are judged from a bounded sniff
+/// before any full read.
 fn count_file_at(path: &Path, size: u64, ctx: &mut LookCtx, visible: bool) -> Count {
     use crate::kind::Kind;
     let name = path
@@ -331,12 +368,26 @@ fn count_file_at(path: &Path, size: u64, ctx: &mut LookCtx, visible: bool) -> Co
     if kind == Kind::Binary {
         return Count::Binary;
     }
-    if !visible && !ctx.reads.can_read(size) {
+    if !ctx.reads.can_read(size) && !(visible && size <= VISIBLE_READ_FLOOR) {
         return match kind {
-            Kind::Text => Count::Est(ctx.reads.estimate(size)),
+            Kind::Text => Count::Est(est_lines(size)),
             // Unknown and unread: claims nothing, not even an estimate.
             _ => Count::Binary,
         };
+    }
+    if kind == Kind::Unknown {
+        // Judge from the first block only — never slurp to find out.
+        use std::io::Read;
+        let mut head = [0u8; SNIFF_BYTES];
+        let sniffed = fs::File::open(path)
+            .and_then(|mut f| f.read(&mut head))
+            .unwrap_or(0);
+        if sniffed == 0 && size > 0 {
+            return Count::Binary; // unreadable unknown claims nothing
+        }
+        if crate::kind::looks_binary(&head[..sniffed]) {
+            return Count::Binary;
+        }
     }
     let bytes = match fs::read(path) {
         Ok(b) => b,
@@ -347,15 +398,12 @@ fn count_file_at(path: &Path, size: u64, ctx: &mut LookCtx, visible: bool) -> Co
             }
         }
     };
-    if kind == Kind::Unknown && crate::kind::looks_binary(&bytes[..bytes.len().min(1024)]) {
-        return Count::Binary;
-    }
     let lines = if ctx.non_blank {
         crate::kind::non_blank_lines(&bytes)
     } else {
         crate::kind::physical_lines(&bytes)
     };
-    ctx.reads.charge(bytes.len() as u64, lines);
+    ctx.reads.charge(bytes.len() as u64);
     Count::Lines(lines)
 }
 
@@ -638,6 +686,21 @@ fn gather_at(
         } else {
             None
         };
+        // A gitlink `.git` (submodule / linked work tree) only ever shows
+        // under --inspect/--show-all; when it does, say where it points —
+        // "see inside .git" cannot mean children here (grok, 2026-08-14).
+        let facets = if name == ".git" && meta.is_file() {
+            match fs::read_to_string(path)
+                .ok()
+                .as_deref()
+                .and_then(|t| t.trim().strip_prefix("gitdir:"))
+            {
+                Some(target) => vec![format!("gitdir: {}", target.trim())],
+                None => Vec::new(),
+            }
+        } else {
+            Vec::new()
+        };
         return Ok(Node {
             name,
             is_dir: false,
@@ -649,6 +712,7 @@ fn gather_at(
             lines,
             link,
             link_broken,
+            facets,
             ..Node::default()
         });
     }
@@ -735,14 +799,11 @@ fn gather_dir(
         entries.iter().map(|e| (e.name.as_str(), e.is_dir)),
     );
     walk.furniture_hidden += reading.hidden as u64;
+    // The git facet is filled by a parallel post-pass (git::annotate —
+    // its porcelain subprocess was a serial cost on multi-repo walks);
+    // it inserts at facets[0] so the order stays [git, github].
     let mut facets = Vec::new();
     let has = |n: &str| entries.iter().any(|e| e.name == n);
-    if reading.kinds.iter().any(|k| k == "git")
-        && has(".git")
-        && let Some(f) = crate::git::facet(path)
-    {
-        facets.push(f);
-    }
     if reading.kinds.iter().any(|k| k == "github")
         && has(".github")
         && let Some(f) = crate::github::facet(path)
@@ -750,6 +811,7 @@ fn gather_dir(
         facets.push(f);
     }
     let kinds = reading.kinds;
+    let hidden_dirs = reading.hidden_dirs;
     let entries: Vec<Entry> = entries
         .into_iter()
         .zip(keep)
@@ -757,28 +819,20 @@ fn gather_dir(
         .map(|(e, _)| e)
         .collect();
     if remain == Some(0) {
-        // Depth cutoff: census of the children, deep mass of the subtree.
-        let mass = deep_mass_here(path, ctx, iter_err);
-        let mut census = census_entries(&entries, iter_err);
-        if census.dirs > 0 {
-            let direct_files = census.buckets.iter().map(|(_, n)| *n as u64).sum::<u64>();
-            census.dir_files = Some(Mass {
-                files: mass.files.saturating_sub(direct_files),
-                lines: 0,
-                est: mass.est,
-                bounded: mass.bounded,
-            });
-        }
+        // Depth cutoff: census of the children now; the subtree's deep
+        // mass comes from the parallel deep phase (deep_phase) after the
+        // whole gather — the serial inline walk was the multi-repo cost.
+        let census = census_entries(&entries, iter_err);
         return Ok(Node {
             name,
             is_dir: true,
             leftover: if census.is_empty() { None } else { Some(census) },
             iter_err,
             kinds,
+            hidden_dirs,
             facets,
             mtime,
             link,
-            mass: Some(mass),
             mass_dup,
             ..Node::default()
         });
@@ -807,9 +861,276 @@ fn gather_dir(
         };
         children.push(kid);
     }
-    // Subtree mass, bottom-up: expanded children carry theirs already.
+    // Mass folds bottom-up in the deep phase (mass_up), once every
+    // cutoff subtree has its parallel deep walk done.
+    if let Some(rest) = early {
+        // The walk bound cut this level: the un-statted remainder is a
+        // typed census; its subtrees were never walked, so mass floors
+        // (mass_up reads `cut`).
+        if children.is_empty() {
+            return Ok(Node {
+                name,
+                is_dir: true,
+                leftover: Some(rest),
+                cut,
+                iter_err,
+                kinds,
+                hidden_dirs,
+                facets,
+                mtime,
+                link,
+                mass_dup,
+                ..Node::default()
+            });
+        }
+        return Ok(Node {
+            name,
+            is_dir: true,
+            children,
+            omitted: Some(rest),
+            cut,
+            iter_err,
+            kinds,
+            hidden_dirs,
+            facets,
+            mtime,
+            link,
+            mass_dup,
+            ..Node::default()
+        });
+    }
+    Ok(Node {
+        name,
+        is_dir: true,
+        children,
+        cut,
+        iter_err,
+        kinds,
+        hidden_dirs,
+        facets,
+        mtime,
+        link,
+        mass_dup,
+        ..Node::default()
+    })
+}
+
+/// Threads any parallel post-pass may spend (deep mass, git facets, heat).
+pub const POOL_THREADS: usize = 8;
+
+/// Is this node a depth-cutoff dir awaiting its deep walk?
+fn wants_deep(n: &Node) -> bool {
+    n.is_dir
+        && n.children.is_empty()
+        && n.leftover.is_some()
+        && !n.denied
+        && !n.cycle
+        && !n.other_fs
+}
+
+fn collect_deep_paths(n: &Node, abs: &Path, out: &mut Vec<std::path::PathBuf>) {
+    if wants_deep(n) {
+        out.push(abs.to_path_buf());
+    }
+    for c in &n.children {
+        collect_deep_paths(c, &abs.join(&c.name), out);
+    }
+}
+
+fn assign_deep(n: &mut Node, results: &[Mass], idx: &mut usize) {
+    if wants_deep(n) {
+        let mut m = results[*idx];
+        *idx += 1;
+        m.bounded |= n.iter_err;
+        if let Some(census) = &mut n.leftover
+            && census.dirs > 0
+        {
+            let direct = census.buckets.iter().map(|(_, k)| *k as u64).sum::<u64>();
+            census.dir_files = Some(Mass {
+                files: m.files.saturating_sub(direct),
+                lines: 0,
+                est: m.est,
+                bounded: m.bounded,
+            });
+        }
+        n.mass = Some(m);
+    }
+    for c in &mut n.children {
+        assign_deep(c, results, idx);
+    }
+}
+
+/// The deep phase (hardening 2026-08-14): every cutoff subtree's deep
+/// walk, in parallel over a bounded pool, each with a *deterministic
+/// share* of the remaining read budget and name cap and its own seen-set
+/// — so a directory's printed total is a function of that directory and
+/// its share, not of what a sibling (or an --inspect'ed .git) happened to
+/// read first. A symlink diamond spanning two cutoff subtrees now counts
+/// in each (each dir's total describes that dir); parent aggregates still
+/// count an expanded dup once via `mass_dup`. Then mass folds bottom-up.
+pub fn deep_phase(node: &mut Node, abs: &Path, ctx: &mut LookCtx) {
+    let mut paths = Vec::new();
+    collect_deep_paths(node, abs, &mut paths);
+    if !paths.is_empty() {
+        let n = paths.len() as u64;
+        let read_share = ctx.reads.remaining.map(|r| r / n);
+        let name_share = (ctx.mass_names / n).max(1);
+        let results: Vec<Mass> = std::thread::scope(|s| {
+            let paths = &paths;
+            let map = ctx.map;
+            let view = ctx.view;
+            let kinds = ctx.kinds;
+            let non_blank = ctx.non_blank;
+            let one_fs = ctx.one_fs;
+            let root_dev = ctx.root_dev;
+            let threads = POOL_THREADS.min(paths.len());
+            let handles: Vec<_> = (0..threads)
+                .map(|t| {
+                    s.spawn(move || {
+                        let mut out = Vec::new();
+                        for (i, p) in paths.iter().enumerate() {
+                            if i % threads != t {
+                                continue;
+                            }
+                            let mut c = LookCtx::new(map, view, kinds, non_blank, one_fs, 0);
+                            c.reads = ReadMeter::with(read_share);
+                            c.mass_names = name_share;
+                            c.root_dev = root_dev;
+                            // Guard against a symlink looping back to the
+                            // cutoff dir itself.
+                            if let Ok(meta) = fs::metadata(p) {
+                                let key = (meta.dev(), meta.ino());
+                                c.seen.insert(key);
+                                c.dir_stack.push(key);
+                            }
+                            out.push((i, deep_mass(p, &mut c)));
+                        }
+                        out
+                    })
+                })
+                .collect();
+            let mut results = vec![Mass::default(); paths.len()];
+            for h in handles {
+                for (i, m) in h.join().expect("deep-mass worker") {
+                    results[i] = m;
+                }
+            }
+            results
+        });
+        let mut idx = 0;
+        assign_deep(node, &results, &mut idx);
+    }
+    mass_up(node, ctx.kinds);
+}
+
+/// Names visited per hidden furniture dir before its count floors (`≥`).
+const HIDDEN_COUNT_CAP: u64 = 20_000;
+
+/// Deep file-count by readdir type-hints alone — no stats, cheap even for
+/// a big `target/`. Symlinks are left uncounted and floor the figure.
+fn count_names(path: &Path, cap: &mut u64, bounded: &mut bool) -> u64 {
+    let Ok(rd) = fs::read_dir(path) else {
+        *bounded = true;
+        return 0;
+    };
+    let mut files = 0;
+    for ent in rd {
+        let Ok(ent) = ent else {
+            *bounded = true;
+            continue;
+        };
+        if *cap == 0 {
+            *bounded = true;
+            return files;
+        }
+        *cap -= 1;
+        match ent.file_type() {
+            Ok(t) if t.is_dir() => files += count_names(&ent.path(), cap, bounded),
+            Ok(t) if t.is_file() => files += 1,
+            _ => *bounded = true,
+        }
+    }
+    files
+}
+
+/// Presence survives hiding (design/furniture.md, three testimonies
+/// 2026-08-14): every hidden furniture dir gets a deep file-count so the
+/// has-spot can say `archive ≈127f` — magnitude without a child slot.
+/// Bounded-parallel like the other post-passes.
+pub fn hidden_phase(node: &mut Node, abs: &Path) {
+    fn collect(n: &Node, abs: &Path, out: &mut Vec<std::path::PathBuf>) {
+        for (_, name) in &n.hidden_dirs {
+            out.push(abs.join(name));
+        }
+        for c in &n.children {
+            collect(c, &abs.join(&c.name), out);
+        }
+    }
+    fn assign(n: &mut Node, results: &[(u64, bool)], idx: &mut usize) {
+        if !n.hidden_dirs.is_empty() {
+            let mut per: std::collections::BTreeMap<String, (u64, bool)> =
+                std::collections::BTreeMap::new();
+            for (kind, _) in &n.hidden_dirs {
+                let (files, bounded) = results[*idx];
+                *idx += 1;
+                let e = per.entry(kind.clone()).or_insert((0, false));
+                e.0 += files;
+                e.1 |= bounded;
+            }
+            n.has_counts = per.into_iter().map(|(k, (f, b))| (k, f, b)).collect();
+        }
+        for c in &mut n.children {
+            assign(c, results, idx);
+        }
+    }
+    let mut paths = Vec::new();
+    collect(node, abs, &mut paths);
+    if paths.is_empty() {
+        return;
+    }
+    let results: Vec<(u64, bool)> = std::thread::scope(|s| {
+        let paths = &paths;
+        let threads = POOL_THREADS.min(paths.len());
+        let handles: Vec<_> = (0..threads)
+            .map(|t| {
+                s.spawn(move || {
+                    let mut out = Vec::new();
+                    for (i, p) in paths.iter().enumerate() {
+                        if i % threads != t {
+                            continue;
+                        }
+                        let mut cap = HIDDEN_COUNT_CAP;
+                        let mut bounded = false;
+                        let files = count_names(p, &mut cap, &mut bounded);
+                        out.push((i, (files, bounded)));
+                    }
+                    out
+                })
+            })
+            .collect();
+        let mut results = vec![(0, false); paths.len()];
+        for h in handles {
+            for (i, r) in h.join().expect("hidden-count worker") {
+                results[i] = r;
+            }
+        }
+        results
+    });
+    let mut idx = 0;
+    assign(node, &results, &mut idx);
+}
+
+/// Fold mass bottom-up over expanded dirs (children carry theirs already
+/// — cutoff nodes from the deep phase, files from their counts).
+fn mass_up(node: &mut Node, kinds: &crate::kind::Map) {
+    for c in &mut node.children {
+        mass_up(c, kinds);
+    }
+    if !node.is_dir || node.denied || node.cycle || node.other_fs || wants_deep(node) {
+        return;
+    }
     let mut mass = Mass::default();
-    for c in &children {
+    for c in &node.children {
         if c.is_dir {
             match (&c.mass, c.mass_dup) {
                 (Some(m), false) => mass.absorb(*m),
@@ -827,74 +1148,17 @@ fn gather_dir(
                 Some(n) => mass.lines += n,
                 None => {
                     if let Some(s) = c.size
-                        && ctx.kinds.kind(&c.name) == crate::kind::Kind::Text
+                        && kinds.kind(&c.name) == crate::kind::Kind::Text
                     {
-                        mass.lines += ctx.reads.estimate(s);
+                        mass.lines += est_lines(s);
                         mass.est = true;
                     }
                 }
             }
         }
     }
-    mass.bounded |= iter_err;
-    if let Some(rest) = early {
-        // The walk bound cut this level: the un-statted remainder is a
-        // typed census; its subtrees were never walked, so mass floors.
-        mass.bounded = true;
-        if children.is_empty() {
-            return Ok(Node {
-                name,
-                is_dir: true,
-                leftover: Some(rest),
-                cut,
-                iter_err,
-                kinds,
-                facets,
-                mtime,
-                link,
-                mass: Some(mass),
-                mass_dup,
-                ..Node::default()
-            });
-        }
-        return Ok(Node {
-            name,
-            is_dir: true,
-            children,
-            omitted: Some(rest),
-            cut,
-            iter_err,
-            kinds,
-            facets,
-            mtime,
-            link,
-            mass: Some(mass),
-            mass_dup,
-            ..Node::default()
-        });
-    }
-    Ok(Node {
-        name,
-        is_dir: true,
-        children,
-        cut,
-        iter_err,
-        kinds,
-        facets,
-        mtime,
-        link,
-        mass: Some(mass),
-        mass_dup,
-        ..Node::default()
-    })
-}
-
-/// Deep mass at a cutoff. The cutoff dir itself is already on the stack
-/// and in `seen`, so only its innards are walked here.
-fn deep_mass_here(path: &Path, ctx: &mut LookCtx, iter_err: bool) -> Mass {
-    let mut m = deep_mass(path, ctx);
-    m.bounded |= iter_err;
-    m
+    mass.bounded |= node.iter_err || node.cut;
+    node.mass = Some(mass);
 }
 
 fn stamp_of(meta: &fs::Metadata) -> Option<i64> {

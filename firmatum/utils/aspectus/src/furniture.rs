@@ -82,13 +82,23 @@ pub fn default_rules() -> Vec<Rule> {
         // Specialized plugins hang on these two (src/git.rs, src/github.rs).
         rule(".git", &["git"], Hide),
         rule(".github", &["github"], Hide),
-        rule(".gitignore", &["git"], Hide),
-        rule(".gitmodules", &["git"], Hide),
-        rule(".gitattributes", &["git"], Hide),
+        // The ignore-file family claims its own words, not `git` — a
+        // `.gitignore` inside `.pytest_cache/` is not a repo, and one bad
+        // `git` row poisoned the whole facet's credibility (both hallway
+        // testers, 2026-08-14). Where a real `.git` also claims `git`,
+        // these words fold away as subsumed (read_names).
+        rule(".gitignore", &["gitignore"], Hide),
+        rule(".gitmodules", &["gitmodules"], Hide),
+        rule(".gitattributes", &["gitattributes"], Hide),
         // Build debris.
         rule("target/", &["build"], Hide),
         rule("node_modules/", &["build", "js"], Hide),
         rule("__pycache__/", &["build", "python"], Hide),
+        rule("*.egg-info/", &["build", "python"], Hide),
+        rule(".pytest_cache/", &["build", "python"], Hide),
+        rule(".mypy_cache/", &["build", "python"], Hide),
+        rule(".ruff_cache/", &["build", "python"], Hide),
+        rule(".tox/", &["build", "python"], Hide),
         rule(".build/", &["build"], Hide),
         rule(".ruby-lsp/", &["build", "ruby"], Hide),
         // Recognized machinery of a place.
@@ -163,6 +173,17 @@ impl Map {
         Map { rules: front }
     }
 
+    /// Every kind this map can claim, sorted — the `--inspect` refusal menu.
+    pub fn known_kinds(&self) -> Vec<String> {
+        let mut set = BTreeSet::new();
+        for r in &self.rules {
+            for k in &r.kinds {
+                set.insert(k.clone());
+            }
+        }
+        set.into_iter().collect()
+    }
+
     /// First matching rule, or `None` — an unknown name is just a child.
     pub fn classify(&self, name: &str, is_dir: bool) -> Option<&Rule> {
         self.rules
@@ -178,6 +199,18 @@ pub struct Reading {
     pub kinds: Vec<String>,
     /// Names hidden or omitted from the child list.
     pub hidden: usize,
+    /// Hidden *directories*, as (claiming kind, name) — the deep phase
+    /// counts them so presence survives hiding (design/furniture.md,
+    /// three testimonies 2026-08-14). Specialized kinds (git, github)
+    /// carry their own facets and are not listed here.
+    pub hidden_dirs: Vec<(String, String)>,
+}
+
+/// Kinds whose presence is already spoken by a specialized facet — their
+/// hidden mass would be noise (`.git`'s object store is not the repo's
+/// working weight).
+fn speaks_for_itself(kind: &str) -> bool {
+    kind == "git" || kind == "github"
 }
 
 /// Fold a directory's names through the map. Returns the reading; the
@@ -189,6 +222,7 @@ where
     let mut kinds = BTreeSet::new();
     let mut keep = Vec::new();
     let mut hidden = 0usize;
+    let mut hidden_dirs = Vec::new();
     for (name, is_dir) in names {
         match map.classify(name, is_dir) {
             None => keep.push(true),
@@ -199,15 +233,29 @@ where
                 let listed = r.fate == Fate::Mark || view.opened(&r.kinds);
                 if !listed {
                     hidden += 1;
+                    if is_dir
+                        && let Some(k) = r.kinds.iter().find(|k| !speaks_for_itself(k))
+                    {
+                        hidden_dirs.push((k.clone(), name.to_string()));
+                    }
                 }
                 keep.push(listed);
             }
+        }
+    }
+    // A real `.git` subsumes the ignore-file family's words — the repo
+    // claim covers its own config files; `[has: git, gitignore]` at every
+    // repo root would be noise.
+    if kinds.contains("git") {
+        for k in ["gitignore", "gitmodules", "gitattributes"] {
+            kinds.remove(k);
         }
     }
     (
         Reading {
             kinds: kinds.into_iter().collect(),
             hidden,
+            hidden_dirs,
         },
         keep,
     )

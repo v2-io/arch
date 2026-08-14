@@ -206,8 +206,9 @@ fn recent_mtime_speaks() {
         .unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(line_of(&o, "hot.md").contains('Z'), "recent speaks: {o}");
-    assert!(!line_of(&o, "old.md").contains('Z'), "old silent: {o}");
+    // mtime speaks in its relative default form now (2026-08-14).
+    assert!(line_of(&o, "hot.md").contains("ago"), "recent speaks: {o}");
+    assert!(!line_of(&o, "old.md").contains("ago"), "old silent: {o}");
 }
 
 /// Subfeature 9: a node listed at --lines 4 and --lines 0 carries the same
@@ -227,9 +228,12 @@ fn budget_independent() {
         .unwrap();
     let (_, o_all, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "0"]);
     let (_, o_tight, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "5"]);
+    // Compare facts, not padding: column tab-stops are a function of each
+    // look's own content, so the two looks may align differently.
+    let squeeze = |s: &str| s.split_whitespace().collect::<Vec<_>>().join(" ");
     assert_eq!(
-        line_of(&o_all, "whale.md"),
-        line_of(&o_tight, "whale.md"),
+        squeeze(line_of(&o_all, "whale.md")),
+        squeeze(line_of(&o_tight, "whale.md")),
         "identical quiet facts across budgets"
     );
     assert!(line_of(&o_tight, "whale.md").contains("80M"));

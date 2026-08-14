@@ -80,6 +80,7 @@ fn cutoff_dirs_still_claim_their_kinds() {
     // and the line still says what the place is.
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
     let proj = o.lines().find(|l| l.contains("proj/")).unwrap();
-    assert!(proj.contains("[has: build, rust]"), "{o}");
+    // The hidden target/'s magnitude rides its kind word (2026-08-14).
+    assert!(proj.contains("[has: build ≈") && proj.contains("rust]"), "{o}");
     assert!(proj.contains("[Cargo.toml]"), "census counts children of the look only: {o}");
 }

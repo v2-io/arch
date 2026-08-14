@@ -18,6 +18,8 @@ use std::process::Command;
 
 pub const DEFAULT_HALF_LIFE: f64 = 7.0;
 const LOG_CAP: usize = 400;
+/// Bytes of `git log` output read per repo before the tail is dropped.
+const LOG_BYTE_CAP: u64 = 4 * 1024 * 1024;
 const NOISE_BASENAMES: &[&str] = &["Cargo.toml", "SOURCE_REV"];
 
 fn is_noise(path: &str) -> bool {
@@ -39,7 +41,13 @@ impl RepoHeat {
     /// `None` when git is unavailable or the log fails — then the look
     /// claims no heat (a fact absent, never faked).
     pub fn obtain(root: &Path, half_life: f64) -> Option<RepoHeat> {
-        let out = Command::new("git")
+        // Spawn with a byte cap instead of an unbounded slurp: a repo
+        // whose log emits pathological volume (import commits touching
+        // huge trees) gets its oldest tail dropped at the cap — ages are
+        // newest-first, so what's lost is what the decay already zeroed
+        // (hardening 2026-08-14; largest measured local log ≈1.2 MB).
+        use std::io::Read;
+        let mut child = Command::new("git")
             .arg("-C")
             .arg(root)
             .args([
@@ -49,12 +57,33 @@ impl RepoHeat {
                 "--name-only",
                 "--diff-filter=ACMR",
             ])
-            .output()
+            .stdin(std::process::Stdio::null())
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::null())
+            .spawn()
             .ok()?;
-        if !out.status.success() {
+        let mut buf = Vec::new();
+        let capped = {
+            let stdout = child.stdout.take()?;
+            let mut limited = stdout.take(LOG_BYTE_CAP);
+            limited.read_to_end(&mut buf).ok()?;
+            buf.len() as u64 >= LOG_BYTE_CAP
+        };
+        let ok = if capped {
+            let _ = child.kill();
+            let _ = child.wait();
+            // Drop the possibly-torn last line.
+            if let Some(i) = buf.iter().rposition(|&b| b == b'\n') {
+                buf.truncate(i);
+            }
+            true
+        } else {
+            child.wait().ok()?.success()
+        };
+        if !ok {
             return None;
         }
-        let text = String::from_utf8_lossy(&out.stdout);
+        let text = String::from_utf8_lossy(&buf);
         // Newest first: age = commit index. If the log reached the initial
         // commit (fewer than LOG_CAP returned), its touches are inventory
         // only — no heat contribution (the model excludes it).
@@ -186,14 +215,28 @@ pub fn annotate(node: &mut crate::n_level::Node, abs: &Path, half_life: f64) {
     }
     collect_repo_roots(node, abs, &mut roots);
     roots.dedup();
+    // Bounded pool: a 30-repo ~/src walk used to fork 30+ concurrent
+    // gits (hardening 2026-08-14).
     let obtained: HashMap<PathBuf, RepoHeat> = std::thread::scope(|s| {
-        let handles: Vec<_> = roots
-            .iter()
-            .map(|r| (r.clone(), s.spawn(move || RepoHeat::obtain(r, half_life))))
+        let roots = &roots;
+        let threads = crate::n_level::POOL_THREADS.min(roots.len().max(1));
+        let handles: Vec<_> = (0..threads)
+            .map(|t| {
+                s.spawn(move || {
+                    roots
+                        .iter()
+                        .enumerate()
+                        .filter(|(i, _)| i % threads == t)
+                        .filter_map(|(_, r)| {
+                            RepoHeat::obtain(r, half_life).map(|h| (r.clone(), h))
+                        })
+                        .collect::<Vec<_>>()
+                })
+            })
             .collect();
         handles
             .into_iter()
-            .filter_map(|(r, h)| h.join().ok().flatten().map(|heat| (r, heat)))
+            .flat_map(|h| h.join().expect("heat worker"))
             .collect()
     });
     let repo = enclosing_repo(abs).and_then(|r| obtained.get(&r));

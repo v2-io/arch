@@ -72,7 +72,10 @@ fn well_known_names_fold_to_parent_state() {
     assert!(!o.contains("target/"), "build debris listed: {o}");
     assert!(!o.contains("__pycache__"), "{o}");
     assert!(!o.contains(".claude"), "{o}");
-    assert!(o.contains("[has: agents, build, python]"), "kind spot: {o}");
+    // Hidden dirs now carry their magnitude on the kind word (presence
+    // survives hiding, 2026-08-14): `agents ≈1f`, `build ≈2f`.
+    assert!(o.contains("[has: agents ≈") && o.contains("build ≈") && o.contains("python]"),
+        "kind spot with hidden magnitudes: {o}");
     assert!(o.contains(".mystery/"), "unknown hidden name stays a child: {o}");
     assert!(o.contains("src.rs"), "{o}");
 }
@@ -94,7 +97,7 @@ fn hidden_names_do_not_join_censuses() {
     // Root is the second line: the stamp has its own line above it.
     let root = o.lines().nth(1).unwrap();
     assert!(!root.contains("3 dir"), "hidden dirs joined the picture: {o}");
-    assert!(o.contains("[has: agents, build, python]"), "{o}");
+    assert!(o.contains("[has: agents ≈") && o.contains("python]"), "{o}");
 }
 
 #[test]

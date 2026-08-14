@@ -73,7 +73,9 @@ pub fn defaults() -> BTreeMap<String, String> {
     m.insert("columns.owner".into(), "quiet".into());
     m.insert("columns.filekind".into(), "quiet".into());
     m.insert("format.size".into(), "human".into());
-    m.insert("format.mtime".into(), "iso-8601".into());
+    // Relative age (`2.2h ago`): one time register with the heat cluster
+    // (format-consistency steer 2026-08-14). JSON stays iso-8601.
+    m.insert("format.mtime".into(), "relative".into());
     m.insert("format.line-count".into(), "physical".into());
     m.insert("format.owner".into(), "name".into());
     // The look's serialization (design/json.md): text for eyes (default),

@@ -183,7 +183,7 @@ fn same_look_as_text() {
     // The same four survivors, in the same order; the same leftover count.
     let listed: Vec<String> = text
         .lines()
-        .skip(2)
+        .filter(|l| l.contains("── ")) // children only, not header/headings
         .filter(|l| !l.contains("[+"))
         .filter_map(|l| l.rsplit("── ").next())
         .map(|s| s.split_whitespace().next().unwrap().to_string())
@@ -193,9 +193,12 @@ fn same_look_as_text() {
     }
     let json_names = j.matches("\"name\":\"f").count();
     assert_eq!(json_names, listed.len(), "no extra nodes for machines: {j}");
-    assert!(text.contains("[+ md×8]"), "{text}");
+    // md×9, not ×8: the text look's column-headings line (2026-08-14)
+    // costs one child slot, and JSON carries the *same* look — same
+    // budget, same survivors — rather than growing wider for machines.
+    assert!(text.contains("[+ md×9]"), "{text}");
     assert!(
-        j.contains("\"omitted\":{\"total\":8"),
+        j.contains("\"omitted\":{\"total\":9"),
         "leaf census as an object: {j}"
     );
 }

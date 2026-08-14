@@ -103,7 +103,9 @@ fn heat_cluster_in_repo() {
     assert!(hot.contains("· 0"), "score paired with an age: {hot:?}");
     assert!(hot.contains("ago"), "human-relative age: {hot:?}");
     let cold = line_of(&o, "cold.md");
-    assert!(!cold.contains("ago"), "initial-commit-only file claims no heat: {cold:?}");
+    // "· 0" is the cluster's own shape; plain "ago" may now also be the
+    // quiet mtime speaking in its relative default (2026-08-14).
+    assert!(!cold.contains("· 0"), "initial-commit-only file claims no heat: {cold:?}");
 }
 
 #[test]
@@ -112,7 +114,9 @@ fn no_heat_outside_git() {
     fs::write(dir.join("a.md"), "1\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(!o.contains("ago"), "no aliveness cluster outside git: {o}");
+    // The quiet mtime may speak "0m ago" on a fresh file; the *cluster*
+    // (score · age) is what git-lessness forbids.
+    assert!(!o.contains('·'), "no aliveness cluster outside git: {o}");
 }
 
 #[test]
@@ -131,8 +135,8 @@ fn noise_basenames_claim_nothing() {
     }
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(!line_of(&o, "Cargo.toml").contains("ago"), "noise basename, heat 0 → silent: {o}");
-    assert!(line_of(&o, "real.rs").contains("ago"), "{o}");
+    assert!(!line_of(&o, "Cargo.toml").contains('·'), "noise basename, heat 0 → silent: {o}");
+    assert!(line_of(&o, "real.rs").contains("· 0"), "{o}");
 }
 
 #[test]
@@ -164,7 +168,9 @@ fn config_can_turn_heat_off() {
     fs::write(xdg.join("aspectus/aspectus.toml"), "columns.heat = \"off\"\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(!o.contains("ago"), "off removes the cluster: {o}");
+    // The quiet mtime's relative voice may still say "ago"; the score-dot
+    // cluster is what `off` removes.
+    assert!(!o.contains("· 0"), "off removes the cluster: {o}");
 }
 
 #[test]
