@@ -39,7 +39,7 @@ Aspectus describes itself. That is the data of this invocation.
 
 ## Help page
 
-Help is the law channel: it must say what the tool *does* in words a first-time reader already has. The first line is the version plus a plain gloss (`print-and-quit glance at a directory tree`). *Locus* and *aspecta* are introduced after that, not as the slogan. Shape: usage → what it is → commands → options → examples.
+Help is the law channel. The “what it is” block is the def prose (aspectus, locus, aspecta, the neighbors it is not) — not a paraphrase and not a slogan. First line is the version line. Shape: usage → what it is → commands → options → examples.
 
 ## Version line
 

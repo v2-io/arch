@@ -43,7 +43,7 @@ const OPTIONS: &[(&str, &str)] = &[
 
 fn help_page() -> String {
     let mut out = format!(
-        "{ver} — print-and-quit glance at a directory tree\n\
+        "{ver}\n\
          \n\
          usage: aspectus [PATH]\n\
                 aspectus help\n\
@@ -52,14 +52,25 @@ fn help_page() -> String {
                 aspectus [-h|--help]\n\
                 aspectus [-v|--version]\n\
          \n\
-         Run it on a path (or the current directory). It prints the place and\n\
-         its immediate children, then exits. That print is an aspecta: the\n\
-         seen-things of the place, right now — a picture, not an essay.\n\
+         aspectus is the faculty of looking at a locus: the look itself, and\n\
+         the command that produces it. You run it on a locus. The path\n\
+         argument is how the command is given a place.\n\
          \n\
-         The place it looks at is a locus (a project, sandbox, machine —\n\
-         wherever you are acting). aspectus is the looking; it does not\n\
-         implement the place. It is not a TUI and not ls. It is not who the\n\
-         place is (carta) and not what a mind is shown (conspectus).\n\
+         A locus is the location of action — project, sandbox, channel,\n\
+         environment, machine. This tool does not implement a locus. It looks\n\
+         at one. Today that look is of the filesystem face of the place (the\n\
+         tree under the path).\n\
+         \n\
+         An aspecta is one look: the seen-things from one running of aspectus\n\
+         on one locus. Two prints of the same path are two aspecta. They may\n\
+         differ. It is the picture, not a summary essay about the place, and\n\
+         not the place itself.\n\
+         \n\
+         It is not carta (who the place is). It is not conspectus (what a mind\n\
+         is shown). It is not percepta (ongoing status and health). aspectus\n\
+         is how the place looks right now.\n\
+         \n\
+         Default: the place and its immediate children, then it exits.\n\
          \n\
          Commands:\n",
         ver = version_line()
