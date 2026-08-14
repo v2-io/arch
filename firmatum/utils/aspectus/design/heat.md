@@ -1,0 +1,24 @@
+# Heat
+
+*Seeded 2026-08-14 from Joseph's pointers to shipped, tuned prior art. Adopt, don't invent.*
+
+## The model: adopt `git-heat`'s
+
+`~/.local/bin/git-heat` (also `firmatum/utils/code/`) carries a worked commit-decay model, already tuned in use:
+
+- `raw = Σ over non-initial touches of exp(-age/τ)`, **age in commits behind HEAD** (not wall-clock), `τ = half_life / ln 2`, normalized `heat = 2·(1−exp(−1/τ))·raw` so touched-every-commit converges to ~2 at any half-life. Half-life choices `21…1`, default **7**.
+- **Dir heat = max of non-noise leaves beneath** (sum drowns in big dirs) — this is heat's `deep-agg` office answered.
+- **Initial commit excluded**; **noise basenames** (`Cargo.toml`, `SOURCE_REV`, extensible) get heat 0 and don't join the rollup — kin to furniture's exclusion from mass; the noise map likely merges with the furniture/config map rather than living separately.
+- The lattice's `H~N` / introducing-sha / last-touch-sha facts are the same obtain (one `git log --name-only` pass); one row's implementation feeds all three.
+
+## The weight office: `orient-rank`'s lessons
+
+`arch/vivarium/bin/orient-rank` is the estate's shipped orientation-importance ranker, and two of its decisions transfer to aspectus's **weight** office directly:
+
+- **Heat is one factor, not the ranking.** It combines freshness / churn / mentions / preeminence / working-surface / pagerank via rank-CDF normalization + geometric mean (a weak axis pulls harder than arithmetic — deliberate), with a "tip fiat" pinning the very-recently-touched to the top. Aspectus's allocator weight should expect the same shape eventually: heat, Focus, importance composing — the lattice Open ("weight office algebra") now has prior art.
+- **Mark in place; don't reorder.** `--mark-outline` stars hot segments *in outline order* because "agents free-read by outline order, not rank order" — the exact philosophy of aspectus Focus ("matches stay in place; surroundings are not thrown away") independently arrived at. Heat in the look marks hot lines where they stand; it does not resort the tree unless Sort is asked for heat.
+- Its docstring's humility is worth inheriting verbatim: *"This is deliberately imperfect. Equal-weight CDF-normalized factors are good enough to move with confidence; rebalance when we have evidence."*
+
+## Aspectus scope
+
+Visible set only (never a reason to widen the walk); omit outside git; `signa`-density is the natural text format (lattice). Obtain is one log pass per repo — cache-keyed by HEAD, which makes it the second-cheapest cache client after mass. Whether aspectus *shells to* `git-heat`, imports its model, or reimplements the ~40-line core is the implementer's call — the model constants above are the law either way.
