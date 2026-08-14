@@ -78,7 +78,9 @@ fn denied_dir_says_so_when_expanded() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "2"]);
     unlock(&dir);
     assert_eq!(c, 0, "one denied child does not fail the look: {e}");
-    assert!(o.contains("secrets/  [denied]"), "{o}");
+    // Non-name material sits at the look's tab stop (design/columns.md).
+    let line = o.lines().find(|l| l.contains("secrets/")).expect(&o);
+    assert!(line.contains("[denied]"), "{o}");
     assert!(!o.contains("hidden.txt"), "{o}");
     // The readable neighbors still render normally.
     assert!(o.contains("a.txt"), "{o}");
@@ -94,10 +96,10 @@ fn denied_dir_at_depth_cutoff_is_not_an_empty_census() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     unlock(&dir);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("secrets/  [denied]"), "{o}");
+    let line = o.lines().find(|l| l.contains("secrets/")).expect(&o);
+    assert!(line.contains("[denied]"), "{o}");
     // It must not print a census claiming knowledge it does not have.
-    let rest = o.replace("secrets/  [denied]", "secrets/");
-    assert!(!rest.contains("secrets/  ["), "{o}");
+    assert_eq!(line.matches('[').count(), 1, "census on a denied dir: {o}");
     // open/ still censuses.
     assert!(o.contains("[1: 1 .txt]"), "{o}");
 }

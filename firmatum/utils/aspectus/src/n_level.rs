@@ -58,6 +58,11 @@ pub struct Node {
     pub cut: bool,
     /// An entry mid-iteration errored; this dir's listing may be missing names.
     pub iter_err: bool,
+    /// Kinds claimed on this line's gathering spot: `[kind: git, rust, …]`.
+    /// Fed by furniture and mark rows; empty prints nothing.
+    pub kinds: Vec<String>,
+    /// Specialized-furniture facets, already phrased (`git: br<main> @…`).
+    pub facets: Vec<String>,
 }
 
 /// Counts names statted. `None` = unbounded.
@@ -72,6 +77,9 @@ pub struct WalkBudget {
     remaining: Option<u64>,
     pub tripped: bool,
     pub statted: u64,
+    /// Names the furniture map kept off the child lists this walk —
+    /// state on their parents instead. For `--explain-budget`.
+    pub furniture_hidden: u64,
 }
 
 impl WalkBudget {
@@ -81,6 +89,7 @@ impl WalkBudget {
             remaining: if bound == 0 { None } else { Some(bound) },
             tripped: false,
             statted: 0,
+            furniture_hidden: 0,
         }
     }
 
@@ -99,9 +108,15 @@ impl WalkBudget {
 }
 
 /// `depth` is how many generations below the root to print. `0` = no limit.
-pub fn gather(path: &Path, depth: u32, walk: &mut WalkBudget) -> io::Result<Node> {
+pub fn gather(
+    path: &Path,
+    depth: u32,
+    walk: &mut WalkBudget,
+    map: &crate::furniture::Map,
+    view: &crate::furniture::View,
+) -> io::Result<Node> {
     let remain = if depth == 0 { None } else { Some(depth) };
-    gather_at(path, remain, walk)
+    gather_at(path, remain, walk, map, view)
 }
 
 /// One name as readdir reported it, before any stat.
@@ -158,7 +173,13 @@ fn census_entries(entries: &[Entry], iter_err: bool) -> Census {
     }
 }
 
-fn gather_at(path: &Path, remain: Option<u32>, walk: &mut WalkBudget) -> io::Result<Node> {
+fn gather_at(
+    path: &Path,
+    remain: Option<u32>,
+    walk: &mut WalkBudget,
+    map: &crate::furniture::Map,
+    view: &crate::furniture::View,
+) -> io::Result<Node> {
     let meta = fs::symlink_metadata(path)?;
     let is_dir = meta.is_dir();
     let name = path
@@ -180,6 +201,38 @@ fn gather_at(path: &Path, remain: Option<u32>, walk: &mut WalkBudget) -> io::Res
             ..Node::default()
         });
     };
+    // Furniture folds into state on this line before any census or child
+    // list — a hidden name is not a child of the look, so it never joins a
+    // census silently; the kind spot is what says it is here. Recognition
+    // is name-based, so it works at the depth cutoff too, and costs no
+    // walk budget (the plugins read only the recognized machinery itself).
+    let (reading, keep) = crate::furniture::read_names(
+        map,
+        view,
+        entries.iter().map(|e| (e.name.as_str(), e.is_dir)),
+    );
+    walk.furniture_hidden += reading.hidden as u64;
+    let mut facets = Vec::new();
+    let has = |n: &str| entries.iter().any(|e| e.name == n);
+    if reading.kinds.iter().any(|k| k == "git")
+        && has(".git")
+        && let Some(f) = crate::git::facet(path)
+    {
+        facets.push(f);
+    }
+    if reading.kinds.iter().any(|k| k == "github")
+        && has(".github")
+        && let Some(f) = crate::github::facet(path)
+    {
+        facets.push(f);
+    }
+    let kinds = reading.kinds;
+    let entries: Vec<Entry> = entries
+        .into_iter()
+        .zip(keep)
+        .filter(|(_, listed)| *listed)
+        .map(|(e, _)| e)
+        .collect();
     if remain == Some(0) {
         let census = census_entries(&entries, iter_err);
         return Ok(Node {
@@ -187,6 +240,8 @@ fn gather_at(path: &Path, remain: Option<u32>, walk: &mut WalkBudget) -> io::Res
             is_dir: true,
             leftover: if census.total == 0 { None } else { Some(census) },
             iter_err,
+            kinds,
+            facets,
             ..Node::default()
         });
     }
@@ -209,6 +264,8 @@ fn gather_at(path: &Path, remain: Option<u32>, walk: &mut WalkBudget) -> io::Res
                     leftover: Some(rest),
                     cut,
                     iter_err,
+                    kinds: kinds.clone(),
+                    facets: facets.clone(),
                     ..Node::default()
                 });
             }
@@ -219,12 +276,14 @@ fn gather_at(path: &Path, remain: Option<u32>, walk: &mut WalkBudget) -> io::Res
                 omitted: Some(rest),
                 cut,
                 iter_err,
+                kinds: kinds.clone(),
+                facets: facets.clone(),
                 ..Node::default()
             });
         }
         walk.charge();
         let child_path = path.join(&ent.name);
-        let kid = match gather_at(&child_path, child_remain, walk) {
+        let kid = match gather_at(&child_path, child_remain, walk, map, view) {
             Ok(kid) => kid,
             Err(_) => Node {
                 name: ent.name.clone(),
@@ -241,6 +300,8 @@ fn gather_at(path: &Path, remain: Option<u32>, walk: &mut WalkBudget) -> io::Res
         children,
         cut,
         iter_err,
+        kinds,
+        facets,
         ..Node::default()
     })
 }
@@ -439,6 +500,19 @@ fn suffix_label(name: &str) -> String {
     }
 }
 
+/// The gathering spot for what this place *is*: specialized facets first,
+/// then the kind list (src/def-furniture.md). Empty claims print nothing.
+fn state_marks(n: &Node) -> String {
+    let mut s = String::new();
+    for f in &n.facets {
+        s.push_str(&format!("  [{f}]"));
+    }
+    if !n.kinds.is_empty() {
+        s.push_str(&format!("  [kind: {}]", n.kinds.join(", ")));
+    }
+    s
+}
+
 /// INFO to hang on a name: the walk's confession about this line.
 fn info_marks(n: &Node) -> String {
     let mut s = String::new();
@@ -456,37 +530,103 @@ fn info_marks(n: &Node) -> String {
     s
 }
 
+/// One printed line, before alignment: the name material (indent + branch +
+/// name) and the non-name material that lands at the look's tab stop.
+struct Row {
+    /// Tree glyphs and branch, uncolored.
+    left_prefix: String,
+    /// The name itself (trailing `/` on dirs), uncolored.
+    name: String,
+    color_dir: bool,
+    /// Censuses, facets, kind spot, look-marks — `"  "`-joined, or empty.
+    right: String,
+}
+
+impl Row {
+    fn name_width(&self) -> usize {
+        self.left_prefix.chars().count() + self.name.chars().count()
+    }
+}
+
+/// Non-name material lands at a computed pseudo-tab-stop: a pure function
+/// of the look's content (longest name column, capped), never terminal
+/// width (design/columns.md, alignment decided 2026-08-14). A name past
+/// the cap goes ragged on its own line only.
+const STOP_CAP: usize = 48;
+const GAP: usize = 2;
+
+fn paint(rows: Vec<Row>, color: bool) -> String {
+    let stop = rows
+        .iter()
+        .filter(|r| !r.right.is_empty())
+        .map(|r| r.name_width() + GAP)
+        .max()
+        .unwrap_or(0)
+        .min(STOP_CAP);
+    let mut out = String::new();
+    for r in rows {
+        out.push_str(&r.left_prefix);
+        let painted = if r.color_dir {
+            crate::color::dir(&r.name, color)
+        } else {
+            r.name.clone()
+        };
+        out.push_str(&painted);
+        if !r.right.is_empty() {
+            let w = r.name_width();
+            let pad = if w + GAP <= stop { stop - w } else { GAP };
+            out.push_str(&" ".repeat(pad));
+            out.push_str(&r.right);
+        }
+        out.push('\n');
+    }
+    out
+}
+
+/// The non-name material for one node: dir census, facets, kind spot, marks.
+fn right_of(n: &Node) -> String {
+    let mut parts = Vec::new();
+    if let Some(c) = &n.leftover {
+        let extra = c.render();
+        if !extra.is_empty() {
+            parts.push(extra);
+        }
+    }
+    let state = state_marks(n);
+    if !state.is_empty() {
+        parts.push(state.trim_start().to_string());
+    }
+    let marks = info_marks(n);
+    if !marks.is_empty() {
+        parts.push(marks.trim_start().to_string());
+    }
+    parts.join("  ")
+}
+
 pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str) -> String {
     let mut root = root_path.to_string();
     if tree.is_dir && !root.ends_with('/') {
         root.push('/');
     }
-    let root = crate::color::dir(&root, color);
-    let mut root_census = String::new();
-    if let Some(c) = &tree.leftover {
-        let extra = c.render();
-        if !extra.is_empty() {
-            root_census = format!("  {extra}");
+    let root_right = {
+        let rest = right_of(tree);
+        if rest.is_empty() {
+            stamp.to_string()
+        } else {
+            format!("{stamp}  {rest}")
         }
-    }
-    let header = format!("{root}  {stamp}{root_census}{}", info_marks(tree));
-    if tree.children.is_empty() && tree.omitted.is_none() {
-        return format!("{header}\n");
-    }
-    let mut lines = vec![header];
-    emit(&tree.children, tree.omitted.as_ref(), "", color, &mut lines);
-    let mut s = lines.join("\n");
-    s.push('\n');
-    s
+    };
+    let mut rows = vec![Row {
+        left_prefix: String::new(),
+        name: root,
+        color_dir: true,
+        right: root_right,
+    }];
+    emit(&tree.children, tree.omitted.as_ref(), "", &mut rows);
+    paint(rows, color)
 }
 
-fn emit(
-    kids: &[Node],
-    omitted: Option<&Census>,
-    prefix: &str,
-    color: bool,
-    out: &mut Vec<String>,
-) {
+fn emit(kids: &[Node], omitted: Option<&Census>, prefix: &str, out: &mut Vec<Row>) {
     let has_om = omitted.map(|c| c.total > 0).unwrap_or(false);
     let total = kids.len() + usize::from(has_om);
     for (i, k) in kids.iter().enumerate() {
@@ -496,29 +636,29 @@ fn emit(
         if k.is_dir && !n.ends_with('/') {
             n.push('/');
         }
-        if k.is_dir {
-            n = crate::color::dir(&n, color);
-        }
-        if let Some(c) = &k.leftover {
-            let extra = c.render();
-            if !extra.is_empty() {
-                n = format!("{n}  {extra}");
-            }
-        }
-        n.push_str(&info_marks(k));
-        out.push(format!("{prefix}{branch}{n}"));
+        out.push(Row {
+            left_prefix: format!("{prefix}{branch}"),
+            name: n,
+            color_dir: k.is_dir,
+            right: right_of(k),
+        });
         if !k.children.is_empty() || k.omitted.is_some() {
             let next = if last {
                 format!("{prefix}    ")
             } else {
                 format!("{prefix}│   ")
             };
-            emit(&k.children, k.omitted.as_ref(), &next, color, out);
+            emit(&k.children, k.omitted.as_ref(), &next, out);
         }
     }
-    if has_om {
-        if let Some(c) = omitted {
-            out.push(format!("{prefix}└── {}", c.render_plus()));
-        }
+    if has_om
+        && let Some(c) = omitted
+    {
+        out.push(Row {
+            left_prefix: format!("{prefix}└── "),
+            name: c.render_plus(),
+            color_dir: false,
+            right: String::new(),
+        });
     }
 }

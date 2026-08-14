@@ -16,5 +16,11 @@ Not present-truth of the design — that is [`../design/`](../design/) or the Fo
 | [`n-level`](n-level.md) | `--depth N` (default 2) |
 | [`summarization`](summarization.md) | dir census at depth cutoff |
 | [`balanced`](balanced.md) | `--lines N` sharing + leaf census |
+| [`walk-bound`](walk-bound.md) | `--walk N` stat bound |
+| [`denied`](denied.md) | `[denied]` marks |
+| [`labels`](labels.md) | `[kind: …]` claims |
+| [`furniture`](furniture.md) | name map, hide/omit, `--show-all` / `--inspect` |
+| [`git`](git.md) | git facet on the parent line |
+| [`github`](github.md) | `.github` facet |
 
 First-snapshot notes (`absorb`, `allocator`, `bounded-walk`, `budget-not-cutoff`, `aspecta-ir`, `parent-state-not-children`, `first-snapshot`) describe code that is **not** in the crate. Keep them as history. Do not treat them as the binary.

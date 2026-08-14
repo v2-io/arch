@@ -157,13 +157,15 @@ fn help_lists_every_accepted_flag() {
         "--depth",
         "--lines",
         "--explain-budget",
+        "--show-all",
+        "--inspect",
         "-h",
         "-v",
         "config",
     ] {
         assert!(page.contains(needle), "help missing {needle}");
     }
-    for gone in ["--visit", "--show-all", "--inspect", "--no-one-fs"] {
+    for gone in ["--visit", "--no-one-fs"] {
         let (c, _, e) = run(&[gone]);
         assert_eq!(c, 2, "{gone} should be unknown, got {e}");
         assert!(e.contains("unknown option"), "{gone}: {e}");

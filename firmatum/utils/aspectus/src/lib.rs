@@ -4,5 +4,8 @@
 
 pub mod color;
 pub mod config;
+pub mod furniture;
+pub mod git;
+pub mod github;
 pub mod n_level;
 pub mod overview;

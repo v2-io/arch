@@ -41,6 +41,14 @@ const OPTIONS: &[(&str, &str)] = &[
          (default 10000; 0 = no bound)",
     ),
     ("--explain-budget", "how lines and the walk were spent, on stderr"),
+    (
+        "--show-all",
+        "list furniture names (.git, target/, …) as ordinary children",
+    ),
+    (
+        "--inspect KIND",
+        "list furniture of one kind as children (git, build, …); repeatable",
+    ),
 ];
 
 fn help_page() -> String {
@@ -96,6 +104,17 @@ fn help_page() -> String {
            aspectus PATH\n\
            aspectus --depth 3 --lines 120 PATH\n\
            aspectus --walk 500 PATH    (huge tree: expand less, count all)\n\
+           aspectus --inspect git PATH (see inside .git as ordinary children)\n\
+         \n\
+         Well-known names are furniture: state on their parent line, not\n\
+         children of the look. A git work tree does not list .git — the\n\
+         directory line says what git is here ([git: remote<…> br<main>\n\
+         @sha dirty<N>], local facts only, no network); build debris\n\
+         (target/, __pycache__, …) folds into the [kind: …] spot. Hidden\n\
+         names are not counted as children; the kind spot is what says\n\
+         they are here. The map is glob-based and extendable from config\n\
+         (key `furniture`: `PATTERN[:KIND[:hide|omit|mark]]`, comma-\n\
+         separated; `!PATTERN` drops a default row).\n\
          \n\
          The look never lies by omission: an unexpanded directory carries a\n\
          census, a walk-bound cut keeps the full name count and says\n\
@@ -134,6 +153,8 @@ struct ShowArgs {
     caller: Option<String>,
     flag_vals: BTreeMap<String, String>,
     explain: bool,
+    show_all: bool,
+    inspect: Vec<String>,
 }
 
 enum Refusal {
@@ -177,6 +198,8 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut color = ColorMode::Auto;
     let mut flag_vals = BTreeMap::new();
     let mut explain = false;
+    let mut show_all = false;
+    let mut inspect = Vec::new();
     let mut end_flags = false;
     // After `--` everything is a path — never re-read as a verb.
     let mut path_is_literal = false;
@@ -261,6 +284,16 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 flag_vals.insert("walk".into(), v.to_string());
             }
             "--explain-budget" => explain = true,
+            "--show-all" => show_all = true,
+            "--inspect" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--inspect needs a kind (git, build, …)".into()))?;
+                inspect.push(v);
+            }
+            s if s.starts_with("--inspect=") => {
+                inspect.push(s[10..].to_string());
+            }
             "--" => end_flags = true,
             s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
             s => take_positional(&mut path, s.to_string())?,
@@ -294,6 +327,8 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         caller,
         flag_vals,
         explain,
+        show_all,
+        inspect,
     }))
 }
 
@@ -388,15 +423,29 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(10_000);
     let abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
+    let map = match cfg.won.get("furniture") {
+        Some((rules, _)) => aspectus::furniture::Map::with_config(rules),
+        None => aspectus::furniture::Map::shipped(),
+    };
+    let view = aspectus::furniture::View {
+        show_all: args.show_all,
+        inspect: args.inspect,
+    };
     let mut walk = aspectus::n_level::WalkBudget::new(walk_bound);
-    let mut tree =
-        aspectus::n_level::gather(&locus, depth, &mut walk).map_err(|e| map_io(&locus, e))?;
+    let mut tree = aspectus::n_level::gather(&locus, depth, &mut walk, &map, &view)
+        .map_err(|e| map_io(&locus, e))?;
     let lines: usize = cfg
         .won
         .get("lines")
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(80);
     let mut why = Vec::new();
+    if walk.furniture_hidden > 0 {
+        why.push(format!(
+            "furniture: {} names as parent-line state, not children",
+            walk.furniture_hidden
+        ));
+    }
     if walk.tripped {
         why.push(format!(
             "walk: bound {walk_bound} reached; some dirs not expanded, marked [walk bound]"

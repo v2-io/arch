@@ -6,4 +6,6 @@ A **submodule** is the same furniture. Nested `.git` (dir or gitlink) is hidden 
 
 `--show-all` / `--inspect git` lists `.git` when you ask.
 
-Related, specialized: [[github|GitHub]] for `.github/` (workflows, not objects). Gitignore / gitattributes names can be map rows, or hang on this plugin — undecided, not a third kind.
+Related, specialized: [[github|GitHub]] for `.github/` (workflows, not objects). Gitignore / gitattributes names are **map rows** feeding kind `git` (decided at landing, 2026-08-14); the plugin itself fires only on `.git` presence.
+
+Shipped facet shape: `[git: remote<host/path> br<branch> @shorthead dirty<N>]` — remote from local config (`origin` preferred, URL trimmed), branch/HEAD from the gitdir's own files (no subprocess), dirt from one local `git status --porcelain` (clean prints nothing; an unobtainable fact is not claimed).

@@ -107,6 +107,11 @@ pub fn env_values() -> BTreeMap<String, String> {
             m.insert("walk".into(), v);
         }
     }
+    if let Ok(v) = env::var("ASPECTUS_FURNITURE") {
+        if !v.is_empty() {
+            m.insert("furniture".into(), v);
+        }
+    }
     m
 }
 

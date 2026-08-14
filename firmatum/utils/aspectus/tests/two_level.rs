@@ -66,7 +66,10 @@ fn default_cwd_two_levels() {
     assert!(o.contains("a/"), "{o}");
     assert!(o.contains(".hidden"), "{o}");
     assert!(o.contains('f'), "{o}");
-    assert!(o.contains(".git/"), "hidden dir listed: {o}");
+    // Furniture superseded ".git listed like any hidden dir": .git is state
+    // on the parent line now; unknown hidden names (.hidden) stay children.
+    assert!(!o.contains(".git/"), "furniture .git listed as child: {o}");
+    assert!(o.contains("[kind: git]"), "kind claim missing: {o}");
     assert!(o.contains("inside.txt"), "two-level includes grandchildren: {o}");
     assert!(o.contains("secret-grandchild") || o.contains("inside.txt"), "{o}");
     assert!(!o.lines().any(|l| l.contains("./") && l.contains("──")), "{o}");
