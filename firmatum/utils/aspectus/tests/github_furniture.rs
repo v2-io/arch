@@ -72,7 +72,7 @@ fn kind_alone_when_no_workflows() {
     let (_, o, _) = run(&dir, &[]);
     assert!(!o.contains(".github/"), "{o}");
     assert!(!o.contains("[github:"), "no workflow claim to make: {o}");
-    assert!(o.contains("[kind: github]"), "{o}");
+    assert!(o.contains("[has: github]"), "{o}");
 }
 
 #[test]

@@ -64,15 +64,25 @@ pub fn defaults() -> BTreeMap<String, String> {
     m.insert("sort".into(), "recency".into());
     m.insert("dotfiles-first".into(), "off".into());
     // Lattice defaults for the built column facts (design/aspect-lattice.md):
-    // quiet = only when it surprises; until the quiet law lands (its own
-    // wave), quiet facts render nothing unless asked (`on`).
+    // quiet = only when it surprises (the cold law, src/quiet.rs).
     m.insert("columns.size".into(), "quiet".into());
     m.insert("columns.mtime".into(), "quiet".into());
     m.insert("columns.line-count".into(), "on".into());
     m.insert("columns.heat".into(), "on".into());
+    m.insert("columns.permissions".into(), "quiet".into());
+    m.insert("columns.owner".into(), "quiet".into());
+    m.insert("columns.filekind".into(), "quiet".into());
     m.insert("format.size".into(), "human".into());
     m.insert("format.mtime".into(), "iso-8601".into());
     m.insert("format.line-count".into(), "physical".into());
+    m.insert("format.owner".into(), "name".into());
+    // The look's serialization (design/json.md): text for eyes (default),
+    // json for machines — same look, two encodings. `--format` wins.
+    m.insert("format".into(), "text".into());
+    // Quiet's one sensitivity dial (design/quiet-columns.md): scales the
+    // statistical thresholds (size log-deviation, mtime window); convention
+    // legs never scale. Per-fact overrides: quiet.sensitivity.size / .mtime.
+    m.insert("quiet.sensitivity".into(), "1.0".into());
     // Links/one-fs (design/links-and-fs.md): stay on the starting
     // filesystem; --no-one-fs follows mounts. Rides the stack like depth.
     m.insert("one-fs".into(), "on".into());
@@ -140,9 +150,18 @@ pub fn env_values() -> BTreeMap<String, String> {
         ("ASPECTUS_COLUMNS_MTIME", "columns.mtime"),
         ("ASPECTUS_COLUMNS_LINE_COUNT", "columns.line-count"),
         ("ASPECTUS_COLUMNS_HEAT", "columns.heat"),
+        ("ASPECTUS_COLUMNS_PERMISSIONS", "columns.permissions"),
+        ("ASPECTUS_COLUMNS_OWNER", "columns.owner"),
+        ("ASPECTUS_COLUMNS_FILEKIND", "columns.filekind"),
         ("ASPECTUS_FORMAT_SIZE", "format.size"),
         ("ASPECTUS_FORMAT_MTIME", "format.mtime"),
         ("ASPECTUS_FORMAT_LINE_COUNT", "format.line-count"),
+        ("ASPECTUS_FORMAT_OWNER", "format.owner"),
+        ("ASPECTUS_FORMAT", "format"),
+        ("ASPECTUS_IMPORTANT", "important"),
+        ("ASPECTUS_QUIET_SENSITIVITY", "quiet.sensitivity"),
+        ("ASPECTUS_QUIET_SENSITIVITY_SIZE", "quiet.sensitivity.size"),
+        ("ASPECTUS_QUIET_SENSITIVITY_MTIME", "quiet.sensitivity.mtime"),
         ("ASPECTUS_KINDS", "kinds"),
         ("ASPECTUS_ONE_FS", "one-fs"),
         ("ASPECTUS_RECENCY_SOURCE", "recency-source"),

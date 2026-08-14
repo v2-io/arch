@@ -64,6 +64,12 @@ const OPTIONS: &[(&str, &str)] = &[
         "follow mount points; the default stays on the starting \
          filesystem and marks a mount [other fs]",
     ),
+    (
+        "--format text|json",
+        "the same look, serialized instead of drawn: sizes in bytes, \
+         times iso-8601 UTC, every glyph-mark a field (denied, walk_bound, \
+         censuses, truncated). Text stays default",
+    ),
 ];
 
 fn help_page() -> String {
@@ -96,8 +102,10 @@ fn help_page() -> String {
          is how the place looks right now.\n\
          \n\
          Default: the absolute path of the place, two generations down\n\
-         (children and grandchildren), then it exits. The header is two\n\
-         lines: the UTC time of the look, then the absolute root.\n\
+         (children and grandchildren), then it exits. The header is the\n\
+         UTC time of the look, then the root's own facts when it has any\n\
+         (heat, [git: ...], [has: ...]), then the bare absolute root\n\
+         directly above its children.\n\
          \n\
          Children are ordered by recency (newest first, directories\n\
          first) so calling again shows what moved, at the top. Under a\n\
@@ -125,6 +133,7 @@ fn help_page() -> String {
            aspectus --depth 3 --lines 120 PATH\n\
            aspectus --walk 500 PATH    (huge tree: expand less, count all)\n\
            aspectus --inspect git PATH (see inside .git as ordinary children)\n\
+           aspectus --format json PATH (the same look, as data)\n\
          \n\
          Non-binary files show a line count (binary shows none, never 0);\n\
          kind comes from a suffix-map extendable via config key `kinds`\n\
@@ -155,9 +164,10 @@ fn help_page() -> String {
          children of the look. A git work tree does not list .git — the\n\
          directory line says what git is here ([git: remote<…> br<main>\n\
          @sha dirty<N>], local facts only, no network); build debris\n\
-         (target/, __pycache__, …) folds into the [kind: …] spot. Hidden\n\
-         names are not counted as children; the kind spot is what says\n\
-         they are here. The map is glob-based and extendable from config\n\
+         (target/, __pycache__, …) folds into the [has: …] spot — a\n\
+         claim about contents, exactly what the evidence supports.\n\
+         Hidden names are not counted as children; the has-spot is what\n\
+         says they are here. The map is glob-based and extendable from config\n\
          (key `furniture`: `PATTERN[:KIND[:hide|omit|mark]]`, comma-\n\
          separated; `!PATTERN` drops a default row).\n\
          \n\
@@ -166,6 +176,34 @@ fn help_page() -> String {
          [walk bound], a count that hides an unreadable place is marked \u{2265},\n\
          and a directory it could not read says [denied] rather than\n\
          printing as empty.\n\
+         \n\
+         Quiet facts appear only when they surprise. Size speaks on a\n\
+         magnitude outlier among its siblings; mtime when recent (within a\n\
+         day); permissions when odd for its level (special bits like setuid\n\
+         always speak); owner when neither you nor the level's majority;\n\
+         the file-kind word when a file differs from its level's plurality\n\
+         (the binary among the .md). Usual is silent: 644 among 644s,\n\
+         owner-you, an old mtime print nothing. Norms come from the full\n\
+         level, so --lines cannot flicker them. One dial scales the\n\
+         statistical thresholds: config quiet.sensitivity (default 1.0;\n\
+         higher = harder to surprise), per-fact quiet.sensitivity.size /\n\
+         .mtime. Convention laws (setuid, root-owner) never scale.\n\
+         \n\
+         Important files (config `important`, comma-separated basename\n\
+         globs; default README*, AGENTS.md, CLAUDE.md; !PATTERN drops one)\n\
+         survive a tight --lines ahead of plain files — dirs, then\n\
+         important, then the rest, sort-key order within each tier. They\n\
+         claim no glyph and no position: with budget to spare the look is\n\
+         unchanged.\n\
+         \n\
+         --format json emits the same look as one JSON document: same\n\
+         walk, same budget, same censuses and marks -- never deeper or\n\
+         wider for being machine-shaped. Sizes are bytes, times iso-8601\n\
+         UTC, censuses objects, denied/walk_bound booleans, and a\n\
+         top-level `truncated` says whether any cut or denial occurred\n\
+         anywhere (exit stays 0). Quiet governs only the drawn look:\n\
+         JSON carries the underlying facts (mode, uid, mtime, ...)\n\
+         either way. Refusals in machine mode are JSON on stderr.\n\
          \n\
          Facts beyond the defaults (size, mtime, ...) have no flags of\n\
          their own; ask through config on the caller stack, e.g.\n\
@@ -369,6 +407,18 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             "--no-one-fs" => {
                 flag_vals.insert("one-fs".into(), "off".into());
             }
+            "--format" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--format needs text or json".into()))?;
+                parse_format(&v)?;
+                flag_vals.insert("format".into(), v);
+            }
+            s if s.starts_with("--format=") => {
+                let v = &s[9..];
+                parse_format(v)?;
+                flag_vals.insert("format".into(), v.to_string());
+            }
             "--explain-budget" => explain = true,
             "--show-all" => show_all = true,
             "--inspect" => {
@@ -438,6 +488,15 @@ fn parse_walk(s: &str) -> Result<u64, Refusal> {
         .map_err(|_| Refusal::Usage(format!("--walk needs a number (got {s})")))
 }
 
+fn parse_format(s: &str) -> Result<(), Refusal> {
+    match s {
+        "text" | "json" => Ok(()),
+        _ => Err(Refusal::Usage(format!(
+            "--format is text or json (got {s}; udon later, csv/yaml/tsv refused)"
+        ))),
+    }
+}
+
 fn take_positional(path: &mut Option<String>, token: String) -> Result<(), Refusal> {
     if path.is_some() {
         return Err(Refusal::Usage("only one PATH".into()));
@@ -454,10 +513,39 @@ fn classify_positional(token: String) -> Result<PathBuf, Refusal> {
     Err(Refusal::UnknownVerb(token))
 }
 
+/// Was json asked for on the surfaces we can read before (or despite) a
+/// parse failure? Argv and env only — a config-file `format = json` still
+/// gets the text refusal (recorded limitation, impl/json.md).
+fn machine_mode() -> bool {
+    let argv_json = {
+        let mut args = env::args().skip(1).peekable();
+        let mut hit = false;
+        while let Some(a) = args.next() {
+            if a == "--" {
+                break;
+            }
+            if a == "--format=json" || (a == "--format" && args.peek().map(String::as_str) == Some("json"))
+            {
+                hit = true;
+            }
+        }
+        hit
+    };
+    argv_json || env::var("ASPECTUS_FORMAT").as_deref() == Ok("json")
+}
+
 fn main() -> ExitCode {
     match parse_args(env::args().skip(1)) {
         Err(r) => {
-            r.write_stderr();
+            if machine_mode() {
+                let _ = write!(
+                    io::stderr(),
+                    "{}",
+                    aspectus::json::refusal(r.class(), r.token(), None)
+                );
+            } else {
+                r.write_stderr();
+            }
             ExitCode::from(2)
         }
         Ok(Cmd::Help) => {
@@ -480,12 +568,23 @@ fn main() -> ExitCode {
         }
         Ok(Cmd::Show(args)) => match show(args) {
             Ok(()) => ExitCode::SUCCESS,
-            Err(ShowErr::NotFound(p)) => {
-                let _ = writeln!(io::stderr(), "aspectus: not found {p}");
-                ExitCode::from(2)
-            }
-            Err(ShowErr::Other(e)) => {
-                let _ = writeln!(io::stderr(), "aspectus: {e}");
+            Err(err) => {
+                if machine_mode() {
+                    let (class, tok) = match &err {
+                        ShowErr::NotFound(p) => ("not found", p.as_str()),
+                        ShowErr::Other(e) => ("error", e.as_str()),
+                    };
+                    let _ = write!(io::stderr(), "{}", aspectus::json::refusal(class, tok, None));
+                } else {
+                    match &err {
+                        ShowErr::NotFound(p) => {
+                            let _ = writeln!(io::stderr(), "aspectus: not found {p}");
+                        }
+                        ShowErr::Other(e) => {
+                            let _ = writeln!(io::stderr(), "aspectus: {e}");
+                        }
+                    }
+                }
                 ExitCode::from(2)
             }
         },
@@ -557,6 +656,43 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
             .unwrap_or(aspectus::heat::DEFAULT_HALF_LIFE);
         aspectus::heat::annotate(&mut tree, &abs, half_life);
     }
+    // Importance (survival weight) and quiet (cold surprise) annotate the
+    // pre-budget tree: sibling norms over the full statted level, so
+    // `--lines` cannot flicker either decision.
+    let important = match cfg.won.get("important") {
+        Some((rules, _)) => aspectus::important::Set::with_config(rules),
+        None => aspectus::important::Set::shipped(),
+    };
+    important.annotate(&mut tree);
+    let now = std::time::SystemTime::now();
+    let now_secs = now
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs() as i64)
+        .unwrap_or(0);
+    let dial = |k: &str| cfg.won.get(k).and_then(|(v, _)| v.parse::<f64>().ok());
+    let dials = aspectus::quiet::Dials {
+        base: dial("quiet.sensitivity").unwrap_or(1.0),
+        size: dial("quiet.sensitivity.size"),
+        mtime: dial("quiet.sensitivity.mtime"),
+    };
+    let kind_ask = match cfg.won.get("columns.filekind").map(|(v, _)| v.as_str()) {
+        None | Some("quiet") => aspectus::quiet::KindAsk::Quiet,
+        Some("on") => aspectus::quiet::KindAsk::On,
+        Some("off") => aspectus::quiet::KindAsk::Off,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "columns.filekind is on, off, or quiet (got {v})"
+            )))
+        }
+    };
+    aspectus::quiet::annotate(
+        &mut tree,
+        &dials,
+        &aspectus::quiet::Caller::detect(),
+        &kinds,
+        kind_ask,
+        now_secs,
+    );
     let lines: usize = cfg
         .won
         .get("lines")
@@ -574,12 +710,17 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
             "walk: bound {walk_bound} reached; some dirs not expanded, marked [walk bound]"
         ));
     }
-    // The header is two lines (stamp, then root — overview invariants);
-    // the tree keeps the rest, the root line counted inside its budget.
-    let tree_budget = if lines == 0 { 0 } else { (lines - 1).max(1) };
+    // The header is up to three lines (stamp, the root's facts when it has
+    // any, then the bare root path — overview invariants, simple-header
+    // steer 2026-08-14); the tree keeps the rest, the root path line
+    // counted inside its budget.
+    let mut cols = cols;
+    cols.now = now_secs;
+    let header = 1 + usize::from(!aspectus::columns::root_facts_line(&tree, &cols).is_empty());
+    let tree_budget = if lines == 0 { 0 } else { lines.saturating_sub(header).max(1) };
     if lines > 0 {
         why.push(format!(
-            "header: stamp line costs 1 of --lines {lines}; {tree_budget} left (root line included)"
+            "header: {header} line(s) cost of --lines {lines}; {tree_budget} left (root line included)"
         ));
     }
     aspectus::n_level::apply_budget(&mut tree, tree_budget, &order, &mut why);
@@ -590,13 +731,20 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         }
     }
     let root = abs.to_string_lossy();
-    let now = std::time::SystemTime::now();
     let stamp = aspectus::overview::stamp_utc(now);
-    let mut cols = cols;
-    cols.now = now
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_secs() as i64)
-        .unwrap_or(0);
+    let machine = match cfg.won.get("format").map(|(v, _)| v.as_str()) {
+        None | Some("text") => false,
+        Some("json") => true,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "format is text or json (got {v}; udon later, csv/yaml/tsv refused)"
+            )))
+        }
+    };
+    if machine {
+        print!("{}", aspectus::json::render(&root, &stamp, &tree));
+        return Ok(());
+    }
     print!(
         "{}",
         aspectus::columns::render(&root, &tree, args.color.active(), &stamp, &cols)
@@ -654,31 +802,41 @@ fn resolve_look(
         recency_git,
     };
 
-    let col_state = |key: &str| -> Result<&str, ShowErr> {
+    let col_state = |key: &str| -> Result<aspectus::columns::State, ShowErr> {
         match cfg.won.get(key).map(|(v, _)| v.as_str()) {
-            None => Ok("quiet"),
-            Some(v @ ("on" | "off" | "quiet")) => Ok(v),
-            Some(v) => Err(ShowErr::Other(format!(
-                "{key} is on, off, or quiet (got {v})"
-            ))),
+            None => Ok(aspectus::columns::State::Quiet),
+            Some(v) => aspectus::columns::State::parse(v).ok_or_else(|| {
+                ShowErr::Other(format!("{key} is on, off, or quiet (got {v})"))
+            }),
         }
     };
     let size_state = col_state("columns.size")?;
     let mtime_state = col_state("columns.mtime")?;
     let lc_state = col_state("columns.line-count")?;
     let heat_state = col_state("columns.heat")?;
+    let perms = col_state("columns.permissions")?;
+    let owner = col_state("columns.owner")?;
     // An explicitly asked sort key implies its column (the order is a
     // claim; the evidence belongs on the line) — unless the caller said
     // off. The recency *default* does not: position already carries the
     // signal, the value stays quiet (design/sort.md, design/columns.md).
+    use aspectus::columns::State;
     let explicit_sort = sort_layer != "defaults";
-    let implied = |k: sort::Key, state: &str| {
-        explicit_sort && order.key == k && state != "off"
+    let implied = |k: sort::Key, state: State| {
+        explicit_sort && order.key == k && state != State::Off
     };
-    let size = size_state == "on" || implied(sort::Key::Size, size_state);
-    let mtime = mtime_state == "on" || implied(sort::Key::Mtime, mtime_state);
-    let line_count = lc_state == "on" || implied(sort::Key::LineCount, lc_state);
-    let heat = heat_state == "on" || implied(sort::Key::Heat, heat_state);
+    let lift = |k: sort::Key, state: State| {
+        if implied(k, state) {
+            State::On
+        } else {
+            state
+        }
+    };
+    let size = lift(sort::Key::Size, size_state);
+    let mtime = lift(sort::Key::Mtime, mtime_state);
+    let line_count =
+        lc_state == State::On || implied(sort::Key::LineCount, lc_state);
+    let heat = heat_state == State::On || implied(sort::Key::Heat, heat_state);
 
     let size_fmt = match cfg.won.get("format.size").map(|(v, _)| v.as_str()) {
         None | Some("human") => SizeFmt::Human,
@@ -707,16 +865,28 @@ fn resolve_look(
             )))
         }
     };
+    let owner_fmt = match cfg.won.get("format.owner").map(|(v, _)| v.as_str()) {
+        None | Some("name") => aspectus::columns::OwnerFmt::Name,
+        Some("id") => aspectus::columns::OwnerFmt::Id,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "format.owner is name or id (got {v})"
+            )))
+        }
+    };
     Ok((
         order,
         Cols {
             line_count,
             size,
             mtime,
+            perms,
+            owner,
             heat,
             size_fmt,
             mtime_fmt,
             line_fmt,
+            owner_fmt,
             now: 0,
         },
     ))

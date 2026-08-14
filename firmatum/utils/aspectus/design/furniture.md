@@ -1,6 +1,6 @@
 # Furniture
 
-A well-known name is shown as state on its parent directory, not as a child of the look ([[../src/def-furniture|def]]). What it feeds is the parent line's **kind** gathering spot (the lattice's `kind` fact): `[kind: git, rust, …]` plus specialized facets. The default look does not list the name itself; `--show-all` / `--inspect` lists it when you ask.
+A well-known name is shown as state on its parent directory, not as a child of the look ([[../src/def-furniture|def]]). What it feeds is the parent line's **has** gathering spot (the lattice's `has` fact, renamed `kind:`→`has:` 2026-08-14 — the map detects contents, not identity): `[has: git, rust, …]` plus specialized facets. The default look does not list the name itself; `--show-all` / `--inspect` lists it when you ask.
 
 Most furniture is **not code**. It is a **map**: a glob (or gitignore-like pattern) → a furniture name, and one of two fates:
 

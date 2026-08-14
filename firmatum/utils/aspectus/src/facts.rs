@@ -66,8 +66,8 @@ pub const FACTS: &[Fact] = &[
     Fact { key: "size", place: Placement::FarRight, default: "quiet", toggle: Some("columns.size"), formats: "human* / bytes", built: true },
     Fact { key: "created", place: Placement::FarRight, default: "off", toggle: Some("columns.created"), formats: "iso-8601* / epoch", built: false },
     Fact { key: "filetype", place: Placement::NearRight, default: "on", toggle: None, formats: "suffix*", built: true },
-    Fact { key: "filekind", place: Placement::NearRight, default: "quiet", toggle: Some("columns.filekind"), formats: "word*", built: false },
-    Fact { key: "kind", place: Placement::NearRight, default: "on", toggle: None, formats: "facet*", built: true },
+    Fact { key: "filekind", place: Placement::NearRight, default: "quiet", toggle: Some("columns.filekind"), formats: "word*", built: true },
+    Fact { key: "has", place: Placement::NearRight, default: "on", toggle: None, formats: "facet*", built: true },
     Fact { key: "git-letter", place: Placement::FarRight, default: "on", toggle: None, formats: "letter*", built: false },
     Fact { key: "heat", place: Placement::FarRight, default: "on", toggle: Some("columns.heat"), formats: "score*", built: true },
     Fact { key: "prior-name", place: Placement::NearRight, default: "quiet", toggle: Some("columns.prior-name"), formats: "was*", built: false },
@@ -75,8 +75,8 @@ pub const FACTS: &[Fact] = &[
     Fact { key: "filesystem", place: Placement::NearRight, default: "on", toggle: None, formats: "mark*", built: true },
     Fact { key: "denied", place: Placement::NearRight, default: "on", toggle: None, formats: "denied*", built: true },
     Fact { key: "walk-marks", place: Placement::NearRight, default: "on", toggle: None, formats: "mark*", built: true },
-    Fact { key: "permissions", place: Placement::FarRight, default: "quiet", toggle: Some("columns.permissions"), formats: "octal* / symbolic", built: false },
-    Fact { key: "owner", place: Placement::FarRight, default: "quiet", toggle: Some("columns.owner"), formats: "name* / id", built: false },
+    Fact { key: "permissions", place: Placement::FarRight, default: "quiet", toggle: Some("columns.permissions"), formats: "octal*", built: true },
+    Fact { key: "owner", place: Placement::FarRight, default: "quiet", toggle: Some("columns.owner"), formats: "name* / id", built: true },
     Fact { key: "linkcount", place: Placement::FarRight, default: "off", toggle: Some("columns.linkcount"), formats: "n*", built: false },
 ];
 

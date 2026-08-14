@@ -72,7 +72,7 @@ fn well_known_names_fold_to_parent_state() {
     assert!(!o.contains("target/"), "build debris listed: {o}");
     assert!(!o.contains("__pycache__"), "{o}");
     assert!(!o.contains(".claude"), "{o}");
-    assert!(o.contains("[kind: agents, build, python]"), "kind spot: {o}");
+    assert!(o.contains("[has: agents, build, python]"), "kind spot: {o}");
     assert!(o.contains(".mystery/"), "unknown hidden name stays a child: {o}");
     assert!(o.contains("src.rs"), "{o}");
 }
@@ -94,7 +94,7 @@ fn hidden_names_do_not_join_censuses() {
     // Root is the second line: the stamp has its own line above it.
     let root = o.lines().nth(1).unwrap();
     assert!(!root.contains("3 dir"), "hidden dirs joined the picture: {o}");
-    assert!(o.contains("[kind: agents, build, python]"), "{o}");
+    assert!(o.contains("[has: agents, build, python]"), "{o}");
 }
 
 #[test]
@@ -108,7 +108,7 @@ fn show_all_lists_furniture_as_ordinary_children() {
     assert!(o.contains(".claude/"), "{o}");
     assert!(o.contains(".DS_Store"), "{o}");
     // The claims stay true even when the names are shown.
-    assert!(o.contains("[kind:"), "{o}");
+    assert!(o.contains("[has:"), "{o}");
 }
 
 #[test]

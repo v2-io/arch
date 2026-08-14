@@ -90,7 +90,7 @@ fn work_tree_facts_on_the_parent_line() {
     assert!(root.contains("br<main>"), "{o}");
     assert!(root.contains('@'), "short HEAD: {o}");
     assert!(!root.contains("dirty"), "clean prints no dirt: {o}");
-    assert!(root.contains("[kind: git]"), "{o}");
+    assert!(root.contains("[has: git]"), "{o}");
 }
 
 #[test]

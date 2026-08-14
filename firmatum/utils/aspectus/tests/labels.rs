@@ -48,7 +48,7 @@ fn mark_rows_stay_children_and_claim_a_kind() {
     let (c, o, e) = run(&dir, &xdg, &[]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("Cargo.toml"), "mark rows are still children: {o}");
-    assert!(o.contains("[kind: rust]"), "the claim on the parent: {o}");
+    assert!(o.contains("[has: rust]"), "the claim on the parent: {o}");
 }
 
 #[test]
@@ -57,7 +57,7 @@ fn kinds_claim_only_what_known_names_say() {
     touch(&dir.join("pyproject.toml"));
     touch(&dir.join("CLAUDE.md"));
     let (_, o, _) = run(&dir, &xdg, &[]);
-    assert!(o.contains("[kind: agents, python]"), "{o}");
+    assert!(o.contains("[has: agents, python]"), "{o}");
     assert!(!o.contains("rust"), "no guess: {o}");
 }
 
@@ -80,6 +80,6 @@ fn cutoff_dirs_still_claim_their_kinds() {
     // and the line still says what the place is.
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
     let proj = o.lines().find(|l| l.contains("proj/")).unwrap();
-    assert!(proj.contains("[kind: build, rust]"), "{o}");
+    assert!(proj.contains("[has: build, rust]"), "{o}");
     assert!(proj.contains("[Cargo.toml]"), "census counts children of the look only: {o}");
 }

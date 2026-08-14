@@ -62,6 +62,18 @@ fn user_home(xdg: &Path, body: &str) {
     fs::write(xdg.join("aspectus/aspectus.toml"), body).unwrap();
 }
 
+/// Fresh files would surprise the quiet mtime law (recent vs now); these
+/// fixtures are about line counts, not surprise — so age everything.
+fn backdate(dir: &Path) {
+    for ent in fs::read_dir(dir).unwrap().flatten() {
+        if let Ok(f) = File::open(ent.path()) {
+            let _ = f.set_modified(
+                std::time::UNIX_EPOCH + std::time::Duration::from_secs(1_700_000_000),
+            );
+        }
+    }
+}
+
 fn line_of<'a>(o: &'a str, name: &str) -> &'a str {
     o.lines().find(|l| l.contains(name)).unwrap_or_else(|| panic!("{name} not in {o}"))
 }
@@ -74,6 +86,7 @@ fn counts_on_text_files() {
     fs::write(dir.join("twelve.md"), "x\n".repeat(12)).unwrap();
     fs::write(dir.join("empty.txt"), "").unwrap();
     fs::write(dir.join("unterm.md"), "a\nb").unwrap();
+    backdate(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(line_of(&o, "twelve.md").contains("12"), "{o}");
@@ -90,6 +103,7 @@ fn binary_omits_never_zero() {
         .unwrap()
         .write_all(&[0x89, 0x50, 0x4e, 0x47, 0, 1, 2])
         .unwrap();
+    backdate(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let line = line_of(&o, "img.png");
@@ -106,6 +120,7 @@ fn unknown_suffix_sniffs() {
         .unwrap()
         .write_all(&[1, 0, 2, 0, 3])
         .unwrap();
+    backdate(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(line_of(&o, "notes.zzz").contains('2'), "text by sniff: {o}");
@@ -119,6 +134,7 @@ fn suffix_map_is_config_driven() {
     let (dir, xdg) = fresh("map");
     fs::write(dir.join("a.md"), "1\n2\n3\n").unwrap();
     user_home(&xdg, "kinds = \"md:binary\"\n");
+    backdate(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(line_of(&o, "a.md").trim_end().ends_with("a.md"), "marked binary, count gone: {o}");
@@ -147,6 +163,7 @@ fn compose_only_no_flag() {
     assert_eq!(c, 2);
     assert!(e.contains("columns.line-count"), "refusal names the ask: {e}");
     user_home(&xdg, "columns.line-count = \"off\"\n");
+    backdate(&dir);
     let (c2, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c2, 0);
     assert!(line_of(&o, "a.md").trim_end().ends_with("a.md"), "off removes it: {o}");
@@ -163,6 +180,7 @@ fn unreadable_file_claims_nothing() {
     let (dir, xdg) = fresh("deny");
     let p = dir.join("locked.md");
     fs::write(&p, "1\n2\n").unwrap();
+    backdate(&dir);
     fs::set_permissions(&p, fs::Permissions::from_mode(0o000)).unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     fs::set_permissions(&p, fs::Permissions::from_mode(0o644)).unwrap();

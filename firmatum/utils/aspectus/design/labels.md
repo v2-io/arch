@@ -1,8 +1,8 @@
 # Labels
 
-A label on a line is a **claim**, not a guess dressed as one. An empty set prints nothing — no `[kind: ]`, no placeholder.
+A label on a line is a **claim**, not a guess dressed as one. An empty set prints nothing — no `[has: ]`, no placeholder.
 
-The shipped label is the **kind** fact of the [[aspect-lattice|lattice]]: the parent line's gathering spot, `[kind: git, rust, …]`, sorted and deduplicated. It is fed by names the map knows:
+The shipped label is the **has** fact of the [[aspect-lattice|lattice]] (renamed `kind:`→`has:`, 2026-08-14 — a contents-claim, exactly what a glob can know): the parent line's gathering spot, `[has: git, rust, …]`, sorted and deduplicated. It is fed by names the map knows:
 
 - **hide** rows ([[furniture|Furniture]]): the name is not a child; its kinds are the state that says it is here.
 - **mark** rows: the name stays an ordinary child *and* its kinds are claimed on the parent — `Cargo.toml` → `rust`, `pyproject.toml` → `python`, `CLAUDE.md` → `agents`. Mark rows are label sources, not furniture: they occupy a child slot because seeing them is worth a line.

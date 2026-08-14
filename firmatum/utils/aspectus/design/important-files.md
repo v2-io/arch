@@ -8,8 +8,8 @@ Why a weight and nothing more (the eyes doc's option walk): the fact serves the 
 
 One **ordered** config list of name globs, on the caller stack like everything else ([[config|Config]]):
 
-- Config key: `important` (spelling Joseph ratifies), a list; later layers extend or replace it (extend-vs-replace semantics are Config's general story, not special here).
-- Built-in default: `README*` — the only entry the origin names. The reader of this tool is usually an agent, which argues for `AGENTS.md` / `CLAUDE.md` in the defaults too; the seeds' longer list (`Cargo.toml`, `package.json`, …) is agent interpolation — those names already have a home as furniture **mark** rows feeding [[labels|Labels]], which is a different office (kind-claim, not survival). Leaning: default `README*` + `AGENTS.md` + `CLAUDE.md`, everything else config. Ratify.
+- Config key: `important` (shipped; spelling Joseph ratifies), a comma-separated list. Shipped semantics follow the furniture grammar: config entries go **in front** of the defaults (they outrank in list order), `!PATTERN` drops a row.
+- Built-in default (shipped as the leaning; ratify): `README*` + `AGENTS.md` + `CLAUDE.md`. `README*` is the only entry the origin names; the reader of this tool is usually an agent, which argues for the other two. The seeds' longer list (`Cargo.toml`, `package.json`, …) is agent interpolation — those names already have a home as furniture **mark** rows feeding [[labels|Labels]], which is a different office (kind-claim, not survival).
 - **Order matters** because [[readme-title|README title]] borrows this exact set and breaks ties by list order (*"the config list's order picks one"*). Defining the set here, once, is what keeps the two rows from drifting — readme-title says so explicitly.
 - Matching is on the basename, per level. A glob set, not regex — same grammar family as the furniture map.
 
@@ -49,11 +49,13 @@ key-within-tier, name tiebreak                 (unchanged)
 | 6 | Determinism | Same tree, same config: byte-identical, budget tight or loose. | Diff runs. |
 | 7 | JSON | No `important` field is claimed unless we decide it is a fact worth exporting — see Open. | — |
 
+*Shipped 2026-08-14 (Wave D) — [[../impl/important-files.md|finish note]].*
+
 ## Open
 
-- **Default set membership** beyond `README*` (leaning `AGENTS.md`, `CLAUDE.md` — see §The set). Joseph ratifies.
-- **Config key spelling** (`important` vs `important-files`). One constant.
-- **Does JSON carry `important: true`?** It is caller-config echo, not a fact of the tree — leaning no (the JSON look should not vary in *fields* with one caller's weights; machine formats get facts). But an agent post-processing JSON may want to know why a node survived. Not decided.
+- **Default set membership** — shipped `README*` + `AGENTS.md` + `CLAUDE.md` (the leaning). Joseph ratifies.
+- **Config key spelling** — shipped `important`. One constant.
+- ~~**Does JSON carry `important: true`?**~~ **Shipped: no** — caller-config echo, not a fact of the tree (the JSON look should not vary in *fields* with one caller's weights). Revisit if an agent post-processing JSON asks why a node survived.
 - Origin says *"highlighting or early listing"*. Early-listing lost to Sort's law; **highlighting** (a decoration glyph on important lines) is unclaimed — leaning against by default (survival is the visibility; a glyph would spend default width restating config), possible later as a quiet/compose rendering. Ratify the leaning.
 
 ## Not in this row

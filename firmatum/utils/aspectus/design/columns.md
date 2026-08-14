@@ -41,7 +41,7 @@ Same tree + same caller state ⇒ byte-identical look. Consequences this row mus
 | 2 | Per-fact override | Config can turn a fact `ON`/`OFF`/`QUIET`; a higher stack layer wins. | `columns.size = on` in user-home shows size; env `ASPECTUS_COLUMNS_SIZE=off` wins over it. |
 | 3 | No own fact-flags | No fact has its own flag (`COMPOSE` and `NO` alike); trying `--size` / `--owner` refuses naming the config path (or "not built yet"). | `aspectus --owner` → exit 2, refusal mentions `columns.owner`. |
 | 4 | Format override | `format.size = bytes` renders bytes; default renders human. | Fixture with a known file size. |
-| 5 | One line | Any column set yields the same line *count* for the same tree and budget. | Same fixture, `--lines 20`, with and without size: identical shape, differing only within lines. |
+| 5 | One line | Any column set yields the same *tree* line count for the same tree and budget. (Amended with the simple-header decision, 2026-08-14: the header's root-facts line exists only when the root has facts to say, so turning a fact on can add that one header line — the tree's shape and the allocator's arithmetic stay untouched.) | Same fixture, `--lines 20`, with and without size: identical tree shape, differing only within lines. |
 | 6 | Determinism | Two runs, same tree, same config: byte-identical stdout, wide or narrow terminal, piped or not (color aside). | Diff two runs under different `COLUMNS`/pty. |
 | 7 | Inventory shown | The discoverability surface lists every lattice fact with its current state and format. | Snapshot; adding a fact to the lattice without the surface updating fails the test. |
 

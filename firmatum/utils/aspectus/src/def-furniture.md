@@ -1,6 +1,6 @@
 # Definition: furniture
 
-The positive concept comes first: a directory line has a **gathering spot for what the place *is*** — its kinds and critical state — `the-projects/ [git: remote<…> (private) br<…> stat<…>] [kind: git, python, rust, obsidian-vault, mise, agents]` (the origin's own example). Kinds are state markers; specialized kinds (git) carry a facet of real facts.
+The positive concept comes first: a directory line has a **gathering spot for what the place *is*** — its kinds and critical state — `the-projects/ [git: remote<…> (private) br<…> stat<…>] [kind: git, python, rust, obsidian-vault, mise, agents]` (the origin's own example; the spot's rendered word is `has:` since 2026-08-14 — it claims contents, not identity). Kinds are state markers; specialized kinds (git) carry a facet of real facts.
 
 **Furniture** is a well-known name whose job is to *feed* that gathering spot rather than occupy a child slot. Once `.git` or `Cargo.toml` has said what the place is, listing it as a child adds nothing — and a child slot spent on hook samples or build objects is a slot not spent on the place. The hiding is a consequence of the gathering, not the point.
 

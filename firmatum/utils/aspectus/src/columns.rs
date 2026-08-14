@@ -33,18 +33,52 @@ pub enum LineFmt {
     NonBlank,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OwnerFmt {
+    Name,
+    Id,
+}
+
+/// One fact's selection state (config `columns.FACT`). `Quiet` renders a
+/// value only on lines where the fact surprises (`Node.q`, quiet.rs); the
+/// silent lines keep an empty cell so the other columns stay aligned.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum State {
+    On,
+    Off,
+    Quiet,
+}
+
+impl State {
+    pub fn parse(s: &str) -> Option<State> {
+        match s {
+            "on" => Some(State::On),
+            "off" => Some(State::Off),
+            "quiet" => Some(State::Quiet),
+            _ => None,
+        }
+    }
+
+    fn claims_column(self) -> bool {
+        self != State::Off
+    }
+}
+
 /// The selection for one look, already arbitrated by config.
 #[derive(Debug, Clone, Copy)]
 pub struct Cols {
     pub line_count: bool,
-    pub size: bool,
-    pub mtime: bool,
+    pub size: State,
+    pub mtime: State,
+    pub perms: State,
+    pub owner: State,
     /// The `score · age` right-cluster (design/heat.md); in-repo only by
     /// nature — outside git no node has heat and the column is silent.
     pub heat: bool,
     pub size_fmt: SizeFmt,
     pub mtime_fmt: TimeFmt,
     pub line_fmt: LineFmt,
+    pub owner_fmt: OwnerFmt,
     /// The look's own stamp time (secs) — ages are relative to the look,
     /// not to each render.
     pub now: i64,
@@ -54,12 +88,15 @@ impl Default for Cols {
     fn default() -> Self {
         Cols {
             line_count: true,
-            size: false,
-            mtime: false,
+            size: State::Quiet,
+            mtime: State::Quiet,
+            perms: State::Quiet,
+            owner: State::Quiet,
             heat: true,
             size_fmt: SizeFmt::Human,
             mtime_fmt: TimeFmt::Iso8601,
             line_fmt: LineFmt::Physical,
+            owner_fmt: OwnerFmt::Name,
             now: 0,
         }
     }
@@ -68,8 +105,10 @@ impl Default for Cols {
 impl Cols {
     fn active(&self) -> usize {
         usize::from(self.line_count)
-            + usize::from(self.size)
-            + usize::from(self.mtime)
+            + usize::from(self.size.claims_column())
+            + usize::from(self.mtime.claims_column())
+            + usize::from(self.perms.claims_column())
+            + usize::from(self.owner.claims_column())
             + usize::from(self.heat)
     }
 }
@@ -97,6 +136,39 @@ fn fmt_size(n: u64, f: SizeFmt) -> String {
         SizeFmt::Human => human_size(n),
         SizeFmt::Bytes => n.to_string(),
     }
+}
+
+/// Octal, three digits — four when a special bit is set (`4755`).
+fn fmt_mode(mode: u32) -> String {
+    if mode & 0o7000 != 0 {
+        format!("{mode:04o}")
+    } else {
+        format!("{:03o}", mode & 0o777)
+    }
+}
+
+/// Owner cell: name (id fallback / `format.owner = id`); the group leg
+/// appends `:group` only when it is the surprising half.
+fn fmt_owner(n: &Node, f: OwnerFmt) -> Option<String> {
+    let uid = n.uid?;
+    let user = match f {
+        OwnerFmt::Id => uid.to_string(),
+        OwnerFmt::Name => crate::quiet::user_name(uid)
+            .map(str::to_string)
+            .unwrap_or_else(|| uid.to_string()),
+    };
+    if n.q.group
+        && let Some(gid) = n.gid
+    {
+        let group = match f {
+            OwnerFmt::Id => gid.to_string(),
+            OwnerFmt::Name => crate::quiet::group_name(gid)
+                .map(str::to_string)
+                .unwrap_or_else(|| gid.to_string()),
+        };
+        return Some(format!("{user}:{group}"));
+    }
+    Some(user)
 }
 
 fn fmt_mtime(secs: i64, f: TimeFmt) -> String {
@@ -239,18 +311,45 @@ pub fn rel_age(now: i64, then: i64) -> String {
 /// say for this line yields an empty cell.
 fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
     let mut cells = Vec::with_capacity(cols.active());
+    // A quiet fact speaks only where it surprises (quiet.rs' cold law);
+    // silent lines yield the empty cell.
+    let when = |st: State, speaks: bool, val: Option<String>| -> String {
+        match st {
+            State::On => val.unwrap_or_default(),
+            State::Quiet if speaks => val.unwrap_or_default(),
+            _ => String::new(),
+        }
+    };
     if cols.line_count {
         cells.push(n.lines.map(|l| l.to_string()).unwrap_or_default());
     }
-    if cols.size {
-        cells.push(n.size.map(|s| fmt_size(s, cols.size_fmt)).unwrap_or_default());
+    if cols.perms.claims_column() {
+        cells.push(when(
+            cols.perms,
+            n.q.mode,
+            n.mode.map(fmt_mode),
+        ));
     }
-    if cols.mtime {
-        cells.push(
-            n.mtime
-                .map(|t| fmt_mtime(t, cols.mtime_fmt))
-                .unwrap_or_default(),
-        );
+    if cols.owner.claims_column() {
+        cells.push(when(
+            cols.owner,
+            n.q.owner || n.q.group,
+            fmt_owner(n, cols.owner_fmt),
+        ));
+    }
+    if cols.size.claims_column() {
+        cells.push(when(
+            cols.size,
+            n.q.size,
+            n.size.map(|s| fmt_size(s, cols.size_fmt)),
+        ));
+    }
+    if cols.mtime.claims_column() {
+        cells.push(when(
+            cols.mtime,
+            n.q.mtime,
+            n.mtime.map(|t| fmt_mtime(t, cols.mtime_fmt)),
+        ));
     }
     if cols.heat {
         // Two aliveness facts as one glance-stop: `1.01 · 13.6d ago`.
@@ -263,15 +362,19 @@ fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
     cells
 }
 
-/// The gathering spot for what this place *is*: specialized facets first,
-/// then the kind list (src/def-furniture.md). Empty claims print nothing.
+/// The gathering spot for what this place *holds*: specialized facets
+/// (identity, verified — `[git: …]` fires only on a real `.git`) first,
+/// then the `[has: …]` contents-claim (renamed from `[kind: …]`,
+/// steward 2026-08-14: the map detects contents, not identity, and the
+/// word now claims exactly what the evidence supports). Empty claims
+/// print nothing.
 fn state_marks(n: &Node) -> Vec<String> {
     let mut parts = Vec::new();
     for f in &n.facets {
         parts.push(format!("[{f}]"));
     }
     if !n.kinds.is_empty() {
-        parts.push(format!("[kind: {}]", n.kinds.join(", ")));
+        parts.push(format!("[has: {}]", n.kinds.join(", ")));
     }
     parts
 }
@@ -318,6 +421,11 @@ fn deco_of(n: &Node) -> String {
 /// look-marks — at the computed tab-stop.
 fn rest_of(n: &Node) -> String {
     let mut parts = Vec::new();
+    // The filekind word, only where kind surprises (or was asked on) —
+    // the binary among the .md (design/quiet-columns.md; lattice INFO).
+    if let Some(w) = n.kind_word {
+        parts.push(w.to_string());
+    }
     if let Some(c) = &n.leftover {
         let extra = c.render();
         if !extra.is_empty() {
@@ -340,33 +448,52 @@ fn rest_of(n: &Node) -> String {
     parts.join("  ")
 }
 
-/// The whole look. Header is two lines — stamp, then root — so the root
-/// line sits directly above its children (design/overview-invariants.md,
-/// decided 2026-08-14).
+/// The root's own facts, pre-joined for the header facts line. Empty when
+/// the root has nothing to say.
+pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
+    let mut parts: Vec<String> = cells_of(tree, cols)
+        .into_iter()
+        .filter(|c| !c.is_empty())
+        .collect();
+    let rest = rest_of(tree);
+    if !rest.is_empty() {
+        parts.push(rest);
+    }
+    parts.join("  ")
+}
+
+/// The whole look. Header is up to three lines — stamp, the root's facts
+/// (only when it has any), then the bare root path directly above its
+/// children (design/overview-invariants.md, decided 2026-08-14; the path
+/// line is "the path and nothing else" — Joseph's simple-header steer).
 pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Cols) -> String {
     let mut root = root_path.to_string();
     if tree.is_dir && !root.ends_with('/') {
         root.push('/');
     }
     let ncols = cols.active();
-    let mut rows = vec![
-        Row {
-            left_prefix: String::new(),
-            name: stamp.to_string(),
-            deco: String::new(),
-            color_dir: false,
-            cells: vec![String::new(); ncols],
-            rest: String::new(),
-        },
-        Row {
-            left_prefix: String::new(),
-            name: root,
-            deco: deco_of(tree),
-            color_dir: true,
-            cells: cells_of(tree, cols),
-            rest: rest_of(tree),
-        },
-    ];
+    let plain = |name: String| Row {
+        left_prefix: String::new(),
+        name,
+        deco: String::new(),
+        color_dir: false,
+        cells: vec![String::new(); ncols],
+        rest: String::new(),
+    };
+    let mut rows = vec![plain(stamp.to_string())];
+    let facts = root_facts_line(tree, cols);
+    if !facts.is_empty() {
+        rows.push(plain(facts));
+    }
+    rows.push(Row {
+        left_prefix: String::new(),
+        name: root,
+        // Decoration completes the name (a symlinked root's `-> target`).
+        deco: deco_of(tree),
+        color_dir: true,
+        cells: vec![String::new(); ncols],
+        rest: String::new(),
+    });
     emit(&tree.children, tree.omitted.as_ref(), "", cols, &mut rows);
     paint(rows, color, ncols)
 }

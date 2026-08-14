@@ -42,6 +42,13 @@ fn fixture() -> (PathBuf, PathBuf) {
         .write_all(&vec![b'x'; 2048])
         .unwrap();
     fs::create_dir_all(dir.join("sub")).unwrap();
+    // Old mtimes: fresh files would surprise the quiet mtime law (recent
+    // vs now) — this fixture is about selection, not surprise.
+    for n in ["a.md", "big.md", "sub"] {
+        let f = File::open(dir.join(n)).unwrap();
+        f.set_modified(std::time::UNIX_EPOCH + std::time::Duration::from_secs(1_700_000_000))
+            .unwrap();
+    }
     (dir, xdg)
 }
 
@@ -147,8 +154,11 @@ fn fact_flags_refused_with_config_path() {
     assert!(e.contains("columns.size"), "refusal names the ask: {e}");
     let (c, _, e) = run(&dir, &xdg, &[], &["--owner"]);
     assert_eq!(c, 2);
+    assert!(e.contains("columns.owner"), "built since Wave D; ask named: {e}");
+    let (c, _, e) = run(&dir, &xdg, &[], &["--linkcount"]);
+    assert_eq!(c, 2);
     assert!(
-        e.contains("columns.owner") && e.contains("not built"),
+        e.contains("columns.linkcount") && e.contains("not built"),
         "unbuilt named: {e}"
     );
 }
@@ -160,10 +170,18 @@ fn columns_do_not_change_line_count() {
     let (_, plain, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "20"]);
     user_home(&xdg, "columns.size = on\ncolumns.mtime = on\n");
     let (_, wide, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "20"]);
+    // The *tree* keeps its shape; the header may gain the root-facts line
+    // when a turned-on fact gives the root something to say (simple-header
+    // decision, 2026-08-14).
+    let tree_lines = |s: &str| {
+        s.lines()
+            .skip_while(|l| !l.starts_with('├') && !l.starts_with('└'))
+            .count()
+    };
     assert_eq!(
-        plain.lines().count(),
-        wide.lines().count(),
-        "same shape, wider lines:\n{plain}\n----\n{wide}"
+        tree_lines(&plain),
+        tree_lines(&wide),
+        "same tree shape, wider lines:\n{plain}\n----\n{wide}"
     );
 }
 

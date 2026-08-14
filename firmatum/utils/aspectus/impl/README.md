@@ -18,7 +18,7 @@ Not present-truth of the design — that is [`../design/`](../design/) or the Fo
 | [`balanced`](balanced.md) | `--lines N` sharing + leaf census |
 | [`walk-bound`](walk-bound.md) | `--walk N` stat bound |
 | [`denied`](denied.md) | `[denied]` marks |
-| [`labels`](labels.md) | `[kind: …]` claims |
+| [`labels`](labels.md) | `[has: …]` claims |
 | [`furniture`](furniture.md) | name map, hide/omit, `--show-all` / `--inspect` |
 | [`git`](git.md) | git facet on the parent line |
 | [`github`](github.md) | `.github` facet |

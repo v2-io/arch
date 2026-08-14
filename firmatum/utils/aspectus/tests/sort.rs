@@ -66,7 +66,10 @@ fn run(dir: &Path, xdg: &Path, args: &[&str]) -> (i32, String, String) {
 
 fn names_in_order(o: &str) -> Vec<String> {
     o.lines()
-        .skip(2) // stamp, root
+        // Header: stamp, the root's facts line when it has any, then the
+        // bare root path (starts with /).
+        .skip_while(|l| !l.starts_with('/'))
+        .skip(1)
         .filter(|l| !l.contains("[+"))
         .filter_map(|l| {
             l.rsplit("── ")
@@ -84,6 +87,12 @@ fn fixture() -> (PathBuf, PathBuf) {
     touch(&dir, "old.md", 1_700_000_000);
     touch(&dir, "new.md", 1_700_000_900);
     fs::create_dir_all(dir.join("zdir")).unwrap();
+    // A fresh dir would surprise the quiet mtime law; this fixture is
+    // about order, not surprise.
+    File::open(dir.join("zdir"))
+        .unwrap()
+        .set_modified(UNIX_EPOCH + Duration::from_secs(1_700_001_000))
+        .unwrap();
     (dir, xdg)
 }
 

@@ -16,11 +16,11 @@ The header is **two lines** — root, then stamp (decided by Joseph, 2026-08-14:
 └── src/
 ```
 
-And the root path line stays **simple** (Joseph, same day: "We're going to need a simple header line :-)"): the path and nothing else. The root's own facts — heat·age, `[git: …]`, `[kind: …]` — move to their own header line(s) between stamp and path or after the path (renderer's judgment on which reads connected to the tree), never crowding the path itself:
+And the root path line stays **simple** (Joseph, same day: "We're going to need a simple header line :-)"): the path and nothing else. The root's own facts — heat·age, `[git: …]`, `[has: …]` — move to their own header line(s) between stamp and path or after the path (renderer's judgment on which reads connected to the tree), never crowding the path itself:
 
 ```
 2026-08-14T20:33:52Z
-0.35 · 2.2w ago  [git: remote<github.com/v2-io/agentic-systems> br<main> @3a705fe]  [kind: agents, build, git, …]
+0.35 · 2.2w ago  [git: remote<github.com/v2-io/agentic-systems> br<main> @3a705fe]  [has: agents, build, git, …]
 /Users/josephwecker-v2/src/arch/asf/
 ├── audits/  …
 ```

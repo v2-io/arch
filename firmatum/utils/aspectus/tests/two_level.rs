@@ -58,8 +58,9 @@ fn default_cwd_two_levels() {
     assert!(e.is_empty(), "success is quiet: {e:?}");
     let abs = std::path::absolute(&dir).unwrap();
     let abs_s = abs.to_string_lossy();
+    // Header: stamp, root-facts line when present, then the bare path.
     assert!(
-        o.lines().nth(1).unwrap_or("").contains(abs_s.as_ref()),
+        o.lines().find(|l| l.starts_with('/')).unwrap_or("").contains(abs_s.as_ref()),
         "absolute root: {o}"
     );
     assert!(!o.starts_with("./"), "{o}");
@@ -69,7 +70,7 @@ fn default_cwd_two_levels() {
     // Furniture superseded ".git listed like any hidden dir": .git is state
     // on the parent line now; unknown hidden names (.hidden) stay children.
     assert!(!o.contains(".git/"), "furniture .git listed as child: {o}");
-    assert!(o.contains("[kind: git]"), "kind claim missing: {o}");
+    assert!(o.contains("[has: git]"), "kind claim missing: {o}");
     assert!(o.contains("inside.txt"), "two-level includes grandchildren: {o}");
     assert!(o.contains("secret-grandchild") || o.contains("inside.txt"), "{o}");
     assert!(!o.lines().any(|l| l.contains("./") && l.contains("──")), "{o}");
@@ -103,7 +104,7 @@ fn named_path_from_parent() {
     assert!(e.is_empty(), "{e:?}");
     let abs = std::path::absolute(&dir).unwrap();
     assert!(
-        o.lines().nth(1).unwrap_or("").contains(&*abs.to_string_lossy()),
+        o.lines().find(|l| l.starts_with('/')).unwrap_or("").contains(&*abs.to_string_lossy()),
         "absolute root: {o}"
     );
     assert!(o.contains("a/"), "{o}");

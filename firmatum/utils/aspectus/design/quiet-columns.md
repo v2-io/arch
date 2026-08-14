@@ -1,6 +1,6 @@
 # Quiet columns — surprisal to *this* caller
 
-*Direction seeded 2026-08-14; cold-baseline mechanics drafted same day (this pass). The lattice `quiet` office is the inventory; this file is the law of when quiet speaks. The warm baseline stays a later wave, gated on [[last-look|Last look]]'s after-image store — nothing below depends on it.*
+*Direction seeded 2026-08-14; cold-baseline mechanics drafted, reviewed, and **shipped** same day (Wave D — `src/quiet.rs`, [[../impl/quiet-columns.md|finish note]] carries the constants and calls). The lattice `quiet` office is the inventory; this file is the law of when quiet speaks. The warm baseline stays a later wave, gated on [[last-look|Last look]]'s after-image store — nothing below depends on it.*
 
 A fact appears only when it surprises. The reason this is right and not a style choice: every glyph in an aspecta should carry surprisal for its reader — a fact that matches expectation carries ~zero bits, and the line budget should never spend width on it. Permissions `644`, clean git, owner-is-you: silence. (Eyes doc: design the nothing-case first; the something-case then carries surprisal by contrast.)
 
@@ -29,7 +29,7 @@ Two kinds of expectation feed cold surprise, and every per-fact law names which 
 | **git letter** | Dirty (shipped law). Clean prints nothing. Not sibling-relative — a dirty file in an all-dirty dir still speaks; the convention is cleanliness. | convention |
 | **cloud / linkcount / prior name** | Their lattice `unique` notes are already the law (evicted-only; nlink > 1; recently-renamed-only): presence-of-condition facts, no statistics involved. | convention |
 
-**Sensitivity is channel tuning** — from the caller stack only, never the place. Leaning (lattice Open, answered here for ratification): **one dial** (`quiet.sensitivity`, default 1.0, scaling the statistical thresholds — size's log-deviation, mtime's window) **plus per-fact override keys** for the few callers who need one fact retuned. Convention legs (special permission bits, dirty git, root-owner) do not scale — they are laws, not thresholds.
+**Sensitivity is channel tuning** — from the caller stack only, never the place. Shipped (lattice Open, answered; Joseph ratifies spelling): **one dial** (`quiet.sensitivity`, default 1.0, scaling the statistical thresholds — size's log-deviation, mtime's window) **plus per-fact override keys** (`quiet.sensitivity.size` / `.mtime`) for the few callers who need one fact retuned. Convention legs (special permission bits, dirty git, root-owner) do not scale — they are laws, not thresholds.
 
 ## Protections (why "nuance" is load-bearing)
 
@@ -69,6 +69,6 @@ Two kinds of expectation feed cold surprise, and every per-fact law names which 
 ## Open
 
 - **Warm∪cold vs warm-overrides-cold.** The union leaning above (warm only adds voice) keeps every cold surprise alive forever — arguably wrong for a *stable* oddity this caller has now seen five times (habituation is how real perception works). Counter-lean: warm may *demote* sibling-statistical legs it has witnessed before, never convention legs. Genuinely undecided; needs Joseph (it is the personalization philosophy question).
-- **Defaults ratification:** the numeric constants (log-deviation 1.0, size floor, recency window 1 day, cohort minimum 3) — reasoned starting points, Joseph corrects on contact.
-- Whether **mtime-quiet is redundant** under the recency default sort (position already says "recent"; the column re-says it). Leaning: keep QUIET but let the warm baseline be its real payoff; cold mtime-speak may prove noise and drop to OFF. Lived-use question.
+- **Defaults ratification:** the shipped constants (log-deviation 1.0, size floor 256 KiB, recency window 1 day, cohort minimum 3; majority = unique-max plurality; group leg egid-only) — reasoned starting points, Joseph corrects on contact ([[../impl/quiet-columns.md|finish note]]).
+- Whether **mtime-quiet is redundant** under the recency default sort (position already says "recent"; the column re-says it). Leaning: keep QUIET but let the warm baseline be its real payoff; cold mtime-speak may prove noise and drop to OFF. Lived-use question — and first lived data point (Wave D dogfood): on an active tree nearly every line speaks its mtime beside heat's own `· 0m ago`; the redundancy is real.
 - JSON: should it carry *why* a fact would have spoken (`quiet_reasons`)? Leaning no — that is affordance, not fact. Flag only if an agent consumer asks.

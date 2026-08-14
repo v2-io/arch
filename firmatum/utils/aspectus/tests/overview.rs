@@ -56,6 +56,36 @@ fn header_is_absolute_path_and_utc_stamp() {
     assert!(!root.starts_with("./"), "{root}");
 }
 
+/// Simple-header decision (2026-08-14): when the root has facts to say
+/// they get their own header line between stamp and path — and the path
+/// line stays bare, directly above its children.
+#[test]
+fn root_facts_get_their_own_line_path_stays_bare() {
+    let dir = fixture();
+    let out = bin()
+        .current_dir(&dir)
+        .env("ASPECTUS_COLUMNS_MTIME", "on") // root mtime becomes a fact
+        .output()
+        .unwrap();
+    assert_eq!(out.status.code(), Some(0));
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let mut lines = stdout.lines();
+    let _stamp = lines.next().unwrap();
+    let facts = lines.next().unwrap();
+    let path = lines.next().unwrap();
+    assert!(
+        facts.ends_with('Z') && !facts.contains('/'),
+        "root facts on their own line: {facts:?}"
+    );
+    // (cwd-resolved roots may gain the /private prefix on macOS — compare
+    // by suffix.)
+    let name = dir.file_name().unwrap().to_string_lossy().into_owned();
+    assert!(
+        path.starts_with('/') && path.ends_with(&format!("{name}/")) && !path.contains("  "),
+        "the path and nothing else: {path:?}"
+    );
+}
+
 #[test]
 fn named_path_also_absolute() {
     let dir = fixture();

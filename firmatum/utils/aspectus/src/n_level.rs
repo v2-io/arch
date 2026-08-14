@@ -132,7 +132,7 @@ pub struct Node {
     pub cut: bool,
     /// An entry mid-iteration errored; this dir's listing may be missing names.
     pub iter_err: bool,
-    /// Kinds claimed on this line's gathering spot: `[kind: git, rust, …]`.
+    /// Kinds claimed on this line's gathering spot: `[has: git, rust, …]`.
     pub kinds: Vec<String>,
     /// Specialized-furniture facets, already phrased (`git: br<main> @…`).
     pub facets: Vec<String>,
@@ -140,6 +140,21 @@ pub struct Node {
     pub mtime: Option<i64>,
     /// `st_size`, plain files only (symlinked files: the target's).
     pub size: Option<u64>,
+    /// Permission bits + special bits (`st_mode & 0o7777`); symlinks: the
+    /// target's. Absent only where the stat itself failed.
+    pub mode: Option<u32>,
+    /// Owner uid / group gid (symlinks: the target's).
+    pub uid: Option<u32>,
+    pub gid: Option<u32>,
+    /// Survival weight from the `important` config set (design/
+    /// important-files.md): survives tight budgets, owns no column or order.
+    pub important: bool,
+    /// Which quiet facts surprise on this line (design/quiet-columns.md,
+    /// cold baseline; set post-gather over full statted levels).
+    pub q: crate::quiet::Speaks,
+    /// The kind *word* for the near-right spot, when filekind speaks
+    /// (`binary` among `.md`) or is asked `on`.
+    pub kind_word: Option<&'static str>,
     /// Line count of a non-binary file (design/linecount.md); absent on
     /// binary, unreadable, or past the read budget — never a guess.
     pub lines: Option<u64>,
@@ -389,7 +404,7 @@ fn enumerate(path: &Path) -> Option<(Vec<Entry>, bool)> {
     Some((entries, iter_err))
 }
 
-fn suffix_bucket(name: &str) -> String {
+pub fn suffix_bucket(name: &str) -> String {
     match name.rsplit_once('.') {
         Some((stem, ext)) if !stem.is_empty() && !ext.is_empty() && !ext.contains('/') => {
             ext.to_string()
@@ -593,10 +608,14 @@ fn gather_at(
             Ok(t) => (t, target, false),
             Err(_) => {
                 let mtime = stamp_of(&lmeta);
+                let (mode, uid, gid) = ids_of(&lmeta);
                 return Ok(Node {
                     name,
                     is_dir: false,
                     mtime,
+                    mode,
+                    uid,
+                    gid,
                     link: target,
                     link_broken: true,
                     ..Node::default()
@@ -608,6 +627,7 @@ fn gather_at(
     };
     let is_dir = meta.is_dir();
     let mtime = stamp_of(&meta);
+    let (mode, uid, gid) = ids_of(&meta);
     if !is_dir {
         let size = meta.is_file().then_some(meta.len());
         let lines = if meta.is_file() {
@@ -623,6 +643,9 @@ fn gather_at(
             is_dir: false,
             mtime,
             size,
+            mode,
+            uid,
+            gid,
             lines,
             link,
             link_broken,
@@ -638,6 +661,9 @@ fn gather_at(
             name,
             is_dir: true,
             mtime,
+            mode,
+            uid,
+            gid,
             link,
             link_broken,
             other_fs: true,
@@ -649,6 +675,9 @@ fn gather_at(
             name,
             is_dir: true,
             mtime,
+            mode,
+            uid,
+            gid,
             link,
             link_broken,
             cycle: true,
@@ -659,7 +688,21 @@ fn gather_at(
     ctx.dir_stack.push(key);
     let node = gather_dir(path, name, remain, walk, ctx, mtime, link, mass_dup);
     ctx.dir_stack.pop();
-    node
+    node.map(|mut n| {
+        n.mode = mode;
+        n.uid = uid;
+        n.gid = gid;
+        n
+    })
+}
+
+/// Identity facts every stat already paid for (quiet-columns' substrate).
+fn ids_of(meta: &fs::Metadata) -> (Option<u32>, Option<u32>, Option<u32>) {
+    (
+        Some(meta.mode() & 0o7777),
+        Some(meta.uid()),
+        Some(meta.gid()),
+    )
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -876,9 +919,13 @@ fn fold_children_into_dir_census(node: &mut Node) {
     node.children.clear();
 }
 
+/// Survival tiers (design/sort.md key-within-weights; design/
+/// important-files.md adds the middle tier): dirs > important > plain.
 fn weight(n: &Node) -> u32 {
     if n.is_dir {
         4
+    } else if n.important {
+        2
     } else {
         1
     }

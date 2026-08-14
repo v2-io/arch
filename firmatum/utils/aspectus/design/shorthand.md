@@ -11,7 +11,7 @@
 | **decoration** | fused to the name | `/` on dirs, `-> target`, `"README title"` |
 | **far-left** | before the hierarchy indent | glyph blocks (see below), heat color-analog marks |
 | **near-left** | indented with the children, before names | line numbers-style facts, per-level marks |
-| **near-right** | after the name at the computed tab-stop | today's `[kind: …]`, facets, censuses, marks |
+| **near-right** | after the name at the computed tab-stop | today's `[has: …]`, facets, censuses, marks |
 | **far-right** | right-aligned full columns | `score · age` clusters, sizes, counts |
 | **glyph-block** | a dense fixed-width symbolic column (permissions-style) | one glyph per fact, position = meaning |
 

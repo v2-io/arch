@@ -1,7 +1,7 @@
 //! Furniture: a well-known name is state on its parent line, not a child.
 //!
 //! The positive concept is the parent line's **kind** gathering spot
-//! (`[kind: git, rust, …]`); hiding is the consequence, not the point
+//! (`[has: git, rust, …]`); hiding is the consequence, not the point
 //! (src/def-furniture.md). Most furniture is a **map**: glob → name, and a
 //! fate. A name the map does not know is just a child.
 //!

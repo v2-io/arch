@@ -1,5 +1,7 @@
 # JSON
 
+*Shipped 2026-08-14 (Wave D) — [[../impl/json.md|finish note]] carries the schema calls (v1 field names, `has`/censuses/mass objects, present-when-true marks).*
+
 `--format json` is the **same look as text** — same walk, same budget, same censuses, same marks — serialized instead of drawn. Text stays default. This is transport-guaranteed, not picture-true (Part II: a JSON Aspecta is verifiable-as-transport, not true-as-picture; do not advertise constrained decoding we don't do).
 
 "Same look" is the binding claim: a machine caller and a human caller looking at the same tree with the same caller state see the same facts, the same cuts, the same honesty. JSON never gets a deeper walk, a bigger budget, or extra facts as a side effect of being machine-shaped.
@@ -51,9 +53,9 @@ In machine mode a failure carries a structured error on the machine channel (Par
 
 ## Open
 
-- **Schema spelling** — field names, nesting (children arrays vs flat paths), where INFO facts (symlink target, furniture facets, README title) hang on the node. Sketch above is a leaning, not law; one schema, versioned from birth (a `"aspectus"`/`"schema"` version field costs one line and saves a migration).
-- **Canonical time form** (iso-8601 string vs epoch int vs both) — Joseph ratifies.
-- **Where the refusal object goes** in machine mode — stdout (it *is* the machine payload) vs stderr (stdout stays data-or-nothing). The estate refusal shape exists; the channel call is the open bit.
+- **Schema spelling** — shipped v1 as the leaning (children arrays, facts on the node, `"schema":1` from birth); field *names* stay ratifiable while consumers are zero.
+- ~~**Canonical time form**~~ **Shipped: iso-8601 UTC string** (the overview invariant's form); epoch was the alternative — Joseph ratifies.
+- ~~**Where the refusal object goes**~~ **Shipped provisionally: stderr** (stdout stays data-or-nothing); one constant to move if the call goes the other way. Config-file-set `format = json` still gets a text refusal on parse errors (parse precedes config resolution — recorded limitation).
 - **Partial-look exit code** — owned by [[walk-bound|Walk bound]]'s open question; decide there first.
 - `--format` spelling family already flagged open in the outline.
 
