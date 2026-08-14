@@ -167,6 +167,12 @@ The short-term aim above every row (Joseph, 2026-08-14): agents spot, focus, dis
 
 ---
 
+### *Chapter* The eyes — glance-surface design
+
+| State | Type | Tag | Claim | Max |
+|---|---|---|---|---|
+| src | Formulation | [[../../principles/src/form-agentic-eyes\|form-agentic-eyes]] | **The master design for agent-facing glance surfaces**: the look is observation infrastructure (κ×A ground); minimum tool-surprise, maximum surprisal per glyph; two duties (unknown-unknowns → unknowns; a living evolving system); the channel inventory (vertical/horizontal position, aligned edges, glyph density/identity, presence, aggregation, pairing, color, plain); the eight bounding concerns (determinism, caller-tunes, never-lie-by-omission, absent-never-faked, glyphs-are-interfaces, facts-not-affordances-for-machines, earned defaults, attention-is-the-budget); and the six-step option walk for admitting a new fact. Foundation for every rendering row. | supported |
+
 ### *Chapter* Progressive read and the suite floor
 
 #### Progressive disclosure
