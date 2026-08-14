@@ -6,4 +6,3 @@ pub mod color;
 pub mod config;
 pub mod n_level;
 pub mod overview;
-pub mod two_level;

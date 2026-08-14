@@ -1,11 +1,13 @@
 # Definition: furniture
 
-**Furniture** is a well-known name that tells you what a place *is*, rather than something you open as a child of the look.
+The positive concept comes first: a directory line has a **gathering spot for what the place *is*** — its kinds and critical state — `the-projects/ [git: remote<…> (private) br<…> stat<…>] [kind: git, python, rust, obsidian-vault, mise, agents]` (the origin's own example). Kinds are state markers; specialized kinds (git) carry a facet of real facts.
 
-`.git`, `target/`, `.obsidian/`, and the rest of that set are furniture. They belong on the parent line. They are not children you decline to expand. A child slot spent on hook samples or build objects is a slot not spent on the place.
+**Furniture** is a well-known name whose job is to *feed* that gathering spot rather than occupy a child slot. Once `.git` or `Cargo.toml` has said what the place is, listing it as a child adds nothing — and a child slot spent on hook samples or build objects is a slot not spent on the place. The hiding is a consequence of the gathering, not the point.
 
 A name the map (or a plugin) does not know is not furniture. It is just a child. You might look in it.
 
-`--show-all` / `--inspect` lists those names when you ask. The default look does not.
+`--show-all` / `--inspect` lists furniture names as ordinary children when you ask. The default look does not.
 
-Furniture is not **carta**. Carta is who the place is, standing identity. Furniture is the implementation guts that, once recognized, should not crowd the picture.
+Furniture is not **carta**. Carta is who the place is, standing identity. Furniture is the recognized machinery of a place — real, sometimes worth saying something true about (git's remote and branch), but never worth crowding the picture with.
+
+*(Provenance: the concept entered through the seeds, but the parent-state form is Joseph's — [[../ORIGIN-DISCUSSION.md|origin]]: "those can all be shown as states on their parent directory instead, more effectively." Definition rewritten 2026-08-14 against that original.)*

@@ -10,9 +10,11 @@ Not present-truth of the design — that is [`../design/`](../design/) or the Fo
 |---|---|
 | [`help-verb`](help-verb.md) | help / version / refusals |
 | [`config`](config.md) | caller stack + `aspectus config` |
-| [`two-level`](two-level.md) | default look |
+| [`two-level`](two-level.md) | milestone: first look (subsumed by n-level) |
 | [`color`](color.md) | `--color=auto\|always\|never`; dirs blue |
 | [`overview-invariants`](overview-invariants.md) | absolute root + UTC stamp |
 | [`n-level`](n-level.md) | `--depth N` (default 2) |
+| [`summarization`](summarization.md) | dir census at depth cutoff |
+| [`balanced`](balanced.md) | `--lines N` sharing + leaf census |
 
 First-snapshot notes (`absorb`, `allocator`, `bounded-walk`, `budget-not-cutoff`, `aspecta-ir`, `parent-state-not-children`, `first-snapshot`) describe code that is **not** in the crate. Keep them as history. Do not treat them as the binary.

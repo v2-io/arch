@@ -16,4 +16,5 @@ cargo install --path firmatum/utils/aspectus   # from arch/
 | [`ASPECTUS.outline.md`](ASPECTUS.outline.md) | Canon view — Part I pipeline, Part II principles, Appendix A reports |
 | [`PRACTICA.md`](PRACTICA.md) | What is in hand this week |
 | [`design/`](design/) | Segments when drafted (none yet) |
-| [`FEATURE-PIPELINE.md`](FEATURE-PIPELINE.md) · [`IMPLEMENTATION-NOTES.md`](IMPLEMENTATION-NOTES.md) | Seeds for those segments |
+| [`ORIGIN-DISCUSSION.md`](ORIGIN-DISCUSSION.md) | Joseph's original intent, verbatim — outranks the seeds |
+| [`FEATURE-PIPELINE.md`](FEATURE-PIPELINE.md) · [`IMPLEMENTATION-NOTES.md`](IMPLEMENTATION-NOTES.md) | Seeds (carry agent interpolation; check against the origin) |

@@ -44,7 +44,9 @@ Do not invent a harness taxonomy in this row. The flag’s value is a key; files
 | Estate overlays stay out of baked world-law | [[../../../principles/src/norm-overlays-are-config\|norm-overlays-are-config]] |
 | Secrets never as argv | [[../../../principles/src/norm-secrets-never-argv\|norm-secrets-never-argv]] |
 | Detect human vs machine; do not require a tribal agent-mode env | [[../../../principles/src/norm-machine-path-is-detected\|norm-machine-path-is-detected]] (flag-as-contract is this design’s overlay of “later gift”) |
-| Suite *repo / locus-walk* precedence | **not this tool** — diverges from [[../../../principles/src/form-config-precedence\|form-config-precedence]] and [[../../../principles/src/norm-config-walks-from-locus\|norm-config-walks-from-locus]] |
+| Only the caller tunes the channel; the place may offer content, never tuning | [[../../../principles/src/norm-caller-tunes-the-channel\|norm-caller-tunes-the-channel]] (Regime-I adversarial-content grounding) |
+| The caller declares itself with a key (`--caller`) | [[../../../principles/src/form-caller-key\|form-caller-key]] |
+| Discovery-from-the-tree is write-scope only; tuning never walks the locus | [[../../../principles/src/norm-config-walks-from-locus\|norm-config-walks-from-locus]] · [[../../../principles/src/form-config-precedence\|form-config-precedence]] (both rewritten 2026-08-14 to match this design — no divergence remains) |
 
 ## Subfeatures
 

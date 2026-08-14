@@ -9,6 +9,15 @@ pub fn absolute_root(path: &Path) -> io::Result<PathBuf> {
     Ok(abs)
 }
 
+/// Resolve `.` against cwd for tests that pass a real fixture path.
+pub fn resolve_locus(path: &Path) -> PathBuf {
+    if path.as_os_str() == "." {
+        std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."))
+    } else {
+        path.to_path_buf()
+    }
+}
+
 /// ISO-8601 / RFC-3339 UTC, second resolution: `YYYY-MM-DDTHH:MM:SSZ`.
 pub fn stamp_utc(now: SystemTime) -> String {
     let secs = now

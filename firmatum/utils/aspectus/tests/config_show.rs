@@ -108,7 +108,10 @@ fn decoy_at_locus_does_not_win() {
         stdout.contains("lines = 80"),
         "decoy must not win: {stdout}"
     );
-    assert!(!stdout.contains("999"), "{stdout}");
+    // "lines = 999", not bare "999": the xdg scratch path carries a nanosecond
+    // timestamp that can itself contain "999" (seen live, 2026-08-14).
+    assert!(!stdout.contains("lines = 999"), "{stdout}");
+    assert!(!stdout.contains("lines = 998"), "{stdout}");
     assert!(!stdout.contains(locus.join("aspectus.toml").to_str().unwrap()), "{stdout}");
 }
 

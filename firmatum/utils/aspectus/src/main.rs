@@ -336,7 +336,7 @@ enum ShowErr {
 }
 
 fn show(args: ShowArgs) -> Result<(), ShowErr> {
-    let locus = aspectus::two_level::resolve_locus(&args.path);
+    let locus = aspectus::overview::resolve_locus(&args.path);
     let cfg = resolve(
         args.user_home_override.as_deref(),
         args.caller.as_deref(),
