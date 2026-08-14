@@ -12,7 +12,6 @@ This is the first picture. It is not yet a line budget, and it is not yet furnit
 | Success is quiet on stderr | [[../../../principles/src/norm-success-is-quiet\|norm-success-is-quiet]] |
 | Glance before focus | [[../../../principles/src/norm-glance-before-focus\|norm-glance-before-focus]] |
 | A picture of the place, not an essay | [[../../../principles/src/claim-query-for-files\|claim-query-for-files]] |
-| `--color=auto` follows stdout TTY | [[../../../principles/src/norm-color-follows-tty\|norm-color-follows-tty]] · [[../../../principles/src/form-shared-flags\|form-shared-flags]] |
 | No prompts | [[../../../principles/src/norm-no-prompts\|norm-no-prompts]] |
 | Explicit paths and the default locus are CWD-relative | [[../../../principles/src/norm-paths-relative-to-cwd\|norm-paths-relative-to-cwd]] |
 | `--` already from Help | [[../../../principles/src/form-shared-flags\|form-shared-flags]] |
@@ -30,10 +29,9 @@ This is the first picture. It is not yet a line budget, and it is not yet furnit
 | 6 | Hidden names | Listed. No furniture rule yet. | `.git/` appears as a child if present. |
 | 7 | Order | Uses [[design/sort\|Sort]]’s default (dirs first, then name). This row does not invent sort. | Stable across runs; same in a pipe. |
 | 8 | Success is quiet | stderr empty, exit 0. | `aspectus` in the fixture. |
-| 9 | Color | `--color=auto` (default): color only if stdout is a TTY. `--color=never` / `--color=always`. No color sequences in a pipe under `auto`. | `aspectus \| cat` has no CSI; `aspectus --color=never` never has CSI. |
-| 10 | Missing path | Path does not exist → stderr, exit 2, class: not found. Next action is not `help` unless the path looks like a flag. | `aspectus /no/such`. |
-| 11 | Install | After `cargo install --path firmatum/utils/aspectus` from `arch/`, `aspectus` on PATH works from any CWD. | Invoke the installed binary from a temp dir that is not the crate. |
-| 12 | Help examples | Add to help in the same commit: `aspectus` and `aspectus PATH`. | Help snapshot updated. |
+| 9 | Missing path | Path does not exist → stderr, exit 2, class: not found. Next action is not `help` unless the path looks like a flag. | `aspectus /no/such`. |
+| 10 | Install | After `cargo install --path firmatum/utils/aspectus` from `arch/`, `aspectus` on PATH works from any CWD. | Invoke the installed binary from a temp dir that is not the crate. |
+| 11 | Help examples | Add to help in the same commit: `aspectus` and `aspectus PATH`. | Help snapshot updated. |
 
 ## Picture (this row)
 
@@ -48,4 +46,4 @@ No sizes, no dates, no git letters. Those wait.
 
 ## Not in this row
 
-Nth-level tree, Summarization, Balanced summarization, furniture, visit cap, JSON. Color (`--color=auto`) is specified here and **not shipped** — do not list a flag that does nothing.
+Nth-level tree, Summarization, Balanced summarization, furniture, visit cap, JSON, [[color\|Color]].
