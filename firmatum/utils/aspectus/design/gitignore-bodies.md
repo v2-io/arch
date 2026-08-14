@@ -40,6 +40,12 @@ Two effects, one per direction of honesty:
 | 9 | Walk cost | The walk does not recurse into ignored dirs at all (their innards cost no stat budget) — the honesty is from presence + declaration, not from walking them. | Bounded-walk fixture: budget not drained by a huge ignored dir. |
 | 10 | JSON | `ignored` is a field; the remainder bucket is data ([[json\|JSON]]). | Parse fixture output. |
 
+## Steward asks (2026-08-14, fold into this row's landing)
+
+Joseph: *"has: git vs gitignored vs .gitignore"* — the has-vocabulary distinguishes three different claims that currently blur: **`git`** (repo machinery — a verified `.git`, facet territory), **`.gitignore`** (the place *has* an ignore file — a contents claim like any map row), and **`gitignored`** (this entry *is itself ignored* — a per-node status, not a parent-contents claim). Three words, three truths; the map and this row split them.
+
+And: *"gitignored files/directories dim color for human and sigil/glyph for non-color"* — ignored entries render **dimmed on a TTY** and carry a **glyph in the no-color look** (the mark this design already wanted, now with its two-channel rendering decided in principle — glyph spelling still interface vocabulary for ratification, [[shorthand|Shorthand]]'s stability law applies).
+
 ## Open
 
 - **Mark and remainder spelling** (`[ignored]`? the census bucket word?) — Joseph ratifies; one constant each.
