@@ -154,6 +154,7 @@ fn help_lists_every_accepted_flag() {
         "--config",
         "--caller",
         "--color",
+        "--depth",
         "-h",
         "-v",
         "config",

@@ -3,6 +3,8 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
+use std::collections::BTreeMap;
+
 use aspectus::color::Mode as ColorMode;
 use aspectus::config::{render_show, resolve, CALLER_FLAG};
 
@@ -23,6 +25,10 @@ const OPTIONS: &[(&str, &str)] = &[
     (
         "--color=auto|always|never",
         "color directories when stdout is a TTY (auto)",
+    ),
+    (
+        "--depth N",
+        "generations below the root (default 2; 0 = no limit)",
     ),
 ];
 
@@ -55,8 +61,9 @@ fn help_page() -> String {
          is shown). It is not percepta (ongoing status and health). aspectus\n\
          is how the place looks right now.\n\
          \n\
-         Default: the absolute path of the place and its immediate children,\n\
-         then it exits. The header includes the time of the look (UTC).\n\
+         Default: the absolute path of the place, two generations down\n\
+         (children and grandchildren), then it exits. The header includes\n\
+         the time of the look (UTC).\n\
          \n\
          Commands:\n",
         ver = version_line()
@@ -98,11 +105,15 @@ enum Cmd {
 struct ConfigArgs {
     user_home_override: Option<PathBuf>,
     caller: Option<String>,
+    flag_vals: BTreeMap<String, String>,
 }
 
 struct ShowArgs {
     path: PathBuf,
     color: ColorMode,
+    user_home_override: Option<PathBuf>,
+    caller: Option<String>,
+    flag_vals: BTreeMap<String, String>,
 }
 
 enum Refusal {
@@ -144,6 +155,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut user_home_override = None;
     let mut caller = None;
     let mut color = ColorMode::Auto;
+    let mut flag_vals = BTreeMap::new();
     let mut end_flags = false;
     let mut args = argv.into_iter().peekable();
 
@@ -188,6 +200,18 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                     Refusal::Usage(format!("--color needs auto, always, or never (got {v})"))
                 })?;
             }
+            "--depth" => {
+                let v = args
+                    .next()
+                    .ok_or_else(|| Refusal::Usage("--depth needs a number".into()))?;
+                parse_depth(&v)?;
+                flag_vals.insert("depth".into(), v);
+            }
+            s if s.starts_with("--depth=") => {
+                let v = &s[8..];
+                parse_depth(v)?;
+                flag_vals.insert("depth".into(), v.to_string());
+            }
             "--" => end_flags = true,
             s if s.starts_with('-') => return Err(Refusal::UnknownOption(s.to_string())),
             s => take_positional(&mut path, s.to_string())?,
@@ -204,6 +228,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         return Ok(Cmd::Config(ConfigArgs {
             user_home_override,
             caller,
+            flag_vals,
         }));
     }
 
@@ -212,7 +237,18 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         Some(p) => classify_positional(p)?,
     };
 
-    Ok(Cmd::Show(ShowArgs { path, color }))
+    Ok(Cmd::Show(ShowArgs {
+        path,
+        color,
+        user_home_override,
+        caller,
+        flag_vals,
+    }))
+}
+
+fn parse_depth(s: &str) -> Result<u32, Refusal> {
+    s.parse::<u32>()
+        .map_err(|_| Refusal::Usage(format!("--depth needs a number (got {s})")))
 }
 
 fn take_positional(path: &mut Option<String>, token: String) -> Result<(), Refusal> {
@@ -246,7 +282,11 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         Ok(Cmd::Config(c)) => {
-            let res = resolve(c.user_home_override.as_deref(), c.caller.as_deref(), None);
+            let res = resolve(
+                c.user_home_override.as_deref(),
+                c.caller.as_deref(),
+                c.flag_vals,
+            );
             print!("{}", render_show(&res));
             ExitCode::SUCCESS
         }
@@ -271,13 +311,23 @@ enum ShowErr {
 
 fn show(args: ShowArgs) -> Result<(), ShowErr> {
     let locus = aspectus::two_level::resolve_locus(&args.path);
+    let cfg = resolve(
+        args.user_home_override.as_deref(),
+        args.caller.as_deref(),
+        args.flag_vals,
+    );
+    let depth = cfg
+        .won
+        .get("depth")
+        .and_then(|(v, _)| v.parse().ok())
+        .unwrap_or(2);
     let abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
-    let (_, kids) = aspectus::two_level::list(&locus).map_err(|e| map_io(&locus, e))?;
+    let tree = aspectus::n_level::gather(&locus, depth).map_err(|e| map_io(&locus, e))?;
     let root = abs.to_string_lossy();
     let stamp = aspectus::overview::stamp_utc(std::time::SystemTime::now());
     print!(
         "{}",
-        aspectus::two_level::render(&root, &kids, args.color.active(), &stamp)
+        aspectus::n_level::render(&root, &tree, args.color.active(), &stamp)
     );
     Ok(())
 }

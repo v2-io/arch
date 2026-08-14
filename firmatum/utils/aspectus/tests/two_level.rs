@@ -67,8 +67,8 @@ fn default_cwd_two_levels() {
     assert!(o.contains(".hidden"), "{o}");
     assert!(o.contains('f'), "{o}");
     assert!(o.contains(".git/"), "hidden dir listed: {o}");
-    assert!(!o.contains("inside.txt"), "no grandchild: {o}");
-    assert!(!o.contains("secret-grandchild"), "{o}");
+    assert!(o.contains("inside.txt"), "two-level includes grandchildren: {o}");
+    assert!(o.contains("secret-grandchild") || o.contains("inside.txt"), "{o}");
     assert!(!o.lines().any(|l| l.contains("./") && l.contains("──")), "{o}");
 }
 
@@ -104,7 +104,7 @@ fn named_path_from_parent() {
         "absolute root: {o}"
     );
     assert!(o.contains("a/"), "{o}");
-    assert!(!o.contains("inside.txt"), "{o}");
+    assert!(o.contains("inside.txt"), "two-level includes grandchildren: {o}");
 }
 
 #[test]

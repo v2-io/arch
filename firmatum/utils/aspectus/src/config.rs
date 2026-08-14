@@ -17,6 +17,7 @@ pub const GLOBAL_PATH: &str = "/etc/aspectus/aspectus.toml";
 pub const CALLER_FLAG: &str = "--caller";
 
 const DEFAULT_LINES: u32 = 80;
+const DEFAULT_DEPTH: u32 = 2;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Layer {
@@ -57,6 +58,7 @@ pub fn agent_type_path(caller: &str) -> PathBuf {
 pub fn defaults() -> BTreeMap<String, String> {
     let mut m = BTreeMap::new();
     m.insert("lines".into(), DEFAULT_LINES.to_string());
+    m.insert("depth".into(), DEFAULT_DEPTH.to_string());
     m
 }
 
@@ -93,16 +95,21 @@ pub fn env_values() -> BTreeMap<String, String> {
             m.insert("lines".into(), v);
         }
     }
+    if let Ok(v) = env::var("ASPECTUS_DEPTH") {
+        if !v.is_empty() {
+            m.insert("depth".into(), v);
+        }
+    }
     m
 }
 
 /// `user_home_override` is `--config=PATH` (substitutes for user-home).
 /// `caller` is `--caller=KEY`.
-/// `flag_lines` is `--lines N` when present.
+/// `flag_vals` is argv (`--depth`, …).
 pub fn resolve(
     user_home_override: Option<&Path>,
     caller: Option<&str>,
-    flag_lines: Option<u32>,
+    flag_vals: BTreeMap<String, String>,
 ) -> Resolved {
     let mut layers = Vec::new();
 
@@ -158,10 +165,6 @@ pub fn resolve(
         values: env_values(),
     });
 
-    let mut flag_vals = BTreeMap::new();
-    if let Some(n) = flag_lines {
-        flag_vals.insert("lines".into(), n.to_string());
-    }
     layers.push(Layer {
         name: "flags",
         path: None,

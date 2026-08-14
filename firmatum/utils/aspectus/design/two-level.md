@@ -1,8 +1,10 @@
 # Two-level look
 
-I run `aspectus` in a directory (or name a path) and get two levels: the place itself, and its children. No grandchildren. Then it exits.
+I run `aspectus` in a directory (or name a path) and get **two generations** below the root: the place, its children, and its grandchildren. Then it exits.
 
-This is the first picture. It is not yet a line budget, and it is not yet furniture. `.git` will show as a child if it is there. That is honest for this row.
+(The first shipped picture was only children — that is `--depth 1`. Two levels is `--depth 2`.)
+
+This is not yet a line budget, and it is not yet furniture. `.git` will show as a child if it is there.
 
 ## Foundations (clauses)
 
@@ -23,7 +25,7 @@ This is the first picture. It is not yet a line budget, and it is not yet furnit
 |---|---|---|---|
 | 1 | Default locus | No path → look at CWD. | In a fixture dir, `aspectus` lists that dir’s name and its children. |
 | 2 | Named locus | `aspectus PATH` looks at PATH. Relative to CWD. | `aspectus sub/` from the fixture parent lists `sub/` and *its* children, not the parent’s. |
-| 3 | Two levels | The locus line, then each child. A child directory is **not** expanded. | A child dir that contains files does not print those files. |
+| 3 | Two levels | The locus line, each child, and each grandchild. Great-grandchildren wait on `--depth 3`. | A child dir’s files print. A grandchild dir’s *children* do not. |
 | 4 | `.` and `..` | Not listed as children. `.` is the locus itself (the root line). `..` is outside the look. | Fixture contains only `a/` and `f`; stdout has no `./` child line and no `../`. |
 | 5 | Dirs marked | Directory names end in `/`. | `a/` in stdout; file `f` has no slash. |
 | 6 | Hidden names | Listed. No furniture rule yet. | `.git/` appears as a child if present. |
