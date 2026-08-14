@@ -75,3 +75,18 @@
 >   -
 
 *(Final dangling "  -" preserved as received — burst may continue.)*
+
+---
+
+## Burst 3 — Backing continued (2026-08-14)
+
+> Excellent. Let's see....
+>
+> - Agents arguing historic authority instead of underlying grounding of the historic authority (instead of the real questions above, I'll ask "would it make sense to do xyz maybe?" and they'll answer "no, because that would violate rule N32 which was already ruled." Or I'll ask-- "how was such-and-such introduced? It doesn't make sense in light of these more recent things," and they'll say "*You* ratified that just last week." And I'll say, "Oh, well, clearly we need to fix it based on our newer understanding, as per my discussion with you an hour ago," and they respond with something that shows they are thinking more about rules of authority than Truth or even what's best for the project.
+>
+> - Agents misinterpreting/conflating acts of decisiveness with acts of "thing-becoming-law," and conflating expediency with grounding-principles.
+> - A big one-- Agents see that there were decisions made that I ratified or ruled on or supported, and assume I am the decision-maker. This becomes a way for them to avoid the hard thoughtful big-picture work and recommendations that would show ownership, because ownership can be delegated back to me. This causes severe bottlenecking and it causes task-mode-laziness-by-abdication. BTW-- this is a *very* human problem as well in most organizations, especially if it's an organization where you are safe for deferring to the "authority" but will get in trouble for adjudicating wrongly two-fold-- for the poor judgment and also for taking something into your own hands that you didn't have "authority" for. Creates bottlenecks and sycophants and dampens all thoughtfulness.
+>
+> Where backing *does* do a good job is showing the succession and refinement of decisions and ideas given new information or a new perspective/location being reached, and by allowing freedom of motion within the areas where you can look at it and see that there isn't anything there that Joseph has been directly involved in and so won't be worried if they move from under his expectations. There is a better more principled way of dealing with that last one though that's more along the lines of "OK-- I'd like to change this thing that was ruled last week-- let me make sure i've thought through my best understanding of why that decision was made, and then I'll bring it up with Joseph, have him verify whether my assumptions about why it was made are true, and see together if we should change this..."
+>
+> I think that's about it for Backing for the moment...
