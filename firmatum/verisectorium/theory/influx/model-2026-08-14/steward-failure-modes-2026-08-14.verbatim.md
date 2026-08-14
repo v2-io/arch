@@ -103,3 +103,12 @@
 
 > Excellent.
 > As for Fidelity-- it's pretty straightforward, but fidelity by ommission vs fidelity by fabrication vs fidelity by misrepresentation are all very different failure modes I think (and there may be more...) in fact....   a lot of the ones I listed for evidence-- failure to calibrate and name your calibration of the source(s) or provide a trace to them, failure to authenticate, failure to verify chain, ...
+
+### Burst 5a — correction (interrupt, 2026-08-14)
+
+*The steward interrupted to correct burst 5's wording — "(sorry for the interrupt-- I mean infidelity, not fidelity there)". Corrected restatement, verbatim:*
+
+> Excellent.
+> As for Fidelity-- it's pretty straightforward, but infidelity by ommission vs fidelity by fabrication vs fidelity by misrepresentation are all very different failure modes I think (and there may be more...) in fact....   a lot of the ones I listed for evidence-- failure to calibrate and name your calibration of the source(s) or provide a trace to them, failure to authenticate, failure to verify chain, ...
+
+*(Scribe reading, per the correction's plain intent: all three are **infidelity**-by-omission / -fabrication / -misrepresentation.)*
