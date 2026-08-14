@@ -36,8 +36,7 @@ const OPTIONS: &[(&str, &str)] = &[
         "--inspect [KIND]",
         "same, or only KIND (git, build, …)",
     ),
-    ("-x", "stay on one filesystem (default)"),
-    ("--no-one-fs", "follow mounts"),
+    ("--no-one-fs", "follow mounts (default is one filesystem)"),
     (
         "--color=auto|always|never",
         "color only if stdout is a TTY (auto)",
@@ -207,7 +206,6 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             }
             "--explain-budget" => explain = true,
             "--show-all" => inspect = Some("*".into()),
-            "-x" => one_fs = true,
             "--no-one-fs" => one_fs = false,
             "--inspect" => {
                 if let Some(n) = args.peek() {

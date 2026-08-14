@@ -160,13 +160,12 @@ fn help_lists_every_accepted_flag() {
         "--config",
         "--caller",
         "--color",
-        "-x",
         "-h",
         "-v",
         "config",
     ] {
         assert!(page.contains(needle), "help missing {needle}");
     }
-    let (c, _, e) = run(&["--lines", "10", "--visit", "20", "-x"]);
+    let (c, _, e) = run(&["--lines", "10", "--visit", "20", "--no-one-fs"]);
     assert_ne!(c, 2, "accepted flags must not refuse: {e}");
 }

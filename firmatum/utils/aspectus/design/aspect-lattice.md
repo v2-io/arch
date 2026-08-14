@@ -41,7 +41,7 @@ Marks: `Y` in scope · `INFO` hangs on the name · `Y + INFO` both · `ON` / `OF
 | group | Y | OFF | Y | — | NO | name* / gid | — | — | — | — | Same as owner. |
 | cloud | INFO | QUIET | Y | — | NO | evicted* / hydrated | — | — | — | — | Evicted / not hydrated. Omit where the FS has no such bit. |
 | linkcount | Y | OFF | Y | — | NO | n* | — | — | — | — | Quiet = nlink > 1. |
-| filesystem | — | OFF | — | — | COMPOSE | — | — | — | NO | — | Already `-x` / `--no-one-fs` on [[links-and-fs\|Links]]. Not a column. |
+| filesystem | — | OFF | — | — | COMPOSE | — | — | — | NO | — | Already `--no-one-fs` on [[links-and-fs\|Links]] (default is one filesystem). Not a column. |
 | child-count | INFO | ON | — | Y | NO | n* / n+shown | Y | Y | — | — | How many children, shown or not. Broot’s gap. Distinct from size. Critical differentiating feature. Hangs on the directory name. |
 | git letter | Y | ON | Y | — | NO | letter* / porcelain | — | — | — | — | Dirty only. Clean prints nothing. |
 | initial-sha | Y | OFF | — | Y | NO | short* / H~N / full | — | — | NO | — | Introducing commit. Outside a repo: omit. Lives with [[../ASPECTUS.outline#heat\|Heat]], not a second universe. |

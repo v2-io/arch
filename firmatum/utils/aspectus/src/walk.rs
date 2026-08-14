@@ -12,7 +12,7 @@ use crate::ir::{Aspecta, Node};
 pub struct WalkOptions {
     /// Max directory entries processed (stat / classified). Not a line budget.
     pub visit_budget: usize,
-    /// Stay on the starting filesystem (`-x`).
+    /// Stay on the starting filesystem (default). `--no-one-fs` clears this.
     pub one_filesystem: bool,
     /// `None` = default (do not list furniture). `Some("*")` = `--show-all`.
     /// `Some(kind)` = `--inspect kind`.
