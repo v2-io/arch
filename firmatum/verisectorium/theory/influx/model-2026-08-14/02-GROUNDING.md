@@ -30,10 +30,14 @@
 ## The forks that are the steward's (laid out, not resolved)
 
 - **F1 — the Evidence MECE table** (the deliberately-open epistemology decision). The model's contribution is only the observation (2026-08-10 reflection, carried): the four candidate ingredients — named channels (GRADE-shaped), evidence ledger (relata's shipped WoE), interval width (credal), calibration-from-events — do not compete; they read as a **maturity ramp** (channels → ledger → width → calibration), which would let the decision ripen in stages instead of a cliff. Offered, not settled; the ordering ("cost to overturn"?) remains the genuinely open call.
-- **F2 — Standing as track vs clause** (divergence 2 above).
+- **F2 — Standing** — resolved toward restoration per 03-ADVERSARIAL-READ A3: now §2-Q0, a gate before any ladder. (Divergence 2 stands as the record of the demotion-and-return.)
 - **F3 — ladder reconciliation across the estate** (scalar / three-axis / rung-tags): under this model the reconciliation object is per-currency, which shrinks the problem — the incompatible ladders are all Evidence-currency dialects; Fidelity/Efficacy/Backing ladders never collided. Whether that reframing survives contact is checkable against disc-ladder-reconciliation's specimens.
 - **F4 — the `claim-` prefix reservation** — untouched by this model except that "assertion" is the currency word, which may or may not inform the revisit.
 - **F5 — groundedness mechanics**: is the foundation scale assessed per decision-event (a field on the event) or per record (a cell)? Sketch is silent; both are workable; per-event composes better with §0.2.
+
+## Amendment log
+
+- 2026-08-14 (post-adversarial-read + steward dialog): A1–A4 folded into 01-MODEL (Foundation-generalizes note in §1; instrument-follows-rung in Q3; Standing restored as Q0 — §2 now nine questions; two-column ledger discipline in Q5). §6 added — the composites closure rule (reify / view-ify / cluster / exempt, visibly; undeclared mixed composite as the named pathology; emissions via weakest-necessary-premise + assembly events + re-atomization; certification of composites inherited through edges, never averaged). §6's shapes were latent in §3 but the rule emerged stated only in steward dialog — provenance: this session's exchange, mine in assembly, the shapes all carried (comproprium outline law; def-atom-cluster; segment-set/old-* exemption; VERA compression; trio weakest-necessary-premise; neurips adjudicated overlay).
 
 ## Reading-state honesty for this distillation
 
