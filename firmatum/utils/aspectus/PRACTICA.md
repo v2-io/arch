@@ -4,7 +4,13 @@ Live efforts only. Pipeline: [`ASPECTUS.outline.md`](ASPECTUS.outline.md) Part I
 
 Start at Part I. Follow Foundation for a why. Seeds: [`IMPLEMENTATION-NOTES.md`](IMPLEMENTATION-NOTES.md), [`FEATURE-PIPELINE.md`](FEATURE-PIPELINE.md). `design/` / `impl/` only when there is something to put in them.
 
-## Now — the whole-tool day (2026-08-14, evening)
+## Day closed — 2026-08-14, v0.1.8
+
+The whole-tool day ended complete-as-specced minus the deliberately-open rows. Working: help/config/look floor, walk-bound+denied, censuses (reworked grammar), balanced allocator w/ redistribution, furniture+labels+git/github facets (`has:`), columns+sort (recency default, headings), mass+linecount, links (follow+recurse), heat+shas, quiet cold-baseline, important-files, JSON, ignored bodies (dim+⊘), globify, readme-title (off, key live), feedback footer → [`inbox.md`](inbox.md). Two de-novo audits + three hallway/witness threads all dispatched; closing audit verified all prior findings fixed. Perf: `~/src` ~1.5s, warm arch ~0.35s.
+
+**Not built (honestly open):** cache+last-look (store designed, identity open), focus, vertical-info (the `~/src` density gauntlet — next), presets (cold look), phenom/SIGNA rendering, udon, private-remote (`gh` tension — Joseph), kind-query, prior-name, cross-level spend order. **Ratification queue:** in the designs' Opens + lattice (all marked; none blocking). **Standing ritual:** check inbox.md each session; reinstall on every consolidation; bump patch per consolidation.
+
+## The build-day record (2026-08-14, kept for provenance)
 
 Joseph's target: the tool complete as specced, today. Waves landed and committed: **A** — labels + furniture map + git/github facets (`[kind: …]`, `[git: remote br @sha dirty]`, noise-free first screens); **B** — columns + sort (caller-stack selection, placement enum, computed-tab-stop alignment per steward decision, **recency default sort** with key-within-weights survival — the call-it-again affordance is live), two-line header (stamp, then root). **C in flight**: mass (deep-agg) + linecount + links-follow-and-recurse + heat obtain (git-heat's model) + the reworked census rendering (no total, `kind×N`, dirs-separate-with-mass — provisional, globify/mass may intercede). **D-design in flight**: important-files / focus / last-look / quiet cold-baseline.
 
