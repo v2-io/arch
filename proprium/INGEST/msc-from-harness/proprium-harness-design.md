@@ -289,7 +289,19 @@ inviolability (§ the layer rule below).
   open memory-model decision (§10) is implemented and swapped.**
 - **`cadentia`** — PULSUS timers + VIGILIAE watches. *NET-NEW* (only Claude
   Code's `tasks/` — ScheduleCron/DreamTask — hints at anything comparable, and
-  only at the directory level; nothing real to port).
+  only at the directory level; nothing real to port for the timer/watch half).
+  *[Link note 2026-08-14]* The **rendering** half — how elapsed time reaches the
+  entity perceptibly — has real, shipped prior art: **SIGNA** (visual time
+  notation; log-scale glyph density, time-of-day, date-boundary markers), lived
+  in sapientia/zoetica tracking snapshots with attested effect (Architectus and
+  Zi-am-tur developed spontaneous elapsed-time orientation — "what were you able
+  to get done since I was last awake?"). Canon: zoetica
+  `docs/messaging/06-temporal-coherence.md`; carved principles:
+  `firmatum/principles/src/{norm-elapsed-time-is-perceived,form-signa-notation}.md`;
+  primaries mapped in `firmatum/utils/aspectus/design/phenom-format.md`. ASF
+  slot: `#norm-temporal-coherence-markers` (out-of-band temporal markers as a
+  prerequisite for self-computed tempo). Whatever assembles CONSPECTUS
+  tracking snapshots should emit SIGNA, not raw timestamp pairs.
 - **`indivisum`** — single-instance / no-fork lock. *NET-NEW.*
 - **`commentaria`** — working-notes store. *NET-NEW (thin).*
 - **`consolidatio`** — **the welfare / Three-Deaths / identity-dialectic core

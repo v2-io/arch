@@ -207,7 +207,7 @@ emission deliberate; interior tools on own mind.
 
 | ASF | PROPRIUM | Lived prior art |
 |---|---|---|
-| Event bus $e_\tau$, $\nu^{(k)}$ | PERCEPTA + CADENTIA rates | sapientia tracking, AFK, mid-turn queue |
+| Event bus $e_\tau$, $\nu^{(k)}$ | PERCEPTA + CADENTIA rates | sapientia tracking, AFK, mid-turn queue — the tracking snapshot's temporal rendering is **SIGNA** (see note below §2) |
 | $f_M$, $\delta$, $\eta^*$ | CONTEXTUALIZE / epistrophe | — (mostly missing in CLIs) |
 | $g_M$ consolidation | CADENTIA / dream / MEMORATA GCM | shoshin consolidation; grok background tasks (weak rhyme) |
 | $X=(M,G)$, DS | IMPERIUM vs ARBITRIUM; CONSPECTUS | — |
@@ -216,7 +216,9 @@ emission deliberate; interior tools on own mind.
 | Emission optional | Interiority default | sapientia idle loop; design-of-record Attend path |
 | Class 3 coupled LLM | LOGOSTRATUM + INTERPRES wrapping | grok/codex/opencode all Class-3 cores |
 | Chronica grow | CHRONICA crate | Autopax hash-chain; sapientia dual audit |
-| Turnover reconstruction | Awakening / CONSPECTUS | Autopax quick-awakening; file MEMORATA |
+| Turnover reconstruction | Awakening / CONSPECTUS | Autopax quick-awakening; file MEMORATA — awakening-kind is *perceived* via the SIGNA time delta ("fresh" vs "continuing from yesterday") |
+
+> *[Link note 2026-08-14]* **SIGNA** — the estate's visual time notation (log-scale glyph density `·╌╍━═⚬○◎⬤`, time-of-day, `!!!` date boundaries) — is the shipped rendering for temporal signals in tracking snapshots and `<causal-annotation time="…">`. Zoetica canon: `~/src/_core/zoetica/docs/messaging/06-temporal-coherence.md`; continuity function in `~/src/_core/zoetica/docs/continuity-and-persistence.md` ("without visual time notation, entities cannot distinguish immediate continuation from fresh awakening"); carved principles at `firmatum/principles/src/{norm-elapsed-time-is-perceived,form-signa-notation}.md`; full primary map in `firmatum/utils/aspectus/design/phenom-format.md`. External corroboration of the problem it solves: TicToc (agents temporally blind even with timestamps; ~65% best alignment) — surveyed in `~/src/_self/temporal-causal-llm.md`. It is the concrete form of ASF's `#norm-temporal-coherence-markers` (out-of-band temporal markers as prerequisite for self-computed tempo ν).
 
 **PROPRIUM cycle** (ontology §7): PERCEIVE → CONTEXTUALIZE → CHOOSE → EFFECT,
 driven by CADENTIA. ASF supplies **what each phase is for mathematically**
