@@ -66,6 +66,12 @@ fn depth_1_is_children_only() {
     assert!(o.contains('f'), "{o}");
     assert!(!o.contains("inside.txt"), "depth 1 has no grandchildren: {o}");
     assert!(!o.contains("deep.txt"), "{o}");
+    assert!(
+        o.contains('[') && o.contains("dir"),
+        "unexpanded a/ must census, not look empty: {o}"
+    );
+    assert!(!o.contains("unlisted"), "{o}");
+    assert!(!o.contains("…"), "{o}");
 }
 
 #[test]
@@ -76,6 +82,10 @@ fn depth_2_includes_grandchildren() {
     assert!(o.contains("inside.txt"), "{o}");
     assert!(o.contains("b/"), "{o}");
     assert!(!o.contains("deep.txt"), "depth 2 stops at grandchildren: {o}");
+    assert!(
+        o.contains(".txt"),
+        "unexpanded b/ must census its file: {o}"
+    );
 }
 
 #[test]
