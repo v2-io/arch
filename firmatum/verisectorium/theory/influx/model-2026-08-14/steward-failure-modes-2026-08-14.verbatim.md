@@ -90,3 +90,9 @@
 > Where backing *does* do a good job is showing the succession and refinement of decisions and ideas given new information or a new perspective/location being reached, and by allowing freedom of motion within the areas where you can look at it and see that there isn't anything there that Joseph has been directly involved in and so won't be worried if they move from under his expectations. There is a better more principled way of dealing with that last one though that's more along the lines of "OK-- I'd like to change this thing that was ruled last week-- let me make sure i've thought through my best understanding of why that decision was made, and then I'll bring it up with Joseph, have him verify whether my assumptions about why it was made are true, and see together if we should change this..."
 >
 > I think that's about it for Backing for the moment...
+
+---
+
+## Burst 4 — Backing, the steward-side pole (2026-08-14)
+
+> Sounds about right. It doesn't help that some human and agent stewards truly feel "put out" by authority being taken by "subordinates." It should be a question of accountability and transparency and (with accountability), "ownership" -- often controlling behavior and dogmatic or coercive insistance on lines of authority are instead proxy for lack of understanding or principledness in the first place.
