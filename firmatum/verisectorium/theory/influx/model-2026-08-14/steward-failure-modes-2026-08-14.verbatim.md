@@ -96,3 +96,10 @@
 ## Burst 4 — Backing, the steward-side pole (2026-08-14)
 
 > Sounds about right. It doesn't help that some human and agent stewards truly feel "put out" by authority being taken by "subordinates." It should be a question of accountability and transparency and (with accountability), "ownership" -- often controlling behavior and dogmatic or coercive insistance on lines of authority are instead proxy for lack of understanding or principledness in the first place.
+
+---
+
+## Burst 5 — Fidelity (2026-08-14)
+
+> Excellent.
+> As for Fidelity-- it's pretty straightforward, but fidelity by ommission vs fidelity by fabrication vs fidelity by misrepresentation are all very different failure modes I think (and there may be more...) in fact....   a lot of the ones I listed for evidence-- failure to calibrate and name your calibration of the source(s) or provide a trace to them, failure to authenticate, failure to verify chain, ...
