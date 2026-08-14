@@ -36,6 +36,10 @@ The folder name is an address; the README title is what the place calls itself. 
 | 7 | Determinism | Same tree, same config: byte-identical. | Diff runs. |
 | 8 | JSON | The title is a field on the dir node when present ([[json\|JSON]]). | Parse fixture output. |
 
+## Shipped (2026-08-14, Wave E)
+
+Default **OFF with the key working** (`readme-title = on`) so the Open below is ratified by flipping one value. 4 KB peek, ATX-heading-else-first-line, redundancy guard, 60-char cap, truthful-or-silent throughout; the set is borrowed from important-files through one shared method. Rendering landed **near-right, quoted** (the INFO office as this codebase renders it; the columns wave's provisional *decoration* filing would have shredded column alignment — divergence recorded in [[../impl/readme-title|impl/readme-title]] for ratification).
+
 ## Open
 
 - **Default state — ON or QUIET/OFF?** The orientation value argues ON; the cost is one bounded read per visible dir-with-README plus line width on every such line. Leaning ON (it is exactly the "what is this place" fact the tool exists for), but this spends default glyphs and the lattice's governing principle makes Joseph the judge of that trade. Ratify.

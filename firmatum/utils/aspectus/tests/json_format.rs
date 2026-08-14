@@ -175,10 +175,14 @@ fn same_look_as_text() {
         touch(&dir, &format!("f{i:02}.md"), 1_700_000_000 + i * 10);
     }
     let args = ["--depth", "1", "--lines", "7"];
-    let (_, text, _) = run(&dir, &xdg, &[], &args);
+    // Numbered-series fixture; globify (2026-08-14) would collapse it to
+    // one listee in both renderings — parity of the budget fold is this
+    // test's subject, so it is pinned off.
+    let g = [("ASPECTUS_GLOBIFY", "off")];
+    let (_, text, _) = run(&dir, &xdg, &g, &args);
     let mut jargs = vec!["--format", "json"];
     jargs.extend_from_slice(&args);
-    let (_, j, _) = run(&dir, &xdg, &[], &jargs);
+    let (_, j, _) = run(&dir, &xdg, &g, &jargs);
     assert_valid_json(&j);
     // The same four survivors, in the same order; the same leftover count.
     let listed: Vec<String> = text

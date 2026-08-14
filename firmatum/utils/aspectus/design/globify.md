@@ -49,9 +49,13 @@ At each level, after sort, before the line budget spends: a collapsed group beco
 | 8 | Determinism | Same tree: identical grouping and rendering across runs. | Diff runs. |
 | 9 | JSON | A collapsed group is a structured node: pattern, min, max, width, count, member kind — members recoverable in principle, not a lossy string ([[json\|JSON]]). | Parse fixture output. |
 
+## Shipped (2026-08-14, Wave E)
+
+All guards as designed; range-only pattern spelling; pre-budget/pre-quiet pipeline slot so the one listee joins sibling norms with aggregate facts (size sum, mtime/heat newest/max); a fold's census counts the members, never the listee; `globify = off` / `--show-all` restore; JSON structured. One surfaced consequence of the width-honesty law: unpadded series that cross digit widths (`1..47`) stay listed — the law's own verdict, flagged for dogfood. Details: [[../impl/globify|impl/globify]].
+
 ## Open
 
-- **Threshold default** (5? 8?) and its config key spelling — Joseph ratifies.
+- **Threshold default** (shipped 5; 8?) and key spellings `globify` / `globify.min` — Joseph ratifies.
 - **Pattern spelling:** origin sketch is `[NN]`-style placeholders *and* the range form; the range (`[001-047]`) says strictly more. Leaning range-only; ratify. Also date-like runs (`2026-08-14`) — a numeric run that is really a date series collapses fine under the same rules, but the range render of dates may deserve its own look later; for now they are just digits.
 - **Aggregate facts on the collapsed line** — which ones earn the width (count always; size/lines when those columns are on?). Lattice-office question as much as this row's.
 - Whether hex runs (`deadbeef` cache names) count as numeric — leaning no (decimal digits only) until wanted; most such dirs are furniture anyway.

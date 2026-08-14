@@ -314,3 +314,75 @@ fn symlink_target_decorates_the_name() {
     assert!(o.contains("here -> real.md"), "{o}");
     assert!(o.contains("dangling -> gone.md [broken]"), "{o}");
 }
+
+/// Heading tokens sit exactly over their columns (steward repro,
+/// 2026-08-14: `bin/`'s heat score sat well left of the `heat · age`
+/// heading). The cluster aligns as two sub-columns — score under `heat`,
+/// age under `age` — with the `·` at one char position on every row.
+#[test]
+fn heading_sits_over_the_cluster() {
+    let (dir, xdg) = fresh("headpos");
+    // A git repo so heat exists; two files with different age widths so
+    // the cluster's halves would wander without sub-alignment.
+    let git = |args: &[&str]| {
+        assert!(std::process::Command::new("git")
+            .args(args)
+            .current_dir(&dir)
+            .env("GIT_AUTHOR_NAME", "t")
+            .env("GIT_AUTHOR_EMAIL", "t@t")
+            .env("GIT_COMMITTER_NAME", "t")
+            .env("GIT_COMMITTER_EMAIL", "t@t")
+            .output()
+            .unwrap()
+            .status
+            .success());
+    };
+    git(&["init", "-q"]);
+    fs::write(dir.join("a.md"), "1\n").unwrap();
+    fs::write(dir.join("b.md"), "1\n").unwrap();
+    git(&["add", "."]);
+    git(&["commit", "-qm", "one"]);
+    fs::write(dir.join("a.md"), "2\n").unwrap();
+    git(&["add", "."]);
+    git(&["commit", "-qm", "two"]);
+    // Different mtime ages → different age-string widths.
+    let f = File::open(dir.join("b.md")).unwrap();
+    f.set_modified(std::time::UNIX_EPOCH + std::time::Duration::from_secs(1_700_000_000))
+        .unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    let pos = |l: &str| {
+        l.chars()
+            .collect::<Vec<_>>()
+            .windows(3)
+            .position(|w| w == [' ', '·', ' '])
+    };
+    // Sub-aligned, the heading may read `heat ·   age` — find it by parts.
+    let head = o
+        .lines()
+        .find(|l| l.contains("heat") && l.contains("age") && !l.contains("── "))
+        .expect("heading");
+    let hp = pos(head).expect("heading has the ·");
+    for l in o.lines().filter(|l| l.contains("── ") && l.contains(" · ")) {
+        assert_eq!(pos(l), Some(hp), "the · aligns under the heading: {l}");
+    }
+}
+
+/// A QUIET column in which no cell speaks claims no heading — a heading
+/// only rides a column present in this look (confirmed against the
+/// 2026-08-14 vivarium report: there the size cell *did* speak once).
+#[test]
+fn quiet_column_without_speakers_has_no_heading() {
+    let (dir, xdg) = fresh("noheads");
+    // Same-size same-kind files: nothing surprises, size stays silent.
+    for n in ["a.md", "b.md", "c.md"] {
+        fs::write(dir.join(n), "same\n").unwrap();
+        let f = File::open(dir.join(n)).unwrap();
+        f.set_modified(std::time::UNIX_EPOCH + std::time::Duration::from_secs(1_700_000_000))
+            .unwrap();
+    }
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(!o.contains("size"), "no heading over silence: {o}");
+    assert!(o.contains("lines"), "the speaking column keeps its word: {o}");
+}

@@ -44,6 +44,10 @@ fn run(dir: &Path, xdg: &Path, args: &[&str]) -> (i32, String, String) {
         .env("XDG_CONFIG_HOME", xdg)
         .env_remove("ASPECTUS_LINES")
         .env_remove("ASPECTUS_DEPTH")
+        // These fixtures probe the allocator with numbered-series names;
+        // globify (landed 2026-08-14) would legitimately collapse them,
+        // which is its own row's business, not this one's.
+        .env("ASPECTUS_GLOBIFY", "off")
         .output()
         .unwrap();
     (

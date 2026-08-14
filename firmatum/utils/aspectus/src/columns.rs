@@ -43,6 +43,33 @@ pub enum OwnerFmt {
     Id,
 }
 
+/// The sha-fact spellings (lattice initial-sha / latest-sha row:
+/// `short* / H~N / full`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ShaFmt {
+    Short,
+    /// Commits behind HEAD: `H` for HEAD itself, `H~4` behind.
+    HN,
+    Full,
+}
+
+fn fmt_sha(fact: &Option<(String, u32)>, f: ShaFmt) -> String {
+    match fact {
+        None => String::new(),
+        Some((sha, n)) => match f {
+            ShaFmt::Full => sha.clone(),
+            ShaFmt::Short => sha.chars().take(7).collect(),
+            ShaFmt::HN => {
+                if *n == 0 {
+                    "H".to_string()
+                } else {
+                    format!("H~{n}")
+                }
+            }
+        },
+    }
+}
+
 /// One fact's selection state (config `columns.FACT`). `Quiet` renders a
 /// value only on lines where the fact surprises (`Node.q`, quiet.rs); the
 /// silent lines keep an empty cell so the other columns stay aligned.
@@ -79,10 +106,16 @@ pub struct Cols {
     /// The `score · age` right-cluster (design/heat.md); in-repo only by
     /// nature — outside git no node has heat and the column is silent.
     pub heat: bool,
+    /// The sha facts (compose-only, lattice OFF): the commit that
+    /// introduced a file / last touched it, from heat's log pass.
+    pub intro_sha: bool,
+    pub latest_sha: bool,
     pub size_fmt: SizeFmt,
     pub mtime_fmt: TimeFmt,
     pub line_fmt: LineFmt,
     pub owner_fmt: OwnerFmt,
+    pub intro_fmt: ShaFmt,
+    pub latest_fmt: ShaFmt,
     /// The look's own stamp time (secs) — ages are relative to the look,
     /// not to each render.
     pub now: i64,
@@ -97,10 +130,14 @@ impl Default for Cols {
             perms: State::Quiet,
             owner: State::Quiet,
             heat: true,
+            intro_sha: false,
+            latest_sha: false,
             size_fmt: SizeFmt::Human,
             mtime_fmt: TimeFmt::Iso8601,
             line_fmt: LineFmt::Physical,
             owner_fmt: OwnerFmt::Name,
+            intro_fmt: ShaFmt::Short,
+            latest_fmt: ShaFmt::Short,
             now: 0,
         }
     }
@@ -113,7 +150,15 @@ impl Cols {
             + usize::from(self.mtime.claims_column())
             + usize::from(self.perms.claims_column())
             + usize::from(self.owner.claims_column())
+            + usize::from(self.intro_sha)
+            + usize::from(self.latest_sha)
             + usize::from(self.heat)
+    }
+
+    /// The heat cluster's cell index, for the paint path's sub-column
+    /// alignment (score under `heat`, age under `age`).
+    fn cluster_idx(&self) -> Option<usize> {
+        self.heat.then(|| self.active() - 1)
     }
 }
 
@@ -204,6 +249,10 @@ struct Row {
     /// name column for tab-stop purposes.
     deco: String,
     color_dir: bool,
+    /// This entry is gitignored: the name renders dimmed on a TTY (the
+    /// glyph in `rest` is the carrier; dim is the redundant overlay —
+    /// steward ask 2026-08-14).
+    dim: bool,
     /// One cell per active column, empty when the fact has nothing to say
     /// (a quiet gap keeps the other columns aligned; no placeholder glyph).
     cells: Vec<String>,
@@ -233,7 +282,39 @@ impl Row {
 const STOP_CAP: usize = 48;
 const GAP: usize = 2;
 
-fn paint(rows: Vec<Row>, color: bool, ncols: usize) -> String {
+fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) -> String {
+    // The heat cluster aligns as two sub-columns — score under `heat`,
+    // age under `age`, the `·` at one column for every row — derived here,
+    // in the same layout pass that positions the cells, so heading and
+    // values cannot drift apart (heading-alignment fix, 2026-08-14).
+    if let Some(ci) = cluster {
+        let (mut lw, mut rw) = (0usize, 0usize);
+        for r in rows.iter().filter(|r| !r.heading) {
+            if let Some(c) = r.cells.get(ci)
+                && !c.is_empty()
+            {
+                match c.split_once(" · ") {
+                    Some((l, a)) => {
+                        lw = lw.max(l.chars().count());
+                        rw = rw.max(a.chars().count());
+                    }
+                    None => lw = lw.max(c.chars().count()),
+                }
+            }
+        }
+        if lw > 0 && rw > 0 {
+            for r in &mut rows {
+                let Some(c) = r.cells.get_mut(ci) else { continue };
+                if c.is_empty() {
+                    continue;
+                }
+                *c = match c.split_once(" · ") {
+                    Some((l, a)) => format!("{l:>lw$} · {a:>rw$}"),
+                    None => format!("{:>lw$}{}", c.clone(), " ".repeat(3 + rw)),
+                };
+            }
+        }
+    }
     let stop = rows
         .iter()
         .filter(|r| r.has_right())
@@ -273,7 +354,11 @@ fn paint(rows: Vec<Row>, color: bool, ncols: usize) -> String {
         }
         let mut line = String::new();
         line.push_str(&r.left_prefix);
-        let painted = if r.color_dir {
+        let painted = if r.dim {
+            // Faint beats the dir blue here: the ignore claim is the
+            // line's loudest fact, and bold-blue would fight it.
+            crate::color::dim(&r.name, color)
+        } else if r.color_dir {
             crate::color::dir(&r.name, color)
         } else {
             r.name.clone()
@@ -389,6 +474,12 @@ fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
             n.mtime.map(|t| fmt_mtime(t, cols.mtime_fmt, cols.now)),
         ));
     }
+    if cols.intro_sha {
+        cells.push(fmt_sha(&n.intro, cols.intro_fmt));
+    }
+    if cols.latest_sha {
+        cells.push(fmt_sha(&n.touch, cols.latest_fmt));
+    }
     if cols.heat {
         // Two aliveness facts as one glance-stop: `1.01 · 13.6d ago`.
         cells.push(match (n.heat, n.mtime) {
@@ -418,6 +509,13 @@ fn heading_cells(cols: &Cols) -> Vec<String> {
     }
     if cols.mtime.claims_column() {
         cells.push("mtime".to_string());
+    }
+    if cols.intro_sha {
+        // Heading spellings provisional until Joseph ratifies.
+        cells.push("initial-sha".to_string());
+    }
+    if cols.latest_sha {
+        cells.push("latest-sha".to_string());
     }
     if cols.heat {
         cells.push("heat · age".to_string());
@@ -470,9 +568,17 @@ fn state_marks(n: &Node) -> Vec<String> {
     parts
 }
 
+/// The gitignored glyph — the no-color carrier of the per-entry status
+/// (TTY adds dim as the redundant overlay). Spelling provisional for
+/// ratification (design/gitignore-bodies.md, shorthand's stability law).
+pub const IGNORED_GLYPH: &str = "⊘";
+
 /// INFO to hang on a name: the walk's confession about this line.
 fn info_marks(n: &Node) -> Vec<String> {
     let mut parts = Vec::new();
+    if n.ignored {
+        parts.push(IGNORED_GLYPH.to_string());
+    }
     if n.denied {
         parts.push("[denied]".to_string());
     }
@@ -512,10 +618,21 @@ fn deco_of(n: &Node) -> String {
 /// look-marks — at the computed tab-stop.
 fn rest_of(n: &Node) -> String {
     let mut parts = Vec::new();
+    // The README's name for the place, hanging on the dir's name
+    // (design/readme-title.md; INFO office, quoting provisional).
+    if let Some(t) = &n.title {
+        parts.push(format!("\"{t}\""));
+    }
     // The filekind word, only where kind surprises (or was asked on) —
     // the binary among the .md (design/quiet-columns.md; lattice INFO).
     if let Some(w) = n.kind_word {
         parts.push(w.to_string());
+    }
+    // A collapsed series' exact membership (design/globify.md): the
+    // pattern is the name; the count says what one line stands for.
+    if let Some(g) = &n.glob {
+        let what = if n.is_dir { "dirs" } else { "files" };
+        parts.push(format!("({} {what})", g.count));
     }
     if let Some(c) = &n.leftover {
         let extra = c.render();
@@ -533,6 +650,12 @@ fn rest_of(n: &Node) -> String {
                 crate::n_level::group_lines(m.lines)
             ));
         }
+    }
+    // Ignored files at an expanded level: the typed remainder, so the
+    // level never pretends they don't exist (a cutoff level's count lives
+    // inside its census instead). Spelling provisional.
+    if n.leftover.is_none() && n.ignored_files > 0 {
+        parts.push(format!("[ignored×{}]", n.ignored_files));
     }
     parts.extend(state_marks(n));
     parts.extend(info_marks(n));
@@ -584,6 +707,7 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         name,
         deco: String::new(),
         color_dir: false,
+        dim: false,
         cells: vec![String::new(); ncols],
         rest: String::new(),
         heading: false,
@@ -599,6 +723,7 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         // Decoration completes the name (a symlinked root's `-> target`).
         deco: deco_of(tree),
         color_dir: true,
+        dim: false,
         cells: vec![String::new(); ncols],
         rest: String::new(),
         heading: false,
@@ -612,13 +737,14 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
             name: String::new(),
             deco: String::new(),
             color_dir: false,
+            dim: false,
             cells: heading_cells(cols),
             rest: String::new(),
             heading: true,
         });
     }
     emit(&tree.children, tree.omitted.as_ref(), "", cols, &mut rows);
-    paint(rows, color, ncols)
+    paint(rows, color, ncols, cols.cluster_idx())
 }
 
 fn emit(
@@ -642,6 +768,7 @@ fn emit(
             name: n,
             deco: deco_of(k),
             color_dir: k.is_dir,
+            dim: k.ignored,
             cells: cells_of(k, cols),
             rest: rest_of(k),
             heading: false,
@@ -663,6 +790,7 @@ fn emit(
             name: c.render_plus(),
             deco: String::new(),
             color_dir: false,
+            dim: false,
             cells: vec![String::new(); cols.active()],
             rest: String::new(),
             heading: false,

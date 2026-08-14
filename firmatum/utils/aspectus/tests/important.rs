@@ -42,7 +42,10 @@ fn touch(dir: &Path, name: &str, epoch_secs: u64) {
 
 fn run(dir: &Path, xdg: &Path, envs: &[(&str, &str)], args: &[&str]) -> (i32, String, String) {
     let mut c = bin();
-    c.args(args).current_dir(dir).env("XDG_CONFIG_HOME", xdg);
+    c.args(args).current_dir(dir).env("XDG_CONFIG_HOME", xdg)
+        // Numbered-series fixtures; globify (2026-08-14) is not this row's
+        // subject — pinned off so the squeeze arithmetic stays visible.
+        .env("ASPECTUS_GLOBIFY", "off");
     for k in ["ASPECTUS_LINES", "ASPECTUS_DEPTH", "ASPECTUS_SORT", "ASPECTUS_IMPORTANT"] {
         c.env_remove(k);
     }

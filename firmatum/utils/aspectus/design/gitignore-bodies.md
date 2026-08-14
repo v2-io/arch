@@ -46,12 +46,16 @@ Joseph: *"has: git vs gitignored vs .gitignore"* — the has-vocabulary distingu
 
 And: *"gitignored files/directories dim color for human and sigil/glyph for non-color"* — ignored entries render **dimmed on a TTY** and carry a **glyph in the no-color look** (the mark this design already wanted, now with its two-channel rendering decided in principle — glyph spelling still interface vocabulary for ratification, [[shorthand|Shorthand]]'s stability law applies).
 
+## Shipped (2026-08-14, Wave E)
+
+In-process matcher + index parser, no subprocess on the walk path; agrees-with-`git check-ignore` cross-tested against git itself. Both steward asks folded in: the has-vocabulary three-way split (`git` facet / `gitignore` furniture word / `gitignored` per-entry status, JSON field) and the two-channel rendering — glyph `⊘` always (the carrier), dim on a TTY (the overlay). Ignored dirs cost zero walk budget; deep mass excludes ignored bodies via per-worker ignore stacks. Details: [[../impl/gitignore-bodies|impl/gitignore-bodies]].
+
 ## Open
 
-- **Mark and remainder spelling** (`[ignored]`? the census bucket word?) — Joseph ratifies; one constant each.
-- **Global `core.excludesFile` / `~/.gitignore_global`:** honoring it makes the look agree with the user's git; but it makes the *look* depend on per-user state outside the caller stack — two agents on one machine still agree, two machines may not. Leaning honor-it (git-agreement is the least surprising truth); flag for ratification.
-- **Under `--show-all`, do restored bodies join mass?** Leaning yes (show-all means *show all*), but then two looks disagree on a number — may deserve a `≈`-style mark. Not decided.
-- Whether an ignored dir's line may carry a *cheap* census (one readdir of its top level only) instead of nothing — costs almost nothing, says a bit more; against it: it walks into what the repo disclaimed. Not decided.
+- **Mark and remainder spelling** — shipped `⊘` (U+2298) and `ignored×N`, one constant each, provisional; Joseph ratifies.
+- **Global `core.excludesFile`:** **shipped honoring it** (repo config → user config → XDG default), the recorded leaning — the look agrees with the user's git; the per-user-state tension stands for ratification.
+- **Under `--show-all`, restored bodies join mass** — shipped the leaning (show-all means *show all*); the two-looks-disagree-on-a-number `≈`-mark question is still open.
+- Whether an ignored dir's line may carry a *cheap* census (one readdir of its top level only) instead of nothing — **not taken**: it walks into what the repo disclaimed. Still open if wanted.
 
 ## Not in this row
 

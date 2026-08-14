@@ -162,13 +162,43 @@ fn help_page() -> String {
          wall-clock. Two clocks, one glance-stop.\n\
          Outside git, no heat is claimed. `--sort heat` orders by it;\n\
          config `recency-source = git` makes the default recency sort use\n\
-         git last-touch where known.\n\
+         git last-touch where known. The same log pass carries the sha\n\
+         facts: columns.initial-sha / columns.latest-sha = on add the\n\
+         commit that introduced a file and the one that last touched it\n\
+         (format short / h~n / full; H~N counts commits behind HEAD);\n\
+         absent outside git or past the log window, never guessed.\n\
          \n\
          Symlinked directories are followed and recursed like real ones\n\
          (facts are the target's; `-> target` says how it got here). A\n\
          cycle prints [cycle] instead of hanging. The walk stays on the\n\
          starting filesystem; a mount point shows [other fs] and stops\n\
          there unless --no-one-fs.\n\
+         \n\
+         Inside a git work tree, gitignored contents stay out of the look\n\
+         and out of every aggregate -- the repo already declared them not\n\
+         the project -- while presence still shows: an ignored directory\n\
+         keeps its line, dimmed on a TTY and marked \u{2298} (spelling\n\
+         provisional), unexpanded and unweighed; ignored files appear only\n\
+         as a typed remainder (ignored\u{d7}3). The rules are git's own --\n\
+         nested .gitignore files, negations, info/exclude, the global\n\
+         core.excludesFile -- and a tracked file matching an ignore\n\
+         pattern lists normally (tracked beats ignored, as in git).\n\
+         Furniture fates apply first; --show-all restores ignored\n\
+         contents, marks kept. Outside a repo a .gitignore is just a file.\n\
+         \n\
+         A real sequence of names collapses to its pattern:\n\
+         output-[001-047].bak  (44 files) -- one line, exact count; a\n\
+         count below the span means gaps. Only genuine series fuse: at\n\
+         least 5 members (config globify.min), exactly one varying\n\
+         digit run, uniform zero-padding, all files or all dirs;\n\
+         important files stay listed by name; collapsed dirs are never\n\
+         expanded. globify = off (or --show-all) restores every name.\n\
+         \n\
+         A directory line can borrow the title its README gives it\n\
+         (config readme-title = on; off by default): the first heading\n\
+         of the first important-files match, quoted after the name --\n\
+         truthful or silent, from a bounded head-peek, never a\n\
+         placeholder, and never repeating the folder name.\n\
          \n\
          Well-known names are furniture: state on their parent line, not\n\
          children of the look. A git work tree does not list .git — the\n\
@@ -687,6 +717,21 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(64 * 1024 * 1024);
     let mut walk = aspectus::n_level::WalkBudget::new(walk_bound);
+    // The important set is built pre-walk: readme-title borrows this exact
+    // set (design/readme-title.md — one definition, the rows cannot drift).
+    let important = match cfg.won.get("important") {
+        Some((rules, _)) => aspectus::important::Set::with_config(rules),
+        None => aspectus::important::Set::shipped(),
+    };
+    let title_on = match cfg.won.get("readme-title").map(|(v, _)| v.as_str()) {
+        None | Some("off") => false,
+        Some("on") => true,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "readme-title is on or off (got {v})"
+            )))
+        }
+    };
     let mut ctx = aspectus::n_level::LookCtx::new(
         &map,
         &view,
@@ -695,6 +740,9 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         one_fs,
         read_budget,
     );
+    if title_on {
+        ctx.titles = Some(&important);
+    }
     let mut tree = aspectus::n_level::gather(&abs, depth, &mut walk, &mut ctx)
         .map_err(|e| map_io(&locus, e))?;
     // Post-gather parallel phases (hardening 2026-08-14): deep mass over
@@ -702,7 +750,12 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     aspectus::n_level::deep_phase(&mut tree, &abs, &mut ctx);
     aspectus::n_level::hidden_phase(&mut tree, &abs);
     aspectus::git::annotate(&mut tree, &abs);
-    if cols.heat || order.key == aspectus::sort::Key::Heat || order.recency_git {
+    if cols.heat
+        || cols.intro_sha
+        || cols.latest_sha
+        || order.key == aspectus::sort::Key::Heat
+        || order.recency_git
+    {
         let half_life: f64 = cfg
             .won
             .get("heat.half-life")
@@ -713,11 +766,26 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     // Importance (survival weight) and quiet (cold surprise) annotate the
     // pre-budget tree: sibling norms over the full statted level, so
     // `--lines` cannot flicker either decision.
-    let important = match cfg.won.get("important") {
-        Some((rules, _)) => aspectus::important::Set::with_config(rules),
-        None => aspectus::important::Set::shipped(),
-    };
     important.annotate(&mut tree);
+    // Globify (design/globify.md): after importance (its exemption) and
+    // the fact annotates the collapsed line aggregates, before quiet — the
+    // one listee joins its level's sibling norms — and before the budget
+    // spends: one series, one line.
+    let globify_on = match cfg.won.get("globify").map(|(v, _)| v.as_str()) {
+        None | Some("on") => true,
+        Some("off") => false,
+        Some(v) => {
+            return Err(ShowErr::Other(format!("globify is on or off (got {v})")))
+        }
+    };
+    if globify_on && !args.show_all {
+        let min: usize = cfg
+            .won
+            .get("globify.min")
+            .and_then(|(v, _)| v.parse().ok())
+            .unwrap_or(5);
+        aspectus::globify::apply(&mut tree, min.max(2));
+    }
     let now = std::time::SystemTime::now();
     let now_secs = now
         .duration_since(std::time::UNIX_EPOCH)
@@ -883,6 +951,15 @@ fn resolve_look(
             }),
         }
     };
+    let on_off = |key: &str| -> Result<bool, ShowErr> {
+        match cfg.won.get(key).map(|(v, _)| v.as_str()) {
+            None | Some("off") => Ok(false),
+            Some("on") => Ok(true),
+            Some(v) => Err(ShowErr::Other(format!("{key} is on or off (got {v})"))),
+        }
+    };
+    let intro_sha = on_off("columns.initial-sha")?;
+    let latest_sha = on_off("columns.latest-sha")?;
     let size_state = col_state("columns.size")?;
     let mtime_state = col_state("columns.mtime")?;
     let lc_state = col_state("columns.line-count")?;
@@ -939,6 +1016,19 @@ fn resolve_look(
             )))
         }
     };
+    let sha_fmt = |key: &str| -> Result<aspectus::columns::ShaFmt, ShowErr> {
+        use aspectus::columns::ShaFmt;
+        match cfg.won.get(key).map(|(v, _)| v.as_str()) {
+            None | Some("short") => Ok(ShaFmt::Short),
+            Some("h~n") | Some("H~N") => Ok(ShaFmt::HN),
+            Some("full") => Ok(ShaFmt::Full),
+            Some(v) => Err(ShowErr::Other(format!(
+                "{key} is short, h~n, or full (got {v})"
+            ))),
+        }
+    };
+    let intro_fmt = sha_fmt("format.initial-sha")?;
+    let latest_fmt = sha_fmt("format.latest-sha")?;
     let owner_fmt = match cfg.won.get("format.owner").map(|(v, _)| v.as_str()) {
         None | Some("name") => aspectus::columns::OwnerFmt::Name,
         Some("id") => aspectus::columns::OwnerFmt::Id,
@@ -957,10 +1047,14 @@ fn resolve_look(
             perms,
             owner,
             heat,
+            intro_sha,
+            latest_sha,
             size_fmt,
             mtime_fmt,
             line_fmt,
             owner_fmt,
+            intro_fmt,
+            latest_fmt,
             now: 0,
         },
     ))

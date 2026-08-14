@@ -27,11 +27,29 @@ fn is_noise(path: &str) -> bool {
     NOISE_BASENAMES.contains(&base)
 }
 
-/// One repo's heat map: repo-relative path → (heat, last-touch unix secs).
+/// A commit reference: (full sha, commits behind HEAD).
+pub type ShaAt = (String, u32);
+
+/// Per-file facts from the one log pass: heat, last-touch time, the
+/// touching/introducing commits (design/heat.md; the lattice's
+/// initial-sha/latest-sha row is the same obtain).
+#[derive(Debug, Clone, Default)]
+pub struct FileFact {
+    pub heat: f64,
+    pub ts: i64,
+    /// Newest commit touching this path: (full sha, commits behind HEAD).
+    pub touch: Option<ShaAt>,
+    /// The commit that introduced this path (A/C in the window, an R's new
+    /// name, or the initial commit when the log reached it). Never guessed
+    /// past the log cap.
+    pub intro: Option<ShaAt>,
+}
+
+/// One repo's heat map: repo-relative path → facts.
 /// Dirs carry max-of-non-noise-leaves and newest touch beneath.
 pub struct RepoHeat {
     pub root: PathBuf,
-    files: HashMap<String, (f64, i64)>,
+    files: HashMap<String, FileFact>,
     dirs: HashMap<String, (f64, i64)>,
     /// The whole repo as one container: max non-noise heat, newest touch.
     root_agg: (f64, i64),
@@ -54,7 +72,7 @@ impl RepoHeat {
                 "log",
                 &format!("-n{LOG_CAP}"),
                 "--pretty=format:%H %ct",
-                "--name-only",
+                "--name-status",
                 "--diff-filter=ACMR",
             ])
             .stdin(std::process::Stdio::null())
@@ -86,23 +104,34 @@ impl RepoHeat {
         let text = String::from_utf8_lossy(&buf);
         // Newest first: age = commit index. If the log reached the initial
         // commit (fewer than LOG_CAP returned), its touches are inventory
-        // only — no heat contribution (the model excludes it).
-        let mut commits: Vec<(i64, Vec<String>)> = Vec::new();
+        // only — no heat contribution (the model excludes it) — but they
+        // do claim introduction (everything there was born by then).
+        // `--name-status` lines: `M\tpath`, `A\tpath`, `R100\told\tnew`.
+        type Commit = (String, i64, Vec<(u8, String)>);
+        let mut commits: Vec<Commit> = Vec::new();
         for line in text.lines() {
-            let line = line.trim();
+            let line = line.trim_end();
             if line.is_empty() {
                 continue;
             }
             let header = line.split_once(' ').and_then(|(h, ts)| {
                 (h.len() == 40 && h.bytes().all(|b| b.is_ascii_hexdigit()))
-                    .then(|| ts.parse::<i64>().ok())
+                    .then(|| ts.parse::<i64>().ok().map(|t| (h.to_string(), t)))
                     .flatten()
             });
             match header {
-                Some(ts) => commits.push((ts, Vec::new())),
+                Some((sha, ts)) => commits.push((sha, ts, Vec::new())),
                 None => {
-                    if let Some((_, paths)) = commits.last_mut() {
-                        paths.push(line.to_string());
+                    if let Some((_, _, paths)) = commits.last_mut() {
+                        let mut it = line.split('\t');
+                        let (Some(status), Some(first)) = (it.next(), it.next()) else {
+                            continue;
+                        };
+                        let letter = status.as_bytes().first().copied().unwrap_or(b'M');
+                        // Renames/copies list old\tnew: the touch (and the
+                        // birth of the *name*) belongs to the new path.
+                        let path = it.next().unwrap_or(first);
+                        paths.push((letter, path.to_string()));
                     }
                 }
             }
@@ -113,40 +142,70 @@ impl RepoHeat {
         let saw_initial = commits.len() < LOG_CAP;
         let tau = half_life / std::f64::consts::LN_2;
         let scale = 2.0 * (1.0 - (-1.0 / tau).exp());
-        let mut raw: HashMap<String, (f64, i64)> = HashMap::new();
-        for (age, (ts, paths)) in commits.iter().enumerate() {
+        struct Raw {
+            score: f64,
+            ts: i64,
+            touch: Option<ShaAt>,
+            intro: Option<ShaAt>,
+        }
+        let mut raw: HashMap<String, Raw> = HashMap::new();
+        for (age, (sha, ts, paths)) in commits.iter().enumerate() {
             let initial = saw_initial && age == commits.len() - 1;
-            for p in paths {
-                let e = raw.entry(p.clone()).or_insert((0.0, 0));
+            for (letter, p) in paths {
+                let e = raw.entry(p.clone()).or_insert(Raw {
+                    score: 0.0,
+                    ts: 0,
+                    touch: None,
+                    intro: None,
+                });
                 if !initial {
-                    e.0 += (-(age as f64) / tau).exp();
+                    e.score += (-(age as f64) / tau).exp();
                 }
-                if *ts > e.1 {
-                    e.1 = *ts;
+                if *ts > e.ts {
+                    e.ts = *ts;
+                }
+                if e.touch.is_none() {
+                    // Newest-first: the first sighting is the last touch.
+                    e.touch = Some((sha.clone(), age as u32));
+                }
+                if matches!(letter, b'A' | b'C' | b'R') || initial {
+                    // Overwritten as we walk older commits: the oldest
+                    // creation in the window wins.
+                    e.intro = Some((sha.clone(), age as u32));
                 }
             }
         }
-        let mut files: HashMap<String, (f64, i64)> = HashMap::new();
+        let mut files: HashMap<String, FileFact> = HashMap::new();
         let mut dirs: HashMap<String, (f64, i64)> = HashMap::new();
         let mut root_agg = (0.0f64, 0i64);
-        for (p, (r, ts)) in raw {
-            let heat = if is_noise(&p) { 0.0 } else { scale * r };
+        for (p, r) in raw {
+            let heat = if is_noise(&p) { 0.0 } else { scale * r.score };
             if heat > root_agg.0 {
                 root_agg.0 = heat;
             }
-            if ts > root_agg.1 {
-                root_agg.1 = ts;
+            if r.ts > root_agg.1 {
+                root_agg.1 = r.ts;
             }
             for anc in ancestors(&p) {
                 let d = dirs.entry(anc).or_insert((0.0, 0));
                 if !is_noise(&p) && heat > d.0 {
                     d.0 = heat;
                 }
-                if ts > d.1 {
-                    d.1 = ts;
+                if r.ts > d.1 {
+                    d.1 = r.ts;
                 }
             }
-            files.insert(p, (heat, ts));
+            files.insert(
+                p,
+                FileFact {
+                    heat,
+                    ts: r.ts,
+                    touch: r.touch,
+                    // Claimed only when the window actually saw a creation
+                    // (or reached the initial commit) — never guessed.
+                    intro: r.intro,
+                },
+            );
         }
         Some(RepoHeat {
             root: root.to_path_buf(),
@@ -159,17 +218,24 @@ impl RepoHeat {
     /// Heat and last touch for a repo-relative path. Noise and unhistoried
     /// paths claim nothing (`heat` None); last-touch may still be known.
     pub fn lookup(&self, rel: &str, is_dir: bool) -> (Option<f64>, Option<i64>) {
-        let hit = if is_dir {
-            self.dirs.get(rel)
-        } else {
-            self.files.get(rel)
-        };
-        match hit {
-            Some(&(h, ts)) => {
-                let heat = (h > 0.0).then_some(h);
-                let touched = (ts > 0).then_some(ts);
-                (heat, touched)
+        if is_dir {
+            match self.dirs.get(rel) {
+                Some(&(h, ts)) => ((h > 0.0).then_some(h), (ts > 0).then_some(ts)),
+                None => (None, None),
             }
+        } else {
+            match self.files.get(rel) {
+                Some(f) => ((f.heat > 0.0).then_some(f.heat), (f.ts > 0).then_some(f.ts)),
+                None => (None, None),
+            }
+        }
+    }
+
+    /// The sha facts for a file (lattice initial-sha / latest-sha row):
+    /// (introducing commit, last-touching commit), each (full sha, H~N).
+    pub fn shas(&self, rel: &str) -> (Option<ShaAt>, Option<ShaAt>) {
+        match self.files.get(rel) {
+            Some(f) => (f.intro.clone(), f.touch.clone()),
             None => (None, None),
         }
     }
@@ -280,6 +346,11 @@ fn go(
             let (h, ts) = r.lookup(&rel, node.is_dir);
             node.heat = h;
             node.git_ts = ts;
+            if !node.is_dir {
+                let (intro, touch) = r.shas(&rel);
+                node.intro = intro;
+                node.touch = touch;
+            }
         } else if node.is_dir {
             // The repo root itself: the repo as one container.
             let (h, ts) = r.root_agg;

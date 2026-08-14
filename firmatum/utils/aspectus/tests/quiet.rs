@@ -52,7 +52,10 @@ fn backdate_all(dir: &Path) {
 
 fn run(dir: &Path, xdg: &Path, envs: &[(&str, &str)], args: &[&str]) -> (i32, String, String) {
     let mut c = bin();
-    c.args(args).current_dir(dir).env("XDG_CONFIG_HOME", xdg);
+    c.args(args).current_dir(dir).env("XDG_CONFIG_HOME", xdg)
+        // Numbered-series fixtures probe sibling-norm statistics; globify
+        // (2026-08-14) would fuse the cohort — pinned off, its own row.
+        .env("ASPECTUS_GLOBIFY", "off");
     for k in [
         "ASPECTUS_LINES",
         "ASPECTUS_DEPTH",

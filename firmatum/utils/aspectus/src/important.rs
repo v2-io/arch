@@ -61,6 +61,23 @@ impl Set {
         self.patterns.iter().any(|p| glob_match(p, name))
     }
 
+    /// The file that lends a dir its README title (design/readme-title.md
+    /// borrows this exact set): first pattern in config-list order wins;
+    /// names within a pattern tie in the caller's (sorted) order.
+    pub fn first_match<'n, I>(&self, names: I) -> Option<&'n str>
+    where
+        I: Iterator<Item = &'n str> + Clone,
+    {
+        for p in &self.patterns {
+            for n in names.clone() {
+                if glob_match(p, n) {
+                    return Some(n);
+                }
+            }
+        }
+        None
+    }
+
     /// Mark every matching file in the (pre-budget) tree. Dirs already
     /// outrank the important tier, so only files carry the mark.
     pub fn annotate(&self, node: &mut Node) {

@@ -73,6 +73,10 @@ pub struct Census {
     /// The sole file's name when the census holds exactly one file and no
     /// dirs — a census that would conceal one cheap name shows the name.
     pub single: Option<String>,
+    /// Gitignored files among the censused names — typed, never silent
+    /// (design/gitignore-bodies.md); they are outside the buckets and
+    /// outside every aggregate.
+    pub ignored: usize,
     /// The counts are a floor (walk stopped early); renders `≥`.
     pub bounded: bool,
 }
@@ -82,7 +86,7 @@ const NAME_FORM_CAP: usize = 24;
 
 impl Census {
     pub fn is_empty(&self) -> bool {
-        self.dirs == 0 && self.buckets.is_empty()
+        self.dirs == 0 && self.buckets.is_empty() && self.ignored == 0
     }
 
     pub fn render(&self) -> String {
@@ -117,6 +121,7 @@ impl Census {
             };
             parts.push(format!("{head}{mass}"));
         } else if self.buckets.iter().map(|(_, n)| n).sum::<usize>() == 1
+            && self.ignored == 0
             && let Some(name) = &self.single
             && name.chars().count() <= NAME_FORM_CAP
         {
@@ -126,6 +131,10 @@ impl Census {
         }
         for (k, n) in &self.buckets {
             parts.push(format!("{k}×{n}"));
+        }
+        if self.ignored > 0 {
+            // Spelling provisional until Joseph ratifies (design Open).
+            parts.push(format!("ignored×{}", self.ignored));
         }
         let geq = if self.bounded { "≥ " } else { "" };
         let p = if plus { "+ " } else { "" };
@@ -191,6 +200,25 @@ pub struct Node {
     pub heat: Option<f64>,
     /// Last git touch (unix secs), when heat's log pass covered this path.
     pub git_ts: Option<i64>,
+    /// The commit that last touched this file: (full sha, commits behind
+    /// HEAD) — from heat's log pass; absent outside git or past the cap.
+    pub touch: Option<(String, u32)>,
+    /// The commit that introduced this file (A/C in the log window, or the
+    /// initial commit when the log reached it); never guessed past the cap.
+    pub intro: Option<(String, u32)>,
+    /// This entry is itself gitignored (design/gitignore-bodies.md):
+    /// presence shows (dimmed + glyph), contents stay out of the look and
+    /// out of every aggregate.
+    pub ignored: bool,
+    /// Gitignored files among this dir's direct children, not listed —
+    /// the typed remainder on an expanded level.
+    pub ignored_files: usize,
+    /// A collapsed name-series (design/globify.md): this node is one
+    /// listee standing for `count` members; never expanded.
+    pub glob: Option<crate::globify::Glob>,
+    /// The name this dir's README gives it (design/readme-title.md);
+    /// absent unless asked (config `readme-title = on`) and truthful.
+    pub title: Option<String>,
     /// Symlink target as the link states it (INFO, lattice `ON`).
     pub link: Option<String>,
     /// The target does not resolve to anything that exists.
@@ -307,6 +335,12 @@ pub struct LookCtx<'a> {
     /// Stay on the starting filesystem (default; `--no-one-fs` clears).
     pub one_fs: bool,
     pub reads: ReadMeter,
+    /// Git-ignore state for the walk (design/gitignore-bodies.md); seeded
+    /// from the root's enclosing repo, grown as repos/.gitignores appear.
+    pub ignore: crate::ignore::Stack,
+    /// When Some, dir lines borrow their README's title (config
+    /// `readme-title = on`; the set is important-files', shared).
+    pub titles: Option<&'a crate::important::Set>,
     root_dev: Option<u64>,
     /// Dirs being expanded on the current path — the cycle guard.
     dir_stack: Vec<(u64, u64)>,
@@ -331,6 +365,8 @@ impl<'a> LookCtx<'a> {
             non_blank,
             one_fs,
             reads: ReadMeter::new(read_budget),
+            ignore: crate::ignore::Stack::new(),
+            titles: None,
             root_dev: None,
             dir_stack: Vec::new(),
             seen: HashSet::new(),
@@ -415,6 +451,12 @@ pub fn gather(
     ctx: &mut LookCtx,
 ) -> io::Result<Node> {
     let remain = if depth == 0 { None } else { Some(depth) };
+    // Ignore rules from any repo *above* the root (the root's own .git and
+    // .gitignore are met by gather_dir like every dir's). An explicitly
+    // named locus is looked at even if it is itself ignored — the ask wins.
+    if let Some(parent) = path.parent() {
+        ctx.ignore = crate::ignore::Stack::for_path(parent);
+    }
     gather_at(path, remain, walk, ctx)
 }
 
@@ -484,17 +526,25 @@ fn census_entries(entries: &[Entry], bounded: bool) -> Census {
         dir_files: None,
         buckets: bucketize(files.iter().map(|e| suffix_bucket(&e.name))),
         single,
+        ignored: 0,
         bounded,
     }
 }
 
 fn census_nodes(nodes: &[Node]) -> Census {
-    let dirs = nodes.iter().filter(|n| n.is_dir).count();
+    let dirs: usize = nodes
+        .iter()
+        .filter(|n| n.is_dir)
+        .map(|n| n.glob.as_ref().map_or(1, |g| g.count))
+        .sum();
     let dir_name = (dirs == 1)
         .then(|| nodes.iter().find(|n| n.is_dir).map(|n| n.name.clone()))
         .flatten();
     let mut dir_files: Option<Mass> = None;
     for n in nodes.iter().filter(|n| n.is_dir) {
+        if n.ignored {
+            continue; // exclusion is declared (the ignored mark), not a floor
+        }
         match (n.mass, n.mass_dup) {
             (Some(m), false) => dir_files.get_or_insert_with(Mass::default).absorb(m),
             // A dup or massless dir under a known aggregate: floor, not lie.
@@ -506,13 +556,29 @@ fn census_nodes(nodes: &[Node]) -> Census {
         }
     }
     let files: Vec<&Node> = nodes.iter().filter(|n| !n.is_dir).collect();
-    let single = (dirs == 0 && files.len() == 1).then(|| files[0].name.clone());
+    let nfiles: usize = files
+        .iter()
+        .map(|n| n.glob.as_ref().map_or(1, |g| g.count))
+        .sum();
+    let single = (dirs == 0 && nfiles == 1).then(|| files[0].name.clone());
+    // A collapsed group folds back as its members (count under its suffix
+    // bucket), so a budget fold cannot shrink 44 files to one listee.
+    let labels = files.iter().flat_map(|n| {
+        let (label, count) = match &n.glob {
+            Some(g) => (g.bucket.clone(), g.count),
+            None => (suffix_bucket(&n.name), 1),
+        };
+        std::iter::repeat_n(label, count)
+    });
+    let ignored = nodes.iter().map(|n| n.ignored_files).sum::<usize>()
+        + nodes.iter().filter(|n| !n.is_dir && n.ignored).count();
     Census {
         dirs,
         dir_name,
         dir_files,
-        buckets: bucketize(files.iter().map(|n| suffix_bucket(&n.name))),
+        buckets: bucketize(labels),
         single,
+        ignored,
         bounded: false,
     }
 }
@@ -561,6 +627,7 @@ fn merge_census(a: Census, b: Census) -> Census {
         dir_files,
         buckets,
         single,
+        ignored: a.ignored + b.ignored,
         bounded: a.bounded || b.bounded,
     }
 }
@@ -575,13 +642,37 @@ fn deep_mass(path: &Path, ctx: &mut LookCtx) -> Mass {
         return m;
     };
     m.bounded |= iter_err;
+    let entered = ctx
+        .ignore
+        .enter_dir(path, entries.iter().map(|e| e.name.as_str()));
     let (_reading, keep) = crate::furniture::read_names(
         ctx.map,
         ctx.view,
         entries.iter().map(|e| (e.name.as_str(), e.is_dir)),
     );
+    let m = deep_mass_body(path, ctx, entries, keep, m);
+    ctx.ignore.exit_dir(entered);
+    m
+}
+
+fn deep_mass_body(
+    path: &Path,
+    ctx: &mut LookCtx,
+    entries: Vec<Entry>,
+    keep: Vec<bool>,
+    mut m: Mass,
+) -> Mass {
     for (e, listed) in entries.iter().zip(keep) {
         if !listed {
+            continue;
+        }
+        // Ignored bodies stay out of mass (mass's own promise). Under
+        // --show-all restored bodies join it — show-all means show all
+        // (implemented leaning; design Open notes the ≈-mark question).
+        if !ctx.view.show_all
+            && ctx.ignore.active()
+            && ctx.ignore.is_ignored(path, &e.name, e.is_dir)
+        {
             continue;
         }
         if ctx.mass_names == 0 {
@@ -760,6 +851,108 @@ fn gather_at(
     })
 }
 
+/// Presence-only node for an ignored directory: the stat facts its line
+/// may carry, nothing from inside (design/gitignore-bodies.md — the repo
+/// disclaimed the innards; the look honors the declaration).
+fn stat_only(path: &Path, name: String) -> Node {
+    let meta = fs::symlink_metadata(path).ok();
+    let link = meta
+        .as_ref()
+        .filter(|m| m.file_type().is_symlink())
+        .and_then(|_| fs::read_link(path).ok())
+        .map(|t| t.to_string_lossy().into_owned());
+    let meta = match (&link, fs::metadata(path)) {
+        (Some(_), Ok(t)) => Some(t),
+        (Some(_), Err(_)) => meta,
+        (None, _) => meta,
+    };
+    let (mtime, mode, uid, gid) = match &meta {
+        Some(m) => {
+            let (mo, u, g) = ids_of(m);
+            (stamp_of(m), mo, u, g)
+        }
+        None => (None, None, None, None),
+    };
+    Node {
+        name,
+        is_dir: true,
+        ignored: true,
+        mtime,
+        mode,
+        uid,
+        gid,
+        link,
+        ..Node::default()
+    }
+}
+
+/// Head-peek constant for README titles (design/readme-title.md: a few KB,
+/// because the fact multiplies across every visible directory).
+const TITLE_PEEK: usize = 4096;
+/// Rendered titles longer than this are cut with an ellipsis (provisional).
+const TITLE_CAP: usize = 60;
+
+/// The title a dir's README lends it: the important-files set picks the
+/// file (config order breaks ties; names within a pattern tie
+/// alphabetically — enumerate already sorted them), the head-peek yields
+/// the first ATX heading, else the first non-empty line. Truthful or
+/// silent: binary, unreadable, empty, or redundant (equal to the folder
+/// name, case/punct-insensitive) lends nothing.
+fn readme_title(
+    dir: &Path,
+    entries: &[Entry],
+    dir_name: &str,
+    set: &crate::important::Set,
+) -> Option<String> {
+    let source = set.first_match(entries.iter().filter(|e| !e.is_dir).map(|e| e.name.as_str()))?;
+    use std::io::Read;
+    let mut head = vec![0u8; TITLE_PEEK];
+    let n = fs::File::open(dir.join(source))
+        .and_then(|mut f| f.read(&mut head))
+        .ok()?;
+    let head = &head[..n];
+    if head.contains(&0) {
+        return None; // binary lends nothing
+    }
+    let text = String::from_utf8_lossy(head);
+    let mut fallback: Option<&str> = None;
+    let mut title: Option<&str> = None;
+    for line in text.lines() {
+        let t = line.trim();
+        if t.is_empty() {
+            continue;
+        }
+        if fallback.is_none() {
+            fallback = Some(t);
+        }
+        let hashes = t.bytes().take_while(|&b| b == b'#').count();
+        if (1..=6).contains(&hashes) && t.as_bytes().get(hashes).is_none_or(|&b| b == b' ') {
+            title = Some(t[hashes..].trim().trim_end_matches('#').trim_end());
+            break;
+        }
+    }
+    let raw = title.or(fallback)?;
+    // Light decoration strip: surrounding emphasis only, no rendering.
+    let clean = raw.trim_matches(|c| matches!(c, '*' | '_' | '`')).trim();
+    if clean.is_empty() {
+        return None;
+    }
+    let norm = |s: &str| -> String {
+        s.chars()
+            .filter(|c| c.is_alphanumeric())
+            .flat_map(char::to_lowercase)
+            .collect()
+    };
+    if norm(clean) == norm(dir_name) {
+        return None; // would spend glyphs saying nothing
+    }
+    let mut out: String = clean.chars().take(TITLE_CAP).collect();
+    if clean.chars().count() > TITLE_CAP {
+        out.push('…');
+    }
+    Some(out)
+}
+
 /// Identity facts every stat already paid for (quiet-columns' substrate).
 fn ids_of(meta: &fs::Metadata) -> (Option<u32>, Option<u32>, Option<u32>) {
     (
@@ -791,6 +984,35 @@ fn gather_dir(
             ..Node::default()
         });
     };
+    // Ignore state enters on the raw names (.git / .gitignore are furniture
+    // and about to be hidden); the matching exit wraps every return path.
+    let entered = ctx
+        .ignore
+        .enter_dir(path, entries.iter().map(|e| e.name.as_str()));
+    let title = ctx
+        .titles
+        .and_then(|set| readme_title(path, &entries, &name, set));
+    let mut node = gather_dir_inner(path, name, remain, walk, ctx, mtime, link, mass_dup, iter_err, entries);
+    ctx.ignore.exit_dir(entered);
+    if let Ok(n) = &mut node {
+        n.title = title;
+    }
+    node
+}
+
+#[allow(clippy::too_many_arguments)]
+fn gather_dir_inner(
+    path: &Path,
+    name: String,
+    remain: Option<u32>,
+    walk: &mut WalkBudget,
+    ctx: &mut LookCtx,
+    mtime: Option<i64>,
+    link: Option<String>,
+    mass_dup: bool,
+    iter_err: bool,
+    entries: Vec<Entry>,
+) -> io::Result<Node> {
     // Furniture folds into state on this line before any census or child
     // list (src/def-furniture.md).
     let (reading, keep) = crate::furniture::read_names(
@@ -818,11 +1040,45 @@ fn gather_dir(
         .filter(|(_, listed)| *listed)
         .map(|(e, _)| e)
         .collect();
+    // Ignored bodies (design/gitignore-bodies.md): furniture fates applied
+    // first (its rendering wins; no double marks) — the map's leftovers are
+    // what the ignore rules see. Ignored *files* leave the child list and
+    // every census bucket, counted in the typed remainder; ignored *dirs*
+    // keep their line (presence) but are never expanded or weighed. Under
+    // --show-all everything lists again, still carrying the mark.
+    let ig: Vec<bool> = if ctx.ignore.active() {
+        entries
+            .iter()
+            .map(|e| ctx.ignore.is_ignored(path, &e.name, e.is_dir))
+            .collect()
+    } else {
+        vec![false; entries.len()]
+    };
+    let show_all = ctx.view.show_all;
+    let ignored_files = if show_all {
+        0
+    } else {
+        entries
+            .iter()
+            .zip(&ig)
+            .filter(|(e, i)| **i && !e.is_dir)
+            .count()
+    };
+    let (entries, ig): (Vec<Entry>, Vec<bool>) = if show_all {
+        (entries, ig)
+    } else {
+        entries
+            .into_iter()
+            .zip(ig)
+            .filter(|(e, i)| !*i || e.is_dir)
+            .unzip()
+    };
     if remain == Some(0) {
         // Depth cutoff: census of the children now; the subtree's deep
         // mass comes from the parallel deep phase (deep_phase) after the
         // whole gather — the serial inline walk was the multi-repo cost.
-        let census = census_entries(&entries, iter_err);
+        let mut census = census_entries(&entries, iter_err);
+        census.ignored = ignored_files;
         return Ok(Node {
             name,
             is_dir: true,
@@ -850,14 +1106,25 @@ fn gather_dir(
         }
         walk.charge();
         let child_path = path.join(&ent.name);
-        let kid = match gather_at(&child_path, child_remain, walk, ctx) {
-            Ok(kid) => kid,
-            Err(_) => Node {
-                name: ent.name.clone(),
-                is_dir: ent.is_dir,
-                denied: true,
-                ..Node::default()
-            },
+        // An ignored dir keeps its line but its innards are not the
+        // project's: no expansion, no census, no mass — presence only.
+        // (Under --show-all it expands like anything, mark kept.)
+        let kid = if ig[i] && !show_all {
+            stat_only(&child_path, ent.name.clone())
+        } else {
+            match gather_at(&child_path, child_remain, walk, ctx) {
+                Ok(mut kid) => {
+                    kid.ignored = ig[i];
+                    kid
+                }
+                Err(_) => Node {
+                    name: ent.name.clone(),
+                    is_dir: ent.is_dir,
+                    denied: true,
+                    ignored: ig[i],
+                    ..Node::default()
+                },
+            }
         };
         children.push(kid);
     }
@@ -880,6 +1147,7 @@ fn gather_dir(
                 mtime,
                 link,
                 mass_dup,
+                ignored_files,
                 ..Node::default()
             });
         }
@@ -896,6 +1164,7 @@ fn gather_dir(
             mtime,
             link,
             mass_dup,
+            ignored_files,
             ..Node::default()
         });
     }
@@ -911,6 +1180,7 @@ fn gather_dir(
         mtime,
         link,
         mass_dup,
+        ignored_files,
         ..Node::default()
     })
 }
@@ -996,6 +1266,11 @@ pub fn deep_phase(node: &mut Node, abs: &Path, ctx: &mut LookCtx) {
                             c.reads = ReadMeter::with(read_share);
                             c.mass_names = name_share;
                             c.root_dev = root_dev;
+                            // Ignore rules from repos above the cutoff dir;
+                            // its own .gitignore/.git are met by deep_mass.
+                            if let Some(parent) = p.parent() {
+                                c.ignore = crate::ignore::Stack::for_path(parent);
+                            }
                             // Guard against a symlink looping back to the
                             // cutoff dir itself.
                             if let Ok(meta) = fs::metadata(p) {

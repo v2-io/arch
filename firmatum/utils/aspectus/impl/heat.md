@@ -30,7 +30,24 @@ Calls made:
   (design/sort.md's "config chooses" — key spelling awaits ratification).
 - `--sort heat` is a built key.
 
-Not in this landing: `H~N` / latest-sha facts and prior-name (same log
-pass, later registration; lattice OFF/compose), signa density, heat color
-ramp, cache-by-HEAD. Tests: `tests/heat.rs` (7, real git fixtures with
-spaced commit dates).
+Not in this landing: prior-name (same log pass, later registration),
+signa density, heat color ramp, cache-by-HEAD. Tests: `tests/heat.rs`
+(7, real git fixtures with spaced commit dates).
+
+## Sha facts landed (Wave E, 2026-08-14)
+
+The `H~N` / initial-sha / latest-sha row now rides the same log pass:
+`--name-status` replaced `--name-only` (same cost; letters + shas were
+already in the stream), and per-file facts grew `touch` (newest commit
+touching the path: full sha + commits-behind-HEAD) and `intro` (oldest
+A/C in the window, an R's new name, or the initial commit when the log
+reached it — **never claimed past the cap**; a capped log simply omits
+introduction, and untracked files claim nothing). Compose-only columns:
+`columns.initial-sha` / `columns.latest-sha` = on, formats `short*` /
+`h~n` (`H` at HEAD, `H~4` behind) / `full`; JSON always carries the full
+shas plus `initial_behind` / `latest_behind`. Files only — a dir's
+"introducing commit" is not a claim this row makes. Sha *sort* keys stay
+honestly unbuilt (refused by name). Heading spellings (`initial-sha`,
+`latest-sha`) provisional. Tests: `tests/shas.rs` (7). A rename counts
+as introducing the *name* (R's new path) — prior-name's row owns the
+deeper story when it lands.

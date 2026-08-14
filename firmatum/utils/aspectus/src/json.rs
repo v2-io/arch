@@ -106,6 +106,11 @@ fn census_obj(c: &Census) -> String {
     let mut o = Obj::new();
     let files: usize = c.buckets.iter().map(|(_, n)| n).sum();
     o.raw("total", &(c.dirs + files).to_string());
+    if c.ignored > 0 {
+        // Gitignored files among the censused names — outside `total`
+        // and the buckets, never silent (design/gitignore-bodies.md).
+        o.raw("ignored", &c.ignored.to_string());
+    }
     if c.dirs > 0 {
         o.raw("dirs", &c.dirs.to_string());
         if let Some(n) = &c.dir_name {
@@ -170,6 +175,28 @@ fn node_obj(n: &Node) -> String {
         let s = s.trim_end_matches('0').trim_end_matches('.');
         o.raw("heat", if s.is_empty() { "0" } else { s });
     }
+    if let Some((sha, n)) = &n.intro {
+        o.str("initial_sha", sha); // full — JSON gets the canonical form
+        o.raw("initial_behind", &n.to_string());
+    }
+    if let Some((sha, n)) = &n.touch {
+        o.str("latest_sha", sha);
+        o.raw("latest_behind", &n.to_string());
+    }
+    if let Some(t) = &n.title {
+        o.str("title", t);
+    }
+    // A collapsed name-series (design/globify.md): structured, members
+    // recoverable in principle — never a lossy string.
+    if let Some(g) = &n.glob {
+        let mut b = Obj::new();
+        b.raw("min", &g.lo.to_string());
+        b.raw("max", &g.hi.to_string());
+        b.raw("width", &g.width.to_string());
+        b.raw("count", &g.count.to_string());
+        b.str("kind", if n.is_dir { "dir" } else { "file" });
+        o.raw("glob", &b.done());
+    }
     // The `[has: …]` contents-claim (lattice row `has`; renamed from
     // `kind` the same day this schema was born, so the field follows).
     if !n.kinds.is_empty() {
@@ -214,6 +241,10 @@ fn node_obj(n: &Node) -> String {
     if let Some(l) = &n.link {
         o.str("link", l);
         o.bool_true("broken", n.link_broken);
+    }
+    o.bool_true("gitignored", n.ignored);
+    if n.ignored_files > 0 {
+        o.raw("ignored_files", &n.ignored_files.to_string());
     }
     o.bool_true("denied", n.denied);
     o.bool_true("walk_bound", n.cut);

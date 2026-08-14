@@ -17,3 +17,27 @@
 **One line stays one line**: turning columns on never changes the line count (tested).
 
 Decided-by-implementation, Joseph ratifies: config-key spelling (`columns.FACT`, `format.FACT`); columns have no compose *flag* (config/env only — `--sort` is the only new flag, see `impl/sort.md`); columns sit right of the name.
+
+## Heading–cluster alignment fix (Wave E, 2026-08-14; steward repro `~/src/arch/vivarium`)
+
+The `score · age` cluster was one right-aligned blob, so a row's score sat
+well left of the heading's `heat` word (the heading, being narrower than
+the widest cluster, hugged the right edge). Now the cluster aligns as
+**two sub-columns inside the same paint pass that positions all cells**:
+score right-aligned under `heat`, age right-aligned under `age`, the `·`
+at one char position on every row — heading included, since it flows
+through the identical split — so heading and values cannot drift apart
+structurally. A score-only cell (no mtime) pads the age subfield.
+Pinned by `tests/columns.rs::heading_sits_over_the_cluster`.
+
+The second reported defect (a `size` heading over apparent silence)
+was confirmed **not a defect**: the heading rule is already
+spoke-at-least-once (paint drops columns whose value-width is zero; the
+vivarium look's speaker was `DECISIONS.decision-log.udon  543K`, below
+the first screen). Pinned anyway by
+`quiet_column_without_speakers_has_no_heading`.
+
+Known ragged case, by design: a row whose name passes the tab-stop cap
+(`STOP_CAP`) shifts its cells right ("a name past the cap goes ragged on
+its own line only") — its `·` is off-grid. Revisit only if the cap law
+changes.

@@ -106,7 +106,7 @@ pub fn facet(dir: &Path) -> Option<String> {
 
 /// `.git` directory, or the target of a `.git` gitlink file (submodule /
 /// linked work tree).
-fn gitdir(dir: &Path) -> Option<PathBuf> {
+pub(crate) fn gitdir(dir: &Path) -> Option<PathBuf> {
     let dotgit = dir.join(".git");
     let meta = fs::symlink_metadata(&dotgit).ok()?;
     if meta.is_dir() {
@@ -123,7 +123,7 @@ fn gitdir(dir: &Path) -> Option<PathBuf> {
 }
 
 /// Linked work trees keep shared state under `commondir`.
-fn commondir(gitdir: &Path) -> PathBuf {
+pub(crate) fn commondir(gitdir: &Path) -> PathBuf {
     if let Ok(text) = fs::read_to_string(gitdir.join("commondir")) {
         let p = Path::new(text.trim());
         if p.is_absolute() {

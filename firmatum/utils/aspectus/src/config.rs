@@ -72,12 +72,18 @@ pub fn defaults() -> BTreeMap<String, String> {
     m.insert("columns.permissions".into(), "quiet".into());
     m.insert("columns.owner".into(), "quiet".into());
     m.insert("columns.filekind".into(), "quiet".into());
+    m.insert("columns.initial-sha".into(), "off".into());
+    m.insert("columns.latest-sha".into(), "off".into());
     m.insert("format.size".into(), "human".into());
     // Relative age (`2.2h ago`): one time register with the heat cluster
     // (format-consistency steer 2026-08-14). JSON stays iso-8601.
     m.insert("format.mtime".into(), "relative".into());
     m.insert("format.line-count".into(), "physical".into());
     m.insert("format.owner".into(), "name".into());
+    // Sha spellings (lattice initial-sha/latest-sha row): short commit,
+    // H~N (commits behind HEAD), or the full sha.
+    m.insert("format.initial-sha".into(), "short".into());
+    m.insert("format.latest-sha".into(), "short".into());
     // The look's serialization (design/json.md): text for eyes (default),
     // json for machines — same look, two encodings. `--format` wins.
     m.insert("format".into(), "text".into());
@@ -91,6 +97,14 @@ pub fn defaults() -> BTreeMap<String, String> {
     // Recency source for the default sort inside repos (design/sort.md):
     // mtime today; `git` uses last-touch where heat's log pass covers.
     m.insert("recency-source".into(), "mtime".into());
+    // Globify (design/globify.md): real name-series collapse to their
+    // pattern; `min` is the smallest group that may fuse (guard against
+    // false-positive collapse; threshold awaits ratification).
+    m.insert("globify".into(), "on".into());
+    m.insert("globify.min".into(), "5".into());
+    // README title (design/readme-title.md): dir lines borrow their
+    // README's title. Off until Joseph ratifies the default (the Open).
+    m.insert("readme-title".into(), "off".into());
     // Heat model half-life in commits (design/heat.md; git-heat default).
     m.insert("heat.half-life".into(), "7".into());
     // Bytes of file content the look may read for line counts before the
@@ -155,10 +169,17 @@ pub fn env_values() -> BTreeMap<String, String> {
         ("ASPECTUS_COLUMNS_PERMISSIONS", "columns.permissions"),
         ("ASPECTUS_COLUMNS_OWNER", "columns.owner"),
         ("ASPECTUS_COLUMNS_FILEKIND", "columns.filekind"),
+        ("ASPECTUS_COLUMNS_INITIAL_SHA", "columns.initial-sha"),
+        ("ASPECTUS_COLUMNS_LATEST_SHA", "columns.latest-sha"),
         ("ASPECTUS_FORMAT_SIZE", "format.size"),
         ("ASPECTUS_FORMAT_MTIME", "format.mtime"),
         ("ASPECTUS_FORMAT_LINE_COUNT", "format.line-count"),
         ("ASPECTUS_FORMAT_OWNER", "format.owner"),
+        ("ASPECTUS_FORMAT_INITIAL_SHA", "format.initial-sha"),
+        ("ASPECTUS_FORMAT_LATEST_SHA", "format.latest-sha"),
+        ("ASPECTUS_GLOBIFY", "globify"),
+        ("ASPECTUS_GLOBIFY_MIN", "globify.min"),
+        ("ASPECTUS_README_TITLE", "readme-title"),
         ("ASPECTUS_FORMAT", "format"),
         ("ASPECTUS_IMPORTANT", "important"),
         ("ASPECTUS_QUIET_SENSITIVITY", "quiet.sensitivity"),
