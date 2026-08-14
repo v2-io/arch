@@ -7,9 +7,11 @@ Every look states the facts that locate it, on the header, before the children.
 
 The header is **two lines** — root, then stamp (decided by Joseph, 2026-08-14: *"root and datetime snapshot should/could be their own lines. From machine perspective and human perspective, those newlines only make things more comprehensible"* — superseding the earlier one-line form):
 
+**Order: stamp first, then root** — so the root line sits directly above its children and reads as connected to them (Joseph's vote, same day):
+
 ```
-/Users/joseph/src/arch/firmatum/utils/aspectus/
 2026-08-14T06:12:03Z
+/Users/joseph/src/arch/firmatum/utils/aspectus/
 ├── design/
 └── src/
 ```
