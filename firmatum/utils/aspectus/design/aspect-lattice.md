@@ -19,7 +19,7 @@ How a **fact** may enter the one look (`aspectus` / `aspectus PATH`). Not a verb
 
 | Office | In the look |
 |---|---|
-| **column** | Where the fact *sits* on the line: `Y` = a column; `INFO` = to the right of the name (symlink target, furniture facet, prior name, aggregates, …). |
+| **column** | Where the fact *sits* on the line. The binary here (`Y` = column, `INFO` = right of the name) is now the coarse form of a richer **placement vocabulary** — decoration / far-left / near-left / near-right / far-right / glyph-block — see [[shorthand|Shorthand]] (Joseph, 2026-08-14). Cells stay coarse until facts claim finer placements. |
 | **default** | In the default look: `ON` · `OFF` · `QUIET` (in the look only when it surprises). |
 | **quiet** | This fact *can* appear only when it surprises (per-fact law lives with [[quiet-columns|Quiet]]: cold baseline = place norms; warm = caller after-image). |
 | **sort** | May be the order key ([[sort|Sort]]). |
