@@ -91,6 +91,41 @@ fn explain_budget_goes_to_stderr() {
 }
 
 #[test]
+fn dir_with_only_its_own_line_censuses_on_the_name() {
+    let n = SEQ.fetch_add(1, Ordering::SeqCst);
+    let dir = std::env::temp_dir().join(format!(
+        "aspectus-fold-{}-{}-{}",
+        std::process::id(),
+        n,
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    fs::create_dir_all(dir.join("ux/autocolors")).unwrap();
+    File::create(dir.join("ux/autocolors/a.md"))
+        .unwrap()
+        .write_all(b"a")
+        .unwrap();
+    File::create(dir.join("ux/autocolors/b.md"))
+        .unwrap()
+        .write_all(b"b")
+        .unwrap();
+    let xdg = std::env::temp_dir().join(format!("aspectus-fold-xdg-{}-{}", std::process::id(), n));
+    fs::create_dir_all(xdg.join("aspectus")).unwrap();
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "3", "--lines", "3"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(
+        o.contains("autocolors/") && o.contains('['),
+        "census on the dir line: {o}"
+    );
+    assert!(
+        !o.contains("[+"),
+        "must not spend a child line on the same census: {o}"
+    );
+}
+
+#[test]
 fn unlimited_lines_zero_lists_all() {
     let (dir, xdg) = fixture_many_files();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "0"]);

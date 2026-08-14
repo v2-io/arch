@@ -122,6 +122,15 @@ fn label_node(n: &Node) -> String {
     }
 }
 
+fn fold_children_into_dir_census(node: &mut Node) {
+    if node.children.is_empty() {
+        return;
+    }
+    node.leftover = Some(census_nodes(&node.children));
+    node.children.clear();
+    node.omitted = None;
+}
+
 fn census_nodes(nodes: &[Node]) -> Census {
     let mut buckets: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
     for n in nodes {
@@ -154,13 +163,23 @@ pub fn apply_budget(node: &mut Node, budget: usize, explain: &mut Vec<String>) {
     }
     let remain = budget.saturating_sub(1);
     if remain == 0 {
-        explain.push(format!("{}: all {n} children omitted (budget 1)", node.name));
-        node.omitted = Some(census_nodes(&node.children));
-        node.children.clear();
+        explain.push(format!(
+            "{}: budget 1 — census on this line, not a child [+]",
+            node.name
+        ));
+        fold_children_into_dir_census(node);
         return;
     }
     if remain < n {
         let show = remain.saturating_sub(1);
+        if show == 0 {
+            explain.push(format!(
+                "{}: one leftover line would only repeat dir census",
+                node.name
+            ));
+            fold_children_into_dir_census(node);
+            return;
+        }
         let mut order: Vec<usize> = (0..n).collect();
         order.sort_by(|&a, &b| {
             weight(&node.children[b])
