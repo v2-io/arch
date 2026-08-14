@@ -24,7 +24,12 @@ fn assert_help(stdout: &str, stderr: &str, code: i32) {
     assert!(stdout.contains("aspectus"), "{stdout}");
     assert!(stdout.contains("aspecta"), "{stdout}");
     assert!(stdout.contains("faculty of looking"), "{stdout}");
+    assert!(stdout.contains("locus"), "{stdout}");
     assert!(stdout.contains("usage:"), "{stdout}");
+    assert!(
+        stdout.contains(&format!("aspectus {}", env!("CARGO_PKG_VERSION"))),
+        "help must name this build's version: {stdout}"
+    );
     assert!(stdout.contains("help"), "{stdout}");
     assert!(stdout.contains("-h"), "{stdout}");
     assert!(stdout.contains("--help"), "{stdout}");

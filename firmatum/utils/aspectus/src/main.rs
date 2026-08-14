@@ -9,13 +9,16 @@ use aspectus::render::render_text;
 use aspectus::walk::{walk, WalkOptions};
 
 /// One source: every accepted flag/verb is named here and printed in help.
-const VERBS_AND_FLAGS: &[(&str, &str)] = &[
-    ("help, -h, --help", "this page"),
+const COMMANDS: &[(&str, &str)] = &[
+    ("help, -h, --help", "this page (includes the version line)"),
     (
         "version, -v, --version",
-        "name + semver; +sha if not a tagged release",
+        "one line: name + semver; +sha if not a tagged release",
     ),
-    ("config", "show which config layers were consulted"),
+    ("config", "show which config layers were consulted and what won"),
+];
+
+const OPTIONS: &[(&str, &str)] = &[
     ("--", "end of flags"),
     ("--config PATH", "use this file as user-home for this run"),
     ("--caller KEY", "select the agent-type overlay"),
@@ -32,23 +35,41 @@ const VERBS_AND_FLAGS: &[(&str, &str)] = &[
     ),
     ("-x", "stay on one filesystem (default)"),
     ("--no-one-fs", "follow mounts"),
-    ("--color=auto|always|never", "color only if stdout is a TTY (auto)"),
+    (
+        "--color=auto|always|never",
+        "color only if stdout is a TTY (auto)",
+    ),
 ];
 
 fn help_page() -> String {
-    let mut out = String::from(
-        "aspectus — the look of a locus\n\
+    let mut out = format!(
+        "{ver} — the look of a locus\n\
          \n\
-         aspectus is the faculty of looking at a place. One look is an aspecta.\n\
-         \n\
-         usage: aspectus help\n\
+         usage: aspectus [PATH]\n\
+                aspectus help\n\
                 aspectus version\n\
+                aspectus config\n\
                 aspectus [-h|--help]\n\
                 aspectus [-v|--version]\n\
-         \n",
+         \n\
+         aspectus is the faculty of looking at a locus: a place of action\n\
+         (a project, sandbox, machine). You run it on a path. One print is\n\
+         an aspecta — the seen-things of that place, right now. It is a\n\
+         picture, not an essay, and not the place itself.\n\
+         \n\
+         The default look is two levels: the place and its immediate children,\n\
+         then it exits. It is not a TUI. It is not ls. It is not carta (who\n\
+         the place is) and not conspectus (what a mind is shown).\n\
+         \n\
+         Commands:\n",
+        ver = version_line()
     );
-    for (name, desc) in VERBS_AND_FLAGS {
-        out.push_str(&format!("  {name:<24}{desc}\n"));
+    for (name, desc) in COMMANDS {
+        out.push_str(&format!("  {name:<28}{desc}\n"));
+    }
+    out.push_str("\nOptions:\n");
+    for (name, desc) in OPTIONS {
+        out.push_str(&format!("  {name:<28}{desc}\n"));
     }
     out.push_str(
         "\n\

@@ -4,4 +4,4 @@
 
 `help` / `-h` / `--help` → stdout, exit 0. `version` / `-v` / `--version` → one line `aspectus <semver>` or `aspectus <semver>+<sha>` (SHA from `build.rs`, not a runtime git call). Unknown option and unknown verb are distinct classes on stderr, exit 2, next action `aspectus help`. `--` ends flags.
 
-Help is generated from the same verb/flag list the parser accepts (including leftover glance flags `--lines` / `--visit` / `--raw` / … so the page does not lie). Examples are still only `help` and `version` until Two-level adds `aspectus` / `aspectus PATH`.
+Help is generated from the same verb/flag list the parser accepts. The page leads with the version line and the defs (faculty, locus, aspecta), not a two-line slogan. Examples include `aspectus` and `aspectus PATH`.

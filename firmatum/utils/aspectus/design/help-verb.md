@@ -37,28 +37,11 @@ Aspectus describes itself. That is the data of this invocation.
 | 7 | Examples teach the forms | The Examples block is the agent’s first lesson. **Rewrite this block whenever a new verb or flag ships.** A stale example is a failed test. | Snapshot test of the Examples section. When glance lands, add `aspectus` and `aspectus PATH` here in the same commit. | §Help page · Examples. |
 | 8 | One source | Parser, help page, and (later) man page take flag/verb names from one list. Adding a flag without updating that list fails a test. | Test: every flag the parser accepts appears in help; every flag help lists is accepted or documented as not-yet. | Generated from that list. |
 
-## Help page (this row)
+## Help page
 
-This is the expected stdout of `aspectus help` until glance adds examples.
+Help is the law channel: it must say what the tool *is*, not only its flags. The first line is the same version line as `aspectus version`. The “what it is” block carries the defs (faculty, locus, aspecta, picture-not-essay, two-level default, not a TUI / not carta / not conspectus). Shape: usage → what it is → commands → options → examples.
 
-```
-aspectus — the look of a locus
-
-aspectus is the faculty of looking at a place. One look is an aspecta.
-
-usage: aspectus help
-       aspectus version
-       aspectus [-h|--help]
-       aspectus [-v|--version]
-
-  help, -h, --help        this page
-  version, -v, --version  name + semver; +sha if not a tagged release
-  --                      end of flags
-
-Examples:
-  aspectus help
-  aspectus version
-```
+A two-line slogan is not this page.
 
 ## Version line
 
