@@ -140,8 +140,8 @@ class Model:
                       if s.dims[d].strong_at is not None
                       and i >= s.dims[d].rung_index(s.dims[d].strong_at)]
             fams = {s.base_family(rec, d) for d in strong}
-            lock = 'ARMED' if len(fams) >= 2 else 'not armed'
-            out.append(f"   lock:          {lock}  (counting lines: {sorted(strong)}; base families: {sorted(fams)})")
+            agree = 'shown' if len(fams) >= 2 else 'not shown (coherence default)'
+            out.append(f"   independent-agreement: {agree}  (counting lines: {sorted(strong)}; base families: {sorted(fams)})")
         if rec.reopened:
             out.append(f"   STATUS: reopened -- {rec.reopen_note}")
         s.log.extend(out)

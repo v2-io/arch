@@ -7,7 +7,7 @@ $ python3 vsl.py specimen.vsl
    evidence/carriage            search-corroborated
    strongest-line: evidence/derivation @ re-derived
    floor:         evidence/instance @ candidate-mapping
-   lock:          ARMED  (counting lines: ['evidence/derivation', 'evidence/in-vivo']; base families: ['derivation', 'in-vivo-measurement'])
+   independent-agreement: shown  (counting lines: ['evidence/derivation', 'evidence/in-vivo']; base families: ['derivation', 'in-vivo-measurement'])
    == era-bump sim: k1 -> k2 (era-keyed certificates now expire, visibly)
 -- checkpoint [after-era-bump] record=claim-fill-residual-distance (all values computed; none stored) --
    evidence/derivation          re-derived
@@ -17,7 +17,7 @@ $ python3 vsl.py specimen.vsl
    evidence/carriage            search-corroborated
    strongest-line: evidence/derivation @ re-derived
    floor:         evidence/in-vivo @ unopened
-   lock:          not armed  (counting lines: ['evidence/derivation']; base families: ['derivation'])
+   independent-agreement: not shown (coherence default)  (counting lines: ['evidence/derivation']; base families: ['derivation'])
 -- checkpoint [after-committed-re-run] record=claim-fill-residual-distance (all values computed; none stored) --
    evidence/derivation          re-derived
    evidence/in-vivo             run-once  [expired@sim@k1: re-run pending]
@@ -26,7 +26,7 @@ $ python3 vsl.py specimen.vsl
    evidence/carriage            search-corroborated
    strongest-line: evidence/derivation @ re-derived
    floor:         evidence/instance @ candidate-mapping
-   lock:          ARMED  (counting lines: ['evidence/derivation', 'evidence/in-vivo']; base families: ['derivation', 'in-vivo-measurement'])
+   independent-agreement: shown  (counting lines: ['evidence/derivation', 'evidence/in-vivo']; base families: ['derivation', 'in-vivo-measurement'])
    !! GUARD [ratified-requires-grounds-and-consult]: refused 'real-read-stands-behind' on decision/accountability -- requires decision/grounding >= falsifiers-declared (currently assumed-implicit)
 -- checkpoint [landed-supported] record=decide-marching-vs-direct-solve (all values computed; none stored) --
    decision/grounding           falsifiers-declared
@@ -34,7 +34,7 @@ $ python3 vsl.py specimen.vsl
    decision/accountability      supported
    strongest-line: decision/grounding @ falsifiers-declared
    floor:         decision/accountability @ supported
-   lock:          not armed  (counting lines: ['decision/consultation', 'decision/grounding']; base families: ['decision-events'])
+   independent-agreement: not shown (coherence default)  (counting lines: ['decision/consultation', 'decision/grounding']; base families: ['decision-events'])
    !! falsifier fired on decide-marching-vs-direct-solve: what-changed: dt-clamp-repaired-at-77b1f5a -- assumption 'dt-clamp-is-binding' no longer holds; verify the model of WHY it was decided, then decide together
 -- checkpoint [after-falsifier-fires] record=decide-marching-vs-direct-solve (all values computed; none stored) --
    decision/grounding           falsifiers-declared
@@ -42,7 +42,7 @@ $ python3 vsl.py specimen.vsl
    decision/accountability      supported
    strongest-line: decision/grounding @ falsifiers-declared
    floor:         decision/accountability @ supported
-   lock:          not armed  (counting lines: ['decision/consultation', 'decision/grounding']; base families: ['decision-events'])
+   independent-agreement: not shown (coherence default)  (counting lines: ['decision/consultation', 'decision/grounding']; base families: ['decision-events'])
    STATUS: reopened -- what-changed: dt-clamp-repaired-at-77b1f5a -- assumption 'dt-clamp-is-binding' no longer holds; verify the model of WHY it was decided, then decide together
 order-invariance [claim-fill-residual-distance]: HOLDS
 order-invariance [decide-marching-vs-direct-solve]: HOLDS

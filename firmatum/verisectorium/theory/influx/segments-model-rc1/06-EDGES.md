@@ -6,11 +6,11 @@
 
 | Edge | Meaning | Consumed by | Composability *(declared per kind — the compound-error lesson)* |
 |---|---|---|---|
-| **supports** (`depends:`) | B is premise or ground for A | re-pricing; the lock (the agreeing lines are supports with independent failure modes); the de-novo verifier path | strength **never** propagates transitively (support chains attenuate; mechanical chaining compounds error); *reachability* is transitive for notification only — a change deep below still signals upward |
+| **supports** (`depends:`) | B is premise or ground for A | re-pricing; the coherence-default question (are these agreeing supports actually descent-independent?); the de-novo verifier path | strength **never** propagates transitively (support chains attenuate; mechanical chaining compounds error); *reachability* is transitive for notification only — a change deep below still signals upward |
 | **rebuts** | R attacks A's *conclusion* — a counterexample, a refuting result | landing (collision surface; blocks "done"; the no-go protocol) | not transitive; not symmetric (R rebutting A says nothing about A rebutting R's premises) |
 | **undercuts** | R attacks the *support* of A-through-B — the premise weakened or the inference doubted, A's conclusion possibly still true | re-pricing's soft path (below) | not transitive |
 | **supersedes** — typed: *revised-by · invalidated-by · alternate-of*, each whole or partial | which record answers now, and why the old one stopped | serving (current-answer resolution); history | *revised-by* chains resolve transitively to the current record; *invalidated-by* and *alternate-of* do not chain |
-| **seeded-by** | A's framing, design, or approach descends from S | the lock's independence check | **transitive — the one edge where propagation is the point**: descent genuinely flows (seeded by X, X seeded by Y ⇒ shares Y's failure modes), and truncating the chain is how fake independence gets manufactured |
+| **seeded-by** | A's framing, design, or approach descends from S | the coherence-default's descent check | **transitive — the one edge where propagation is the point**: descent genuinely flows (seeded by X, X seeded by Y ⇒ shares Y's failure modes), and truncating the chain is how fake independence gets manufactured |
 | **narrates** | teaching or pointer material speaks about A | Freshness (referent-coupled reset); Comprehension's bounds | not transitive (narrating a narration is narrating *that record*, not its referents) |
 | **restates** | same claim, different carrier | identity grain (linked, never deduped on sentiment); collision checking across carriers | *exact*-restates compose as an equivalence; *near*-restates deliberately do **not** chain — near-plus-near drifts (the mapping-relations lesson: the relation kind *is* the confidence statement, and transitivity is granted only where meaning survives it) |
 
@@ -35,7 +35,7 @@ The model's hardest open problem — *when a premise changes, how do dependents 
 
 ## Working Notes
 
-- Provenance: rebut/undercut is adopted argumentation-theory vocabulary (the one distinction there whose consumers already exist here); the transitivity-per-kind discipline is the mapping-relations lesson; the supersession types are the provenance-vocabulary triple with the whole/partial grain from standards practice; descent-transitivity is this model's own commitment (the lock's look-through, extended along chains). Per-element trace lands in 90.
-- Open: whether `seeded-by` wants a *strength* (heavily-seeded vs a passing glance) or stays binary with the lock erring conservative. Binary until a real lock evaluation demands otherwise.
+- Provenance: rebut/undercut is adopted argumentation-theory vocabulary (the one distinction there whose consumers already exist here); the transitivity-per-kind discipline is the mapping-relations lesson; the supersession types are the provenance-vocabulary triple with the whole/partial grain from standards practice; descent-transitivity is this model's own commitment (carriage look-through, extended along chains). Per-element trace lands in 90.
+- Open: whether `seeded-by` wants a *strength* (heavily-seeded vs a passing glance) or stays binary with the descent check erring conservative. Binary until a real evaluation demands otherwise.
 - Open: edge direction conventions at the syntax level (who declares — the dependent declares `supports`; the refuter declares `rebuts`; the narrator declares `narrates`) — a 09-language surface question, noted here so the language inherits an answer rather than a gap.
 - The `restates` exact/near split needs its discriminator stated when first exercised: candidate — exact iff a collision on one carrier *is* a collision on the other.

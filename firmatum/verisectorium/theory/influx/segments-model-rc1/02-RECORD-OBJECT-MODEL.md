@@ -52,7 +52,7 @@
 - invariants:
   - Every status a consumer reads is a projection; hand-set status is inexpressible in the model.
   - Order-invariant: the same whatever order events arrived in.
-  - A projection is declared (strongest-line | every-line-sustains | independence-locked | …); one unqualified scalar is not a default.
+  - A projection is declared (strongest-line | every-line-sustains | shown-independent-agreement | …); one unqualified scalar is not a default.
 - fails by: the label-lie — a cell asserting what no events support, or surviving events that invalidated it.
 
 **LADDER** — a dimension's ordered rungs with the channel vocabulary that moves between them and a ceiling law.
@@ -69,7 +69,7 @@
 ## Working Notes
 
 - **Grown-as-needed discipline:** objects are added here only when 03–09 need one this file lacks; each addition logged with its demanding file. *Log:* DIMENSION re-grained to the orthogonality unit (2026-08-14, steward correction via 03 — the earlier cut had let a grouping carry ontology); a FAMILY object existed for one commit before the steward reduced it to a **namespace in the dimension's name** — organization that structurally cannot bear invariants; LINE re-related from foundation-rung to dimension in the same pass, resolving its overlap question. Deliberately absent so far: view/outline objects (carried by [[claim-outline-as-view]] and the cluster definition in theory canon — reuse, don't restate), edge objects (06's subject — typed relations land here once 06 adjudicates them), question/disposition objects (07's subject).
-- **To-do, carried from the charter's earlier anatomy sketch:** the uniform-anatomy test per dimension (does each dimension's adjudication fit record+trail+projections without strain? — checked as failure-mode bursts land); crumb-routing as the working-notes → trail drain; max/floor/lock as the named projection set; descent edges' minimal form; the era registry's key vocabulary.
+- **To-do, carried from the charter's earlier anatomy sketch:** the uniform-anatomy test per dimension (does each dimension's adjudication fit record+trail+projections without strain? — checked as failure-mode bursts land); crumb-routing as the working-notes → trail drain; max/floor/shown-independent-agreement as the named projection set; descent edges' minimal form; the era registry's key vocabulary.
 - **Feedback loop noted:** the udon reference defs this file's style follows are themselves future records of a deployment this model will describe — when 09's language exists, those defs are among its first test articles.
 - Open: whether WORKING-NOTES is an object or a body-part with editable-free semantics; whether TRAIL and the Fidelity dimension are one thing seen twice (substrate vs priced question) or genuinely two.
 - **Forward, steward-noted (2026-08-14), deliberately not minted now:** a namespace is a strong indication of a desired **accumulator** — evidences, saliency-factors, trust — so the namespace-level thing may earn objecthood later *as* the accumulator its projection reads over; and the name-level cut affords cheap **sub-subdivision** (`evidence/testimony/…`) when a dimension's population wants finer grain. Both wait for a demanding file; the easy cut stands until then.
