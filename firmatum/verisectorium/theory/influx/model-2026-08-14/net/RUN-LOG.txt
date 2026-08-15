@@ -1,0 +1,69 @@
+LADDERS (guard vocabulary + rung ordering + ceiling law, per line):
+  math       family=derivation           rungs=sketch -> drafted -> deps-verified -> re-derived
+             channels: formal-expression-written | premises-named-and-checked | independent-re-derivation
+             ceiling:  exact (under named premises); conditional if any premise is empirical
+  sim        family=in-vivo-measurement  rungs=pre-registered -> run-once -> swept -> independently-reproduced
+             channels: first-run (era-keyed) | seed/level/footprint-sweep | independent-re-run
+             ceiling:  exact for the authored world (identifiability by construction); empirical for transfer to the wild; every number era-keyed
+  lit        family=transmission:empirical-wild rungs=named-not-read -> recalled -> search-corroborated -> verified-via-secondary -> primary-verified
+             channels: recall-marked-as-recall | convergent-secondaries | faithful-secondary-fetched | primary-fetched
+             ceiling:  min(rung, source own tier) -- transmitted ceiling caps at source; defeasible two ways: source wrong OR carriage infidelious; family = transmission:<source-family> -- a wrapper, never lock-independent of it
+  testimony  family=testimony            rungs=captured -> corroborated -> cross-kind-corroborated
+             channels: independent-account-located | independent-kind-agrees
+             ceiling:  position fixed at capture (attested/reconstructed/secondhand); corroboration raises credibility only, never position
+  analog     family=analogy              rungs=hunch -> articulated -> perturbation-tested
+             channels: analogy-articulated | perturbation-test-passed
+             ceiling:  heuristic; survival licenses generative use, never assertion
+
+KAHN OBLIGATION: reversed pay-in order -> HOLDS (identical ledgers + projections)
+
+Act I -- after all lines pay in:
+  (testimony@credibility=1 present but position fixed) max=3 floor=1 lock=ARMED   
+      (lit, strength=1, family=transmission:empirical-wild, rung=2)
+      (math, strength=3, family=derivation, exact|premises-named)
+      (sim, strength=2, family=in-vivo-measurement, k1)
+      (testimony, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
+
+Act II -- kernel era bump k1->k2 (certificates decay, visibly):
+  sim@k1 expired -> question minted max=3 floor=1 lock=unarmed 
+      (lit, strength=1, family=transmission:empirical-wild, rung=2)
+      (math, strength=3, family=derivation, exact|premises-named)
+      (testimony, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
+      expired-place holds: [('expired', 'does-the-fill-settle', 'sim@k1', 'kernel-era-boundary')]
+      new question: [('q', 're-run-does-the-fill-settle-under-k2')]
+
+Act III -- the wall moved: primary fetched, lit re-verified to its source-tier cap:
+  lit raised 1->2 (capped, base family empirical-wild): lock re-arms max=3 floor=1 lock=ARMED   
+      (lit, strength=2, family=transmission:empirical-wild, primary-fetched; capped-at-source-tier)
+      (math, strength=3, family=derivation, exact|premises-named)
+      (testimony, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
+      counter-demo: same strengths but source=derivation -> unarmed (transmitted derivation is not independent of our math leg)
+
+EVENT LOG head (run 1, first 12 of 30 firings):
+    1  T.ideate                   {o -> ('obs', 'water-fill-never-settles'), q -> ('q', 'does-the-fill-settle'), c -> ('cf', 'solve-equilibrium-directly')}
+    2  T.launch.math              {cl -> ('claim', 'does-the-fill-settle')}
+    3  T.launch.sim               {cl -> ('claim', 'does-the-fill-settle')}
+    4  T.launch.lit               {cl -> ('claim', 'does-the-fill-settle')}
+    5  T.launch.testimony         {cl -> ('claim', 'does-the-fill-settle')}
+    6  T.launch.analog            {cl -> ('claim', 'does-the-fill-settle')}
+    7  T.secure*.math             {x -> ('line', 'math', 'does-the-fill-settle', 0, '')}
+    8  T.secure*.math             {x -> ('line', 'math', 'does-the-fill-settle', 1, '')}
+    9  T.secure*.math             {x -> ('line', 'math', 'does-the-fill-settle', 2, '')}
+   10  T.secure*.sim              {x -> ('line', 'sim', 'does-the-fill-settle', 0, 'k1')}
+   11  T.secure*.sim              {x -> ('line', 'sim', 'does-the-fill-settle', 1, 'k1')}
+   12  T.secure*.lit              {x -> ('line', 'lit', 'does-the-fill-settle', 0, '')}
+
+accounts substrate (the securing events, with their channel names):
+    ('acct', 'analogy-fed-ideation', 'does-the-fill-settle', 'survived-perturbation')
+    ('acct', 'ideated', 'does-the-fill-settle', '')
+    ('acct', 're-verified', 'lit', 'wall-moved: primary now fetchable')
+    ('acct', 'secured', 'analog', 'analogy-articulated')
+    ('acct', 'secured', 'analog', 'perturbation-test-passed')
+    ('acct', 'secured', 'lit', 'convergent-secondaries')
+    ('acct', 'secured', 'lit', 'recall-marked-as-recall')
+    ('acct', 'secured', 'math', 'formal-expression-written')
+    ('acct', 'secured', 'math', 'independent-re-derivation')
+    ('acct', 'secured', 'math', 'premises-named-and-checked')
+    ('acct', 'secured', 'sim', 'first-run (era-keyed)')
+    ('acct', 'secured', 'sim', 'seed/level/footprint-sweep')
+    ('acct', 'secured', 'testimony', 'independent-account-located')
