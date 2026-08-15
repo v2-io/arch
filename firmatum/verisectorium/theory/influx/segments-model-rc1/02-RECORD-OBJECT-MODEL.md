@@ -52,7 +52,7 @@
 - invariants:
   - Every status a consumer reads is a projection; hand-set status is inexpressible in the model.
   - Order-invariant: the same whatever order events arrived in.
-  - A projection is declared (strongest-leg | every-line-sustains | independence-locked | …); one unqualified scalar is not a default.
+  - A projection is declared (strongest-line | every-line-sustains | independence-locked | …); one unqualified scalar is not a default.
 - fails by: the label-lie — a cell asserting what no events support, or surviving events that invalidated it.
 
 **LADDER** — a dimension's ordered rungs with the channel vocabulary that moves between them and a ceiling law.

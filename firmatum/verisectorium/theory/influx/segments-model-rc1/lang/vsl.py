@@ -134,14 +134,14 @@ class Model:
         if positions:
             strongest = max(positions, key=lambda d: positions[d])
             floor = min(acted, key=lambda d: acted[d]) if acted else strongest
-            out.append(f"   strongest-leg: {strongest} @ {s.dims[strongest].rungs[positions[strongest]]}")
+            out.append(f"   strongest-line: {strongest} @ {s.dims[strongest].rungs[positions[strongest]]}")
             out.append(f"   floor:         {floor} @ {s.dims[floor].rungs[acted[floor]]}")
             strong = [d for d, i in positions.items()
                       if s.dims[d].strong_at is not None
                       and i >= s.dims[d].rung_index(s.dims[d].strong_at)]
             fams = {s.base_family(rec, d) for d in strong}
             lock = 'ARMED' if len(fams) >= 2 else 'not armed'
-            out.append(f"   lock:          {lock}  (strong legs: {sorted(strong)}; base families: {sorted(fams)})")
+            out.append(f"   lock:          {lock}  (counting lines: {sorted(strong)}; base families: {sorted(fams)})")
         if rec.reopened:
             out.append(f"   STATUS: reopened -- {rec.reopen_note}")
         s.log.extend(out)

@@ -91,7 +91,7 @@ decision/consultation  decision/falsifiers
 salience/freshness     salience/disposition
 ```
 
-Each named dimension has its own ladder and accumulates its own evidences (weight-of-evidence style, theoretically limitless subrecords, each item at its own rung). A claim's overall "truth," a decision's overall "decidedness" — any namespace-level value — is never a stored field; it is a **declared projection** over member dimensions (strongest-leg / every-member-sustains / independence-locked). The namespace is part of the name: it structurally *cannot* bear invariants, re-cutting it is a rename, and the steward's own illustrative cut differs from this file's table (freshness and disposition under `salience/`; the reopen-trigger coordinate named `decision/falsifiers`) — kept as the demonstration that the cuts are free, not as a pending decision.
+Each named dimension has its own ladder and accumulates its own evidences (weight-of-evidence style, theoretically limitless subrecords, each item at its own rung). A claim's overall "truth," a decision's overall "decidedness" — any namespace-level value — is never a stored field; it is a **declared projection** over member dimensions (strongest-line / every-member-sustains / independence-locked). The namespace is part of the name: it structurally *cannot* bear invariants, re-cutting it is a rename, and the steward's own illustrative cut differs from this file's table (freshness and disposition under `salience/`; the reopen-trigger coordinate named `decision/falsifiers`) — kept as the demonstration that the cuts are free, not as a pending decision.
 
 ## Kinds as dimension-compositions
 

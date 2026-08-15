@@ -35,11 +35,11 @@ Note what the trail does *not* contain: no row says "status: good." No row ever 
 | `evidence/testimony` | reconstructed, credibility 1 |
 | `evidence/carriage` | rung 2/5, capped at source tier |
 
-- *strongest-leg*: exact-under-premises, away-from-lakes (derivation)
+- *strongest-line*: exact-under-premises, away-from-lakes (derivation)
 - *every-line-sustains*: credibility-1 testimony — the floor an adversarial reader may hold us to
 - *independence-locked*: **ARMED** — derivation + in-vivo agree and their failure modes are independent families. Carriage did **not** arm it and could not have alone: had its source been another *derivation*, the lock would look through the carriage wrapper, see same-family, and refuse — carried material never corroborates a line it could have seeded.
 
-**As of e8 (the era bumped):** `evidence/in-vivo` shows *expired @ k1 — re-run pending*; the lock **disarms** (one strong leg left); nothing was edited anywhere — the same trail simply computes differently, and the minted question routes the re-run. When e9 lands a fresh committed run under k2, the lock re-arms; that event's criterion is the *same pre-committed one from e3a*, which is what makes the re-run certifying rather than tuning.
+**As of e8 (the era bumped):** `evidence/in-vivo` shows *expired @ k1 — re-run pending*; the lock **disarms** (one counting line left); nothing was edited anywhere — the same trail simply computes differently, and the minted question routes the re-run. When e9 lands a fresh committed run under k2, the lock re-arms; that event's criterion is the *same pre-committed one from e3a*, which is what makes the re-run certifying rather than tuning.
 
 ## Second specimen — a decision, same anatomy
 
