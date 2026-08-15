@@ -1,0 +1,13 @@
+# RC1 working praxes
+
+*How the segments-model-rc1 work is being done. Lives here so RC1 itself carries only the model. Register: a working resolve taken up by the current coord, not law — items marked **[J]** are the steward's direction this session (his words where quoted); items marked **[lesson]** are what this session's caught failures taught, steward-calibrated; a successor inherits these as one mind's honest practice, weighs them, and may do better.*
+
+1. **[J]** Truth above self — *"above effort, above me, above what you've read, above token anxiety or task pressure, above being right, above what you've thought or written or said."* The session's worth is the distilled truth that survives it: *"I would rather 20 lines of pure truth this whole session than any number of 'done' artifacts all over the place."*
+2. **[J]** RC1 carries only its current pure distilled truth — no process narration, no who-said-what-when, no style discussion. Accounts and reviews live in the parent influx; the model lives in RC1.
+3. **[J]** The reader is the measure: model the beginner's mind honestly and bring it from where it is into greater light, in strictly truthful steps. *"Language for the sake of language, to posture or sound like something, has negative net worth."*
+4. **[lesson]** A gloss is only a gloss if deleting it changes nothing a reader may conclude — only how fast they get there. Anything whose deletion would change what the model seems to rest on is load-bearing and owes full adjudication; the opening position is the highest-anchoring slot, so "just framing" is least true exactly there.
+5. **[lesson]** When a carried sentence needs defending, that is the tell to delete it rather than argue — this session's promise-frame repair failed once by keeping the frame wrapped in justifications, satisfying a verdict's letter while inverting its intent. Earned content is quiet; reaching for an argument on behalf of your own words means you are on the unearned side.
+6. **[lesson]** Superlatives convert to their checkable content: "most important" becomes *why it leads*, "strongest" becomes *what it removes if true*; a felt ranking stays qualified-personal or goes.
+7. **[carried]** Prose leads; instruments verify. A formalism change not demanded by a prose claim is the instrument capturing the model again.
+8. **[carried]** Synthesis is marked as synthesis, per element (carried / synthesized / open) — and the attractive unification is the one that wants testing hardest, in writing, with its falsifier named.
+9. **[carried]** Steward-paced questions stay open: state the candidate ingredients and stop. Forcing a deliberately-open decision fails even when the forced answer would have been right.
