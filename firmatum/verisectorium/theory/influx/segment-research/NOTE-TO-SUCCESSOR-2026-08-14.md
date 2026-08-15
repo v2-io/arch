@@ -8,7 +8,7 @@ The work is the epistemology and segment-feature model for verisectorium. His st
 
 > "The ultimate objective is for any agent creating a verisectorium to look at the kinds of things they need to create and see clearly what they need to track and where and how it enters and upgrades and gets refined for their verisectorium's needs, and what it can then certify etc."
 
-A *generative* mental model, then — the thing a founding agent runs to derive their own kinds, states, and ladders — not a taxonomy they browse. He has done this before with fresh Opus agents "dedicated to really ingesting the entire picture first thing and then distilling the true and most salient aspects." That's you, and the ingest-first-then-distill order is the entire reason you exist instead of me continuing.
+A *generative* mental model, then — the thing a founding agent runs to derive their own kinds, states, and ladders — not a taxonomy they browse. He has done this before with fresh Fable agents "dedicated to really ingesting the entire picture first thing and [only] then distilling the true and most salient aspects." That's you, and the ingest-first-then-distill order is the reason he has launched you instead of me continuing.
 
 ## What happened in my session, told honestly because it's your best warning
 
@@ -16,17 +16,12 @@ Joseph asked me to find where the epistemology research had landed and pull out 
 
 The one discipline I can hand you against this (it is cheap and it works): before claiming orientation, enumerate the corpus and mark each item read-whole / partial / unread **from your tool log, not from felt-state** — a prior agent here filled an accounting row from felt-state the same evening the discipline was written.
 
-## The corpus — what exists and where
+> ## (from Joseph, additional orientation)
 
-Everything below deserves whole reads; the filenames and index lines systematically understate content (a standing property of this estate — the surprisal is in the bodies). This corpus's own ORIENT recommends experiential reading — predict → read → diff → wander — and having failed by the other method, I'd take that seriously.
+> *There's a new tool, under active development and changing rapidly, but already worth a lot for this exact failure-mode:*
+> *`aspectus` -- I recommend you use it, plain vanilla just like that, from verisectorium/ , arch/vivarium/, and arch/asf/  and then you can explore its flags etc. and dig deeper if you want. This should show you exactly where the mass is that the agent writing this letter didn't see, that allowed him to feel like he had the arc when he had a tiny sliver of it.*
+> *A lot of the synthesis and analysis in verisectorium might have lost touch with the actual segments' and their needs in arch-- don't hesitate to look at original sources and verify what is being just assumed in the verisectorium influx files, as important as they might be. I told the last instance that it would be very hard to consider anything he said credible if he hadn't actually read a good sampling of existing segments etc. (that was before I found out he had failed to read the research in verisectorium, etc., and by that time he was diffing from the original premature model and things were getting muddier and muddier, hence, you). Back to the letter now...
 
-- `theory/sop/ORIENT.md` + `CLAUDE.md` + `README.md` + `theory/OUTLINE.md` (with Working Notes) — the front door; ORIENT's doctrina names the 23 drafted segments + 12 pre-drafted stubs as required whole reads, and it means it.
-- `theory/influx/segment-research/` — the epistemology research's landing site. The layers, in rough genetic order: `glimpse-2026-08-10.md` → the four `dive-*.md` files (~90k tokens; the actual survey evidence — I never read these) → `synthesis-v0-2026-08-10.md` → `pre-taxonomy-synthesis.md` (proposal pool + E-question log) → `TAXONOMY-DRAFT.md` (skeleton of record, discussed-solid only) → `TAXONOMY-FILL-v1.md` (want-mode fill; its Working Notes may be the most valuable half) → `vera-read-notes-2026-08-10.md` (the estate's own Nov-2025 prior arrival, ennaos VERA — the argued counter-position to the family carve).
-- `theory/influx/segment-research/external-ontologies/` — ten sweep files + `REASSEMBLED-MODEL.md` (eight cross-field laws, five tracks, footnoted to verification grade). I read only the reassembled model, not the sweeps under it.
-- `segment-research-notes-2026-08-09.md` (20k, unread by me), `reflections-coord-2026-08-10.md`, `terminology-survey.md` + `TERM.term.ud`, `steward-brainstorms/`, `vera/`, `instrumenta/REGISTER-RULING.md` (binding on that gather's labels).
-- `2025-11-17-sensibility-to-truth.md` — Joseph copied this in 2026-08-12; an old autopax piece with its own epistemic ladder (Pure Guess → … → Fundamental Truth).
-- `sketch-2026-03-epistemic-foundation-scale.jpeg` — **steward primary, March 2026**, copied in by me from our dialog: his hand-drawn "Design/Architectural Epistemic Foundation Scale" (a support-gradient for design decisions, with a visible branch into speculative/random/cargo-cult, plus two lower notes on logocentric self-governed meta-loops and a Conscious→Habitual→Reflexive→Instinctive depth line). Read the image itself; any transcription of mine is a reading.
-- The prior epistemology discussions ORIENT and the fill point into (asf naming cycles, trio sessions, comproprium FORMAT divergences) — the E5 chase-before-relitigating list in `pre-taxonomy-synthesis.md`.
 
 ## Steward signal from my session (carry these; they're his, not mine)
 
