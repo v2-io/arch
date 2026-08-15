@@ -1,0 +1,20 @@
+# The founding questions — the derivation procedure, in this set
+
+*Register: **proposed**. The procedure a founding agent (or the kit questionnaire) runs per record-kind their instance will hold — restated here in RC1's vocabulary because both stranger reads found the set "incomplete at the exact point of use" without it. Carried from the prior model's nine questions with the dimension-grain corrections applied; the wild population of existing instances checks your answers' completeness, never bounds them.*
+
+Run these **per kind of record the project must write down**, in order:
+
+0. **Standing.** What must be true for a record of this kind to *validly come into being at all* — who has the power to produce one, through what act, with what chain-integrity? A gate, never a rung: a "decision" recorded by someone without the power to decide is not a weak decision; it never existed as one. Misfire ≠ wrong-content.
+1. **Speech-act.** What does a record of this kind *do* — assert, decide, record, prescribe, ask, point, teach, commit? (Composites answer with more than one; they close over the four shapes — reify, view-ify, cluster, exempt-visibly.)
+2. **Failure.** What *should* go wrong with one? Forced from first principles; hold the kind open until answered. The wild corpus checks your answer's completeness; it never supplies the answer.
+3. **Instrument.** What *should* adjudicate and repair that failure? Half-derivable from the record's ground — proof → re-derive; declaration → ratify; reality → measure; a proven model → check the instance; analogy → break it; a practice → watch it fire. A declared-∅ instrument is legitimate for records whose value is that nobody repairs them (sketches, raw reflections) — but declared intent is the floor, and principled-∅ must never be confused with nobody-has-asked-yet.
+4. **Dimensions.** Which epistemic dimensions does this kind open (or: which foundation declaration derives them)? This yields the kind's tracked state by construction, and its write semantics follow from its truth-conditions — never from style. The fusion check runs here: any proposed ladder whose values are cross-products of independently-movable parts is two dimensions sharing a field — split them.
+5. **Movers and warrant.** Who may move each value, on what warrant, recorded how? Every movement is an event (channel · actor+authority · criterion · commitment · date · outcome · era-key); top rungs are event-gated and grader-escalated per stakes; and the ledger keeps *what the act showed* and *how trusted its performer* as two columns, never one grade.
+6. **Ceiling and evidence-action.** Per laddered dimension: the strongest value this kind can reach — assignable from kind before work — and the named action that would raise a given record toward it. Transmitted ceilings cap at the source's own tier; authority ceilings derive from ownership; epistemic gaps have no principled ceiling, aleatory gaps *are* the ceiling.
+7. **Grain and edges.** At what depth does state attach (record / section / clause), what is the projection rule upward, and which edge kinds does the kind participate in (with each kind's composability declared)?
+8. **Certification.** What may a consumer conclude from this kind's state, checkable from the record and its trail alone? The acceptance test for the whole declaration: *is it immediately obvious to a de-novo auditor, given nothing but the records and their carried states, exactly what should be audited?* Where that fails, the declaration is missing something.
+
+## Working Notes
+
+- Provenance: questions 0–8 carried from the prior model's §2 (itself steward-probed through multiple rounds); RC1's corrections applied at Q4 (dimensions at orthogonality grain, fusion check) and Q7 (edge kinds now typed, per 06). The prior model's §2 remains the historical form; this file supersedes it *for founding use* once ratified — 90's map updated accordingly.
+- Both stranger reads asked for this file's existence; its adequacy test is the founding dry run (08's protocol, item 2).

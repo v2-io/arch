@@ -41,6 +41,23 @@ Note what the trail does *not* contain: no row says "status: good." No row ever 
 
 **As of e8 (the era bumped):** `evidence/in-vivo` shows *expired @ k1 — re-run pending*; the lock **disarms** (one strong leg left); nothing was edited anywhere — the same trail simply computes differently, and the minted question routes the re-run. When e9 lands a fresh committed run under k2, the lock re-arms; that event's criterion is the *same pre-committed one from e3a*, which is what makes the re-run certifying rather than tuning.
 
+## Second specimen — a decision, same anatomy
+
+*(Added after both stranger reads asked whether the uniform anatomy serves a non-assertion kind — the exact kind-class this substrate's known bias under-weights. The test, run in miniature:)*
+
+- **record:** `decide-marching-vs-direct-solve` · **kind:** decision (*decides*; fails by silent overturn or drift-from; write semantics: append-or-expressly-overturn) · **dimensions opened:** `decision/grounding` · `decision/consultation` · `decision/accountability` · `decision/falsifiers`
+
+| # | date | dimension | event | outcome |
+|---|---|---|---|---|
+| d1 | 08-03 | grounding | assumptions named: *dt-clamp-is-binding*, *no-marching-consumers-yet* | assumptions-explicit |
+| d2 | 08-03 | falsifiers | declared: "reopen if dt-clamp is repaired" | falsifiers-declared |
+| d3 | 08-04 | consultation | announced to the affected worklines; no objections in window | announced → feedback-collected |
+| d4 | 08-04 | accountability | steward no-objection recorded | **supported** *(not ratified: guard requires a real read — grounding and consultation alone cannot lift it)* |
+| d5 | 08-12 | *(evidence arrival)* | sim result: dt-clamp repaired at `77b1f5a` — invalidates named assumption | falsifier **fires** |
+| d6 | 08-12 | accountability | reopen minted, carrying **what changed** — never argued from the old authority | reopened → superseded-by `…-v2` |
+
+Projections at d4: grounding=falsifiers-declared · consultation=feedback-collected · accountability=supported — four fields, never one grade; the license served: *act on it; revisit is easy; do not argue from it as law.* At d6 the old decision stands as history with its pointer; nothing was deleted. **The anatomy held**: body + trail + computed projections, no strain — one dimension-namespace swapped for another, everything else identical. (Teaching records and instruments still owe their own specimens; the claim stays exposed until they run.)
+
 ## What the specimen teaches, in one breath each
 
 - The record occupies exactly the positions its trail supports — and *reports* exactly those (the cardinal sin impossible by construction; its under-recording mirror visible too: had e7 never been appended, the claim would compute at deps-verified while actually re-derived — just as dishonest in the downward direction, and worse than it looks: a later reader who learns agent-D worked on this would have to wonder whether the re-derivation *failed* — which is why a declined lift gets its own event, and silence stays meaning *unrun*).
