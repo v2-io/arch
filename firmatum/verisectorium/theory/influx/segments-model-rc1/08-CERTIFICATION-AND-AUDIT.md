@@ -1,0 +1,45 @@
+# Certification, the trusted base, and the audit
+
+*Register: **proposed**. What a consumer may conclude from a record's state; where the warrant bottoms out; what auditing is; and the acceptance protocol for RC1 itself. The trusted-base and under-recording sections answer the two questions the de-novo read named as unanswerable from 01–06.*
+
+## Certification, precisely
+
+A **certification** is a claim *about* a record that is checkable without trusting the record's author: a named criterion · a grader whose independence meets the rung's requirement · a dated event · a **reproducible check** (re-derive, re-run, re-locate the span, re-walk the quiz). What a store "can certify" is exactly the set of such claims its declared kinds and trails support — no more. Three consequences:
+
+1. **Certification strength is bounded by grader independence, never by effort.** Self-assessed rungs certify authorship diligence; independently-reviewed rungs certify the claim. The independent-verify gate is load-bearing precisely because the conviction that it is unneeded is the failure it catches — an author cannot catch a framing the author and the work now share.
+2. **A certificate decays with its warrant** — content edit, referent change, era bump — and the decay is visible, never silent. A certificate that cannot decay is a label-lie in waiting.
+3. **Verification is not validation, and they never share a cell.** Verification: the record meets its *stated* criterion. Validation: the criterion was *adequate for the purpose*. A perfect chain of verifications certifies lineage and diligence; whether the whole thing is fit for what a consumer wants to do with it is a separate judgment, separately owed. (Adopted vocabulary — metrology's own split, imported because its consumer already existed here.)
+
+## The trusted base — where warrant bottoms out
+
+Events assert acts, and nothing inside the model prevents a recorded event from describing a securing act that never happened. Grader-independence regresses (the grader's grading is itself an event). So the model states its floor instead of hiding it — **three layers, each buying something different, with named residue below:**
+
+1. **Reproducibility is the fabrication defense for everything reproducible.** A certification *requires* a reproducible check by definition — so a fabricated re-derivation event fails on re-run, a fabricated build-pass fails on rebuild, a fabricated span-cite fails on grep. For the reproducible classes, fabrication is not prevented but is *convictable at any later moment at the fabricator's standing risk* — which is the strongest defense any provenance system achieves.
+2. **Tamper-evidence covers the trail itself.** The append-only substrate (in this estate: the commit stream, hash-chained) makes silent *retro*-fabrication — editing what was recorded — detectable. It does not make the original recording true; it makes the record of the recording honest.
+3. **Actor identity as recorded** is trusted at the substrate's grain (commit attribution, session records). Below it the model offers no warrant of its own.
+
+**The named residue:** irreproducible events — testimony above all, and any witnessed-once act — bottom out in **trust in the recording person or channel**, which is exactly why the model keeps the credibility column separate from what-the-event-shows, prices witness position as unimprovable-by-work, and holds testimony at the bottom of every lock computation. The floor is not a defect to engineer away; it is the honest boundary every provenance system has, stated so that no consumer mistakes the machinery for more than it is. *The model's warrant, fully unwound: reproducibility where possible, tamper-evidence around the trail, identity at the substrate's grain, and named trust for the remainder.*
+
+## Honest under-recording — the full economics
+
+*(03 carries the short answer; this is the pricing.)* The securing work done but never recorded leaves the trail computing below the record's true position. Three properties govern it:
+
+- **Safe-side by construction, and the asymmetry is deliberate.** Over-recording (events asserting acts that didn't happen) injects false confidence into consumers — the harm the whole model exists to prevent. Under-recording injects only under-trust: a consumer double-checks something already solid. The model tolerates the second to make the first convictable; a design that punished both equally would push authors toward neither recording nor doing.
+- **Priced, not free.** The unrecorded securing re-bills: someone re-derives what was derived, re-runs what was run — the comprehension-economics tax arriving through the trail. At corpus scale, chronic under-recording converges on the pre-model world, where every reader re-verifies everything.
+- **The remedy is economic, never disciplinary.** A trail-keeping duty enforced by diligence fails exactly as often as diligence does — the estate's measured base rate. The repair-shape ordering applies: make recording *cheaper than not recording* (the act's tool emits its own event; the affordance law; 09's language exists largely so that stating a securing act *is* recording it), then acts-that-leave-traces, then probes, and resolve last because it demonstrably loses.
+
+## The audit
+
+Auditing is **reading over the trail** — every warrant question is one: was the "independent" re-derivation independent (descent-trace)? was the criterion pre-committed (commitment field)? does the cited atom still assert what dependents assumed (support-audit)? has this certificate outlived its era (decay-sweep)? A de-novo audit adds the one thing trail-reading cannot supply: a reader whose descent from the corpus's own framings has been cut. The two compose: the trail answers *was the recorded work sound*; the fresh mind answers *is the frame itself the flaw* — and neither can do the other's job.
+
+## The acceptance protocol for RC1 itself
+
+1. **The auditor walk** — the model's own stated criterion, still its most important unrun test: hand a fresh mind one corpus plus this model and ask only *"what should be audited?"* Every stopping point is a missing kind-declaration, dimension, or bound. *(Partially exercised: the 2026-08-14 de-novo read established that a stranger can reconstruct the model from this set — the walk proper, against a real corpus, remains.)*
+2. **The founding dry run** — the derivation questions run against a live deployment with the steward available (the AISI instance is the standing case), checking that a founding agent reaches declarations rather than inheriting them.
+3. **The two queued external checks** — the evidence-to-decision structure (would externally corroborate the dimension split's deepest cut) and the safety-case frameworks (the one surveyed place a counterexample to the ceiling-plus-evidence-action design plausibly lives).
+
+## Working Notes
+
+- The reproducibility-as-fabrication-defense argument is this file's main synthesis (the de-novo read supplied the question; the answer assembles certification's own definition with the tamper-evidence layer) — attack it at the irreproducible boundary: if a deployment's record population is testimony-heavy, the floor is high and the model should say so at founding time (a kit-questionnaire item).
+- Open: whether decay-sweeps and support-audits are one standing process or two (they read different event classes; they may share a clock) — a process-map question for deployments, not a model question.
+- Open: the walk (protocol item 1) wants a target corpus small enough to walk whole — the references/ instance or AISI, not asf.
