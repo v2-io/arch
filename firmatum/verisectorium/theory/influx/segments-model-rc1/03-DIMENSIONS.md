@@ -14,7 +14,9 @@ The word "dimension" is load-bearing: it structurally resists the collapse into 
 
 ## The table
 
-| Dimension | The question it asks | Warrant, by degrees | Fails by *(dishonesty modes)* |
+*Rows are the questions, at family altitude: Evidence and Backing are **families** grouping several orthogonal dimensions each (see the orthogonality section below); the others are single dimensions as far as is currently known. Grouping is for the eye; only dimensions bear invariants.*
+
+| Family / Dimension | The question it asks | Warrant, by degrees | Fails by *(dishonesty modes)* |
 |---|---|---|---|
 | **Evidence** | is it true? | securing acts on named, signed channels, per line; settled at the primary | **[attested]** overclaiming (scalar truthfulness, completeness, warranted confidence) *and* underclaiming; underspecification; scope/containment failure; mis-scoped prerequisites; statistical results mis-mapped to confidence; uncalibrated sources; broken citation trace; accumulated past-truths mixing warrants |
 | **Backing** | who is accountable; who was consulted; on what grounds; what reopens it? | decision events on its securing lines — grounds (assumptions explicit → revisit-triggers declared), consultation (announced → feedback collected), authority (proposed → supported → ratified → ruled) | **[attested]** authority substituted for thoughtfulness; historic authority argued instead of its grounding; ownership abdicated upward (bottleneck + task-mode-laziness); decisiveness conflated with thing-becoming-law; assuming more than the decision assumed; grounds reconstructed post-hoc (masquerading as derivation); steward-side: control as proxy for lack of principledness |
@@ -71,9 +73,20 @@ Every axis the research catalogued, routed **dimension / bound / universal machi
 | Exposition weight | **machinery** (projection) | aside/detail/sketch are view-projection concerns, not warrant |
 | Salience / retrieval | **folded into Disposition, held as hypothesis** | should-come-to-mind-when *is* placement-for-influence asked of non-question kinds (a practice surfacing at its moment; a hazard at its trigger) — the live test of the steward's Disposition hypothesis: if it fits, Disposition's question generalizes across the population; if it strains, salience is a separate routing concern and the hypothesis narrows |
 
-## The Backing cardinality, resolved on the individuation rule
+## Orthogonality is the principle; grouping is organization
 
-Accountability, consultation, grounds, and reopenability *do* fail differently — but so do a claim's mathematical and empirical lines, and they are not four dimensions. The structure is the same as Evidence's: **one dimension, plural securing lines.** Backing's question-cluster ("who stands behind it, on what grounds, with whom aware, reopenable how") is one soundness question — the record's *decidedness* — secured along three lines (grounds · consultation · authority), each with its own rungs and channels, exactly as a claim's truth is one question secured along derivation, measurement, and testimony. What must never happen — and what the fused single grade caused — is the *authority* line's value standing in for the *grounds* line's: the four coordinates stay separately visible in every projection, and ratified is guard-gated on grounds-explicit and consultation-announced while ruled deliberately is not (fiat may carry unstated reasons, honestly). *(Proposed; the steward's earlier lean toward top-level separation is the standing counter-position — what would overturn this: a Backing coordinate whose movers turn out not to be decision events at all.)*
+*(Steward-corrected, 2026-08-14, dissolving the earlier "Backing cardinality" question — which was a question about grouping, and grouping carries no principled weight.)*
+
+**A dimension is the thing that is orthogonal as it is created**: one independently-movable value with its own field, its own ladder, its own movers, accumulating its own subrecords. Empirical evidence does not share a state field with the theorem; freshness does not share a field with disposition; grounds does not share a field with authority. Two values that can move independently never share a field — that is what dimensionhood *is*.
+
+**The mechanical test** *(steward)*: if capturing two things honestly forces a ladder whose values are unrolled permutations of independently-movable parts — `ruled-groundless | consulted-independent-agent-grounded | …` — they were orthogonal dimensions fused, and the longhand cross-product is the hack that proves it. This failure is already live in corpus records that try to capture decidedness in one field.
+
+Under this rule the table's Evidence and Backing rows are **families** — organizational groupings with no principled standing of their own:
+
+- **Evidence** groups the orthogonal dimensions the truthification work showed: derivation-strength · in-vivo/authored-world · wild-empirical · instance-check · testimonial-credibility · transmission-carriage — each with its own ladder, each accumulating its own evidences (weight-of-evidence style, theoretically limitless subrecords, each item at its own rung). A claim's overall "truth" is never a stored field; it is a **declared projection** over these (strongest-leg / every-line-sustains / independence-locked).
+- **Backing** groups grounds · consultation · authority — three dimensions, separately fielded, separately laddered (ratified stays guard-gated on grounds-explicit and consultation-announced; ruled deliberately carries no grounds guard).
+
+A family claims nothing — it exists for the eye and the declaration form, and a founding agent may cut the families differently without touching the model; only dimensions bear invariants. A "family" that grouped nothing orthogonal would be an empty gloss and should dissolve into whatever actually moves.
 
 ## Kinds as dimension-compositions
 
@@ -82,6 +95,7 @@ A kind's dimension-profile *is* most of its declaration: a **definition** is a c
 ## Working Notes
 
 - Fold-state: Evidence, Backing, Fidelity rows carry attested modes from the open verbatim series (bursts 1–5a); the series is *not* rested — fold formally, with backtracks, when the steward says each rests. Efficacy, Comprehension, Conviction, Freshness, Disposition await his illumination; their interpolated modes are placeholders.
-- The salience-into-Disposition fold is this file's most falsifiable call — revisit it first when 07 drafts.
+- The salience-into-Disposition fold is a falsifiable call the steward endorsed — revisit when 07 drafts.
+- The family cuts themselves (which dimensions display under Evidence, whether Backing's three warrant a family or list flat) are organizational and re-cuttable per deployment — recorded so nobody defends a family as ontology again; this file's first draft did exactly that with "Backing cardinality," steward-dissolved same day.
 - Open: whether *bounds* deserve their own small object in 02 (license · audience-safety · conflict-precedence share a shape: declared, consulted-at-a-moment, not warranted by degrees). 02 gains it if 06/07 need it.
 - Open: Grain's projection rule upward (headline vs floor) is unresolved estate-wide — the declared-projection discipline (02 PROJECTION) is the frame it resolves in.
