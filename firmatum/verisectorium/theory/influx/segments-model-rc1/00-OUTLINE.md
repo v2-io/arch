@@ -1,6 +1,6 @@
 # Segments model RC1 — outline and charter
 
-*Register: **proposed**. This file is the charter; content files land beside it incrementally, each carrying per-element provenance (carried / synthesized / open). **Landed so far:** 01–04, 06, SPECIMEN; **pending:** 07, 08, 09, 90. There is no 05 — its planned content merged into 02 and the number was retired rather than reused.*
+*Register: **proposed**. This file is the charter; content files land beside it incrementally, each carrying per-element provenance (carried / synthesized / open). **All chartered files are landed** (01–04, 06–09, 90, SPECIMEN), every one `proposed`, none ratified. There is no 05 — its planned content merged into 02 and the number was retired rather than reused.*
 
 *For the stranger arriving cold: a **verisectorium** is a truth-governed living collection — a corpus of records that accumulates adjudicated truth across total contributor turnover; this model is its epistemic core. The **delete-test** (cited for supersession): an item counts as integrated only if, were it deleted entirely, every piece of its information is either landed elsewhere or truly disposable. `[[wikilinks]]` and estate-canon citations point into the wider corpus outside this set — by design; the de-novo read below the fold of `../rc1-denovo-read-2026-08-14.md` records what a stranger actually needs from out there.*
 

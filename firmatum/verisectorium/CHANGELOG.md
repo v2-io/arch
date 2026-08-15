@@ -2,6 +2,13 @@
 
 *What happened and why. Present truth lives in theory/ (segments + OUTLINE); process rules in theory/sop/ORIENT.md; state in PRACTICA.ud. The misfire-era CHANGELOG.un is archived beside the rest of that attempt's record.*
 
+## 2026-08-14 (third successor session, continued) — rc1 landed whole; audited; folded upward
+
+- **All chartered rc1 files landed** (01-SPINE · 02-RECORD-OBJECT-MODEL · 03-DIMENSIONS · 04-CYCLE · 06-EDGES · 07-DISPOSITION-AND-GAP-ECONOMICS · 08-CERTIFICATION-AND-AUDIT · 09-LANGUAGE sketch · 90-PROVENANCE-AND-FORKS · SPECIMEN), all `proposed`. Steward corrections landed live throughout: "epistemic dimensions" elevated (coord-coined in passing, steward-noticed); dimension re-grained to the orthogonality unit with the unrolled-permutation fusion test; FAMILY reduced to a namespace in the name (one-commit object lifespan); Disposition rehabilitated as placement-for-influence; completeness claim denied by construction; promise-frame deleted from the spine after a letter-vs-intent catch; **under-recording corrected to full severity** (as dishonest as an unwarranted lift; poisons absence-semantics — decline-events added as the semantic remedy).
+- **De-novo read run and landed verbatim** (`influx/rc1-denovo-read-2026-08-14.md`): an unprimed stranger reconstructed the model from the set alone; its five strain points all worked same-day (SPECIMEN; the landing seam; stranger glosses; trusted base + under-recording assigned to and answered in 08). First launch stopped for a taxonomy-primed brief — the two-shot law lived; praxis 10 banked with the steward's ASF-genesis testimony (bare briefs generative; freed auditors converge on honesty).
+- **Two insights folded into the stopgap system prompt** (steward-invited; PROVENANCE-mapped): §V "The bare brief is generative"; §III interrupt 8's ghost-second-act + the gloss deletion-test.
+- Cross-architecture read (grok, headless, same bare brief) launched; lands in influx when complete.
+
 ## 2026-08-14 (third successor session, Fable, fresh context) — segments-model-rc1 chartered
 
 - **`theory/influx/segments-model-rc1/00-OUTLINE.md`** (proposed): consolidation surface chartered at the steward's direction after the second session closed near context-end — three generations of partial models (taxonomy arc / 01-MODEL currencies / nets+06-COUPLING) named as one object under three frames, with formalism capture (net-as-spine) the hazard to repair. Nine content files proposed in dependency order; the one-paragraph model statement carried at top; deliberate exclusions declared (no burst-folding while the failure-mode series is open, no epistemology decision, no v4 net, no coinage). Content lands incrementally beside it.
