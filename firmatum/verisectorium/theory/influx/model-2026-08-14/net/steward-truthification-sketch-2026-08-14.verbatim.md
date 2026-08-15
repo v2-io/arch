@@ -73,3 +73,7 @@
 ## Sketch 10 — Fidelity as leaf (chart observation)
 
 > (in the v3 chart-- it seems like "Fidelity" is a terminal node / leaf. -- I'm not sure how that ends up working...)
+
+## Sketch 11 — the decision line
+
+> (and, you're probably already working on it, but the whole decision line needs modeling)
