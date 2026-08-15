@@ -20,18 +20,13 @@
 
 **DIMENSION** — the unit of orthogonality in epistemic state: one independently-movable value with its own field, its own ladder, and its own movers, accumulating its own subrecords. *The thing that is orthogonal as it is created.*
 
-- rels: `moved-only-by` → EVENT-class {1,N} · `laddered-by` → LADDER {0,1} · `displayed-under` → FAMILY {0,1}
+- named: `namespace/dimension` — `evidence/derivation` · `evidence/testimony` · `evidence/carriage` · `decision/grounding` · `decision/accountability` · `decision/consultation` · `decision/falsifiers` · `salience/freshness` · `salience/disposition` · … The namespace is part of the *name*, not an object: pure organization, re-cuttable per deployment as a rename, bearing no invariants by construction. Any namespace-level value a consumer sees is a declared PROJECTION over member dimensions, never a stored field.
+- rels: `moved-only-by` → EVENT-class {1,N} · `laddered-by` → LADDER {0,1}
 - invariants:
   - Two values that can move independently never share a field or a ladder.
   - A dimension's value is moved only by its own movers; no dimension's value ever substitutes for another's.
   - The dimension-set is open: a new dimension is admitted by exhibiting an independently-movable value no existing dimension carries — never by enumeration being "done."
 - fails by: **fusion** — the tell is the unrolled-permutation ladder (`ruled-groundless | consulted-independent-agent-grounded | …`), values that are cross-products of independently-movable parts; and by substitution (authority read as truth, endorsement as firing, chain as adequacy…).
-
-**FAMILY** — an organizational grouping of dimensions for display and declaration (Evidence groups derivation · in-vivo · wild-empirical · instance-check · testimony · transmission-carriage; Backing groups grounds · consultation · authority).
-
-- invariants:
-  - A family claims nothing and bears no invariants of its own; deployments may cut families differently without touching the model.
-  - Any family-level value shown to a consumer is a declared PROJECTION over its dimensions, never a stored field.
 
 **LINE** — one record's accumulating engagement with one dimension over time: the diachronic program (derive it · ratify it · measure it · check the instance · watch it fire), holding that dimension's subrecords as they accrue.
 
@@ -73,7 +68,7 @@
 
 ## Working Notes
 
-- **Grown-as-needed discipline:** objects are added here only when 03–09 need one this file lacks; each addition logged with its demanding file. *Log:* FAMILY added and DIMENSION re-grained to the orthogonality unit (2026-08-14, steward correction via 03 — the earlier cut had let a grouping carry ontology); LINE re-related from foundation-rung to dimension in the same pass, resolving its overlap question. Deliberately absent so far: view/outline objects (carried by [[claim-outline-as-view]] and the cluster definition in theory canon — reuse, don't restate), edge objects (06's subject — typed relations land here once 06 adjudicates them), question/disposition objects (07's subject).
+- **Grown-as-needed discipline:** objects are added here only when 03–09 need one this file lacks; each addition logged with its demanding file. *Log:* DIMENSION re-grained to the orthogonality unit (2026-08-14, steward correction via 03 — the earlier cut had let a grouping carry ontology); a FAMILY object existed for one commit before the steward reduced it to a **namespace in the dimension's name** — organization that structurally cannot bear invariants; LINE re-related from foundation-rung to dimension in the same pass, resolving its overlap question. Deliberately absent so far: view/outline objects (carried by [[claim-outline-as-view]] and the cluster definition in theory canon — reuse, don't restate), edge objects (06's subject — typed relations land here once 06 adjudicates them), question/disposition objects (07's subject).
 - **To-do, carried from the charter's earlier anatomy sketch:** the uniform-anatomy test per dimension (does each dimension's adjudication fit record+trail+projections without strain? — checked as failure-mode bursts land); crumb-routing as the working-notes → trail drain; max/floor/lock as the named projection set; descent edges' minimal form; the era registry's key vocabulary.
 - **Feedback loop noted:** the udon reference defs this file's style follows are themselves future records of a deployment this model will describe — when 09's language exists, those defs are among its first test articles.
 - Open: whether WORKING-NOTES is an object or a body-part with editable-free semantics; whether TRAIL and the Fidelity dimension are one thing seen twice (substrate vs priced question) or genuinely two.
