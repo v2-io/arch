@@ -1,0 +1,4 @@
+# expected to FAIL: hand-set status has no syntax
+record some-claim
+  kind: claim
+  status: verified

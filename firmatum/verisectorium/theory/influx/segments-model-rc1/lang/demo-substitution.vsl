@@ -1,0 +1,13 @@
+# expected to FAIL: a rule trying to place accountability's value on grounding
+dimension decision/grounding
+  rungs: assumed-implicit assumptions-explicit
+  channels: name-assumptions->assumptions-explicit
+end-dimension
+dimension decision/accountability
+  rungs: proposed supported ratified ruled
+  channels: no-objection->supported
+end-dimension
+rule launder
+  when: decision/accountability>=ruled
+  allow: decision/grounding->ruled
+end-rule

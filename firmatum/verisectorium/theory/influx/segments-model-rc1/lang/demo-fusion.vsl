@@ -1,0 +1,13 @@
+# expected to FAIL: an unrolled-permutation ladder
+dimension decision/grounding
+  rungs: assumed-implicit assumptions-explicit falsifiers-declared
+  channels: name-assumptions->assumptions-explicit
+end-dimension
+dimension decision/accountability
+  rungs: proposed supported ratified ruled
+  channels: no-objection->supported
+end-dimension
+dimension decision/fused
+  rungs: proposed-assumed-implicit ruled-assumptions-explicit ruled-falsifiers-declared
+  channels: x->ruled-falsifiers-declared
+end-dimension

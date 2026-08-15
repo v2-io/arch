@@ -1,0 +1,134 @@
+# specimen.vsl -- both SPECIMEN.md records, stated in the language.
+# Every projection printed at a checkpoint is computed; none is stored anywhere.
+
+dimension evidence/derivation
+  strong-at: deps-verified
+  rungs: unopened sketch drafted deps-verified re-derived
+  channels: formal-expression-written->drafted premises-named-and-checked->deps-verified independent-re-derivation->re-derived
+  refutes: counterexample-found
+  ceiling: exact-under-named-premises
+  family: derivation
+end-dimension
+
+dimension evidence/in-vivo
+  strong-at: run-once
+  rungs: unopened pre-registered run-once swept independently-reproduced
+  channels: pre-register->pre-registered first-run->run-once sweep->swept independent-re-run->independently-reproduced
+  refutes: prediction-miss
+  ceiling: exact-for-authored-world
+  family: in-vivo-measurement
+end-dimension
+
+dimension evidence/instance
+  strong-at: correspondence-verified
+  rungs: unopened candidate-mapping correspondence-verified instance-prediction-checked
+  channels: map-onto-model->candidate-mapping verify-by-perturbation->correspondence-verified
+  refutes: mapping-breaks
+  ceiling: inherits-model-tier-on-verified-overlap
+  family: model-instance
+end-dimension
+
+dimension evidence/testimony
+  strong-at: cross-kind-corroborated
+  rungs: unopened captured corroborated cross-kind-corroborated
+  channels: account-captured->captured independent-account->corroborated
+  refutes: account-impeached
+  ceiling: position-fixed-at-capture
+  family: testimony
+end-dimension
+
+dimension evidence/carriage
+  strong-at: verified-via-secondary
+  rungs: unopened named-not-read recalled search-corroborated verified-via-secondary primary-verified
+  channels: recall-marked->recalled convergent-secondaries->search-corroborated secondary-fetched->verified-via-secondary primary-fetched->primary-verified
+  refutes: carriage-infidelity
+  ceiling: min-of-carriage-and-source-tier
+  family: transmission:wild-measurement
+end-dimension
+
+kind claim
+  speech-act: asserts
+  write: replacement
+  opens: derivable->evidence/derivation in-vivo-testable->evidence/in-vivo instance->evidence/instance witnessed->evidence/testimony carried->evidence/carriage
+
+record claim-fill-residual-distance
+  kind: claim
+  foundation: derivable in-vivo-testable instance witnessed carried
+
+era sim k1
+
+event e1 08-02 claim-fill-residual-distance evidence/derivation formal-expression-written actor=agent-A outcome=pass
+event e2 08-03 claim-fill-residual-distance evidence/derivation premises-named-and-checked actor=agent-A outcome=pass
+event e3 08-05 claim-fill-residual-distance evidence/in-vivo first-run actor=agent-B outcome=pass commitment=pre-committed era=sim@k1
+event e4 08-06 claim-fill-residual-distance evidence/instance map-onto-model actor=agent-B outcome=pass
+event e4b 08-06 claim-fill-residual-distance evidence/instance mapping-breaks actor=agent-B note=SCOPE-BOUND:away-from-lakes
+event e5 08-07 claim-fill-residual-distance evidence/testimony account-captured actor=steward outcome=position-reconstructed
+event e6 08-08 claim-fill-residual-distance evidence/carriage convergent-secondaries actor=agent-C outcome=pass
+event e7 08-10 claim-fill-residual-distance evidence/derivation independent-re-derivation actor=agent-D outcome=pass commitment=pre-committed
+
+checkpoint as-of-e7 claim-fill-residual-distance
+
+era-bump sim k2
+
+checkpoint after-era-bump claim-fill-residual-distance
+
+event e9 08-14 claim-fill-residual-distance evidence/in-vivo first-run actor=agent-B outcome=pass commitment=pre-committed era=sim@k2
+
+checkpoint after-committed-re-run claim-fill-residual-distance
+
+# ----- the decision specimen: same anatomy, different namespace -----
+
+dimension decision/grounding
+  strong-at: falsifiers-declared
+  rungs: assumed-implicit assumptions-explicit falsifiers-declared
+  channels: name-assumptions->assumptions-explicit declare-falsifiers->falsifiers-declared
+  refutes:
+  ceiling: decided
+  family: decision-events
+end-dimension
+
+dimension decision/consultation
+  strong-at: feedback-collected
+  rungs: unannounced announced-to-affected feedback-collected
+  channels: announce->announced-to-affected collect-feedback->feedback-collected
+  refutes:
+  ceiling: decided
+  family: decision-events
+end-dimension
+
+dimension decision/accountability
+  strong-at: ratified
+  rungs: proposed supported ratified ruled
+  channels: no-objection->supported real-read-stands-behind->ratified reserved-fiat->ruled
+  refutes:
+  ceiling: ruled
+  family: decision-events
+end-dimension
+
+rule ratified-requires-grounds-and-consult
+  when: decision/grounding>=falsifiers-declared decision/consultation>=announced-to-affected
+  allow: decision/accountability->ratified
+end-rule
+
+kind decision
+  speech-act: decides
+  write: append-or-expressly-overturn
+  opens: grounded->decision/grounding consulted->decision/consultation backed->decision/accountability
+
+record decide-marching-vs-direct-solve
+  kind: decision
+  foundation: grounded consulted backed
+
+# guard demo: ratification attempted before grounds/consult exist -- refused
+event d0 08-03 decide-marching-vs-direct-solve decision/accountability real-read-stands-behind actor=steward
+event d1 08-03 decide-marching-vs-direct-solve decision/grounding name-assumptions actor=coord assumptions=dt-clamp-is-binding,no-marching-consumers-yet
+event d2 08-03 decide-marching-vs-direct-solve decision/grounding declare-falsifiers actor=coord triggers=dt-clamp-is-binding
+event d3 08-04 decide-marching-vs-direct-solve decision/consultation announce actor=coord outcome=pass
+event d3b 08-04 decide-marching-vs-direct-solve decision/consultation collect-feedback actor=coord outcome=no-objections
+event d4 08-04 decide-marching-vs-direct-solve decision/accountability no-objection actor=steward outcome=pass
+
+checkpoint landed-supported decide-marching-vs-direct-solve
+
+event d5 08-12 decide-marching-vs-direct-solve decision/grounding sim-arrival invalidates=dt-clamp-is-binding note=dt-clamp-repaired-at-77b1f5a
+
+checkpoint after-falsifier-fires decide-marching-vs-direct-solve

@@ -1,0 +1,58 @@
+$ python3 vsl.py specimen.vsl
+-- checkpoint [as-of-e7] record=claim-fill-residual-distance (all values computed; none stored) --
+   evidence/derivation          re-derived
+   evidence/in-vivo             run-once
+   evidence/instance            candidate-mapping  [mapping-breaks: SCOPE-BOUND:away-from-lakes]
+   evidence/testimony           captured
+   evidence/carriage            search-corroborated
+   strongest-leg: evidence/derivation @ re-derived
+   floor:         evidence/instance @ candidate-mapping
+   lock:          ARMED  (strong legs: ['evidence/derivation', 'evidence/in-vivo']; base families: ['derivation', 'in-vivo-measurement'])
+   == era-bump sim: k1 -> k2 (era-keyed certificates now expire, visibly)
+-- checkpoint [after-era-bump] record=claim-fill-residual-distance (all values computed; none stored) --
+   evidence/derivation          re-derived
+   evidence/in-vivo             unopened  [expired@sim@k1: re-run pending]
+   evidence/instance            candidate-mapping  [mapping-breaks: SCOPE-BOUND:away-from-lakes]
+   evidence/testimony           captured
+   evidence/carriage            search-corroborated
+   strongest-leg: evidence/derivation @ re-derived
+   floor:         evidence/in-vivo @ unopened
+   lock:          not armed  (strong legs: ['evidence/derivation']; base families: ['derivation'])
+-- checkpoint [after-committed-re-run] record=claim-fill-residual-distance (all values computed; none stored) --
+   evidence/derivation          re-derived
+   evidence/in-vivo             run-once  [expired@sim@k1: re-run pending]
+   evidence/instance            candidate-mapping  [mapping-breaks: SCOPE-BOUND:away-from-lakes]
+   evidence/testimony           captured
+   evidence/carriage            search-corroborated
+   strongest-leg: evidence/derivation @ re-derived
+   floor:         evidence/instance @ candidate-mapping
+   lock:          ARMED  (strong legs: ['evidence/derivation', 'evidence/in-vivo']; base families: ['derivation', 'in-vivo-measurement'])
+   !! GUARD [ratified-requires-grounds-and-consult]: refused 'real-read-stands-behind' on decision/accountability -- requires decision/grounding >= falsifiers-declared (currently assumed-implicit)
+-- checkpoint [landed-supported] record=decide-marching-vs-direct-solve (all values computed; none stored) --
+   decision/grounding           falsifiers-declared
+   decision/consultation        feedback-collected
+   decision/accountability      supported
+   strongest-leg: decision/grounding @ falsifiers-declared
+   floor:         decision/accountability @ supported
+   lock:          not armed  (strong legs: ['decision/consultation', 'decision/grounding']; base families: ['decision-events'])
+   !! falsifier fired on decide-marching-vs-direct-solve: what-changed: dt-clamp-repaired-at-77b1f5a -- assumption 'dt-clamp-is-binding' no longer holds; verify the model of WHY it was decided, then decide together
+-- checkpoint [after-falsifier-fires] record=decide-marching-vs-direct-solve (all values computed; none stored) --
+   decision/grounding           falsifiers-declared
+   decision/consultation        feedback-collected
+   decision/accountability      supported
+   strongest-leg: decision/grounding @ falsifiers-declared
+   floor:         decision/accountability @ supported
+   lock:          not armed  (strong legs: ['decision/consultation', 'decision/grounding']; base families: ['decision-events'])
+   STATUS: reopened -- what-changed: dt-clamp-repaired-at-77b1f5a -- assumption 'dt-clamp-is-binding' no longer holds; verify the model of WHY it was decided, then decide together
+order-invariance [claim-fill-residual-distance]: HOLDS
+order-invariance [decide-marching-vs-direct-solve]: HOLDS
+
+$ python3 vsl.py demo-fusion.vsl   # expected to fail
+VSLError: FUSION: dimension 'decision/fused' rung 'proposed-assumed-implicit' is 'proposed' (decision/accountability) x 'assumed-implicit' (decision/grounding) unrolled longhand -- two independently-movable dimensions are sharing a field; split them.
+
+$ python3 vsl.py demo-substitution.vsl   # expected to fail
+VSLError: SUBSTITUTION-SHAPED: rule 'launder' tries to allow 'ruled' on decision/grounding, which is not in that dimension's own ladder -- no rule may place another dimension's value here.
+
+$ python3 vsl.py demo-handset.vsl   # expected to fail
+VSLError: line 4: 'status:' has no syntax here BY DESIGN -- every status is a projection over the trail.
+
