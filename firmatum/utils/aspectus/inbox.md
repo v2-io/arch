@@ -34,3 +34,53 @@ would rather have the ~= 681 lines in the lines column. etc.:
 Always show in the output head (after timestamp, before more informative stuff and root) what config values are different than default (it would catch me, Joseph, accidentally assuming everyone had the same --depth default as I have, for example)
 
 ---
+
+Seen in the wild:
+
+│   │   ├── src/                                                    0.00 · 4.4d ago
+│   │   │   ├── dir-disposition.md                 22               0.00 · 4.4d ago
+│   │   │   ├── dir-orient.md                      51               0.00 · 4.4d ago
+│   │   │   ├── ref-hazards.md                     18               0.00 · 4.4d ago
+│   │   │   ├── ref-verisectorium-tools.md         29               0.00 · 4.4d ago
+│   │   │   ├── claim-naming-criteria.md -> ../../../theory/src/claim-naming-criteria.md     52               0.00 · 5.2d ago
+│   │   │   ├── claim-dispatch-compounds.md -> ../../../theory/src/claim-dispatch-compounds.md     53               0.00 · 8.1d ago
+│   │   │   ├── def-integration-replacement.md -> ../../../theory/src/def-integration-replacement.md     64               0.00 · 8.1d ago
+│   │   │   ├── form-slug-form-kinds.md -> ../../../theory/src/form-slug-form-kinds.md     58               0.00 · 8.2d ago
+│   │   │   ├── form-influx-membrane.md -> ../../../theory/src/form-influx-membrane.md     49               0.00 · 8.2d ago
+│   │   │   ├── def-atom-cluster.md -> ../../../theory/src/def-atom-cluster.md     49               0.00 · 8.2d ago
+│   │   │   ├── def-atom.md -> ../../../theory/src/def-atom.md     43               0.00 · 8.2d ago
+│   │   │   ├── post-names-are-interface.md -> ../../../theory/src/post-names-are-interface.md     42               0.00 · 8.2d ago
+│   │   │   └── form-state-flags-not-gates.md -> ../../../theory/src/form-state-flags-not-gates.md     47               0.00 · 8.7d ago
+│   │   ├── influx/                                                 0.00 · 5.3d ago
+│   │   │   └── .gitkeep                            0               0.00 · 5.2d ago
+│   │   └── SOP.outline.md                         63               0.00 · 4.4d ago
+│   ├── influx/                                                     0.00 · 4.9d ago  [has: archive ≈1f]
+│   │   ├── .integrated/                                            0.00 · 5.2d ago
+│   │   │   └── .gitkeep                            0               0.00 · 5.2d ago
+│   │   └── 00-INDEX.md                            22               0.00 · 4.9d ago
+│   ├── ref/                                                        0.00 · 5.2d ago
+
+
+
+Recommend:
+
+│   │   │   ├── dir-orient.md                      51               0.00 · 4.4d ago
+│   │   │   ├── ref-hazards.md                     18               0.00 · 4.4d ago
+│   │   │   ├── ref-verisectorium-tools.md         29               0.00 · 4.4d ago
+│   │   │   ├── claim-naming-criteria.md           52               0.00 · 5.2d ago
+                │ -> ../../../theory/src/
+                ╰    claim-naming-criteria.md
+│   │   │   ├── claim-dispatch-compounds.md        53               0.00 · 8.1d ago
+                │ -> ../../../theory/src/
+                ╰    claim-dispatch-compounds.md
+│   │   │   ├── def-integration-replacement.md     64               0.00 · 8.1d ago
+                │ -> ../../../theory/src/
+                ╰    def-integration-replacement.md
+...
+
+
+Or, in other words, allow the wrapping of the file description so that columns properly line up. I would even go as far as to say don't worry about counting this as extra lines against the line count --lines, which can be essentially a logical count, instead of exact count. Because the secondary and tertiary lines (etc.) no longer need numbers in the columns after that, they can overflow into the columns without it messing up vertical flow too much.
+
+---
+
+
