@@ -43,7 +43,7 @@ Note what the trail does *not* contain: no row says "status: good." No row ever 
 
 ## What the specimen teaches, in one breath each
 
-- The record occupies exactly the positions its trail supports — and *reports* exactly those (the cardinal sin impossible by construction; its under-recording mirror visible too: if e7 had never been appended, the claim would compute at deps-verified — safe-side, but re-billing agent-D's work).
+- The record occupies exactly the positions its trail supports — and *reports* exactly those (the cardinal sin impossible by construction; its under-recording mirror visible too: had e7 never been appended, the claim would compute at deps-verified while actually re-derived — just as dishonest in the downward direction, and worse than it looks: a later reader who learns agent-D worked on this would have to wonder whether the re-derivation *failed* — which is why a declined lift gets its own event, and silence stays meaning *unrun*).
 - A refutation is a result: e4 *improved* the claim (narrower and true beats broader and false), and the scope rides every later projection.
 - Decay is visible, not silent: e8 expired e3 in public, minted the repair, and touched nothing else.
 - The undeclared dimension never lied: no wild-empirical line, no wild-empirical status, no pretense.
