@@ -1,0 +1,58 @@
+# The truthification cycle
+
+*Register: **proposed**. The dynamics at full resolution: the stages, the three inter-line laws, and two worked instantiations (a claim; a decision). The per-dimension ladders below trace to estate sources through the retired modeling scaffolding; rungs and channels marked **[attested]** carry steward-stated semantics, the rest are **[interpolated]** pending his illumination.*
+
+## The stages
+
+**ORIGINATE.** Work begins at one of two poles. *Corrective*: something disagrees — a model-observation mismatch, a present-truth collision inside the population, a named gap, staleness surfaced by maintenance. *Generative*: nothing disagrees — a proposal, a steward brainstorm, a first-encounter wandering, a counterfactual, curiosity. **Decision-inflection** crosses both: a fork demanding a call, often before any hypothesis exists — and the pending decision is what value-orders the open gaps (the gap worth closing first is the one the decision is waiting on). Every signal converges to a **question** before anything is minted; a signal that cannot be phrased as a question is not yet work.
+
+**MINT.** A question becomes a record: kind chosen by failure-and-repair, **foundation declared** — which rungs of ground this record can stand on (provable? measurable in an authored world? in the wild? an instance of an established model? witnessed? carried from outside?). The declaration is load-bearing because *the instrument follows the ground*: it derives which `evidence/*` dimensions this record's securing work opens, and a dimension not declared correctly never opens (nor silently pretends to).
+
+**SECURE.** Each open dimension is worked as a line — the diachronic program of exercising that ground — accumulating its own subrecords at its own tempo. Movement on a ladder happens only through the dimension's named channels, and the channels are **signed**: refutation channels are first-class, and a refutation is a *result* — a counterexample mints a no-go; a mapping that breaks under perturbation lands a scope-bound; a prediction-miss is recorded where it prevents the flattering read. A break that narrows scope is a finding, not a failure.
+
+**RECORD.** Every securing act appends an event to the trail: channel · actor with authority · criterion · criterion-commitment (pre-committed | post-hoc) · date · outcome · era-key where measured. What a consumer reads is *computed* from the trail, and every computation is **order-invariant** — the same whatever order the lines reported in. An aggregation that depends on arrival order has a race condition built into its epistemology; anchoring is that race condition in cognitive form.
+
+**LAND.** The population changes under the kind's write semantics — replacement for present-truth kinds (a refuted claim is deleted, not kept-softened; the no-go lands as present truth), append for accounts. Collisions surface and block "done." Dependents re-price: a refuted premise cascades hard; a weakened one degrades support without deciding the conclusion (06's subject).
+
+**SERVE.** The reason the collection exists: certifying, deciding, teaching, applying. Each consumer takes exactly what the certified state licenses — a `supported` decision licenses acting-on-it with easy revisit, never arguing-from-it-as-law; a scope-bound claim licenses use inside the bound; a `proposed` anything licenses building-at-risk, marked.
+
+**MAINTAIN.** Decay made honest, on clocks: measured results expire visibly when their era bumps; teaching prose resets when its referents change; carried sources re-verify on a schedule because walls move (a 403 is not permanent). Staleness signals, application feedback, and reader confusion flow back to ORIGINATE, and the cycle closes — a living collection is this metabolism, not a warehouse.
+
+## The three laws of inter-line contact
+
+**The lock.** A record's composite support exceeds its strongest single leg *only* when two or more legs with **independent failure modes** agree. Within-leg corroboration (three same-method runs, three same-author restatements) raises that leg; it never arms the lock. Independence is checked by **descent**: legs seeded by one source — one prior-art frame, one author, one dataset — share its failure modes whatever their method labels say, and carried material can never corroborate a line it seeded (the lock looks through carriage to the source's own method family). The lock is evaluated at consumption time over the recorded trail — which is precisely what frees the lines to collaborate during the work.
+
+**The commitment law.** Contact between lines through **question and design channels** is legitimate and usually obligatory: the simulation built from the math is what makes it a test *of* the math; the survey shaped by the other lines asks better questions. What destroys evidential value is contact through the **verdict channel** — adjusting what-counts-as-passing after seeing the outcome: re-fitting the hypothesis against the data that will judge it, tuning the simulation until it matches, softening acceptance criteria post-hoc. The tells, checkable from the trail: *(1)* was the criterion pre-committed, or did it crystallize during reconciliation? *(2)* did divergence get nailed to root cause, or reconciled by adjustment until agreement? (a nailed divergence leaves a root-cause finding; a tuned-away one leaves only the agreement) *(3)* agreement reached by mutual adjustment measures the reconciliation process, not the world — still valuable (coherence catches errors; nailed divergences are often the best findings), never lock-arming. **Eligibility is restored cheaply**: one fresh committed run of each line's final form — the reconciliation loop does the learning; the committed re-run does the certifying; the trail records which each event was.
+
+**Transmission is the ambient prior — adjudicated, calibrated, qualified.** External material is not a peer truth-line; it seeds *everything* — what gets minted, how derivations are approached, how experiments are designed. So it enters through a carriage ladder (recalled-as-recalled → search-corroborated → verified-via-secondary → primary-verified), capped at its source's own tier, with descent edges recording what it seeded. An uncalibrated import is not a prior; it is contamination with a citation. And the estate's one deliberately *manufactured* transmission-independent leg is the de-novo audit: priming-stripped readers whose descent from the corpus's own framings has been cut.
+
+## Worked instantiation: a claim (`evidence/*`)
+
+| Dimension | Rungs | Channels | Refutes by | Ceiling law |
+|---|---|---|---|---|
+| `evidence/derivation` | sketch → drafted → deps-verified → re-derived | formal expression written · premises named and checked · independent re-derivation | counterexample → **no-go** (a result, on the critical path) | exact under named premises; conditional if any premise is empirical |
+| `evidence/in-vivo` (authored world) | pre-registered → run-once → swept → independently-reproduced | first run (era-keyed) · parameter sweep · independent re-run | pre-registered prediction-miss, recorded | exact for the authored world; every number era-keyed, decay-liable |
+| `evidence/wild-empirical` | anecdotal → measured-once → population-robust → calibrated | first measurement · population sweep · calibration events | signed down-channels: bias found · inconsistency · imprecision | empirical; instruments distinguish empty ≠ failed ≠ unrun |
+| `evidence/instance` (of an established model) | candidate-mapping → correspondence-verified → instance-prediction-checked | map onto the model · verify correspondence by perturbation | mapping breaks under perturbation → **scope-bound** (narrows, doesn't fail) | inherits the model's tier, on the verified overlap only |
+| `evidence/testimony` | captured → corroborated → cross-kind-corroborated | independent account located · independent kind agrees | account impeached (infidelity by omission / fabrication / misrepresentation) **[attested]** | witness position fixed at capture; corroboration moves credibility only **[attested]** |
+| `evidence/carriage` (transmission) | named-not-read → recalled → search-corroborated → verified-via-secondary → primary-verified | recall marked as recall · convergent secondaries · faithful secondary fetched · primary fetched | carriage infidelity found; or the source itself revised | min(carriage rung, source's own tier); never lock-independent of its source's family |
+
+The claim's overall "truth" is a declared projection over whichever of these its foundation opened — and analogy deliberately has **no row**: it grounds ideation (a frame surviving perturbation licenses generative use), never assertion.
+
+## Worked instantiation: a decision (`decision/*`)
+
+| Dimension | Rungs | Semantics **[attested]** |
+|---|---|---|
+| `decision/grounding` | assumed-implicit → assumptions-explicit → falsifiers-declared | grounds recorded *before* the call are auditable; reconstructed after are rationalization ("masquerading as derivation") |
+| `decision/consultation` | unannounced → announced-to-affected → feedback-collected | who knows, who could object — "backwards compatibility with a ruling nobody deploys" is this dimension's failure |
+| `decision/accountability` | proposed → supported → ratified → ruled *(terminals: rejected · superseded; honesty states: defacto · transition)* | each rung a different statement: *supported* = no objections at the time, act on it, revisit easy; *ratified* = thought through, would want to know if someone differs; *ruled* = reserved fiat, unstated reasons allowed, honestly |
+| `decision/falsifiers` | — the declared conditions that reopen it | when evidence invalidates a *named* assumption, the trigger fires: the reopen carries **what changed**, verifies the model of *why* it was decided, and is decided together — never argued from the old ruling's authority |
+
+Cross-dimension guards, structural rather than customary: *ratified* requires grounding-explicit **and** consultation-announced; *ruled* deliberately carries no grounding guard; and nothing anywhere reads the accountability value into a grounding value — authority cannot launder groundedness.
+
+## Working Notes
+
+- Provenance: stage semantics and both instantiations extract the *semantics* of the retired executable scaffolding (whose runs verified order-invariance, look-through, decay, and the reopen path); ladder contents trace to named estate sources through it; [attested] marks steward-burst content. The verbatim series stays primary and open.
+- Open: **adjudication's place** — currently every securing/landing act adjudicates as it fires (guard-checking is what an act *is*); whether a distinct adjudication *stage* exists for some kinds is unresolved from the sketch dialog.
+- Open: whether an external no-go may rescope a claim directly or only mint a scope-question (currently: mints the question; the claim's own instance/derivation work answers it).
+- Open: MAINTAIN's clocks — which resets run standing (reset-on-edit is trigger-shaped), which on schedule (carriage re-verification), which on era events; composes with the estate's clocked-drains law rather than restating it.
