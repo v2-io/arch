@@ -1,0 +1,52 @@
+digraph currencies {
+  rankdir=TB; ranksep=0.8; nodesep=0.5; fontsize=20; labelloc=t;
+  label="Currency coupling map (2026-08-14, proposed) — solid: legitimate causal channels · red dashed: FORBIDDEN inferences (each a paid-for halo failure) · Fidelity: substrate · Disposition: routing bus";
+  node [fontname="Helvetica" fontsize=12 style=filled shape=box margin="0.15,0.08"];
+  edge [fontname="Helvetica" fontsize=10];
+
+  Evidence      [fillcolor="#dfeedd" label="EVIDENCE\n(asserts; support-kind × strength;\nsigned channels; lock at query time)"];
+  Backing       [fillcolor="#eadff0" label="BACKING\n(decides; decided-by × groundedness)"];
+  Efficacy      [fillcolor="#e8f4f8" label="EFFICACY\n(practices; moved only by firings)"];
+  Comprehension [fillcolor="#fdf3c8" label="COMPREHENSION\n(teaches; reader events;\nreferent-coupled freshness)"];
+  Conviction    [fillcolor="#f5e6d8" label="CONVICTION\n(commits; ground-validated;\nclosed by delivery or release)"];
+  Currency      [fillcolor="#eeeeee" label="CURRENCY\n(points; decaying freshness\nrelative to what it tracks)"];
+  Disposition   [fillcolor="#dbe7f5" shape=ellipse label="DISPOSITION (bus)\nquestions route all work;\ndecision-inflection value-orders them"];
+  Fidelity      [fillcolor="#f2e6d0" shape=box peripheries=2 label="FIDELITY — THE SUBSTRATE\nevery ladder's warrant = the fidelity of its event trail\nconsumed by every audit, lock-trace, and certification\n(corrupt the trail → every status above becomes unwarranted)"];
+  Prior         [fillcolor="#e9dcc9" shape=ellipse label="AMBIENT PRIOR\n(transmission: adjudicated / calibrated /\nqualified; seeds every line;\nlock traces descent through it)"];
+
+  // legitimate causal channels
+  Evidence -> Backing        [label="informs — never\nmechanically (L3)"];
+  Backing  -> Evidence       [label="scope rulings\nre-bound claims"];
+  Evidence -> Comprehension  [label="referents; teaching\nresets on change"];
+  Comprehension -> Disposition [label="misses are signals"];
+  Evidence -> Conviction     [label="specs commit on\nbelieved claims" dir=both];
+  Conviction -> Evidence     [label="ground-validation\ngenerates evidence"];
+  Efficacy -> Evidence       [label="firings are\nempirical events" dir=both];
+  Backing  -> Disposition    [label="decision-inflection\n(originates work)"];
+  Disposition -> Evidence    [label="questions mint claims" style=dotted];
+  Evidence -> Currency [label="tracked state\nresets pointers" style=dotted];
+  Prior -> Evidence   [label="seeds framings,\ndesigns, questions" color="#886633"];
+  Prior -> Comprehension [color="#886633" label="seeds pedagogy"];
+  Prior -> Conviction [color="#886633" label="seeds designs"];
+
+  // forbidden inferences
+  edge [color="#bb2222" style=dashed fontcolor="#bb2222"];
+  Backing -> Evidence        [label="✗ 'ruled' ≠ true\n(authority ↛ groundedness)" constraint=false];
+  Backing -> Efficacy        [label="✗ endorsement\ncannot move firings" constraint=false];
+  Fidelity -> Fidelity       [label="✗ corroboration ↛ witness position\n(credibility only)"];
+  Currency -> Evidence       [label="✗ traceability ↛ adequacy\n(VIM NOTE 5)" constraint=false];
+  Comprehension -> Evidence  [label="✗ teaches-well ↛ true\n(plausibility ≠ verification)" constraint=false];
+  Conviction -> Evidence     [label="✗ committed-hard ↛ sound" constraint=false];
+
+  // substrate relation
+  edge [color="#997744" style=solid fontcolor="#997744"];
+  Fidelity -> Evidence      [label="warrants" arrowhead=empty];
+  Fidelity -> Backing       [arrowhead=empty];
+  Fidelity -> Efficacy      [arrowhead=empty];
+  Fidelity -> Comprehension [arrowhead=empty];
+  Fidelity -> Conviction    [arrowhead=empty];
+  Fidelity -> Currency      [arrowhead=empty];
+
+  {rank=same; Fidelity}
+  {rank=same; Prior; Disposition}
+}

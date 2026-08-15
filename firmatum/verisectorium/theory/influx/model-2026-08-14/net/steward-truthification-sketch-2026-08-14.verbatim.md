@@ -55,3 +55,21 @@
 > And there are other pregenerators besides aporia -- the ideation / spike-proposals / etc.
 
 > and counterfactuals is, I would think separate from aporia, and its own generator...
+
+## Sketch 9 — landing directives + the recording question + currencies (three bursts)
+
+> Excellent.. Let's make sure all of this makes it into the model folder please. Especially:
+> - What "lock" really means and where in the steps it is crucial for allowing the lines to influence each other, and how to detect when it is unprincipled coherence rather than stronger corroberation
+> - Transmission / literature review type research = ambient prior (or, I would probably say: adjudicated/calibrated/qualified ambient prior).
+>
+> Sure-- please continue to update the model with as much fidelity as you can figure out.
+>
+> With this model, it is still begging the question of how it actually gets recorded. Some thing are still quite easy-- central-slug/claim ==> current-reality/law (already satisfies KPN ordering) + append-only log; but the multiple independent lines and lit review etc. and the other coordination surfaces besides the canon view is all still up in the air I think. It almost certainly begs for a number of (potential) sidecars for a given "claim" atom/segment/record/document though...
+
+> More importantly now though, I'm wondering how you can get all of the other "currencies" in there and show which ones are mutually dependent, which ones are orthogonal, which ones are loosely causal, etc. etc.
+
+> (and properly deal with all of the failure modes and realities we've only started to enumerate and understand)
+
+## Sketch 10 — Fidelity as leaf (chart observation)
+
+> (in the v3 chart-- it seems like "Fidelity" is a terminal node / leaf. -- I'm not sure how that ends up working...)
