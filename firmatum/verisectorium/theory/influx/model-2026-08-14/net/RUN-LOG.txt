@@ -1,69 +1,80 @@
-LADDERS (guard vocabulary + rung ordering + ceiling law, per line):
-  math       family=derivation           rungs=sketch -> drafted -> deps-verified -> re-derived
-             channels: formal-expression-written | premises-named-and-checked | independent-re-derivation
-             ceiling:  exact (under named premises); conditional if any premise is empirical
-  sim        family=in-vivo-measurement  rungs=pre-registered -> run-once -> swept -> independently-reproduced
-             channels: first-run (era-keyed) | seed/level/footprint-sweep | independent-re-run
-             ceiling:  exact for the authored world (identifiability by construction); empirical for transfer to the wild; every number era-keyed
-  lit        family=transmission:empirical-wild rungs=named-not-read -> recalled -> search-corroborated -> verified-via-secondary -> primary-verified
-             channels: recall-marked-as-recall | convergent-secondaries | faithful-secondary-fetched | primary-fetched
-             ceiling:  min(rung, source own tier) -- transmitted ceiling caps at source; defeasible two ways: source wrong OR carriage infidelious; family = transmission:<source-family> -- a wrapper, never lock-independent of it
-  testimony  family=testimony            rungs=captured -> corroborated -> cross-kind-corroborated
-             channels: independent-account-located | independent-kind-agrees
-             ceiling:  position fixed at capture (attested/reconstructed/secondhand); corroboration raises credibility only, never position
-  analog     family=analogy              rungs=hunch -> articulated -> perturbation-tested
-             channels: analogy-articulated | perturbation-test-passed
-             ceiling:  heuristic; survival licenses generative use, never assertion
+THE DERIVED LINE-SET (one line per foundation rung; instrument-follows-rung):
+  derivation       <- mathematically-groundable                      family=derivation
+                      rungs:    sketch -> drafted -> deps-verified -> re-derived
+                      channels: formal-expression-written | premises-named-and-checked | independent-re-derivation
+                      refute:   counterexample-found -> no-go (a result, on the critical path)
+                      ceiling:  exact under named premises; conditional if any premise is empirical
+  authored-world   <- in-vivo-testable                               family=in-vivo-measurement
+                      rungs:    pre-registered -> run-once -> swept -> independently-reproduced
+                      channels: first-run (era-keyed) | seed/level/footprint-sweep | independent-re-run
+                      refute:   prediction-miss (pre-registered) -> recorded miss, prevents flattering read
+                      ceiling:  exact for the authored world; every number era-keyed and decay-liable
+  wild-empirical   <- world-measurable                               family=wild-measurement
+                      rungs:    anecdotal -> measured-once -> population-robust -> calibrated
+                      channels: first-measurement | population-sweep | calibration-events
+                      refute:   signed GRADE-shaped down-channels: bias-found / inconsistency / imprecision
+                      ceiling:  empirical; instrument honesty binds (empty != failed != unrun)
+  instance-check   <- well-modeled (instance of an ESTABLISHED model) family=model-instance
+                      rungs:    candidate-mapping -> correspondence-verified -> instance-prediction-checked
+                      channels: map-claim-onto-model | verify-correspondence-by-perturbation
+                      refute:   mapping breaks under perturbation -> SCOPE-BOUND (strengthen-first: the break is a result that narrows scope, not a failure)
+                      ceiling:  inherits the established model own tier, on the verified overlap only
+  testimonial      <- witnessed                                      family=testimony
+                      rungs:    captured -> corroborated -> cross-kind-corroborated
+                      channels: independent-account-located | independent-kind-agrees
+                      refute:   account impeached (infidelity by omission/fabrication/misrepresentation)
+                      ceiling:  position fixed at capture; corroboration moves credibility only
+  transmission     <- (carrier, not a rung) -- carriage over an external source family=transmission:wild-measurement
+                      rungs:    named-not-read -> recalled -> search-corroborated -> verified-via-secondary -> primary-verified
+                      channels: recall-marked-as-recall | convergent-secondaries | faithful-secondary-fetched | primary-fetched
+                      refute:   carriage infidelity found; or the source itself revised
+                      ceiling:  min(carriage rung, source own tier); never lock-independent of source family
 
-KAHN OBLIGATION: reversed pay-in order -> HOLDS (identical ledgers + projections)
+DERIVED FAN-OUT: claim declared rungs -> launched ['derivation', 'authored-world', 'instance-check', 'testimonial', 'transmission']
+  (wild-empirical declared inapplicable -> its line correctly never launched)
 
-Act I -- after all lines pay in:
-  (testimony@credibility=1 present but position fixed) max=3 floor=1 lock=ARMED   
-      (lit, strength=1, family=transmission:empirical-wild, rung=2)
-      (math, strength=3, family=derivation, exact|premises-named)
-      (sim, strength=2, family=in-vivo-measurement, k1)
-      (testimony, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
+KAHN OBLIGATION over reversed pay-in order: HOLDS
 
-Act II -- kernel era bump k1->k2 (certificates decay, visibly):
-  sim@k1 expired -> question minted max=3 floor=1 lock=unarmed 
-      (lit, strength=1, family=transmission:empirical-wild, rung=2)
-      (math, strength=3, family=derivation, exact|premises-named)
-      (testimony, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
-      expired-place holds: [('expired', 'does-the-fill-settle', 'sim@k1', 'kernel-era-boundary')]
-      new question: [('q', 're-run-does-the-fill-settle-under-k2')]
+Act I -- ascent + one SIGNED refutation (instance mapping breaks at the lake case):
+  scope-bound lands as a RESULT, question minted max=3 floor=1 lock=ARMED
+      (authored-world, strength=2, family=in-vivo-measurement, k1)
+      (derivation, strength=3, family=derivation, exact|premises-named)
+      (instance-check, strength=2, family=model-instance, SCOPE-BOUND: mapping fails near-horizontal (lake case))
+      (testimonial, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
+      (transmission, strength=1, family=transmission:wild-measurement, carriage-rung=2)
+      refutation-minted question: [('q', 'rescope-water-fill-residual-grows-away-from-lakes', 'from:refutation')]
 
-Act III -- the wall moved: primary fetched, lit re-verified to its source-tier cap:
-  lit raised 1->2 (capped, base family empirical-wild): lock re-arms max=3 floor=1 lock=ARMED   
-      (lit, strength=2, family=transmission:empirical-wild, primary-fetched; capped-at-source-tier)
-      (math, strength=3, family=derivation, exact|premises-named)
-      (testimony, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
-      counter-demo: same strengths but source=derivation -> unarmed (transmitted derivation is not independent of our math leg)
+Act II -- era decay -> staleness SIGNAL (loop closure through origination):
+  authored-world@k1 expired                      max=3 floor=1 lock=ARMED
+      (derivation, strength=3, family=derivation, exact|premises-named)
+      (instance-check, strength=2, family=model-instance, SCOPE-BOUND: mapping fails near-horizontal (lake case))
+      (testimonial, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
+      (transmission, strength=1, family=transmission:wild-measurement, carriage-rung=2)
+      signals now queued: [('comprehension-miss', 'reader-confusion:water-fill-residual-grows'), ('decision-inflection', 'grounds-needed-for:water-fill-residual-grows'), ('mismatch', 'application-feedback:water-fill-residual-grows'), ('spike-proposal', 'try-graphflood-style-priming'), ('staleness', 're-run-water-fill-residual-grows-under-k2'), ('wandering-gold', 'first-encounter-reflection:water-fill-residual-grows')]
 
-EVENT LOG head (run 1, first 12 of 30 firings):
-    1  T.ideate                   {o -> ('obs', 'water-fill-never-settles'), q -> ('q', 'does-the-fill-settle'), c -> ('cf', 'solve-equilibrium-directly')}
-    2  T.launch.math              {cl -> ('claim', 'does-the-fill-settle')}
-    3  T.launch.sim               {cl -> ('claim', 'does-the-fill-settle')}
-    4  T.launch.lit               {cl -> ('claim', 'does-the-fill-settle')}
-    5  T.launch.testimony         {cl -> ('claim', 'does-the-fill-settle')}
-    6  T.launch.analog            {cl -> ('claim', 'does-the-fill-settle')}
-    7  T.secure*.math             {x -> ('line', 'math', 'does-the-fill-settle', 0, '')}
-    8  T.secure*.math             {x -> ('line', 'math', 'does-the-fill-settle', 1, '')}
-    9  T.secure*.math             {x -> ('line', 'math', 'does-the-fill-settle', 2, '')}
-   10  T.secure*.sim              {x -> ('line', 'sim', 'does-the-fill-settle', 0, 'k1')}
-   11  T.secure*.sim              {x -> ('line', 'sim', 'does-the-fill-settle', 1, 'k1')}
-   12  T.secure*.lit              {x -> ('line', 'lit', 'does-the-fill-settle', 0, '')}
+Act III -- carriage re-verified (wall moved); lock via look-through:
+  transmission raised to source-tier cap         max=3 floor=1 lock=ARMED
+      (derivation, strength=3, family=derivation, exact|premises-named)
+      (instance-check, strength=2, family=model-instance, SCOPE-BOUND: mapping fails near-horizontal (lake case))
+      (testimonial, strength=1, family=testimony, position=reconstructed (fixed); credibility=1)
+      (transmission, strength=2, family=transmission:wild-measurement, primary-fetched; capped-at-source-tier)
 
-accounts substrate (the securing events, with their channel names):
-    ('acct', 'analogy-fed-ideation', 'does-the-fill-settle', 'survived-perturbation')
-    ('acct', 'ideated', 'does-the-fill-settle', '')
-    ('acct', 're-verified', 'lit', 'wall-moved: primary now fetchable')
-    ('acct', 'secured', 'analog', 'analogy-articulated')
-    ('acct', 'secured', 'analog', 'perturbation-test-passed')
-    ('acct', 'secured', 'lit', 'convergent-secondaries')
-    ('acct', 'secured', 'lit', 'recall-marked-as-recall')
-    ('acct', 'secured', 'math', 'formal-expression-written')
-    ('acct', 'secured', 'math', 'independent-re-derivation')
-    ('acct', 'secured', 'math', 'premises-named-and-checked')
-    ('acct', 'secured', 'sim', 'first-run (era-keyed)')
-    ('acct', 'secured', 'sim', 'seed/level/footprint-sweep')
-    ('acct', 'secured', 'testimony', 'independent-account-located')
+Return edges observed this run (the loop is structural):
+   signal: ('comprehension-miss', 'reader-confusion:water-fill-residual-grows')
+   signal: ('decision-inflection', 'grounds-needed-for:water-fill-residual-grows')
+   signal: ('mismatch', 'application-feedback:water-fill-residual-grows')
+   signal: ('spike-proposal', 'try-graphflood-style-priming')
+   signal: ('staleness', 're-run-water-fill-residual-grows-under-k2')
+   signal: ('wandering-gold', 'first-encounter-reflection:water-fill-residual-grows')
+
+EVENT LOG head (run 1, first 10 of 38):
+    1  T.pose-question          {s -> ('mismatch', 'water-fill-residual-grows')}
+    2  T.pose-question          {s -> ('decision-inflection', 'choose-marching-vs-direct-solve')}
+    3  T.analogize              {m -> ('segment', 'diffusion-wave-model', 'established')}
+    4  T.counterfactualize      {q -> ('q', 'water-fill-residual-grows', 'from:mismatch')}
+    5  T.mint                   {q -> ('q', 'water-fill-residual-grows', 'from:mismatch'), f -> ('frame', 'analogy:diffusion-wave-model', 'perturbation-tested')}
+    6  T.launch.derivation      {cl -> ('claim', 'water-fill-residual-grows', frozenset({'authored-world', 'testimonial', 'derivation', 'transmission', 'instance-check'}))}
+    7  T.launch.authored-world  {cl -> ('claim', 'water-fill-residual-grows', frozenset({'authored-world', 'testimonial', 'derivation', 'transmission', 'instance-check'}))}
+    8  T.launch.instance-check  {cl -> ('claim', 'water-fill-residual-grows', frozenset({'authored-world', 'testimonial', 'derivation', 'transmission', 'instance-check'}))}
+    9  T.launch.testimonial     {cl -> ('claim', 'water-fill-residual-grows', frozenset({'authored-world', 'testimonial', 'derivation', 'transmission', 'instance-check'}))}
+   10  T.launch.transmission    {cl -> ('claim', 'water-fill-residual-grows', frozenset({'authored-world', 'testimonial', 'derivation', 'transmission', 'instance-check'}))}

@@ -40,3 +40,18 @@
 ## Sketch 5 — the lit-line correction (mid-modeling interrupt)
 
 > Also, I'm not sure if lit it independent of any of the other lines... it feeds them at first, it gets check later, it might have something independent from the lines altogether (like an influencing no-go or scope change or something)
+
+## Sketch 6 — the principled-not-translated directive (on seeing v2)
+
+> This looks amazing.
+> I want to be clear though, because I worry that you might be too deferential to my framing, I was making very rough guesses about the nodes on my little ascii fan-in-fan-out-fan-in diagram-- I'm counting on *you* to add the correct earlier nodes, correct the "analog should really be: ...." etc. etc.-- in other words-- my diagram was very very unprincipled-- that's why I handed it over to you to make it principled, not just to translate it into petri-net notation
+
+## Sketch 7 — decision-inflection (mid-v3-build interrupt)
+
+> OH-- another origination point:  decision-inflection (where a decision needs to be made often before hypotheses are even formed)
+
+## Sketch 8 — pregenerators + counterfactuals (two interrupts)
+
+> And there are other pregenerators besides aporia -- the ideation / spike-proposals / etc.
+
+> and counterfactuals is, I would think separate from aporia, and its own generator...
