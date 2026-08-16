@@ -4,7 +4,7 @@
 
 ## The model: adopt `git-heat`'s
 
-`~/.local/bin/git-heat` (also `firmatum/utils/code/`) carries a worked commit-decay model, already tuned in use:
+`~/.local/bin/git-heat` (also `firmatum/utils/git-heat/`) carries a worked commit-decay model, already tuned in use:
 
 - `raw = Σ over non-initial touches of exp(-age/τ)`, **age in commits behind HEAD** (not wall-clock), `τ = half_life / ln 2`, normalized `heat = 2·(1−exp(−1/τ))·raw` so touched-every-commit converges to ~2 at any half-life. Half-life choices `21…1`, default **7**. **Claim scope (close audit 2026-08-14): the score is comparable within a repo, not across repos** — commits-behind-HEAD is each repo's own clock, so a dormant repo whose last few commits concentrated on the same files outscores a busy one at any multi-repo root. The paired age and the recency sort are the cross-repo signals; help now teaches the scope.
 - **Dir heat = max of non-noise leaves beneath** (sum drowns in big dirs) — this is heat's `deep-agg` office answered.

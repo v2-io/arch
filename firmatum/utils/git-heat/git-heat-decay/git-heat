@@ -20,7 +20,7 @@ Examples
   git-heat crates/codegen --serve   # one subdirectory
   git-heat --half-life 3 --top 20 .
 
-See also: firmatum/utils/code/README.md
+See also: firmatum/utils/git-heat/README.md
 """
 
 from __future__ import annotations
@@ -1755,7 +1755,7 @@ half-life. Focus slider (HTML) moves half-life from long/historical (left)
 to short/recent (right). --serve holds HTML in memory; use --html only when
 you want a file on disk.
 
-home: ~/src/arch/firmatum/utils/code/git-heat-decay/
+home: ~/src/arch/firmatum/utils/git-heat/git-heat-decay/
 """
     p = argparse.ArgumentParser(
         prog="git-heat",

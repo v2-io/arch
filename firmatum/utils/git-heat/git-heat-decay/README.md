@@ -13,7 +13,7 @@ unless you also pass `--html`). Blame API: `/__git-heat__/blame`.
 
 ```sh
 # one-time (or after moves):
-ln -sfn ~/src/arch/firmatum/utils/code/git-heat-decay/git-heat ~/.local/bin/git-heat
+ln -sfn ~/src/arch/firmatum/utils/git-heat/git-heat-decay/git-heat ~/.local/bin/git-heat
 # ensure ~/.local/bin is on PATH
 ```
 

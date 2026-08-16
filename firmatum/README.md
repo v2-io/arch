@@ -49,16 +49,12 @@ cargo install --path firmatum/utils/fmt-md
 
 Queued (not done): rename, public crate/repo readiness, re-intern as `firmatum/<newname>/` submodule and empty-or-repurpose `utils/` for internal migrators.
 
-### [`utils/code/`](utils/code/)
+### [`utils/git-heat/`](utils/git-heat/)
 
-Installable code utilities (index: [`utils/code/README.md`](utils/code/README.md)).
-
-#### [`git-heat`](utils/code/git-heat-decay/) (`git-heat-decay/`)
-
-Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer.
+Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer. Index: [`utils/git-heat/README.md`](utils/git-heat/README.md).
 
 ```sh
-ln -sfn ~/src/arch/firmatum/utils/code/git-heat-decay/git-heat ~/.local/bin/git-heat
+ln -sfn ~/src/arch/firmatum/utils/git-heat/git-heat-decay/git-heat ~/.local/bin/git-heat
 git-heat --help
 git-heat --html --serve
 ```

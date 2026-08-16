@@ -89,7 +89,7 @@ Erlang analog: keep the tuple, write `...` in the boring slots. `tree \| rg` thr
 
 ## P5 — git archaeology (optional, cached)
 
-Do not `git log` per file. Reuse [`../code/git-heat-decay/`](../code/git-heat-decay/) or its model.
+Do not `git log` per file. Reuse [`../git-heat/git-heat-decay/`](../git-heat/git-heat-decay/) or its model.
 
 | Feature | Status | What it is |
 |---|---|---|
