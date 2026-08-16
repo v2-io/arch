@@ -12,4 +12,37 @@ Partition happens right after `enumerate()`, before any census or stat — so hi
 
 Also decided (was open in the outline): `.github` is its own kind (`github`), not folded into `git` — it has its own plugin and its own facts.
 
-**Alignment (steward decision, arrived mid-landing):** all non-name material — censuses, facets, the kind spot, look-marks — lands at a computed pseudo-tab-stop per `design/columns.md`: max name column in the look + 2, capped at 48 (`n_level.rs` `STOP_CAP`), a pure function of tree content, never terminal width; an over-cap name goes ragged on its own line only. The machinery (`Row` / `paint` in `src/n_level.rs`) is minimal on purpose — the Columns row owns the full mechanism when it lands and should absorb this.
+## The shipped map (verified against `src/furniture.rs::default_rules`, 2026-08-15)
+
+First match wins; config rules are prepended. Trailing `/` = dirs only.
+
+| pattern | kinds | fate |
+|---|---|---|
+| `.git` | git | hide (plugin: `src/git.rs`) |
+| `.github` | github | hide (plugin: `src/github.rs`) |
+| `.gitignore` · `.gitmodules` · `.gitattributes` | gitignore · gitmodules · gitattributes (each its own word, never `git`) | hide |
+| `target/` | build | hide |
+| `node_modules/` | build+js | hide |
+| `__pycache__/` · `*.egg-info/` · `.pytest_cache/` · `.mypy_cache/` · `.ruff_cache/` · `.tox/` | build+python | hide |
+| `.build/` | build | hide |
+| `.ruby-lsp/` | build+ruby | hide |
+| `.obsidian/` · `.obsidian.vimrc` | obsidian-vault | hide |
+| `.claude/` | agents | hide |
+| `.mise.toml` | mise | hide |
+| `.archive/` | archive | hide |
+| `.trash/` | trash | hide |
+| `.DS_Store` | — | omit |
+| `Cargo.toml` · `Cargo.lock` | rust | mark |
+| `pyproject.toml` | python | mark |
+| `Gemfile` | ruby | mark |
+| `mise.toml` | mise | mark |
+| `package.json` | js | mark |
+| `AGENTS.md` · `CLAUDE.md` · `GEMINI.md` | agents | mark |
+
+**Subsumption (in code, not in the map — `read_names`):** when a level claims `git` (a real `.git`), the words `gitignore` / `gitmodules` / `gitattributes` are dropped from that level's `has:` — a repo root says `[has: git, …]`, not `[has: git, gitignore]`. Hidden *dirs* whose kind does not speak for itself (`speaks_for_itself`: git/github excluded) get the readdir-only file count folded onto the kind word (`archive ≈127f`).
+
+**Sibling keys, same grammar family:** `kinds = "SUFFIX:text|binary, !SUFFIX"` (`src/kind.rs`, feeds line counts and the kind word) and `important = "GLOB, …, !GLOB"` (`src/important.rs`).
+
+**Not in the mechanism (as of 0.1.8):** kind identity beyond a word (no glyph/tag/priority — `has:` sorts alphabetically); no split between kind-of-place (rust, python, vault) and furniture-class (build, archive, trash); no `--caller`-keyed default map (the agent-caller "don't hide `.claude`" ask stays open); no plugin registry beyond the two wired kinds; a rule cannot say what it counts as for mass beyond the hidden-dir file count.
+
+**Alignment (steward decision, arrived mid-landing):** all non-name material — censuses, facets, the kind spot, look-marks — lands at a computed pseudo-tab-stop per `design/columns.md`: max name column in the look + 2, capped at 48 (`n_level.rs` `STOP_CAP`), a pure function of tree content, never terminal width; an over-cap name goes ragged on its own line only. The machinery (`Row` / `paint`, since moved to `src/columns.rs`) is minimal on purpose — the Columns row owns the full mechanism when it lands and should absorb this. *(It did — impl/columns.md.)*

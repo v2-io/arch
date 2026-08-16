@@ -38,3 +38,9 @@ No `./` child. The stamp is when *this* print ran, not mtime of the directory.
 ## Not in this row
 
 Canonicalize / realpath. Local timezone offset. Extra header fields (uid, hostname) until someone names them.
+
+## Config drift in the header (steward ask, inbox 2026-08-14 — verbatim, routed 2026-08-15; **unbuilt**)
+
+> Always show in the output head (after timestamp, before more informative stuff and root) what config values are different than default (it would catch me, Joseph, accidentally assuming everyone had the same --depth default as I have, for example)
+
+A third overview invariant: the effective settings that differ from the built-in defaults, and where they came from — so a look pasted into another mind's context says what eyes produced it (`depth = 3 (user-home)`, `--lines 200`, `--caller grok`…). Position: after the stamp, before the root's facts line and the path. Spelling and whether flags count as "different than default" (leaning yes — a `--lines 200` look is not the default look) are open; the row is otherwise `working`, this subfeature is not.
