@@ -33,7 +33,7 @@ A line with more columns is still **one line**. `--lines` counts lines, not widt
 
 Same tree + same caller state ⇒ byte-identical look. Consequences this row must hold:
 
-- Column selection and formats resolve from the caller stack only — never from terminal width, screen, or the place. Width-adaptive column dropping would make two aspecta undiffable; it is refused.
+- Column selection and formats resolve from the caller stack only — never from the place. *(2026-08-22: "never from terminal width" withdrawn — agent-authored, not a steward law; a human caller's terminal width is caller state and may seed a `width` setting. Width-adaptive column *dropping* is still refused for a fixed caller state — two looks under one setting stay diffable.)*
 - **Alignment is the trap.** If columns pad to align across lines, one line's value (or a quiet fact speaking on one line) changes the *bytes of other lines*, and a small tree change diffs as noise. The default leaning: pad within the look for readability is tolerable only if we accept that cost knowingly — see Open. Whatever is chosen, it is chosen once, deterministically.
 - A `QUIET` fact that has nothing to say prints nothing — no reserved gap, no placeholder. When quiet speaks is [[quiet-columns|Quiet columns]]' law, not this row's.
 

@@ -21,7 +21,7 @@ A glance surface is **observation infrastructure**, and its quality is existenti
 
 ## The channels — the physical media a text look owns
 
-A token-reading mind has no retina, but a text surface has independent information channels, each with its own carrying capacity, cost, and natural tenants. Spending them deliberately is the whole craft:
+A token-reading mind has a retina made of regularity rather than pixels — Joseph measured agents' spatial awareness in one of his earliest LLM experiments, and it shaped udon, aspectus, and tablecop (2026-08-22 correction of this sentence, which had said "no retina": a deflationary absence-claim, wrong in the way that matters; aligned delimiters and consistent whitespace runs are *read* structurally, ragged ones are *parsed*). A text surface has independent information channels, each with its own carrying capacity, cost, and natural tenants. Spending them deliberately is the whole craft:
 
 | Channel | Carries best | Cost | Evidence / prior art |
 |---|---|---|---|
@@ -40,7 +40,7 @@ Two registers per fact is normal and *good* — position for one reading, value 
 
 ## The concerns — laws that bound every option
 
-1. **Determinism.** Every channel is a pure function of (tree content, caller state). Never terminal width, locale, readdir order, or the place's own preferences. Two runs are byte-identical; two agents with one config see one look.
+1. **Determinism.** Every channel is a pure function of (tree content, caller state). Never locale, readdir order, or the place's own preferences. Two runs are byte-identical; two agents with one config see one look. *(Corrected 2026-08-22 — the original also said "never terminal width"; that was agent-authored overreach, never Joseph's: a human caller's terminal width **is** caller state — "precisely the thing an agent/human should set about his/her view/eyes" — so it may be the default for a `width` setting; what the law forbids is the *place* tuning the channel, not the caller's own eyes.)*
 2. **Only the caller tunes the channel** ([[norm-caller-tunes-the-channel]]). The observed may speak into the look as *content*; it never sets columns, budgets, thresholds, or formats.
 3. **Never lie by omission.** Truncation, denial, bounds, and hiding all confess — typed censuses, `≥`, `[denied]`, `[walk bound]`, kind-marks for hidden furniture. A look that ran out of anything says so where a reader will see it.
 4. **Absent, never faked.** An unobtainable fact (no btime, outside git, unreadable) prints nothing and claims nothing. A `0` that means "not a thing that has this fact" is a lie.
