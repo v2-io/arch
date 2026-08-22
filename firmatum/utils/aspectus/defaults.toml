@@ -1,0 +1,272 @@
+# aspectus — shipped defaults (design/defaults.md)
+#
+# This file is embedded in the binary at build time and is the `defaults`
+# layer of the caller stack:  defaults < global < user-home < agent-type < env < flags.
+# Copy it out with `aspectus config defaults > ~/.config/aspectus/aspectus.toml`
+# and keep only the keys you change. Nothing in the tree you look at is ever
+# read as config — only the caller tunes the channel.
+#
+# Every value here is a default, not a law. Glyph vocabulary (≈ ≥ ~ ⊘ ● □ ▣ …)
+# and the fact inventory live in code; this file says which facts show, where,
+# in what order, and how they are formatted.
+
+# ── The look's shape ─────────────────────────────────────────────────────────
+depth = 2              # generations below the root; 0 = no limit
+lines = 80             # line budget for the whole look (logical lines); 0 = no limit
+walk = 10000           # names stat+expanded at most; names past the bound still count; 0 = no bound
+reads = 67108864       # bytes of file content the look may read (line counts, mass); 0 = unlimited
+one-fs = true          # stay on the starting filesystem (--no-one-fs to follow mounts)
+
+# ── Order ────────────────────────────────────────────────────────────────────
+sort = "recency"       # recency (newest first) | name | size | line-count | heat ; "-KEY" reverses
+recency-source = "mtime"   # mtime | git  (git = last-touch where the log covered a path)
+dotfiles-first = false
+
+# ── Features with an on/off ──────────────────────────────────────────────────
+readme-title = false   # a dir line borrows its README's title (quoted, near-right)
+globify = true         # a real numeric series collapses to its template
+globify.min = 5        # members needed before a series collapses
+
+# ── Aliveness and surprise dials ─────────────────────────────────────────────
+heat.half-life = 7     # commits; git-heat's model
+quiet.sensitivity = 1.0        # scales statistical surprise thresholds (higher = harder to surprise)
+# quiet.sensitivity.size = 1.0
+# quiet.sensitivity.mtime = 1.0
+
+# ── The grid (design/lattice-2.md positions) ─────────────────────────────────
+# Membership = shown; order = left-to-right. A fact in no list renders nothing.
+# name-location, name-suffix and after-name are structural and not listable.
+[layout]
+far-left   = ["git-status", "mtime", "bytes"] # Joseph, 2026-08-22: "git-status and time and size/mass on the far left side" — positional cells before the tree (blank when silent, compact forms); while mtime sits here the heat cluster shows the score alone
+near-right = ["census", "has", "marks"]      # each part at a stable stop after the name
+supplement = ["facets"]                      # spills under the row when it doesn't fit
+far-right  = ["lines", "heat"]               # right-aligned numeric columns under a headings line
+quiet      = ["mtime", "bytes", "permissions", "owner", "filekind"]   # listed-or-not, these speak only on surprise
+
+# ── Formats (starred defaults in design/lattice-2.md) ────────────────────────
+[format]
+mtime = "relative"          # relative (2.2h ago) | iso-8601 | epoch
+bytes = "human"             # human (1.2M) | bytes
+lines = "physical"          # physical | non-blank
+owner = "name"              # name | id
+initial-sha = "short"       # short | h~n | full
+latest-sha = "short"
+
+# ── Important files (survival tier; readme-title borrows this set, in order) ─
+important = ["README*", "AGENTS.md", "CLAUDE.md"]
+
+# ── Furniture map (impl/furniture.md) ────────────────────────────────────────
+# PATTERN = "KINDS[:FATE]"  — kinds `+`-separated; fate hide (default) | omit | mark.
+# A trailing `/` restricts the pattern to directories. First match wins; a user
+# file's rows go in front of these; `"PATTERN" = "!"` drops a shipped row.
+[furniture]
+".git"            = "git"                 # plugin: facet [git: …]
+".github"         = "github"              # plugin: facet [github: …]
+".gitignore"      = "gitignore"           # its own word — never `git` (a .gitignore is not a repo)
+".gitmodules"     = "gitmodules"
+".gitattributes"  = "gitattributes"
+"target/"         = "build"               # maven's too — the name alone claims build output, not rust
+"node_modules/"   = "build+js"
+"__pycache__/"    = "build+python"
+"*.egg-info/"     = "build+python"
+".pytest_cache/"  = "build+python"
+".mypy_cache/"    = "build+python"
+".ruff_cache/"    = "build+python"
+".tox/"           = "build+python"
+".build/"         = "build"
+".ruby-lsp/"      = "build+ruby"
+".obsidian/"      = "obsidian-vault"
+".obsidian.vimrc" = "obsidian-vault"
+".claude/"        = "agents"
+".mise.toml"      = "mise"
+".archive/"       = "archive"
+".trash/"         = "trash"
+".DS_Store"       = ":omit"               # not listed, not mentioned
+"Cargo.toml"      = "rust:mark"           # listed as a child AND claims the kind
+"Cargo.lock"      = "rust:mark"
+"pyproject.toml"  = "python:mark"
+"Gemfile"         = "ruby:mark"
+"mise.toml"       = "mise:mark"
+"package.json"    = "js:mark"
+"AGENTS.md"       = "agents:mark"
+"CLAUDE.md"       = "agents:mark"
+"GEMINI.md"       = "agents:mark"
+
+# ── Kinds: suffix / name → filetype (design/filetype.md) ─────────────────────
+# MAJOR/MINOR. The bare words "text" and "binary" are still accepted
+# (text = text/plain, binary = binary/plain). Magic bytes and shebangs are code;
+# this map is the tie-breaker the bytes can't settle. `"SUFFIX" = "!"` drops a row.
+[kinds]
+# prose and markup
+md = "text/markdown"
+markdown = "text/markdown"
+txt = "text/plain"
+udon = "text/udon"
+ud = "text/udon"
+html = "text/html"
+htm = "text/html"
+css = "text/css"
+scss = "text/css"
+xml = "text/xml"
+svg = "image/svg"            # image by purpose, text by bytes — counts lines
+tex = "text/tex"
+sty = "text/tex"
+cls = "text/tex"
+bib = "text/bib"
+rst = "text/rst"
+org = "text/org"
+adoc = "text/asciidoc"
+typ = "text/typst"
+diff = "text/diff"
+patch = "text/diff"
+# source
+rs = "text/rust"
+py = "text/python"
+rb = "text/ruby"
+js = "text/js"
+mjs = "text/js"
+ts = "text/ts"
+tsx = "text/ts"
+jsx = "text/js"
+c = "text/c"
+h = "text/c"
+cpp = "text/cpp"
+cc = "text/cpp"
+hpp = "text/cpp"
+go = "text/go"
+java = "text/java"
+kt = "text/kotlin"
+swift = "text/swift"
+ex = "text/elixir"
+exs = "text/elixir"
+erl = "text/erlang"
+hrl = "text/erlang"
+hs = "text/haskell"
+zig = "text/zig"
+lua = "text/lua"
+el = "text/elisp"
+vim = "text/vim"
+pl = "text/perl"
+pm = "text/perl"
+r = "text/r"
+jl = "text/julia"
+d = "text/d"
+s = "text/asm"
+asm = "text/asm"
+nix = "text/nix"
+sh = "text/shell"
+bash = "text/shell"
+zsh = "text/shell"
+sql = "text/sql"
+proto = "text/proto"
+graphql = "text/graphql"
+# structured data (text)
+json = "data/json"
+jsonl = "log/jsonl"
+yaml = "data/yaml"
+yml = "data/yaml"
+toml = "data/toml"
+ini = "data/ini"
+cfg = "data/ini"
+conf = "data/ini"
+env = "data/env"
+csv = "data/csv"
+tsv = "data/tsv"
+lock = "data/lock"
+sum = "data/lock"
+mod = "text/go"
+log = "log/log"
+# images
+png = "image/png"
+jpg = "image/jpeg"
+jpeg = "image/jpeg"
+gif = "image/gif"
+webp = "image/webp"
+bmp = "image/bmp"
+ico = "image/ico"
+heic = "image/heic"
+# documents
+pdf = "doc/pdf"
+doc = "doc/word"
+docx = "doc/word"
+xls = "doc/excel"
+xlsx = "doc/excel"
+ppt = "doc/powerpoint"
+pptx = "doc/powerpoint"
+pages = "doc/pages"
+keynote = "doc/keynote"
+numbers = "doc/numbers"
+# archives
+zip = "archive/zip"
+gz = "archive/gzip"
+tgz = "archive/tar"
+tar = "archive/tar"
+bz2 = "archive/bzip2"
+xz = "archive/xz"
+zst = "archive/zstd"
+"7z" = "archive/7z"
+dmg = "archive/dmg"
+pkg = "archive/pkg"
+iso = "archive/iso"
+# media
+mp3 = "media/mp3"
+wav = "media/wav"
+flac = "media/flac"
+ogg = "media/ogg"
+mp4 = "media/mp4"
+mov = "media/mov"
+avi = "media/avi"
+# fonts
+ttf = "font/ttf"
+otf = "font/otf"
+woff = "font/woff"
+woff2 = "font/woff2"
+eot = "font/eot"
+# build objects
+o = "object/o"
+a = "object/a"
+so = "object/so"
+dylib = "object/dylib"
+rlib = "object/rlib"
+rmeta = "object/rmeta"
+class = "object/class"
+jar = "object/jar"
+wasm = "object/wasm"
+pyc = "object/pyc"
+pyo = "object/pyc"
+# data (binary)
+sqlite = "data/sqlite"
+sqlite3 = "data/sqlite"
+db = "data/sqlite"
+parquet = "data/parquet"
+arrow = "data/arrow"
+bin = "binary/plain"
+exe = "exe/binary"
+# models
+pt = "model/pt"
+onnx = "model/onnx"
+gguf = "model/gguf"
+safetensors = "model/safetensors"
+# extensionless text names
+Makefile = "text/make"
+makefile = "text/make"
+GNUmakefile = "text/make"
+Dockerfile = "text/dockerfile"
+Rakefile = "text/ruby"
+Gemfile = "text/ruby"
+Justfile = "text/just"
+justfile = "text/just"
+Procfile = "text/plain"
+LICENSE = "text/plain"
+LICENCE = "text/plain"
+README = "text/plain"
+CHANGELOG = "text/plain"
+CHANGES = "text/plain"
+TODO = "text/plain"
+NOTICE = "text/plain"
+AUTHORS = "text/plain"
+CONTRIBUTORS = "text/plain"
+COPYING = "text/plain"
+VERSION = "text/plain"
+CODEOWNERS = "text/plain"
+SOURCE_REV = "text/plain"
