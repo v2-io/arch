@@ -26,10 +26,7 @@ pub fn resolve_locus(path: &Path) -> PathBuf {
 
 /// ISO-8601 / RFC-3339 UTC, second resolution: `YYYY-MM-DDTHH:MM:SSZ`.
 pub fn stamp_utc(now: SystemTime) -> String {
-    let secs = now
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_secs();
+    let secs = now.duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
     let (y, m, d, hh, mm, ss) = civil_utc(secs);
     format!("{y:04}-{m:02}-{d:02}T{hh:02}:{mm:02}:{ss:02}Z")
 }

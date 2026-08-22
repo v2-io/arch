@@ -86,7 +86,10 @@ fn ignored_dir_presence_without_innards() {
     fs::write(dir.join("a.md"), "x\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "2"]);
     assert_eq!(c, 0, "{e}");
-    let line = o.lines().find(|l| l.contains("logs/")).expect("presence shows");
+    let line = o
+        .lines()
+        .find(|l| l.contains("logs/"))
+        .expect("presence shows");
     assert!(line.contains("⊘"), "the ignored glyph: {line}");
     assert!(!line.contains("log×"), "no census of the innards: {line}");
     assert!(!o.contains("f0.log"), "children do not print: {o}");
@@ -141,7 +144,10 @@ fn mass_excludes_ignored_bodies() {
     // deleted; the census still tells presence (dir count, ignored×1) —
     // that is the design's other half, not a leak into the numbers.
     for look in [&a, &b] {
-        assert!(look.contains("≈4 lines"), "un-ignored lines only: {look}");
+        // 2026-08-22 count-cell slice: 4 is exact/ungrouped, so `4.` in the
+        // lines column; the word "lines" is the heading.
+        assert!(look.contains("4."), "un-ignored lines only: {look}");
+        assert!(!look.contains("≈4 lines"), "old mass tail retired: {look}");
         assert!(look.contains("≈1f"), "junk/'s 20 files stay out: {look}");
     }
     assert!(a.contains("ignored×1"), "the cut is typed: {a}");
@@ -181,7 +187,11 @@ fn nested_and_negation_agree_with_git() {
     let data = o.lines().find(|l| l.contains("data/")).expect("presence");
     assert!(data.contains("⊘"), "nested dir-only pattern: {data}");
     // The contract, checked against git itself.
-    for (path, ignored) in [("sub/keep.log", false), ("sub/drop.log", true), ("sub/data", true)] {
+    for (path, ignored) in [
+        ("sub/keep.log", false),
+        ("sub/drop.log", true),
+        ("sub/data", true),
+    ] {
         let st = Command::new("git")
             .args(["check-ignore", "-q", path])
             .current_dir(&dir)
@@ -205,7 +215,10 @@ fn nested_repo_uses_its_own_rules() {
     fs::write(inner.join("x.log"), "inner pattern must\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "2"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("doc.md"), "outer *.md does not cross the repo: {o}");
+    assert!(
+        o.contains("doc.md"),
+        "outer *.md does not cross the repo: {o}"
+    );
     assert!(!o.contains("x.log"), "inner rule applies: {o}");
 }
 
@@ -254,7 +267,11 @@ fn ignored_dirs_cost_no_walk_budget() {
     }
     // Budget 50 names: the 200 inside huge/ would trip it; skipping means
     // every real file still lists and nothing says [walk bound].
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "2", "--walk", "50", "--lines", "0"]);
+    let (c, o, e) = run(
+        &dir,
+        &xdg,
+        &["--depth", "2", "--walk", "50", "--lines", "0"],
+    );
     assert_eq!(c, 0, "{e}");
     for i in 0..8 {
         assert!(o.contains(&format!("real{i}.md")), "real{i}.md: {o}");
@@ -272,7 +289,10 @@ fn json_fields() {
     fs::write(dir.join("b.md"), "x\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--format", "json"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("\"gitignored\":true"), "dir status is a field: {o}");
+    assert!(
+        o.contains("\"gitignored\":true"),
+        "dir status is a field: {o}"
+    );
     assert!(o.contains("\"ignored_files\":1"), "remainder is data: {o}");
     assert!(!o.contains("a.tmp"), "ignored file carries no node: {o}");
 }
@@ -289,9 +309,6 @@ fn cutoff_census_counts_ignored() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let sub = o.lines().find(|l| l.contains("sub/")).unwrap();
-    assert!(
-        sub.contains("ignored×2"),
-        "the census tells the cut: {sub}"
-    );
+    assert!(sub.contains("ignored×2"), "the census tells the cut: {sub}");
     assert!(!sub.contains("tmp×"), "no bucket for ignored bodies: {sub}");
 }

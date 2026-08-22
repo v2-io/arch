@@ -117,8 +117,9 @@ pub fn fold_asides(node: &mut crate::n_level::Node) {
     if !node.children.iter().any(|c| c.aside) {
         return;
     }
-    let (asides, kept): (Vec<_>, Vec<_>) =
-        std::mem::take(&mut node.children).into_iter().partition(|c| c.aside);
+    let (asides, kept): (Vec<_>, Vec<_>) = std::mem::take(&mut node.children)
+        .into_iter()
+        .partition(|c| c.aside);
     node.children = kept;
     let mut om = crate::n_level::census_nodes(&asides);
     om.bounded |= asides.iter().any(|c| c.denied);
@@ -144,7 +145,10 @@ pub fn unlisted(tree: &crate::n_level::Node, root: &Path, sel: &[PathBuf]) -> Ve
     }
     let mut present = Vec::new();
     walk(tree, root, &mut present);
-    sel.iter().filter(|p| !present.contains(p)).cloned().collect()
+    sel.iter()
+        .filter(|p| !present.contains(p))
+        .cloned()
+        .collect()
 }
 
 #[cfg(test)]

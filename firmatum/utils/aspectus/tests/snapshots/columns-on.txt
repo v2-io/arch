@@ -1,14 +1,14 @@
 755  1600000000  [has: rust]
 <ROOT>/
-                                     lines  perms  size       mtime
-├── deep/                                     755        1600000000
-│   └── one/                                  755        1600000000  [dir×2 ≈5f]  ≈11 lines
-├── src/                                      755        1600000000
-│   ├── blob.bin                              644    6B  1600000000  binary
-│   ├── lib.rs                           2    644   28B  1600000000
-│   └── main.rs                          1    644   13B  1600000000
-├── Cargo.toml                           2    644   22B  1600000000
-├── README.md                            3    644   17B  1600000000
-├── readme-link -> README.md             3    644   17B  1600000000
-├── run.sh                               2    700   18B  1600000000
-└── dangling -> nowhere.md [broken]           755        1599955200
+                                         lines     perms      bytes          mtime
+├── deep/                                            755                1600000000
+│   └── one/                               11.       755                1600000000  [dir×2 ≈5f]
+├── src/                                             755                1600000000
+│   ├── blob.bin                                     644         6.     1600000000  binary
+│   ├── lib.rs                              2.       644        28.     1600000000
+│   └── main.rs                             1.       644        13.     1600000000
+├── Cargo.toml                              2.       644        22.     1600000000
+├── README.md                               3.       644        17.     1600000000
+├── readme-link -> README.md                3.       644        17.     1600000000
+├── run.sh                                  2.       700        18.     1600000000
+└── dangling -> nowhere.md [broken]                  755                1599955200

@@ -22,13 +22,7 @@ pub fn default_patterns() -> Vec<String> {
         .arrays
         .get("important")
         .cloned()
-        .unwrap_or_else(|| {
-            vec![
-                "README*".into(),
-                "AGENTS.md".into(),
-                "CLAUDE.md".into(),
-            ]
-        })
+        .unwrap_or_else(|| vec!["README*".into(), "AGENTS.md".into(), "CLAUDE.md".into()])
 }
 
 #[derive(Debug, Clone)]

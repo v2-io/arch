@@ -86,7 +86,11 @@ fn defaults_show_no_size_or_mtime() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let a_line = o.lines().find(|l| l.contains("a.md")).unwrap();
-    assert!(!a_line.contains("5B"), "size is quiet by default: {a_line}");
+    // 2026-08-22 count-cell slice: human size is no longer `5B`.
+    assert!(
+        !a_line.contains("5B") && !a_line.contains("5."),
+        "size is quiet by default: {a_line}"
+    );
     // The stamp is the only ISO time in the look.
     assert_eq!(o.matches('Z').count(), 1, "mtime is quiet by default: {o}");
 }
@@ -98,7 +102,16 @@ fn config_turns_size_on_env_overrides() {
     user_home(&xdg, "columns.size = on\n");
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("5B") && o.contains("2.0K"), "human sizes: {o}");
+    // 2026-08-22 count-cell slice: scale at ≥10,000, so 5 B and 2048 B are
+    // exact (`5.`, `2·048.`) not `5B` / `2.0K`. Unit blanked under `bytes`.
+    assert!(
+        o.contains("5.") && o.contains("2·048."),
+        "count-cell sizes: {o}"
+    );
+    assert!(
+        !o.contains("5B") && !o.contains("2.0K"),
+        "old human_size retired: {o}"
+    );
     let (c, o, _) = run(
         &dir,
         &xdg,
@@ -106,7 +119,10 @@ fn config_turns_size_on_env_overrides() {
         &["--depth", "1"],
     );
     assert_eq!(c, 0);
-    assert!(!o.contains("5B"), "env layer outranks user-home: {o}");
+    assert!(
+        !o.contains("5.") && !o.contains("2·048."),
+        "env layer outranks user-home: {o}"
+    );
 }
 
 /// Subfeature 4: format override through the same stack.
@@ -117,7 +133,8 @@ fn format_override_bytes() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("2048"), "bytes format: {o}");
-    assert!(!o.contains("2.0K"), "{o}");
+    // 2026-08-22 count-cell slice: format.size = bytes stays the raw integer.
+    assert!(!o.contains("2.0K") && !o.contains("2·048."), "{o}");
 }
 
 #[test]
@@ -130,7 +147,9 @@ fn mtime_epoch_format() {
     assert_eq!(o.matches('Z').count(), 1, "{o}");
     let a_line = o.lines().find(|l| l.contains("a.md")).unwrap();
     assert!(
-        a_line.split_whitespace().any(|w| w.len() >= 10 && w.chars().all(|c| c.is_ascii_digit())),
+        a_line
+            .split_whitespace()
+            .any(|w| w.len() >= 10 && w.chars().all(|c| c.is_ascii_digit())),
         "epoch seconds: {a_line}"
     );
 }
@@ -154,7 +173,10 @@ fn fact_flags_refused_with_config_path() {
     assert!(e.contains("columns.size"), "refusal names the ask: {e}");
     let (c, _, e) = run(&dir, &xdg, &[], &["--owner"]);
     assert_eq!(c, 2);
-    assert!(e.contains("columns.owner"), "built since Wave D; ask named: {e}");
+    assert!(
+        e.contains("columns.owner"),
+        "built since Wave D; ask named: {e}"
+    );
     let (c, _, e) = run(&dir, &xdg, &[], &["--linkcount"]);
     assert_eq!(c, 2);
     assert!(
@@ -205,10 +227,15 @@ fn size_column_right_aligned() {
     let (dir, xdg) = fixture();
     user_home(&xdg, "columns.size = on\n");
     let (_, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    // 2026-08-22 count-cell slice: both exact, unit blanked; the `.` is
+    // the right edge after trim. Char positions — `·` is two UTF-8 bytes.
     let end = |name: &str| {
         let l = o.lines().find(|l| l.contains(name)).unwrap();
-        let v = if name == "a.md" { "5B" } else { "2.0K" };
-        l.find(v).unwrap() + v.len()
+        l.char_indices()
+            .rev()
+            .find(|(_, c)| *c == '.')
+            .map(|(i, _)| l[..i].chars().count() + 1)
+            .unwrap()
     };
     assert_eq!(end("a.md"), end("big.md"), "right edges align: {o}");
 }
@@ -224,16 +251,38 @@ fn config_shows_fact_inventory() {
     let (c, o, e) = run(&dir, &xdg, &[], &["config"]);
     assert_eq!(c, 0, "{e}");
     for key in [
-        "filename", "leaf-census", "dir-census", "lines", "bytes", "mtime",
-        "filetype", "filekind-word", "symlink-target", "denied", "walk-bound",
-        "heat", "owner", "has", "facet", "git-status",
+        "filename",
+        "leaf-census",
+        "dir-census",
+        "lines",
+        "bytes",
+        "mtime",
+        "filetype",
+        "filekind-word",
+        "symlink-target",
+        "denied",
+        "walk-bound",
+        "heat",
+        "owner",
+        "has",
+        "facet",
+        "git-status",
     ] {
         assert!(o.contains(key), "inventory lists {key}: {o}");
     }
     // The position vocabulary is lattice-2's, and it says where the fact
     // paints *today* — the old table's `place` words were inverted.
-    for word in ["name-location", "after-name", "near-right", "far-right", "level-location"] {
-        assert!(o.contains(word), "inventory speaks lattice-2 positions ({word}): {o}");
+    for word in [
+        "name-location",
+        "after-name",
+        "near-right",
+        "far-right",
+        "level-location",
+    ] {
+        assert!(
+            o.contains(word),
+            "inventory speaks lattice-2 positions ({word}): {o}"
+        );
     }
     // Offices, and the fields that make a row actionable or honest.
     for word in ["office", "census", "mark", "weight", "derived-from"] {
@@ -248,7 +297,10 @@ fn config_shows_fact_inventory() {
         .lines()
         .find(|l| l.contains(" bytes ") && l.contains("columns.size"))
         .unwrap();
-    assert!(bytes_row.contains(" on"), "state is current, not default: {bytes_row}");
+    assert!(
+        bytes_row.contains(" on"),
+        "state is current, not default: {bytes_row}"
+    );
 }
 
 /// The column-headings line (design/columns.md §Column headings): dimmed
@@ -260,17 +312,21 @@ fn headings_line_names_the_columns() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let lines: Vec<&str> = o.lines().collect();
-    let h = lines.iter().position(|l| l.trim_start().starts_with("lines")).unwrap();
-    assert!(lines[h + 1].starts_with('├') || lines[h + 1].starts_with('└'),
-        "headings sit directly above the children: {o}");
-    // Right edge of the heading aligns with the column's values (right-
-    // aligned like them): a.md is one unterminated line -> value "1".
-    // Char positions, not byte offsets — the tree glyphs are multibyte.
+    let h = lines
+        .iter()
+        .position(|l| l.trim_start().starts_with("lines"))
+        .unwrap();
+    assert!(
+        lines[h + 1].starts_with('├') || lines[h + 1].starts_with('└'),
+        "headings sit directly above the children: {o}"
+    );
+    // 2026-08-22 heading-to-dot: the word ends at cell 9 (the `.`), not
+    // cell 12. Char positions, not bytes — the tree glyphs are multibyte.
     let chars_to = |l: &str, byte: usize| l[..byte].chars().count();
     let head_end = chars_to(lines[h], lines[h].find("lines").unwrap()) + "lines".len();
     let a_line = lines.iter().find(|l| l.contains("a.md")).unwrap();
-    let val_end = chars_to(a_line, a_line.rfind('1').unwrap()) + 1;
-    assert_eq!(head_end, val_end, "heading right-aligns over its column: {o}");
+    let dot_end = chars_to(a_line, a_line.rfind('.').unwrap()) + 1;
+    assert_eq!(head_end, dot_end, "heading ends above the `.`: {o}");
 }
 
 /// No fact columns ⇒ no headings line (an all-off look stays bare).
@@ -288,7 +344,12 @@ fn headings_absent_without_columns() {
 fn headings_charge_the_budget() {
     let (dir, xdg) = fixture();
     for n in 4..8 {
-        let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", &n.to_string()]);
+        let (c, o, e) = run(
+            &dir,
+            &xdg,
+            &[],
+            &["--depth", "1", "--lines", &n.to_string()],
+        );
         assert_eq!(c, 0, "{e}");
         // (Footer on stderr since 2026-08-22 — stdout is exactly the look.)
         assert!(o.lines().count() <= n, "--lines {n} holds: {o}");
@@ -302,7 +363,13 @@ fn file_root_facts_are_labeled() {
     let (dir, xdg) = fixture();
     let (c, o, e) = run(&dir, &xdg, &[], &["a.md"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("1 lines"), "labeled line count on the facts line: {o}");
+    // 2026-08-22 count-cell slice: file-root has no headings line, so the
+    // unit slot speaks (`𝓁`) instead of the `"N lines"` wrap.
+    assert!(
+        o.contains("1.") && o.contains('\u{1D4C1}'),
+        "count cell with unit on the facts line: {o}"
+    );
+    assert!(!o.contains("1 lines"), "old wrap retired: {o}");
 }
 
 /// mtime's default text form is relative — one register with heat's age —
@@ -401,5 +468,8 @@ fn quiet_column_without_speakers_has_no_heading() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(!o.contains("size"), "no heading over silence: {o}");
-    assert!(o.contains("lines"), "the speaking column keeps its word: {o}");
+    assert!(
+        o.contains("lines"),
+        "the speaking column keeps its word: {o}"
+    );
 }

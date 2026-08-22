@@ -84,7 +84,10 @@ fn gitignore_does_not_claim_git() {
         !cache_line.contains("git]") && !cache_line.contains("git,"),
         "no git claim from an ignore file: {cache_line}"
     );
-    assert!(cache_line.contains("gitignore"), "its own word instead: {cache_line}");
+    assert!(
+        cache_line.contains("gitignore"),
+        "its own word instead: {cache_line}"
+    );
 }
 
 /// An unknown --inspect kind is refused by name with the menu (it used to
@@ -135,17 +138,30 @@ fn estimates_marked_distinctly_and_big_visible_files_degrade() {
     let (c, o, e) = run(&dir, &xdg, &[("ASPECTUS_READS", "1")], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let sub = o.lines().find(|l| l.contains("sub/")).unwrap();
-    assert!(sub.contains("~") && sub.contains("lines"), "estimate marked ~: {sub}");
-    assert!(!sub.contains("≈"), "≈ is reserved for exact counts now: {sub}");
+    // 2026-08-22 count-cell slice: `~` in the m slot; "lines" is the heading.
+    assert!(sub.contains('~'), "estimate marked ~: {sub}");
+    assert!(
+        !sub.contains("≈"),
+        "≈ is reserved for exact counts now: {sub}"
+    );
     let big = o.lines().find(|l| l.contains("big.md")).unwrap();
     assert!(
-        !big.split_whitespace().any(|w| w.chars().all(|c| c.is_ascii_digit())),
+        !big.split_whitespace()
+            .any(|w| w.chars().all(|c| c.is_ascii_digit())),
         "per-file count absent past the budget: {big}"
     );
     // With budget, the same totals are exact and wear ≈.
     let (_, o2, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
     let sub2 = o2.lines().find(|l| l.contains("sub/")).unwrap();
-    assert!(sub2.contains("≈20k lines"), "exact count, grouped: {sub2}");
+    // 2026-08-22 count-cell slice: 20,000 lines → ≈ 20.0K in the lines column.
+    assert!(
+        sub2.contains('\u{2248}') && sub2.contains("20.0K"),
+        "exact count, grouped: {sub2}"
+    );
+    assert!(
+        !sub2.contains("≈20k lines"),
+        "old mass tail retired: {sub2}"
+    );
 }
 
 /// JSON heat is rounded to at most four decimals — no 17-digit spurious
@@ -219,7 +235,10 @@ fn truncated_sees_hidden_furniture_floor() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("\"bounded\":true"), "the floor is data: {o}");
-    assert!(o.contains("\"truncated\":true"), "and truncated sees it: {o}");
+    assert!(
+        o.contains("\"truncated\":true"),
+        "and truncated sees it: {o}"
+    );
 }
 
 /// The steward's feedback footer (verbatim ask, 2026-08-14) rides every
@@ -235,10 +254,16 @@ fn feedback_footer_rides_every_output() {
     assert!(!o.contains(probe), "stdout is the look only: {o}");
     assert!(e.contains(probe), "footer on stderr: {e}");
     let (_, j, e) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
-    assert!(!j.contains("\"feedback\""), "no feedback field in the document: {j}");
+    assert!(
+        !j.contains("\"feedback\""),
+        "no feedback field in the document: {j}"
+    );
     assert!(e.contains(probe), "footer on stderr in json mode: {e}");
     let (_, cfg, e) = run(&dir, &xdg, &[], &["config"]);
-    assert!(!cfg.contains(probe) && e.contains(probe), "config: {cfg} / {e}");
+    assert!(
+        !cfg.contains(probe) && e.contains(probe),
+        "config: {cfg} / {e}"
+    );
     let (_, v, _) = run(&dir, &xdg, &[], &["version"]);
     assert_eq!(v.lines().count(), 1, "version stays one line: {v}");
     let (_, h, _) = run(&dir, &xdg, &[], &["help"]);

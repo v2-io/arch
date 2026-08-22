@@ -114,10 +114,7 @@ fn level(node: &mut Node, min: usize) {
     let mut taken = vec![false; node.children.len()];
     let mut collapsed: Vec<(Key, Vec<(usize, u64)>)> = Vec::new();
     for (key, members) in order {
-        let members: Vec<(usize, u64)> = members
-            .into_iter()
-            .filter(|(i, _)| !taken[*i])
-            .collect();
+        let members: Vec<(usize, u64)> = members.into_iter().filter(|(i, _)| !taken[*i]).collect();
         if members.len() < min {
             continue;
         }

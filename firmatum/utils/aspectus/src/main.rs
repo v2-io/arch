@@ -161,20 +161,22 @@ fn help_page() -> String {
                                         names its gitdir)\n\
            aspectus --format json PATH (the same look, as data)\n\
          \n\
-         Non-binary files show a line count (binary shows none, never 0);\n\
-         kind comes from a suffix-map (the `[kinds]` table in\n\
-         `aspectus config defaults`; legacy key `kinds`:\n\
+         Non-binary files show a line count in a 12-cell field (binary\n\
+         shows none, never 0); kind comes from a suffix-map (the `[kinds]`\n\
+         table in `aspectus config defaults`; legacy key `kinds`:\n\
          `SUFFIX:text|binary`, `!SUFFIX` to drop). An unexpanded directory\n\
-         carries a census of what it held — [dir×3 \u{2248}120f \u{b7} md\u{d7}31] — with\n\
+         carries a census of what it held — [dir\u{d7}3 \u{2248}120f \u{b7} md\u{d7}31] — with\n\
          subdirectories as containers whose deep file-count (mass) leads,\n\
-         and the subtree's text lines after it (\u{2248}61k lines): a glance\n\
-         calibrates how much has not been seen. \u{2248} is an exact count\n\
-         grouped for the eye; \u{2265} marks a floor; a single concealed name\n\
-         shows the name. The look reads file content only up to a budget\n\
-         (config `reads`, bytes); past it, deep line totals are estimated\n\
-         from sizes and marked ~ (this walk's estimate, not a property of\n\
-         the directory) and per-file counts are omitted \u{2014} the glance\n\
-         stays fast, and says how it degraded.\n\
+         and the subtree's text lines in the `lines` column (\u{2248}  61.2K /\n\
+         ~   5.0M / \u{2265} 434.0K): a glance calibrates how much has not been\n\
+         seen. Below 10,000 the value is exact (`1\u{b7}099.`); at and above,\n\
+         three significant digits and a scale letter. \u{2248} is an exact count\n\
+         grouped for the eye; ~ is this walk's estimate; \u{2265} marks a floor;\n\
+         a single concealed name shows the name. The look reads file\n\
+         content only up to a budget (config `reads`, bytes); past it, deep\n\
+         line totals are estimated from sizes and marked ~ (this walk's\n\
+         estimate, not a property of the directory) and per-file counts\n\
+         are omitted \u{2014} the glance stays fast, and says how it degraded.\n\
          \n\
          Inside a git repo each visible line carries the aliveness cluster\n\
          `score \u{b7} age` under the `heat \u{b7} age` heading: the score is\n\

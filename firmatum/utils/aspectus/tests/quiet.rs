@@ -52,7 +52,9 @@ fn backdate_all(dir: &Path) {
 
 fn run(dir: &Path, xdg: &Path, envs: &[(&str, &str)], args: &[&str]) -> (i32, String, String) {
     let mut c = bin();
-    c.args(args).current_dir(dir).env("XDG_CONFIG_HOME", xdg)
+    c.args(args)
+        .current_dir(dir)
+        .env("XDG_CONFIG_HOME", xdg)
         // Numbered-series fixtures probe sibling-norm statistics; globify
         // (2026-08-14) would fuse the cohort — pinned off, its own row.
         .env("ASPECTUS_GLOBIFY", "off");
@@ -135,7 +137,10 @@ fn majority_normalizes_exec() {
     backdate_all(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(!o.contains("755"), "sibling-usual bin dir stays silent: {o}");
+    assert!(
+        !o.contains("755"),
+        "sibling-usual bin dir stays silent: {o}"
+    );
 }
 
 /// Subfeature 4: a setuid file speaks even in an all-setuid level.
@@ -164,7 +169,10 @@ fn size_whale_speaks() {
     backdate_all(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(line_of(&o, "whale.md").contains("80M"), "{o}");
+    // 2026-08-22 count-cell slice: 80 MiB → ≈ 80.0M (always one fraction
+    // digit when scaled); 2048 B is exact `2·048.`, so the old `2.0K`
+    // silence check still holds.
+    assert!(line_of(&o, "whale.md").contains("80.0M"), "{o}");
     assert!(!line_of(&o, "f1.md").contains("2.0K"), "{o}");
 }
 
@@ -178,8 +186,15 @@ fn tiny_level_floor() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     // Tree lines only — the temp-dir path in the header carries digits.
-    let tree: String = o.lines().skip_while(|l| !l.starts_with('/')).skip(1).collect();
-    assert!(!tree.contains("1000") && !tree.contains("1.0K") && !tree.contains("100B"), "{o}");
+    let tree: String = o
+        .lines()
+        .skip_while(|l| !l.starts_with('/'))
+        .skip(1)
+        .collect();
+    assert!(
+        !tree.contains("1000") && !tree.contains("1.0K") && !tree.contains("100B"),
+        "{o}"
+    );
 }
 
 /// Subfeature 8: the binary among twenty .md carries the kind word.
@@ -194,7 +209,10 @@ fn kind_intruder_speaks() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "0"]);
     assert_eq!(c, 0, "{e}");
     assert!(line_of(&o, "blob.png").contains("binary"), "{o}");
-    assert!(!line_of(&o, "n3.md").contains("text"), "the plurality is silent: {o}");
+    assert!(
+        !line_of(&o, "n3.md").contains("text"),
+        "the plurality is silent: {o}"
+    );
 }
 
 /// Recent mtime speaks (cold recency window), old stays silent.
@@ -239,7 +257,8 @@ fn budget_independent() {
         squeeze(line_of(&o_tight, "whale.md")),
         "identical quiet facts across budgets"
     );
-    assert!(line_of(&o_tight, "whale.md").contains("80M"));
+    // 2026-08-22 count-cell slice: 80 MiB is `80.0M`, not `80M`.
+    assert!(line_of(&o_tight, "whale.md").contains("80.0M"));
 }
 
 /// Subfeature 10: the dial silences a 10× outlier; a per-fact override
@@ -253,21 +272,31 @@ fn sensitivity_dial_and_override() {
     write_file(&dir, "big.md", 10 << 20); // 10×: log10 dev = 1.0
     backdate_all(&dir);
     let (_, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
-    assert!(line_of(&o, "big.md").contains("10M"), "default 1.0 voices 10x: {o}");
+    // 2026-08-22 count-cell slice: 10 MiB is `10.0M`, not `10M`.
+    assert!(
+        line_of(&o, "big.md").contains("10.0M"),
+        "default 1.0 voices 10x: {o}"
+    );
     fs::write(
         xdg.join("aspectus/aspectus.toml"),
         "quiet.sensitivity = \"2.0\"\n",
     )
     .unwrap();
     let (_, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
-    assert!(!line_of(&o, "big.md").contains("10M"), "2.0 silences 10x: {o}");
+    assert!(
+        !line_of(&o, "big.md").contains("10.0M"),
+        "2.0 silences 10x: {o}"
+    );
     fs::write(
         xdg.join("aspectus/aspectus.toml"),
         "quiet.sensitivity = \"2.0\"\nquiet.sensitivity.size = \"1.0\"\n",
     )
     .unwrap();
     let (_, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
-    assert!(line_of(&o, "big.md").contains("10M"), "per-fact override re-voices: {o}");
+    assert!(
+        line_of(&o, "big.md").contains("10.0M"),
+        "per-fact override re-voices: {o}"
+    );
 }
 
 /// Subfeature 11: same tree, same config — byte-identical below the stamp

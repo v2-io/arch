@@ -157,6 +157,8 @@ Laws:
         3.3PB       under a heading naming the subject (𝓃/B/𝓁/𝓉 still shows unless the heading names the unit too)
 ```
 
+**Landed 2026-08-22 (step 3) — two things for Joseph's eyes:** (a) *small exact totals carry no mark* — the inbox mock showed `≈101`/`≈681` for ungrouped dir totals, but the cell law says `≈` means "exact, grouped for the eye," so an ungrouped exact total is blank-marked (`681.`); the mock predates the law — ratify or reverse. (b) *`.`-always is loud on small numbers* (`1.` `2.` `7.`) — the dots align, which was the point; if it grates in use, the alternative is "dot only when there is a fraction or thousands," at the cost of the anchor column. Also landed: a scaled exact value wears `≈` even under a heading (`≈  80.0M`), since scaling *is* grouping.
+
 **Not decided here:** how a *subgroup* subject (suffix bucket `md`, kind `archive`, a glob pattern, `dirty`) is written before its cell — the census/facet forms wait on that. Consequences already implied: `(44 files)`, `dirty<4>`, `≈127f`, `md×31` all migrate into this grammar once the subgroup form is chosen.
 
 ## Meaningful agent glyph packs (2026-08-15, from Joseph's question "what do nerdfont glyphs look like to you?")

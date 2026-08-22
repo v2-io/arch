@@ -164,7 +164,10 @@ fn layer_rank(name: &str) -> u8 {
 /// Look up a format key under either its lattice name or the older
 /// config name (`format.bytes` / `format.size`, `format.lines` /
 /// `format.line-count`). The higher layer wins when both names are set.
-pub fn format_val<'a>(won: &'a BTreeMap<String, (String, &'static str)>, key: &str) -> Option<&'a str> {
+pub fn format_val<'a>(
+    won: &'a BTreeMap<String, (String, &'static str)>,
+    key: &str,
+) -> Option<&'a str> {
     let alias = match key {
         "format.size" => Some("format.bytes"),
         "format.bytes" => Some("format.size"),
@@ -360,7 +363,11 @@ fn parse_val(v: &str) -> Val {
     if v.starts_with('[') {
         Val::Array(parse_str_array(v).unwrap_or_default())
     } else if v.starts_with('"') || v.starts_with('\'') {
-        Val::Str(parse_quoted(v).map(|(s, _)| s).unwrap_or_else(|| unquote(v)))
+        Val::Str(
+            parse_quoted(v)
+                .map(|(s, _)| s)
+                .unwrap_or_else(|| unquote(v)),
+        )
     } else {
         Val::Str(v.to_string())
     }
@@ -452,12 +459,7 @@ fn load_path(path: &Path) -> (bool, Parsed) {
     }
 }
 
-fn layer_from_parsed(
-    name: &'static str,
-    path: Option<PathBuf>,
-    existed: bool,
-    p: Parsed,
-) -> Layer {
+fn layer_from_parsed(name: &'static str, path: Option<PathBuf>, existed: bool, p: Parsed) -> Layer {
     Layer {
         name,
         path,
@@ -517,7 +519,10 @@ pub fn env_values() -> BTreeMap<String, String> {
         ("ASPECTUS_IMPORTANT", "important"),
         ("ASPECTUS_QUIET_SENSITIVITY", "quiet.sensitivity"),
         ("ASPECTUS_QUIET_SENSITIVITY_SIZE", "quiet.sensitivity.size"),
-        ("ASPECTUS_QUIET_SENSITIVITY_MTIME", "quiet.sensitivity.mtime"),
+        (
+            "ASPECTUS_QUIET_SENSITIVITY_MTIME",
+            "quiet.sensitivity.mtime",
+        ),
         ("ASPECTUS_KINDS", "kinds"),
         ("ASPECTUS_ONE_FS", "one-fs"),
         ("ASPECTUS_RECENCY_SOURCE", "recency-source"),
@@ -919,10 +924,7 @@ pub fn render_show(res: &Resolved) -> String {
             (None, "agent-type", _) => "--caller not set".into(),
             (None, _, _) => "—".into(),
         };
-        out.push_str(&format!(
-            "{:<12} {:<9} {}\n",
-            layer.name, status, source
-        ));
+        out.push_str(&format!("{:<12} {:<9} {}\n", layer.name, status, source));
     }
     out.push_str("\nwon:\n");
     for (k, (v, from)) in &res.won {
@@ -1000,10 +1002,7 @@ mod tests {
         assert_eq!(p.scalars.get("lines").map(String::as_str), Some("80"));
         assert_eq!(p.scalars.get("globify").map(String::as_str), Some("true"));
         assert_eq!(p.scalars.get("globify.min").map(String::as_str), Some("5"));
-        assert_eq!(
-            p.scalars.get("one-fs").map(String::as_str),
-            Some("true")
-        );
+        assert_eq!(p.scalars.get("one-fs").map(String::as_str), Some("true"));
         assert_eq!(
             p.scalars.get("format.mtime").map(String::as_str),
             Some("relative")
@@ -1017,7 +1016,10 @@ mod tests {
             ["git-status", "mtime", "bytes"]
         );
         assert_eq!(
-            p.arrays.get("layout.far-right").cloned().unwrap_or_default(),
+            p.arrays
+                .get("layout.far-right")
+                .cloned()
+                .unwrap_or_default(),
             ["lines", "heat"]
         );
         assert_eq!(
@@ -1051,7 +1053,9 @@ mod tests {
             p.furniture
         );
         assert!(
-            p.kinds.iter().any(|(k, v)| k == "md" && v == "text/markdown"),
+            p.kinds
+                .iter()
+                .any(|(k, v)| k == "md" && v == "text/markdown"),
             "{:?}",
             p.kinds
         );
@@ -1061,9 +1065,7 @@ mod tests {
             p.kinds
         );
         assert!(
-            p.kinds
-                .iter()
-                .any(|(k, v)| k == "svg" && v == "image/svg"),
+            p.kinds.iter().any(|(k, v)| k == "svg" && v == "image/svg"),
             "{:?}",
             p.kinds
         );
@@ -1106,7 +1108,10 @@ far-right = ["lines", "heat"]
 "#,
         );
         assert_eq!(p.scalars.get("globify.min").unwrap(), "5");
-        assert_eq!(p.arrays.get("important").unwrap(), &["README*", "AGENTS.md"]);
+        assert_eq!(
+            p.arrays.get("important").unwrap(),
+            &["README*", "AGENTS.md"]
+        );
         assert_eq!(
             p.arrays.get("layout.far-right").unwrap(),
             &["lines", "heat"]
@@ -1134,7 +1139,13 @@ far-right = ["lines", "heat"]
         assert_eq!(get("columns.initial-sha"), Some("off"));
         assert_eq!(get("columns.latest-sha"), Some("off"));
         assert_eq!(p.scalars.get("lines").map(String::as_str), Some("80"));
-        assert_eq!(p.scalars.get("format.bytes").map(String::as_str), Some("human"));
-        assert_eq!(p.scalars.get("format.lines").map(String::as_str), Some("physical"));
+        assert_eq!(
+            p.scalars.get("format.bytes").map(String::as_str),
+            Some("human")
+        );
+        assert_eq!(
+            p.scalars.get("format.lines").map(String::as_str),
+            Some("physical")
+        );
     }
 }

@@ -16,7 +16,7 @@
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
-use crate::n_level::{suffix_bucket, Node};
+use crate::n_level::{Node, suffix_bucket};
 
 /// Which quiet facts surprise on this line.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -179,7 +179,11 @@ fn permissions(kids: &mut [Node]) {
         } else {
             p == 0o644 || (exec_majority && p == 0o755)
         };
-        let majority = if n.is_dir { dir_majority } else { file_majority };
+        let majority = if n.is_dir {
+            dir_majority
+        } else {
+            file_majority
+        };
         let matches_majority = majority == Some(p);
         n.q.mode = !conventional && !matches_majority;
     }
@@ -348,7 +352,10 @@ mod tests {
     /// since a real root-owned fixture needs privilege).
     #[test]
     fn root_owned_speaks_among_your_own() {
-        let caller = Caller { euid: 501, egid: 20 };
+        let caller = Caller {
+            euid: 501,
+            egid: 20,
+        };
         let mut kids = vec![
             file("a.md", 0o644, 501, 10),
             file("b.md", 0o644, 501, 10),
@@ -363,14 +370,20 @@ mod tests {
     /// unsurprising.
     #[test]
     fn majority_other_owner_is_silent() {
-        let caller = Caller { euid: 501, egid: 20 };
+        let caller = Caller {
+            euid: 501,
+            egid: 20,
+        };
         let mut kids = vec![
             file("a", 0o644, 1000, 1),
             file("b", 0o644, 1000, 1),
             file("c", 0o644, 501, 1),
         ];
         owner(&mut kids, &caller);
-        assert!(!kids[0].q.owner, "majority owner silent even though not you");
+        assert!(
+            !kids[0].q.owner,
+            "majority owner silent even though not you"
+        );
         assert!(!kids[2].q.owner, "you are always silent");
     }
 

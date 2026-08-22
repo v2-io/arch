@@ -235,7 +235,10 @@ mod tests {
     #[test]
     fn urls_trim_to_host_path() {
         assert_eq!(trim_url("git@github.com:v2-io/x.git"), "github.com/v2-io/x");
-        assert_eq!(trim_url("https://github.com/v2-io/x.git"), "github.com/v2-io/x");
+        assert_eq!(
+            trim_url("https://github.com/v2-io/x.git"),
+            "github.com/v2-io/x"
+        );
         assert_eq!(trim_url("ssh://git@host/a/b"), "host/a/b");
     }
 }

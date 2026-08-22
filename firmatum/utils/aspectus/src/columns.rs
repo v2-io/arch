@@ -20,6 +20,7 @@
 //!    Stops are pure functions of the look's content, never terminal width
 //!    (alignment decided 2026-08-14; git-heat's look is the prior art).
 
+use crate::count_cell;
 use crate::n_level::Node;
 use crate::ready::{self, Position, Ready};
 
@@ -236,13 +237,21 @@ struct Row {
 
 impl Row {
     fn plain(name: String, ncols: usize) -> Row {
-        Row { slots: Slots::bare(name, ncols), color_dir: false, dim: false, heading: false }
+        Row {
+            slots: Slots::bare(name, ncols),
+            color_dir: false,
+            dim: false,
+            heading: false,
+        }
     }
 
     /// The width of everything left of the tab-stop.
     fn name_width(&self) -> usize {
         let s = &self.slots;
-        s.far_left.iter().map(|r| r.text.chars().count()).sum::<usize>()
+        s.far_left
+            .iter()
+            .map(|r| r.text.chars().count())
+            .sum::<usize>()
             + s.level.chars().count()
             + s.name.chars().count()
             + s.name_suffix.chars().count()
@@ -250,7 +259,11 @@ impl Row {
     }
 
     fn cell(&self, i: usize) -> &str {
-        self.slots.far_right.get(i).map(|r| r.text.as_str()).unwrap_or("")
+        self.slots
+            .far_right
+            .get(i)
+            .map(|r| r.text.as_str())
+            .unwrap_or("")
     }
 
     fn has_right(&self) -> bool {
@@ -288,7 +301,9 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
         }
         if lw > 0 && rw > 0 {
             for r in &mut rows {
-                let Some(cell) = r.slots.far_right.get_mut(ci) else { continue };
+                let Some(cell) = r.slots.far_right.get_mut(ci) else {
+                    continue;
+                };
                 if cell.is_empty() {
                     continue;
                 }
@@ -400,13 +415,22 @@ fn heading_row(cols: &Cols) -> Row {
         .into_iter()
         .map(|c| Ready {
             fact: c.fact,
-            text: c.heading.to_string(),
+            // Count-cell headings end at the `.` (cell 9); the field stays
+            // 12 so heat does not move (design/grid-cleanup.md §The count
+            // cell: a heading is aligned over the columns it names).
+            text: match c.fact {
+                "lines" | "bytes" => count_cell::heading(c.heading),
+                _ => c.heading.to_string(),
+            },
             position: Position::FarRight,
             office: crate::ready::Office::Look,
         })
         .collect();
     Row {
-        slots: Slots { far_right: cells, ..Slots::default() },
+        slots: Slots {
+            far_right: cells,
+            ..Slots::default()
+        },
         color_dir: false,
         dim: false,
         heading: true,
@@ -427,24 +451,35 @@ pub fn headings_expected(tree: &Node, cols: &Cols) -> bool {
 }
 
 /// The root's own facts, pre-joined for the header facts line. Empty when
-/// the root has nothing to say. A file root gets no headings line below,
-/// so its unitless numbers carry their column word here (`767 lines`,
-/// `heat 1.01 · …` — the bare-`0`/`767` first-contact fix, 2026-08-14);
-/// a directory root's cluster stays bare per the headings specimen.
+/// the root has nothing to say. Count cells here show their unit (this
+/// line sits *above* the headings; a file root has no headings line at
+/// all) — the 2026-08-14 `"767 lines"` wrap is the unit slot now. Other
+/// unitless columns still carry their word (`perms`, `heat`). The 12-cell
+/// pad is trimmed: this line is not in the column grid.
 pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
-    let cells = ready::far_right(tree, cols);
+    let cells = ready::far_right_header(tree, cols);
     let mut parts: Vec<String> = if tree.is_dir {
-        cells.into_iter().filter(|c| !c.is_empty()).map(|c| c.text).collect()
+        cells
+            .into_iter()
+            .filter(|c| !c.is_empty())
+            .map(|c| {
+                if c.fact == "lines" || c.fact == "bytes" {
+                    c.text.trim().to_string()
+                } else {
+                    c.text
+                }
+            })
+            .collect()
     } else {
         cells
             .into_iter()
             .zip(ready::columns(cols))
             .filter(|(c, _)| !c.is_empty())
             .map(|(c, col)| match col.heading {
-                "lines" => format!("{} lines", c.text),
+                "lines" | "bytes" => c.text.trim().to_string(),
                 "perms" => format!("perms {}", c.text),
                 "heat · age" => format!("heat {}", c.text),
-                _ => c.text, // sizes, owners, ages already say what they are
+                _ => c.text,
             })
             .collect()
     };
@@ -476,7 +511,9 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
     }
     let mut root_row = Row::plain(root, ncols);
     // Decoration completes the name (a symlinked root's `-> target`).
-    root_row.slots.after_name = ready::symlink_target(tree).map(|r| r.text).unwrap_or_default();
+    root_row.slots.after_name = ready::symlink_target(tree)
+        .map(|r| r.text)
+        .unwrap_or_default();
     root_row.color_dir = true;
     rows.push(root_row);
     // The headings line, directly above the children it teaches (design/

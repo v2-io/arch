@@ -75,7 +75,9 @@ fn backdate(dir: &Path) {
 }
 
 fn line_of<'a>(o: &'a str, name: &str) -> &'a str {
-    o.lines().find(|l| l.contains(name)).unwrap_or_else(|| panic!("{name} not in {o}"))
+    o.lines()
+        .find(|l| l.contains(name))
+        .unwrap_or_else(|| panic!("{name} not in {o}"))
 }
 
 /// Subfeatures 1, 3, 4: counts on text, empty is zero, unterminated final
@@ -91,8 +93,12 @@ fn counts_on_text_files() {
     assert_eq!(c, 0, "{e}");
     assert!(line_of(&o, "twelve.md").contains("12"), "{o}");
     let empty = line_of(&o, "empty.txt");
-    assert!(empty.trim_end().ends_with('0'), "empty text is a real 0: {o}");
-    assert!(line_of(&o, "unterm.md").contains('2'), "a\\nb counts 2: {o}");
+    // 2026-08-22 count-cell slice: empty text is `0.` (the `.` always).
+    assert!(empty.contains("0."), "empty text is a real 0: {o}");
+    assert!(
+        line_of(&o, "unterm.md").contains('2'),
+        "a\\nb counts 2: {o}"
+    );
 }
 
 /// Subfeature 2: binary omits — not 0, no placeholder.
@@ -107,8 +113,15 @@ fn binary_omits_never_zero() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let line = line_of(&o, "img.png");
-    assert_eq!(line.trim_end(), line.trim_end().trim_end_matches('0'), "no 0 on binary: {o}");
-    assert!(!line.contains("img.png "), "nothing after the name: {line:?}");
+    assert_eq!(
+        line.trim_end(),
+        line.trim_end().trim_end_matches('0'),
+        "no 0 on binary: {o}"
+    );
+    assert!(
+        !line.contains("img.png "),
+        "nothing after the name: {line:?}"
+    );
 }
 
 /// Unknown suffix: the null-byte sniff decides (design leaning).
@@ -125,7 +138,10 @@ fn unknown_suffix_sniffs() {
     assert_eq!(c, 0, "{e}");
     assert!(line_of(&o, "notes.zzz").contains('2'), "text by sniff: {o}");
     let blob = line_of(&o, "blob.zzy");
-    assert!(blob.trim_end().ends_with("blob.zzy"), "binary by sniff, no count: {o}");
+    assert!(
+        blob.trim_end().ends_with("blob.zzy"),
+        "binary by sniff, no count: {o}"
+    );
 }
 
 /// Subfeature 5: config suffix-map override, both directions.
@@ -137,7 +153,10 @@ fn suffix_map_is_config_driven() {
     backdate(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(line_of(&o, "a.md").trim_end().ends_with("a.md"), "marked binary, count gone: {o}");
+    assert!(
+        line_of(&o, "a.md").trim_end().ends_with("a.md"),
+        "marked binary, count gone: {o}"
+    );
     user_home(&xdg, "kinds = \"md:text\"\n");
     let (_, o2, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert!(line_of(&o2, "a.md").contains('3'), "text restores it: {o2}");
@@ -161,12 +180,18 @@ fn compose_only_no_flag() {
     fs::write(dir.join("a.md"), "1\n").unwrap();
     let (c, _, e) = run(&dir, &xdg, &[], &["--line-count"]);
     assert_eq!(c, 2);
-    assert!(e.contains("columns.line-count"), "refusal names the ask: {e}");
+    assert!(
+        e.contains("columns.line-count"),
+        "refusal names the ask: {e}"
+    );
     user_home(&xdg, "columns.line-count = \"off\"\n");
     backdate(&dir);
     let (c2, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c2, 0);
-    assert!(line_of(&o, "a.md").trim_end().ends_with("a.md"), "off removes it: {o}");
+    assert!(
+        line_of(&o, "a.md").trim_end().ends_with("a.md"),
+        "off removes it: {o}"
+    );
 }
 
 /// Subfeature 8: unreadable file — no count, never a guess.
@@ -185,7 +210,10 @@ fn unreadable_file_claims_nothing() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     fs::set_permissions(&p, fs::Permissions::from_mode(0o644)).unwrap();
     assert_eq!(c, 0, "{e}");
-    assert!(line_of(&o, "locked.md").trim_end().ends_with("locked.md"), "{o}");
+    assert!(
+        line_of(&o, "locked.md").trim_end().ends_with("locked.md"),
+        "{o}"
+    );
 }
 
 fn is_root() -> bool {

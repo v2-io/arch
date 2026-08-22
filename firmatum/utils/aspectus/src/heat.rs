@@ -300,9 +300,7 @@ pub fn annotate(node: &mut crate::n_level::Node, abs: &Path, half_life: f64) {
                         .iter()
                         .enumerate()
                         .filter(|(i, _)| i % threads == t)
-                        .filter_map(|(_, r)| {
-                            RepoHeat::obtain(r, half_life).map(|h| (r.clone(), h))
-                        })
+                        .filter_map(|(_, r)| RepoHeat::obtain(r, half_life).map(|h| (r.clone(), h)))
                         .collect::<Vec<_>>()
                 })
             })
@@ -340,7 +338,9 @@ fn go(
     obtained: &HashMap<PathBuf, RepoHeat>,
 ) {
     let own = if is_repo_root(node, abs) {
-        obtained.get(abs).filter(|r| repo.is_none_or(|c| c.root != r.root))
+        obtained
+            .get(abs)
+            .filter(|r| repo.is_none_or(|c| c.root != r.root))
     } else {
         None
     };

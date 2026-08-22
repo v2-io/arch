@@ -1,7 +1,9 @@
-//! Grid snapshots — the prefactor's safety net (impl/grid-cleanup.md step 1).
+//! Grid snapshots — the prefactor's safety net (impl/grid-cleanup.md step 1),
+//! re-blessed for the count-cell slice (step 3, 2026-08-22): `lines`/`bytes`
+//! are 12-cell fields, dir mass lives in `lines`, the census tail is gone.
+//! Re-blessed 2026-08-22: count-cell headings end at the `.` (cell 9).
 //!
-//! The grid refactor (ready-facts → cells → rows → paint) must not move the
-//! rendered bytes. These fixtures exercise the whole row grammar at once —
+//! These fixtures exercise the whole row grammar at once —
 //! furniture, facets, dir census, leaf census, symlinks (one broken), a
 //! walk-bound mark, quiet columns, gitignored entries, the `[has: …]` block
 //! — and compare against goldens byte-for-byte.

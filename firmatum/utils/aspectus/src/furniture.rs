@@ -53,10 +53,7 @@ pub struct View {
 impl View {
     /// Does this view neutralize hiding for a rule with these kinds?
     fn opened(&self, kinds: &[String]) -> bool {
-        self.show_all
-            || kinds
-                .iter()
-                .any(|k| self.inspect.iter().any(|i| i == k))
+        self.show_all || kinds.iter().any(|k| self.inspect.iter().any(|i| i == k))
     }
 }
 
@@ -234,9 +231,7 @@ where
                 let listed = r.fate == Fate::Mark || view.opened(&r.kinds);
                 if !listed {
                     hidden += 1;
-                    if is_dir
-                        && let Some(k) = r.kinds.iter().find(|k| !speaks_for_itself(k))
-                    {
+                    if is_dir && let Some(k) = r.kinds.iter().find(|k| !speaks_for_itself(k)) {
                         hidden_dirs.push((k.clone(), name.to_string()));
                     }
                 }

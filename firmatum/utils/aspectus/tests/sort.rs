@@ -220,7 +220,9 @@ fn explicit_sort_key_implies_its_column() {
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(o.matches('Z').count(), 1, "default look stays quiet: {o}");
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1", "--sort", "size"]);
-    assert!(o.contains("1B"), "size evidence on the line: {o}");
+    // 2026-08-22 count-cell slice: 1 byte is `1.` under the `bytes` heading,
+    // not `1B`. The heading is the evidence the column was implied on.
+    assert!(o.contains("bytes"), "size evidence on the line: {o}");
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1", "--sort", "recency"]);
     // The implied mtime column speaks in the relative default (2026-08-14).
     assert!(o.matches("ago").count() > 1, "mtime evidence when asked: {o}");

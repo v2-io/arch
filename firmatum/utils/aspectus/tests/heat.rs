@@ -108,8 +108,15 @@ fn heat_cluster_in_repo() {
     // stays blank, never faked. No digits may precede cold's `·`.
     let (before, _) = cold.rsplit_once('·').expect("age in the cluster: {cold:?}");
     let after_name = before.rsplit("cold.md").next().unwrap();
+    // 2026-08-22 count-cell slice: the line count is `1.` not `1`.
+    let cell = after_name.trim();
+    let count_cell = cell
+        .trim_end_matches('.')
+        .trim()
+        .parse::<u64>()
+        .is_ok();
     assert!(
-        !after_name.chars().any(|c| c.is_ascii_digit()) || after_name.trim().parse::<u64>().is_ok(),
+        !cell.chars().any(|c| c.is_ascii_digit()) || cell.parse::<u64>().is_ok() || count_cell,
         "no score claimed (a bare line-count cell is fine): {cold:?}"
     );
 }
@@ -121,7 +128,8 @@ fn no_heat_outside_git() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     // The quiet mtime may speak "0m ago" on a fresh file; the *cluster*
-    // (score · age) is what git-lessness forbids.
+    // (score · age) is what git-lessness forbids. 2026-08-22 count-cell
+    // slice: `·` also lives in `1·099.` at ≥1000 — this fixture is 1 line.
     assert!(!o.contains('·'), "no aliveness cluster outside git: {o}");
 }
 

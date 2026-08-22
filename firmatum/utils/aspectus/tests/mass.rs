@@ -69,7 +69,13 @@ fn unexpanded_dir_carries_deep_weight() {
     // mid/), direct one.md in the suffix bucket; subtree lines = 6.
     assert!(line.contains("mid/ ≈2f"), "container with deep files: {o}");
     assert!(line.contains("md×1"), "direct file bucket: {o}");
-    assert!(line.contains("≈6 lines"), "subtree text lines: {o}");
+    // 2026-08-22 count-cell slice: mass lines moved to the `lines` column.
+    // 6 is exact and ungrouped (below 10,000) so the mark is blank, not ≈.
+    assert!(!line.contains("≈6 lines"), "old mass tail retired: {o}");
+    assert!(
+        line.contains("6."),
+        "deep line total in the lines column: {o}"
+    );
 }
 
 #[test]
@@ -84,7 +90,10 @@ fn furniture_does_not_count() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let line = o.lines().find(|l| l.contains("crate/")).expect(&o);
-    assert!(line.contains("≈1f"), "target/'s debris is not the crate's mass: {o}");
+    assert!(
+        line.contains("≈1f"),
+        "target/'s debris is not the crate's mass: {o}"
+    );
     assert!(!line.contains("31"), "{o}");
 }
 
@@ -103,7 +112,10 @@ fn walk_bound_makes_mass_a_floor() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "2", "--walk", "2"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("[walk bound]"), "{o}");
-    assert!(!o.contains("≈20f"), "cut mass must not claim exactness: {o}");
+    assert!(
+        !o.contains("≈20f"),
+        "cut mass must not claim exactness: {o}"
+    );
 }
 
 /// A dir whose files are all binary shows the census without a lines claim.
@@ -137,7 +149,10 @@ fn read_budget_estimates_marked() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let line = o.lines().find(|l| l.contains("deep/")).expect(&o);
-    assert!(line.contains("~") && line.contains("lines"), "estimated, marked: {o}");
+    // 2026-08-22 count-cell slice: the `~` lives in the count cell's m slot;
+    // the word "lines" is the heading, not the cell.
+    assert!(line.contains('~'), "estimated, marked: {o}");
+    assert!(!line.contains(" lines"), "mass tail retired: {o}");
 }
 
 #[test]

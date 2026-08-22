@@ -85,7 +85,10 @@ fn parse_line(raw: &str) -> Option<Pattern> {
     if let Some(rest) = line.strip_prefix('!') {
         neg = true;
         line = rest;
-    } else if let Some(rest) = line.strip_prefix("\\!").or_else(|| line.strip_prefix("\\#")) {
+    } else if let Some(rest) = line
+        .strip_prefix("\\!")
+        .or_else(|| line.strip_prefix("\\#"))
+    {
         // Escaped leading ! or # is literal; put the char back.
         return Some(finish(false, &format!("{}{rest}", &line[1..2])));
     }
@@ -124,9 +127,7 @@ fn segs_match(pat: &[String], name: &[&str]) -> bool {
             }
             segs_match(&pat[1..], name) || (!name.is_empty() && segs_match(pat, &name[1..]))
         }
-        Some(p) => {
-            !name.is_empty() && seg_match(p, name[0]) && segs_match(&pat[1..], &name[1..])
-        }
+        Some(p) => !name.is_empty() && seg_match(p, name[0]) && segs_match(&pat[1..], &name[1..]),
     }
 }
 
@@ -139,9 +140,7 @@ fn seg_match(pat: &str, name: &str) -> bool {
             None => n.is_empty(),
             Some('*') => inner(&p[1..], n) || (!n.is_empty() && inner(p, &n[1..])),
             Some('?') => !n.is_empty() && inner(&p[1..], &n[1..]),
-            Some('\\') if p.len() > 1 => {
-                !n.is_empty() && p[1] == n[0] && inner(&p[2..], &n[1..])
-            }
+            Some('\\') if p.len() > 1 => !n.is_empty() && p[1] == n[0] && inner(&p[2..], &n[1..]),
             Some('[') => {
                 let Some((matched, rest)) = class_match(&p[1..], n.first().copied()) else {
                     // Unterminated class: literal '['.
@@ -206,9 +205,7 @@ impl Tracked {
     /// Any tracked path strictly beneath this directory?
     fn any_under(&self, rel_dir: &str) -> bool {
         let prefix = format!("{rel_dir}/");
-        let i = self
-            .paths
-            .partition_point(|p| p.as_str() < prefix.as_str());
+        let i = self.paths.partition_point(|p| p.as_str() < prefix.as_str());
         self.paths.get(i).is_some_and(|p| p.starts_with(&prefix))
     }
 }
@@ -347,8 +344,14 @@ fn global_excludes(common: &Path) -> Option<File> {
         .map(PathBuf::from)
         .or_else(|| home.as_ref().map(|h| Path::new(h).join(".config")));
     let path = from(&common.join("config"))
-        .or_else(|| home.as_ref().and_then(|h| from(&Path::new(h).join(".gitconfig"))))
-        .or_else(|| xdg.as_ref().and_then(|x| from(&x.join("git").join("config"))))
+        .or_else(|| {
+            home.as_ref()
+                .and_then(|h| from(&Path::new(h).join(".gitconfig")))
+        })
+        .or_else(|| {
+            xdg.as_ref()
+                .and_then(|x| from(&x.join("git").join("config")))
+        })
         .or_else(|| xdg.map(|x| x.join("git").join("ignore")));
     let text = fs::read_to_string(path?).ok()?;
     Some(File::parse(&text))
@@ -572,7 +575,11 @@ mod tests {
     fn double_star() {
         assert_eq!(v("**/foo\n", "foo", false), Some(true));
         assert_eq!(v("**/foo\n", "a/b/foo", false), Some(true));
-        assert_eq!(v("abc/**\n", "abc", true), None, "inside, not the dir itself");
+        assert_eq!(
+            v("abc/**\n", "abc", true),
+            None,
+            "inside, not the dir itself"
+        );
         assert_eq!(v("abc/**\n", "abc/x", false), Some(true));
         assert_eq!(v("a/**/b\n", "a/b", false), Some(true));
         assert_eq!(v("a/**/b\n", "a/x/y/b", false), Some(true));

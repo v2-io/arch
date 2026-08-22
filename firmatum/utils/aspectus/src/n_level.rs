@@ -26,33 +26,6 @@ impl Mass {
         self.est |= other.est;
         self.bounded |= other.bounded;
     }
-
-    /// The honesty mark this aggregate has earned (mass-mark proposal,
-    /// design/mass.md, 2026-08-14): `≥` floor beats `~` estimated beats
-    /// `≈` exact-but-grouped — an estimate is a property of *this walk's*
-    /// read budget, and the mark now says so.
-    pub fn mark(&self) -> &'static str {
-        if self.bounded {
-            "≥"
-        } else if self.est {
-            "~"
-        } else {
-            "≈"
-        }
-    }
-}
-
-/// Group a line total for the census channel: `61234` → `61k`.
-pub fn group_lines(n: u64) -> String {
-    if n < 1000 {
-        n.to_string()
-    } else if n < 10_000 {
-        format!("{:.1}k", n as f64 / 1000.0)
-    } else if n < 1_000_000 {
-        format!("{}k", n / 1000)
-    } else {
-        format!("{:.1}M", n as f64 / 1_000_000.0)
-    }
 }
 
 /// Census, reworked form (design/dir-census.md, 2026-08-14): no total,
@@ -450,7 +423,7 @@ fn count_file_at(path: &Path, size: u64, ctx: &mut LookCtx, visible: bool) -> Co
             return match kind {
                 Kind::Text => Count::Denied,
                 _ => Count::Binary,
-            }
+            };
         }
     };
     let lines = if ctx.non_blank {
@@ -942,7 +915,12 @@ fn readme_title(
     dir_name: &str,
     set: &crate::important::Set,
 ) -> Option<String> {
-    let source = set.first_match(entries.iter().filter(|e| !e.is_dir).map(|e| e.name.as_str()))?;
+    let source = set.first_match(
+        entries
+            .iter()
+            .filter(|e| !e.is_dir)
+            .map(|e| e.name.as_str()),
+    )?;
     use std::io::Read;
     let mut head = vec![0u8; TITLE_PEEK];
     let n = fs::File::open(dir.join(source))
@@ -1030,7 +1008,9 @@ fn gather_dir(
     let title = ctx
         .titles
         .and_then(|set| readme_title(path, &entries, &name, set));
-    let mut node = gather_dir_inner(path, name, remain, walk, ctx, mtime, link, mass_dup, iter_err, entries);
+    let mut node = gather_dir_inner(
+        path, name, remain, walk, ctx, mtime, link, mass_dup, iter_err, entries,
+    );
     ctx.ignore.exit_dir(entered);
     if let Ok(n) = &mut node {
         n.title = title;
@@ -1120,7 +1100,11 @@ fn gather_dir_inner(
         return Ok(Node {
             name,
             is_dir: true,
-            leftover: if census.is_empty() { None } else { Some(census) },
+            leftover: if census.is_empty() {
+                None
+            } else {
+                Some(census)
+            },
             iter_err,
             kinds,
             hidden_dirs,
@@ -1573,7 +1557,11 @@ pub fn apply_budget(
     if remain < n {
         // One line goes to the leftover census — unless this node already
         // reserved one, in which case the drops merge into it for free.
-        let show = if reserved == 1 { remain } else { remain.saturating_sub(1) };
+        let show = if reserved == 1 {
+            remain
+        } else {
+            remain.saturating_sub(1)
+        };
         if show == 0 {
             explain.push(format!(
                 "{}: one leftover line would only repeat dir census",
@@ -1619,7 +1607,11 @@ pub fn apply_budget(
     let mut unspent = 0usize;
     if extra > 0 {
         let caps: Vec<usize> = node.children.iter().map(capacity).collect();
-        let need2: Vec<bool> = node.children.iter().map(|c| c.children.len() >= 2).collect();
+        let need2: Vec<bool> = node
+            .children
+            .iter()
+            .map(|c| c.children.len() >= 2)
+            .collect();
         let mut left = extra;
         let mut progressed = true;
         while left > 0 && progressed {

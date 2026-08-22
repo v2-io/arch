@@ -12,12 +12,11 @@
 //! what kind of fact it is (`Office`). Everything about *other* rows —
 //! stops, widths, right edges, padding — belongs to paint, one layer down.
 //!
-//! This layer is deliberately output-identical to the strings the pre-grid
-//! renderer built inline (prefactor, 2026-08-22): the formatters moved, the
-//! bytes did not. New forms (the count cell, far-left glyphs, sub-rows)
-//! land here, one fact at a time, in the slices after this one.
+//! Count cells (step 3, 2026-08-22) land here: `lines` and `bytes` render
+//! through `count_cell`. The census's internal grammar is unchanged.
 
 use crate::columns::{Cols, OwnerFmt, ShaFmt, SizeFmt, State, TimeFmt};
+use crate::count_cell::{Mark, Unit, count_cell};
 use crate::n_level::Node;
 
 /// Where a ready-fact lands on the line (design/lattice-2.md §default
@@ -108,7 +107,12 @@ pub struct Ready {
 
 impl Ready {
     fn new(fact: &'static str, position: Position, office: Office, text: String) -> Ready {
-        Ready { fact, text, position, office }
+        Ready {
+            fact,
+            text,
+            position,
+            office,
+        }
     }
 
     pub fn is_empty(&self) -> bool {
@@ -124,7 +128,11 @@ impl Ready {
 /// stands. `dir_suffix` carries the `/` separately (it is painted with the
 /// name, but it is its own lattice row).
 pub fn name(n: &Node) -> Ready {
-    let fact = if n.glob.is_some() { "glob-template" } else { "filename" };
+    let fact = if n.glob.is_some() {
+        "glob-template"
+    } else {
+        "filename"
+    };
     Ready::new(fact, Position::NameLocation, Office::Line, n.name.clone())
 }
 
@@ -132,14 +140,24 @@ pub fn name(n: &Node) -> Ready {
 /// the name's color run, which is why it is a suffix and not after-name.
 pub fn dir_suffix(n: &Node) -> Option<Ready> {
     (n.is_dir && !n.name.ends_with('/')).then(|| {
-        Ready::new("directory-glyph", Position::NameSuffix, Office::Line, "/".to_string())
+        Ready::new(
+            "directory-glyph",
+            Position::NameSuffix,
+            Office::Line,
+            "/".to_string(),
+        )
     })
 }
 
 /// A leaf census standing in the name-location (`[+ md×5 · txt×2]`) — the
 /// allocator's remainder row for names this look did not list.
 pub fn leaf_census(c: &crate::n_level::Census) -> Ready {
-    Ready::new("leaf-census", Position::NameLocation, Office::Census, c.render_plus())
+    Ready::new(
+        "leaf-census",
+        Position::NameLocation,
+        Office::Census,
+        c.render_plus(),
+    )
 }
 
 /// The symlink target completing the name (`-> target`, `[broken]` when it
@@ -175,7 +193,12 @@ fn readme_title(n: &Node) -> Option<Ready> {
 /// arbitrated answer.
 fn filekind_word(n: &Node) -> Option<Ready> {
     let w = n.kind_word?;
-    Some(Ready::new("filekind-word", Position::NearRight, Office::Line, w.to_string()))
+    Some(Ready::new(
+        "filekind-word",
+        Position::NearRight,
+        Office::Line,
+        w.to_string(),
+    ))
 }
 
 /// What one collapsed series line stands for (design/globify.md). The
@@ -197,22 +220,6 @@ fn dir_census(n: &Node) -> Option<Ready> {
     let c = n.leftover.as_ref()?;
     let text = c.render();
     (!text.is_empty()).then(|| Ready::new("dir-census", Position::NearRight, Office::Census, text))
-}
-
-/// Mass's headline number on an unexpanded dir's line: subtree text lines
-/// (the files already live in the census's dir bucket). Rides the census —
-/// a dir this look expanded says its lines through its children.
-fn mass_lines(n: &Node) -> Option<Ready> {
-    n.leftover.as_ref()?;
-    let m = n.mass.as_ref()?;
-    (m.lines > 0).then(|| {
-        Ready::new(
-            "lines",
-            Position::NearRight,
-            Office::Line,
-            format!("{}{} lines", m.mark(), crate::n_level::group_lines(m.lines)),
-        )
-    })
 }
 
 /// Gitignored files at an *expanded* level: the typed remainder, so the
@@ -275,7 +282,8 @@ pub const IGNORED_GLYPH: &str = "⊘";
 /// inode, and never quietable: each one says where the picture stops.
 fn look_marks(n: &Node) -> Vec<Ready> {
     let mut parts = Vec::new();
-    let mark = |fact, text: &str| Ready::new(fact, Position::NearRight, Office::Mark, text.to_string());
+    let mark =
+        |fact, text: &str| Ready::new(fact, Position::NearRight, Office::Mark, text.to_string());
     if n.ignored {
         parts.push(mark("gitignored", IGNORED_GLYPH));
     }
@@ -303,17 +311,15 @@ fn look_marks(n: &Node) -> Vec<Ready> {
 }
 
 /// Every near-right part of one node, in the fixed order the paint joins
-/// them in: title · kind-word · glob-count · census · mass · ignored
-/// remainder · facets · has · look-marks. (design/grid-cleanup.md proposes
-/// a per-part-kind sub-column order for a later slice; today the order is
-/// the join order, made explicit here instead of implicit in a string.)
+/// them in: title · kind-word · glob-count · census · ignored remainder ·
+/// facets · has · look-marks. Mass lines moved to the far-right `lines`
+/// column (step 3, 2026-08-22; Joseph's inbox ask of 2026-08-14).
 pub fn near_right(n: &Node) -> Vec<Ready> {
     let mut parts = Vec::new();
     parts.extend(readme_title(n));
     parts.extend(filekind_word(n));
     parts.extend(glob_count(n));
     parts.extend(dir_census(n));
-    parts.extend(mass_lines(n));
     parts.extend(ignored_remainder(n));
     parts.extend(facets(n));
     parts.extend(has_block(n));
@@ -326,7 +332,12 @@ pub fn near_right(n: &Node) -> Vec<Ready> {
 pub fn weights(n: &Node) -> Vec<Ready> {
     let mut v = Vec::new();
     if n.important {
-        v.push(Ready::new("important", Position::Unplaced, Office::Weight, String::new()));
+        v.push(Ready::new(
+            "important",
+            Position::Unplaced,
+            Office::Weight,
+            String::new(),
+        ));
     }
     v
 }
@@ -355,7 +366,7 @@ pub fn columns(cols: &Cols) -> Vec<Column> {
         push("owner", "owner");
     }
     if cols.size.claims_column() {
-        push("bytes", "size");
+        push("bytes", "bytes");
     }
     if cols.mtime.claims_column() {
         push("mtime", "mtime");
@@ -386,27 +397,52 @@ fn quiet(st: State, speaks: bool, val: Option<String>) -> String {
 
 /// The far-right cells of one node, in `columns()` order — one per column,
 /// empty where the fact has nothing to say on this line.
+///
+/// `under_heading`: tree rows sit under the headings line, so `g` and `u`
+/// of a count cell blank (field keeps its width). The root facts line is
+/// *above* the headings, so it shows the unit — a file argument has no
+/// headings line below, and a unitless `767` was the 2026-08-14 first-contact
+/// bug; the count cell's unit slot is what replaces the `"N lines"` wrap.
 pub fn far_right(n: &Node, cols: &Cols) -> Vec<Ready> {
+    far_right_inner(n, cols, true)
+}
+
+/// Root-facts variant: same cells, units shown (no heading above them).
+pub fn far_right_header(n: &Node, cols: &Cols) -> Vec<Ready> {
+    far_right_inner(n, cols, false)
+}
+
+fn far_right_inner(n: &Node, cols: &Cols, under_heading: bool) -> Vec<Ready> {
     let mut cells = Vec::with_capacity(cols.active());
-    let mut push = |fact, text: String| {
-        cells.push(Ready::new(fact, Position::FarRight, Office::Line, text))
-    };
+    let mut push =
+        |fact, text: String| cells.push(Ready::new(fact, Position::FarRight, Office::Line, text));
     if cols.line_count {
-        push("lines", n.lines.map(|l| l.to_string()).unwrap_or_default());
+        push("lines", lines_cell(n, under_heading));
     }
     if cols.perms.claims_column() {
-        push("permissions", quiet(cols.perms, n.q.mode, n.mode.map(fmt_mode)));
+        push(
+            "permissions",
+            quiet(cols.perms, n.q.mode, n.mode.map(fmt_mode)),
+        );
     }
     if cols.owner.claims_column() {
         push(
             "owner",
-            quiet(cols.owner, n.q.owner || n.q.group, fmt_owner(n, cols.owner_fmt)),
+            quiet(
+                cols.owner,
+                n.q.owner || n.q.group,
+                fmt_owner(n, cols.owner_fmt),
+            ),
         );
     }
     if cols.size.claims_column() {
         push(
             "bytes",
-            quiet(cols.size, n.q.size, n.size.map(|s| fmt_size(s, cols.size_fmt))),
+            quiet(
+                cols.size,
+                n.q.size,
+                n.size.map(|s| fmt_size(s, cols.size_fmt, under_heading)),
+            ),
         );
     }
     if cols.mtime.claims_column() {
@@ -452,27 +488,46 @@ fn heat_cluster(n: &Node, now: i64) -> String {
 
 // ── the individual formatters ───────────────────────────────────────────
 
-/// `human` size: ≤4 glyphs of number+unit, deterministic. 1024-base.
-fn human_size(n: u64) -> String {
-    const UNITS: [&str; 5] = ["B", "K", "M", "G", "T"];
-    let mut v = n as f64;
-    let mut u = 0;
-    while v >= 1000.0 && u + 1 < UNITS.len() {
-        v /= 1024.0;
-        u += 1;
-    }
-    if u == 0 {
-        format!("{n}B")
-    } else if v < 10.0 {
-        format!("{v:.1}{}", UNITS[u])
+/// The `lines` column (design/grid-cleanup.md rows 4 and 6): a file's own
+/// count, or an unexpanded dir's deep line total (the mass tail that used
+/// to follow the census). Binary files omit — never `0`. Empty text is a
+/// real `0`. Marks ride the `m` slot; they are never dropped.
+fn lines_cell(n: &Node, under_heading: bool) -> String {
+    if n.is_dir {
+        // Unexpanded only: an expanded dir says its lines through its
+        // children. The leftover census is the cutoff gate; mass.lines > 0
+        // is the honesty gate (a binary-only subtree claims nothing).
+        if n.leftover.is_none() {
+            return String::new();
+        }
+        let Some(m) = n.mass else {
+            return String::new();
+        };
+        if m.lines == 0 {
+            return String::new();
+        }
+        let mark = if m.bounded {
+            Mark::Floor
+        } else if m.est {
+            Mark::Estimated
+        } else {
+            Mark::Exact
+        };
+        count_cell(m.lines, mark, None, Unit::Lines, !under_heading)
     } else {
-        format!("{v:.0}{}", UNITS[u])
+        match n.lines {
+            Some(l) => count_cell(l, Mark::Exact, None, Unit::Lines, !under_heading),
+            None => String::new(),
+        }
     }
 }
 
-fn fmt_size(n: u64, f: SizeFmt) -> String {
+fn fmt_size(n: u64, f: SizeFmt, under_heading: bool) -> String {
     match f {
-        SizeFmt::Human => human_size(n),
+        SizeFmt::Human => count_cell(n, Mark::Exact, None, Unit::Bytes, !under_heading),
+        // Raw integer: the format override for "I want the exact byte
+        // count". A 12-cell exact form cannot hold values ≥ 10,000 without
+        // scaling, so this spelling stays the escape hatch.
         SizeFmt::Bytes => n.to_string(),
     }
 }

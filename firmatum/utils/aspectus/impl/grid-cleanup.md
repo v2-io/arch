@@ -29,3 +29,32 @@ Not in this plan (undecided): subgroup-subject form · census delimiter · mass/
 - **`readme-title`'s place is still open** (after-name vs near-right); the implementation's choice is near-right and the inventory now says so plainly rather than filing it as decoration.
 - **`git-status` and `gitignored` are one fact wearing two rows today.** The inventory shows `gitignored` painting `⊘` in the near-right marks and `git-status` marked `↬` at the same place; step 5 collapses them into the far-left cell. Nothing was changed here.
 - **`files` / `dirs`** have no independent ready-fact — they exist only inside `Census::render`. Their inventory rows say `near-right (inside the census)`, which is true, but the count-cell slice will want them as real formatters; that is where `Census::render` gets carved up.
+
+## Step 3 landed — count cell (2026-08-22)
+
+**What the binary does now.** Far-right `lines` and `bytes` render as the 12-cell field (`g ␠ m T · NNN . f s u`). File line counts are `816.` / `1·099.`; an unexpanded dir's deep line total sits in the same column with its mark in the `m` slot (`≈  61.2K`, `~   5.0M`, `≥ 434.0K`); the trailing `≈61k lines` after the census is gone. The `bytes` heading replaced `size`; `human_size` is gone. JSON is unchanged. `Census::render` is untouched.
+
+- **`src/count_cell.rs` (new).** One function, `count_cell(value, mark, subject, unit, show_unit) → 12 chars`. Scale at ≥ 10,000 (1000 for counts/lines, 1024 for bytes); below that, exact with `T·` only when ≥ 1,000; at and above, one fraction digit and `K M G T P`. `Exact` becomes `≈` when the formatter scales; `Floor` / `Estimated` keep their face. Subject glyphs `● □ ▣` and units `𝓃 B 𝓁 𝓉` are implemented; this slice blanks both under the `lines`/`bytes` headings (width kept). Unit tests cover 1·099, 9·021, 190.0K, 14.3G, 1.0M, 3.3P, 0, 912, plus heading-blanking and mark precedence.
+- **`src/ready.rs`.** `lines_cell`: files from `n.lines` (binary omits, empty text is `0.`); dirs only when unexpanded (`leftover` + `mass.lines > 0`) — the mass tail *moved*, expanded dirs still speak through their children. `fmt_size`: `human` is the count cell; `format.size = bytes` stays the raw integer (a 12-cell exact form cannot hold ≥ 10,000 without scaling). `mass_lines` is gone from near-right. `far_right_header` shows units (the root facts line sits above the headings; a file root has no headings line).
+- **`src/columns.rs`.** Heading `size` → `bytes`. Root facts trim the 12-cell pad (that line is not in the grid) and drop the `"N lines"` wrap.
+- **Help.** The line-count/mass paragraph and the `≈ ~ ≥` paragraph say the new form.
+- **Tests.** Snapshots re-blessed (`ASPECTUS_SNAPSHOT_BLESS=1`). Every changed scrape carries a `2026-08-22 count-cell slice` comment.
+
+**Calls made**
+
+- Unexpanded dirs only for the deep total (the leftover gate). lattice-2 can be read as *every* dir carrying Σ subtree; this slice moved the existing tail, it did not add a new number on expanded dirs.
+- `format.size = bytes` remains a raw integer, not an unscaled count cell.
+- File-root facts show `𝓁` in the unit slot rather than wrapping `"N lines"`.
+- Scaled exact values wear `≈` (grouped for the eye), including file sizes — so a quiet whale is `≈  80.0M`, not `80M`.
+
+**Awkward — the two places you named**
+
+- **`.`-always.** Every file is `1.` `2.` `3.` `11.`. The dots align (that is the point) and they are loud on small numbers. The heading `lines` (5 chars) right-aligns to cell 12 of a field whose `.` is cell 9, so the word sits over the ones digit, the `.`, and the blank `f s u` — the tens digit of `11.` sticks out left of the heading.
+- **Heading-blanking + `trim_end`.** When `lines` is the last column (no heat, outside git), paint eats the three trailing spaces of the 12-cell; the heading (which ends in `s`) is not eaten, so it overhangs the `.` by 3. When heat or another column follows, the 12-wide field is preserved and the gap after the `.` is the blanked `f s u` plus the next column's pad — visible in the kitchen snapshot as a wide hole between `11.` and the census when quiet `perms` also claims a column. The field keeps its width in the layout; the last column's visible bytes do not.
+
+**Flagged for the design (not acted on)**
+
+- Small mass lost its `≈`: `≈6 lines` is now `6.` (exact, ungrouped, mark blank). Joseph's inbox mock had `≈101` / `≈681` for ungrouped totals. The count-cell law says blank; the mock said ≈. Which?
+- `3.3PB` under a heading that names only the subject still wears `≈` once scaled. The design specimen omitted the mark to show g-blanking.
+- Dir byte totals (lattice-2 `dir: Σ descendants`) are still unbuilt. This slice only replaced `human_size` on file `st_size`.
+- `files`/`dirs` as count cells still wait on the subgroup-subject form (`Census::render` unchanged).

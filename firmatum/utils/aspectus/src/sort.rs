@@ -44,8 +44,13 @@ impl Default for Order {
 }
 
 /// Keys built today, as the refusal menu names them.
-pub const BUILT: &[&str] =
-    &["recency (mtime, the default)", "name", "size", "line-count", "heat"];
+pub const BUILT: &[&str] = &[
+    "recency (mtime, the default)",
+    "name",
+    "size",
+    "line-count",
+    "heat",
+];
 
 /// Lattice `sort = Y` facts whose obtain is not built yet — asking for one
 /// is a refusal naming the class, never a silent fallback sort.
