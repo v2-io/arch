@@ -98,35 +98,21 @@ pub enum KindAsk {
 
 /// Annotate the whole (pre-budget) tree: every level's statistics are over
 /// its full statted children, so the decision is budget-independent.
-pub fn annotate(
-    node: &mut Node,
-    dials: &Dials,
-    caller: &Caller,
-    kinds: &crate::kind::Map,
-    kind_ask: KindAsk,
-    now: i64,
-) {
-    level(&mut node.children, dials, caller, kinds, kind_ask, now);
+pub fn annotate(node: &mut Node, dials: &Dials, caller: &Caller, kind_ask: KindAsk, now: i64) {
+    level(&mut node.children, dials, caller, kind_ask, now);
     for c in &mut node.children {
-        annotate(c, dials, caller, kinds, kind_ask, now);
+        annotate(c, dials, caller, kind_ask, now);
     }
 }
 
-fn level(
-    kids: &mut [Node],
-    dials: &Dials,
-    caller: &Caller,
-    kinds: &crate::kind::Map,
-    kind_ask: KindAsk,
-    now: i64,
-) {
+fn level(kids: &mut [Node], dials: &Dials, caller: &Caller, kind_ask: KindAsk, now: i64) {
     if kids.is_empty() {
         return;
     }
     permissions(kids);
     owner(kids, caller);
     size(kids, dials);
-    filekind(kids, kinds, kind_ask);
+    filekind(kids, kind_ask);
     mtime(kids, dials, now);
 }
 
@@ -244,42 +230,52 @@ fn size(kids: &mut [Node], dials: &Dials) {
     }
 }
 
-/// The kind word appears when the node's kind differs from its level's
-/// file-kind plurality. No plurality (≤ 2 known-kind files, or all
-/// singleton kinds) → no norm, no surprise. `on` claims the word wherever
-/// kind is known.
-fn filekind(kids: &mut [Node], kinds: &crate::kind::Map, ask: KindAsk) {
-    use crate::kind::Kind;
+/// Countable class for the kind-word law (design/filetype.md): counts
+/// lines vs. does not. Structural types (dir/link/special) and unknown
+/// sit in neither class and are absent from the statistics.
+fn countable_class(n: &Node) -> Option<bool> {
+    use crate::filetype::Major;
+    match n.filetype.major {
+        Major::Unknown | Major::Dir | Major::Link | Major::Special => None,
+        _ => Some(n.filetype.counts_lines()),
+    }
+}
+
+/// The kind word appears when the node's *countable class* differs from
+/// its level's plurality, and then says the *major* (design/filetype.md).
+/// A `.toml` among `.md` is the same class — silent; a PDF among `.md`
+/// says `doc`. No plurality (≤ 2 classed files, or a class tie) → no
+/// norm, no surprise. `on` claims the word wherever the major is known.
+fn filekind(kids: &mut [Node], ask: KindAsk) {
     if ask == KindAsk::Off {
         return;
     }
-    let word = |k: Kind| match k {
-        Kind::Text => Some("text"),
-        Kind::Binary => Some("binary"),
-        Kind::Unknown => None, // unobtainable without a read: absent
-    };
     if ask == KindAsk::On {
         for n in kids.iter_mut() {
             if !n.is_dir {
-                n.kind_word = word(kinds.kind(&n.name));
+                n.kind_word = n.filetype.kind_word();
             }
         }
         return;
     }
-    let known: Vec<(usize, &'static str)> = kids
+    let known: Vec<(usize, bool, &'static str)> = kids
         .iter()
         .enumerate()
         .filter(|(_, n)| !n.is_dir)
-        .filter_map(|(i, n)| word(kinds.kind(&n.name)).map(|w| (i, w)))
+        .filter_map(|(i, n)| {
+            let class = countable_class(n)?;
+            let w = n.filetype.kind_word()?;
+            Some((i, class, w))
+        })
         .collect();
     if known.len() <= 2 {
         return;
     }
-    let Some(plural) = plurality(known.iter().map(|(_, w)| *w)) else {
+    let Some(plural) = plurality(known.iter().map(|(_, c, _)| *c)) else {
         return;
     };
-    for (i, w) in known {
-        if w != plural {
+    for (i, class, w) in known {
+        if class != plural {
             kids[i].kind_word = Some(w);
         }
     }

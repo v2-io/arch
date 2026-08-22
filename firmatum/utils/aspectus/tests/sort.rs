@@ -152,7 +152,11 @@ fn dotfiles_first_groups_within_dirs_first() {
     touch(&dir, "f", 1_700_000_900);
     fs::create_dir_all(dir.join("a")).unwrap();
     fs::create_dir_all(dir.join(".b")).unwrap();
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--dotfiles-first", "--sort", "name"]);
+    let (c, o, e) = run(
+        &dir,
+        &xdg,
+        &["--depth", "1", "--dotfiles-first", "--sort", "name"],
+    );
     assert_eq!(c, 0, "{e}");
     assert_eq!(names_in_order(&o), [".b/", "a/", ".x", "f"], "{o}");
 }
@@ -166,7 +170,11 @@ fn config_sets_order_flag_wins() {
     assert_eq!(names_in_order(&o)[1], "mid.md", "user-home wins: {o}");
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--sort", "recency"]);
     assert_eq!(c, 0, "{e}");
-    assert_eq!(names_in_order(&o)[1], "new.md", "flag wins over config: {o}");
+    assert_eq!(
+        names_in_order(&o)[1],
+        "new.md",
+        "flag wins over config: {o}"
+    );
 }
 
 #[test]
@@ -225,7 +233,10 @@ fn explicit_sort_key_implies_its_column() {
     assert!(o.contains("bytes"), "size evidence on the line: {o}");
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1", "--sort", "recency"]);
     // The implied mtime column speaks in the relative default (2026-08-14).
-    assert!(o.matches("ago").count() > 1, "mtime evidence when asked: {o}");
+    assert!(
+        o.matches("ago").count() > 1,
+        "mtime evidence when asked: {o}"
+    );
 }
 
 /// Total order: byte-identical across runs regardless of creation order.

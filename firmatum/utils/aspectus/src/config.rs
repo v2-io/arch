@@ -509,6 +509,7 @@ pub fn env_values() -> BTreeMap<String, String> {
         ("ASPECTUS_FORMAT_SIZE", "format.size"),
         ("ASPECTUS_FORMAT_MTIME", "format.mtime"),
         ("ASPECTUS_FORMAT_LINE_COUNT", "format.line-count"),
+        ("ASPECTUS_FORMAT_CENSUS", "format.census"),
         ("ASPECTUS_FORMAT_OWNER", "format.owner"),
         ("ASPECTUS_FORMAT_INITIAL_SHA", "format.initial-sha"),
         ("ASPECTUS_FORMAT_LATEST_SHA", "format.latest-sha"),

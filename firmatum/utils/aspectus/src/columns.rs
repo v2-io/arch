@@ -556,9 +556,7 @@ fn emit(
             emit(&k.children, k.omitted.as_ref(), &next, cols, out);
         }
     }
-    if has_om
-        && let Some(c) = omitted
-    {
+    if has_om && let Some(c) = omitted {
         // The allocator's remainder: a leaf census standing where a name
         // stands (design/lattice-2.md — name-location, three tenants).
         let mut row = Row::plain(ready::leaf_census(c).text, cols.active());

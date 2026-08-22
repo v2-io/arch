@@ -139,10 +139,23 @@ fn census_obj(c: &Census) -> String {
     o.done()
 }
 
+fn type_obj(ft: &crate::filetype::FileType) -> String {
+    let mut o = Obj::new();
+    o.str("major", ft.major.as_str());
+    if !ft.minor.is_empty() {
+        o.str("minor", &ft.minor);
+    }
+    if let Some(t) = &ft.trait_ {
+        o.str("trait", t);
+    }
+    o.done()
+}
+
 fn node_obj(n: &Node) -> String {
     let mut o = Obj::new();
     o.str("name", &n.name);
     o.raw("dir", if n.is_dir { "true" } else { "false" });
+    o.raw("type", &type_obj(&n.filetype));
     if let Some(l) = n.lines {
         o.raw("lines", &l.to_string());
     }

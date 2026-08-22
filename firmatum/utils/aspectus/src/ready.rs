@@ -188,9 +188,9 @@ fn readme_title(n: &Node) -> Option<Ready> {
     ))
 }
 
-/// The filekind word — quiet: it speaks only where kind surprises (the
-/// binary among the `.md`) or was asked on. `Node.kind_word` is already the
-/// arbitrated answer.
+/// The filekind word — quiet: it speaks only where countable class
+/// surprises (a PDF among the `.md`) or was asked on. `Node.kind_word`
+/// is already the arbitrated answer (the major).
 fn filekind_word(n: &Node) -> Option<Ready> {
     let w = n.kind_word?;
     Some(Ready::new(

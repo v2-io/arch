@@ -147,8 +147,16 @@ fn determinism_and_default_off() {
     let (_, o2, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
     let strip = |s: &str| s.lines().skip(1).collect::<Vec<_>>().join("\n");
     assert_eq!(strip(&o1), strip(&o2));
-    let (_, off, _) = run(&dir, &xdg, &[("ASPECTUS_README_TITLE", "off")], &["--depth", "1"]);
-    assert!(!off.contains("A Name"), "default stays Joseph's to flip: {off}");
+    let (_, off, _) = run(
+        &dir,
+        &xdg,
+        &[("ASPECTUS_README_TITLE", "off")],
+        &["--depth", "1"],
+    );
+    assert!(
+        !off.contains("A Name"),
+        "default stays Joseph's to flip: {off}"
+    );
 }
 
 /// Subfeature 8: JSON carries the title as a field on the dir node.
@@ -171,6 +179,9 @@ fn cutoff_dir_titled() {
     fs::write(dir.join("d/inner/x.md"), "x\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    let l = o.lines().find(|l| l.contains("d/") && l.contains("── ")).unwrap();
+    let l = o
+        .lines()
+        .find(|l| l.contains("d/") && l.contains("── "))
+        .unwrap();
     assert!(l.contains("\"Cut Name\""), "{l}");
 }

@@ -409,17 +409,19 @@ fn heading_sits_over_the_cluster() {
     // A git repo so heat exists; two files with different age widths so
     // the cluster's halves would wander without sub-alignment.
     let git = |args: &[&str]| {
-        assert!(std::process::Command::new("git")
-            .args(args)
-            .current_dir(&dir)
-            .env("GIT_AUTHOR_NAME", "t")
-            .env("GIT_AUTHOR_EMAIL", "t@t")
-            .env("GIT_COMMITTER_NAME", "t")
-            .env("GIT_COMMITTER_EMAIL", "t@t")
-            .output()
-            .unwrap()
-            .status
-            .success());
+        assert!(
+            std::process::Command::new("git")
+                .args(args)
+                .current_dir(&dir)
+                .env("GIT_AUTHOR_NAME", "t")
+                .env("GIT_AUTHOR_EMAIL", "t@t")
+                .env("GIT_COMMITTER_NAME", "t")
+                .env("GIT_COMMITTER_EMAIL", "t@t")
+                .output()
+                .unwrap()
+                .status
+                .success()
+        );
     };
     git(&["init", "-q"]);
     fs::write(dir.join("a.md"), "1\n").unwrap();

@@ -19,11 +19,7 @@ fn have_git() -> bool {
 
 fn tmp(tag: &str) -> PathBuf {
     let n = SEQ.fetch_add(1, Ordering::SeqCst);
-    let dir = std::env::temp_dir().join(format!(
-        "aspectus-git-{tag}-{}-{}",
-        std::process::id(),
-        n
-    ));
+    let dir = std::env::temp_dir().join(format!("aspectus-git-{tag}-{}-{}", std::process::id(), n));
     fs::create_dir_all(&dir).unwrap();
     dir
 }
@@ -47,12 +43,20 @@ fn git(dir: &Path, args: &[&str]) {
 fn repo(tag: &str) -> PathBuf {
     let dir = tmp(tag);
     git(&dir, &["init", "-q", "-b", "main"]);
-    File::create(dir.join("a.txt")).unwrap().write_all(b"a").unwrap();
+    File::create(dir.join("a.txt"))
+        .unwrap()
+        .write_all(b"a")
+        .unwrap();
     git(&dir, &["add", "."]);
     git(&dir, &["commit", "-q", "-m", "one"]);
     git(
         &dir,
-        &["remote", "add", "origin", "git@github.com:v2-io/example.git"],
+        &[
+            "remote",
+            "add",
+            "origin",
+            "git@github.com:v2-io/example.git",
+        ],
     );
     dir
 }
@@ -99,7 +103,10 @@ fn porcelain_dirt_only_when_dirty() {
         return;
     }
     let dir = repo("dirty");
-    File::create(dir.join("b.txt")).unwrap().write_all(b"b").unwrap();
+    File::create(dir.join("b.txt"))
+        .unwrap()
+        .write_all(b"b")
+        .unwrap();
     fs::write(dir.join("a.txt"), "changed").unwrap();
     let (_, o, _) = run(&dir, &[]);
     assert!(o.contains("dirty<2>"), "{o}");
@@ -114,7 +121,10 @@ fn nested_repo_carries_its_own_facts() {
     let inner = outer.join("inner");
     fs::create_dir_all(&inner).unwrap();
     git(&inner, &["init", "-q", "-b", "work"]);
-    File::create(inner.join("x.txt")).unwrap().write_all(b"x").unwrap();
+    File::create(inner.join("x.txt"))
+        .unwrap()
+        .write_all(b"x")
+        .unwrap();
     git(&inner, &["add", "."]);
     git(&inner, &["commit", "-q", "-m", "one"]);
     let (_, o, _) = run(&outer, &[]);
@@ -134,7 +144,10 @@ fn submodule_gitlink_is_the_same_furniture() {
     let sub = sup.join("sub");
     fs::create_dir_all(&sub).unwrap();
     git(&sub, &["init", "-q", "-b", "subbr"]);
-    File::create(sub.join("s.txt")).unwrap().write_all(b"s").unwrap();
+    File::create(sub.join("s.txt"))
+        .unwrap()
+        .write_all(b"s")
+        .unwrap();
     git(&sub, &["add", "."]);
     git(&sub, &["commit", "-q", "-m", "one"]);
     let modules = sup.join(".git/modules");
@@ -144,7 +157,10 @@ fn submodule_gitlink_is_the_same_furniture() {
     fs::write(modules.join("sub/core-noop"), "").unwrap();
     let (_, o, _) = run(&sup, &[]);
     let line = o.lines().find(|l| l.contains("sub/")).unwrap();
-    assert!(line.contains("br<subbr>"), "gitlink read like a work tree: {o}");
+    assert!(
+        line.contains("br<subbr>"),
+        "gitlink read like a work tree: {o}"
+    );
     assert!(!o.contains(".git/"), "{o}");
 }
 

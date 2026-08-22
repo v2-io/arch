@@ -144,7 +144,11 @@ fn level(node: &mut Node, min: usize) {
             let m = &node.children[*i];
             consumed[*i] = true;
             if bucket.is_empty() {
-                bucket = crate::n_level::suffix_bucket(&m.name);
+                bucket = if m.census_key.is_empty() {
+                    crate::n_level::suffix_bucket(&m.name)
+                } else {
+                    m.census_key.clone()
+                };
             }
             if let Some(t) = m.mtime {
                 mtime = Some(mtime.map_or(t, |x: i64| x.max(t)));

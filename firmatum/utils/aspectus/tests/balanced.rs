@@ -31,7 +31,10 @@ fn fixture_many_files() -> (PathBuf, PathBuf) {
             .unwrap();
     }
     fs::create_dir_all(dir.join("sub")).unwrap();
-    File::create(dir.join("sub/a.rs")).unwrap().write_all(b"a").unwrap();
+    File::create(dir.join("sub/a.rs"))
+        .unwrap()
+        .write_all(b"a")
+        .unwrap();
     let xdg = std::env::temp_dir().join(format!("aspectus-bal-xdg-{}-{}", std::process::id(), n));
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
     (dir, xdg)
@@ -93,7 +96,10 @@ fn explain_budget_goes_to_stderr() {
     );
     assert_eq!(c, 0);
     assert!(!e.is_empty(), "explain on stderr");
-    assert!(e.contains("budget") || e.contains("listed") || e.contains("share"), "{e}");
+    assert!(
+        e.contains("budget") || e.contains("listed") || e.contains("share"),
+        "{e}"
+    );
     assert!(!o.is_empty());
 }
 
@@ -154,11 +160,7 @@ fn fixture_uneven() -> (PathBuf, PathBuf) {
     for i in 0..10 {
         File::create(dir.join(format!("deep/d{i}.rs"))).unwrap();
     }
-    let xdg = std::env::temp_dir().join(format!(
-        "aspectus-redis-xdg-{}-{}",
-        std::process::id(),
-        n
-    ));
+    let xdg = std::env::temp_dir().join(format!("aspectus-redis-xdg-{}-{}", std::process::id(), n));
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
     (dir, xdg)
 }
@@ -172,7 +174,11 @@ fn share_a_child_cannot_use_flows_to_one_that_can() {
     assert_eq!(c, 0, "{e}");
     // (The feedback footer moved to stderr 2026-08-22; stdout is exactly
     // the budget again.)
-    assert_eq!(o.lines().count(), 12, "capacity exists, so spend it all: {o}");
+    assert_eq!(
+        o.lines().count(),
+        12,
+        "capacity exists, so spend it all: {o}"
+    );
     assert!(o.contains("s0.md") && o.contains("s1.md"), "{o}");
     let deep_files = o.matches(".rs").count() - o.matches("[+").count(); // names, not census buckets
     assert!(
@@ -192,7 +198,10 @@ fn budget_beyond_the_tree_is_named_unspent_not_lost() {
     );
     assert_eq!(c, 0);
     assert!(!o.contains("[+"), "everything fits, nothing omitted: {o}");
-    assert!(e.contains("unspent"), "explain names the unspent lines: {e}");
+    assert!(
+        e.contains("unspent"),
+        "explain names the unspent lines: {e}"
+    );
 }
 
 #[test]

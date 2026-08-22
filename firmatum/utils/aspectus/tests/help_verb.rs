@@ -20,7 +20,10 @@ fn run(args: &[&str]) -> (i32, String, String) {
 
 fn assert_help(stdout: &str, stderr: &str, code: i32) {
     assert_eq!(code, 0, "stderr={stderr}");
-    assert!(stderr.is_empty(), "help stderr must be empty, got {stderr:?}");
+    assert!(
+        stderr.is_empty(),
+        "help stderr must be empty, got {stderr:?}"
+    );
     assert!(stdout.contains("aspectus"), "{stdout}");
     assert!(stdout.contains("aspecta"), "{stdout}");
     assert!(stdout.contains("faculty of looking at a locus"), "{stdout}");
@@ -71,7 +74,10 @@ fn three_help_spellings_identical() {
 
 fn assert_version(stdout: &str, stderr: &str, code: i32) {
     assert_eq!(code, 0, "stderr={stderr}");
-    assert!(stderr.is_empty(), "version stderr must be empty, got {stderr:?}");
+    assert!(
+        stderr.is_empty(),
+        "version stderr must be empty, got {stderr:?}"
+    );
     let line = stdout.trim_end_matches('\n');
     assert!(!line.contains('\n'), "one line, got {stdout:?}");
     let rest = line
@@ -119,7 +125,10 @@ fn unknown_option_stderr_exit_2() {
     assert!(e.contains("unknown option"), "{e}");
     assert!(e.contains("--nope"), "{e}");
     assert!(e.contains("aspectus help"), "{e}");
-    assert!(!e.contains("faculty of looking"), "must not reprint help: {e}");
+    assert!(
+        !e.contains("faculty of looking"),
+        "must not reprint help: {e}"
+    );
 }
 
 #[test]

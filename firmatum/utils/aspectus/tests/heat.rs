@@ -89,7 +89,9 @@ fn repo_fixture() -> (PathBuf, PathBuf) {
 }
 
 fn line_of<'a>(o: &'a str, name: &str) -> &'a str {
-    o.lines().find(|l| l.contains(name)).unwrap_or_else(|| panic!("{name} not in {o}"))
+    o.lines()
+        .find(|l| l.contains(name))
+        .unwrap_or_else(|| panic!("{name} not in {o}"))
 }
 
 #[test]
@@ -110,11 +112,7 @@ fn heat_cluster_in_repo() {
     let after_name = before.rsplit("cold.md").next().unwrap();
     // 2026-08-22 count-cell slice: the line count is `1.` not `1`.
     let cell = after_name.trim();
-    let count_cell = cell
-        .trim_end_matches('.')
-        .trim()
-        .parse::<u64>()
-        .is_ok();
+    let count_cell = cell.trim_end_matches('.').trim().parse::<u64>().is_ok();
     assert!(
         !cell.chars().any(|c| c.is_ascii_digit()) || cell.parse::<u64>().is_ok() || count_cell,
         "no score claimed (a bare line-count cell is fine): {cold:?}"
@@ -160,13 +158,12 @@ fn noise_is_source_rev_and_cargo_toml_scores() {
         "intent scores now: {o}"
     );
     let sr = line_of(&o, "SOURCE_REV");
-    let (before, after) = sr.rsplit_once('·').expect("age still rides the cluster: {o}");
+    let (before, after) = sr
+        .rsplit_once('·')
+        .expect("age still rides the cluster: {o}");
     assert!(after.contains("ago"), "{sr:?}");
     let after_name = before.rsplit("SOURCE_REV").next().unwrap();
-    assert!(
-        !after_name.contains("0."),
-        "no score for noise: {sr:?}"
-    );
+    assert!(!after_name.contains("0."), "no score for noise: {sr:?}");
     assert!(line_of(&o, "real.rs").contains("· 0"), "{o}");
 }
 
@@ -183,7 +180,10 @@ fn dir_heat_is_max_of_leaves() {
     git(&dir, &["commit", "-qm", "touch"]);
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(line_of(&o, "sub/").contains("ago"), "dir carries leaf heat: {o}");
+    assert!(
+        line_of(&o, "sub/").contains("ago"),
+        "dir carries leaf heat: {o}"
+    );
 }
 
 #[test]
@@ -196,7 +196,11 @@ fn sort_by_heat_is_built() {
 #[test]
 fn config_can_turn_heat_off() {
     let (dir, xdg) = repo_fixture();
-    fs::write(xdg.join("aspectus/aspectus.toml"), "columns.heat = \"off\"\n").unwrap();
+    fs::write(
+        xdg.join("aspectus/aspectus.toml"),
+        "columns.heat = \"off\"\n",
+    )
+    .unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     // The quiet mtime's relative voice may still say "ago"; the score-dot
@@ -212,10 +216,17 @@ fn git_recency_source_orders_by_last_touch() {
     let future = std::time::SystemTime::now();
     let _ = future; // mtimes: rewrite cold.md so its mtime is newest
     fs::write(dir.join("cold.md"), "cold but freshly written\n").unwrap();
-    fs::write(xdg.join("aspectus/aspectus.toml"), "recency-source = \"git\"\n").unwrap();
+    fs::write(
+        xdg.join("aspectus/aspectus.toml"),
+        "recency-source = \"git\"\n",
+    )
+    .unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let hot_at = o.find("hot.md").expect(&o);
     let cold_at = o.find("cold.md").expect(&o);
-    assert!(hot_at < cold_at, "git last-touch outranks a fresh mtime: {o}");
+    assert!(
+        hot_at < cold_at,
+        "git last-touch outranks a fresh mtime: {o}"
+    );
 }

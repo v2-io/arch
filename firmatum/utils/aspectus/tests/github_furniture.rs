@@ -10,11 +10,7 @@ static SEQ: AtomicU64 = AtomicU64::new(0);
 
 fn tmp(tag: &str) -> PathBuf {
     let n = SEQ.fetch_add(1, Ordering::SeqCst);
-    let dir = std::env::temp_dir().join(format!(
-        "aspectus-gh-{tag}-{}-{}",
-        std::process::id(),
-        n
-    ));
+    let dir = std::env::temp_dir().join(format!("aspectus-gh-{tag}-{}-{}", std::process::id(), n));
     fs::create_dir_all(&dir).unwrap();
     dir
 }

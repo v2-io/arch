@@ -24,7 +24,10 @@ fn fixture() -> PathBuf {
             .as_nanos()
     ));
     fs::create_dir_all(dir.join("a")).unwrap();
-    File::create(dir.join("f")).unwrap().write_all(b"f").unwrap();
+    File::create(dir.join("f"))
+        .unwrap()
+        .write_all(b"f")
+        .unwrap();
     dir
 }
 
@@ -50,7 +53,11 @@ fn always_colors_directories() {
     let dir = fixture();
     let (c, o, e) = run_in(&dir, &["--color=always"]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
+    assert!(
+        e.lines()
+            .all(|l| l.is_empty() || l.starts_with("*(This is a critical")),
+        "{e:?}"
+    ); // stderr: only the feedback footer (teaching) since 2026-08-22
     assert!(has_csi(&o), "always must emit CSI: {o:?}");
     let text = String::from_utf8_lossy(&o);
     assert!(text.contains("a/"), "{text}");
@@ -89,6 +96,12 @@ fn bad_color_value_is_usage() {
     let (c, o, e) = run_in(Path::new("/"), &["--color=purple"]);
     assert_eq!(c, 2);
     assert!(o.is_empty(), "{o:?}");
-    assert!(e.contains("auto") || e.contains("never") || e.contains("usage"), "{e}");
-    assert!(!e.contains("faculty of looking"), "must not reprint help: {e}");
+    assert!(
+        e.contains("auto") || e.contains("never") || e.contains("usage"),
+        "{e}"
+    );
+    assert!(
+        !e.contains("faculty of looking"),
+        "must not reprint help: {e}"
+    );
 }

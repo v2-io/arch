@@ -90,20 +90,35 @@ fn several_paths_are_one_look_with_depth_from_each() {
         &dir,
         &xdg,
         &[
-            "--lines", "0", "--depth", "3",
-            "asf/01-aat", "asf/02-tst", "asf/03-llm", "asf/04-eli",
+            "--lines",
+            "0",
+            "--depth",
+            "3",
+            "asf/01-aat",
+            "asf/02-tst",
+            "asf/03-llm",
+            "asf/04-eli",
         ],
     );
     assert_eq!(code, 0, "{o}");
     // Root is the common ancestor, on its own bare line.
-    assert!(root_line(&o).ends_with("/asf/"), "root is the ancestor: {o}");
+    assert!(
+        root_line(&o).ends_with("/asf/"),
+        "root is the ancestor: {o}"
+    );
     for v in ["01-aat/", "02-tst/", "03-llm/", "04-eli/"] {
         assert!(o.contains(v), "selected {v} listed: {o}");
     }
     // Three generations under each selected path — src/g1/g2 shows, and
     // g2's contents are the cutoff census, not a line.
-    assert!(o.contains("── g2/"), "depth counts from the selected path: {o}");
-    assert!(!o.contains("── g3/"), "depth 3 stops under each selected: {o}");
+    assert!(
+        o.contains("── g2/"),
+        "depth counts from the selected path: {o}"
+    );
+    assert!(
+        !o.contains("── g3/"),
+        "depth 3 stops under each selected: {o}"
+    );
 }
 
 /// Depth from the *root* would have shown one generation less; this is the
@@ -115,10 +130,17 @@ fn the_connective_chain_spends_no_depth() {
     write(&dir.join("a/b/one/x/y/z.md"), "z\n");
     write(&dir.join("a/b/two/x/y/z.md"), "z\n");
     write(&dir.join("a/other.md"), "o\n");
-    let (code, o, _) = run(&dir, &xdg, &["--lines", "0", "--depth", "2", "a/b/one", "a/b/two"]);
+    let (code, o, _) = run(
+        &dir,
+        &xdg,
+        &["--lines", "0", "--depth", "2", "a/b/one", "a/b/two"],
+    );
     assert_eq!(code, 0, "{o}");
     // Root a/b, chain spends nothing, two generations under each selected.
-    assert!(root_line(&o).ends_with("/a/b/"), "root is the ancestor: {o}");
+    assert!(
+        root_line(&o).ends_with("/a/b/"),
+        "root is the ancestor: {o}"
+    );
     assert!(o.contains("── x/"), "{o}");
     assert!(o.contains("── y/"), "{o}");
     assert!(!o.contains("── z.md"), "depth 2 stops below y/: {o}");
@@ -129,13 +151,20 @@ fn the_connective_chain_spends_no_depth() {
 #[test]
 fn unselected_siblings_fold_to_one_typed_remainder() {
     let (dir, xdg) = volumes();
-    let (_, o, _) = run(&dir, &xdg, &["--lines", "0", "--depth", "1", "asf/01-aat", "asf/02-tst"]);
+    let (_, o, _) = run(
+        &dir,
+        &xdg,
+        &["--lines", "0", "--depth", "1", "asf/01-aat", "asf/02-tst"],
+    );
     let rem: Vec<&str> = o.lines().filter(|l| l.contains("[+ ")).collect();
     assert_eq!(rem.len(), 1, "exactly one remainder line: {o}");
     let rem = rem[0];
     // Two unselected volumes + audits/ doc/ msc/ — every one of them
     // present in the remainder, typed, not one of them dropped.
-    assert!(rem.contains("dir×5"), "the five unselected dirs are typed: {rem}");
+    assert!(
+        rem.contains("dir×5"),
+        "the five unselected dirs are typed: {rem}"
+    );
     assert!(rem.contains("f"), "with their deep file count: {rem}");
     assert!(rem.contains("md×1"), "and TOP.md by suffix: {rem}");
     // Level membership is honest: nothing at the ancestor's level vanished.
@@ -148,9 +177,17 @@ fn unselected_siblings_fold_to_one_typed_remainder() {
 #[test]
 fn selected_paths_take_the_top_survival_tier() {
     let (dir, xdg) = volumes();
-    let (_, o, _) = run(&dir, &xdg, &["--lines", "7", "--depth", "1", "asf/01-aat", "asf/04-eli"]);
+    let (_, o, _) = run(
+        &dir,
+        &xdg,
+        &["--lines", "7", "--depth", "1", "asf/01-aat", "asf/04-eli"],
+    );
     assert!(o.contains("01-aat/") && o.contains("04-eli/"), "{o}");
-    let (_, tight, err) = run(&dir, &xdg, &["--lines", "5", "--depth", "1", "asf/01-aat", "asf/04-eli"]);
+    let (_, tight, err) = run(
+        &dir,
+        &xdg,
+        &["--lines", "5", "--depth", "1", "asf/01-aat", "asf/04-eli"],
+    );
     assert!(
         err.contains("could not give every focus path a line"),
         "a leftover match is typed, never silent: {err}"
@@ -164,7 +201,11 @@ fn selected_paths_take_the_top_survival_tier() {
 fn the_line_budget_still_binds() {
     let (dir, xdg) = volumes();
     for n in ["8", "12", "20"] {
-        let (_, o, _) = run(&dir, &xdg, &["--lines", n, "--depth", "4", "asf/01-aat", "asf/02-tst"]);
+        let (_, o, _) = run(
+            &dir,
+            &xdg,
+            &["--lines", n, "--depth", "4", "asf/01-aat", "asf/02-tst"],
+        );
         assert!(
             o.lines().count() <= n.parse::<usize>().unwrap(),
             "--lines {n} honored: {o}"
@@ -180,7 +221,15 @@ fn a_missing_focus_path_is_confessed_not_fatal() {
     let (code, o, err) = run(
         &dir,
         &xdg,
-        &["--lines", "0", "--depth", "1", "asf/01-aat", "asf/nope", "asf/02-tst"],
+        &[
+            "--lines",
+            "0",
+            "--depth",
+            "1",
+            "asf/01-aat",
+            "asf/nope",
+            "asf/02-tst",
+        ],
     );
     assert_eq!(code, 0, "the look succeeded: {err}");
     assert!(err.contains("not found"), "confessed: {err}");
@@ -206,7 +255,14 @@ fn a_nested_selection_collapses_to_the_outer_one() {
     let (code, o, err) = run(
         &dir,
         &xdg,
-        &["--lines", "0", "--depth", "2", "asf/01-aat", "asf/01-aat/src"],
+        &[
+            "--lines",
+            "0",
+            "--depth",
+            "2",
+            "asf/01-aat",
+            "asf/01-aat/src",
+        ],
     );
     assert_eq!(code, 0, "{err}");
     assert!(err.contains("already inside another"), "{err}");
@@ -219,7 +275,11 @@ fn a_nested_selection_collapses_to_the_outer_one() {
 fn one_path_is_unchanged() {
     let (dir, xdg) = volumes();
     let (_, one, _) = run(&dir, &xdg, &["--lines", "0", "--depth", "2", "asf/01-aat"]);
-    let (_, twice, _) = run(&dir, &xdg, &["--lines", "0", "--depth", "2", "asf/01-aat", "asf/01-aat"]);
+    let (_, twice, _) = run(
+        &dir,
+        &xdg,
+        &["--lines", "0", "--depth", "2", "asf/01-aat", "asf/01-aat"],
+    );
     let strip = |s: &str| s.lines().skip(1).collect::<Vec<_>>().join("\n");
     assert_eq!(strip(&one), strip(&twice), "a repeated path is one path");
 }
@@ -228,7 +288,15 @@ fn one_path_is_unchanged() {
 #[test]
 fn determinism() {
     let (dir, xdg) = volumes();
-    let args = ["--lines", "30", "--depth", "3", "asf/01-aat", "asf/02-tst", "asf/03-llm"];
+    let args = [
+        "--lines",
+        "30",
+        "--depth",
+        "3",
+        "asf/01-aat",
+        "asf/02-tst",
+        "asf/03-llm",
+    ];
     let (_, a, _) = run(&dir, &xdg, &args);
     let (_, b, _) = run(&dir, &xdg, &args);
     assert_eq!(
@@ -245,12 +313,24 @@ fn json_names_the_root_and_marks_the_matches() {
     let (code, o, _) = run(
         &dir,
         &xdg,
-        &["--format", "json", "--lines", "0", "--depth", "1", "asf/01-aat", "asf/02-tst"],
+        &[
+            "--format",
+            "json",
+            "--lines",
+            "0",
+            "--depth",
+            "1",
+            "asf/01-aat",
+            "asf/02-tst",
+        ],
     );
     assert_eq!(code, 0, "{o}");
     assert!(o.contains("/asf\","), "root is the ancestor: {o}");
     assert_eq!(o.matches("\"matched\":true").count(), 2, "{o}");
-    assert!(o.contains("\"omitted\""), "the folded siblings are data too: {o}");
+    assert!(
+        o.contains("\"omitted\""),
+        "the folded siblings are data too: {o}"
+    );
 }
 
 /// The help page teaches the arity rule (help is the law channel).
@@ -260,5 +340,8 @@ fn help_teaches_several_paths() {
     let (_, o, _) = run(&dir, &xdg, &["help"]);
     assert!(o.contains("usage: aspectus [PATH ...]"), "{o}");
     assert!(o.contains("Several paths are one look"), "{o}");
-    assert!(o.contains("01-aat-core"), "the brace-expansion example: {o}");
+    assert!(
+        o.contains("01-aat-core"),
+        "the brace-expansion example: {o}"
+    );
 }

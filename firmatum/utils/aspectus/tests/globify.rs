@@ -59,7 +59,10 @@ fn collapse() {
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("output-[001-047].bak"), "the pattern: {o}");
     assert!(o.contains("(47 files)"), "the exact count: {o}");
-    assert!(!o.contains("output-001.bak"), "members compact, not listed: {o}");
+    assert!(
+        !o.contains("output-001.bak"),
+        "members compact, not listed: {o}"
+    );
 }
 
 /// Subfeature 2: below the threshold, members list individually.
@@ -96,7 +99,10 @@ fn not_a_series_stays_individual() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "0"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("w-1.dat"), "narrow cohort below min lists: {o}");
-    assert!(o.contains("w-[10-17].dat"), "the wide cohort is a series: {o}");
+    assert!(
+        o.contains("w-[10-17].dat"),
+        "the wide cohort is a series: {o}"
+    );
     assert!(
         !o.contains("w-[1-17].dat") && !o.contains("w-[01-17].dat"),
         "mixed widths never fuse: {o}"
@@ -138,13 +144,19 @@ fn budget_arithmetic() {
     // With room, the group is one listee costing one line.
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "2", "--lines", "6"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("s[01-30].dat") && o.contains("(30 files)"), "{o}");
+    assert!(
+        o.contains("s[01-30].dat") && o.contains("(30 files)"),
+        "{o}"
+    );
     // One line tighter: sub/ folds to its census — the collapsed group
     // folds back as 30 files, never one.
     let (c2, o2, e2) = run(&dir, &xdg, &[], &["--depth", "2", "--lines", "5"]);
     assert_eq!(c2, 0, "{e2}");
     let sub = o2.lines().find(|l| l.contains("sub/")).unwrap();
-    assert!(sub.contains("dat×30"), "membership survives the fold: {sub}");
+    assert!(
+        sub.contains("dat×30"),
+        "membership survives the fold: {sub}"
+    );
 }
 
 /// Subfeature 6: an important file inside the pattern stays listed by
@@ -178,10 +190,23 @@ fn off_switch_restores() {
     for i in 1..=8 {
         File::create(dir.join(format!("f{i}.tmp"))).unwrap();
     }
-    let (c, o, e) = run(&dir, &xdg, &[("ASPECTUS_GLOBIFY", "off")], &["--depth", "1", "--lines", "0"]);
+    let (c, o, e) = run(
+        &dir,
+        &xdg,
+        &[("ASPECTUS_GLOBIFY", "off")],
+        &["--depth", "1", "--lines", "0"],
+    );
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("f1.tmp") && o.contains("f8.tmp"), "config off: {o}");
-    let (c2, o2, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "0", "--show-all"]);
+    assert!(
+        o.contains("f1.tmp") && o.contains("f8.tmp"),
+        "config off: {o}"
+    );
+    let (c2, o2, _) = run(
+        &dir,
+        &xdg,
+        &[],
+        &["--depth", "1", "--lines", "0", "--show-all"],
+    );
     assert_eq!(c2, 0);
     assert!(o2.contains("f1.tmp"), "--show-all restores: {o2}");
 }

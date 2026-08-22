@@ -10,11 +10,7 @@ static SEQ: AtomicU64 = AtomicU64::new(0);
 
 fn fixture() -> (PathBuf, PathBuf) {
     let n = SEQ.fetch_add(1, Ordering::SeqCst);
-    let dir = std::env::temp_dir().join(format!(
-        "aspectus-lab-{}-{}",
-        std::process::id(),
-        n
-    ));
+    let dir = std::env::temp_dir().join(format!("aspectus-lab-{}-{}", std::process::id(), n));
     let xdg = dir.join("xdg");
     fs::create_dir_all(dir.join("tree")).unwrap();
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
@@ -47,7 +43,10 @@ fn mark_rows_stay_children_and_claim_a_kind() {
     touch(&dir.join("main.rs"));
     let (c, o, e) = run(&dir, &xdg, &[]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("Cargo.toml"), "mark rows are still children: {o}");
+    assert!(
+        o.contains("Cargo.toml"),
+        "mark rows are still children: {o}"
+    );
     assert!(o.contains("[has: rust]"), "the claim on the parent: {o}");
 }
 
@@ -81,6 +80,12 @@ fn cutoff_dirs_still_claim_their_kinds() {
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
     let proj = o.lines().find(|l| l.contains("proj/")).unwrap();
     // The hidden target/'s magnitude rides its kind word (2026-08-14).
-    assert!(proj.contains("[has: build ≈") && proj.contains("rust]"), "{o}");
-    assert!(proj.contains("[Cargo.toml]"), "census counts children of the look only: {o}");
+    assert!(
+        proj.contains("[has: build ≈") && proj.contains("rust]"),
+        "{o}"
+    );
+    assert!(
+        proj.contains("[Cargo.toml]"),
+        "census counts children of the look only: {o}"
+    );
 }

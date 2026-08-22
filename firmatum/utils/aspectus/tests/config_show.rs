@@ -63,7 +63,11 @@ fn config_defaults_stdout_exit_0() {
     let xdg = fresh_xdg();
     let (c, o, e) = run_with_xdg(&xdg, &["config"]);
     assert_eq!(c, 0, "stderr={e}");
-    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "config show stderr must be empty: {e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
+    assert!(
+        e.lines()
+            .all(|l| l.is_empty() || l.starts_with("*(This is a critical")),
+        "config show stderr must be empty: {e:?}"
+    ); // stderr: only the feedback footer (teaching) since 2026-08-22
     assert!(o.contains("defaults"), "{o}");
     assert!(o.contains("user-home"), "{o}");
     assert!(o.contains("global"), "{o}");
@@ -112,7 +116,10 @@ fn decoy_at_locus_does_not_win() {
     // timestamp that can itself contain "999" (seen live, 2026-08-14).
     assert!(!stdout.contains("lines = 999"), "{stdout}");
     assert!(!stdout.contains("lines = 998"), "{stdout}");
-    assert!(!stdout.contains(locus.join("aspectus.toml").to_str().unwrap()), "{stdout}");
+    assert!(
+        !stdout.contains(locus.join("aspectus.toml").to_str().unwrap()),
+        "{stdout}"
+    );
 }
 
 #[test]
@@ -149,7 +156,6 @@ fn env_beats_user_home() {
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("lines = 33"), "env should win: {o}");
     assert!(o.contains("(env)"), "{o}");
-
 }
 
 #[test]
@@ -173,7 +179,11 @@ fn missing_layers_are_not_errors() {
     let xdg = fresh_xdg();
     let (c, o, e) = run_with_xdg(&xdg, &["config"]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
+    assert!(
+        e.lines()
+            .all(|l| l.is_empty() || l.starts_with("*(This is a critical")),
+        "{e:?}"
+    ); // stderr: only the feedback footer (teaching) since 2026-08-22
     assert!(o.contains("absent"), "{o}");
 }
 
@@ -205,10 +215,7 @@ fn config_defaults_prints_the_embedded_file() {
     assert_eq!(c, 0, "stderr={e}");
     assert_eq!(
         o,
-        include_str!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/defaults.toml"
-        )),
+        include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/defaults.toml")),
         "stdout is the embedded file verbatim"
     );
     assert!(
@@ -241,7 +248,8 @@ fn furniture_table_overlay_matches_bang() {
     assert!(o.contains(".mystery = lab"), "added row: {o}");
     assert!(o.contains("(user-home)"), "{o}");
     assert!(
-        !o.lines().any(|l| l.contains("target/") && l.contains("build")),
+        !o.lines()
+            .any(|l| l.contains("target/") && l.contains("build")),
         "dropped shipped row: {o}"
     );
 }
@@ -262,13 +270,7 @@ fn round_trip_defaults_file_is_identity() {
     fs::create_dir_all(&locus).unwrap();
     fs::write(locus.join("a.md"), "hi\n").unwrap();
 
-    let strip = |stdout: &str| {
-        stdout
-            .lines()
-            .skip(1)
-            .collect::<Vec<_>>()
-            .join("\n")
-    };
+    let strip = |stdout: &str| stdout.lines().skip(1).collect::<Vec<_>>().join("\n");
     let none = bin()
         .arg(&locus)
         .env("XDG_CONFIG_HOME", &xdg)
@@ -283,8 +285,18 @@ fn round_trip_defaults_file_is_identity() {
         .env_remove("ASPECTUS_LINES")
         .output()
         .unwrap();
-    assert_eq!(none.status.code(), Some(0), "{}", String::from_utf8_lossy(&none.stderr));
-    assert_eq!(with.status.code(), Some(0), "{}", String::from_utf8_lossy(&with.stderr));
+    assert_eq!(
+        none.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&none.stderr)
+    );
+    assert_eq!(
+        with.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&with.stderr)
+    );
     assert_eq!(
         strip(&String::from_utf8_lossy(&none.stdout)),
         strip(&String::from_utf8_lossy(&with.stdout)),

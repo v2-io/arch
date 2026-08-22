@@ -29,11 +29,7 @@ fn fixture() -> (PathBuf, PathBuf) {
         File::create(dir.join(format!("big/file-{i:02}.txt"))).unwrap();
     }
     File::create(dir.join("top.txt")).unwrap();
-    let xdg = std::env::temp_dir().join(format!(
-        "aspectus-wb-xdg-{}-{}",
-        std::process::id(),
-        n
-    ));
+    let xdg = std::env::temp_dir().join(format!("aspectus-wb-xdg-{}-{}", std::process::id(), n));
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
     (dir, xdg)
 }
@@ -72,7 +68,11 @@ fn default_bound_does_not_trip_on_a_small_tree() {
     assert_eq!(c, 0, "{e}");
     assert!(!o.contains('≥'), "{o}");
     assert!(!o.contains("[walk bound]"), "{o}");
-    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "success is quiet: {e}");  // stderr: only the feedback footer (teaching) since 2026-08-22
+    assert!(
+        e.lines()
+            .all(|l| l.is_empty() || l.starts_with("*(This is a critical")),
+        "success is quiet: {e}"
+    ); // stderr: only the feedback footer (teaching) since 2026-08-22
 }
 
 #[test]
@@ -83,9 +83,15 @@ fn bound_keeps_level_membership_exact() {
     let (c, o, e) = run(&dir, &xdg, &["--walk", "1", "--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("[txt×20]"), "census stays exact: {o}");
-    assert!(o.contains("[+ "), "unspent sibling remainder keeps the + form: {o}");
+    assert!(
+        o.contains("[+ "),
+        "unspent sibling remainder keeps the + form: {o}"
+    );
     assert!(o.contains("[walk bound]"), "the cut is said: {o}");
-    assert!(!o.contains('≥'), "nothing is unknown, so no floor-mark: {o}");
+    assert!(
+        !o.contains('≥'),
+        "nothing is unknown, so no floor-mark: {o}"
+    );
 }
 
 #[test]
@@ -96,7 +102,10 @@ fn bound_cutting_a_listing_marks_the_dir() {
     let (c, o, e) = run(&dir, &xdg, &["--walk", "1", "--depth", "2"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("[txt×20]"), "membership still total: {o}");
-    assert!(o.contains("[walk bound]"), "a cut listing must confess: {o}");
+    assert!(
+        o.contains("[walk bound]"),
+        "a cut listing must confess: {o}"
+    );
     assert!(!o.contains("file-00.txt"), "no children were expanded: {o}");
 }
 
@@ -110,9 +119,11 @@ fn expansion_order_is_sorted_not_readdir_roulette() {
     assert!(o.contains("big/"), "first-in-sort-order is expanded: {o}");
     let (c2, o2, _) = run(&dir, &xdg, &["--walk", "1", "--depth", "1"]);
     assert_eq!(c2, 0);
-    assert_eq!(o.lines().skip(1).collect::<Vec<_>>(),
-               o2.lines().skip(1).collect::<Vec<_>>(),
-               "two cut looks agree below the header");
+    assert_eq!(
+        o.lines().skip(1).collect::<Vec<_>>(),
+        o2.lines().skip(1).collect::<Vec<_>>(),
+        "two cut looks agree below the header"
+    );
 }
 
 #[test]
@@ -121,7 +132,10 @@ fn walk_rides_the_caller_stack() {
     fs::write(xdg.join("aspectus/aspectus.toml"), "walk = 1\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("[walk bound]"), "user-home walk=1 must bound: {o}");
+    assert!(
+        o.contains("[walk bound]"),
+        "user-home walk=1 must bound: {o}"
+    );
     // Flags outrank the file.
     let (c2, o2, e2) = run(&dir, &xdg, &["--depth", "1", "--walk", "0"]);
     assert_eq!(c2, 0, "{e2}");

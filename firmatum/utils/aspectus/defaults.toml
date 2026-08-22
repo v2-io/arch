@@ -52,6 +52,7 @@ quiet      = ["mtime", "bytes", "permissions", "owner", "filekind"]   # listed-o
 mtime = "relative"          # relative (2.2h ago) | iso-8601 | epoch
 bytes = "human"             # human (1.2M) | bytes
 lines = "physical"          # physical | non-blank
+census = "suffix"           # suffix | minor | major  (census bucket grain)
 owner = "name"              # name | id
 initial-sha = "short"       # short | h~n | full
 latest-sha = "short"

@@ -42,11 +42,18 @@ fn touch(dir: &Path, name: &str, epoch_secs: u64) {
 
 fn run(dir: &Path, xdg: &Path, envs: &[(&str, &str)], args: &[&str]) -> (i32, String, String) {
     let mut c = bin();
-    c.args(args).current_dir(dir).env("XDG_CONFIG_HOME", xdg)
+    c.args(args)
+        .current_dir(dir)
+        .env("XDG_CONFIG_HOME", xdg)
         // Numbered-series fixtures; globify (2026-08-14) is not this row's
         // subject — pinned off so the squeeze arithmetic stays visible.
         .env("ASPECTUS_GLOBIFY", "off");
-    for k in ["ASPECTUS_LINES", "ASPECTUS_DEPTH", "ASPECTUS_SORT", "ASPECTUS_IMPORTANT"] {
+    for k in [
+        "ASPECTUS_LINES",
+        "ASPECTUS_DEPTH",
+        "ASPECTUS_SORT",
+        "ASPECTUS_IMPORTANT",
+    ] {
         c.env_remove(k);
     }
     for (k, v) in envs {
@@ -78,8 +85,14 @@ fn survives_the_squeeze() {
     // stamp + root + 4 children + leaf census = 7
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "7"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("README.md"), "oldest but important survives: {o}");
-    assert!(o.contains("f28.md"), "newest plain files fill the rest: {o}");
+    assert!(
+        o.contains("README.md"),
+        "oldest but important survives: {o}"
+    );
+    assert!(
+        o.contains("f28.md"),
+        "newest plain files fill the rest: {o}"
+    );
     assert!(!o.contains("f00.md"), "{o}");
     assert!(o.contains("[+ "), "leftover census: {o}");
 }
@@ -99,7 +112,11 @@ fn order_untouched_when_loose() {
         .filter_map(|l| l.rsplit("── ").next())
         .map(|s| s.split_whitespace().next().unwrap_or(""))
         .collect();
-    assert_eq!(names.last(), Some(&"README.md"), "recency order untouched: {o}");
+    assert_eq!(
+        names.last(),
+        Some(&"README.md"),
+        "recency order untouched: {o}"
+    );
 }
 
 /// Subfeature 3: config set — adding survives, `!README*` demotes.
@@ -110,16 +127,27 @@ fn config_set_extends_and_drops() {
     for i in 0..10 {
         touch(&dir, &format!("f{i}.md"), 1_700_001_000 + i * 10);
     }
-    fs::write(xdg.join("aspectus/aspectus.toml"), "important = \"DESIGN.md\"\n").unwrap();
+    fs::write(
+        xdg.join("aspectus/aspectus.toml"),
+        "important = \"DESIGN.md\"\n",
+    )
+    .unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "6"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("DESIGN.md"), "config-important survives: {o}");
 
     let (dir2, xdg2) = squeeze_fixture();
-    fs::write(xdg2.join("aspectus/aspectus.toml"), "important = \"!README*\"\n").unwrap();
+    fs::write(
+        xdg2.join("aspectus/aspectus.toml"),
+        "important = \"!README*\"\n",
+    )
+    .unwrap();
     let (c, o, e) = run(&dir2, &xdg2, &[], &["--depth", "1", "--lines", "7"]);
     assert_eq!(c, 0, "{e}");
-    assert!(!o.contains("README.md"), "demoted README folds by recency: {o}");
+    assert!(
+        !o.contains("README.md"),
+        "demoted README folds by recency: {o}"
+    );
 }
 
 /// Subfeature 4: no ancestor rescue — an unexpanded dir holding only a
@@ -141,8 +169,10 @@ fn no_ancestor_rescue() {
     assert_eq!(c, 0, "{e}");
     let docs = o.lines().find(|l| l.contains("docs/")).unwrap();
     assert!(docs.contains("[README.md]"), "just part of the census: {o}");
-    assert!(!o.contains("├── README.md") && !o.contains("└── README.md"),
-        "not pulled up as a line: {o}");
+    assert!(
+        !o.contains("├── README.md") && !o.contains("└── README.md"),
+        "not pulled up as a line: {o}"
+    );
 }
 
 /// Subfeature 5: five importants, three file slots — key-within-tier picks
@@ -165,8 +195,10 @@ fn too_many_importants_compete() {
     // (the headings line, 2026-08-14, costs one when fact columns render)
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "7"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("IMP4.md") && o.contains("IMP3.md") && o.contains("IMP2.md"),
-        "newest importants win the tier: {o}");
+    assert!(
+        o.contains("IMP4.md") && o.contains("IMP3.md") && o.contains("IMP2.md"),
+        "newest importants win the tier: {o}"
+    );
     assert!(!o.contains("IMP0.md"), "leftover important censused: {o}");
     assert!(o.contains("[+ "), "{o}");
 }

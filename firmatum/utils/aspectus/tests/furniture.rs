@@ -74,9 +74,14 @@ fn well_known_names_fold_to_parent_state() {
     assert!(!o.contains(".claude"), "{o}");
     // Hidden dirs now carry their magnitude on the kind word (presence
     // survives hiding, 2026-08-14): `agents ≈1f`, `build ≈2f`.
-    assert!(o.contains("[has: agents ≈") && o.contains("build ≈") && o.contains("python]"),
-        "kind spot with hidden magnitudes: {o}");
-    assert!(o.contains(".mystery/"), "unknown hidden name stays a child: {o}");
+    assert!(
+        o.contains("[has: agents ≈") && o.contains("build ≈") && o.contains("python]"),
+        "kind spot with hidden magnitudes: {o}"
+    );
+    assert!(
+        o.contains(".mystery/"),
+        "unknown hidden name stays a child: {o}"
+    );
     assert!(o.contains("src.rs"), "{o}");
 }
 
@@ -85,7 +90,10 @@ fn omit_is_not_mentioned_at_all() {
     let (dir, xdg) = fixture();
     let (_, o, _) = run(&dir, &xdg, &[]);
     assert!(!o.contains(".DS_Store"), "{o}");
-    assert!(!o.contains("other"), ".DS_Store must not leak into a census: {o}");
+    assert!(
+        !o.contains("other"),
+        ".DS_Store must not leak into a census: {o}"
+    );
 }
 
 #[test]
@@ -96,7 +104,10 @@ fn hidden_names_do_not_join_censuses() {
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1"]);
     // Root is the second line: the stamp has its own line above it.
     let root = o.lines().nth(1).unwrap();
-    assert!(!root.contains("3 dir"), "hidden dirs joined the picture: {o}");
+    assert!(
+        !root.contains("3 dir"),
+        "hidden dirs joined the picture: {o}"
+    );
     assert!(o.contains("[has: agents ≈") && o.contains("python]"), "{o}");
 }
 
@@ -152,7 +163,10 @@ fn toml_table_extends_and_removes_map_rows() {
     assert_eq!(c, 0, "{e}");
     assert!(!o.contains(".mystery"), "table row hides it: {o}");
     assert!(o.contains("lab"), "table kind claimed: {o}");
-    assert!(o.contains("target/"), "\"target/\" = \"!\" un-furnitures it: {o}");
+    assert!(
+        o.contains("target/"),
+        "\"target/\" = \"!\" un-furnitures it: {o}"
+    );
 }
 
 #[test]

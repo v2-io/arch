@@ -107,7 +107,10 @@ fn short_columns() {
         &["--depth", "1", "--sort", "name"],
     );
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("initial-sha") && o.contains("latest-sha"), "headed: {o}");
+    assert!(
+        o.contains("initial-sha") && o.contains("latest-sha"),
+        "headed: {o}"
+    );
     let a = o.lines().find(|l| l.contains("a.md")).unwrap();
     assert!(a.contains(&first[..7]), "born in the first commit: {a}");
     assert!(a.contains(&head[..7]), "touched at HEAD: {a}");
@@ -133,7 +136,10 @@ fn hn_spelling() {
     // a.md: introduced 2 behind, last touched at HEAD.
     assert!(a.contains("H~2"), "intro two behind: {a}");
     let b = o.lines().find(|l| l.contains("b.md")).unwrap();
-    assert!(b.contains("H~1"), "b.md born and last touched one behind: {b}");
+    assert!(
+        b.contains("H~1"),
+        "b.md born and last touched one behind: {b}"
+    );
     let cells: Vec<&str> = a.split_whitespace().collect();
     assert!(cells.contains(&"H"), "HEAD spells H: {a}");
 }

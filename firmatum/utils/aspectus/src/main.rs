@@ -7,7 +7,7 @@ use std::collections::BTreeMap;
 
 use aspectus::color::Mode as ColorMode;
 use aspectus::config::{
-    old_columns_note, render_show, resolve, boolish, format_val, CALLER_FLAG, DEFAULTS_TOML,
+    CALLER_FLAG, DEFAULTS_TOML, boolish, format_val, old_columns_note, render_show, resolve,
 };
 
 /// One source: every accepted flag/verb is named here and printed in help.
@@ -18,7 +18,10 @@ const COMMANDS: &[(&str, &str)] = &[
         "one line: name + semver; +sha[.dirty] if not a tagged release, \
          and the build's UTC time",
     ),
-    ("config", "show layers, what won, the effective [layout] and maps"),
+    (
+        "config",
+        "show layers, what won, the effective [layout] and maps",
+    ),
     (
         "config defaults",
         "print the embedded defaults.toml (stdout, exit 0)",
@@ -49,7 +52,10 @@ const OPTIONS: &[(&str, &str)] = &[
          count in censuses, and a cut dir says [walk bound] \
          (default 10000; 0 = no bound)",
     ),
-    ("--explain-budget", "how lines and the walk were spent, on stderr"),
+    (
+        "--explain-budget",
+        "how lines and the walk were spent, on stderr",
+    ),
     (
         "--show-all",
         "list furniture names (.git, target/, …) as ordinary children",
@@ -162,9 +168,10 @@ fn help_page() -> String {
            aspectus --format json PATH (the same look, as data)\n\
          \n\
          Non-binary files show a line count in a 12-cell field (binary\n\
-         shows none, never 0); kind comes from a suffix-map (the `[kinds]`\n\
-         table in `aspectus config defaults`; legacy key `kinds`:\n\
-         `SUFFIX:text|binary`, `!SUFFIX` to drop). An unexpanded directory\n\
+         shows none, never 0); type is stat \u{2192} magic \u{2192} shebang \u{2192}\n\
+         suffix (the `[kinds]` table; legacy key `kinds`: `SUFFIX:text|binary`,\n\
+         `!SUFFIX` to drop) \u{2192} sniff. Census buckets stay by suffix unless\n\
+         `format.census = minor|major`. An unexpanded directory\n\
          carries a census of what it held — [dir\u{d7}3 \u{2248}120f \u{b7} md\u{d7}31] — with\n\
          subdirectories as containers whose deep file-count (mass) leads,\n\
          and the subtree's text lines in the `lines` column (\u{2248}  61.2K /\n\
@@ -252,8 +259,9 @@ fn help_page() -> String {
          magnitude outlier among its siblings; mtime when recent (within a\n\
          day); permissions when odd for its level (special bits like setuid\n\
          always speak); owner when neither you nor the level's majority;\n\
-         the file-kind word when a file differs from its level's plurality\n\
-         (the binary among the .md). Usual is silent: 644 among 644s,\n\
+         the file-kind word when a file's countable class differs from its\n\
+         level's plurality (a PDF among the .md says doc; a .toml does not).\n\
+         Usual is silent: 644 among 644s,\n\
          owner-you, an old mtime print nothing. Sibling norms (size,\n\
          perms, owner, kind) come from the full level, so --lines cannot\n\
          flicker them; mtime alone is an absolute window -- recent vs\n\
@@ -500,9 +508,9 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 flag_vals.insert("walk".into(), v.to_string());
             }
             "--sort" => {
-                let v = args
-                    .next()
-                    .ok_or_else(|| Refusal::Usage("--sort needs a key (recency, name, size)".into()))?;
+                let v = args.next().ok_or_else(|| {
+                    Refusal::Usage("--sort needs a key (recency, name, size)".into())
+                })?;
                 flag_vals.insert("sort".into(), v);
             }
             s if s.starts_with("--sort=") => {
@@ -529,9 +537,9 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             "--explain-budget" => explain = true,
             "--show-all" => show_all = true,
             "--inspect" => {
-                let v = args
-                    .next()
-                    .ok_or_else(|| Refusal::Usage("--inspect needs a kind (git, build, …)".into()))?;
+                let v = args.next().ok_or_else(|| {
+                    Refusal::Usage("--inspect needs a kind (git, build, …)".into())
+                })?;
                 inspect.push(v);
             }
             s if s.starts_with("--inspect=") => {
@@ -643,7 +651,8 @@ fn machine_mode() -> bool {
             if a == "--" {
                 break;
             }
-            if a == "--format=json" || (a == "--format" && args.peek().map(String::as_str) == Some("json"))
+            if a == "--format=json"
+                || (a == "--format" && args.peek().map(String::as_str) == Some("json"))
             {
                 hit = true;
             }
@@ -701,7 +710,11 @@ fn main() -> ExitCode {
                         ShowErr::NotFound(p) => ("not found", p.as_str()),
                         ShowErr::Other(e) => ("error", e.as_str()),
                     };
-                    let _ = write!(io::stderr(), "{}", aspectus::json::refusal(class, tok, None));
+                    let _ = write!(
+                        io::stderr(),
+                        "{}",
+                        aspectus::json::refusal(class, tok, None)
+                    );
                 } else {
                     match &err {
                         ShowErr::NotFound(p) => {
@@ -810,12 +823,22 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         show_all: args.show_all,
         inspect: args.inspect,
     };
-    let kinds = aspectus::kind::Map::from_sourced(&cfg.kinds);
+    let kinds = aspectus::filetype::Map::from_sourced(&cfg.kinds);
+    let census_grain = match format_val(&cfg.won, "format.census") {
+        None | Some("suffix") => aspectus::filetype::CensusGrain::Suffix,
+        Some("minor") => aspectus::filetype::CensusGrain::Minor,
+        Some("major") => aspectus::filetype::CensusGrain::Major,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "format.census is suffix, minor, or major (got {v})"
+            )));
+        }
+    };
     let one_fs = match cfg.won.get("one-fs").map(|(v, _)| v.as_str()) {
         None => true,
-        Some(v) => boolish(v).ok_or_else(|| {
-            ShowErr::Other(format!("one-fs is on or off (got {v})"))
-        })?,
+        Some(v) => {
+            boolish(v).ok_or_else(|| ShowErr::Other(format!("one-fs is on or off (got {v})")))?
+        }
     };
     let read_budget: u64 = cfg
         .won
@@ -828,9 +851,8 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     let important = aspectus::important::Set::from_sourced(&cfg.important);
     let title_on = match cfg.won.get("readme-title").map(|(v, _)| v.as_str()) {
         None => false,
-        Some(v) => boolish(v).ok_or_else(|| {
-            ShowErr::Other(format!("readme-title is on or off (got {v})"))
-        })?,
+        Some(v) => boolish(v)
+            .ok_or_else(|| ShowErr::Other(format!("readme-title is on or off (got {v})")))?,
     };
     let mut ctx = aspectus::n_level::LookCtx::new(
         &map,
@@ -840,6 +862,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         one_fs,
         read_budget,
     );
+    ctx.census_grain = census_grain;
     if title_on {
         ctx.titles = Some(&important);
     }
@@ -883,9 +906,9 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     // spends: one series, one line.
     let globify_on = match cfg.won.get("globify").map(|(v, _)| v.as_str()) {
         None => true,
-        Some(v) => boolish(v).ok_or_else(|| {
-            ShowErr::Other(format!("globify is on or off (got {v})"))
-        })?,
+        Some(v) => {
+            boolish(v).ok_or_else(|| ShowErr::Other(format!("globify is on or off (got {v})")))?
+        }
     };
     if globify_on && !args.show_all {
         let min: usize = cfg
@@ -913,14 +936,13 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "columns.filekind is on, off, or quiet (got {v})"
-            )))
+            )));
         }
     };
     aspectus::quiet::annotate(
         &mut tree,
         &dials,
         &aspectus::quiet::Caller::detect(),
-        &kinds,
         kind_ask,
         now_secs,
     );
@@ -957,7 +979,11 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     let mut cols = cols;
     cols.now = now_secs;
     let header = 1 + usize::from(!aspectus::columns::root_facts_line(&tree, &cols).is_empty());
-    let tree_budget = if lines == 0 { 0 } else { lines.saturating_sub(header).max(1) };
+    let tree_budget = if lines == 0 {
+        0
+    } else {
+        lines.saturating_sub(header).max(1)
+    };
     // The headings line costs a header line only when it actually renders,
     // which depends on what survives the budget — so allocate, look, and
     // when headings landed, re-allocate one line tighter (the tighter tree
@@ -1013,7 +1039,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "format is text or json (got {v}; udon later, csv/yaml/tsv refused)"
-            )))
+            )));
         }
     };
     if machine {
@@ -1065,9 +1091,8 @@ fn resolve_look(
     })?;
     let dotfiles_first = match cfg.won.get("dotfiles-first").map(|(v, _)| v.as_str()) {
         None => false,
-        Some(v) => boolish(v).ok_or_else(|| {
-            ShowErr::Other(format!("dotfiles-first is on or off (got {v})"))
-        })?,
+        Some(v) => boolish(v)
+            .ok_or_else(|| ShowErr::Other(format!("dotfiles-first is on or off (got {v})")))?,
     };
     let recency_git = match cfg.won.get("recency-source").map(|(v, _)| v.as_str()) {
         None | Some("mtime") => false,
@@ -1075,7 +1100,7 @@ fn resolve_look(
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "recency-source is mtime or git (got {v})"
-            )))
+            )));
         }
     };
     let order = Order {
@@ -1088,9 +1113,8 @@ fn resolve_look(
     let col_state = |key: &str| -> Result<aspectus::columns::State, ShowErr> {
         match cfg.won.get(key).map(|(v, _)| v.as_str()) {
             None => Ok(aspectus::columns::State::Quiet),
-            Some(v) => aspectus::columns::State::parse(v).ok_or_else(|| {
-                ShowErr::Other(format!("{key} is on, off, or quiet (got {v})"))
-            }),
+            Some(v) => aspectus::columns::State::parse(v)
+                .ok_or_else(|| ShowErr::Other(format!("{key} is on, off, or quiet (got {v})"))),
         }
     };
     let on_off = |key: &str| -> Result<bool, ShowErr> {
@@ -1117,20 +1141,14 @@ fn resolve_look(
     // not lift either.
     use aspectus::columns::State;
     let explicit_sort = sort_layer != "defaults";
-    let implied = |k: sort::Key, state: State| {
-        explicit_sort && order.key == k && state != State::Off
-    };
+    let implied =
+        |k: sort::Key, state: State| explicit_sort && order.key == k && state != State::Off;
     let lift = |k: sort::Key, state: State| {
-        if implied(k, state) {
-            State::On
-        } else {
-            state
-        }
+        if implied(k, state) { State::On } else { state }
     };
     let size = lift(sort::Key::Size, size_state);
     let mtime = lift(sort::Key::Mtime, mtime_state);
-    let line_count =
-        lc_state == State::On || implied(sort::Key::LineCount, lc_state);
+    let line_count = lc_state == State::On || implied(sort::Key::LineCount, lc_state);
     let heat = heat_state == State::On || implied(sort::Key::Heat, heat_state);
 
     let size_fmt = match format_val(&cfg.won, "format.size") {
@@ -1139,7 +1157,7 @@ fn resolve_look(
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "format.size is human or bytes (got {v}; log not built yet)"
-            )))
+            )));
         }
     };
     let mtime_fmt = match format_val(&cfg.won, "format.mtime") {
@@ -1149,7 +1167,7 @@ fn resolve_look(
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "format.mtime is relative, iso-8601, or epoch (got {v}; rfc-3339, pattern, signa not built yet)"
-            )))
+            )));
         }
     };
     let line_fmt = match format_val(&cfg.won, "format.line-count") {
@@ -1158,7 +1176,7 @@ fn resolve_look(
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "format.line-count is physical or non-blank (got {v}; signa not built yet)"
-            )))
+            )));
         }
     };
     let sha_fmt = |key: &str| -> Result<aspectus::columns::ShaFmt, ShowErr> {
@@ -1180,7 +1198,7 @@ fn resolve_look(
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "format.owner is name or id (got {v})"
-            )))
+            )));
         }
     };
     Ok((

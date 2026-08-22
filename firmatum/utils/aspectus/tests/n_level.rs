@@ -32,12 +32,11 @@ fn fixture() -> (PathBuf, PathBuf) {
         .unwrap()
         .write_all(b"gg")
         .unwrap();
-    File::create(dir.join("f")).unwrap().write_all(b"f").unwrap();
-    let xdg = std::env::temp_dir().join(format!(
-        "aspectus-nl-xdg-{}-{}",
-        std::process::id(),
-        n
-    ));
+    File::create(dir.join("f"))
+        .unwrap()
+        .write_all(b"f")
+        .unwrap();
+    let xdg = std::env::temp_dir().join(format!("aspectus-nl-xdg-{}-{}", std::process::id(), n));
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
     (dir, xdg)
 }
@@ -64,7 +63,10 @@ fn depth_1_is_children_only() {
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("a/"), "{o}");
     assert!(o.contains('f'), "{o}");
-    assert!(!o.contains("inside.txt"), "depth 1 has no grandchildren: {o}");
+    assert!(
+        !o.contains("inside.txt"),
+        "depth 1 has no grandchildren: {o}"
+    );
     assert!(
         o.contains("[b/"),
         "unexpanded a/ must census, not look empty (name form at n=1): {o}"
@@ -81,7 +83,9 @@ fn depth_2_includes_grandchildren() {
     assert!(o.contains("inside.txt"), "{o}");
     assert!(o.contains("b/"), "{o}");
     assert!(
-        !o.lines().any(|l| l.trim_start_matches(['│', ' ', '├', '└', '─']).starts_with("deep.txt")),
+        !o.lines().any(|l| l
+            .trim_start_matches(['│', ' ', '├', '└', '─'])
+            .starts_with("deep.txt")),
         "depth 2 stops at grandchildren — deep.txt gets no line of its own: {o}"
     );
     assert!(

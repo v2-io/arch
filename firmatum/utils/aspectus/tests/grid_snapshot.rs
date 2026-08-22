@@ -163,7 +163,11 @@ fn kitchen(dir: &Path) {
     // Odd permissions for its level (the quiet perms column speaks).
     let odd = dir.join("run.sh");
     write(&odd, "#!/bin/sh\necho hi\n");
-    fs::set_permissions(&odd, <fs::Permissions as std::os::unix::fs::PermissionsExt>::from_mode(0o700)).unwrap();
+    fs::set_permissions(
+        &odd,
+        <fs::Permissions as std::os::unix::fs::PermissionsExt>::from_mode(0o700),
+    )
+    .unwrap();
     age_all(dir);
     // Symlinks last: they carry the target's mtime, and creating them does
     // not disturb the aged tree.
@@ -198,7 +202,10 @@ fn kitchen_tree_grid() {
 fn leaf_census_grid() {
     let (dir, xdg) = fresh("leaf");
     kitchen(&dir);
-    golden("leaf-census", &run(&dir, &xdg, &["--depth", "3", "--lines", "8"]));
+    golden(
+        "leaf-census",
+        &run(&dir, &xdg, &["--depth", "3", "--lines", "8"]),
+    );
 }
 
 /// Depth 1: every dir is a census line, and the mass tail speaks.

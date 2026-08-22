@@ -170,17 +170,19 @@ fn estimates_marked_distinctly_and_big_visible_files_degrade() {
 fn json_heat_rounded() {
     let (dir, xdg) = fresh("jheat");
     let git = |args: &[&str]| {
-        assert!(Command::new("git")
-            .args(args)
-            .current_dir(&dir)
-            .env("GIT_AUTHOR_NAME", "t")
-            .env("GIT_AUTHOR_EMAIL", "t@t")
-            .env("GIT_COMMITTER_NAME", "t")
-            .env("GIT_COMMITTER_EMAIL", "t@t")
-            .output()
-            .unwrap()
-            .status
-            .success());
+        assert!(
+            Command::new("git")
+                .args(args)
+                .current_dir(&dir)
+                .env("GIT_AUTHOR_NAME", "t")
+                .env("GIT_AUTHOR_EMAIL", "t@t")
+                .env("GIT_COMMITTER_NAME", "t")
+                .env("GIT_COMMITTER_EMAIL", "t@t")
+                .output()
+                .unwrap()
+                .status
+                .success()
+        );
     };
     git(&["init", "-q"]);
     fs::write(dir.join("a.md"), "1\n").unwrap();

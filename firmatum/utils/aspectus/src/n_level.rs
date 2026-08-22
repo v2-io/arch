@@ -158,8 +158,13 @@ pub struct Node {
     /// cold baseline; set post-gather over full statted levels).
     pub q: crate::quiet::Speaks,
     /// The kind *word* for the near-right spot, when filekind speaks
-    /// (`binary` among `.md`) or is asked `on`.
+    /// (a node's countable class among its level) or is asked `on`.
     pub kind_word: Option<&'static str>,
+    /// Ladder type (design/filetype.md). Every node has one; unknown
+    /// is the honest floor, never faked as text.
+    pub filetype: crate::filetype::FileType,
+    /// Census bucket key at the caller's grain (suffix default).
+    pub census_key: String,
     /// Line count of a non-binary file (design/linecount.md); absent on
     /// binary, unreadable, or past the read budget — never a guess.
     pub lines: Option<u64>,
@@ -302,10 +307,10 @@ pub fn est_lines(size: u64) -> u64 {
 /// (measured 2.8 GB resident on ~/src, hardening 2026-08-14).
 const VISIBLE_READ_FLOOR: u64 = 256 * 1024;
 
-/// Bytes sniffed to decide text-vs-binary for unknown suffixes. The sniff
-/// used to read the whole file first; a bounded read keeps unknown big
-/// binaries from eating the budget (and memory) before judgment.
-const SNIFF_BYTES: usize = 1024;
+/// Bytes sniffed to decide text-vs-binary for unknown suffixes. Shared
+/// with magic/shebang (design/filetype.md); never a second classification
+/// read. The constant lives in filetype so the ladder and the walk agree.
+const SNIFF_BYTES: usize = crate::filetype::SNIFF_BYTES;
 
 /// Names deep-mass will visit per look before declaring the floor (`≥`).
 const MASS_NAME_CAP: u64 = 500_000;
@@ -314,7 +319,9 @@ const MASS_NAME_CAP: u64 = 500_000;
 pub struct LookCtx<'a> {
     pub map: &'a crate::furniture::Map,
     pub view: &'a crate::furniture::View,
-    pub kinds: &'a crate::kind::Map,
+    pub kinds: &'a crate::filetype::Map,
+    /// Census bucket grain (`format.census`); default suffix.
+    pub census_grain: crate::filetype::CensusGrain,
     /// Count non-blank instead of physical lines.
     pub non_blank: bool,
     /// Stay on the starting filesystem (default; `--no-one-fs` clears).
@@ -344,7 +351,7 @@ impl<'a> LookCtx<'a> {
     pub fn new(
         map: &'a crate::furniture::Map,
         view: &'a crate::furniture::View,
-        kinds: &'a crate::kind::Map,
+        kinds: &'a crate::filetype::Map,
         non_blank: bool,
         one_fs: bool,
         read_budget: u64,
@@ -353,6 +360,7 @@ impl<'a> LookCtx<'a> {
             map,
             view,
             kinds,
+            census_grain: crate::filetype::CensusGrain::Suffix,
             non_blank,
             one_fs,
             reads: ReadMeter::new(read_budget),
@@ -378,61 +386,137 @@ enum Count {
     Denied,
 }
 
-fn count_file(path: &Path, size: u64, ctx: &mut LookCtx) -> Count {
-    count_file_at(path, size, ctx, false)
+fn count_file(
+    path: &Path,
+    size: u64,
+    mode: u32,
+    ctx: &mut LookCtx,
+) -> (crate::filetype::FileType, Count) {
+    count_file_at(path, size, mode, ctx, false)
 }
 
 /// `visible` files (lines of the look itself) get a small exemption from
 /// the budget (`VISIBLE_READ_FLOOR`); past that everything degrades the
-/// same honest way. Unknown suffixes are judged from a bounded sniff
-/// before any full read.
-fn count_file_at(path: &Path, size: u64, ctx: &mut LookCtx, visible: bool) -> Count {
-    use crate::kind::Kind;
+/// same honest way. Classification uses one ≤1 KiB window (magic, shebang,
+/// sniff); line-count may then read the rest of a text file. Known-binary
+/// suffixes are not opened just to verify magic — the read budget governs
+/// whether a file is read at all.
+fn count_file_at(
+    path: &Path,
+    size: u64,
+    mode: u32,
+    ctx: &mut LookCtx,
+    visible: bool,
+) -> (crate::filetype::FileType, Count) {
+    use crate::filetype::{self, FileType, Major};
+    use std::io::Read;
     let name = path
         .file_name()
         .map(|s| s.to_string_lossy().into_owned())
         .unwrap_or_default();
-    let kind = ctx.kinds.kind(&name);
-    if kind == Kind::Binary {
-        return Count::Binary;
+    // Specials (fifo/socket/…) must never be opened — a fifo read blocks
+    // the glance until a writer appears.
+    if let Ok(meta) = fs::symlink_metadata(path) {
+        let ft = meta.file_type();
+        if let Some(special) =
+            crate::filetype::from_stat(ft).filter(|t| t.major == crate::filetype::Major::Special)
+        {
+            return (special, Count::Binary);
+        }
     }
-    if !ctx.reads.can_read(size) && !(visible && size <= VISIBLE_READ_FLOOR) {
-        return match kind {
-            Kind::Text => Count::Est(est_lines(size)),
-            // Unknown and unread: claims nothing, not even an estimate.
-            _ => Count::Binary,
-        };
+    let mapped = ctx.kinds.lookup(&name);
+    let exec = mode & 0o111 != 0;
+
+    if size == 0 {
+        let mut ft = FileType::empty();
+        if exec {
+            ft.trait_ = Some("+x".into());
+        }
+        return (ft, Count::Lines(0));
     }
-    if kind == Kind::Unknown {
-        // Judge from the first block only — never slurp to find out.
-        use std::io::Read;
+
+    // Known-binary by suffix: no read. Magic only runs when a read is
+    // already happening (line-count or unknown sniff).
+    if let Some(ft) = &mapped
+        && !ft.counts_lines()
+    {
+        let mut ft = ft.clone();
+        if exec && ft.trait_.is_none() && ft.major != Major::Exe {
+            ft.trait_ = Some("+x".into());
+        }
+        return (ft, Count::Binary);
+    }
+
+    let can = ctx.reads.can_read(size) || (visible && size <= VISIBLE_READ_FLOOR);
+    if !can {
+        let ft = mapped.unwrap_or_else(FileType::unknown);
+        if ft.counts_lines() && ft.major != Major::Unknown {
+            return (ft, Count::Est(est_lines(size)));
+        }
+        return (ft, Count::Binary);
+    }
+
+    let unknown = mapped.is_none();
+    if unknown {
         let mut head = [0u8; SNIFF_BYTES];
         let sniffed = fs::File::open(path)
             .and_then(|mut f| f.read(&mut head))
             .unwrap_or(0);
         if sniffed == 0 && size > 0 {
-            return Count::Binary; // unreadable unknown claims nothing
+            return (FileType::unknown(), Count::Binary);
         }
-        if crate::kind::looks_binary(&head[..sniffed]) {
-            return Count::Binary;
+        let ft = filetype::from_window(&head[..sniffed], None, exec);
+        if !ft.counts_lines() {
+            return (ft, Count::Binary);
+        }
+        if size as usize <= sniffed {
+            let lines = if ctx.non_blank {
+                filetype::non_blank_lines(&head[..sniffed])
+            } else {
+                filetype::physical_lines(&head[..sniffed])
+            };
+            ctx.reads.charge(sniffed as u64);
+            return (ft, Count::Lines(lines));
+        }
+        return finish_count(path, ft, exec, ctx);
+    }
+
+    finish_count(path, mapped.unwrap_or_else(FileType::unknown), exec, ctx)
+}
+
+/// Full-file read for a type that counts (or that we just sniffed as
+/// text). The first 1 KiB of this buffer is the ladder window — magic can
+/// still override a suffix (a `.md` that starts `\x89PNG` becomes image).
+fn finish_count(
+    path: &Path,
+    mapped: crate::filetype::FileType,
+    exec: bool,
+    ctx: &mut LookCtx,
+) -> (crate::filetype::FileType, Count) {
+    use crate::filetype;
+    match fs::read(path) {
+        Ok(bytes) => {
+            ctx.reads.charge(bytes.len() as u64);
+            let n = bytes.len().min(SNIFF_BYTES);
+            let ft = filetype::from_window(&bytes[..n], Some(mapped.clone()), exec);
+            if !ft.counts_lines() {
+                return (ft, Count::Binary);
+            }
+            let lines = if ctx.non_blank {
+                filetype::non_blank_lines(&bytes)
+            } else {
+                filetype::physical_lines(&bytes)
+            };
+            (ft, Count::Lines(lines))
+        }
+        Err(_) => {
+            if mapped.counts_lines() {
+                (mapped, Count::Denied)
+            } else {
+                (mapped, Count::Binary)
+            }
         }
     }
-    let bytes = match fs::read(path) {
-        Ok(b) => b,
-        Err(_) => {
-            return match kind {
-                Kind::Text => Count::Denied,
-                _ => Count::Binary,
-            };
-        }
-    };
-    let lines = if ctx.non_blank {
-        crate::kind::non_blank_lines(&bytes)
-    } else {
-        crate::kind::physical_lines(&bytes)
-    };
-    ctx.reads.charge(bytes.len() as u64);
-    Count::Lines(lines)
 }
 
 /// `depth` is how many generations below the root to print. `0` = no limit.
@@ -524,18 +608,25 @@ fn bucketize(names: impl Iterator<Item = String>) -> Vec<(String, usize)> {
     buckets
 }
 
-fn census_entries(entries: &[Entry], bounded: bool) -> Census {
+fn census_entries(entries: &[Entry], bounded: bool, ctx: &LookCtx) -> Census {
     let dirs = entries.iter().filter(|e| e.is_dir).count();
     let dir_name = (dirs == 1)
         .then(|| entries.iter().find(|e| e.is_dir).map(|e| e.name.clone()))
         .flatten();
     let files: Vec<&Entry> = entries.iter().filter(|e| !e.is_dir).collect();
     let single = (dirs == 0 && files.len() == 1).then(|| files[0].name.clone());
+    let grain = ctx.census_grain;
+    let map = ctx.kinds;
     Census {
         dirs,
         dir_name,
         dir_files: None,
-        buckets: bucketize(files.iter().map(|e| suffix_bucket(&e.name))),
+        buckets: bucketize(files.iter().map(|e| {
+            let ft = map
+                .lookup(&e.name)
+                .unwrap_or_else(crate::filetype::FileType::unknown);
+            crate::filetype::census_key(&e.name, &ft, grain)
+        })),
         single,
         ignored: 0,
         bounded,
@@ -577,7 +668,14 @@ pub(crate) fn census_nodes(nodes: &[Node]) -> Census {
     let labels = files.iter().flat_map(|n| {
         let (label, count) = match &n.glob {
             Some(g) => (g.bucket.clone(), g.count),
-            None => (suffix_bucket(&n.name), 1),
+            None => {
+                let key = if n.census_key.is_empty() {
+                    suffix_bucket(&n.name)
+                } else {
+                    n.census_key.clone()
+                };
+                (key, 1)
+            }
         };
         std::iter::repeat_n(label, count)
     });
@@ -723,7 +821,7 @@ fn deep_mass_body(
             ctx.dir_stack.pop();
         } else if meta.is_file() {
             m.files += 1;
-            match count_file(&p, meta.len(), ctx) {
+            match count_file(&p, meta.len(), meta.mode(), ctx).1 {
                 Count::Lines(n) => m.lines += n,
                 Count::Est(n) => {
                     m.lines += n;
@@ -735,6 +833,85 @@ fn deep_mass_body(
         }
     }
     m
+}
+
+/// A non-directory node: regular file, special, or a symlink whose target
+/// is a file. The node's type is `link` when we got here via a symlink;
+/// line-count still follows the target (today's behavior).
+fn gather_non_dir(
+    path: &Path,
+    name: String,
+    meta: &fs::Metadata,
+    mtime: Option<i64>,
+    mode: Option<u32>,
+    uid: Option<u32>,
+    gid: Option<u32>,
+    link: Option<String>,
+    link_broken: bool,
+    ctx: &mut LookCtx,
+) -> Node {
+    use crate::filetype::{self, FileType};
+
+    let ft = meta.file_type();
+    let mut filetype = if link.is_some() {
+        FileType::link(if link_broken { "broken" } else { "file" })
+    } else if let Some(special) =
+        filetype::from_stat(ft).filter(|t| t.major == filetype::Major::Special)
+    {
+        special
+    } else {
+        FileType::unknown()
+    };
+
+    let (size, lines) = if meta.is_file() {
+        let bits = mode.unwrap_or(0);
+        let (tgt, count) = count_file_at(path, meta.len(), bits, ctx, true);
+        if link.is_some() && !link_broken {
+            filetype.trait_ = tgt.kind_word().map(|s| s.to_string());
+        } else if link.is_none() {
+            filetype = tgt;
+        }
+        let lines = match count {
+            Count::Lines(n) => Some(n),
+            _ => None,
+        };
+        (Some(meta.len()), lines)
+    } else {
+        (None, None)
+    };
+
+    // A gitlink `.git` (submodule / linked work tree) only ever shows
+    // under --inspect/--show-all; when it does, say where it points —
+    // "see inside .git" cannot mean children here (grok, 2026-08-14).
+    let facets = if name == ".git" && meta.is_file() {
+        match fs::read_to_string(path)
+            .ok()
+            .as_deref()
+            .and_then(|t| t.trim().strip_prefix("gitdir:"))
+        {
+            Some(target) => vec![format!("gitdir: {}", target.trim())],
+            None => Vec::new(),
+        }
+    } else {
+        Vec::new()
+    };
+    let census_key = filetype::census_key(&name, &filetype, ctx.census_grain);
+    Node {
+        name,
+        is_dir: false,
+        mtime,
+        size,
+        mode,
+        uid,
+        gid,
+        lines,
+        link,
+        link_broken,
+        facets,
+        filetype,
+        census_key,
+        ..Node::default()
+    }
 }
 
 fn gather_at(
@@ -759,6 +936,8 @@ fn gather_at(
             Err(_) => {
                 let mtime = stamp_of(&lmeta);
                 let (mode, uid, gid) = ids_of(&lmeta);
+                let filetype = crate::filetype::FileType::link("broken");
+                let census_key = crate::filetype::census_key(&name, &filetype, ctx.census_grain);
                 return Ok(Node {
                     name,
                     is_dir: false,
@@ -768,6 +947,8 @@ fn gather_at(
                     gid,
                     link: target,
                     link_broken: true,
+                    filetype,
+                    census_key,
                     ..Node::default()
                 });
             }
@@ -779,51 +960,25 @@ fn gather_at(
     let mtime = stamp_of(&meta);
     let (mode, uid, gid) = ids_of(&meta);
     if !is_dir {
-        let size = meta.is_file().then_some(meta.len());
-        let lines = if meta.is_file() {
-            match count_file_at(path, meta.len(), ctx, true) {
-                Count::Lines(n) => Some(n),
-                _ => None,
-            }
-        } else {
-            None
-        };
-        // A gitlink `.git` (submodule / linked work tree) only ever shows
-        // under --inspect/--show-all; when it does, say where it points —
-        // "see inside .git" cannot mean children here (grok, 2026-08-14).
-        let facets = if name == ".git" && meta.is_file() {
-            match fs::read_to_string(path)
-                .ok()
-                .as_deref()
-                .and_then(|t| t.trim().strip_prefix("gitdir:"))
-            {
-                Some(target) => vec![format!("gitdir: {}", target.trim())],
-                None => Vec::new(),
-            }
-        } else {
-            Vec::new()
-        };
-        return Ok(Node {
+        return Ok(gather_non_dir(
+            path,
             name,
-            is_dir: false,
+            &meta,
             mtime,
-            size,
             mode,
             uid,
             gid,
-            lines,
             link,
             link_broken,
-            facets,
-            ..Node::default()
-        });
+            ctx,
+        ));
     }
     let key = (meta.dev(), meta.ino());
     if ctx.root_dev.is_none() {
         ctx.root_dev = Some(meta.dev());
     } else if ctx.one_fs && ctx.root_dev != Some(meta.dev()) {
         // A filesystem boundary, not an empty directory, stopped here.
-        return Ok(Node {
+        let mut n = Node {
             name,
             is_dir: true,
             mtime,
@@ -834,10 +989,12 @@ fn gather_at(
             link_broken,
             other_fs: true,
             ..Node::default()
-        });
+        };
+        stamp_dir_type(&mut n, ctx.census_grain);
+        return Ok(n);
     }
     if ctx.dir_stack.contains(&key) {
-        return Ok(Node {
+        let mut n = Node {
             name,
             is_dir: true,
             mtime,
@@ -848,7 +1005,9 @@ fn gather_at(
             link_broken,
             cycle: true,
             ..Node::default()
-        });
+        };
+        stamp_dir_type(&mut n, ctx.census_grain);
+        return Ok(n);
     }
     let mass_dup = !ctx.seen.insert(key);
     ctx.dir_stack.push(key);
@@ -858,6 +1017,7 @@ fn gather_at(
         n.mode = mode;
         n.uid = uid;
         n.gid = gid;
+        stamp_dir_type(&mut n, ctx.census_grain);
         n
     })
 }
@@ -865,7 +1025,7 @@ fn gather_at(
 /// Presence-only node for an ignored directory: the stat facts its line
 /// may carry, nothing from inside (design/gitignore-bodies.md — the repo
 /// disclaimed the innards; the look honors the declaration).
-fn stat_only(path: &Path, name: String) -> Node {
+fn stat_only(path: &Path, name: String, grain: crate::filetype::CensusGrain) -> Node {
     let meta = fs::symlink_metadata(path).ok();
     let link = meta
         .as_ref()
@@ -884,7 +1044,7 @@ fn stat_only(path: &Path, name: String) -> Node {
         }
         None => (None, None, None, None),
     };
-    Node {
+    let mut n = Node {
         name,
         is_dir: true,
         ignored: true,
@@ -894,7 +1054,9 @@ fn stat_only(path: &Path, name: String) -> Node {
         gid,
         link,
         ..Node::default()
-    }
+    };
+    stamp_dir_type(&mut n, grain);
+    n
 }
 
 /// Head-peek constant for README titles (design/readme-title.md: a few KB,
@@ -976,6 +1138,15 @@ fn ids_of(meta: &fs::Metadata) -> (Option<u32>, Option<u32>, Option<u32>) {
         Some(meta.uid()),
         Some(meta.gid()),
     )
+}
+
+fn stamp_dir_type(n: &mut Node, grain: crate::filetype::CensusGrain) {
+    n.filetype = if n.link.is_some() {
+        crate::filetype::FileType::link(if n.link_broken { "broken" } else { "dir" })
+    } else {
+        crate::filetype::FileType::dir()
+    };
+    n.census_key = crate::filetype::census_key(&n.name, &n.filetype, grain);
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1095,7 +1266,7 @@ fn gather_dir_inner(
         // Depth cutoff: census of the children now; the subtree's deep
         // mass comes from the parallel deep phase (deep_phase) after the
         // whole gather — the serial inline walk was the multi-repo cost.
-        let mut census = census_entries(&entries, iter_err);
+        let mut census = census_entries(&entries, iter_err, ctx);
         census.ignored = ignored_files;
         return Ok(Node {
             name,
@@ -1130,7 +1301,7 @@ fn gather_dir_inner(
         if walk.exhausted() {
             walk.tripped = true;
             cut = true;
-            early = Some(census_entries(&entries[i..], false));
+            early = Some(census_entries(&entries[i..], false, ctx));
             break;
         }
         walk.charge();
@@ -1151,20 +1322,26 @@ fn gather_dir_inner(
         // project's: no expansion, no census, no mass — presence only.
         // (Under --show-all it expands like anything, mark kept.)
         let kid = if ig[i] && !show_all {
-            stat_only(&child_path, ent.name.clone())
+            stat_only(&child_path, ent.name.clone(), ctx.census_grain)
         } else {
             match gather_at(&child_path, child_remain, walk, ctx) {
                 Ok(mut kid) => {
                     kid.ignored = ig[i];
                     kid
                 }
-                Err(_) => Node {
-                    name: ent.name.clone(),
-                    is_dir: ent.is_dir,
-                    denied: true,
-                    ignored: ig[i],
-                    ..Node::default()
-                },
+                Err(_) => {
+                    let mut n = Node {
+                        name: ent.name.clone(),
+                        is_dir: ent.is_dir,
+                        denied: true,
+                        ignored: ig[i],
+                        ..Node::default()
+                    };
+                    if n.is_dir {
+                        stamp_dir_type(&mut n, ctx.census_grain);
+                    }
+                    n
+                }
             }
         };
         let mut kid = kid;
@@ -1297,6 +1474,7 @@ pub fn deep_phase(node: &mut Node, abs: &Path, ctx: &mut LookCtx) {
             let non_blank = ctx.non_blank;
             let one_fs = ctx.one_fs;
             let root_dev = ctx.root_dev;
+            let census_grain = ctx.census_grain;
             let threads = POOL_THREADS.min(paths.len());
             let handles: Vec<_> = (0..threads)
                 .map(|t| {
@@ -1307,6 +1485,7 @@ pub fn deep_phase(node: &mut Node, abs: &Path, ctx: &mut LookCtx) {
                                 continue;
                             }
                             let mut c = LookCtx::new(map, view, kinds, non_blank, one_fs, 0);
+                            c.census_grain = census_grain;
                             c.reads = ReadMeter::with(read_share);
                             c.mass_names = name_share;
                             c.root_dev = root_dev;
@@ -1339,7 +1518,7 @@ pub fn deep_phase(node: &mut Node, abs: &Path, ctx: &mut LookCtx) {
         let mut idx = 0;
         assign_deep(node, &results, &mut idx);
     }
-    mass_up(node, ctx.kinds);
+    mass_up(node);
 }
 
 /// Names visited per hidden furniture dir before its count floors (`≥`).
@@ -1441,9 +1620,9 @@ pub fn hidden_phase(node: &mut Node, abs: &Path) {
 
 /// Fold mass bottom-up over expanded dirs (children carry theirs already
 /// — cutoff nodes from the deep phase, files from their counts).
-fn mass_up(node: &mut Node, kinds: &crate::kind::Map) {
+fn mass_up(node: &mut Node) {
     for c in &mut node.children {
-        mass_up(c, kinds);
+        mass_up(c);
     }
     if !node.is_dir || node.denied || node.cycle || node.other_fs || wants_deep(node) {
         return;
@@ -1467,7 +1646,7 @@ fn mass_up(node: &mut Node, kinds: &crate::kind::Map) {
                 Some(n) => mass.lines += n,
                 None => {
                     if let Some(s) = c.size
-                        && kinds.kind(&c.name) == crate::kind::Kind::Text
+                        && c.filetype.counts_lines()
                     {
                         mass.lines += est_lines(s);
                         mass.est = true;

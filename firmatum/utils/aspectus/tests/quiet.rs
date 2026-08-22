@@ -197,7 +197,8 @@ fn tiny_level_floor() {
     );
 }
 
-/// Subfeature 8: the binary among twenty .md carries the kind word.
+/// Subfeature 8: the uncountable among twenty .md carries the kind word.
+/// 2026-08-22: class is counts-lines vs. does-not; the word is the major.
 #[test]
 fn kind_intruder_speaks() {
     let (dir, xdg) = fresh("kind");
@@ -205,13 +206,44 @@ fn kind_intruder_speaks() {
         write_file(&dir, &format!("n{i}.md"), 10);
     }
     write_file(&dir, "blob.png", 10);
+    write_file(&dir, "Cargo.toml", 10);
+    write_file(&dir, "note.pdf", 10);
     backdate_all(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "0"]);
     assert_eq!(c, 0, "{e}");
-    assert!(line_of(&o, "blob.png").contains("binary"), "{o}");
+    assert!(
+        line_of(&o, "blob.png").contains("image"),
+        "kind-word speaks the major: {o}"
+    );
+    assert!(
+        line_of(&o, "note.pdf").contains("doc"),
+        "a PDF among .md says doc: {o}"
+    );
     assert!(
         !line_of(&o, "n3.md").contains("text"),
         "the plurality is silent: {o}"
+    );
+    assert!(
+        !line_of(&o, "Cargo.toml").contains("data"),
+        "a manifest among prose is not a surprise: {o}"
+    );
+
+    // Inverse: a .md among PDFs speaks `text`.
+    let (dir, xdg) = fresh("kind-text");
+    for i in 0..20 {
+        write_file(&dir, &format!("n{i}.pdf"), 10);
+    }
+    write_file(&dir, "README.md", 10);
+    backdate_all(&dir);
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "0"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(
+        line_of(&o, "README.md").contains("text"),
+        "a .md among PDFs says text: {o}"
+    );
+    assert!(
+        !line_of(&o, "n3.pdf").contains("doc"),
+        "the uncountable plurality is silent: {o}"
     );
 }
 

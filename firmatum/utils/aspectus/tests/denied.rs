@@ -38,11 +38,7 @@ fn fixture() -> (PathBuf, PathBuf) {
     File::create(dir.join("secrets/hidden.txt")).unwrap();
     fs::set_permissions(dir.join("secrets"), fs::Permissions::from_mode(0o000)).unwrap();
     File::create(dir.join("top.txt")).unwrap();
-    let xdg = std::env::temp_dir().join(format!(
-        "aspectus-dn-xdg-{}-{}",
-        std::process::id(),
-        n
-    ));
+    let xdg = std::env::temp_dir().join(format!("aspectus-dn-xdg-{}-{}", std::process::id(), n));
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
     (dir, xdg)
 }
@@ -117,7 +113,10 @@ fn denied_root_says_so_not_empty() {
     let (c, o, e) = run(&dir, &xdg, &[secrets.to_str().unwrap()]);
     unlock(&dir);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("[denied]"), "root itself denied must say so: {o}");
+    assert!(
+        o.contains("[denied]"),
+        "root itself denied must say so: {o}"
+    );
 }
 
 #[test]

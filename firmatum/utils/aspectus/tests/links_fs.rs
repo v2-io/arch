@@ -58,7 +58,10 @@ fn target_shown_verbatim() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("rel-link -> real.md"), "{o}");
-    assert!(o.contains(&format!("abs-link -> {}", dir.join("real.md").display())), "{o}");
+    assert!(
+        o.contains(&format!("abs-link -> {}", dir.join("real.md").display())),
+        "{o}"
+    );
 }
 
 /// Subfeature 2: a broken link says so, exit still 0.
@@ -83,7 +86,10 @@ fn symlinked_dir_recurses() {
     assert_eq!(c, 0, "{e}");
     let door_idx = o.find("door/ -> real").expect(&o);
     let after = &o[door_idx..];
-    assert!(after.contains("inside.md"), "children under the link line: {o}");
+    assert!(
+        after.contains("inside.md"),
+        "children under the link line: {o}"
+    );
 }
 
 /// Subfeature 4: a symlinked file carries the target's facts.
@@ -126,7 +132,11 @@ fn diamond_is_deterministic() {
     assert_eq!(tail(&o1), tail(&o2));
     // "── x.md" not bare "x.md": the feedback footer's inbox.md
     // (2026-08-14) contains that substring.
-    assert_eq!(o1.matches("── x.md").count(), 3, "real + both links expand: {o1}");
+    assert_eq!(
+        o1.matches("── x.md").count(),
+        3,
+        "real + both links expand: {o1}"
+    );
 }
 
 /// Subfeature 9: an unexpanded symlinked dir still gets a dir census.

@@ -24,19 +24,25 @@ fn fixture() -> PathBuf {
             .as_nanos()
     ));
     fs::create_dir_all(dir.join("a")).unwrap();
-    File::create(dir.join("f")).unwrap().write_all(b"f").unwrap();
+    File::create(dir.join("f"))
+        .unwrap()
+        .write_all(b"f")
+        .unwrap();
     dir
 }
 
 #[test]
 fn header_is_absolute_path_and_utc_stamp() {
     let dir = fixture();
-    let out = bin()
-        .current_dir(&dir)
-        .output()
-        .unwrap();
+    let out = bin().current_dir(&dir).output().unwrap();
     assert_eq!(out.status.code(), Some(0));
-    assert!(String::from_utf8_lossy(&out.stderr).lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{:?}", String::from_utf8_lossy(&out.stderr));  // stderr: only the feedback footer (teaching) since 2026-08-22
+    assert!(
+        String::from_utf8_lossy(&out.stderr)
+            .lines()
+            .all(|l| l.is_empty() || l.starts_with("*(This is a critical")),
+        "{:?}",
+        String::from_utf8_lossy(&out.stderr)
+    ); // stderr: only the feedback footer (teaching) since 2026-08-22
     let stdout = String::from_utf8_lossy(&out.stdout);
     // Two-line header (decided 2026-08-14): stamp first, then the root —
     // so the root line sits directly above its children.
@@ -94,11 +100,7 @@ fn named_path_also_absolute() {
     let dir = fixture();
     let parent = dir.parent().unwrap();
     let name = dir.file_name().unwrap().to_string_lossy().into_owned();
-    let out = bin()
-        .current_dir(parent)
-        .arg(&name)
-        .output()
-        .unwrap();
+    let out = bin().current_dir(parent).arg(&name).output().unwrap();
     assert_eq!(out.status.code(), Some(0));
     let stdout = String::from_utf8_lossy(&out.stdout);
     let root = stdout.lines().nth(1).unwrap();

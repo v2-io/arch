@@ -161,7 +161,11 @@ fn valid_transport() {
     let (dir, xdg) = fixture();
     let (c, o, e) = run(&dir, &xdg, &[], &["--format", "json"]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "stderr empty on success: {e}");  // stderr: only the feedback footer (teaching) since 2026-08-22
+    assert!(
+        e.lines()
+            .all(|l| l.is_empty() || l.starts_with("*(This is a critical")),
+        "stderr empty on success: {e}"
+    ); // stderr: only the feedback footer (teaching) since 2026-08-22
     assert_valid_json(&o);
     assert!(o.starts_with("{\"aspectus\":"), "{o:.80}");
     assert!(o.contains("\"schema\":1"), "versioned from birth: {o:.120}");
@@ -193,7 +197,10 @@ fn same_look_as_text() {
         .map(|s| s.split_whitespace().next().unwrap().to_string())
         .collect();
     for name in &listed {
-        assert!(j.contains(&format!("\"name\":\"{name}\"")), "{name} in json");
+        assert!(
+            j.contains(&format!("\"name\":\"{name}\"")),
+            "{name} in json"
+        );
     }
     let json_names = j.matches("\"name\":\"f").count();
     assert_eq!(json_names, listed.len(), "no extra nodes for machines: {j}");
@@ -220,7 +227,10 @@ fn bytes_and_canonical_times() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--format", "json", "--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("\"size\":8"), "bytes, not 8B: {o}");
-    assert!(o.contains("\"mtime\":\"2023-11-14T"), "iso-8601 despite epoch config: {o}");
+    assert!(
+        o.contains("\"mtime\":\"2023-11-14T"),
+        "iso-8601 despite epoch config: {o}"
+    );
 }
 
 /// Subfeature 4: denied and walk-bound are fields, censuses objects.
@@ -243,17 +253,30 @@ fn marks_as_data() {
     for i in 0..30 {
         touch(&dir2, &format!("f{i:02}.md"), 1_700_000_000);
     }
-    let (c, o, _) = run(&dir2, &xdg2, &[], &["--format", "json", "--walk", "5", "--depth", "1"]);
+    let (c, o, _) = run(
+        &dir2,
+        &xdg2,
+        &[],
+        &["--format", "json", "--walk", "5", "--depth", "1"],
+    );
     assert_eq!(c, 0);
     assert!(o.contains("\"walk_bound\":true"), "{o}");
-    assert!(o.contains("\"census\":{\"total\":") || o.contains("\"omitted\":{\"total\":"), "{o}");
+    assert!(
+        o.contains("\"census\":{\"total\":") || o.contains("\"omitted\":{\"total\":"),
+        "{o}"
+    );
 }
 
 /// Subfeature 5: a complete look clears the top-level flag.
 #[test]
 fn truncated_reflects_the_look() {
     let (dir, xdg) = fixture();
-    let (_, o, _) = run(&dir, &xdg, &[], &["--format", "json", "--depth", "0", "--lines", "0"]);
+    let (_, o, _) = run(
+        &dir,
+        &xdg,
+        &[],
+        &["--format", "json", "--depth", "0", "--lines", "0"],
+    );
     assert!(o.contains("\"truncated\":false"), "complete look: {o}");
 }
 
