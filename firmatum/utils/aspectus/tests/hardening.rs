@@ -223,19 +223,22 @@ fn truncated_sees_hidden_furniture_floor() {
 }
 
 /// The steward's feedback footer (verbatim ask, 2026-08-14) rides every
-/// look — text below the tree outside --lines, JSON as the `feedback`
-/// field, `config` too; `version` keeps its one-line contract.
+/// look on **stderr** (moved off stdout 2026-08-22 — stdout is data):
+/// text look, JSON (no `feedback` field in the document), `config` too;
+/// `version` keeps its one-line contract.
 #[test]
 fn feedback_footer_rides_every_output() {
     let (dir, xdg) = fresh("footer");
     fs::write(dir.join("a.md"), "x\n").unwrap();
     let probe = "unproven tool";
-    let (_, o, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
-    assert!(o.lines().last().unwrap().contains(probe), "text look: {o}");
-    let (_, j, _) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
-    assert!(j.contains("\"feedback\":\"*(This is a critical"), "json field: {j}");
-    let (_, cfg, _) = run(&dir, &xdg, &[], &["config"]);
-    assert!(cfg.contains(probe), "config output: {cfg}");
+    let (_, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert!(!o.contains(probe), "stdout is the look only: {o}");
+    assert!(e.contains(probe), "footer on stderr: {e}");
+    let (_, j, e) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
+    assert!(!j.contains("\"feedback\""), "no feedback field in the document: {j}");
+    assert!(e.contains(probe), "footer on stderr in json mode: {e}");
+    let (_, cfg, e) = run(&dir, &xdg, &[], &["config"]);
+    assert!(!cfg.contains(probe) && e.contains(probe), "config: {cfg} / {e}");
     let (_, v, _) = run(&dir, &xdg, &[], &["version"]);
     assert_eq!(v.lines().count(), 1, "version stays one line: {v}");
     let (_, h, _) = run(&dir, &xdg, &[], &["help"]);

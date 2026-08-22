@@ -72,7 +72,7 @@ fn default_bound_does_not_trip_on_a_small_tree() {
     assert_eq!(c, 0, "{e}");
     assert!(!o.contains('≥'), "{o}");
     assert!(!o.contains("[walk bound]"), "{o}");
-    assert!(e.is_empty(), "success is quiet: {e}");
+    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "success is quiet: {e}");  // stderr: only the feedback footer (teaching) since 2026-08-22
 }
 
 #[test]

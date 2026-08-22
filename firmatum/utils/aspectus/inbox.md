@@ -4,6 +4,8 @@
 
 ## Routed (ledger — the entries themselves now live verbatim at their destinations)
 
+- 2026-08-22 — Joseph's multi-path ask → [`design/focus.md`](design/focus.md) §Multiple paths. Fable instance's `~/src` mid-tree cut (exit 1, silent tail) → PRACTICA as a bug to reproduce; its heat-threshold wish → noted in focus.md §Multiple paths (weight/threshold, undesigned). Both entries kept below until the bug is reproduced.
+
 - 2026-08-15 — three entries by Joseph (2026-08-14): mass lines in the `lines` column and description-wrap-to-sub-lines / logical `--lines` → [`design/vertical-info.md`](design/vertical-info.md) §Steward asks; config-drift in the header → [`design/overview-invariants.md`](design/overview-invariants.md) §Config drift. Pass record: [`audit/usability-aesthetics-2026-08-15.md`](audit/usability-aesthetics-2026-08-15.md).
 
 ---

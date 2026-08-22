@@ -28,6 +28,19 @@
 
 Zero matches is an honest look, not an error: the ordinary picture plus a stderr note (`focus matched nothing`). Exit stays 0 — the look succeeded; whether an agent needs to branch on match-count without parsing is the same open exit-vocabulary question walk-bound carries.
 
+## Multiple paths (Joseph, inbox 2026-08-15; routed 2026-08-22)
+
+> I need to be able to do this:
+> `aspectus --lines 200 --depth 4 ~/src/arch/asf/{01-aat-core,02-tst-core,03-llm-core,04-eli-core}`
+
+Several positional paths are a **focus set**, not several looks: the look is of their **common ancestor** (the perspective root — overview invariant), the selected paths take the focus tier, and everything between and beside them is connective context that folds to remainders — *"elide between the selected aspects"* (Joseph) — never dropped (this row's law). Almost no new design; three small decisions, recorded as leanings for ratification:
+
+- **Depth counts from each selected path**, not from the common root — `--depth 4` means four generations under `01-aat-core/`, etc.; the connective ancestors (here just `asf/`) render as the chain to the matches, spending no depth. (Counting from the root would make the ask unexpressible: the user named the places they want *deep*.)
+- **Unselected siblings fold**: at each connective level, non-selected siblings collapse to one leaf-census remainder (`[+ dir×9 ≈1.4Kf · md×27]`) — present, typed, one line — rather than each getting a line; the selected ones are the picture.
+- **No common root but `/`** (paths on different devices, or `~/a` with `~/b/c`): the common ancestor is still the root, rendered honestly; if the ancestor is `/` itself the look is legal but the header says so. Shell brace expansion hands us plain paths, so this is the positional-arity rule: one path = the locus; several = focus over their ancestor. JSON: `root` is the ancestor; `matched` on the selected nodes as this row already specifies.
+
+Also noted from the same inbox day (a Fable instance): a **heat threshold** — *"only dirs with heat > 0.2"* — as a focus-shaped ask (weight by a fact's value, or a threshold that promotes to the focus tier). Undesigned; the weight-office algebra (lattice Open) is where it belongs.
+
 ## Foundations (clauses)
 
 | Clause | Where |

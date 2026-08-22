@@ -63,7 +63,7 @@ fn config_defaults_stdout_exit_0() {
     let xdg = fresh_xdg();
     let (c, o, e) = run_with_xdg(&xdg, &["config"]);
     assert_eq!(c, 0, "stderr={e}");
-    assert!(e.is_empty(), "config show stderr must be empty: {e:?}");
+    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "config show stderr must be empty: {e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
     assert!(o.contains("defaults"), "{o}");
     assert!(o.contains("user-home"), "{o}");
     assert!(o.contains("global"), "{o}");
@@ -173,6 +173,6 @@ fn missing_layers_are_not_errors() {
     let xdg = fresh_xdg();
     let (c, o, e) = run_with_xdg(&xdg, &["config"]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.is_empty(), "{e:?}");
+    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
     assert!(o.contains("absent"), "{o}");
 }

@@ -161,7 +161,7 @@ fn valid_transport() {
     let (dir, xdg) = fixture();
     let (c, o, e) = run(&dir, &xdg, &[], &["--format", "json"]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.is_empty(), "stderr empty on success: {e}");
+    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "stderr empty on success: {e}");  // stderr: only the feedback footer (teaching) since 2026-08-22
     assert_valid_json(&o);
     assert!(o.starts_with("{\"aspectus\":"), "{o:.80}");
     assert!(o.contains("\"schema\":1"), "versioned from birth: {o:.120}");

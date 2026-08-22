@@ -753,15 +753,10 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         });
     }
     emit(&tree.children, tree.omitted.as_ref(), "", cols, &mut rows);
-    let mut out = paint(rows, color, ncols, cols.cluster_idx());
-    // The steward's feedback footer (verbatim; overview.rs). Not tree
-    // content, so it costs no --lines — the budget governs the look of
-    // the place, and this is the tool speaking about itself (dimmed on a
-    // TTY like the headings line).
-    out.push('\n');
-    out.push_str(&crate::color::dim(crate::overview::FEEDBACK_FOOTER, color));
-    out.push('\n');
-    out
+    // The steward's feedback footer rides on stderr (main.rs) — the tool
+    // speaking about itself, not the picture (stdout is data; Joseph,
+    // 2026-08-22).
+    paint(rows, color, ncols, cols.cluster_idx())
 }
 
 fn emit(

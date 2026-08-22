@@ -36,7 +36,7 @@ fn header_is_absolute_path_and_utc_stamp() {
         .output()
         .unwrap();
     assert_eq!(out.status.code(), Some(0));
-    assert!(out.stderr.is_empty(), "{:?}", String::from_utf8_lossy(&out.stderr));
+    assert!(String::from_utf8_lossy(&out.stderr).lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{:?}", String::from_utf8_lossy(&out.stderr));  // stderr: only the feedback footer (teaching) since 2026-08-22
     let stdout = String::from_utf8_lossy(&out.stdout);
     // Two-line header (decided 2026-08-14): stamp first, then the root —
     // so the root line sits directly above its children.

@@ -55,7 +55,7 @@ fn default_cwd_two_levels() {
     let dir = fixture();
     let (c, o, e) = run_in(&dir, &[]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.is_empty(), "success is quiet: {e:?}");
+    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "success is quiet: {e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
     let abs = std::path::absolute(&dir).unwrap();
     let abs_s = abs.to_string_lossy();
     // Header: stamp, root-facts line when present, then the bare path.
@@ -101,7 +101,7 @@ fn named_path_from_parent() {
     let name = dir.file_name().unwrap().to_string_lossy().into_owned();
     let (c, o, e) = run_in(parent, &[&name]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.is_empty(), "{e:?}");
+    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
     let abs = std::path::absolute(&dir).unwrap();
     assert!(
         o.lines().find(|l| l.starts_with('/')).unwrap_or("").contains(&*abs.to_string_lossy()),

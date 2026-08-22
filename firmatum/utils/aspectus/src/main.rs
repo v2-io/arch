@@ -262,11 +262,11 @@ fn help_page() -> String {
          with the heat cluster's age; config format.mtime = iso-8601 or\n\
          epoch restores the absolute spellings (JSON always iso-8601).\n\
          \n\
-         Every look ends with a feedback footer: this tool is critical\n\
+         Every look ends with a feedback footer on stderr (stdout stays\n\
+         data, so pipes and `jq` never see it): this tool is critical\n\
          but new and unproven -- submit feedback, anomalies, issues, or\n\
          confusion (with the command and cwd) to the bottom of\n\
-         arch/firmatum/utils/aspectus/inbox.md. In JSON the same\n\
-         solicitation is the top-level `feedback` field.\n\
+         arch/firmatum/utils/aspectus/inbox.md.\n\
          \n\
          Facts beyond the defaults (size, mtime, ...) have no flags of\n\
          their own; ask through config on the caller stack, e.g.\n\
@@ -647,7 +647,7 @@ fn main() -> ExitCode {
             );
             print!("{}", render_show(&res));
             print!("{}", aspectus::facts::inventory(&res));
-            println!("\n{}", aspectus::overview::FEEDBACK_FOOTER);
+            feedback_footer();
             ExitCode::SUCCESS
         }
         Ok(Cmd::Show(args)) => match show(args) {
@@ -881,7 +881,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         ));
     }
     why.append(&mut why_alloc);
-    why.push("footer: feedback solicitation rides below the look, outside --lines".into());
+    why.push("footer: feedback solicitation rides on stderr, outside --lines".into());
     aspectus::sort::apply(&mut tree, &order);
     if args.explain {
         for line in &why {
@@ -901,13 +901,24 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     };
     if machine {
         print!("{}", aspectus::json::render(&root, &stamp, &tree));
+        feedback_footer();
         return Ok(());
     }
     print!(
         "{}",
         aspectus::columns::render(&root, &tree, args.color.active(), &stamp, &cols)
     );
+    feedback_footer();
     Ok(())
+}
+
+/// The steward's feedback footer (verbatim, overview.rs), on **stderr**:
+/// it is the tool speaking about itself, not the look of the place, so
+/// stdout stays data (Joseph, 2026-08-22; until then it rode stdout as a
+/// dimmed last line and as a JSON `feedback` field). Harnesses merge the
+/// streams, so agents still see it; pipes and `jq` no longer do.
+fn feedback_footer() {
+    let _ = writeln!(io::stderr(), "\n{}", aspectus::overview::FEEDBACK_FOOTER);
 }
 
 /// Selection and order from the resolved caller stack (design/columns.md,

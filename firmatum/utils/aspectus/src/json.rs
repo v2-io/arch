@@ -304,9 +304,8 @@ pub fn render(root: &str, stamp: &str, tree: &Node) -> String {
     o.str("time", stamp);
     o.str("root", root);
     o.raw("truncated", if truncated(tree) { "true" } else { "false" });
-    // The steward's feedback solicitation — a fact about the tool's
-    // status; machine callers deserve it too (verbatim, overview.rs).
-    o.str("feedback", crate::overview::FEEDBACK_FOOTER);
+    // The steward's feedback solicitation rides on stderr (main.rs), not
+    // in the document — stdout is data (Joseph, 2026-08-22).
     o.raw("tree", &node_obj(tree));
     let mut out = o.done();
     out.push('\n');

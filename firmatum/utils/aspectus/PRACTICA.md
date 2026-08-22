@@ -4,7 +4,11 @@ Live efforts only. Pipeline: [`ASPECTUS.outline.md`](ASPECTUS.outline.md) Part I
 
 Start at Part I. Follow Foundation for a why. Seeds: [`IMPLEMENTATION-NOTES.md`](IMPLEMENTATION-NOTES.md), [`FEATURE-PIPELINE.md`](FEATURE-PIPELINE.md). `design/` / `impl/` only when there is something to put in them.
 
-## Session 2026-08-15 — orientation, inbox routed, usability pass; grid-cleanup design begun · **paused Sat evening, resumes Tue 2026-08-18**
+## Session 2026-08-22 — resumed; footer → stderr (v0.1.9); multi-path ask routed to Focus
+
+v0.1.9: feedback footer on stderr for every output, JSON `feedback` field dropped (stdout is data; the quiet norm's teaching carve). Inbox (2026-08-15, two entries): (1) Fable instance — `--lines 300 --depth 3 ~/src` cut mid-tree with **exit 1** and a silent tail → **bug to reproduce** (not yet); wants a heat threshold filter (→ Focus/weight or a `--min-heat`, undesigned); (2) Joseph — multiple positional paths `aspectus … asf/{01-aat-core,…}` → routed to [`design/focus.md`](design/focus.md) §Multiple paths (small design: common root, depth from each selected path, siblings fold to remainders). Grid-cleanup discussion continues where PRACTICA's previous section left it.
+
+## Session 2026-08-15 — orientation, inbox routed, usability pass; grid-cleanup design begun · paused Sat evening
 
 **Where we stopped (resume here):** [`design/grid-cleanup.md`](design/grid-cleanup.md) is the live design — pipeline stages, both ready-facts tables (as-shipped, normalized), the count cell (Subject × Unit, 12-cell field, `● □ ▣` / `≈ ≥ ~` / `𝓃 B 𝓁 𝓉` — decided), git-status glyph slot (decided), glyph-pack law + Grok's `glyphs.md` embedded. **Next on the table, in order Joseph set:** the subgroup-subject form (suffix buckets, kinds, patterns, `dirty` — blocks census/has/facet forms and the census delimiter question `⟨ ⟩`); placement of mass lines and size (not decided — do not infer from the tables); `[denied]` and the marks column; empty-dir mark; glob-count place; README-title place; the git facet internals; then rows/sub-rows + far-right ceiling. Also open from the same thread: `aspectus config` should print the effective furniture map (defaults + overrides, by source), and whether the map ships as a real defaults file (natural home for a `--caller` map). Only after those: rows/impl notes, then delegate coding (opus/sonnet/grok) under supervision.
 

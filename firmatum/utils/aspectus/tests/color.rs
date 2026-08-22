@@ -50,7 +50,7 @@ fn always_colors_directories() {
     let dir = fixture();
     let (c, o, e) = run_in(&dir, &["--color=always"]);
     assert_eq!(c, 0, "{e}");
-    assert!(e.is_empty(), "{e:?}");
+    assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
     assert!(has_csi(&o), "always must emit CSI: {o:?}");
     let text = String::from_utf8_lossy(&o);
     assert!(text.contains("a/"), "{text}");
