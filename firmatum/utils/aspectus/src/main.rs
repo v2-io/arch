@@ -79,7 +79,7 @@ fn help_page() -> String {
     let mut out = format!(
         "{ver}\n\
          \n\
-         usage: aspectus [PATH]\n\
+         usage: aspectus [PATH ...]\n\
                 aspectus help\n\
                 aspectus version\n\
                 aspectus config\n\
@@ -94,6 +94,16 @@ fn help_page() -> String {
          environment, machine. This tool does not implement a locus. It looks\n\
          at one. Today that look is of the filesystem face of the place (the\n\
          tree under the path).\n\
+         \n\
+         Several paths are one look, not several: the locus becomes their\n\
+         common ancestor, the named paths are the picture, and --depth\n\
+         counts from each of them (so --depth 4 on four sibling volumes\n\
+         means N generations under each; the ancestor chain spends\n\
+         none). Their unselected siblings do not vanish -- each connective\n\
+         level keeps them as one typed remainder line. Shell brace\n\
+         expansion hands us plain paths, so `dir/{{a,b,c}}` just works. A\n\
+         path that does not exist is confessed on stderr and dropped; the\n\
+         rest of the ask is still a look.\n\
          \n\
          An aspecta is one look: the seen-things from one running of aspectus\n\
          on one locus. Two prints of the same path are two aspecta. They may\n\
@@ -134,6 +144,9 @@ fn help_page() -> String {
            aspectus\n\
            aspectus PATH\n\
            aspectus --depth 3 --lines 120 PATH\n\
+           aspectus --lines 200 --depth 4 asf/{01-aat-core,02-tst-core}\n\
+                                       (several paths: one look of their\n\
+                                        common ancestor, depth from each)\n\
            aspectus --walk 500 PATH    (huge tree: expand less, count all)\n\
            aspectus --inspect git PATH (see inside .git as ordinary children;\n\
                                         a submodule's gitlink .git instead\n\
@@ -311,7 +324,9 @@ struct ConfigArgs {
 }
 
 struct ShowArgs {
-    path: PathBuf,
+    /// One path is the locus; several are a focus set over their common
+    /// ancestor (design/focus.md §Multiple paths).
+    paths: Vec<PathBuf>,
     color: ColorMode,
     user_home_override: Option<PathBuf>,
     caller: Option<String>,
@@ -371,7 +386,7 @@ impl Refusal {
 }
 
 fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
-    let mut path = None;
+    let mut paths: Vec<String> = Vec::new();
     let mut help = false;
     let mut version = false;
     let mut config_cmd = false;
@@ -389,7 +404,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
 
     while let Some(a) = args.next() {
         if end_flags {
-            take_positional(&mut path, a)?;
+            paths.push(a);
             path_is_literal = true;
             continue;
         }
@@ -510,7 +525,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 }
                 return Err(Refusal::UnknownOption(s.to_string()));
             }
-            s => take_positional(&mut path, s.to_string())?,
+            s => paths.push(s.to_string()),
         }
     }
 
@@ -538,14 +553,17 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
         }));
     }
 
-    let path = match path {
-        None => PathBuf::from("."),
-        Some(p) if path_is_literal => PathBuf::from(p),
-        Some(p) => classify_positional(p)?,
+    // Arity is the whole rule: none = here, one = the locus (and the only
+    // place a bare word could still be a mistyped verb), several = a focus
+    // set (shell brace expansion hands us plain paths).
+    let paths: Vec<PathBuf> = match paths.len() {
+        0 => vec![PathBuf::from(".")],
+        1 if !path_is_literal => vec![classify_positional(paths.remove(0))?],
+        _ => paths.into_iter().map(PathBuf::from).collect(),
     };
 
     Ok(Cmd::Show(ShowArgs {
-        path,
+        paths,
         color,
         user_home_override,
         caller,
@@ -578,14 +596,6 @@ fn parse_format(s: &str) -> Result<(), Refusal> {
             "--format is text or json (got {s}; udon later, csv/yaml/tsv refused)"
         ))),
     }
-}
-
-fn take_positional(path: &mut Option<String>, token: String) -> Result<(), Refusal> {
-    if path.is_some() {
-        return Err(Refusal::Usage("only one PATH".into()));
-    }
-    *path = Some(token);
-    Ok(())
 }
 
 fn classify_positional(token: String) -> Result<PathBuf, Refusal> {
@@ -681,7 +691,7 @@ enum ShowErr {
 }
 
 fn show(args: ShowArgs) -> Result<(), ShowErr> {
-    let locus = aspectus::overview::resolve_locus(&args.path);
+    let locus = aspectus::overview::resolve_locus(&args.paths[0]);
     let cfg = resolve(
         args.user_home_override.as_deref(),
         args.caller.as_deref(),
@@ -697,7 +707,56 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         .get("walk")
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(10_000);
-    let abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
+    // Several positional paths are a focus set over their common ancestor
+    // (design/focus.md §Multiple paths). Bad paths are confessed and
+    // dropped — the rest of the ask is still a serviceable look; only when
+    // nothing is left is there no place to look at all.
+    let mut focus = None;
+    let mut abs = aspectus::overview::absolute_root(&locus).map_err(|e| map_io(&locus, e))?;
+    if args.paths.len() > 1 {
+        let mut sel = Vec::new();
+        let mut missing = Vec::new();
+        for p in &args.paths {
+            let p = aspectus::overview::resolve_locus(p);
+            match aspectus::overview::absolute_root(&p) {
+                Ok(a) if a.exists() => sel.push(a),
+                _ => missing.push(p.display().to_string()),
+            }
+        }
+        if !missing.is_empty() {
+            let _ = writeln!(
+                io::stderr(),
+                "aspectus: focus path not found ({}): {}",
+                missing.len(),
+                missing.join(", ")
+            );
+        }
+        if sel.is_empty() {
+            return Err(ShowErr::NotFound(args.paths[0].display().to_string()));
+        }
+        sel.sort();
+        sel.dedup();
+        let nested = aspectus::focus::drop_nested(&mut sel);
+        if !nested.is_empty() {
+            let _ = writeln!(
+                io::stderr(),
+                "aspectus: focus path already inside another ({}): {} — depth counts from the outer one",
+                nested.len(),
+                nested
+                    .iter()
+                    .map(|p| p.display().to_string())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            );
+        }
+        if sel.len() > 1 {
+            abs = aspectus::focus::common_ancestor(&sel);
+            focus = Some(aspectus::focus::Focus { sel, depth });
+        } else {
+            // One survivor: today's behavior exactly, at that path.
+            abs = sel.remove(0);
+        }
+    }
     let (order, cols) = resolve_look(&cfg)?;
     let map = match cfg.won.get("furniture") {
         Some((rules, _)) => aspectus::furniture::Map::with_config(rules),
@@ -759,11 +818,21 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     if title_on {
         ctx.titles = Some(&important);
     }
-    let mut tree = aspectus::n_level::gather(&abs, depth, &mut walk, &mut ctx)
-        .map_err(|e| map_io(&locus, e))?;
+    let mut tree = match &focus {
+        Some(f) => aspectus::n_level::gather_focus(&abs, f, &mut walk, &mut ctx)
+            .map_err(|e| map_io(&abs, e))?,
+        None => aspectus::n_level::gather(&abs, depth, &mut walk, &mut ctx)
+            .map_err(|e| map_io(&locus, e))?,
+    };
     // Post-gather parallel phases (hardening 2026-08-14): deep mass over
     // cutoff subtrees, then git facets (porcelain per repo).
     aspectus::n_level::deep_phase(&mut tree, &abs, &mut ctx);
+    // After the deep phase, so a folded sibling arrives at the remainder
+    // carrying its real mass (`dir×9 ≈1.4Kf`) rather than a bare count —
+    // the difference between compressing the context and cutting it.
+    if focus.is_some() {
+        aspectus::focus::fold_asides(&mut tree);
+    }
     aspectus::n_level::hidden_phase(&mut tree, &abs);
     aspectus::git::annotate(&mut tree, &abs);
     if cols.heat
@@ -837,6 +906,15 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         .and_then(|(v, _)| v.parse().ok())
         .unwrap_or(80);
     let mut why = Vec::new();
+    if let Some(f) = &focus {
+        why.push(format!(
+            "focus: {} selected paths, depth {depth} from each; \
+             root is their common ancestor {}; unselected siblings on the \
+             connective levels folded to one typed remainder each",
+            f.sel.len(),
+            abs.display()
+        ));
+    }
     if walk.furniture_hidden > 0 {
         why.push(format!(
             "furniture: {} names as parent-line state, not children",
@@ -883,6 +961,21 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     why.append(&mut why_alloc);
     why.push("footer: feedback solicitation rides on stderr, outside --lines".into());
     aspectus::sort::apply(&mut tree, &order);
+    if let Some(f) = &focus {
+        let lost = aspectus::focus::unlisted(&tree, &abs, &f.sel);
+        if !lost.is_empty() {
+            let _ = writeln!(
+                io::stderr(),
+                "aspectus: --lines {lines} could not give every focus path a line ({}): {} — \
+                 they are inside the remainder censuses; a larger --lines lists them",
+                lost.len(),
+                lost.iter()
+                    .map(|p| p.display().to_string())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            );
+        }
+    }
     if args.explain {
         for line in &why {
             let _ = writeln!(io::stderr(), "{line}");

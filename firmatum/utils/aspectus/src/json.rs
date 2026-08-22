@@ -242,6 +242,10 @@ fn node_obj(n: &Node) -> String {
         o.str("link", l);
         o.bool_true("broken", n.link_broken);
     }
+    // The caller's explicit ask, marked where it landed (design/focus.md:
+    // `matched` is a field on matched nodes; the ask does not change the
+    // schema's shape).
+    o.bool_true("matched", n.matched);
     o.bool_true("gitignored", n.ignored);
     if n.ignored_files > 0 {
         o.raw("ignored_files", &n.ignored_files.to_string());

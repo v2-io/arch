@@ -19,3 +19,4 @@ pub mod quiet;
 pub mod overview;
 pub mod sort;
 pub mod facts;
+pub mod focus;

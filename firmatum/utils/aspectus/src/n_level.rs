@@ -228,6 +228,14 @@ pub struct Node {
     pub cycle: bool,
     /// A mount point the one-fs default did not cross.
     pub other_fs: bool,
+    /// This node is one of the paths the caller named (design/focus.md):
+    /// top survival tier, `matched` in JSON, and the spot where the depth
+    /// count restarts.
+    pub matched: bool,
+    /// An unselected sibling on a connective level of a focus look: walked
+    /// for its census and mass, then folded into that level's remainder by
+    /// `focus::fold_asides`. Never on a node the caller can see.
+    pub aside: bool,
 }
 
 /// Counts names statted. `None` = unbounded.
@@ -345,6 +353,12 @@ pub struct LookCtx<'a> {
     /// When Some, dir lines borrow their README's title (config
     /// `readme-title = on`; the set is important-files', shared).
     pub titles: Option<&'a crate::important::Set>,
+    /// The focus set, when several positional paths named one
+    /// (design/focus.md §Multiple paths). It changes the walk only on
+    /// *connective* levels — the chain from the common ancestor down to
+    /// the selected paths; inside a selected subtree the ordinary depth
+    /// law runs untouched.
+    pub focus: Option<&'a crate::focus::Focus>,
     root_dev: Option<u64>,
     /// Dirs being expanded on the current path — the cycle guard.
     dir_stack: Vec<(u64, u64)>,
@@ -371,6 +385,7 @@ impl<'a> LookCtx<'a> {
             reads: ReadMeter::new(read_budget),
             ignore: crate::ignore::Stack::new(),
             titles: None,
+            focus: None,
             root_dev: None,
             dir_stack: Vec::new(),
             seen: HashSet::new(),
@@ -464,6 +479,25 @@ pub fn gather(
     gather_at(path, remain, walk, ctx)
 }
 
+/// The same walk, rooted at the focus set's common ancestor
+/// (design/focus.md §Multiple paths). The root and the chain below it are
+/// *connective*: they spend no depth and are not depth-cut, because every
+/// one of their children is assigned a role explicitly — selected (the
+/// depth count starts here), connective (keep descending), or aside
+/// (census only, folded afterwards).
+pub fn gather_focus<'a>(
+    path: &Path,
+    focus: &'a crate::focus::Focus,
+    walk: &mut WalkBudget,
+    ctx: &mut LookCtx<'a>,
+) -> io::Result<Node> {
+    if let Some(parent) = path.parent() {
+        ctx.ignore = crate::ignore::Stack::for_path(parent);
+    }
+    ctx.focus = Some(focus);
+    gather_at(path, None, walk, ctx)
+}
+
 /// One name as readdir reported it, before any stat.
 struct Entry {
     name: String,
@@ -535,7 +569,7 @@ fn census_entries(entries: &[Entry], bounded: bool) -> Census {
     }
 }
 
-fn census_nodes(nodes: &[Node]) -> Census {
+pub(crate) fn census_nodes(nodes: &[Node]) -> Census {
     let dirs: usize = nodes
         .iter()
         .filter(|n| n.is_dir)
@@ -588,7 +622,7 @@ fn census_nodes(nodes: &[Node]) -> Census {
 }
 
 /// Two censuses of disjoint name-sets become one. `bounded` is sticky.
-fn merge_census(a: Census, b: Census) -> Census {
+pub(crate) fn merge_census(a: Census, b: Census) -> Census {
     let dirs = a.dirs + b.dirs;
     let dir_name = match (dirs, &a.dir_name, &b.dir_name) {
         (1, Some(n), _) | (1, _, Some(n)) => Some(n.clone()),
@@ -1098,6 +1132,13 @@ fn gather_dir_inner(
         });
     }
     let child_remain = remain.map(|n| n.saturating_sub(1));
+    // On a connective level of a focus look the depth law is per-child
+    // (design/focus.md §Multiple paths): the selected restart the count,
+    // the chain keeps descending for free, and everyone else is walked
+    // one level for its census and folded after the deep phase.
+    let connective = ctx
+        .focus
+        .is_some_and(|f| f.is_connective(path) && !f.is_selected(path));
     let mut children: Vec<Node> = Vec::new();
     let mut cut = false;
     let mut early: Option<Census> = None;
@@ -1110,6 +1151,18 @@ fn gather_dir_inner(
         }
         walk.charge();
         let child_path = path.join(&ent.name);
+        let (child_remain, matched, aside) = match ctx.focus {
+            Some(f) if connective => {
+                if f.is_selected(&child_path) {
+                    (if f.depth == 0 { None } else { Some(f.depth) }, true, false)
+                } else if f.is_connective(&child_path) {
+                    (None, false, false)
+                } else {
+                    (Some(0), false, true)
+                }
+            }
+            _ => (child_remain, false, false),
+        };
         // An ignored dir keeps its line but its innards are not the
         // project's: no expansion, no census, no mass — presence only.
         // (Under --show-all it expands like anything, mark kept.)
@@ -1130,6 +1183,9 @@ fn gather_dir_inner(
                 },
             }
         };
+        let mut kid = kid;
+        kid.matched = matched;
+        kid.aside = aside;
         children.push(kid);
     }
     // Mass folds bottom-up in the deep phase (mass_up), once every
@@ -1463,9 +1519,13 @@ fn fold_children_into_dir_census(node: &mut Node) {
 }
 
 /// Survival tiers (design/sort.md key-within-weights; design/
-/// important-files.md adds the middle tier): dirs > important > plain.
+/// important-files.md adds the middle tier; design/focus.md puts the
+/// caller's explicit ask above every standing default):
+/// focus > dirs > important > plain.
 fn weight(n: &Node) -> u32 {
-    if n.is_dir {
+    if n.matched {
+        8
+    } else if n.is_dir {
         4
     } else if n.important {
         2
@@ -1497,7 +1557,11 @@ pub fn apply_budget(
     if n == 0 {
         return;
     }
-    let remain = budget.saturating_sub(1);
+    // A remainder census this node already carries (a focus fold, or a
+    // walk-bound cut) costs a line of its own. Reserve it, or the look
+    // overshoots --lines by one per such level — the budget is a promise.
+    let reserved = usize::from(node.omitted.as_ref().is_some_and(|c| !c.is_empty()));
+    let remain = budget.saturating_sub(1).saturating_sub(reserved);
     if remain == 0 {
         explain.push(format!(
             "{}: budget 1 — census on this line, not a child [+]",
@@ -1507,7 +1571,9 @@ pub fn apply_budget(
         return;
     }
     if remain < n {
-        let show = remain.saturating_sub(1);
+        // One line goes to the leftover census — unless this node already
+        // reserved one, in which case the drops merge into it for free.
+        let show = if reserved == 1 { remain } else { remain.saturating_sub(1) };
         if show == 0 {
             explain.push(format!(
                 "{}: one leftover line would only repeat dir census",
