@@ -33,6 +33,10 @@ quiet.sensitivity = 1.0        # scales statistical surprise thresholds (higher 
 # quiet.sensitivity.size = 1.0
 # quiet.sensitivity.mtime = 1.0
 
+# ── Important files (survival tier; readme-title borrows this set, in order) ─
+# Top-level, before any [table]: a key after [format] would be format.important.
+important = ["README*", "AGENTS.md", "CLAUDE.md"]
+
 # ── The grid (design/lattice-2.md positions) ─────────────────────────────────
 # Membership = shown; order = left-to-right. A fact in no list renders nothing.
 # name-location, name-suffix and after-name are structural and not listable.
@@ -51,9 +55,6 @@ lines = "physical"          # physical | non-blank
 owner = "name"              # name | id
 initial-sha = "short"       # short | h~n | full
 latest-sha = "short"
-
-# ── Important files (survival tier; readme-title borrows this set, in order) ─
-important = ["README*", "AGENTS.md", "CLAUDE.md"]
 
 # ── Furniture map (impl/furniture.md) ────────────────────────────────────────
 # PATTERN = "KINDS[:FATE]"  — kinds `+`-separated; fate hide (default) | omit | mark.

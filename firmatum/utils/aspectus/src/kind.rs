@@ -17,66 +17,83 @@ pub enum Kind {
     Unknown,
 }
 
-const TEXT_SUFFIXES: &[&str] = &[
-    "md", "txt", "rs", "py", "rb", "toml", "json", "yaml", "yml", "sh", "bash", "zsh",
-    "c", "h", "cpp", "cc", "hpp", "js", "ts", "tsx", "jsx", "mjs", "html", "htm", "css",
-    "scss", "tex", "bib", "ex", "exs", "erl", "hrl", "hs", "go", "java", "kt", "swift",
-    "lock", "cfg", "ini", "conf", "xml", "svg", "csv", "tsv", "sql", "el", "lua", "vim",
-    "zig", "pl", "pm", "r", "jl", "org", "rst", "adoc", "udon", "log", "diff", "patch",
-    "env", "sum", "mod", "proto", "graphql", "sty", "cls", "typ", "nix", "d", "s", "asm",
-];
+/// Classify a `[kinds]` value. Bare `text`/`binary` still work; `MAJOR/MINOR`
+/// follows design/defaults.md for this slice: `text/*`, `data/*`, `log/*`,
+/// `image/svg` → text, the rest → binary. The full ladder is design/filetype.md.
+pub fn classify(spec: &str) -> Option<Kind> {
+    let spec = spec.trim();
+    match spec {
+        "text" => Some(Kind::Text),
+        "binary" => Some(Kind::Binary),
+        "!" => None,
+        _ => match spec.split_once('/') {
+            Some(("text", _)) | Some(("data", _)) | Some(("log", _)) => Some(Kind::Text),
+            Some(("image", "svg")) => Some(Kind::Text),
+            Some((_, _)) => Some(Kind::Binary),
+            None => None, // unknown bare word claims nothing
+        },
+    }
+}
 
-const BINARY_SUFFIXES: &[&str] = &[
-    "png", "jpg", "jpeg", "gif", "webp", "bmp", "ico", "pdf", "zip", "gz", "bz2", "xz",
-    "zst", "tar", "tgz", "7z", "dylib", "so", "a", "o", "rlib", "rmeta", "class", "jar",
-    "wasm", "ttf", "otf", "woff", "woff2", "eot", "mp3", "mp4", "mov", "avi", "wav",
-    "flac", "ogg", "sqlite", "sqlite3", "db", "bin", "exe", "dmg", "pkg", "iso", "heic",
-    "pyc", "pyo", "keynote", "pages", "numbers", "doc", "docx", "xls", "xlsx", "ppt",
-    "pptx", "parquet", "arrow", "pt", "onnx", "gguf", "safetensors",
-];
-
-/// Extensionless names the estate reads as text every day.
-const TEXT_NAMES: &[&str] = &[
-    "Makefile", "makefile", "GNUmakefile", "LICENSE", "LICENCE", "README", "CHANGELOG",
-    "CHANGES", "TODO", "NOTICE", "AUTHORS", "CONTRIBUTORS", "COPYING", "VERSION",
-    "Dockerfile", "Rakefile", "Gemfile", "Justfile", "justfile", "Procfile", "CODEOWNERS",
-    "SOURCE_REV",
-];
-
-/// The suffix-map with config overrides applied. Config key `kinds`:
-/// `SUFFIX:text` / `SUFFIX:binary` / `NAME:text` comma-separated;
-/// `!SUFFIX` drops a shipped row back to unknown (sniff decides).
+/// The suffix-map with config overlays applied. Config key `kinds`:
+/// `SUFFIX:text` / `SUFFIX:binary` / `NAME:text` comma-separated, or a
+/// `[kinds]` table of `SUFFIX = "major/minor"`; `!SUFFIX` / `"SUFFIX" = "!"`
+/// drops a shipped row back to unknown (sniff decides).
 #[derive(Debug, Default)]
 pub struct Map {
-    overrides: BTreeMap<String, Option<Kind>>,
+    /// Present `None` is an explicit drop (unknown / sniff).
+    rows: BTreeMap<String, Option<Kind>>,
 }
 
 impl Map {
     pub fn shipped() -> Self {
-        Map::default()
+        Self::from_pairs(
+            crate::config::embedded()
+                .kinds
+                .iter()
+                .map(|(k, v)| (k.as_str(), v.as_str())),
+        )
+    }
+
+    pub fn from_pairs<'a, I>(pairs: I) -> Self
+    where
+        I: IntoIterator<Item = (&'a str, &'a str)>,
+    {
+        let mut rows = BTreeMap::new();
+        for (k, v) in pairs {
+            if v.trim() == "!" {
+                insert_kind(&mut rows, k, None);
+            } else if let Some(kind) = classify(v) {
+                insert_kind(&mut rows, k, Some(kind));
+            }
+        }
+        Map { rows }
+    }
+
+    pub fn from_sourced(rows: &[crate::config::Sourced]) -> Self {
+        Self::from_pairs(rows.iter().map(|r| (r.key.as_str(), r.value.as_str())))
     }
 
     pub fn with_config(rules: &str) -> Self {
-        let mut overrides = BTreeMap::new();
+        let mut map = Map::shipped();
         for rule in rules.split(',') {
             let rule = rule.trim();
             if rule.is_empty() {
                 continue;
             }
             if let Some(dropped) = rule.strip_prefix('!') {
-                overrides.insert(norm(dropped), None);
+                insert_kind(&mut map.rows, dropped, None);
                 continue;
             }
             if let Some((pat, kind)) = rule.rsplit_once(':') {
-                let k = match kind.trim() {
-                    "text" => Kind::Text,
-                    "binary" => Kind::Binary,
-                    _ => continue, // an unknown kind word claims nothing
-                };
-                overrides.insert(norm(pat), Some(k));
+                match classify(kind) {
+                    Some(k) => insert_kind(&mut map.rows, pat, Some(k)),
+                    None if kind.trim() == "!" => insert_kind(&mut map.rows, pat, None),
+                    None => {} // an unknown kind word claims nothing
+                }
             }
         }
-        Map { overrides }
+        map
     }
 
     /// Judge a basename. Suffix match first (case-insensitive), then the
@@ -86,22 +103,36 @@ impl Map {
             Some((stem, ext)) if !stem.is_empty() && !ext.is_empty() => ext.to_lowercase(),
             _ => name.to_string(),
         };
-        if let Some(o) = self.overrides.get(&key).or_else(|| self.overrides.get(name)) {
+        if let Some(o) = self.rows.get(&key).or_else(|| self.rows.get(name)) {
             return o.unwrap_or(Kind::Unknown);
         }
-        let k = key.as_str();
-        if TEXT_SUFFIXES.contains(&k) || TEXT_NAMES.contains(&name) {
-            Kind::Text
-        } else if BINARY_SUFFIXES.contains(&k) {
-            Kind::Binary
+        // Extensionless names in the file are stored as written (Makefile)
+        // and sometimes lowercased (makefile); try the other case too.
+        if key != name {
+            if let Some(o) = self.rows.get(&norm(&key)) {
+                return o.unwrap_or(Kind::Unknown);
+            }
         } else {
-            Kind::Unknown
+            let lower = name.to_lowercase();
+            if let Some(o) = self.rows.get(&lower) {
+                return o.unwrap_or(Kind::Unknown);
+            }
         }
+        Kind::Unknown
     }
 }
 
 fn norm(pat: &str) -> String {
     pat.trim().trim_start_matches('.').to_string()
+}
+
+fn insert_kind(rows: &mut BTreeMap<String, Option<Kind>>, k: &str, v: Option<Kind>) {
+    let key = norm(k);
+    let lower = key.to_lowercase();
+    if lower != key {
+        rows.insert(lower, v);
+    }
+    rows.insert(key, v);
 }
 
 /// Physical lines: newline-terminated, plus a final unterminated line

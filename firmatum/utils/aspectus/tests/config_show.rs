@@ -176,3 +176,118 @@ fn missing_layers_are_not_errors() {
     assert!(e.lines().all(|l| l.is_empty() || l.starts_with("*(This is a critical")), "{e:?}");  // stderr: only the feedback footer (teaching) since 2026-08-22
     assert!(o.contains("absent"), "{o}");
 }
+
+#[test]
+fn config_names_the_embedded_layer() {
+    let xdg = fresh_xdg();
+    let (c, o, e) = run_with_xdg(&xdg, &["config"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(
+        o.contains("built-in (defaults.toml, embedded)"),
+        "defaults layer names the file: {o}"
+    );
+    assert!(o.contains("layout:"), "{o}");
+    assert!(o.contains("far-left"), "{o}");
+    assert!(o.contains("(unbuilt position)"), "far-left is unbuilt: {o}");
+    assert!(o.contains("furniture:"), "{o}");
+    assert!(o.contains(".git = git"), "{o}");
+    assert!(o.contains("(default)"), "{o}");
+    assert!(o.contains("kinds:"), "{o}");
+    assert!(o.contains("md = text/markdown"), "{o}");
+    assert!(o.contains("important:"), "{o}");
+    assert!(o.contains("README*"), "{o}");
+}
+
+#[test]
+fn config_defaults_prints_the_embedded_file() {
+    let xdg = fresh_xdg();
+    let (c, o, e) = run_with_xdg(&xdg, &["config", "defaults"]);
+    assert_eq!(c, 0, "stderr={e}");
+    assert_eq!(
+        o,
+        include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/defaults.toml"
+        )),
+        "stdout is the embedded file verbatim"
+    );
+    assert!(
+        e.is_empty(),
+        "config defaults is stdout only, no footer: {e:?}"
+    );
+}
+
+#[test]
+fn old_columns_key_warns_naming_layout() {
+    let xdg = fresh_xdg();
+    fs::write(xdg.join("aspectus/aspectus.toml"), "columns.size = on\n").unwrap();
+    let (c, o, e) = run_with_xdg(&xdg, &["config"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(e.contains("[layout]"), "stderr names [layout]: {e}");
+    assert!(e.contains("columns.size"), "{e}");
+    assert!(o.contains("columns.size = on"), "old key still wins: {o}");
+}
+
+#[test]
+fn furniture_table_overlay_matches_bang() {
+    let xdg = fresh_xdg();
+    fs::write(
+        xdg.join("aspectus/aspectus.toml"),
+        "[furniture]\n\".mystery\" = \"lab\"\n\"target/\" = \"!\"\n",
+    )
+    .unwrap();
+    let (c, o, e) = run_with_xdg(&xdg, &["config"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains(".mystery = lab"), "added row: {o}");
+    assert!(o.contains("(user-home)"), "{o}");
+    assert!(
+        !o.lines().any(|l| l.contains("target/") && l.contains("build")),
+        "dropped shipped row: {o}"
+    );
+}
+
+#[test]
+fn round_trip_defaults_file_is_identity() {
+    let xdg = fresh_xdg();
+    let (c, dumped, e) = run_with_xdg(&xdg, &["config", "defaults"]);
+    assert_eq!(c, 0, "{e}");
+    let copy = xdg.join("copy.toml");
+    fs::write(&copy, &dumped).unwrap();
+
+    let locus = std::env::temp_dir().join(format!(
+        "aspectus-rt-{}-{}",
+        std::process::id(),
+        SEQ.fetch_add(1, Ordering::SeqCst)
+    ));
+    fs::create_dir_all(&locus).unwrap();
+    fs::write(locus.join("a.md"), "hi\n").unwrap();
+
+    let strip = |stdout: &str| {
+        stdout
+            .lines()
+            .skip(1)
+            .collect::<Vec<_>>()
+            .join("\n")
+    };
+    let none = bin()
+        .arg(&locus)
+        .env("XDG_CONFIG_HOME", &xdg)
+        .env_remove("ASPECTUS_LINES")
+        .output()
+        .unwrap();
+    let with = bin()
+        .arg(&locus)
+        .arg("--config")
+        .arg(&copy)
+        .env("XDG_CONFIG_HOME", &xdg)
+        .env_remove("ASPECTUS_LINES")
+        .output()
+        .unwrap();
+    assert_eq!(none.status.code(), Some(0), "{}", String::from_utf8_lossy(&none.stderr));
+    assert_eq!(with.status.code(), Some(0), "{}", String::from_utf8_lossy(&with.stderr));
+    assert_eq!(
+        strip(&String::from_utf8_lossy(&none.stdout)),
+        strip(&String::from_utf8_lossy(&with.stdout)),
+        "copy of defaults.toml as --config must not move the look"
+    );
+}

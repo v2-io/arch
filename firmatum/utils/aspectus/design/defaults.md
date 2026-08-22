@@ -39,6 +39,8 @@ supplement = ["facets"]                            # spills below the row when i
 far-right  = ["lines", "heat"]
 quiet      = ["mtime", "bytes", "permissions", "owner", "filekind"]
 
+important = ["README*", "AGENTS.md", "CLAUDE.md"]
+
 [format]
 mtime = "relative"
 bytes = "human"
@@ -61,8 +63,9 @@ latest-sha = "short"
 "png" = "image/png"
 # …
 
-important = ["README*", "AGENTS.md", "CLAUDE.md"]
 ```
+
+*(Shape note, from the step-2 landing: TOML table scope is sticky — a bare `important = [...]` after `[format]` would read as `format.important` — so in the shipped file `important` sits with the top-level keys, before any table. The example above is illustrative; `defaults.toml` is the primary.)*
 
 Keys keep today's spellings where they exist (`columns.size` → the `bytes` fact is the one rename, per lattice-2; `columns.*` state keys are accepted for one release and warned as superseded by `[layout]`). The exact shipped contents are the file itself.
 

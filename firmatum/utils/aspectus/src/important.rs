@@ -15,11 +15,21 @@
 use crate::furniture::glob_match;
 use crate::n_level::Node;
 
-/// Shipped default (design leaning, Joseph ratifies): the file that says
-/// what the place *is*, then the agent-instruction names. Everything else
-/// is config. (`Cargo.toml` etc. are furniture mark rows — a different
-/// office.)
-pub const DEFAULT: &[&str] = &["README*", "AGENTS.md", "CLAUDE.md"];
+/// Shipped default — data in `defaults.toml` (`important = [...]`).
+/// (`Cargo.toml` etc. are furniture mark rows — a different office.)
+pub fn default_patterns() -> Vec<String> {
+    crate::config::embedded()
+        .arrays
+        .get("important")
+        .cloned()
+        .unwrap_or_else(|| {
+            vec![
+                "README*".into(),
+                "AGENTS.md".into(),
+                "CLAUDE.md".into(),
+            ]
+        })
+}
 
 #[derive(Debug, Clone)]
 pub struct Set {
@@ -30,7 +40,13 @@ pub struct Set {
 impl Set {
     pub fn shipped() -> Self {
         Set {
-            patterns: DEFAULT.iter().map(|s| s.to_string()).collect(),
+            patterns: default_patterns(),
+        }
+    }
+
+    pub fn from_sourced(rows: &[crate::config::Sourced]) -> Self {
+        Set {
+            patterns: rows.iter().map(|r| r.key.clone()).collect(),
         }
     }
 

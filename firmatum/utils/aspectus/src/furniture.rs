@@ -70,63 +70,64 @@ fn rule(pattern: &str, kinds: &[&str], fate: Fate) -> Rule {
     }
 }
 
-/// The shipped map. Rows reviewed against the first snapshot's table
-/// (impl/absorb.md) and the origin's own kind list.
-///
-/// `target/` (also maven's) stays kind `build`, not `rust` — the name alone
-/// claims build output; the ecosystem claim comes from `Cargo.toml`
-/// (impl/furniture.md records the choice).
+/// Parse one `[furniture]` value: `KINDS[:FATE]`. Kinds `+`-separated;
+/// fate `hide` when absent. `:omit` is empty kinds + omit.
+pub fn parse_value(pattern: &str, value: &str) -> Option<Rule> {
+    if value == "!" {
+        return None;
+    }
+    let (kinds_s, fate) = if let Some(rest) = value.strip_prefix(':') {
+        ("", fate_of(rest))
+    } else if let Some((k, f)) = value.rsplit_once(':') {
+        (k, fate_of(f))
+    } else {
+        (value, Fate::Hide)
+    };
+    let kinds: Vec<&str> = kinds_s
+        .split('+')
+        .map(str::trim)
+        .filter(|k| !k.is_empty())
+        .collect();
+    Some(rule(pattern, &kinds, fate))
+}
+
+fn fate_of(s: &str) -> Fate {
+    match s.trim() {
+        "omit" => Fate::Omit,
+        "mark" => Fate::Mark,
+        _ => Fate::Hide,
+    }
+}
+
+/// The shipped map — data in `defaults.toml`, not a Rust table
+/// (design/defaults.md). `target/` stays kind `build` (the file says so;
+/// impl/furniture.md records why).
 pub fn default_rules() -> Vec<Rule> {
-    use Fate::*;
-    vec![
-        // Specialized plugins hang on these two (src/git.rs, src/github.rs).
-        rule(".git", &["git"], Hide),
-        rule(".github", &["github"], Hide),
-        // The ignore-file family claims its own words, not `git` — a
-        // `.gitignore` inside `.pytest_cache/` is not a repo, and one bad
-        // `git` row poisoned the whole facet's credibility (both hallway
-        // testers, 2026-08-14). Where a real `.git` also claims `git`,
-        // these words fold away as subsumed (read_names).
-        rule(".gitignore", &["gitignore"], Hide),
-        rule(".gitmodules", &["gitmodules"], Hide),
-        rule(".gitattributes", &["gitattributes"], Hide),
-        // Build debris.
-        rule("target/", &["build"], Hide),
-        rule("node_modules/", &["build", "js"], Hide),
-        rule("__pycache__/", &["build", "python"], Hide),
-        rule("*.egg-info/", &["build", "python"], Hide),
-        rule(".pytest_cache/", &["build", "python"], Hide),
-        rule(".mypy_cache/", &["build", "python"], Hide),
-        rule(".ruff_cache/", &["build", "python"], Hide),
-        rule(".tox/", &["build", "python"], Hide),
-        rule(".build/", &["build"], Hide),
-        rule(".ruby-lsp/", &["build", "ruby"], Hide),
-        // Recognized machinery of a place.
-        rule(".obsidian/", &["obsidian-vault"], Hide),
-        rule(".obsidian.vimrc", &["obsidian-vault"], Hide),
-        rule(".claude/", &["agents"], Hide),
-        rule(".mise.toml", &["mise"], Hide),
-        rule(".archive/", &["archive"], Hide),
-        rule(".trash/", &["trash"], Hide),
-        // Noise: not listed, not mentioned.
-        rule(".DS_Store", &[], Omit),
-        // Mark rows: still children; their kind is claimed on the parent.
-        rule("Cargo.toml", &["rust"], Mark),
-        rule("Cargo.lock", &["rust"], Mark),
-        rule("pyproject.toml", &["python"], Mark),
-        rule("Gemfile", &["ruby"], Mark),
-        rule("mise.toml", &["mise"], Mark),
-        rule("package.json", &["js"], Mark),
-        rule("AGENTS.md", &["agents"], Mark),
-        rule("CLAUDE.md", &["agents"], Mark),
-        rule("GEMINI.md", &["agents"], Mark),
-    ]
+    rules_from_pairs(&crate::config::embedded().furniture)
+}
+
+pub fn rules_from_pairs(pairs: &[(String, String)]) -> Vec<Rule> {
+    pairs
+        .iter()
+        .filter_map(|(pat, val)| parse_value(pat, val))
+        .collect()
 }
 
 impl Map {
     pub fn shipped() -> Self {
         Map {
             rules: default_rules(),
+        }
+    }
+
+    /// Build from sourced overlay rows (already merged, first-match order).
+    pub fn from_sourced(rows: &[crate::config::Sourced]) -> Self {
+        let pairs: Vec<(String, String)> = rows
+            .iter()
+            .map(|r| (r.key.clone(), r.value.clone()))
+            .collect();
+        Map {
+            rules: rules_from_pairs(&pairs),
         }
     }
 

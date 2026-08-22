@@ -162,6 +162,8 @@ fn help_lists_every_accepted_flag() {
         "-h",
         "-v",
         "config",
+        "config defaults",
+        "[layout]",
     ] {
         assert!(page.contains(needle), "help missing {needle}");
     }

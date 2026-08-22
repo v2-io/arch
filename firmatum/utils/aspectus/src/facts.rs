@@ -259,7 +259,7 @@ fn fmt_in_effect(fact: &Fact, cfg: &Resolved) -> String {
         .toggle
         .and_then(|k| k.rsplit('.').next())
         .unwrap_or(fact.key);
-    let chosen = cfg.won.get(&format!("format.{tail}")).map(|(v, _)| v.as_str());
+    let chosen = crate::config::format_val(&cfg.won, &format!("format.{tail}"));
     match chosen {
         None => fact.formats.to_string(),
         Some(c) => fact

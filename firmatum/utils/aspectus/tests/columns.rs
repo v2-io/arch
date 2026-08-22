@@ -244,7 +244,10 @@ fn config_shows_fact_inventory() {
     // State reflects the stack.
     user_home(&xdg, "columns.size = on\n");
     let (_, o, _) = run(&dir, &xdg, &[], &["config"]);
-    let bytes_row = o.lines().find(|l| l.contains(" bytes ")).unwrap();
+    let bytes_row = o
+        .lines()
+        .find(|l| l.contains(" bytes ") && l.contains("columns.size"))
+        .unwrap();
     assert!(bytes_row.contains(" on"), "state is current, not default: {bytes_row}");
 }
 

@@ -6,7 +6,9 @@ use std::process::ExitCode;
 use std::collections::BTreeMap;
 
 use aspectus::color::Mode as ColorMode;
-use aspectus::config::{render_show, resolve, CALLER_FLAG};
+use aspectus::config::{
+    old_columns_note, render_show, resolve, boolish, format_val, CALLER_FLAG, DEFAULTS_TOML,
+};
 
 /// One source: every accepted flag/verb is named here and printed in help.
 const COMMANDS: &[(&str, &str)] = &[
@@ -16,7 +18,11 @@ const COMMANDS: &[(&str, &str)] = &[
         "one line: name + semver; +sha[.dirty] if not a tagged release, \
          and the build's UTC time",
     ),
-    ("config", "show which config layers were consulted and what won"),
+    ("config", "show layers, what won, the effective [layout] and maps"),
+    (
+        "config defaults",
+        "print the embedded defaults.toml (stdout, exit 0)",
+    ),
 ];
 
 const OPTIONS: &[(&str, &str)] = &[
@@ -83,6 +89,7 @@ fn help_page() -> String {
                 aspectus help\n\
                 aspectus version\n\
                 aspectus config\n\
+                aspectus config defaults\n\
                 aspectus [-h|--help]\n\
                 aspectus [-v|--version]\n\
          \n\
@@ -141,6 +148,7 @@ fn help_page() -> String {
            aspectus help\n\
            aspectus version\n\
            aspectus config\n\
+           aspectus config defaults\n\
            aspectus\n\
            aspectus PATH\n\
            aspectus --depth 3 --lines 120 PATH\n\
@@ -154,8 +162,9 @@ fn help_page() -> String {
            aspectus --format json PATH (the same look, as data)\n\
          \n\
          Non-binary files show a line count (binary shows none, never 0);\n\
-         kind comes from a suffix-map extendable via config key `kinds`\n\
-         (`SUFFIX:text|binary`, `!SUFFIX` to drop). An unexpanded directory\n\
+         kind comes from a suffix-map (the `[kinds]` table in\n\
+         `aspectus config defaults`; legacy key `kinds`:\n\
+         `SUFFIX:text|binary`, `!SUFFIX` to drop). An unexpanded directory\n\
          carries a census of what it held — [dir×3 \u{2248}120f \u{b7} md\u{d7}31] — with\n\
          subdirectories as containers whose deep file-count (mass) leads,\n\
          and the subtree's text lines after it (\u{2248}61k lines): a glance\n\
@@ -227,8 +236,9 @@ fn help_page() -> String {
          claim about contents, exactly what the evidence supports.\n\
          Hidden names are not counted as children; the has-spot is what\n\
          says they are here. The map is glob-based and extendable from config\n\
-         (key `furniture`: `PATTERN[:KIND[:hide|omit|mark]]`, comma-\n\
-         separated; `!PATTERN` drops a default row).\n\
+         (the `[furniture]` table in `aspectus config defaults`; legacy key\n\
+         `furniture`: `PATTERN[:KIND[:hide|omit|mark]]`, comma-separated;\n\
+         `!PATTERN` or `\"PATTERN\" = \"!\"` drops a default row).\n\
          \n\
          The look never lies by omission: an unexpanded directory carries a\n\
          census, a walk-bound cut keeps the full name count and says\n\
@@ -251,12 +261,12 @@ fn help_page() -> String {
          higher = harder to surprise), per-fact quiet.sensitivity.size /\n\
          .mtime. Convention laws (setuid, root-owner) never scale.\n\
          \n\
-         Important files (config `important`, comma-separated basename\n\
-         globs; default README*, AGENTS.md, CLAUDE.md; !PATTERN drops one)\n\
-         survive a tight --lines ahead of plain files — dirs, then\n\
-         important, then the rest, sort-key order within each tier. They\n\
-         claim no glyph and no position: with budget to spare the look is\n\
-         unchanged.\n\
+         Important files (config `important = [\"README*\", …]` or the\n\
+         legacy comma-separated globs; default README*, AGENTS.md,\n\
+         CLAUDE.md; !PATTERN drops one) survive a tight --lines ahead of\n\
+         plain files — dirs, then important, then the rest, sort-key order\n\
+         within each tier. They claim no glyph and no position: with budget\n\
+         to spare the look is unchanged.\n\
          \n\
          --format json emits the same look as one JSON document: same\n\
          walk, same budget, same censuses and marks -- never deeper or\n\
@@ -282,12 +292,16 @@ fn help_page() -> String {
          arch/firmatum/utils/aspectus/inbox.md.\n\
          \n\
          Facts beyond the defaults (size, mtime, ...) have no flags of\n\
-         their own; ask through config on the caller stack, e.g.\n\
-         columns.size = on, format.mtime = epoch, sort = -size (env:\n\
-         ASPECTUS_COLUMNS_SIZE, ...). Column values align at computed\n\
-         tab-stops -- a function of the tree, never terminal width, so\n\
-         two looks of the same tree stay diffable. `aspectus config`\n\
-         lists every fact with its state, ask, and format.\n",
+         their own; ask through config on the caller stack. Membership is\n\
+         `[layout]` in `aspectus config defaults` — a fact in a position\n\
+         list is shown, a fact in `quiet` speaks only on surprise, a fact\n\
+         in no list renders nothing. `columns.size = on` still works for\n\
+         this release (stderr names `[layout]`). format.mtime = epoch,\n\
+         sort = -size (env: ASPECTUS_COLUMNS_SIZE, ...). Column values\n\
+         align at computed tab-stops -- a function of the tree, never\n\
+         terminal width, so two looks of the same tree stay diffable.\n\
+         `aspectus config` lists every fact with its state, ask, format,\n\
+         the effective `[layout]`, and the furniture/kinds/important maps.\n",
     );
     out
 }
@@ -321,6 +335,8 @@ struct ConfigArgs {
     user_home_override: Option<PathBuf>,
     caller: Option<String>,
     flag_vals: BTreeMap<String, String>,
+    /// `aspectus config defaults` — dump the embedded file, no layers.
+    dump_defaults: bool,
 }
 
 struct ShowArgs {
@@ -390,6 +406,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
     let mut help = false;
     let mut version = false;
     let mut config_cmd = false;
+    let mut dump_defaults = false;
     let mut user_home_override = None;
     let mut caller = None;
     let mut color = ColorMode::Auto;
@@ -525,7 +542,13 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
                 }
                 return Err(Refusal::UnknownOption(s.to_string()));
             }
-            s => paths.push(s.to_string()),
+            s => {
+                if config_cmd && s == "defaults" && !dump_defaults && paths.is_empty() {
+                    dump_defaults = true;
+                } else {
+                    paths.push(s.to_string());
+                }
+            }
         }
     }
 
@@ -550,6 +573,7 @@ fn parse_args(argv: impl IntoIterator<Item = String>) -> Result<Cmd, Refusal> {
             user_home_override,
             caller,
             flag_vals,
+            dump_defaults,
         }));
     }
 
@@ -650,11 +674,18 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         Ok(Cmd::Config(c)) => {
+            if c.dump_defaults {
+                print!("{DEFAULTS_TOML}");
+                return ExitCode::SUCCESS;
+            }
             let res = resolve(
                 c.user_home_override.as_deref(),
                 c.caller.as_deref(),
                 c.flag_vals,
             );
+            if let Some(note) = old_columns_note(&res) {
+                let _ = writeln!(io::stderr(), "{note}");
+            }
             print!("{}", render_show(&res));
             print!("{}", aspectus::facts::inventory(&res));
             feedback_footer();
@@ -758,10 +789,10 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         }
     }
     let (order, cols) = resolve_look(&cfg)?;
-    let map = match cfg.won.get("furniture") {
-        Some((rules, _)) => aspectus::furniture::Map::with_config(rules),
-        None => aspectus::furniture::Map::shipped(),
-    };
+    if let Some(note) = old_columns_note(&cfg) {
+        let _ = writeln!(io::stderr(), "{note}");
+    }
+    let map = aspectus::furniture::Map::from_sourced(&cfg.furniture);
     // An unknown --inspect kind used to exit 0 silently — "the flags I
     // would use to debug the tool lie by being fine" (grok, 2026-08-14).
     // Refuse by name, with the menu.
@@ -777,14 +808,12 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         show_all: args.show_all,
         inspect: args.inspect,
     };
-    let kinds = match cfg.won.get("kinds") {
-        Some((rules, _)) => aspectus::kind::Map::with_config(rules),
-        None => aspectus::kind::Map::shipped(),
-    };
+    let kinds = aspectus::kind::Map::from_sourced(&cfg.kinds);
     let one_fs = match cfg.won.get("one-fs").map(|(v, _)| v.as_str()) {
-        None | Some("on") => true,
-        Some("off") => false,
-        Some(v) => return Err(ShowErr::Other(format!("one-fs is on or off (got {v})"))),
+        None => true,
+        Some(v) => boolish(v).ok_or_else(|| {
+            ShowErr::Other(format!("one-fs is on or off (got {v})"))
+        })?,
     };
     let read_budget: u64 = cfg
         .won
@@ -794,18 +823,12 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     let mut walk = aspectus::n_level::WalkBudget::new(walk_bound);
     // The important set is built pre-walk: readme-title borrows this exact
     // set (design/readme-title.md — one definition, the rows cannot drift).
-    let important = match cfg.won.get("important") {
-        Some((rules, _)) => aspectus::important::Set::with_config(rules),
-        None => aspectus::important::Set::shipped(),
-    };
+    let important = aspectus::important::Set::from_sourced(&cfg.important);
     let title_on = match cfg.won.get("readme-title").map(|(v, _)| v.as_str()) {
-        None | Some("off") => false,
-        Some("on") => true,
-        Some(v) => {
-            return Err(ShowErr::Other(format!(
-                "readme-title is on or off (got {v})"
-            )))
-        }
+        None => false,
+        Some(v) => boolish(v).ok_or_else(|| {
+            ShowErr::Other(format!("readme-title is on or off (got {v})"))
+        })?,
     };
     let mut ctx = aspectus::n_level::LookCtx::new(
         &map,
@@ -857,11 +880,10 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     // one listee joins its level's sibling norms — and before the budget
     // spends: one series, one line.
     let globify_on = match cfg.won.get("globify").map(|(v, _)| v.as_str()) {
-        None | Some("on") => true,
-        Some("off") => false,
-        Some(v) => {
-            return Err(ShowErr::Other(format!("globify is on or off (got {v})")))
-        }
+        None => true,
+        Some(v) => boolish(v).ok_or_else(|| {
+            ShowErr::Other(format!("globify is on or off (got {v})"))
+        })?,
     };
     if globify_on && !args.show_all {
         let min: usize = cfg
@@ -1040,13 +1062,10 @@ fn resolve_look(
         })
     })?;
     let dotfiles_first = match cfg.won.get("dotfiles-first").map(|(v, _)| v.as_str()) {
-        None | Some("off") => false,
-        Some("on") => true,
-        Some(v) => {
-            return Err(ShowErr::Other(format!(
-                "dotfiles-first is on or off (got {v})"
-            )))
-        }
+        None => false,
+        Some(v) => boolish(v).ok_or_else(|| {
+            ShowErr::Other(format!("dotfiles-first is on or off (got {v})"))
+        })?,
     };
     let recency_git = match cfg.won.get("recency-source").map(|(v, _)| v.as_str()) {
         None | Some("mtime") => false,
@@ -1091,6 +1110,9 @@ fn resolve_look(
     // claim; the evidence belongs on the line) — unless the caller said
     // off. The recency *default* does not: position already carries the
     // signal, the value stays quiet (design/sort.md, design/columns.md).
+    // A copied defaults.toml restating `sort = "recency"` keeps the
+    // defaults layer as source (equal values don't promote), so it does
+    // not lift either.
     use aspectus::columns::State;
     let explicit_sort = sort_layer != "defaults";
     let implied = |k: sort::Key, state: State| {
@@ -1109,7 +1131,7 @@ fn resolve_look(
         lc_state == State::On || implied(sort::Key::LineCount, lc_state);
     let heat = heat_state == State::On || implied(sort::Key::Heat, heat_state);
 
-    let size_fmt = match cfg.won.get("format.size").map(|(v, _)| v.as_str()) {
+    let size_fmt = match format_val(&cfg.won, "format.size") {
         None | Some("human") => SizeFmt::Human,
         Some("bytes") => SizeFmt::Bytes,
         Some(v) => {
@@ -1118,7 +1140,7 @@ fn resolve_look(
             )))
         }
     };
-    let mtime_fmt = match cfg.won.get("format.mtime").map(|(v, _)| v.as_str()) {
+    let mtime_fmt = match format_val(&cfg.won, "format.mtime") {
         None | Some("relative") => TimeFmt::Relative,
         Some("iso-8601") => TimeFmt::Iso8601,
         Some("epoch") => TimeFmt::Epoch,
@@ -1128,7 +1150,7 @@ fn resolve_look(
             )))
         }
     };
-    let line_fmt = match cfg.won.get("format.line-count").map(|(v, _)| v.as_str()) {
+    let line_fmt = match format_val(&cfg.won, "format.line-count") {
         None | Some("physical") => LineFmt::Physical,
         Some("non-blank") => LineFmt::NonBlank,
         Some(v) => {
@@ -1150,7 +1172,7 @@ fn resolve_look(
     };
     let intro_fmt = sha_fmt("format.initial-sha")?;
     let latest_fmt = sha_fmt("format.latest-sha")?;
-    let owner_fmt = match cfg.won.get("format.owner").map(|(v, _)| v.as_str()) {
+    let owner_fmt = match format_val(&cfg.won, "format.owner") {
         None | Some("name") => aspectus::columns::OwnerFmt::Name,
         Some("id") => aspectus::columns::OwnerFmt::Id,
         Some(v) => {

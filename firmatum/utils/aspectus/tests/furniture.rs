@@ -141,6 +141,21 @@ fn config_extends_and_removes_map_rows() {
 }
 
 #[test]
+fn toml_table_extends_and_removes_map_rows() {
+    let (dir, xdg) = fixture();
+    fs::write(
+        xdg.join("aspectus/aspectus.toml"),
+        "[furniture]\n\".mystery/\" = \"lab\"\n\"target/\" = \"!\"\n",
+    )
+    .unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[]);
+    assert_eq!(c, 0, "{e}");
+    assert!(!o.contains(".mystery"), "table row hides it: {o}");
+    assert!(o.contains("lab"), "table kind claimed: {o}");
+    assert!(o.contains("target/"), "\"target/\" = \"!\" un-furnitures it: {o}");
+}
+
+#[test]
 fn explain_budget_confesses_furniture_on_stderr() {
     let (dir, xdg) = fixture();
     let (_, o, e) = run(&dir, &xdg, &["--explain-budget"]);
