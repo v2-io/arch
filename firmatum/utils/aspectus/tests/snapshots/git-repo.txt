@@ -1,0 +1,7 @@
+[ignored×1]  [git: br<main> @c2d0d59]  [has: build ≈1f, git, rust]
+<ROOT>/
+                 lines
+├── src/
+│   └── main.rs      1
+├── Cargo.toml       1
+└── README.md        1

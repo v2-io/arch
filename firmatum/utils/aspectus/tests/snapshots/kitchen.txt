@@ -1,0 +1,14 @@
+[has: rust]
+<ROOT>/
+                                     lines  perms
+├── deep/
+│   └── one/                                       [dir×2 ≈5f]  ≈11 lines
+├── src/
+│   ├── blob.bin                                   binary
+│   ├── lib.rs                           2
+│   └── main.rs                          1
+├── Cargo.toml                           2
+├── README.md                            3
+├── readme-link -> README.md             3
+├── run.sh                               2    700
+└── dangling -> nowhere.md [broken]           755

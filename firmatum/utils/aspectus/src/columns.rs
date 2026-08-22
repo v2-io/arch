@@ -1,19 +1,27 @@
-//! Columns — how facts land on a line (design/columns.md).
+//! Columns — selection, format, and the row grammar (design/columns.md,
+//! design/grid-cleanup.md).
 //!
-//! Three duties: selection (which facts are in this look — resolved through
-//! the config caller stack against the lattice defaults), placement (a
-//! column beside the name vs INFO hanging right of it — the lattice cell is
-//! the law), and format (lattice options, starred default, `format.FACT`
-//! overrides). Placement follows the classes of design/shorthand.md
-//! (decoration / near-right / far-right render today; far-left, near-left,
-//! and glyph-block are declared in `facts::Placement` and plug in here).
-//! This module also owns the paint path: all non-name material
-//! lands at computed pseudo-tab-stops — pure functions of the look's
-//! content, never terminal width (alignment decided 2026-08-14). Column
-//! values are additionally aligned per-column, right-edge (position carries
-//! meaning; git-heat's look is the prior art).
+//! Duties, in the pipeline's order:
+//!
+//! 1. **Selection / format** (`Cols`): which facts are in this look and in
+//!    which spelling, resolved through the config caller stack against the
+//!    lattice defaults (design/lattice-2.md is the inventory; `facts.rs`
+//!    prints it).
+//! 2. **Ready-facts**: each fact rendered by its own formatter, quiet
+//!    applied, no neighbor knowledge — `ready.rs`.
+//! 3. **Cells / rows** (`Slots`, `Row`): the ready-facts land in *named
+//!    slots in a fixed order* — far-left · level-location · name-location ·
+//!    name-suffix · after-name · near-right · supplement · far-right (the
+//!    positions of design/lattice-2.md). Far-left and supplement have no
+//!    tenants yet; a node emits exactly one row today (sub-rows are a later
+//!    slice).
+//! 4. **Paint**: the only layer that knows about other rows — the computed
+//!    pseudo-tab-stop, per-column right edges, heading alignment, color.
+//!    Stops are pure functions of the look's content, never terminal width
+//!    (alignment decided 2026-08-14; git-heat's look is the prior art).
 
 use crate::n_level::Node;
+use crate::ready::{self, Position, Ready};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SizeFmt {
@@ -53,23 +61,6 @@ pub enum ShaFmt {
     Full,
 }
 
-fn fmt_sha(fact: &Option<(String, u32)>, f: ShaFmt) -> String {
-    match fact {
-        None => String::new(),
-        Some((sha, n)) => match f {
-            ShaFmt::Full => sha.clone(),
-            ShaFmt::Short => sha.chars().take(7).collect(),
-            ShaFmt::HN => {
-                if *n == 0 {
-                    "H".to_string()
-                } else {
-                    format!("H~{n}")
-                }
-            }
-        },
-    }
-}
-
 /// One fact's selection state (config `columns.FACT`). `Quiet` renders a
 /// value only on lines where the fact surprises (`Node.q`, quiet.rs); the
 /// silent lines keep an empty cell so the other columns stay aligned.
@@ -90,7 +81,7 @@ impl State {
         }
     }
 
-    fn claims_column(self) -> bool {
+    pub fn claims_column(self) -> bool {
         self != State::Off
     }
 }
@@ -144,15 +135,8 @@ impl Default for Cols {
 }
 
 impl Cols {
-    fn active(&self) -> usize {
-        usize::from(self.line_count)
-            + usize::from(self.size.claims_column())
-            + usize::from(self.mtime.claims_column())
-            + usize::from(self.perms.claims_column())
-            + usize::from(self.owner.claims_column())
-            + usize::from(self.intro_sha)
-            + usize::from(self.latest_sha)
-            + usize::from(self.heat)
+    pub fn active(&self) -> usize {
+        ready::columns(self).len()
     }
 
     /// The heat cluster's cell index, for the paint path's sub-column
@@ -162,102 +146,88 @@ impl Cols {
     }
 }
 
-/// `human` size: ≤4 glyphs of number+unit, deterministic. 1024-base.
-fn human_size(n: u64) -> String {
-    const UNITS: [&str; 5] = ["B", "K", "M", "G", "T"];
-    let mut v = n as f64;
-    let mut u = 0;
-    while v >= 1000.0 && u + 1 < UNITS.len() {
-        v /= 1024.0;
-        u += 1;
-    }
-    if u == 0 {
-        format!("{n}B")
-    } else if v < 10.0 {
-        format!("{v:.1}{}", UNITS[u])
-    } else {
-        format!("{v:.0}{}", UNITS[u])
-    }
+/// The named slots one node's ready-facts land in, in the fixed left-to-
+/// right order of design/lattice-2.md. A slot with no tenant is empty, not
+/// absent: the grammar is the same on every row, which is what lets paint
+/// align across the look.
+#[derive(Default)]
+struct Slots {
+    /// Fixed-width blocks before the hierarchy — no tenants yet (the
+    /// git-status glyph is the first, a later slice).
+    far_left: Vec<Ready>,
+    /// The tree's indent and branch glyphs.
+    level: String,
+    /// Name **or** glob-template **or** leaf-census — mutually exclusive.
+    name: String,
+    /// Painted inside the name's color run (`/` on dirs).
+    name_suffix: String,
+    /// `-> target`, uncolored, still part of the name column's width.
+    after_name: String,
+    /// The typed near-right parts, in order — one string per part today,
+    /// each one still its own ready-fact rather than a pre-joined blob.
+    near_right: Vec<Ready>,
+    /// Between near-right and far-right — no tenants yet (design/lattice-2
+    /// names it; nothing has been assigned to it).
+    supplement: Vec<Ready>,
+    /// One cell per active far-right column, empty where the fact is silent
+    /// on this line (the gap keeps the neighbors aligned; no placeholder).
+    far_right: Vec<Ready>,
 }
 
-fn fmt_size(n: u64, f: SizeFmt) -> String {
-    match f {
-        SizeFmt::Human => human_size(n),
-        SizeFmt::Bytes => n.to_string(),
-    }
-}
-
-/// Octal, three digits — four when a special bit is set (`4755`).
-fn fmt_mode(mode: u32) -> String {
-    if mode & 0o7000 != 0 {
-        format!("{mode:04o}")
-    } else {
-        format!("{:03o}", mode & 0o777)
-    }
-}
-
-/// Owner cell: name (id fallback / `format.owner = id`); the group leg
-/// appends `:group` only when it is the surprising half.
-fn fmt_owner(n: &Node, f: OwnerFmt) -> Option<String> {
-    let uid = n.uid?;
-    let user = match f {
-        OwnerFmt::Id => uid.to_string(),
-        OwnerFmt::Name => crate::quiet::user_name(uid)
-            .map(str::to_string)
-            .unwrap_or_else(|| uid.to_string()),
-    };
-    if n.q.group
-        && let Some(gid) = n.gid
-    {
-        let group = match f {
-            OwnerFmt::Id => gid.to_string(),
-            OwnerFmt::Name => crate::quiet::group_name(gid)
-                .map(str::to_string)
-                .unwrap_or_else(|| gid.to_string()),
-        };
-        return Some(format!("{user}:{group}"));
-    }
-    Some(user)
-}
-
-fn fmt_mtime(secs: i64, f: TimeFmt, now: i64) -> String {
-    match f {
-        TimeFmt::Relative => rel_age(now, secs),
-        TimeFmt::Epoch => secs.to_string(),
-        TimeFmt::Iso8601 => {
-            if secs < 0 {
-                // Pre-epoch mtimes exist in the wild; epoch form is exact.
-                return secs.to_string();
-            }
-            let t = std::time::UNIX_EPOCH + std::time::Duration::from_secs(secs as u64);
-            crate::overview::stamp_utc(t)
+impl Slots {
+    /// A node's slots, filled from its ready-facts.
+    fn of(n: &Node, cols: &Cols, level: String) -> Slots {
+        Slots {
+            far_left: Vec::new(),
+            level,
+            name: ready::name(n).text,
+            name_suffix: ready::dir_suffix(n).map(|r| r.text).unwrap_or_default(),
+            after_name: ready::symlink_target(n).map(|r| r.text).unwrap_or_default(),
+            near_right: ready::near_right(n),
+            supplement: Vec::new(),
+            far_right: ready::far_right(n, cols),
         }
     }
+
+    /// A row that carries only text in the name slot (the stamp line, the
+    /// root path line, the pre-joined root facts line, a leaf census).
+    fn bare(name: String, ncols: usize) -> Slots {
+        Slots {
+            name,
+            far_right: vec![blank(); ncols],
+            ..Slots::default()
+        }
+    }
+
+    fn near_right_text(&self) -> String {
+        let parts: Vec<&str> = self
+            .near_right
+            .iter()
+            .chain(self.supplement.iter())
+            .filter(|r| !r.is_empty())
+            .map(|r| r.text.as_str())
+            .collect();
+        parts.join("  ")
+    }
 }
 
-/// One printed line, before alignment. Fields follow the placement classes
-/// of design/shorthand.md: decoration is fused to the name, `cells` are the
-/// far-right aligned columns, `rest` is the near-right material at the
-/// tab-stop. Far-left / near-left / glyph-block have no tenants yet and
-/// plug in here when they do.
+fn blank() -> Ready {
+    Ready {
+        fact: "",
+        text: String::new(),
+        position: Position::FarRight,
+        office: crate::ready::Office::Line,
+    }
+}
+
+/// One printed line: the slots plus how this row wants to be painted.
 struct Row {
-    /// Tree glyphs and branch, uncolored.
-    left_prefix: String,
-    /// The name itself (trailing `/` on dirs), uncolored.
-    name: String,
-    /// Decoration fused to the name (`-> target`), uncolored, part of the
-    /// name column for tab-stop purposes.
-    deco: String,
+    slots: Slots,
     color_dir: bool,
     /// This entry is gitignored: the name renders dimmed on a TTY (the
-    /// glyph in `rest` is the carrier; dim is the redundant overlay —
+    /// glyph in near-right is the carrier; dim is the redundant overlay —
     /// steward ask 2026-08-14).
     dim: bool,
-    /// One cell per active column, empty when the fact has nothing to say
-    /// (a quiet gap keeps the other columns aligned; no placeholder glyph).
-    cells: Vec<String>,
-    /// Near-right: censuses, facets, kind spot, look-marks.
-    rest: String,
     /// The headings line (design/columns.md §Column headings): its cells
     /// name columns instead of carrying values; painted dim, dropped when
     /// no value column below it exists, excluded from value widths.
@@ -265,12 +235,27 @@ struct Row {
 }
 
 impl Row {
+    fn plain(name: String, ncols: usize) -> Row {
+        Row { slots: Slots::bare(name, ncols), color_dir: false, dim: false, heading: false }
+    }
+
+    /// The width of everything left of the tab-stop.
     fn name_width(&self) -> usize {
-        self.left_prefix.chars().count() + self.name.chars().count() + self.deco.chars().count()
+        let s = &self.slots;
+        s.far_left.iter().map(|r| r.text.chars().count()).sum::<usize>()
+            + s.level.chars().count()
+            + s.name.chars().count()
+            + s.name_suffix.chars().count()
+            + s.after_name.chars().count()
+    }
+
+    fn cell(&self, i: usize) -> &str {
+        self.slots.far_right.get(i).map(|r| r.text.as_str()).unwrap_or("")
     }
 
     fn has_right(&self) -> bool {
-        !self.rest.is_empty() || self.cells.iter().any(|c| !c.is_empty())
+        !self.slots.near_right_text().is_empty()
+            || self.slots.far_right.iter().any(|r| !r.is_empty())
     }
 }
 
@@ -290,9 +275,8 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
     if let Some(ci) = cluster {
         let (mut lw, mut rw) = (0usize, 0usize);
         for r in rows.iter().filter(|r| !r.heading) {
-            if let Some(c) = r.cells.get(ci)
-                && !c.is_empty()
-            {
+            let c = r.cell(ci);
+            if !c.is_empty() {
                 match c.split_once(" · ") {
                     Some((l, a)) => {
                         lw = lw.max(l.chars().count());
@@ -304,13 +288,13 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
         }
         if lw > 0 && rw > 0 {
             for r in &mut rows {
-                let Some(c) = r.cells.get_mut(ci) else { continue };
-                if c.is_empty() {
+                let Some(cell) = r.slots.far_right.get_mut(ci) else { continue };
+                if cell.is_empty() {
                     continue;
                 }
-                *c = match c.split_once(" · ") {
+                cell.text = match cell.text.split_once(" · ") {
                     Some((l, a)) => format!("{l:>lw$} · {a:>rw$}"),
-                    None => format!("{:>lw$}{}", c.clone(), " ".repeat(3 + rw)),
+                    None => format!("{:>lw$}{}", cell.text.clone(), " ".repeat(3 + rw)),
                 };
             }
         }
@@ -328,7 +312,7 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
         .map(|i| {
             rows.iter()
                 .filter(|r| !r.heading)
-                .map(|r| r.cells.get(i).map(|c| c.chars().count()).unwrap_or(0))
+                .map(|r| r.cell(i).chars().count())
                 .max()
                 .unwrap_or(0)
         })
@@ -341,7 +325,7 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
             }
             rows.iter()
                 .filter(|r| r.heading)
-                .map(|r| r.cells.get(i).map(|c| c.chars().count()).unwrap_or(0))
+                .map(|r| r.cell(i).chars().count())
                 .max()
                 .unwrap_or(0)
                 .max(value_widths[i])
@@ -353,18 +337,24 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
             continue; // no fact columns in this look — no headings line
         }
         let mut line = String::new();
-        line.push_str(&r.left_prefix);
+        for g in &r.slots.far_left {
+            line.push_str(&g.text);
+        }
+        line.push_str(&r.slots.level);
+        // The name and its suffix are one painted run: the `/` belongs to
+        // the dir's name visually even though it is its own lattice row.
+        let named = format!("{}{}", r.slots.name, r.slots.name_suffix);
         let painted = if r.dim {
             // Faint beats the dir blue here: the ignore claim is the
             // line's loudest fact, and bold-blue would fight it.
-            crate::color::dim(&r.name, color)
+            crate::color::dim(&named, color)
         } else if r.color_dir {
-            crate::color::dir(&r.name, color)
+            crate::color::dir(&named, color)
         } else {
-            r.name.clone()
+            named
         };
         line.push_str(&painted);
-        line.push_str(&r.deco);
+        line.push_str(&r.slots.after_name);
         if r.has_right() {
             let w = r.name_width();
             let pad = if w + GAP <= stop { stop - w } else { GAP };
@@ -378,7 +368,7 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
                     line.push_str("  ");
                 }
                 first = false;
-                let cell = r.cells.get(i).map(String::as_str).unwrap_or("");
+                let cell = r.cell(i);
                 let cw = cell.chars().count();
                 line.push_str(&" ".repeat(width - cw));
                 if r.heading {
@@ -387,11 +377,12 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
                     line.push_str(cell);
                 }
             }
-            if !r.rest.is_empty() {
+            let rest = r.slots.near_right_text();
+            if !rest.is_empty() {
                 if !first {
                     line.push_str("  ");
                 }
-                line.push_str(&r.rest);
+                line.push_str(&rest);
             }
         }
         // Alignment gaps for silent cells must not leave trailing bytes.
@@ -401,135 +392,25 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
     out
 }
 
-/// Human-relative age (`13.6d ago`) — the delta register for aliveness
-/// (design/heat.md affordances; git-heat's shipped look).
-pub fn rel_age(now: i64, then: i64) -> String {
-    let d = now - then;
-    if d < 0 {
-        return "future".to_string();
+/// Heading words per active column, in `ready::columns` order
+/// (design/columns.md §Column headings; spellings provisional until
+/// Joseph ratifies).
+fn heading_row(cols: &Cols) -> Row {
+    let cells = ready::columns(cols)
+        .into_iter()
+        .map(|c| Ready {
+            fact: c.fact,
+            text: c.heading.to_string(),
+            position: Position::FarRight,
+            office: crate::ready::Office::Look,
+        })
+        .collect();
+    Row {
+        slots: Slots { far_right: cells, ..Slots::default() },
+        color_dir: false,
+        dim: false,
+        heading: true,
     }
-    let d = d as f64;
-    if d < 3600.0 {
-        format!("{}m ago", (d / 60.0) as u64)
-    } else if d < 172_800.0 {
-        format!("{:.1}h ago", d / 3600.0)
-    } else if d < 1_209_600.0 {
-        format!("{:.1}d ago", d / 86_400.0)
-    } else if d < 4_838_400.0 {
-        format!("{:.1}w ago", d / 604_800.0)
-    } else if d < 63_113_904.0 {
-        format!("{:.1}mo ago", d / 2_629_746.0)
-    } else {
-        format!("{:.1}y ago", d / 31_556_952.0)
-    }
-}
-
-/// The column cells for one node, in lattice order (line-count, size,
-/// mtime, then the heat cluster at the far right). A fact with nothing to
-/// say for this line yields an empty cell.
-fn cells_of(n: &Node, cols: &Cols) -> Vec<String> {
-    let mut cells = Vec::with_capacity(cols.active());
-    // A quiet fact speaks only where it surprises (quiet.rs' cold law);
-    // silent lines yield the empty cell.
-    let when = |st: State, speaks: bool, val: Option<String>| -> String {
-        match st {
-            State::On => val.unwrap_or_default(),
-            State::Quiet if speaks => val.unwrap_or_default(),
-            _ => String::new(),
-        }
-    };
-    if cols.line_count {
-        cells.push(n.lines.map(|l| l.to_string()).unwrap_or_default());
-    }
-    if cols.perms.claims_column() {
-        cells.push(when(
-            cols.perms,
-            n.q.mode,
-            n.mode.map(fmt_mode),
-        ));
-    }
-    if cols.owner.claims_column() {
-        cells.push(when(
-            cols.owner,
-            n.q.owner || n.q.group,
-            fmt_owner(n, cols.owner_fmt),
-        ));
-    }
-    if cols.size.claims_column() {
-        cells.push(when(
-            cols.size,
-            n.q.size,
-            n.size.map(|s| fmt_size(s, cols.size_fmt)),
-        ));
-    }
-    if cols.mtime.claims_column() {
-        // The heat cluster already carries this line's mtime as `· age`;
-        // a quiet mtime speaking beside it would say the same thing twice
-        // (format-consistency steer, 2026-08-14). An explicit `on` still
-        // renders everywhere — a full column asked for is a full column.
-        let redundant =
-            cols.heat && n.mtime.is_some() && (n.heat.is_some() || n.git_ts.is_some());
-        cells.push(when(
-            cols.mtime,
-            n.q.mtime && !redundant,
-            n.mtime.map(|t| fmt_mtime(t, cols.mtime_fmt, cols.now)),
-        ));
-    }
-    if cols.intro_sha {
-        cells.push(fmt_sha(&n.intro, cols.intro_fmt));
-    }
-    if cols.latest_sha {
-        cells.push(fmt_sha(&n.touch, cols.latest_fmt));
-    }
-    if cols.heat {
-        // Two aliveness facts as one glance-stop: `1.01 · 13.6d ago`.
-        // A git-known line without a score (noise basename, history says
-        // nothing hot) still carries its age in the cluster — score
-        // honestly absent, the age in the one time register — so quiet's
-        // mtime never re-speaks it in a stray column (close audit
-        // 2026-08-14: the silenced Cargo.toml had become the loudest row).
-        cells.push(match (n.heat, n.mtime) {
-            (Some(h), Some(t)) => format!("{h:.2} · {}", rel_age(cols.now, t)),
-            (Some(h), None) => format!("{h:.2}"),
-            (None, Some(t)) if n.git_ts.is_some() => {
-                format!(" · {}", rel_age(cols.now, t))
-            }
-            _ => String::new(),
-        });
-    }
-    cells
-}
-
-/// Heading words per active column, in `cells_of` order (design/columns.md
-/// §Column headings; spellings provisional until Joseph ratifies).
-fn heading_cells(cols: &Cols) -> Vec<String> {
-    let mut cells = Vec::with_capacity(cols.active());
-    if cols.line_count {
-        cells.push("lines".to_string());
-    }
-    if cols.perms.claims_column() {
-        cells.push("perms".to_string());
-    }
-    if cols.owner.claims_column() {
-        cells.push("owner".to_string());
-    }
-    if cols.size.claims_column() {
-        cells.push("size".to_string());
-    }
-    if cols.mtime.claims_column() {
-        cells.push("mtime".to_string());
-    }
-    if cols.intro_sha {
-        // Heading spellings provisional until Joseph ratifies.
-        cells.push("initial-sha".to_string());
-    }
-    if cols.latest_sha {
-        cells.push("latest-sha".to_string());
-    }
-    if cols.heat {
-        cells.push("heat · age".to_string());
-    }
-    cells
 }
 
 /// Will this look carry a headings line? True when any node below the root
@@ -538,137 +419,11 @@ fn heading_cells(cols: &Cols) -> Vec<String> {
 /// it actually renders); paint applies the same predicate via widths.
 pub fn headings_expected(tree: &Node, cols: &Cols) -> bool {
     fn any_cell(n: &Node, cols: &Cols) -> bool {
-        n.children.iter().any(|c| {
-            cells_of(c, cols).iter().any(|s| !s.is_empty()) || any_cell(c, cols)
-        })
+        n.children
+            .iter()
+            .any(|c| ready::far_right(c, cols).iter().any(|r| !r.is_empty()) || any_cell(c, cols))
     }
     cols.active() > 0 && any_cell(tree, cols)
-}
-
-/// The gathering spot for what this place *holds*: specialized facets
-/// (identity, verified — `[git: …]` fires only on a real `.git`) first,
-/// then the `[has: …]` contents-claim (renamed from `[kind: …]`,
-/// steward 2026-08-14: the map detects contents, not identity, and the
-/// word now claims exactly what the evidence supports). Empty claims
-/// print nothing.
-fn state_marks(n: &Node) -> Vec<String> {
-    let mut parts = Vec::new();
-    for f in &n.facets {
-        parts.push(format!("[{f}]"));
-    }
-    if !n.kinds.is_empty() {
-        // A hidden dir's magnitude rides its kind word — presence
-        // survives hiding (`archive ≈127f`, design/furniture.md).
-        let words: Vec<String> = n
-            .kinds
-            .iter()
-            .map(|k| {
-                match n.has_counts.iter().find(|(hk, _, _)| hk == k) {
-                    Some((_, files, bounded)) => {
-                        let mark = if *bounded { "≥" } else { "≈" };
-                        format!("{k} {mark}{files}f")
-                    }
-                    None => k.clone(),
-                }
-            })
-            .collect();
-        parts.push(format!("[has: {}]", words.join(", ")));
-    }
-    parts
-}
-
-/// The gitignored glyph — the no-color carrier of the per-entry status
-/// (TTY adds dim as the redundant overlay). Spelling provisional for
-/// ratification (design/gitignore-bodies.md, shorthand's stability law).
-pub const IGNORED_GLYPH: &str = "⊘";
-
-/// INFO to hang on a name: the walk's confession about this line.
-fn info_marks(n: &Node) -> Vec<String> {
-    let mut parts = Vec::new();
-    if n.ignored {
-        parts.push(IGNORED_GLYPH.to_string());
-    }
-    if n.denied {
-        parts.push("[denied]".to_string());
-    }
-    if n.cycle {
-        // A link back to a place already being expanded on this path —
-        // recursion refused, never a hang (spelling awaits ratification).
-        parts.push("[cycle]".to_string());
-    }
-    if n.other_fs {
-        // A filesystem boundary, not an empty dir, stopped the walk here.
-        parts.push("[other fs]".to_string());
-    }
-    if n.iter_err {
-        parts.push("[unreadable: io]".to_string());
-    }
-    // Membership stays exact under a cut, so the census carries no `≥`;
-    // the mark is what says this dir was cut short of the requested depth.
-    if n.cut {
-        parts.push("[walk bound]".to_string());
-    }
-    parts
-}
-
-/// Decoration fused to the name: the symlink target completes the name
-/// (design/shorthand.md — decoration class).
-fn deco_of(n: &Node) -> String {
-    match &n.link {
-        Some(target) => {
-            let broken = if n.link_broken { " [broken]" } else { "" };
-            format!(" -> {target}{broken}")
-        }
-        None => String::new(),
-    }
-}
-
-/// The near-right material for one node: dir census, facets, kind spot,
-/// look-marks — at the computed tab-stop.
-fn rest_of(n: &Node) -> String {
-    let mut parts = Vec::new();
-    // The README's name for the place, hanging on the dir's name
-    // (design/readme-title.md; INFO office, quoting provisional).
-    if let Some(t) = &n.title {
-        parts.push(format!("\"{t}\""));
-    }
-    // The filekind word, only where kind surprises (or was asked on) —
-    // the binary among the .md (design/quiet-columns.md; lattice INFO).
-    if let Some(w) = n.kind_word {
-        parts.push(w.to_string());
-    }
-    // A collapsed series' exact membership (design/globify.md): the
-    // pattern is the name; the count says what one line stands for.
-    if let Some(g) = &n.glob {
-        let what = if n.is_dir { "dirs" } else { "files" };
-        parts.push(format!("({} {what})", g.count));
-    }
-    if let Some(c) = &n.leftover {
-        let extra = c.render();
-        if !extra.is_empty() {
-            parts.push(extra);
-        }
-        // Mass's headline number: subtree text lines on the unexpanded
-        // dir's line (files already live in the census's dir bucket).
-        if let Some(m) = &n.mass
-            && m.lines > 0
-        {
-            parts.push(format!(
-                "{}{} lines",
-                m.mark(),
-                crate::n_level::group_lines(m.lines)
-            ));
-        }
-    }
-    // Ignored files at an expanded level: the typed remainder, so the
-    // level never pretends they don't exist (a cutoff level's count lives
-    // inside its census instead). Spelling provisional.
-    if n.leftover.is_none() && n.ignored_files > 0 {
-        parts.push(format!("[ignored×{}]", n.ignored_files));
-    }
-    parts.extend(state_marks(n));
-    parts.extend(info_marks(n));
-    parts.join("  ")
 }
 
 /// The root's own facts, pre-joined for the header facts line. Empty when
@@ -677,24 +432,27 @@ fn rest_of(n: &Node) -> String {
 /// `heat 1.01 · …` — the bare-`0`/`767` first-contact fix, 2026-08-14);
 /// a directory root's cluster stays bare per the headings specimen.
 pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
-    let cells = cells_of(tree, cols);
+    let cells = ready::far_right(tree, cols);
     let mut parts: Vec<String> = if tree.is_dir {
-        cells.into_iter().filter(|c| !c.is_empty()).collect()
+        cells.into_iter().filter(|c| !c.is_empty()).map(|c| c.text).collect()
     } else {
-        let labels = heading_cells(cols);
         cells
             .into_iter()
-            .zip(labels)
+            .zip(ready::columns(cols))
             .filter(|(c, _)| !c.is_empty())
-            .map(|(c, label)| match label.as_str() {
-                "lines" => format!("{c} lines"),
-                "perms" => format!("perms {c}"),
-                "heat · age" => format!("heat {c}"),
-                _ => c, // sizes, owners, ages already say what they are
+            .map(|(c, col)| match col.heading {
+                "lines" => format!("{} lines", c.text),
+                "perms" => format!("perms {}", c.text),
+                "heat · age" => format!("heat {}", c.text),
+                _ => c.text, // sizes, owners, ages already say what they are
             })
             .collect()
     };
-    let rest = rest_of(tree);
+    let rest = Slots {
+        near_right: ready::near_right(tree),
+        ..Slots::default()
+    }
+    .near_right_text();
     if !rest.is_empty() {
         parts.push(rest);
     }
@@ -711,46 +469,21 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         root.push('/');
     }
     let ncols = cols.active();
-    let plain = |name: String| Row {
-        left_prefix: String::new(),
-        name,
-        deco: String::new(),
-        color_dir: false,
-        dim: false,
-        cells: vec![String::new(); ncols],
-        rest: String::new(),
-        heading: false,
-    };
-    let mut rows = vec![plain(stamp.to_string())];
+    let mut rows = vec![Row::plain(stamp.to_string(), ncols)];
     let facts = root_facts_line(tree, cols);
     if !facts.is_empty() {
-        rows.push(plain(facts));
+        rows.push(Row::plain(facts, ncols));
     }
-    rows.push(Row {
-        left_prefix: String::new(),
-        name: root,
-        // Decoration completes the name (a symlinked root's `-> target`).
-        deco: deco_of(tree),
-        color_dir: true,
-        dim: false,
-        cells: vec![String::new(); ncols],
-        rest: String::new(),
-        heading: false,
-    });
+    let mut root_row = Row::plain(root, ncols);
+    // Decoration completes the name (a symlinked root's `-> target`).
+    root_row.slots.after_name = ready::symlink_target(tree).map(|r| r.text).unwrap_or_default();
+    root_row.color_dir = true;
+    rows.push(root_row);
     // The headings line, directly above the children it teaches (design/
     // columns.md §Column headings). paint drops it when no fact column
     // below carries a value.
     if ncols > 0 && (!tree.children.is_empty() || tree.omitted.is_some()) {
-        rows.push(Row {
-            left_prefix: String::new(),
-            name: String::new(),
-            deco: String::new(),
-            color_dir: false,
-            dim: false,
-            cells: heading_cells(cols),
-            rest: String::new(),
-            heading: true,
-        });
+        rows.push(heading_row(cols));
     }
     emit(&tree.children, tree.omitted.as_ref(), "", cols, &mut rows);
     // The steward's feedback footer rides on stderr (main.rs) — the tool
@@ -771,18 +504,10 @@ fn emit(
     for (i, k) in kids.iter().enumerate() {
         let last = i + 1 == total;
         let branch = if last { "└── " } else { "├── " };
-        let mut n = k.name.clone();
-        if k.is_dir && !n.ends_with('/') {
-            n.push('/');
-        }
         out.push(Row {
-            left_prefix: format!("{prefix}{branch}"),
-            name: n,
-            deco: deco_of(k),
+            slots: Slots::of(k, cols, format!("{prefix}{branch}")),
             color_dir: k.is_dir,
             dim: k.ignored,
-            cells: cells_of(k, cols),
-            rest: rest_of(k),
             heading: false,
         });
         if !k.children.is_empty() || k.omitted.is_some() {
@@ -797,15 +522,10 @@ fn emit(
     if has_om
         && let Some(c) = omitted
     {
-        out.push(Row {
-            left_prefix: format!("{prefix}└── "),
-            name: c.render_plus(),
-            deco: String::new(),
-            color_dir: false,
-            dim: false,
-            cells: vec![String::new(); cols.active()],
-            rest: String::new(),
-            heading: false,
-        });
+        // The allocator's remainder: a leaf census standing where a name
+        // stands (design/lattice-2.md — name-location, three tenants).
+        let mut row = Row::plain(ready::leaf_census(c).text, cols.active());
+        row.slots.level = format!("{prefix}└── ");
+        out.push(row);
     }
 }

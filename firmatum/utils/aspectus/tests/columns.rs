@@ -213,26 +213,39 @@ fn size_column_right_aligned() {
     assert_eq!(end("a.md"), end("big.md"), "right edges align: {o}");
 }
 
-/// Subfeature 7: the inventory surface lists every lattice fact the
-/// machinery knows, with state and ask.
+/// Subfeature 7: the inventory surface lists every lattice-2 fact the
+/// machinery knows, with its position, office, state, and ask
+/// (design/lattice-2.md; rewritten with the grid prefactor 2026-08-22 —
+/// the slugs are the lattice's, so `size` is `bytes` and `child-count` is
+/// gone, being the census's totals rather than a fact of its own).
 #[test]
 fn config_shows_fact_inventory() {
     let (dir, xdg) = fixture();
     let (c, o, e) = run(&dir, &xdg, &[], &["config"]);
     assert_eq!(c, 0, "{e}");
     for key in [
-        "name", "child-count", "mtime", "size", "filetype", "kind",
-        "symlink-target", "denied", "walk-marks", "heat", "owner",
+        "filename", "leaf-census", "dir-census", "lines", "bytes", "mtime",
+        "filetype", "filekind-word", "symlink-target", "denied", "walk-bound",
+        "heat", "owner", "has", "facet", "git-status",
     ] {
         assert!(o.contains(key), "inventory lists {key}: {o}");
+    }
+    // The position vocabulary is lattice-2's, and it says where the fact
+    // paints *today* — the old table's `place` words were inverted.
+    for word in ["name-location", "after-name", "near-right", "far-right", "level-location"] {
+        assert!(o.contains(word), "inventory speaks lattice-2 positions ({word}): {o}");
+    }
+    // Offices, and the fields that make a row actionable or honest.
+    for word in ["office", "census", "mark", "weight", "derived-from"] {
+        assert!(o.contains(word), "inventory carries {word}: {o}");
     }
     assert!(o.contains("columns.size"), "the ask is taught: {o}");
     assert!(o.contains("unbuilt"), "unbuilt facts named honestly: {o}");
     // State reflects the stack.
     user_home(&xdg, "columns.size = on\n");
     let (_, o, _) = run(&dir, &xdg, &[], &["config"]);
-    let size_row = o.lines().find(|l| l.trim_start().starts_with("size")).unwrap();
-    assert!(size_row.contains(" on"), "state is current, not default: {size_row}");
+    let bytes_row = o.lines().find(|l| l.contains(" bytes ")).unwrap();
+    assert!(bytes_row.contains(" on"), "state is current, not default: {bytes_row}");
 }
 
 /// The column-headings line (design/columns.md §Column headings): dimmed

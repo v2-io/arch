@@ -16,6 +16,7 @@ pub mod important;
 pub mod json;
 pub mod n_level;
 pub mod quiet;
+pub mod ready;
 pub mod overview;
 pub mod sort;
 pub mod facts;
