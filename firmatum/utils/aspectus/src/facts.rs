@@ -122,7 +122,8 @@ const fn f(
 use Display::{Always, Off, On, Quiet};
 use Office::{Census, Line, Look, Mark, Weight};
 use Position::{
-    AfterName, FarRight, InCell, LevelLocation, NameLocation, NameSuffix, NearRight, Unplaced,
+    AfterName, FarLeft, FarRight, InCell, LevelLocation, NameLocation, NameSuffix, NearRight,
+    Unplaced,
 };
 use Stat::{Built, Deferred, Provisional, Wants};
 
@@ -342,16 +343,16 @@ pub const FACTS: &[Fact] = &[
         true,
     ),
     f(
-        Wants,
+        Built,
         "git-status",
-        "git status --porcelain (worktree wins)",
-        NearRight,
-        Mark,
-        Always,
+        "git status --porcelain (worktree wins); ⊘ = gitignored",
+        FarLeft,
+        Line,
+        On,
         None,
         "1",
         None,
-        "⊘ today; far-left block pending",
+        "{⊘ M A ⁇ R U D C T}*",
         true,
     ),
     f(
@@ -591,16 +592,16 @@ pub const FACTS: &[Fact] = &[
         true,
     ),
     f(
-        Wants,
+        Built,
         "gitignored",
         "the ignore stack (entry itself)",
-        NearRight,
+        Unplaced,
         Mark,
         Always,
         None,
         "1",
         None,
-        "⊘* (moves into git-status)",
+        "JSON gitignored: true; glyph in git-status",
         true,
     ),
     f(

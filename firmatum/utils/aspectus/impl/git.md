@@ -7,7 +7,7 @@
 - **remote** — local config only, `origin` preferred, URL trimmed to `host/path` (scheme, `git@`, `.git` stripped). No remote → not shown.
 - **branch** — from `HEAD`; detached prints `detached`.
 - **short HEAD** — resolved from loose refs then `packed-refs` (gitdir, then commondir); unborn branch → no `@`. File parsing, no subprocess.
-- **dirty** — the one `git` subprocess (`status --porcelain --untracked-files=normal`), count of dirty paths; clean prints nothing (quiet law). If git is unavailable or errors, the fact is not claimed — never guessed.
+- **dirty** — the one `git` subprocess (`status --porcelain --untracked-files=normal`), count of dirty paths; clean prints nothing (quiet law). If git is unavailable or errors, the fact is not claimed — never guessed. The same call now also records per-path XY letters for the far-left git-status cell (step 5, `impl/grid-cleanup.md`); still one subprocess.
 
 `(private)` is NOT here — that is the Private-remote row.
 

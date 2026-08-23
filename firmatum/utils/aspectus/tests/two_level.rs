@@ -104,13 +104,8 @@ fn twice_same_tree() {
 }
 
 fn strip_stamp(s: &str) -> String {
-    let mut lines = s.lines();
-    let first = lines.next().unwrap_or("");
-    let first = first.rsplit_once("  ").map(|(p, _)| p).unwrap_or(first);
-    std::iter::once(first)
-        .chain(lines)
-        .collect::<Vec<_>>()
-        .join("\n")
+    // Line 1 is the wall-clock stamp; the tree below it is the subject.
+    s.lines().skip(1).collect::<Vec<_>>().join("\n")
 }
 
 #[test]

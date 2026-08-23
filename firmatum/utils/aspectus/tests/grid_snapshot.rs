@@ -249,8 +249,11 @@ fn git(dir: &Path, args: &[&str]) {
     assert!(ok, "git {args:?} failed in {dir:?}");
 }
 
-/// A real repo: the `[git: …]` facet on the parent line, `⊘` on a
-/// gitignored entry, the ignored remainder, and `[has: git, rust]`.
+/// A real repo: the `[git: …]` facet on the parent line, the far-left
+/// git-status cell (clean → blank; `⊘` lives here, not in the marks
+/// column), the ignored remainder, and `[has: git, rust]`.
+/// Re-blessed 2026-08-22: git-status far-left slice.
+/// Re-blessed 2026-08-22: untracked-dir ⁇; stamp/facts/path skip far-left.
 #[test]
 fn git_repo_grid() {
     let (dir, xdg) = fresh("git");

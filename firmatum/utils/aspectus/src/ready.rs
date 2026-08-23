@@ -20,11 +20,12 @@ use crate::count_cell::{Mark, Unit, count_cell};
 use crate::n_level::Node;
 
 /// Where a ready-fact lands on the line (design/lattice-2.md §default
-/// position). `FarLeft` and `Supplement` have no tenants yet; they are
-/// declared so the slices that give them one plug in rather than restructure.
+/// position). `Supplement` has no tenants yet; `FarLeft` takes git-status
+/// (step 5). They stay declared so later tenants plug in rather than
+/// restructure.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Position {
-    /// Stackable fixed-width columns before the hierarchy (no tenants yet).
+    /// Stackable fixed-width columns before the hierarchy (git-status).
     FarLeft,
     /// The tree's indent and branch glyphs.
     LevelLocation,
@@ -272,21 +273,18 @@ fn has_block(n: &Node) -> Option<Ready> {
     ))
 }
 
-/// The gitignored glyph — the no-color carrier of the per-entry status
-/// (TTY adds dim as the redundant overlay). Spelling provisional
-/// (design/gitignore-bodies.md); design/grid-cleanup.md retires this
-/// marks-column glyph into the far-left git-status cell in a later slice.
+/// The gitignored glyph — now the far-left git-status cell (design/
+/// grid-cleanup.md decided pack, 2026-08-15). TTY dim on the name stays
+/// the redundant overlay. JSON `gitignored: true` is unchanged.
 pub const IGNORED_GLYPH: &str = "⊘";
 
 /// The walk's confessions about this line — facts about the *look*, not the
 /// inode, and never quietable: each one says where the picture stops.
+/// The marks-column `⊘` retired: gitignored paints in `far_left`.
 fn look_marks(n: &Node) -> Vec<Ready> {
     let mut parts = Vec::new();
     let mark =
         |fact, text: &str| Ready::new(fact, Position::NearRight, Office::Mark, text.to_string());
-    if n.ignored {
-        parts.push(mark("gitignored", IGNORED_GLYPH));
-    }
     if n.denied {
         parts.push(mark("denied", "[denied]"));
     }
@@ -308,6 +306,56 @@ fn look_marks(n: &Node) -> Vec<Ready> {
         parts.push(mark("walk-bound", "[walk bound]"));
     }
     parts
+}
+
+/// Far-left cells this look paints, in `[layout] far-left` order, skipping
+/// entries that have no formatter yet (mtime/bytes compact forms are not
+/// designed). git-status is one cell, width 1: the porcelain letter, `⊘`
+/// when gitignored, `⁇` on an untracked directory (`?? dir/`), blank
+/// (a space) when clean. Tracked-and-clean dirs stay blank.
+pub fn far_left(n: &Node, cols: &Cols) -> Vec<Ready> {
+    cols.far_left
+        .iter()
+        .filter_map(|fact| match fact.as_str() {
+            "git-status" => Some(git_status_cell(n)),
+            _ => None,
+        })
+        .collect()
+}
+
+/// Blank far-left cells of the same width as `far_left` would paint — the
+/// headings line and remainder rows pay the block when the look contains
+/// a repo (positional; no heading word). Stamp, root-facts, and root-path
+/// do not (a copied path must not start with a space).
+pub fn far_left_blank(cols: &Cols) -> Vec<Ready> {
+    cols.far_left
+        .iter()
+        .filter_map(|fact| match fact.as_str() {
+            "git-status" => Some(Ready::new(
+                "git-status",
+                Position::FarLeft,
+                Office::Line,
+                " ".to_string(),
+            )),
+            _ => None,
+        })
+        .collect()
+}
+
+fn git_status_cell(n: &Node) -> Ready {
+    let text = if n.ignored {
+        IGNORED_GLYPH.to_string()
+    } else if n.is_dir && n.git_letter != Some('\u{2047}') {
+        // Tracked-and-clean dirs (and dirty submodules, typechange-to-dir)
+        // stay blank. Porcelain `?? dir/` is ⁇ — dropping it made a newly
+        // added directory look clean (design/grid-cleanup.md §Step 5 landed).
+        " ".to_string()
+    } else {
+        n.git_letter
+            .map(|c| c.to_string())
+            .unwrap_or_else(|| " ".to_string())
+    };
+    Ready::new("git-status", Position::FarLeft, Office::Line, text)
 }
 
 /// Every near-right part of one node, in the fixed order the paint joins

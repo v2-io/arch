@@ -23,10 +23,14 @@ pub const CALLER_FLAG: &str = "--caller";
 /// The shipped file, verbatim. `aspectus config defaults` prints this.
 pub const DEFAULTS_TOML: &str = include_str!("../defaults.toml");
 
-/// Positions whose paint has not landed yet (design/lattice-2.md;
-/// impl/grid-cleanup.md step 2). Listed facts stay at today's paint
-/// location; `aspectus config` marks the position honestly.
-pub const UNBUILT_POSITIONS: &[&str] = &["far-left", "supplement"];
+/// Positions whose paint has not landed yet (design/lattice-2.md).
+/// Far-left paints git-status (step 5); mtime/bytes compact forms in that
+/// list are still unbuilt and named per-entry. Supplement has no tenant.
+pub const UNBUILT_POSITIONS: &[&str] = &["supplement"];
+
+/// Far-left facts this binary can paint. Listed members not in this set
+/// show as `(unbuilt: …)` on `aspectus config`.
+pub const FAR_LEFT_PAINTABLE: &[&str] = &["git-status"];
 
 /// Layout list keys, in the order `aspectus config` prints them.
 const LAYOUT_KEYS: &[&str] = &[
@@ -942,17 +946,17 @@ fn render_layout(res: &Resolved) -> String {
     let mut out = String::from("\nlayout:\n");
     for key in LAYOUT_KEYS {
         let short = key.strip_prefix("layout.").unwrap_or(key);
-        let unbuilt = UNBUILT_POSITIONS.contains(&short);
+        let unbuilt_pos = UNBUILT_POSITIONS.contains(&short);
         match res.layout.get(*key) {
             Some((facts, src)) => {
                 let list = facts.join(", ");
-                let mark = if unbuilt { "  (unbuilt position)" } else { "" };
+                let mark = layout_unbuilt_mark(short, facts);
                 out.push_str(&format!(
                     "  {short:<12} {list}{mark}  ({})\n",
                     source_word(src)
                 ));
             }
-            None if unbuilt => {
+            None if unbuilt_pos => {
                 out.push_str(&format!("  {short:<12} —  (unbuilt position)\n"));
             }
             None => {
@@ -961,6 +965,25 @@ fn render_layout(res: &Resolved) -> String {
         }
     }
     out
+}
+
+/// Whole-position unbuilt (`supplement`) vs per-entry (`far-left` once
+/// git-status paints: `(unbuilt: mtime, bytes)`).
+fn layout_unbuilt_mark(short: &str, facts: &[String]) -> String {
+    if UNBUILT_POSITIONS.contains(&short) {
+        return "  (unbuilt position)".to_string();
+    }
+    if short == "far-left" {
+        let pending: Vec<&str> = facts
+            .iter()
+            .filter(|f| !FAR_LEFT_PAINTABLE.contains(&f.as_str()))
+            .map(String::as_str)
+            .collect();
+        if !pending.is_empty() {
+            return format!("  (unbuilt: {})", pending.join(", "));
+        }
+    }
+    String::new()
 }
 
 fn render_map(title: &str, rows: &[Sourced], show_value: bool) -> String {

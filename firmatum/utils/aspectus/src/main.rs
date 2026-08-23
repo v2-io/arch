@@ -214,14 +214,20 @@ fn help_page() -> String {
          Inside a git work tree, gitignored contents stay out of the look\n\
          and out of every aggregate -- the repo already declared them not\n\
          the project -- while presence still shows: an ignored directory\n\
-         keeps its line, dimmed on a TTY and marked \u{2298} (spelling\n\
-         provisional), unexpanded and unweighed; ignored files appear only\n\
-         as a typed remainder (ignored\u{d7}3). The rules are git's own --\n\
-         nested .gitignore files, negations, info/exclude, the global\n\
-         core.excludesFile -- and a tracked file matching an ignore\n\
-         pattern lists normally (tracked beats ignored, as in git).\n\
+         keeps its line, dimmed on a TTY, unexpanded and unweighed; ignored\n\
+         files appear only as a typed remainder (ignored\u{d7}3). The rules\n\
+         are git's own -- nested .gitignore files, negations, info/exclude,\n\
+         the global core.excludesFile -- and a tracked file matching an\n\
+         ignore pattern lists normally (tracked beats ignored, as in git).\n\
          Furniture fates apply first; --show-all restores ignored\n\
          contents, marks kept. Outside a repo a .gitignore is just a file.\n\
+         \n\
+         Git status sits in one cell to the left of the tree, blank when\n\
+         clean, absent entirely when the look contains no repo. Worktree\n\
+         wins when index and worktree differ. --sort git is not built.\n\
+           \u{2298}  gitignored     M  modified     A  added\n\
+           \u{2047}  untracked      R  renamed      U  unmerged\n\
+           D  deleted        C  copied       T  typechange\n\
          \n\
          A real sequence of names collapses to its pattern:\n\
          output-[001-047].bak  (44 files) -- one line, exact count; a\n\
@@ -1219,6 +1225,11 @@ fn resolve_look(
             intro_fmt,
             latest_fmt,
             now: 0,
+            far_left: cfg
+                .layout
+                .get("layout.far-left")
+                .map(|(v, _)| v.clone())
+                .unwrap_or_default(),
         },
     ))
 }

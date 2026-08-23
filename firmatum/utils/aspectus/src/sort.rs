@@ -59,6 +59,7 @@ pub const UNBUILT: &[&str] = &[
     "filetype",
     "filekind",
     "child-count",
+    "git",
     "initial-sha",
     "latest-sha",
     "last-look",

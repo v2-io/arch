@@ -173,3 +173,145 @@ fn inspect_git_lists_dot_git() {
     let (_, o, _) = run(&dir, &["--inspect", "git", "--depth", "1"]);
     assert!(o.contains(".git/"), "{o}");
 }
+
+/// Far-left git-status: worktree letter on files, ⁇ on untracked files
+/// *and* untracked directories (`?? dir/`), blank on tracked-and-clean
+/// dirs, positional blank on clean rows. Stamp / root-facts / root-path
+/// do not pay the cell; headings and tree rows do.
+#[test]
+fn far_left_git_status_letters() {
+    if !have_git() {
+        return;
+    }
+    let dir = repo("letters");
+    fs::create_dir(dir.join("kept")).unwrap();
+    fs::write(dir.join("kept/y.txt"), "y").unwrap();
+    git(&dir, &["add", "."]);
+    git(&dir, &["commit", "-q", "-m", "two"]);
+    fs::write(dir.join("a.txt"), "changed").unwrap();
+    File::create(dir.join("new.txt"))
+        .unwrap()
+        .write_all(b"n")
+        .unwrap();
+    fs::create_dir(dir.join("subdir")).unwrap();
+    fs::write(dir.join("subdir/x.txt"), "x").unwrap();
+    let (_, o, _) = run(&dir, &["--depth", "2", "--sort", "name"]);
+    let file = |name: &str| {
+        o.lines()
+            .find(|l| l.contains(name) && !l.contains("dirty"))
+            .unwrap_or_else(|| panic!("missing {name} in {o}"))
+            .to_string()
+    };
+    let a = file("a.txt");
+    assert!(
+        a.split_once("a.txt").unwrap().0.contains('M'),
+        "modified is M, far-left: {a}"
+    );
+    let n = file("new.txt");
+    assert!(
+        n.split_once("new.txt").unwrap().0.contains('\u{2047}'),
+        "untracked is ⁇: {n}"
+    );
+    let sub = o.lines().find(|l| l.contains("subdir/")).expect(&o);
+    let before = sub.split_once("subdir/").unwrap().0;
+    assert!(
+        before.contains('\u{2047}'),
+        "untracked dir (?? dir/) is ⁇: {sub}"
+    );
+    let kept = o.lines().find(|l| l.contains("kept/")).expect(&o);
+    let kept_before = kept.split_once("kept/").unwrap().0;
+    assert!(
+        !kept_before.contains('\u{2047}') && !kept_before.contains('M'),
+        "tracked-and-clean dir stays blank: {kept}"
+    );
+    let stamp = o.lines().next().expect(&o);
+    assert!(
+        stamp.ends_with('Z') && !stamp.starts_with(' '),
+        "stamp does not pay far-left: {stamp:?}"
+    );
+    let path = o
+        .lines()
+        .find(|l| l.starts_with('/') && l.ends_with('/'))
+        .expect(&o);
+    assert!(
+        path.starts_with('/') && !path.starts_with(" /"),
+        "root path does not pay far-left: {path:?}"
+    );
+    let facts = o.lines().nth(1).expect(&o);
+    assert!(
+        !facts.starts_with(' '),
+        "root-facts does not pay far-left: {facts:?}"
+    );
+    let tree = o
+        .lines()
+        .find(|l| l.contains("├── ") || l.contains("└── "))
+        .expect(&o);
+    assert!(
+        tree.starts_with(' ')
+            || tree.starts_with('M')
+            || tree.starts_with('\u{2047}')
+            || tree.starts_with('\u{2298}'),
+        "far-left cell is positional, width 1: {tree}"
+    );
+    let headings = o
+        .lines()
+        .find(|l| l.trim_start().starts_with("lines") && !l.contains('/'))
+        .expect(&o);
+    assert!(
+        headings.starts_with(' '),
+        "headings line keeps the far-left cell: {headings:?}"
+    );
+}
+
+/// A look at a non-repo that *contains* a repo still pays the far-left
+/// cell on tree rows (look-wide presence). A look with no repo at all
+/// does not — width unchanged.
+#[test]
+fn far_left_absent_outside_any_repo() {
+    if !have_git() {
+        return;
+    }
+    let outer = tmp("plain");
+    File::create(outer.join("plain.txt"))
+        .unwrap()
+        .write_all(b"p")
+        .unwrap();
+    let (_, o, _) = run(&outer, &["--depth", "1"]);
+    let line = o.lines().find(|l| l.contains("plain.txt")).expect(&o);
+    assert!(line.contains("├── ") || line.contains("└── "), "{line}");
+    let tree_at = line.find("── ").expect(line);
+    // No far-left cell: the branch glyph sits at column 0.
+    assert!(
+        line.starts_with('├') || line.starts_with('└'),
+        "no repo → no far-left block: {line} (tree at {tree_at})"
+    );
+}
+
+/// `[layout] far-left` without git-status turns the cell off even in a repo.
+#[test]
+fn layout_list_turns_git_status_off() {
+    if !have_git() {
+        return;
+    }
+    let dir = repo("off");
+    fs::write(dir.join("a.txt"), "changed").unwrap();
+    let xdg = tmp("xdg-off");
+    fs::create_dir_all(xdg.join("aspectus")).unwrap();
+    fs::write(xdg.join("aspectus/aspectus.toml"), "layout.far-left = []\n").unwrap();
+    let out = Command::new(env!("CARGO_BIN_EXE_aspectus"))
+        .args(["--depth", "1"])
+        .current_dir(&dir)
+        .env("XDG_CONFIG_HOME", &xdg)
+        .output()
+        .unwrap();
+    let o = String::from_utf8_lossy(&out.stdout);
+    let line = o.lines().find(|l| l.contains("a.txt")).expect(&o);
+    assert!(
+        !line.split_once("a.txt").unwrap().0.contains('M'),
+        "empty far-left list paints no letter: {line}"
+    );
+    assert!(
+        line.starts_with('├') || line.starts_with('└'),
+        "no far-left block when git-status is not listed: {line}"
+    );
+}

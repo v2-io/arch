@@ -185,9 +185,21 @@ pub struct Node {
     /// initial commit when the log reached it); never guessed past the cap.
     pub intro: Option<(String, u32)>,
     /// This entry is itself gitignored (design/gitignore-bodies.md):
-    /// presence shows (dimmed + glyph), contents stay out of the look and
-    /// out of every aggregate.
+    /// presence shows (dimmed + glyph in the far-left git-status cell),
+    /// contents stay out of the look and out of every aggregate.
     pub ignored: bool,
+    /// This node sits inside a git work tree (enclosing `.git` at or
+    /// above it). The far-left git-status cell is positional look-wide
+    /// on tree rows and the headings line once *any* node is in a work
+    /// tree; this flag is the per-node membership that paints a letter
+    /// vs a blank.
+    pub in_git: bool,
+    /// Porcelain worktree-wins letter for this path (`M A ⁇ R U D C T`),
+    /// absent when clean or when porcelain did not name this path.
+    /// Directories carry `⁇` when porcelain named them (`?? dir/`); the
+    /// formatter blanks tracked-and-clean dirs. Gitignored paints `⊘`
+    /// from `ignored`, not from here.
+    pub git_letter: Option<char>,
     /// Gitignored files among this dir's direct children, not listed —
     /// the typed remainder on an expanded level.
     pub ignored_files: usize,

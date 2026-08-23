@@ -58,3 +58,29 @@ Not in this plan (undecided): subgroup-subject form · census delimiter · mass/
 - `3.3PB` under a heading that names only the subject still wears `≈` once scaled. The design specimen omitted the mark to show g-blanking.
 - Dir byte totals (lattice-2 `dir: Σ descendants`) are still unbuilt. This slice only replaced `human_size` on file `st_size`.
 - `files`/`dirs` as count cells still wait on the subgroup-subject form (`Census::render` unchanged).
+
+## Step 5 landed — git-status far-left glyph (2026-08-22)
+
+**What the binary does now.** Inside a live git work tree, every row of the look pays one cell to the left of the tree prefix: porcelain `M A ⁇ R U D C T` (`⁇` = U+2047 for `??`), `⊘` when the entry is gitignored, blank (a space) when clean. Outside any repo the block is absent — kitchen and the other non-git goldens did not move. The marks-column `⊘` is gone; TTY dim on the name stays; JSON `gitignored: true` is unchanged. `[layout] far-left` is what turns the cell on (`git-status` in the list paints; `mtime`/`bytes` in that list still have no compact form). `aspectus config` prints `(unbuilt: mtime, bytes)` on far-left, not `(unbuilt position)`. Help teaches the pack in one short table. `--sort git` is refused by name.
+
+- **`src/git.rs`.** The one porcelain subprocess (`status --porcelain --untracked-files=normal`) now yields the dirty *count* (parent-line facet, as before) and a per-path XY map. Worktree letter wins when it is not space; otherwise the index letter. Unmerged pairs (`DD AU UD UA DU AA UU`, or either column `U`) render as `U`. Paths are repo-relative; rename/copy use the new name; quoted paths unquote. The enclosing work tree of the look is obtained even when `.git` sits above the asked path (a look at `src/` still gets letters). Nested repos use their own map.
+- **`src/ready.rs`.** `far_left` / `far_left_blank` / `git_status_cell`. Directories are blank unless gitignored (`⊘`) or porcelain `?? dir/` (`⁇`). `look_marks` no longer emits `⊘`.
+- **`src/columns.rs`.** `[layout] far-left` membership on `Cols`; paint fills the slot in list order for facts that have a formatter. Far-left is excluded from `name_width` (it is a look prefix, not the name column — including it would steal from STOP_CAP and shift everything right of the tree). Headings and remainder rows pay a blank cell; stamp, root-facts, and root-path do not (a copied path must not start with a space). No heading word over the block.
+- **`src/n_level.rs`.** `in_git` / `git_letter` on `Node`.
+- **`src/facts.rs`.** `git-status` paints `far-left` today (`{⊘ M A ⁇ R U D C T}*`); `gitignored` is unplaced (JSON field; glyph in git-status).
+- **`src/config.rs`.** `UNBUILT_POSITIONS` is just `supplement`. Far-left names the entries it cannot paint.
+- **`src/sort.rs`.** `git` is an unbuilt key.
+- **Help.** Pack table; gitignored paragraph no longer claims a marks-column `⊘`.
+- **Tests.** `tests/git_furniture.rs` letters / absent-outside-repo / layout-off; gitignore tests assert `⊘` is before the name; `--sort git` refused; config scrape for `(unbuilt: mtime, bytes)`. Git-repo golden re-blessed 2026-08-22 (dated comment in `tests/grid_snapshot.rs`); the other four goldens did not move. Suite green (288 tests).
+
+**Calls made**
+
+- **Directories:** porcelain `?? dir/` is `⁇` (design/grid-cleanup.md §Step 5 landed — a newly-added directory that looked clean would be a silent lie). Tracked-and-clean dirs stay blank; gitignored dirs keep `⊘`. Dirty submodules, typechange-to-dir: still blank (not asked).
+- **`--untracked-files=normal` does not name files inside an untracked directory** (`?? newdir/` is the whole entry). The dir itself now shows `⁇`; children under it still look clean. Extending porcelain with `-uall` would be a second contract, not this slice.
+- **"The look contains a repo" means git facts actually obtained** (facet or porcelain), not merely a `.git` name. Furniture decoys (empty `.git/` in `tests/two_level.rs`) do not widen the look. A live enclosing repo above the asked path does.
+- **Look-wide presence.** Once any node is in a live work tree, every *tree* row and the headings line pay the cell — including non-repo siblings of a nested repo. Stamp, root-facts, and root-path do not. A look at a parent of repos (e.g. `~/src`) grows by one column for the tree.
+- **No JSON `git_status` letter.** Design said JSON `gitignored: true` unchanged and was silent on a status field; not added.
+- **`--sort git` stays unbuilt.** lattice-2's Initial table lists `sort git`; the Time/aliveness row lists `—`. The ask was to refuse by name; facts.rs `sort` stays `None` (only keys `sort.rs` accepts appear there).
+- **`two_level::twice_same_tree` stamp-strip.** Pre-existing flake: strip required `"  "` on the stamp line, so two runs that straddled a second failed. The test now drops line 1. Not a render change.
+
+**The two silences, decided 2026-08-22 (design/grid-cleanup.md §Step 5 landed) and now in the binary.** Untracked dirs show `⁇`; stamp/facts/path skip the cell. Remaining adjacent (not acted on): dirty-submodule / typechange-to-dir letters; `-uall` for children of an untracked dir; look-wide vs per-row for mixed trees (non-git siblings still pay the blank cell). Two `git-status` rows in lattice-2 (Initial: `sort git`; Time/aliveness: `sort —`) — one cell was painted; sort remains unbuilt.

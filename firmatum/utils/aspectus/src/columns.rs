@@ -12,9 +12,9 @@
 //! 3. **Cells / rows** (`Slots`, `Row`): the ready-facts land in *named
 //!    slots in a fixed order* — far-left · level-location · name-location ·
 //!    name-suffix · after-name · near-right · supplement · far-right (the
-//!    positions of design/lattice-2.md). Far-left and supplement have no
-//!    tenants yet; a node emits exactly one row today (sub-rows are a later
-//!    slice).
+//!    positions of design/lattice-2.md). Far-left takes git-status (step 5);
+//!    supplement has no tenants yet. A node emits exactly one row today
+//!    (sub-rows are a later slice).
 //! 4. **Paint**: the only layer that knows about other rows — the computed
 //!    pseudo-tab-stop, per-column right edges, heading alignment, color.
 //!    Stops are pure functions of the look's content, never terminal width
@@ -88,7 +88,7 @@ impl State {
 }
 
 /// The selection for one look, already arbitrated by config.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Cols {
     pub line_count: bool,
     pub size: State,
@@ -111,6 +111,10 @@ pub struct Cols {
     /// The look's own stamp time (secs) — ages are relative to the look,
     /// not to each render.
     pub now: i64,
+    /// `[layout] far-left` membership, in list order. The renderer paints
+    /// entries it has formatters for (`git-status`); the rest stay
+    /// unbuilt (mtime/bytes compact forms are not designed).
+    pub far_left: Vec<String>,
 }
 
 impl Default for Cols {
@@ -131,6 +135,7 @@ impl Default for Cols {
             intro_fmt: ShaFmt::Short,
             latest_fmt: ShaFmt::Short,
             now: 0,
+            far_left: Vec::new(),
         }
     }
 }
@@ -138,6 +143,11 @@ impl Default for Cols {
 impl Cols {
     pub fn active(&self) -> usize {
         ready::columns(self).len()
+    }
+
+    /// True when `[layout] far-left` names a fact this slice can paint.
+    pub fn paints_far_left(&self) -> bool {
+        self.far_left.iter().any(|f| f == "git-status")
     }
 
     /// The heat cluster's cell index, for the paint path's sub-column
@@ -153,8 +163,9 @@ impl Cols {
 /// align across the look.
 #[derive(Default)]
 struct Slots {
-    /// Fixed-width blocks before the hierarchy — no tenants yet (the
-    /// git-status glyph is the first, a later slice).
+    /// Fixed-width blocks before the hierarchy — git-status is the first
+    /// tenant (step 5). Empty when the look contains no repo, or when
+    /// `[layout] far-left` has no paintable entry: absent, never faked.
     far_left: Vec<Ready>,
     /// The tree's indent and branch glyphs.
     level: String,
@@ -177,9 +188,13 @@ struct Slots {
 
 impl Slots {
     /// A node's slots, filled from its ready-facts.
-    fn of(n: &Node, cols: &Cols, level: String) -> Slots {
+    fn of(n: &Node, cols: &Cols, level: String, far_left_on: bool) -> Slots {
         Slots {
-            far_left: Vec::new(),
+            far_left: if far_left_on {
+                ready::far_left(n, cols)
+            } else {
+                Vec::new()
+            },
             level,
             name: ready::name(n).text,
             name_suffix: ready::dir_suffix(n).map(|r| r.text).unwrap_or_default(),
@@ -226,7 +241,7 @@ struct Row {
     slots: Slots,
     color_dir: bool,
     /// This entry is gitignored: the name renders dimmed on a TTY (the
-    /// glyph in near-right is the carrier; dim is the redundant overlay —
+    /// far-left `⊘` is the carrier; dim is the redundant overlay —
     /// steward ask 2026-08-14).
     dim: bool,
     /// The headings line (design/columns.md §Column headings): its cells
@@ -245,14 +260,12 @@ impl Row {
         }
     }
 
-    /// The width of everything left of the tab-stop.
+    /// The width of everything left of the tab-stop. Far-left is a look
+    /// prefix, not part of the name column — including it would steal from
+    /// STOP_CAP and shift everything right of the tree prefix.
     fn name_width(&self) -> usize {
         let s = &self.slots;
-        s.far_left
-            .iter()
-            .map(|r| r.text.chars().count())
-            .sum::<usize>()
-            + s.level.chars().count()
+        s.level.chars().count()
             + s.name.chars().count()
             + s.name_suffix.chars().count()
             + s.after_name.chars().count()
@@ -410,7 +423,7 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
 /// Heading words per active column, in `ready::columns` order
 /// (design/columns.md §Column headings; spellings provisional until
 /// Joseph ratifies).
-fn heading_row(cols: &Cols) -> Row {
+fn heading_row(cols: &Cols, far_left_on: bool) -> Row {
     let cells = ready::columns(cols)
         .into_iter()
         .map(|c| Ready {
@@ -428,12 +441,31 @@ fn heading_row(cols: &Cols) -> Row {
         .collect();
     Row {
         slots: Slots {
+            far_left: if far_left_on {
+                ready::far_left_blank(cols)
+            } else {
+                Vec::new()
+            },
             far_right: cells,
             ..Slots::default()
         },
         color_dir: false,
         dim: false,
         heading: true,
+    }
+}
+
+/// Look-wide: any node inside a work tree means the far-left block is
+/// present on tree rows and the headings line. Stamp, root-facts, and
+/// root-path do not pay it. Outside any repo the block is absent — the
+/// width of the look must not change for trees with no git.
+fn tree_has_git(n: &Node) -> bool {
+    n.in_git || n.children.iter().any(tree_has_git)
+}
+
+fn pad_far_left(row: &mut Row, cols: &Cols, far_left_on: bool) {
+    if far_left_on {
+        row.slots.far_left = ready::far_left_blank(cols);
     }
 }
 
@@ -504,7 +536,12 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
         root.push('/');
     }
     let ncols = cols.active();
-    let mut rows = vec![Row::plain(stamp.to_string(), ncols)];
+    let far_left_on = cols.paints_far_left() && tree_has_git(tree);
+    // Stamp, root-facts, and root-path do not pay the far-left cell —
+    // a copied root path must not start with a space (design/grid-cleanup.md
+    // §Step 5 landed). Headings and every tree row do.
+    let stamp_row = Row::plain(stamp.to_string(), ncols);
+    let mut rows = vec![stamp_row];
     let facts = root_facts_line(tree, cols);
     if !facts.is_empty() {
         rows.push(Row::plain(facts, ncols));
@@ -518,11 +555,19 @@ pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Col
     rows.push(root_row);
     // The headings line, directly above the children it teaches (design/
     // columns.md §Column headings). paint drops it when no fact column
-    // below carries a value.
+    // below carries a value. The far-left block gets no heading word
+    // (one cell; help teaches the pack).
     if ncols > 0 && (!tree.children.is_empty() || tree.omitted.is_some()) {
-        rows.push(heading_row(cols));
+        rows.push(heading_row(cols, far_left_on));
     }
-    emit(&tree.children, tree.omitted.as_ref(), "", cols, &mut rows);
+    emit(
+        &tree.children,
+        tree.omitted.as_ref(),
+        "",
+        cols,
+        far_left_on,
+        &mut rows,
+    );
     // The steward's feedback footer rides on stderr (main.rs) — the tool
     // speaking about itself, not the picture (stdout is data; Joseph,
     // 2026-08-22).
@@ -534,6 +579,7 @@ fn emit(
     omitted: Option<&crate::n_level::Census>,
     prefix: &str,
     cols: &Cols,
+    far_left_on: bool,
     out: &mut Vec<Row>,
 ) {
     let has_om = omitted.map(|c| !c.is_empty()).unwrap_or(false);
@@ -542,7 +588,7 @@ fn emit(
         let last = i + 1 == total;
         let branch = if last { "└── " } else { "├── " };
         out.push(Row {
-            slots: Slots::of(k, cols, format!("{prefix}{branch}")),
+            slots: Slots::of(k, cols, format!("{prefix}{branch}"), far_left_on),
             color_dir: k.is_dir,
             dim: k.ignored,
             heading: false,
@@ -553,7 +599,14 @@ fn emit(
             } else {
                 format!("{prefix}│   ")
             };
-            emit(&k.children, k.omitted.as_ref(), &next, cols, out);
+            emit(
+                &k.children,
+                k.omitted.as_ref(),
+                &next,
+                cols,
+                far_left_on,
+                out,
+            );
         }
     }
     if has_om && let Some(c) = omitted {
@@ -561,6 +614,7 @@ fn emit(
         // stands (design/lattice-2.md — name-location, three tenants).
         let mut row = Row::plain(ready::leaf_census(c).text, cols.active());
         row.slots.level = format!("{prefix}└── ");
+        pad_far_left(&mut row, cols, far_left_on);
         out.push(row);
     }
 }

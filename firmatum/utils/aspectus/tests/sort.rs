@@ -180,10 +180,13 @@ fn config_sets_order_flag_wins() {
 #[test]
 fn unbuilt_key_refused_with_menu() {
     let (dir, xdg) = fixture();
-    // heat landed; created is still an unbuilt lattice sort fact.
+    // heat landed; created and git are still unbuilt lattice sort facts.
     let (c, _, e) = run(&dir, &xdg, &["--sort", "created"]);
     assert_eq!(c, 2);
     assert!(e.contains("not built"), "class named: {e}");
+    let (c, _, e) = run(&dir, &xdg, &["--sort", "git"]);
+    assert_eq!(c, 2);
+    assert!(e.contains("not built"), "sort git refused by name: {e}");
     assert!(
         e.contains("recency") && e.contains("name") && e.contains("size"),
         "menu of built keys: {e}"

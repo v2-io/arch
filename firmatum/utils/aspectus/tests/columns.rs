@@ -277,6 +277,7 @@ fn config_shows_fact_inventory() {
         "after-name",
         "near-right",
         "far-right",
+        "far-left",
         "level-location",
     ] {
         assert!(

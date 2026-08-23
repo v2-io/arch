@@ -91,6 +91,12 @@ fn ignored_dir_presence_without_innards() {
         .find(|l| l.contains("logs/"))
         .expect("presence shows");
     assert!(line.contains("⊘"), "the ignored glyph: {line}");
+    let (before, after) = line.split_once("logs/").expect(line);
+    assert!(
+        before.contains("⊘"),
+        "⊘ sits in the far-left cell, before the name: {line}"
+    );
+    assert!(!after.contains("⊘"), "marks-column ⊘ retired: {line}");
     assert!(!line.contains("log×"), "no census of the innards: {line}");
     assert!(!o.contains("f0.log"), "children do not print: {o}");
 }
@@ -248,8 +254,16 @@ fn show_all_restores_with_marks() {
     assert!(o.contains("b.tmp"), "files list: {o}");
     let logs = o.lines().find(|l| l.contains("logs/")).unwrap();
     assert!(logs.contains("⊘"), "mark remains: {logs}");
+    assert!(
+        logs.split_once("logs/").unwrap().0.contains("⊘"),
+        "dir ⊘ is far-left: {logs}"
+    );
     let tmp = o.lines().find(|l| l.contains("b.tmp")).unwrap();
     assert!(tmp.contains("⊘"), "file mark too: {tmp}");
+    assert!(
+        tmp.split_once("b.tmp").unwrap().0.contains("⊘"),
+        "file ⊘ is far-left: {tmp}"
+    );
 }
 
 /// Subfeature 9: the walk does not recurse into ignored dirs — a huge

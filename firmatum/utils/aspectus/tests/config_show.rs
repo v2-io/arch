@@ -198,7 +198,14 @@ fn config_names_the_embedded_layer() {
     );
     assert!(o.contains("layout:"), "{o}");
     assert!(o.contains("far-left"), "{o}");
-    assert!(o.contains("(unbuilt position)"), "far-left is unbuilt: {o}");
+    assert!(
+        o.contains("(unbuilt: mtime, bytes)"),
+        "far-left paints git-status; compact mtime/bytes still unbuilt: {o}"
+    );
+    assert!(
+        o.contains("(unbuilt position)"),
+        "supplement is still an unbuilt position: {o}"
+    );
     assert!(o.contains("furniture:"), "{o}");
     assert!(o.contains(".git = git"), "{o}");
     assert!(o.contains("(default)"), "{o}");
