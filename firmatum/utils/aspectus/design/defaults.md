@@ -103,3 +103,7 @@ Keys keep today's spellings where they exist (`columns.size` → the `bytes` fac
 - Far-left default membership and the compact forms' exact spellings — Joseph sets them in the file.
 - Whether `quiet` is a list or stays per-fact keys (`quiet.mtime = true`) — leaning list.
 - Name of the embedded file (`defaults.toml` at crate root) — one constant.
+
+## Open — column-set stability across looks (2026-08-22 cold reads, both substrates)
+
+*Why open:* quiet facts add whole columns (`perms`, `mtime`, `bytes`) when any row surprises, so the far-right set differs between two looks with no per-look signal that it changed — Sonnet named it the one usability risk ("silent misreads"); Grok: "the tool grows extra clocks when git is present" (`audit/hallway-2026-08-22.md` #2). The quiet law is right; the *announcement* is missing. Candidates: a fixed column order always (so a column's absence never shifts its neighbors' meaning); a visible mark on the heading of a quiet-spoken column; reserving width for every `[layout]` far-right entry regardless of speakers (costs width on quiet looks). Joseph's trade.

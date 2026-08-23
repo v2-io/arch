@@ -55,3 +55,7 @@ From `Cargo.toml` version. SHA from the build, not from a live `git` call at run
 `--help --format=json`, `--list-flags`, completions, man(1) file, self-update, `--verbose`. Man page sections in the docs convention are the shape to follow *when* a page is written; they do not gate this story.
 
 Color belongs with the first picture, not with help.
+
+## Open — help's shape (2026-08-22 cold reads, both substrates; usability pass item 9)
+
+*Why open:* both readers said the first picture taught more than the essay, that `aspectus config` is the real documentation, and that the orientation recipe they arrived at — `--depth 1 PATH`, then `--lines 0 --depth 1 PATH`, then enter — is not what the examples lead with (`audit/hallway-2026-08-22.md` #7). Help is the law channel, so the content stays; the *order* is the question: a one-screen usage + recipe table first, the defining prose and the glyph tables after, under headings. Deferred until the header designation and the subgroup form settle, so the examples teach the final grammar once.

@@ -213,3 +213,9 @@ What it adds beyond the testimony above, folded into the law: (a) a **confusable
 ## Not in this row
 
 New facts. Glyph vocabulary for the glyph-block (shorthand's open). SIGNA. Per-kind edge offsets (noted seam). The density gauntlet's *acceptance* is [[vertical-info|Vertical info]]'s; this row is the model that makes it possible.
+
+## Open — from the 2026-08-22 cold reads (`audit/hallway-2026-08-22.md`)
+
+- **#1 The `≈` mark** — fourth independent arrival that the exact-grouped mark reads as "approximately" and the three marks don't stick. *Why open:* the glyphs are decided (2026-08-15) and a learned glyph is an interface; reversing costs every reader who learned it, keeping costs every reader who hasn't. Proposal: exact-grouped carries **no mark** (`61.2K`), `~` estimate, `≥` floor — a mark then always means "not exact." Joseph.
+- **#3 `⊘`** read as "denied / blocked / not for you" by both readers — the git-status pack's first cold-read test, failed on this glyph. *Why open:* decided pack; the rest of it (`M A ⁇ R U D`) passed. Candidates: a heading for the far-left column; a different ignored glyph. Joseph.
+- **#6 The far-left cell is cramped** (`M├──` read as a compound glyph) and unheaded. *Why open:* layout — a separating cell costs one column on every row; a one-glyph heading costs nothing but must be ratified vocabulary. Joseph.
