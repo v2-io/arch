@@ -41,15 +41,17 @@ important = ["README*", "AGENTS.md", "CLAUDE.md"]
 # Membership = shown; order = left-to-right. A fact in no list renders nothing.
 # name-location, name-suffix and after-name are structural and not listable.
 [layout]
-far-left   = ["git-status", "mtime", "bytes"] # Joseph, 2026-08-22: "git-status and time and size/mass on the far left side" — positional cells before the tree (blank when silent, compact forms); while mtime sits here the heat cluster shows the score alone
+far-left   = ["heat", "git-status", "mtime", "bytes"] # Joseph, 2026-08-23: heat as a two-cell density block first (`░▒▓█`), then git-status; 2026-08-22: "git-status and time and size/mass on the far left side" — positional cells before the tree (blank when silent, compact forms)
+far-left-gap = 2                             # spaces between the far-left block and the tree prefix (Joseph, 2026-08-23)
 near-right = ["census", "has", "marks"]      # each part at a stable stop after the name
 supplement = ["facets"]                      # spills under the row when it doesn't fit
-far-right  = ["lines", "heat"]               # right-aligned numeric columns under a headings line
+far-right  = ["lines", "age"]                # right-aligned columns under a headings line; age = the relative mtime that was the `score · age` cluster's right half (heat's score moved far-left as density)
 quiet      = ["mtime", "bytes", "permissions", "owner", "filekind"]   # listed-or-not, these speak only on surprise
 
 # ── Formats (starred defaults in design/lattice-2.md) ────────────────────────
 [format]
 mtime = "relative"          # relative (2.2h ago) | iso-8601 | epoch
+heat = "density"            # density (░▒▓█ block, far-left) | score (0–~2 number)
 bytes = "human"             # human (1.2M) | bytes
 lines = "physical"          # physical | non-blank
 census = "suffix"           # suffix | minor | major  (census bucket grain)

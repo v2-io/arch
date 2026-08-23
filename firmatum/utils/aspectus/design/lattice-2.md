@@ -145,7 +145,7 @@
 | --- |---|---|---|---|---|---|---|
 | ↬ | mtime / age | file: stat; dir: inode mtime today — *newest-beneath proposed* | far-right (paired in the heat cluster); far-left compact — *open* | quiet (recent vs now); on inside the cluster | Y (**default key**, newest first) | 9 (`13.6d ago`) / 5 compact (`13.6d`) | relative\* / iso-8601 / epoch / signa |
 | ⇥ | created (btime) | getattrlist / statx; absent elsewhere | far-right | off | Y | 9 | relative / iso-8601\* / epoch |
-| ↬ | heat | git log, commit-decay (half-life 7 commits); dir: max of non-noise leaves; repo-relative | far-right (the `score · age` cluster) | on in-repo | Y | 4 (`0.44`) / 1 glyph | score\* / density-glyph (`░▒▓█`) |
+| ↬ | heat | git log, commit-decay (half-life 7 commits); dir: max of non-noise leaves; repo-relative | **far-left, two-cell density block before git-status** (Joseph, 2026-08-23); the age stays far-right | on in-repo | Y | 2 (`░▒`) | density\* (`  ░ ░░ ░▒ ▒▒ ▒▓ ▓▓ ▓█ ██`) / score |
 | ↬ | git-status | `git status --porcelain` (worktree wins); `⊘` = gitignored | far-left (one-cell glyph block) | on (blank when clean) | — | 1 | glyph\* `⊘ M A ⁇ R U D` (`C T` available) |
 | ✓ | initial-sha / latest-sha | git log `--name-status` (never past the log window) | far-right | off | Y | 7 / `H~N` | short\* / h~n / full |
 | ⇥ | prior-name | git log rename-follow | after-name or sub-row | quiet (recently renamed) | — | var | was\* |
