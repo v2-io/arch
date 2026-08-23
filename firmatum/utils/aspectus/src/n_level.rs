@@ -228,6 +228,12 @@ pub struct Node {
     pub aside: bool,
 }
 
+/// Whether any node in this tree claims `kind` on its `[has: …]` spot.
+/// `--inspect KIND` with nothing of that kind in the look uses this.
+pub fn tree_claims_kind(n: &Node, kind: &str) -> bool {
+    n.kinds.iter().any(|k| k == kind) || n.children.iter().any(|c| tree_claims_kind(c, kind))
+}
+
 /// Counts names statted. `None` = unbounded.
 #[derive(Debug, Default)]
 pub struct WalkBudget {
@@ -602,18 +608,29 @@ fn enumerate(path: &Path) -> Option<(Vec<Entry>, bool)> {
 }
 
 pub fn suffix_bucket(name: &str) -> String {
-    match name.rsplit_once('.') {
+    let raw = match name.rsplit_once('.') {
         Some((stem, ext)) if !stem.is_empty() && !ext.is_empty() && !ext.contains('/') => {
             ext.to_string()
         }
         _ => "other".to_string(),
+    };
+    census_label(raw)
+}
+
+/// A suffix that is all digits (`1`, `2` from man pages / numbered files)
+/// is a claim with no content — fold into `other`.
+fn census_label(label: String) -> String {
+    if !label.is_empty() && label.chars().all(|c| c.is_ascii_digit()) {
+        "other".to_string()
+    } else {
+        label
     }
 }
 
 fn bucketize(names: impl Iterator<Item = String>) -> Vec<(String, usize)> {
     let mut buckets: std::collections::BTreeMap<String, usize> = std::collections::BTreeMap::new();
     for label in names {
-        *buckets.entry(label).or_insert(0) += 1;
+        *buckets.entry(census_label(label)).or_insert(0) += 1;
     }
     let mut buckets: Vec<(String, usize)> = buckets.into_iter().collect();
     buckets.sort_by(|a, b| b.1.cmp(&a.1).then_with(|| a.0.cmp(&b.0)));

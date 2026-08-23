@@ -1,3 +1,4 @@
+columns.heat = off (env) · columns.mtime = on (user-home) · columns.permissions = on (user-home) · columns.size = on (user-home) · format.mtime = epoch (user-home)
 755  1600000000  [has: rust]
 <ROOT>/
                                          lines     perms      bytes          mtime

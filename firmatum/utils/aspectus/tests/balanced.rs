@@ -63,9 +63,9 @@ fn run(dir: &Path, xdg: &Path, args: &[&str]) -> (i32, String, String) {
 #[test]
 fn tight_lines_has_plus_census_not_ellipsis() {
     let (dir, xdg) = fixture_many_files();
-    // 6, not 5: the column-headings line (2026-08-14) costs one header
-    // line whenever a fact column renders, and the .txt line-counts do.
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "6"]);
+    // 7, not 6: headings (2026-08-14) plus a config-drift line (the
+    // test's --depth/--lines and ASPECTUS_GLOBIFY=off all differ).
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "7"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("[+"), "leaf leftover uses + : {o}");
     assert!(o.contains(".txt"), "{o}");
@@ -76,8 +76,8 @@ fn tight_lines_has_plus_census_not_ellipsis() {
 #[test]
 fn first_child_does_not_eat_the_budget() {
     let (dir, xdg) = fixture_many_files();
-    // 7, not 6: one line goes to the column headings (2026-08-14).
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "7"]);
+    // 8, not 7: headings plus the config-drift line this invocation earns.
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "8"]);
     assert_eq!(c, 0, "{e}");
     let listed_txt = o.matches(".txt").count();
     assert!(
@@ -126,9 +126,9 @@ fn dir_with_only_its_own_line_censuses_on_the_name() {
         .unwrap();
     let xdg = std::env::temp_dir().join(format!("aspectus-fold-xdg-{}-{}", std::process::id(), n));
     fs::create_dir_all(xdg.join("aspectus")).unwrap();
-    // Header is two lines (stamp, root) since 2026-08-14; 4 leaves the
-    // same one-line budget for autocolors/ this test is about.
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "3", "--lines", "4"]);
+    // Stamp + config-drift + root; 5 leaves the same one-line budget
+    // for autocolors/ this test is about.
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "3", "--lines", "5"]);
     assert_eq!(c, 0, "{e}");
     assert!(
         o.contains("autocolors/") && o.contains('['),

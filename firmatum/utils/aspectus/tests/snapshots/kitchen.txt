@@ -1,3 +1,4 @@
+columns.heat = off (env)
 [has: rust]
 <ROOT>/
                                          lines     perms

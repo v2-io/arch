@@ -79,6 +79,27 @@ fn config_defaults_stdout_exit_0() {
     assert!(o.contains("(defaults)"), "{o}");
 }
 
+/// Data carries its units on the `won:` listing (hallway 2026-08-22:
+/// Sonnet assumed heat.half-life was days). `config defaults` is the
+/// file verbatim — units live only here.
+#[test]
+fn won_listing_carries_units() {
+    let xdg = fresh_xdg();
+    let (c, o, e) = run_with_xdg(&xdg, &["config"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains("heat.half-life = 7 commits"), "{o}");
+    assert!(o.contains("reads = 67108864 bytes"), "{o}");
+    assert!(o.contains("lines = 80 lines"), "{o}");
+    assert!(o.contains("walk = 10000 names"), "{o}");
+    assert!(o.contains("depth = 2 generations"), "{o}");
+    let (c, defaults, e) = run_with_xdg(&xdg, &["config", "defaults"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(
+        !defaults.contains("7 commits") && defaults.contains("heat.half-life = 7"),
+        "defaults dumps the file verbatim: {defaults}"
+    );
+}
+
 #[test]
 fn config_show_twice_identical() {
     let xdg = fresh_xdg();
@@ -199,8 +220,8 @@ fn config_names_the_embedded_layer() {
     assert!(o.contains("layout:"), "{o}");
     assert!(o.contains("far-left"), "{o}");
     assert!(
-        o.contains("(unbuilt: mtime, bytes)"),
-        "far-left paints git-status; compact mtime/bytes still unbuilt: {o}"
+        o.contains("(unbuilt:") && o.contains("mtime") && o.contains("bytes"),
+        "far-left compact forms still unbuilt: {o}"
     );
     assert!(
         o.contains("(unbuilt position)"),

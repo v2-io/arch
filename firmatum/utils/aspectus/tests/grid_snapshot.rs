@@ -2,6 +2,9 @@
 //! re-blessed for the count-cell slice (step 3, 2026-08-22): `lines`/`bytes`
 //! are 12-cell fields, dir mass lives in `lines`, the census tail is gone.
 //! Re-blessed 2026-08-22: count-cell headings end at the `.` (cell 9).
+//! Re-blessed 2026-08-23: config-drift header — this file pins heat off
+//! via env, so `columns.heat = off (env)` appears; invocations that set
+//! `--depth`/`--lines` away from default add those flags too.
 //!
 //! These fixtures exercise the whole row grammar at once —
 //! furniture, facets, dir census, leaf census, symlinks (one broken), a

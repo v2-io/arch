@@ -589,11 +589,18 @@ fn normalize_interp(name: &str) -> &str {
 }
 
 fn suffix_label(name: &str) -> String {
-    match name.rsplit_once('.') {
+    let raw = match name.rsplit_once('.') {
         Some((stem, ext)) if !stem.is_empty() && !ext.is_empty() && !ext.contains('/') => {
             ext.to_string()
         }
-        _ => "other".to_string(),
+        _ => return "other".to_string(),
+    };
+    // All-digit suffixes (`man.1`, numbered dumps) are a claim with no
+    // content — they fold into `other` (usability pass item 7).
+    if !raw.is_empty() && raw.chars().all(|c| c.is_ascii_digit()) {
+        "other".to_string()
+    } else {
+        raw
     }
 }
 
@@ -664,6 +671,15 @@ mod tests {
         assert_eq!(ft.major, Major::Image);
         assert_eq!(ft.minor, "png");
         assert!(!ft.counts_lines());
+    }
+
+    #[test]
+    fn all_digit_suffix_folds_to_other() {
+        let ft = FileType::unknown();
+        assert_eq!(census_key("page.1", &ft, CensusGrain::Suffix), "other");
+        assert_eq!(census_key("page.12", &ft, CensusGrain::Suffix), "other");
+        assert_eq!(census_key("notes.md", &ft, CensusGrain::Suffix), "md");
+        assert_eq!(census_key("noext", &ft, CensusGrain::Suffix), "other");
     }
 
     #[test]

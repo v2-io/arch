@@ -161,7 +161,11 @@ fn outside_git_omits() {
     );
     assert_eq!(c, 0, "{e}");
     // No value anywhere → the columns don't exist → no headings for them.
-    assert!(!o.contains("initial-sha"), "no heading over silence: {o}");
+    assert!(
+        !o.lines()
+            .any(|l| l.contains("initial-sha") && !l.contains("columns.initial-sha")),
+        "no heading over silence: {o}"
+    );
 }
 
 /// An uncommitted file in a repo has no history: absent, never guessed.

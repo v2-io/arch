@@ -125,7 +125,7 @@ use Position::{
     AfterName, FarLeft, FarRight, InCell, LevelLocation, NameLocation, NameSuffix, NearRight,
     Unplaced,
 };
-use Stat::{Built, Deferred, Provisional, Wants};
+use Stat::{Built, Deferred, Wants};
 
 /// Every lattice-2 fact the machinery knows, grouped as the design table
 /// groups them: the line's own identity, the quantities, time and
@@ -712,7 +712,7 @@ pub const FACTS: &[Fact] = &[
         true,
     ),
     f(
-        Provisional,
+        Built,
         "config-drift",
         "the config caller stack",
         NearRight,
@@ -721,8 +721,8 @@ pub const FACTS: &[Fact] = &[
         None,
         "var",
         None,
-        "unbuilt",
-        false,
+        "key = value (source) · --flag value (flag)*",
+        true,
     ),
 ];
 

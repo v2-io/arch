@@ -112,6 +112,58 @@ fn porcelain_dirt_only_when_dirty() {
     assert!(o.contains("dirty<2>"), "{o}");
 }
 
+/// Dirty count is porcelain at *that repo's root*, not the look's root
+/// (hallway 2026-08-22: dirty<3>→dirty<4> between looks of different
+/// roots). Two sibling repos, independently dirty.
+#[test]
+fn dirty_count_is_per_repo_root() {
+    if !have_git() {
+        return;
+    }
+    let parent = tmp("sibs");
+    let a = parent.join("a");
+    let b = parent.join("b");
+    fs::create_dir_all(&a).unwrap();
+    fs::create_dir_all(&b).unwrap();
+    git(&a, &["init", "-q", "-b", "main"]);
+    git(&b, &["init", "-q", "-b", "main"]);
+    File::create(a.join("keep.txt"))
+        .unwrap()
+        .write_all(b"k")
+        .unwrap();
+    File::create(b.join("keep.txt"))
+        .unwrap()
+        .write_all(b"k")
+        .unwrap();
+    git(&a, &["add", "."]);
+    git(&a, &["commit", "-q", "-m", "one"]);
+    git(&b, &["add", "."]);
+    git(&b, &["commit", "-q", "-m", "one"]);
+    File::create(a.join("x.txt"))
+        .unwrap()
+        .write_all(b"x")
+        .unwrap();
+    File::create(a.join("y.txt"))
+        .unwrap()
+        .write_all(b"y")
+        .unwrap();
+    File::create(b.join("z.txt"))
+        .unwrap()
+        .write_all(b"z")
+        .unwrap();
+    let (_, oa, _) = run(&a, &[]);
+    let (_, ob, _) = run(&b, &[]);
+    assert!(oa.contains("dirty<2>"), "repo a: {oa}");
+    assert!(!oa.contains("dirty<1>"), "repo a must not inherit b: {oa}");
+    assert!(ob.contains("dirty<1>"), "repo b: {ob}");
+    assert!(!ob.contains("dirty<2>"), "repo b must not inherit a: {ob}");
+    let (_, op, _) = run(&parent, &["--depth", "1"]);
+    let la = op.lines().find(|l| l.contains("a/")).unwrap();
+    let lb = op.lines().find(|l| l.contains("b/")).unwrap();
+    assert!(la.contains("dirty<2>"), "parent look, a: {op}");
+    assert!(lb.contains("dirty<1>"), "parent look, b: {op}");
+}
+
 #[test]
 fn nested_repo_carries_its_own_facts() {
     if !have_git() {

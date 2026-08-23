@@ -191,9 +191,8 @@ fn too_many_importants_compete() {
     for i in 0..10u64 {
         touch(&dir, &format!("f{i}.md"), 1_700_002_000 + i * 10);
     }
-    // stamp + column headings + root + 3 children + census = 7
-    // (the headings line, 2026-08-14, costs one when fact columns render)
-    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "7"]);
+    // stamp + config-drift + headings + root + 3 children + census = 8
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "8"]);
     assert_eq!(c, 0, "{e}");
     assert!(
         o.contains("IMP4.md") && o.contains("IMP3.md") && o.contains("IMP2.md"),

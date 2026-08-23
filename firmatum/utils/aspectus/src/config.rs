@@ -209,6 +209,141 @@ pub fn source_word(layer: &str) -> &'static str {
     }
 }
 
+/// A setting whose effective value differs from the built-in default.
+/// `source` is the word a pasted look uses (`user-home`, `env`, `flag`,
+/// `caller`, `global`) — `flag` not `flags`, matching the header example.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Drift {
+    pub key: String,
+    pub value: String,
+    pub source: &'static str,
+}
+
+fn drift_source(layer: &str) -> &'static str {
+    match layer {
+        "flags" => "flag",
+        other => source_word(other),
+    }
+}
+
+fn same_value(a: &str, b: &str) -> bool {
+    if a == b {
+        return true;
+    }
+    match (boolish(a), boolish(b)) {
+        (Some(x), Some(y)) => x == y,
+        _ => false,
+    }
+}
+
+/// Built-in defaults as `won` would see them (file scalars + columns
+/// derived from the shipped `[layout]`). Overlay layers are not applied.
+fn default_values(res: &Resolved) -> BTreeMap<String, String> {
+    let Some(defaults) = res.layers.iter().find(|l| l.name == "defaults") else {
+        return BTreeMap::new();
+    };
+    let mut m = defaults.values.clone();
+    let mut layout = BTreeMap::new();
+    for key in LAYOUT_KEYS {
+        if let Some(v) = defaults.arrays.get(*key) {
+            layout.insert((*key).to_string(), (v.clone(), "defaults"));
+        }
+    }
+    for (k, v) in derive_columns(&layout) {
+        m.entry(k).or_insert(v);
+    }
+    m
+}
+
+/// CLI form for a config key, when the source is the flags layer.
+fn flag_form(key: &str, value: &str) -> Option<String> {
+    match key {
+        "depth" => Some(format!("--depth {value}")),
+        "lines" => Some(format!("--lines {value}")),
+        "walk" => Some(format!("--walk {value}")),
+        "sort" => Some(format!("--sort {value}")),
+        "format" => Some(format!("--format {value}")),
+        "caller" => Some(format!("--caller {value}")),
+        "dotfiles-first" if boolish(value) == Some(true) => Some("--dotfiles-first".into()),
+        "one-fs" if boolish(value) == Some(false) => Some("--no-one-fs".into()),
+        _ => None,
+    }
+}
+
+/// Effective settings that differ from the built-in defaults, in key order.
+/// `--caller` is included when set (it names whose eyes produced the look).
+/// Empty when nothing differs — never a fake line.
+pub fn drift(res: &Resolved, caller: Option<&str>) -> Vec<Drift> {
+    let defaults = default_values(res);
+    let mut out = Vec::new();
+    for (k, (v, src)) in &res.won {
+        if *src == "defaults" {
+            continue;
+        }
+        // Serialization `format` (text/json) is the output channel, not
+        // the eyes — a JSON look of the same tree must report the same
+        // drift as the text look (design/json.md: same look).
+        if k == "format" {
+            continue;
+        }
+        // Maps are not one-line eye settings; they live in `aspectus config`.
+        // A furniture overlay in the header would also collide with the
+        // look (a `.mystery` in the drift line is not a child named that).
+        if k == "furniture" || k == "kinds" || k == "important" {
+            continue;
+        }
+        if defaults.get(k).is_some_and(|d| same_value(d, v)) {
+            continue;
+        }
+        out.push(Drift {
+            key: k.clone(),
+            value: v.clone(),
+            source: drift_source(src),
+        });
+    }
+    if let Some(c) = caller {
+        out.push(Drift {
+            key: "caller".into(),
+            value: c.to_string(),
+            source: "flag",
+        });
+    }
+    out.sort_by(|a, b| a.key.cmp(&b.key));
+    out
+}
+
+/// One header line, or empty when nothing differs (absent, never faked).
+pub fn drift_line(items: &[Drift]) -> String {
+    if items.is_empty() {
+        return String::new();
+    }
+    items
+        .iter()
+        .map(|d| {
+            if d.source == "flag"
+                && let Some(f) = flag_form(&d.key, &d.value)
+            {
+                return format!("{f} (flag)");
+            }
+            format!("{} = {} ({})", d.key, d.value, d.source)
+        })
+        .collect::<Vec<_>>()
+        .join(" · ")
+}
+
+/// Units the `won:` listing prints beside a value (data carries its units).
+/// `aspectus config defaults` prints the file verbatim — not this.
+fn won_unit(key: &str) -> Option<&'static str> {
+    match key {
+        "heat.half-life" => Some("commits"),
+        "reads" => Some("bytes"),
+        "lines" => Some("lines"),
+        "walk" => Some("names"),
+        "depth" => Some("generations"),
+        _ => None,
+    }
+}
+
 fn defaults_layer() -> Layer {
     let p = embedded().clone();
     let mut values = p.scalars.clone();
@@ -933,7 +1068,10 @@ pub fn render_show(res: &Resolved) -> String {
     }
     out.push_str("\nwon:\n");
     for (k, (v, from)) in &res.won {
-        out.push_str(&format!("  {k} = {v}  ({from})\n"));
+        match won_unit(k) {
+            Some(u) => out.push_str(&format!("  {k} = {v} {u}  ({from})\n")),
+            None => out.push_str(&format!("  {k} = {v}  ({from})\n")),
+        }
     }
     out.push_str(&render_layout(res));
     out.push_str(&render_map("furniture", &res.furniture, true));
@@ -1029,7 +1167,7 @@ mod tests {
         assert_eq!(p.scalars.get("one-fs").map(String::as_str), Some("true"));
         assert_eq!(
             p.scalars.get("format.mtime").map(String::as_str),
-            Some("relative")
+            Some("signa")
         );
         assert_eq!(
             p.scalars.get("format.bytes").map(String::as_str),
@@ -1037,14 +1175,14 @@ mod tests {
         );
         assert_eq!(
             p.arrays.get("layout.far-left").cloned().unwrap_or_default(),
-            ["git-status", "mtime", "bytes"]
+            ["heat", "git-status", "mtime", "bytes"]
         );
         assert_eq!(
             p.arrays
                 .get("layout.far-right")
                 .cloned()
                 .unwrap_or_default(),
-            ["lines", "heat"]
+            ["lines", "age"]
         );
         assert_eq!(
             p.arrays.get("important").cloned().unwrap_or_default(),
@@ -1170,6 +1308,51 @@ far-right = ["lines", "heat"]
         assert_eq!(
             p.scalars.get("format.lines").map(String::as_str),
             Some("physical")
+        );
+    }
+
+    #[test]
+    fn drift_line_absent_when_empty() {
+        assert_eq!(drift_line(&[]), "");
+    }
+
+    #[test]
+    fn drift_line_flag_and_file_forms() {
+        let items = vec![
+            Drift {
+                key: "depth".into(),
+                value: "3".into(),
+                source: "user-home",
+            },
+            Drift {
+                key: "lines".into(),
+                value: "200".into(),
+                source: "flag",
+            },
+        ];
+        assert_eq!(
+            drift_line(&items),
+            "depth = 3 (user-home) · --lines 200 (flag)"
+        );
+    }
+
+    #[test]
+    fn drift_line_caller_and_inverted_flag() {
+        let items = vec![
+            Drift {
+                key: "caller".into(),
+                value: "grok".into(),
+                source: "flag",
+            },
+            Drift {
+                key: "one-fs".into(),
+                value: "off".into(),
+                source: "flag",
+            },
+        ];
+        assert_eq!(
+            drift_line(&items),
+            "--caller grok (flag) · --no-one-fs (flag)"
         );
     }
 }

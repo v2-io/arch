@@ -44,7 +44,9 @@ const OPTIONS: &[(&str, &str)] = &[
         "--lines N",
         "line budget for the whole look (default 80; 0 = no limit). \
          A non-empty root's honest floor is 3 lines — stamp, the root's \
-         facts/census, path — so 1 and 2 overshoot rather than omit",
+         facts/census, path — plus a config-drift line when anything \
+         differs from the built-in defaults; 1 and 2 overshoot rather \
+         than omit",
     ),
     (
         "--walk N",
@@ -54,7 +56,8 @@ const OPTIONS: &[(&str, &str)] = &[
     ),
     (
         "--explain-budget",
-        "how lines and the walk were spent, on stderr",
+        "how lines and the walk were spent, on stderr (header lines — \
+         stamp, config drift, root facts, column headings — charge --lines)",
     ),
     (
         "--show-all",
@@ -62,7 +65,8 @@ const OPTIONS: &[(&str, &str)] = &[
     ),
     (
         "--inspect KIND",
-        "list furniture of one kind as children (git, build, …); repeatable",
+        "list furniture of one kind as children (git, build, …); repeatable. \
+         A kind with nothing of that kind in this look says so on stderr",
     ),
     (
         "--sort KEY",
@@ -129,9 +133,11 @@ fn help_page() -> String {
          \n\
          Default: the absolute path of the place, two generations down\n\
          (children and grandchildren), then it exits. The header is the\n\
-         UTC time of the look, then the root's own facts when it has any\n\
-         (heat, [git: ...], [has: ...]), then the bare absolute root\n\
-         directly above its children.\n\
+         UTC time of the look, then every effective setting that differs\n\
+         from the built-in defaults with its source (depth = 3 (user-home)\n\
+         · --lines 200 (flag)) — absent when nothing differs — then the\n\
+         root's own facts when it has any (heat, [git: ...], [has: ...]),\n\
+         then the bare absolute root directly above its children.\n\
          \n\
          Children are ordered by recency (newest first, directories\n\
          first) so calling again shows what moved, at the top. Under a\n\
@@ -287,11 +293,14 @@ fn help_page() -> String {
          --format json emits the same look as one JSON document: same\n\
          walk, same budget, same censuses and marks -- never deeper or\n\
          wider for being machine-shaped. Sizes are bytes, times iso-8601\n\
-         UTC, censuses objects, denied/walk_bound booleans, and a\n\
-         top-level `truncated` says whether any cut or denial occurred\n\
-         anywhere (exit stays 0). Quiet governs only the drawn look:\n\
-         JSON carries the underlying facts (mode, uid, mtime, ...)\n\
-         either way. Refusals in machine mode are JSON on stderr.\n\
+         UTC, censuses objects, denied/walk_bound booleans, a top-level\n\
+         `truncated` says whether any cut or denial occurred anywhere\n\
+         (exit stays 0), and `config_drift` is an array of\n\
+         {key, value, source} when anything differs from the built-in\n\
+         defaults (omitted when nothing does). Quiet governs only the\n\
+         drawn look: JSON carries the underlying facts (mode, uid,\n\
+         mtime, ...) either way. Refusals in machine mode are JSON on\n\
+         stderr.\n\
          \n\
          A dimmed headings line sits under the root path, right-aligned\n\
          over the fact columns it names (`lines   heat \u{b7} age`), so the\n\
@@ -978,13 +987,17 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
             "walk: bound {walk_bound} reached; some dirs not expanded, marked [walk bound]"
         ));
     }
-    // The header is up to three lines (stamp, the root's facts when it has
-    // any, then the bare root path — overview invariants, simple-header
-    // steer 2026-08-14); the tree keeps the rest, the root path line
-    // counted inside its budget.
+    // The header is stamp, config-drift (when anything differs from the
+    // built-in defaults), the root's facts when it has any, then the bare
+    // root path (overview invariants). The tree keeps the rest; the root
+    // path line is counted inside its budget.
     let mut cols = cols;
     cols.now = now_secs;
-    let header = 1 + usize::from(!aspectus::columns::root_facts_line(&tree, &cols).is_empty());
+    let drift = aspectus::config::drift(&cfg, args.caller.as_deref());
+    let drift_text = aspectus::config::drift_line(&drift);
+    let header = 1
+        + usize::from(!drift_text.is_empty())
+        + usize::from(!aspectus::columns::root_facts_line(&tree, &cols).is_empty());
     let tree_budget = if lines == 0 {
         0
     } else {
@@ -1009,7 +1022,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     }
     if lines > 0 {
         why.push(format!(
-            "header: {} line(s) (stamp, root facts, column headings as rendered) \
+            "header: {} line(s) (stamp, config drift, root facts, column headings as rendered) \
              cost of --lines {lines} (root line inside the tree's share)",
             header + usize::from(headed)
         ));
@@ -1037,6 +1050,17 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
             let _ = writeln!(io::stderr(), "{line}");
         }
     }
+    // A no-op --inspect: the flag asked to look inside a kind that this
+    // look does not have. Silence was the one confession that didn't
+    // confess (hallway 2026-08-22). Exit unchanged — the look succeeded.
+    for k in &view.inspect {
+        if !aspectus::n_level::tree_claims_kind(&tree, k) {
+            let _ = writeln!(
+                io::stderr(),
+                "aspectus: --inspect {k}: nothing of that kind in this look"
+            );
+        }
+    }
     let root = abs.to_string_lossy();
     let stamp = aspectus::overview::stamp_utc(now);
     let machine = match cfg.won.get("format").map(|(v, _)| v.as_str()) {
@@ -1049,13 +1073,20 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
         }
     };
     if machine {
-        print!("{}", aspectus::json::render(&root, &stamp, &tree));
+        print!("{}", aspectus::json::render(&root, &stamp, &tree, &drift));
         feedback_footer();
         return Ok(());
     }
     print!(
         "{}",
-        aspectus::columns::render(&root, &tree, args.color.active(), &stamp, &cols)
+        aspectus::columns::render(
+            &root,
+            &tree,
+            args.color.active(),
+            &stamp,
+            &cols,
+            &drift_text
+        )
     );
     feedback_footer();
     Ok(())
@@ -1170,6 +1201,11 @@ fn resolve_look(
         None | Some("relative") => TimeFmt::Relative,
         Some("iso-8601") => TimeFmt::Iso8601,
         Some("epoch") => TimeFmt::Epoch,
+        // Unbuilt spellings (design/phenom-format.md; starred in the
+        // shipped file 2026-08-23). An unbuilt default must not refuse
+        // the look — relative is the built spelling. An explicit ask of
+        // a truly unknown word still refuses.
+        Some("signa") | Some("rfc-3339") | Some("pattern") => TimeFmt::Relative,
         Some(v) => {
             return Err(ShowErr::Other(format!(
                 "format.mtime is relative, iso-8601, or epoch (got {v}; rfc-3339, pattern, signa not built yet)"

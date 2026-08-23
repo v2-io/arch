@@ -178,7 +178,7 @@ fn same_look_as_text() {
     for i in 0..12 {
         touch(&dir, &format!("f{i:02}.md"), 1_700_000_000 + i * 10);
     }
-    let args = ["--depth", "1", "--lines", "7"];
+    let args = ["--depth", "1", "--lines", "8"];
     // Numbered-series fixture; globify (2026-08-14) would collapse it to
     // one listee in both renderings — parity of the budget fold is this
     // test's subject, so it is pinned off.

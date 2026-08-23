@@ -86,9 +86,11 @@ fn run(dir: &Path, xdg: &Path, envs: &[(&str, &str)], args: &[&str]) -> (i32, St
 }
 
 fn line_of<'a>(o: &'a str, name: &str) -> &'a str {
-    // Skip the stamp and root header — a temp path can contain any name.
+    // Tree rows only — stamp, config-drift, facts, path, and headings
+    // sit above them (the drift line can contain a flag/value that
+    // collides with a fixture name).
     o.lines()
-        .skip(2)
+        .filter(|l| l.contains("── "))
         .find(|l| l.contains(name))
         .unwrap_or_else(|| panic!("{name} not in {o}"))
 }
@@ -280,7 +282,7 @@ fn budget_independent() {
         .set_modified(UNIX_EPOCH + Duration::from_secs(1_700_000_100))
         .unwrap();
     let (_, o_all, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "0"]);
-    let (_, o_tight, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "5"]);
+    let (_, o_tight, _) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "6"]);
     // Compare facts, not padding: column tab-stops are a function of each
     // look's own content, so the two looks may align differently.
     let squeeze = |s: &str| s.split_whitespace().collect::<Vec<_>>().join(" ");

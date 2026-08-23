@@ -142,7 +142,7 @@ fn budget_arithmetic() {
     }
     fs::write(dir.join("a.md"), "x\n").unwrap();
     // With room, the group is one listee costing one line.
-    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "2", "--lines", "6"]);
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "2", "--lines", "7"]);
     assert_eq!(c, 0, "{e}");
     assert!(
         o.contains("s[01-30].dat") && o.contains("(30 files)"),
@@ -150,7 +150,7 @@ fn budget_arithmetic() {
     );
     // One line tighter: sub/ folds to its census — the collapsed group
     // folds back as 30 files, never one.
-    let (c2, o2, e2) = run(&dir, &xdg, &[], &["--depth", "2", "--lines", "5"]);
+    let (c2, o2, e2) = run(&dir, &xdg, &[], &["--depth", "2", "--lines", "6"]);
     assert_eq!(c2, 0, "{e2}");
     let sub = o2.lines().find(|l| l.contains("sub/")).unwrap();
     assert!(

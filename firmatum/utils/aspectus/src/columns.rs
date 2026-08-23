@@ -485,9 +485,11 @@ pub fn headings_expected(tree: &Node, cols: &Cols) -> bool {
 /// The root's own facts, pre-joined for the header facts line. Empty when
 /// the root has nothing to say. Count cells here show their unit (this
 /// line sits *above* the headings; a file root has no headings line at
-/// all) — the 2026-08-14 `"767 lines"` wrap is the unit slot now. Other
-/// unitless columns still carry their word (`perms`, `heat`). The 12-cell
-/// pad is trimmed: this line is not in the column grid.
+/// all, so `𝓁` stays) — the 2026-08-14 `"767 lines"` wrap is the unit
+/// slot now. A file root uses the same count-cell grammar, and the same
+/// `heat · age` cluster form as a row, labelled `heat …` (no heading
+/// follows). Other unitless columns still carry their word (`perms`).
+/// The 12-cell pad is trimmed: this line is not in the column grid.
 pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
     let cells = ready::far_right_header(tree, cols);
     let mut parts: Vec<String> = if tree.is_dir {
@@ -526,22 +528,35 @@ pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
     parts.join("  ")
 }
 
-/// The whole look. Header is up to three lines — stamp, the root's facts
-/// (only when it has any), then the bare root path directly above its
-/// children (design/overview-invariants.md, decided 2026-08-14; the path
-/// line is "the path and nothing else" — Joseph's simple-header steer).
-pub fn render(root_path: &str, tree: &Node, color: bool, stamp: &str, cols: &Cols) -> String {
+/// The whole look. Header is stamp, then config-drift (when anything
+/// differs from the built-in defaults), then the root's facts (only when
+/// it has any), then the bare root path directly above its children
+/// (design/overview-invariants.md). The path line is "the path and nothing
+/// else" — Joseph's simple-header steer. `drift` is empty when nothing
+/// differs (absent, never faked).
+pub fn render(
+    root_path: &str,
+    tree: &Node,
+    color: bool,
+    stamp: &str,
+    cols: &Cols,
+    drift: &str,
+) -> String {
     let mut root = root_path.to_string();
     if tree.is_dir && !root.ends_with('/') {
         root.push('/');
     }
     let ncols = cols.active();
     let far_left_on = cols.paints_far_left() && tree_has_git(tree);
-    // Stamp, root-facts, and root-path do not pay the far-left cell —
-    // a copied root path must not start with a space (design/grid-cleanup.md
-    // §Step 5 landed). Headings and every tree row do.
+    // Stamp, config-drift, root-facts, and root-path do not pay the
+    // far-left cell — a copied root path must not start with a space
+    // (design/grid-cleanup.md §Step 5 landed). Headings and every tree
+    // row do.
     let stamp_row = Row::plain(stamp.to_string(), ncols);
     let mut rows = vec![stamp_row];
+    if !drift.is_empty() {
+        rows.push(Row::plain(drift.to_string(), ncols));
+    }
     let facts = root_facts_line(tree, cols);
     if !facts.is_empty() {
         rows.push(Row::plain(facts, ncols));

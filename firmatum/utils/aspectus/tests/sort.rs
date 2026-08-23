@@ -211,9 +211,8 @@ fn tight_budget_keeps_the_newest() {
         let name = format!("{}.md", (b'a' + i) as char);
         touch(&dir, &name, 1_700_000_000 + u64::from(i) * 100);
     }
-    // stamp + headings + root + 3 files + [+5 census] = 7 lines
-    // (the column-headings line, 2026-08-14, costs one when columns render).
-    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "7"]);
+    // stamp + config-drift + headings + root + 3 files + [+5 census] = 8
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1", "--lines", "8"]);
     assert_eq!(c, 0, "{e}");
     assert!(
         o.contains("h.md") && o.contains("g.md") && o.contains("f.md"),

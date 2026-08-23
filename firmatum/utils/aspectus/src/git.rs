@@ -282,8 +282,11 @@ fn trim_url(url: &str) -> String {
 /// The one porcelain subprocess (design/furniture/git.md; impl/git.md):
 /// `git status --porcelain --untracked-files=normal`. The dirty *count*
 /// and the per-path XY letters come from this call — never a second
-/// subprocess. `None` = not obtained (no git, error) — then the look
-/// claims nothing about dirt or letters.
+/// subprocess. `dir` is **that repo's root** (the work tree `obtain`
+/// was given), never the look's root or a subpath of the repo: a look
+/// at `src/` of a repo still counts dirt for the whole repo, and a look
+/// at a sibling repo does not inherit this one. `None` = not obtained
+/// (no git, error) — then the look claims nothing about dirt or letters.
 fn porcelain(dir: &Path) -> Option<Porcelain> {
     let out = std::process::Command::new("git")
         .args(["-C"])

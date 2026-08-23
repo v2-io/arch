@@ -258,11 +258,14 @@ fn has_block(n: &Node) -> Option<Ready> {
         .kinds
         .iter()
         .map(|k| match n.has_counts.iter().find(|(hk, _, _)| hk == k) {
-            Some((_, files, bounded)) => {
+            Some((_, files, bounded)) if *files > 0 => {
                 let mark = if *bounded { "≥" } else { "≈" };
                 format!("{k} {mark}{files}f")
             }
-            None => k.clone(),
+            // A has-count of zero files is a claim with no content
+            // (`agents ≈0f`); the kind word stays, the count does not.
+            // JSON keeps the underlying number.
+            _ => k.clone(),
         })
         .collect();
     Some(Ready::new(

@@ -16,6 +16,7 @@
 //! quiet is a text-rendering law, not a data cut (machine formats get
 //! facts, not affordances).
 
+use crate::config::Drift;
 use crate::n_level::{Census, Mass, Node};
 
 /// Schema version, from birth: one field, one saved migration.
@@ -313,14 +314,34 @@ fn truncated(n: &Node) -> bool {
         || n.children.iter().any(truncated)
 }
 
+fn drift_arr(items: &[Drift]) -> String {
+    let mut buf = String::from("[");
+    for (i, d) in items.iter().enumerate() {
+        if i > 0 {
+            buf.push(',');
+        }
+        let mut o = Obj::new();
+        o.str("key", &d.key);
+        o.str("value", &d.value);
+        o.str("source", d.source);
+        buf.push_str(&o.done());
+    }
+    buf.push(']');
+    buf
+}
+
 /// The whole look as one JSON document (one line, trailing newline).
-pub fn render(root: &str, stamp: &str, tree: &Node) -> String {
+/// `config_drift` is omitted when nothing differs (absent, never faked).
+pub fn render(root: &str, stamp: &str, tree: &Node, drift: &[Drift]) -> String {
     let mut o = Obj::new();
     o.str("aspectus", env!("CARGO_PKG_VERSION"));
     o.raw("schema", &SCHEMA.to_string());
     o.str("time", stamp);
     o.str("root", root);
     o.raw("truncated", if truncated(tree) { "true" } else { "false" });
+    if !drift.is_empty() {
+        o.raw("config_drift", &drift_arr(drift));
+    }
     // The steward's feedback solicitation rides on stderr (main.rs), not
     // in the document — stdout is data (Joseph, 2026-08-22).
     o.raw("tree", &node_obj(tree));

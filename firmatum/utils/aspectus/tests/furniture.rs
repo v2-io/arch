@@ -134,6 +134,67 @@ fn inspect_opens_one_kind_only() {
     assert!(o.contains("__pycache__/"), "{o}");
     assert!(!o.contains(".claude"), "agents kind not asked for: {o}");
     assert!(!o.contains(".DS_Store"), "omit has no kind to inspect: {o}");
+    assert!(
+        !e.contains("nothing of that kind"),
+        "build was in this look: {e}"
+    );
+}
+
+#[test]
+fn inspect_names_nothing_of_that_kind() {
+    let (dir, xdg) = fixture();
+    let (c, o, e) = run(&dir, &xdg, &["--inspect", "git"]);
+    assert_eq!(c, 0, "exit unchanged: {e}");
+    assert!(!o.is_empty(), "the look still printed: {o}");
+    assert!(
+        e.contains("aspectus: --inspect git: nothing of that kind in this look"),
+        "{e}"
+    );
+}
+
+#[test]
+fn has_count_of_zero_files_is_not_printed() {
+    let (dir, xdg) = fixture();
+    fs::create_dir_all(dir.join(".trash")).unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains("[has:") && o.contains("trash"), "{o}");
+    assert!(!o.contains("trash ≈0f") && !o.contains("trash ≥0f"), "{o}");
+
+    let (c, json, e) = run(&dir, &xdg, &["--format", "json"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(
+        json.contains("\"kind\":\"trash\"") && json.contains("\"files\":0"),
+        "JSON keeps the number: {json}"
+    );
+}
+
+#[test]
+fn digit_suffix_census_folds_into_other() {
+    let dir = tmpdir("man");
+    fs::create_dir_all(dir.join("man")).unwrap();
+    for n in 1..=5 {
+        File::create(dir.join(format!("man/page.{n}")))
+            .unwrap()
+            .write_all(b"x")
+            .unwrap();
+    }
+    File::create(dir.join("man/notes.md"))
+        .unwrap()
+        .write_all(b"x")
+        .unwrap();
+    let xdg = tmpdir("man-xdg");
+    fs::create_dir_all(xdg.join("aspectus")).unwrap();
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(
+        o.contains("other×5") && o.contains("md×1"),
+        "all-digit suffixes fold to other: {o}"
+    );
+    assert!(
+        !o.contains("1×") && !o.contains("2×") && !o.contains("5×"),
+        "no digit-suffix buckets: {o}"
+    );
 }
 
 #[test]
