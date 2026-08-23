@@ -143,7 +143,7 @@
 
 | stat | fact | derived-from | default position | default display | sort | width | formats |
 | --- |---|---|---|---|---|---|---|
-| ↬ | mtime / age | file: stat; dir: inode mtime today — *newest-beneath proposed* | far-right (paired in the heat cluster); far-left compact — *open* | quiet (recent vs now); on inside the cluster | Y (**default key**, newest first) | 9 (`13.6d ago`) / 5 compact (`13.6d`) | relative\* / iso-8601 / epoch / signa |
+| ↬ | mtime / age | file: stat; dir: inode mtime today — *newest-beneath proposed* | far-right (paired in the heat cluster); far-left compact — *open* | quiet (recent vs now); on inside the cluster | Y (**default key**, newest first) | 9 (`13.6d ago`) / 5 compact (`13.6d`) | signa\* (2026-08-23) / relative / iso-8601 / epoch |
 | ⇥ | created (btime) | getattrlist / statx; absent elsewhere | far-right | off | Y | 9 | relative / iso-8601\* / epoch |
 | ↬ | heat | git log, commit-decay (half-life 7 commits); dir: max of non-noise leaves; repo-relative | **far-left, two-cell density block before git-status** (Joseph, 2026-08-23); the age stays far-right | on in-repo | Y | 2 (`░▒`) | density\* (`  ░ ░░ ░▒ ▒▒ ▒▓ ▓▓ ▓█ ██`) / score |
 | ↬ | git-status | `git status --porcelain` (worktree wins); `⊘` = gitignored | far-left (one-cell glyph block) | on (blank when clean) | — | 1 | glyph\* `⊘ M A ⁇ R U D` (`C T` available) |

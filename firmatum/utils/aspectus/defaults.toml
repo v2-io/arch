@@ -50,7 +50,7 @@ quiet      = ["mtime", "bytes", "permissions", "owner", "filekind"]   # listed-o
 
 # ── Formats (starred defaults in design/lattice-2.md) ────────────────────────
 [format]
-mtime = "relative"          # relative (2.2h ago) | iso-8601 | epoch
+mtime = "signa"             # signa (SIGNA glyph run: ○⚬⚬ = 1d 8h — design/phenom-format.md) | relative (2.2h ago) | iso-8601 | epoch
 heat = "density"            # density (░▒▓█ block, far-left) | score (0–~2 number)
 bytes = "human"             # human (1.2M) | bytes
 lines = "physical"          # physical | non-blank
