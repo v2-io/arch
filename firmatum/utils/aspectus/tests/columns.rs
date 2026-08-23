@@ -373,17 +373,30 @@ fn file_root_facts_are_labeled() {
     assert!(!o.contains("1 lines"), "old wrap retired: {o}");
 }
 
-/// mtime's default text form is relative — one register with heat's age —
-/// and a quiet mtime stays silent where the heat cluster already says it.
+/// mtime's default text form is SIGNA — one register with the age column —
+/// and `format.mtime = relative` restores `13.6d ago`. JSON stays iso-8601
+/// (the stamp is the only `Z` in the text look).
 #[test]
-fn mtime_defaults_to_relative_age() {
+fn mtime_defaults_to_signa() {
     let (dir, xdg) = fixture();
     user_home(&xdg, "columns.mtime = on\n");
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert_eq!(o.matches('Z').count(), 1, "stamp is the only ISO time: {o}");
     let a_line = o.lines().find(|l| l.contains("a.md")).unwrap();
-    assert!(a_line.contains("ago"), "relative age spelled: {a_line}");
+    assert!(
+        a_line.contains('⬤') || a_line.contains('◉') || a_line.contains('◎'),
+        "SIGNA age spelled: {a_line}"
+    );
+    assert!(
+        !a_line.contains("ago"),
+        "relative is not the default: {a_line}"
+    );
+    user_home(&xdg, "columns.mtime = on\nformat.mtime = relative\n");
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    let a_line = o.lines().find(|l| l.contains("a.md")).unwrap();
+    assert!(a_line.contains("ago"), "relative still works: {a_line}");
 }
 
 /// Symlink target is decoration on the name (lattice INFO ON; shorthand
@@ -436,6 +449,7 @@ fn heading_sits_over_the_cluster() {
     let f = File::open(dir.join("b.md")).unwrap();
     f.set_modified(std::time::UNIX_EPOCH + std::time::Duration::from_secs(1_700_000_000))
         .unwrap();
+    user_home(&xdg, "format.heat = score\nformat.mtime = relative\n");
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let pos = |l: &str| {

@@ -94,23 +94,61 @@ fn line_of<'a>(o: &'a str, name: &str) -> &'a str {
         .unwrap_or_else(|| panic!("{name} not in {o}"))
 }
 
+fn density_before<'a>(line: &'a str, name: &str) -> &'a str {
+    line.split_once(name)
+        .unwrap_or_else(|| panic!("{name} not in {line}"))
+        .0
+}
+
 #[test]
-fn heat_cluster_in_repo() {
+fn heat_density_in_repo() {
     let (dir, xdg) = repo_fixture();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let hot = line_of(&o, "hot.md");
-    // score · age as one cluster; touched-every-commit at half-life 7
-    // scores near the model's ceiling shape.
+    let before = density_before(hot, "hot.md");
+    // Hot was touched every non-initial commit — a positive grade, not blank.
+    assert!(
+        before.contains('░')
+            || before.contains('▒')
+            || before.contains('▓')
+            || before.contains('█'),
+        "hot.md has a density grade: {hot:?}"
+    );
+    let cold = line_of(&o, "cold.md");
+    let cold_before = density_before(cold, "cold.md");
+    // Initial-commit-only: score 0 → blank two cells, never faked.
+    assert!(
+        !cold_before.contains('░')
+            && !cold_before.contains('▒')
+            && !cold_before.contains('▓')
+            && !cold_before.contains('█'),
+        "cold.md is blank in the block: {cold:?}"
+    );
+    // Age column heading, not the old cluster.
+    assert!(
+        o.lines()
+            .any(|l| l.contains("age") && !l.contains("──") && !l.contains("heat ·")),
+        "age heading under density: {o}"
+    );
+}
+
+#[test]
+fn format_heat_score_restores_the_cluster() {
+    let (dir, xdg) = repo_fixture();
+    fs::write(
+        xdg.join("aspectus/aspectus.toml"),
+        "format.heat = \"score\"\nformat.mtime = \"relative\"\n",
+    )
+    .unwrap();
+    let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    let hot = line_of(&o, "hot.md");
     assert!(hot.contains("· 0"), "score paired with an age: {hot:?}");
     assert!(hot.contains("ago"), "human-relative age: {hot:?}");
     let cold = line_of(&o, "cold.md");
-    // Since the close-audit tranche (2026-08-14) a git-known unscored
-    // line carries its age in the cluster (` · 0m ago`) — the score half
-    // stays blank, never faked. No digits may precede cold's `·`.
-    let (before, _) = cold.rsplit_once('·').expect("age in the cluster: {cold:?}");
+    let (before, _) = cold.rsplit_once('·').expect("age in the cluster");
     let after_name = before.rsplit("cold.md").next().unwrap();
-    // 2026-08-22 count-cell slice: the line count is `1.` not `1`.
     let cell = after_name.trim();
     let count_cell = cell.trim_end_matches('.').trim().parse::<u64>().is_ok();
     assert!(
@@ -125,10 +163,17 @@ fn no_heat_outside_git() {
     fs::write(dir.join("a.md"), "1\n").unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    // The quiet mtime may speak "0m ago" on a fresh file; the *cluster*
-    // (score · age) is what git-lessness forbids. 2026-08-22 count-cell
-    // slice: `·` also lives in `1·099.` at ≥1000 — this fixture is 1 line.
-    assert!(!o.contains('·'), "no aliveness cluster outside git: {o}");
+    // Quiet mtime may speak SIGNA on a fresh file (`·` is a seconds glyph);
+    // density and the in-repo `age` column are what git-lessness forbids.
+    assert!(
+        !o.contains('░') && !o.contains('▒') && !o.contains('▓') && !o.contains('█'),
+        "no density block outside git: {o}"
+    );
+    assert!(
+        !o.lines()
+            .any(|l| l.trim() == "age" || l.split_whitespace().any(|w| w == "age")),
+        "no age heading outside git: {o}"
+    );
 }
 
 /// Close-audit tranche (2026-08-14): `Cargo.toml` left the noise set (it
@@ -153,18 +198,22 @@ fn noise_is_source_rev_and_cargo_toml_scores() {
     }
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
+    let cargo = density_before(line_of(&o, "Cargo.toml"), "Cargo.toml");
     assert!(
-        line_of(&o, "Cargo.toml").contains("· 0"),
+        cargo.contains('░') || cargo.contains('▒') || cargo.contains('▓') || cargo.contains('█'),
         "intent scores now: {o}"
     );
-    let sr = line_of(&o, "SOURCE_REV");
-    let (before, after) = sr
-        .rsplit_once('·')
-        .expect("age still rides the cluster: {o}");
-    assert!(after.contains("ago"), "{sr:?}");
-    let after_name = before.rsplit("SOURCE_REV").next().unwrap();
-    assert!(!after_name.contains("0."), "no score for noise: {sr:?}");
-    assert!(line_of(&o, "real.rs").contains("· 0"), "{o}");
+    let sr = density_before(line_of(&o, "SOURCE_REV"), "SOURCE_REV");
+    assert!(
+        !sr.contains('░') && !sr.contains('▒') && !sr.contains('▓') && !sr.contains('█'),
+        "no density for noise: {}",
+        line_of(&o, "SOURCE_REV")
+    );
+    let real = density_before(line_of(&o, "real.rs"), "real.rs");
+    assert!(
+        real.contains('░') || real.contains('▒') || real.contains('▓') || real.contains('█'),
+        "{o}"
+    );
 }
 
 #[test]
@@ -180,8 +229,9 @@ fn dir_heat_is_max_of_leaves() {
     git(&dir, &["commit", "-qm", "touch"]);
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
+    let sub = density_before(line_of(&o, "sub/"), "sub/");
     assert!(
-        line_of(&o, "sub/").contains("ago"),
+        sub.contains('░') || sub.contains('▒') || sub.contains('▓') || sub.contains('█'),
         "dir carries leaf heat: {o}"
     );
 }
@@ -203,9 +253,12 @@ fn config_can_turn_heat_off() {
     .unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    // The quiet mtime's relative voice may still say "ago"; the score-dot
-    // cluster is what `off` removes.
-    assert!(!o.contains("· 0"), "off removes the cluster: {o}");
+    // Heat off removes the density block and the age column (same toggle).
+    assert!(
+        !o.contains('░') && !o.contains('▒') && !o.contains('▓') && !o.contains('█'),
+        "off removes density: {o}"
+    );
+    assert!(!o.contains("· 0"), "off removes the score cluster too: {o}");
 }
 
 #[test]

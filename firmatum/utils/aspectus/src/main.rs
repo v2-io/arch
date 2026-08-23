@@ -191,25 +191,28 @@ fn help_page() -> String {
          estimate, not a property of the directory) and per-file counts\n\
          are omitted \u{2014} the glance stays fast, and says how it degraded.\n\
          \n\
-         Inside a git repo each visible line carries the aliveness cluster\n\
-         `score \u{b7} age` under the `heat \u{b7} age` heading: the score is\n\
-         commit-decay heat (git-heat's model, half-life 7 commits via\n\
-         config `heat.half-life`) on a 0\u{2013}~2 scale \u{2014} not a size \u{2014}\n\
-         counting in commits; the age is the mtime delta, counting in\n\
-         wall-clock. Two clocks, one glance-stop. The score decays in\n\
-         commits behind *that repo's* HEAD, so it is comparable within a\n\
-         repo, not across repos -- at a multi-repo root a dormant repo's\n\
+         Inside a git repo each visible line carries aliveness in two\n\
+         places. Heat is a two-cell density block at far-left, before\n\
+         git-status, on a 0\u{2013}~2 commit-decay scale (git-heat's model,\n\
+         half-life 7 commits via config `heat.half-life`) \u{2014} not a size\n\
+         \u{2014} counting in commits. Age is the mtime delta on the far-right\n\
+         under `age`, counting in wall-clock, SIGNA by default. Two\n\
+         clocks, two glance-stops. The score decays in commits behind\n\
+         *that repo's* HEAD, so it is comparable within a repo, not\n\
+         across repos -- at a multi-repo root a dormant repo's\n\
          concentrated last commits can outscore a busy one; the paired\n\
          age (and the recency sort) is the cross-repo signal. A line\n\
-         git knows but does not score still carries its age in the\n\
-         cluster (` \u{b7} 6m ago`) -- the score absent, never faked.\n\
-         Outside git, no heat is claimed. `--sort heat` orders by it;\n\
-         config `recency-source = git` makes the default recency sort use\n\
-         git last-touch where known. The same log pass carries the sha\n\
-         facts: columns.initial-sha / columns.latest-sha = on add the\n\
-         commit that introduced a file and the one that last touched it\n\
-         (format short / h~n / full; H~N counts commits behind HEAD);\n\
-         absent outside git or past the log window, never guessed.\n\
+         git knows but does not score is blank in the block (never\n\
+         faked) and still carries its age. Outside git, no heat is\n\
+         claimed. `--sort heat` orders by it; config `recency-source =\n\
+         git` makes the default recency sort use git last-touch where\n\
+         known. `format.heat = score` restores the number on the\n\
+         far-right as today's `score \u{b7} age` cluster. The same log pass\n\
+         carries the sha facts: columns.initial-sha / columns.latest-sha\n\
+         = on add the commit that introduced a file and the one that\n\
+         last touched it (format short / h~n / full; H~N counts commits\n\
+         behind HEAD); absent outside git or past the log window, never\n\
+         guessed.\n\
          \n\
          Symlinked directories are followed and recursed like real ones\n\
          (facts are the target's; `-> target` says how it got here). A\n\
@@ -228,12 +231,27 @@ fn help_page() -> String {
          Furniture fates apply first; --show-all restores ignored\n\
          contents, marks kept. Outside a repo a .gitignore is just a file.\n\
          \n\
-         Git status sits in one cell to the left of the tree, blank when\n\
-         clean, absent entirely when the look contains no repo. Worktree\n\
-         wins when index and worktree differ. --sort git is not built.\n\
+         Heat sits in two cells at the far left, before git-status,\n\
+         blank outside git and at score 0. Any positive score is at\n\
+         least  \u{2591}; linear over [0, 2], capped at \u{2588}\u{2588}.\n\
+             \u{2591}   \u{2591}\u{2591}  \u{2591}\u{2592}  \u{2592}\u{2592}  \u{2592}\u{2593}  \u{2593}\u{2593}  \u{2593}\u{2588}  \u{2588}\u{2588}\n\
+         Git status sits in one cell after heat, blank when clean,\n\
+         absent entirely (with the block) when the look contains no\n\
+         repo. Worktree wins when index and worktree differ. --sort git\n\
+         is not built. Two spaces (config layout.far-left-gap) sit\n\
+         between the block and the tree prefix.\n\
            \u{2298}  gitignored     M  modified     A  added\n\
            \u{2047}  untracked      R  renamed      U  unmerged\n\
            D  deleted        C  copied       T  typechange\n\
+         \n\
+         The far-right `age` column is SIGNA (zoetica's visual time\n\
+         notation): mixed-radix, two most-significant units, seconds\n\
+         omitted when a minute or larger is present. format.mtime =\n\
+         relative restores `13.6d ago`; JSON stays iso-8601.\n\
+           \u{b7}  1 s \u{d7}\u{2264}4      \u{2576}  5 s \u{d7}1       \u{254c}  10 s \u{d7}\u{2264}5\n\
+           \u{2505}  1 m \u{d7}\u{2264}9      \u{2501}  10 m \u{d7}\u{2264}5     \u{2550}  1 h \u{d7}\u{2264}3\n\
+           \u{26ac}  4 h \u{d7}\u{2264}7      \u{25cb}  1 d \u{d7}\u{2264}6      \u{25ce}  1 w \u{d7}\u{2264}7\n\
+           \u{25c9}  2 mo \u{d7}\u{2264}5     \u{2b24}  1 y \u{d7}\u{2264}9 (capped)\n\
          \n\
          A real sequence of names collapses to its pattern:\n\
          output-[001-047].bak  (44 files) -- one line, exact count; a\n\
@@ -303,12 +321,12 @@ fn help_page() -> String {
          stderr.\n\
          \n\
          A dimmed headings line sits under the root path, right-aligned\n\
-         over the fact columns it names (`lines   heat \u{b7} age`), so the\n\
+         over the fact columns it names (`lines   age`), so the\n\
          numbers below it are never bare. It appears only when fact\n\
-         columns do, and costs one header line of the budget. mtime cells\n\
-         default to the relative form (`2.2h ago`) \u{2014} one time register\n\
-         with the heat cluster's age; config format.mtime = iso-8601 or\n\
-         epoch restores the absolute spellings (JSON always iso-8601).\n\
+         columns do, and costs one header line of the budget. The age\n\
+         column defaults to SIGNA; format.mtime = relative (`2.2h ago`),\n\
+         iso-8601, or epoch restores the other spellings (JSON always\n\
+         iso-8601).\n\
          \n\
          Every look ends with a feedback footer on stderr (stdout stays\n\
          data, so pipes and `jq` never see it): this tool is critical\n\
@@ -1106,7 +1124,7 @@ fn feedback_footer() {
 fn resolve_look(
     cfg: &aspectus::config::Resolved,
 ) -> Result<(aspectus::sort::Order, aspectus::columns::Cols), ShowErr> {
-    use aspectus::columns::{Cols, LineFmt, SizeFmt, TimeFmt};
+    use aspectus::columns::{Cols, HeatFmt, LineFmt, SizeFmt, TimeFmt};
     use aspectus::sort::{self, KeyErr, Order};
 
     let (sort_val, sort_layer) = cfg
@@ -1198,20 +1216,41 @@ fn resolve_look(
         }
     };
     let mtime_fmt = match format_val(&cfg.won, "format.mtime") {
-        None | Some("relative") => TimeFmt::Relative,
+        None | Some("signa") => TimeFmt::Signa,
+        Some("relative") => TimeFmt::Relative,
         Some("iso-8601") => TimeFmt::Iso8601,
         Some("epoch") => TimeFmt::Epoch,
-        // Unbuilt spellings (design/phenom-format.md; starred in the
-        // shipped file 2026-08-23). An unbuilt default must not refuse
-        // the look — relative is the built spelling. An explicit ask of
-        // a truly unknown word still refuses.
-        Some("signa") | Some("rfc-3339") | Some("pattern") => TimeFmt::Relative,
+        // Still-unbuilt spellings: degrade rather than refuse a look
+        // that inherited them. An explicit unknown word still refuses.
+        Some("rfc-3339") | Some("pattern") => TimeFmt::Relative,
         Some(v) => {
             return Err(ShowErr::Other(format!(
-                "format.mtime is relative, iso-8601, or epoch (got {v}; rfc-3339, pattern, signa not built yet)"
+                "format.mtime is signa, relative, iso-8601, or epoch (got {v}; rfc-3339, pattern not built yet)"
             )));
         }
     };
+    let heat_fmt = match format_val(&cfg.won, "format.heat") {
+        None | Some("density") => HeatFmt::Density,
+        Some("score") => HeatFmt::Score,
+        Some(v) => {
+            return Err(ShowErr::Other(format!(
+                "format.heat is density or score (got {v})"
+            )));
+        }
+    };
+    let far_left_gap = match cfg.won.get("layout.far-left-gap").map(|(v, _)| v.as_str()) {
+        None => 2usize,
+        Some(v) => v.parse::<usize>().map_err(|_| {
+            ShowErr::Other(format!(
+                "layout.far-left-gap is a non-negative integer (got {v})"
+            ))
+        })?,
+    };
+    let age_listed = cfg
+        .layout
+        .get("layout.far-right")
+        .map(|(v, _)| v.iter().any(|f| f == "age"))
+        .unwrap_or(false);
     let line_fmt = match format_val(&cfg.won, "format.line-count") {
         None | Some("physical") => LineFmt::Physical,
         Some("non-blank") => LineFmt::NonBlank,
@@ -1252,6 +1291,8 @@ fn resolve_look(
             perms,
             owner,
             heat,
+            age: heat && age_listed,
+            heat_fmt,
             intro_sha,
             latest_sha,
             size_fmt,
@@ -1266,6 +1307,7 @@ fn resolve_look(
                 .get("layout.far-left")
                 .map(|(v, _)| v.clone())
                 .unwrap_or_default(),
+            far_left_gap,
         },
     ))
 }

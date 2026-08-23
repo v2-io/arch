@@ -15,7 +15,7 @@
 //! Count cells (step 3, 2026-08-22) land here: `lines` and `bytes` render
 //! through `count_cell`. The census's internal grammar is unchanged.
 
-use crate::columns::{Cols, OwnerFmt, ShaFmt, SizeFmt, State, TimeFmt};
+use crate::columns::{Cols, HeatFmt, OwnerFmt, ShaFmt, SizeFmt, State, TimeFmt};
 use crate::count_cell::{Mark, Unit, count_cell};
 use crate::n_level::Node;
 
@@ -25,7 +25,8 @@ use crate::n_level::Node;
 /// restructure.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Position {
-    /// Stackable fixed-width columns before the hierarchy (git-status).
+    /// Stackable fixed-width columns before the hierarchy (heat density,
+    /// git-status).
     FarLeft,
     /// The tree's indent and branch glyphs.
     LevelLocation,
@@ -40,7 +41,8 @@ pub enum Position {
     NearRight,
     /// Between near-right and far-right (no tenants yet).
     Supplement,
-    /// Right-aligned columns: counts, sizes, times, shas, the heat cluster.
+    /// Right-aligned columns: counts, sizes, times, shas, age (or the
+    /// score cluster when `format.heat = score`).
     FarRight,
     /// A mark *inside* another fact's cell (lattice-2's own ninth word):
     /// the honesty marks `≈ ≥ ~` live in a count cell's `m` slot.
@@ -313,13 +315,15 @@ fn look_marks(n: &Node) -> Vec<Ready> {
 
 /// Far-left cells this look paints, in `[layout] far-left` order, skipping
 /// entries that have no formatter yet (mtime/bytes compact forms are not
-/// designed). git-status is one cell, width 1: the porcelain letter, `⊘`
-/// when gitignored, `⁇` on an untracked directory (`?? dir/`), blank
-/// (a space) when clean. Tracked-and-clean dirs stay blank.
+/// designed). `heat` is two cells (density) when `format.heat = density`;
+/// git-status is one cell, width 1: the porcelain letter, `⊘` when
+/// gitignored, `⁇` on an untracked directory (`?? dir/`), blank (a space)
+/// when clean. Tracked-and-clean dirs stay blank.
 pub fn far_left(n: &Node, cols: &Cols) -> Vec<Ready> {
     cols.far_left
         .iter()
         .filter_map(|fact| match fact.as_str() {
+            "heat" if cols.heat && cols.heat_fmt == HeatFmt::Density => Some(heat_density_cell(n)),
             "git-status" => Some(git_status_cell(n)),
             _ => None,
         })
@@ -334,6 +338,12 @@ pub fn far_left_blank(cols: &Cols) -> Vec<Ready> {
     cols.far_left
         .iter()
         .filter_map(|fact| match fact.as_str() {
+            "heat" if cols.heat && cols.heat_fmt == HeatFmt::Density => Some(Ready::new(
+                "heat",
+                Position::FarLeft,
+                Office::Line,
+                "  ".to_string(),
+            )),
             "git-status" => Some(Ready::new(
                 "git-status",
                 Position::FarLeft,
@@ -343,6 +353,15 @@ pub fn far_left_blank(cols: &Cols) -> Vec<Ready> {
             _ => None,
         })
         .collect()
+}
+
+fn heat_density_cell(n: &Node) -> Ready {
+    Ready::new(
+        "heat",
+        Position::FarLeft,
+        Office::Line,
+        crate::heat::density_cell(n.heat).to_string(),
+    )
 }
 
 fn git_status_cell(n: &Node) -> Ready {
@@ -429,8 +448,10 @@ pub fn columns(cols: &Cols) -> Vec<Column> {
     if cols.latest_sha {
         push("latest-sha", "latest-sha");
     }
-    if cols.heat {
+    if cols.heat && cols.heat_fmt == HeatFmt::Score {
         push("heat", "heat · age");
+    } else if cols.age {
+        push("age", "age");
     }
     v
 }
@@ -497,11 +518,13 @@ fn far_right_inner(n: &Node, cols: &Cols, under_heading: bool) -> Vec<Ready> {
         );
     }
     if cols.mtime.claims_column() {
-        // The heat cluster already carries this line's mtime as `· age`;
+        // The age column / score-cluster already carries this line's mtime;
         // a quiet mtime speaking beside it would say the same thing twice
         // (format-consistency steer, 2026-08-14). An explicit `on` still
         // renders everywhere — a full column asked for is a full column.
-        let redundant = cols.heat && n.mtime.is_some() && (n.heat.is_some() || n.git_ts.is_some());
+        let redundant = (cols.heat || cols.age)
+            && n.mtime.is_some()
+            && (n.heat.is_some() || n.git_ts.is_some());
         push(
             "mtime",
             quiet(
@@ -517,22 +540,33 @@ fn far_right_inner(n: &Node, cols: &Cols, under_heading: bool) -> Vec<Ready> {
     if cols.latest_sha {
         push("latest-sha", fmt_sha(&n.touch, cols.latest_fmt));
     }
-    if cols.heat {
-        push("heat", heat_cluster(n, cols.now));
+    if cols.heat && cols.heat_fmt == HeatFmt::Score {
+        push("heat", heat_cluster(n, cols));
+    } else if cols.age {
+        push("age", age_cell(n, cols));
     }
     cells
 }
 
-/// Two aliveness facts as one glance-stop: `1.01 · 13.6d ago`. A git-known
-/// line without a score (noise basename, history says nothing hot) still
-/// carries its age here — score honestly absent, the age in the one time
-/// register — so quiet's mtime never re-speaks it in a stray column (close
-/// audit 2026-08-14: the silenced Cargo.toml had become the loudest row).
-fn heat_cluster(n: &Node, now: i64) -> String {
-    match (n.heat, n.mtime) {
-        (Some(h), Some(t)) => format!("{h:.2} · {}", rel_age(now, t)),
+/// Two aliveness facts as one glance-stop: `1.01 · 13.6d ago` (or SIGNA
+/// in the age half). Kept for `format.heat = score`. A git-known line
+/// without a score still carries its age — score honestly absent, never
+/// faked.
+fn heat_cluster(n: &Node, cols: &Cols) -> String {
+    let age = n.mtime.map(|t| fmt_mtime(t, cols.mtime_fmt, cols.now));
+    match (n.heat, age) {
+        (Some(h), Some(a)) => format!("{h:.2} · {a}"),
         (Some(h), None) => format!("{h:.2}"),
-        (None, Some(t)) if n.git_ts.is_some() => format!(" · {}", rel_age(now, t)),
+        (None, Some(a)) if n.git_ts.is_some() => format!(" · {a}"),
+        _ => String::new(),
+    }
+}
+
+/// The far-right `age` column under density: the cluster's right half,
+/// same git-known rule, format.mtime's spelling.
+fn age_cell(n: &Node, cols: &Cols) -> String {
+    match n.mtime {
+        Some(t) if n.heat.is_some() || n.git_ts.is_some() => fmt_mtime(t, cols.mtime_fmt, cols.now),
         _ => String::new(),
     }
 }
@@ -618,6 +652,7 @@ fn fmt_owner(n: &Node, f: OwnerFmt) -> Option<String> {
 
 fn fmt_mtime(secs: i64, f: TimeFmt, now: i64) -> String {
     match f {
+        TimeFmt::Signa => crate::signa::format(now - secs),
         TimeFmt::Relative => rel_age(now, secs),
         TimeFmt::Epoch => secs.to_string(),
         TimeFmt::Iso8601 => {

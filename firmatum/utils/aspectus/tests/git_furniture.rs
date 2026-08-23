@@ -298,12 +298,15 @@ fn far_left_git_status_letters() {
         .lines()
         .find(|l| l.contains("├── ") || l.contains("└── "))
         .expect(&o);
+    let branch = tree.find("├── ").or_else(|| tree.find("└── ")).expect(tree);
+    let prefix: String = tree.chars().take(tree[..branch].chars().count()).collect();
     assert!(
-        tree.starts_with(' ')
-            || tree.starts_with('M')
-            || tree.starts_with('\u{2047}')
-            || tree.starts_with('\u{2298}'),
-        "far-left cell is positional, width 1: {tree}"
+        prefix.ends_with("  "),
+        "gap of 2 between the block and the tree: {tree:?}"
+    );
+    assert!(
+        prefix.chars().count() >= 5,
+        "heat (2) + git-status (1) + gap (2): {tree:?}"
     );
     let headings = o
         .lines()

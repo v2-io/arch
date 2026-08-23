@@ -12,9 +12,9 @@
 //! 3. **Cells / rows** (`Slots`, `Row`): the ready-facts land in *named
 //!    slots in a fixed order* — far-left · level-location · name-location ·
 //!    name-suffix · after-name · near-right · supplement · far-right (the
-//!    positions of design/lattice-2.md). Far-left takes git-status (step 5);
-//!    supplement has no tenants yet. A node emits exactly one row today
-//!    (sub-rows are a later slice).
+//!    positions of design/lattice-2.md). Far-left takes heat (density,
+//!    two cells) then git-status (step 6); supplement has no tenants yet.
+//!    A node emits exactly one row today (sub-rows are a later slice).
 //! 4. **Paint**: the only layer that knows about other rows — the computed
 //!    pseudo-tab-stop, per-column right edges, heading alignment, color.
 //!    Stops are pure functions of the look's content, never terminal width
@@ -34,10 +34,20 @@ pub enum SizeFmt {
 pub enum TimeFmt {
     Iso8601,
     Epoch,
-    /// Age relative to the look's stamp (`2.2h ago`) — the default text
-    /// spelling, so mtime and the heat cluster's age read as one register
-    /// (format-consistency steer, 2026-08-14; JSON stays iso-8601).
+    /// Age relative to the look's stamp (`2.2h ago`).
     Relative,
+    /// SIGNA glyph run (design/phenom-format.md) — the default text
+    /// spelling as of 2026-08-23. JSON stays iso-8601.
+    Signa,
+}
+
+/// How the heat fact paints (design/grid-cleanup.md; `format.heat`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HeatFmt {
+    /// Two-cell density block at far-left (` ░` … `██`). Default.
+    Density,
+    /// Today's `score · age` cluster on the far-right.
+    Score,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -95,9 +105,13 @@ pub struct Cols {
     pub mtime: State,
     pub perms: State,
     pub owner: State,
-    /// The `score · age` right-cluster (design/heat.md); in-repo only by
-    /// nature — outside git no node has heat and the column is silent.
+    /// Heat is on (layout membership). Density paints far-left; score
+    /// paints the far-right cluster. In-repo only by nature.
     pub heat: bool,
+    /// The far-right `age` column (layout `age`; the cluster's right half
+    /// under density). Silent outside git, same as the old cluster.
+    pub age: bool,
+    pub heat_fmt: HeatFmt,
     /// The sha facts (compose-only, lattice OFF): the commit that
     /// introduced a file / last touched it, from heat's log pass.
     pub intro_sha: bool,
@@ -112,9 +126,12 @@ pub struct Cols {
     /// not to each render.
     pub now: i64,
     /// `[layout] far-left` membership, in list order. The renderer paints
-    /// entries it has formatters for (`git-status`); the rest stay
-    /// unbuilt (mtime/bytes compact forms are not designed).
+    /// entries it has formatters for (`heat` as density, `git-status`);
+    /// the rest stay unbuilt (mtime/bytes compact forms are not designed).
     pub far_left: Vec<String>,
+    /// Spaces between the far-left block and the tree prefix. Paid only
+    /// when the block exists (design/grid-cleanup.md).
+    pub far_left_gap: usize,
 }
 
 impl Default for Cols {
@@ -126,16 +143,19 @@ impl Default for Cols {
             perms: State::Quiet,
             owner: State::Quiet,
             heat: true,
+            age: true,
+            heat_fmt: HeatFmt::Density,
             intro_sha: false,
             latest_sha: false,
             size_fmt: SizeFmt::Human,
-            mtime_fmt: TimeFmt::Iso8601,
+            mtime_fmt: TimeFmt::Signa,
             line_fmt: LineFmt::Physical,
             owner_fmt: OwnerFmt::Name,
             intro_fmt: ShaFmt::Short,
             latest_fmt: ShaFmt::Short,
             now: 0,
             far_left: Vec::new(),
+            far_left_gap: 2,
         }
     }
 }
@@ -147,13 +167,18 @@ impl Cols {
 
     /// True when `[layout] far-left` names a fact this slice can paint.
     pub fn paints_far_left(&self) -> bool {
-        self.far_left.iter().any(|f| f == "git-status")
+        self.far_left.iter().any(|f| match f.as_str() {
+            "git-status" => true,
+            "heat" => self.heat && self.heat_fmt == HeatFmt::Density,
+            _ => false,
+        })
     }
 
     /// The heat cluster's cell index, for the paint path's sub-column
-    /// alignment (score under `heat`, age under `age`).
+    /// alignment (score under `heat`, age under `age`). Only when
+    /// `format.heat = score` — density has no cluster.
     fn cluster_idx(&self) -> Option<usize> {
-        self.heat.then(|| self.active() - 1)
+        (self.heat && self.heat_fmt == HeatFmt::Score).then(|| self.active() - 1)
     }
 }
 
@@ -163,8 +188,8 @@ impl Cols {
 /// align across the look.
 #[derive(Default)]
 struct Slots {
-    /// Fixed-width blocks before the hierarchy — git-status is the first
-    /// tenant (step 5). Empty when the look contains no repo, or when
+    /// Fixed-width blocks before the hierarchy — heat density then
+    /// git-status (step 6). Empty when the look contains no repo, or when
     /// `[layout] far-left` has no paintable entry: absent, never faked.
     far_left: Vec<Ready>,
     /// The tree's indent and branch glyphs.
@@ -293,7 +318,13 @@ impl Row {
 const STOP_CAP: usize = 48;
 const GAP: usize = 2;
 
-fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) -> String {
+fn paint(
+    mut rows: Vec<Row>,
+    color: bool,
+    ncols: usize,
+    cluster: Option<usize>,
+    gap: usize,
+) -> String {
     // The heat cluster aligns as two sub-columns — score under `heat`,
     // age under `age`, the `·` at one column for every row — derived here,
     // in the same layout pass that positions the cells, so heading and
@@ -367,6 +398,11 @@ fn paint(mut rows: Vec<Row>, color: bool, ncols: usize, cluster: Option<usize>) 
         let mut line = String::new();
         for g in &r.slots.far_left {
             line.push_str(&g.text);
+        }
+        // Gap between the far-left block and the tree prefix, paid only
+        // when the block exists (stamp/facts/path have an empty slot).
+        if !r.slots.far_left.is_empty() && gap > 0 {
+            line.push_str(&" ".repeat(gap));
         }
         line.push_str(&r.slots.level);
         // The name and its suffix are one painted run: the `/` belongs to
@@ -486,9 +522,10 @@ pub fn headings_expected(tree: &Node, cols: &Cols) -> bool {
 /// the root has nothing to say. Count cells here show their unit (this
 /// line sits *above* the headings; a file root has no headings line at
 /// all, so `𝓁` stays) — the 2026-08-14 `"767 lines"` wrap is the unit
-/// slot now. A file root uses the same count-cell grammar, and the same
-/// `heat · age` cluster form as a row, labelled `heat …` (no heading
-/// follows). Other unitless columns still carry their word (`perms`).
+/// slot now. A file root uses the same count-cell grammar. Under
+/// `format.heat = score` the cluster is labelled `heat …`; under density
+/// the root's heat is not shown (header lines don't pay the block). Other
+/// unitless columns still carry their word (`perms`, `age`).
 /// The 12-cell pad is trimmed: this line is not in the column grid.
 pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
     let cells = ready::far_right_header(tree, cols);
@@ -513,6 +550,7 @@ pub fn root_facts_line(tree: &Node, cols: &Cols) -> String {
                 "lines" | "bytes" => c.text.trim().to_string(),
                 "perms" => format!("perms {}", c.text),
                 "heat · age" => format!("heat {}", c.text),
+                "age" => format!("age {}", c.text),
                 _ => c.text,
             })
             .collect()
@@ -586,7 +624,7 @@ pub fn render(
     // The steward's feedback footer rides on stderr (main.rs) — the tool
     // speaking about itself, not the picture (stdout is data; Joseph,
     // 2026-08-22).
-    paint(rows, color, ncols, cols.cluster_idx())
+    paint(rows, color, ncols, cols.cluster_idx(), cols.far_left_gap)
 }
 
 fn emit(

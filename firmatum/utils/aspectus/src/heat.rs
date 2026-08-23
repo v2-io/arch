@@ -370,3 +370,64 @@ fn go(
         go(c, &child_abs, repo, obtained);
     }
 }
+
+/// Nine grades, two cells: blank, then the four density glyphs filling
+/// left to right (design/grid-cleanup.md decided pack, 2026-08-23).
+pub const DENSITY: [&str; 9] = ["  ", " ░", "░░", "░▒", "▒▒", "▒▓", "▓▓", "▓█", "██"];
+
+/// Linear map of a git-heat score onto grades 1–8 over [0, 2].
+///
+/// First cut, 2026-08-23: grade `k` (1..=8) is the half-open-on-the-left
+/// bin `((k−1)/4, k/4]` of the score — i.e. `ceil(score × 4)`, clamped
+/// to 1..=8. Any positive score is at least grade 1 (` ░`); scores above
+/// 2 cap at grade 8 (`██`). Score 0 / `None` is grade 0 (blank `  `) —
+/// absent never faked, and 0 reads as blank by construction.
+pub fn density_grade(score: Option<f64>) -> usize {
+    match score {
+        Some(s) if s > 0.0 => {
+            let g = (s * 4.0).ceil() as usize;
+            g.clamp(1, 8)
+        }
+        _ => 0,
+    }
+}
+
+pub fn density_cell(score: Option<f64>) -> &'static str {
+    DENSITY[density_grade(score)]
+}
+
+#[cfg(test)]
+mod density_tests {
+    use super::*;
+
+    #[test]
+    fn blank_at_zero_and_none() {
+        assert_eq!(density_grade(None), 0);
+        assert_eq!(density_grade(Some(0.0)), 0);
+        assert_eq!(density_grade(Some(-0.1)), 0);
+        assert_eq!(density_cell(None), "  ");
+    }
+
+    #[test]
+    fn any_positive_is_at_least_one() {
+        assert_eq!(density_grade(Some(0.0001)), 1);
+        assert_eq!(density_cell(Some(0.0001)), " ░");
+    }
+
+    #[test]
+    fn linear_bins_over_zero_to_two() {
+        assert_eq!(density_grade(Some(0.25)), 1); // (0, 0.25]
+        assert_eq!(density_grade(Some(0.2500001)), 2);
+        assert_eq!(density_grade(Some(0.5)), 2);
+        assert_eq!(density_grade(Some(1.0)), 4);
+        assert_eq!(density_grade(Some(1.75)), 7);
+        assert_eq!(density_grade(Some(2.0)), 8);
+        assert_eq!(density_cell(Some(2.0)), "██");
+    }
+
+    #[test]
+    fn capped_above_two() {
+        assert_eq!(density_grade(Some(2.1)), 8);
+        assert_eq!(density_grade(Some(99.0)), 8);
+    }
+}

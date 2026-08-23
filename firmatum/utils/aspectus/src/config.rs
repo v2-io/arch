@@ -24,13 +24,14 @@ pub const CALLER_FLAG: &str = "--caller";
 pub const DEFAULTS_TOML: &str = include_str!("../defaults.toml");
 
 /// Positions whose paint has not landed yet (design/lattice-2.md).
-/// Far-left paints git-status (step 5); mtime/bytes compact forms in that
-/// list are still unbuilt and named per-entry. Supplement has no tenant.
+/// Far-left paints heat (density) and git-status (step 6); mtime/bytes
+/// compact forms in that list are still unbuilt and named per-entry.
+/// Supplement has no tenant.
 pub const UNBUILT_POSITIONS: &[&str] = &["supplement"];
 
 /// Far-left facts this binary can paint. Listed members not in this set
 /// show as `(unbuilt: …)` on `aspectus config`.
-pub const FAR_LEFT_PAINTABLE: &[&str] = &["git-status"];
+pub const FAR_LEFT_PAINTABLE: &[&str] = &["heat", "git-status"];
 
 /// Layout list keys, in the order `aspectus config` prints them.
 const LAYOUT_KEYS: &[&str] = &[
@@ -48,6 +49,7 @@ const COLUMN_FACTS: &[(&str, &str)] = &[
     ("bytes", "columns.size"),
     ("mtime", "columns.mtime"),
     ("heat", "columns.heat"),
+    ("age", "columns.heat"),
     ("permissions", "columns.permissions"),
     ("owner", "columns.owner"),
     ("filekind", "columns.filekind"),
@@ -340,6 +342,7 @@ fn won_unit(key: &str) -> Option<&'static str> {
         "lines" => Some("lines"),
         "walk" => Some("names"),
         "depth" => Some("generations"),
+        "layout.far-left-gap" => Some("spaces"),
         _ => None,
     }
 }
@@ -647,6 +650,8 @@ pub fn env_values() -> BTreeMap<String, String> {
         ("ASPECTUS_COLUMNS_LATEST_SHA", "columns.latest-sha"),
         ("ASPECTUS_FORMAT_SIZE", "format.size"),
         ("ASPECTUS_FORMAT_MTIME", "format.mtime"),
+        ("ASPECTUS_FORMAT_HEAT", "format.heat"),
+        ("ASPECTUS_LAYOUT_FAR_LEFT_GAP", "layout.far-left-gap"),
         ("ASPECTUS_FORMAT_LINE_COUNT", "format.line-count"),
         ("ASPECTUS_FORMAT_CENSUS", "format.census"),
         ("ASPECTUS_FORMAT_OWNER", "format.owner"),
@@ -1106,7 +1111,7 @@ fn render_layout(res: &Resolved) -> String {
 }
 
 /// Whole-position unbuilt (`supplement`) vs per-entry (`far-left` once
-/// git-status paints: `(unbuilt: mtime, bytes)`).
+/// heat and git-status paint: `(unbuilt: mtime, bytes)`).
 fn layout_unbuilt_mark(short: &str, facts: &[String]) -> String {
     if UNBUILT_POSITIONS.contains(&short) {
         return "  (unbuilt position)".to_string();
@@ -1168,6 +1173,14 @@ mod tests {
         assert_eq!(
             p.scalars.get("format.mtime").map(String::as_str),
             Some("signa")
+        );
+        assert_eq!(
+            p.scalars.get("format.heat").map(String::as_str),
+            Some("density")
+        );
+        assert_eq!(
+            p.scalars.get("layout.far-left-gap").map(String::as_str),
+            Some("2")
         );
         assert_eq!(
             p.scalars.get("format.bytes").map(String::as_str),

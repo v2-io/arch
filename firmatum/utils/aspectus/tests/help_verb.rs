@@ -173,6 +173,10 @@ fn help_lists_every_accepted_flag() {
         "config",
         "config defaults",
         "[layout]",
+        "SIGNA",
+        "layout.far-left-gap",
+        "░",
+        "⬤",
     ] {
         assert!(page.contains(needle), "help missing {needle}");
     }

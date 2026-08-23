@@ -5,6 +5,9 @@
 //! Re-blessed 2026-08-23: config-drift header — this file pins heat off
 //! via env, so `columns.heat = off (env)` appears; invocations that set
 //! `--depth`/`--lines` away from default add those flags too.
+//! Re-blessed 2026-08-23: heat-density + SIGNA + far-left-gap. Heat stays
+//! off (wall-clock ages would rot); the git-repo golden gains the gap
+//! (2 spaces) in front of git-status. Non-git goldens must not move.
 //!
 //! These fixtures exercise the whole row grammar at once —
 //! furniture, facets, dir census, leaf census, symlinks (one broken), a
@@ -257,6 +260,8 @@ fn git(dir: &Path, args: &[&str]) {
 /// column), the ignored remainder, and `[has: git, rust]`.
 /// Re-blessed 2026-08-22: git-status far-left slice.
 /// Re-blessed 2026-08-22: untracked-dir ⁇; stamp/facts/path skip far-left.
+/// Re-blessed 2026-08-23: far-left-gap (heat off in this golden, so the
+/// block is still git-status + 2-space gap, not the density cells).
 #[test]
 fn git_repo_grid() {
     let (dir, xdg) = fresh("git");

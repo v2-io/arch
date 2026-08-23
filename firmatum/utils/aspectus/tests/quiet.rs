@@ -261,9 +261,17 @@ fn recent_mtime_speaks() {
         .unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    // mtime speaks in its relative default form now (2026-08-14).
-    assert!(line_of(&o, "hot.md").contains("ago"), "recent speaks: {o}");
-    assert!(!line_of(&o, "old.md").contains("ago"), "old silent: {o}");
+    // mtime speaks in SIGNA (2026-08-23); a just-written file is seconds-grain.
+    let hot = line_of(&o, "hot.md");
+    assert!(
+        hot.contains('·') || hot.contains('╶') || hot.contains('╌') || hot.contains('╍'),
+        "recent speaks: {o}"
+    );
+    let old = line_of(&o, "old.md");
+    assert!(
+        !old.contains('·') && !old.contains('╶') && !old.contains('╌') && !old.contains('╍'),
+        "old silent: {o}"
+    );
 }
 
 /// Subfeature 9: a node listed at --lines 4 and --lines 0 carries the same

@@ -234,11 +234,12 @@ fn explicit_sort_key_implies_its_column() {
     // not `1B`. The heading is the evidence the column was implied on.
     assert!(o.contains("bytes"), "size evidence on the line: {o}");
     let (_, o, _) = run(&dir, &xdg, &["--depth", "1", "--sort", "recency"]);
-    // The implied mtime column speaks in the relative default (2026-08-14).
-    assert!(
-        o.matches("ago").count() > 1,
-        "mtime evidence when asked: {o}"
-    );
+    // The implied mtime column speaks in SIGNA (2026-08-23).
+    let signa = o.matches('⬤').count()
+        + o.matches('◉').count()
+        + o.matches('◎').count()
+        + o.matches('○').count();
+    assert!(signa > 1, "mtime evidence when asked: {o}");
 }
 
 /// Total order: byte-identical across runs regardless of creation order.

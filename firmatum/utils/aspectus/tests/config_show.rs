@@ -223,6 +223,22 @@ fn config_names_the_embedded_layer() {
         o.contains("(unbuilt:") && o.contains("mtime") && o.contains("bytes"),
         "far-left compact forms still unbuilt: {o}"
     );
+    let far = o
+        .lines()
+        .find(|l| l.trim_start().starts_with("far-left"))
+        .expect(&o);
+    assert!(
+        far.contains("heat") && far.contains("(unbuilt: mtime, bytes)"),
+        "heat paints; mtime/bytes compact forms still unbuilt: {far}"
+    );
+    assert!(
+        !far.contains("unbuilt: heat"),
+        "heat must not be in the unbuilt mark: {far}"
+    );
+    assert!(
+        o.contains("layout.far-left-gap = 2 spaces"),
+        "gap is on won: {o}"
+    );
     assert!(
         o.contains("(unbuilt position)"),
         "supplement is still an unbuilt position: {o}"

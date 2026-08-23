@@ -84,3 +84,40 @@ Not in this plan (undecided): subgroup-subject form · census delimiter · mass/
 - **`two_level::twice_same_tree` stamp-strip.** Pre-existing flake: strip required `"  "` on the stamp line, so two runs that straddled a second failed. The test now drops line 1. Not a render change.
 
 **The two silences, decided 2026-08-22 (design/grid-cleanup.md §Step 5 landed) and now in the binary.** Untracked dirs show `⁇`; stamp/facts/path skip the cell. Remaining adjacent (not acted on): dirty-submodule / typechange-to-dir letters; `-uall` for children of an untracked dir; look-wide vs per-row for mixed trees (non-git siblings still pay the blank cell). Two `git-status` rows in lattice-2 (Initial: `sort git`; Time/aliveness: `sort —`) — one cell was painted; sort remains unbuilt.
+
+## Step 6 landed — heat density (2026-08-23)
+
+**What the binary does now.** Heat paints as a two-cell density block at far-left, first in the block, before git-status. Nine grades `  ` · ` ░` · `░░` · `░▒` · `▒▒` · `▒▓` · `▓▓` · `▓█` · `██`; blank outside git (block absent) and for score 0 / unscored (cells paid, blank). Any positive score is at least ` ░`; linear over [0, 2] into grades 1–8, capped at `██`. A directory's grade is its rolled-up heat (max of leaves, as today). The far-right cluster is `age` alone under an `age` heading (SIGNA by default). `format.heat = score` restores today's `score · age` cluster on the far-right (path kept). `layout.far-left-gap` (default 2, env `ASPECTUS_LAYOUT_FAR_LEFT_GAP`) is spaces between the block and the tree prefix, paid only when the block exists — headings and tree rows pay it; stamp / facts / path do not. JSON heat stays a number. `aspectus config` paints heat on far-left (no longer in `(unbuilt: …)`); mtime/bytes compact forms stay unbuilt. Help teaches the density pack next to git-status and SIGNA in one compact table.
+
+**Score → grade mapping (first cut).** Grade `k` (1..=8) is the bin `((k−1)/4, k/4]` of the score — `ceil(score × 4)`, clamped to 1..=8. Equivalently bins of width 0.25 on [0, 2]: `(0, 0.25] → ░`, `(0.25, 0.50] → ░░`, …, `(1.75, 2] → ██`, `> 2 → ██`. Score 0 / `None` → blank `  `. Joseph corrects on contact.
+
+**SIGNA (same hour, design/phenom-format.md §Decided).** `format.mtime = signa*` (relative / iso-8601 / epoch kept). Mixed-radix from the zoetica table; two most-significant unit ranks; seconds-grain (`· ╶ ╌`) omitted when a minute or larger is present; ≥10 years is `⬤` ×9 capped; right-aligned under `age`; JSON stays iso-8601. Month/year seconds match `rel_age` (2_629_746 / 31_556_952). 0 elapsed renders `·` (just now) so a speaking mtime that is "now" is not blank.
+
+- **`src/heat.rs`.** `density_grade` / `density_cell` / the nine-grade table. Unit tests for the bins.
+- **`src/signa.rs` (new).** The run. Unit tests against the table-matching primary examples, omit-seconds, two-unit bound, year cap.
+- **`src/ready.rs`.** Far-left paints heat then git-status; far-right is `age` under density or the cluster under score.
+- **`src/columns.rs`.** `HeatFmt`, `TimeFmt::Signa`, `far_left_gap`, gap in paint, cluster alignment only on score.
+- **`src/config.rs`.** `FAR_LEFT_PAINTABLE` includes `heat`; `age` maps to `columns.heat` (one toggle); env keys; won unit `spaces` on the gap.
+- **`src/facts.rs`.** Heat position `far-left`, formats `density* / score`; mtime formats `signa* / relative / iso-8601 / epoch`.
+- **Help.** Density pack + SIGNA glyph table.
+- **Tests.** Snapshots: git-repo re-blessed (gap; heat still off so density cells are not in the golden — ages would rot); kitchen / census / leaf / columns-on did not move.
+
+**Calls made**
+
+- **0 elapsed is `·`, not blank.** A speaking quiet-mtime of "now" would otherwise look silent.
+- **Two-unit truncation is by unit rank, not glyph count.** 3h 15m is `═══━` (the primary's full-run example `═══━╍╍╍╍╍` is three ranks; the 5 minutes drop). 1y 5mo is `⬤◉◉` (4 of 5 months), matching the primary's two-unit example.
+- **7 seconds is `╶··`, not seven dots.** The table's max-count on `·` is 4; mixed-radix is the law. The primary's `·······` is a full-run illustration that exceeds it.
+- **`age` in `layout.far-right` shares the `columns.heat` toggle.** `columns.heat = off` removes density *and* the age column (today's "off removes the cluster"), which is why snapshots pinning heat off stay time-stable.
+- **Quiet mtime uses `format.mtime` too** — recent files outside git now speak SIGNA in the mtime column. Same format, different place.
+
+**Root facts / file-as-PATH (asked to say so).** Header lines do not pay the density block. With density the root's *heat* is not shown as a number (children's blocks carry aliveness). The facts line *does* still show unlabeled SIGNA age (`━━╍╍  [has: …]` in dogfood) — not heat; I didn't invent a label. A file-as-PATH under density shows `age <signa>` and no heat at all (no block on the header, no children). Flagged rather than invented.
+
+**Flagged for the design (not acted on)**
+
+- **Unlabeled SIGNA on the root facts line** is cryptic next to `[has:…]` (`━━╍╍` with no heading above it). Previously the cluster was somewhat self-labeling (`0.71 · 0m ago`).
+- **File-as-PATH under density has no heat at all.** If that's wrong, the header would have to pay the block, against the copied-path rule, or the facts line would have to carry the two cells.
+- **Two-unit coarsening at hour/minute** (9.6h → `⚬⚬═` = 9h). The dropped remainder is the spec; worth knowing it is visible in dogfood.
+- **Primary examples vs column form** as above (7s, 3h15m).
+- **mtime compact at far-left** still unbuilt (`(unbuilt: mtime, bytes)`).
+
+Suite: 314 tests green (302 + 11 lib (4 density + 7 SIGNA) + 1 score-path integration). Not committed, not `cargo install`.
