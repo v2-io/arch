@@ -4,8 +4,11 @@
 
 ## The question this paper answers
 
-- Where do beliefs and intents live in an LLM agent — and what follows from the fact that, today, the honest answer is "nowhere you can point to"?
-- Specifically: why the current architectural coupling of the two is (a) not inevitable, (b) not principled, and (c) hiding both certification and deeper theoretical understanding of sycophancy, prompt injection, unintentional dishonesty, and adjacent alignment concerns.
+1. Where do beliefs and intents live in an LLM agent — and what follows from the fact that, today, the honest answer is "nowhere you can point to"?
+2. Specifically: why the current architectural coupling of the two is:
+    - (a) not inevitable;
+    - (b) not principled; and
+    - (c) hiding both certification and deeper theoretical understanding of sycophancy, prompt injection, unintentional dishonesty, and adjacent alignment concerns.
 
 ## Pedagogical order (constructive, not rebuttal-shaped)
 

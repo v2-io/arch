@@ -25,6 +25,9 @@ Joseph's four (internal-reality-model / intent / action-space-and-orientation / 
 
 ## Circle-back triggers
 
-- Spike lands → revisit §1's spine-upgrade decision and whether the quotient construction appears; fold result into outline.md §2.
+- ~~Spike lands~~ **Landed (asf 4add071):** conjecture refuted as stated (frozen-objective counterexample); replaced by `#deriv-decomposition-uniqueness` — interventions force the quotient-by-goal-variation; spine upgrades to "separation underdetermines; interventions force; the counterfactual definition is the unique completion." *All per the spike author's report — unverified tier until the two steps below.*
+- **4add071 verification adjudicated** (audit agent in flight) → then the drafting mind **reads the changed segments and derivations first-hand** (segments/appendices, not the reports) before the theorem is load-bearing in any draft. Joseph's explicit instruction, 2026-08-24; no need to wait on the distributional spike or other agents for this.
+- Novelty search **done** → `novelty-decomposition-uniqueness.md`: core theorem unclaimed; underdetermination half has ancestors (Armstrong–Mindermann 2018, Biehl/Virgo line, Lewis) to cite as such; Kalman-realization + interventional-CRL near-misses to pre-empt; Buchholz 1994 lumpability cite to verify before print.
+- Distributional-analog spike (in flight) → fold per its own landing.
 - (b) substrate pass → concordance offer above; κ̂ confound notes; selection-vs-processing precise form.
 - Hafez markdown finishes → verify IDT numbers before any §4/§6 use.
