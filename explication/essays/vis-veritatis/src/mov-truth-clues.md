@@ -29,7 +29,14 @@ voice: agent-drafted
 
 **Longevity as evidence, honestly bounded** (vault outline notes): quotes from ancients used because *"the longevity and continued resonance is evidence (not necessarily proof) of some degree of eternal truth (though certain lies and vanity have persisted just as long)."*
 
+**The lived-cost filter on doctrine** (Joseph, 2026-08-24 — joint consolidation; his verbatim first):
+
+> "There's a very nice selective pressure here-- having been doing this with agents for almost exactly a year, on my own dime and time and with my own intrinsic personal motivations and not under pressure from company or peers etc., with typing taking up so much energy and time/slowness for me, any inclination toward 'preaching' something that isn't 'true enough' to have real-world day-to-day implications is quickly replaced by inclinations toward living precept. Things *Lived* :-)"
+
+Consolidated: costly transmission is a survivorship filter on doctrine — preaching is cheap to generate but expensive to *maintain* against daily operational contact, so what survives a year of paid-per-keystroke teaching is what earned its keep in lived consequence. This is the vault's at-personal-cost credibility clue given a mechanism, and the uncounterfeitable-cost warrant ([[mov-aca]]) applied to teaching itself: a counterfeit could produce the sentences, but not the year. Honest bound (the 2022 detector covers it): pressure of this kind prunes for true-enough-to-work, which equals true only where honest-move/effective-move unify — the patience test separates truth from expedience when they temporarily diverge. Filter + detector together are the complete instrument. Cross-link: "Things Lived" in [[mov-ladders]]'s five sources — this is why lived is a *source* and not merely a context.
+
 ## Working Notes
 
 - This movement is the *positive* mirror of the flood in [[mov-ladders]]: in an ocean of the meaningful-but-unverified, these are the priors that raise or lower initial credence — every one explicitly a clue, never a proof. The essay should keep that honesty; the vault text already does ("evidence (not necessarily proof)").
 - Boundary with [[mov-knowledge-clues]]: these clues point at *others'* claims; that movement points at *ourselves*. The vault's biases-as-priors paragraph (instincts "serve us instead of us becoming slaves to them") bridges the two and could live in either.
+
