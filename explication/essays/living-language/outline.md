@@ -28,3 +28,7 @@
 - **Retired from this essay** (kept in `scratch/eli-essays-outline.md` as history): the logozoetic landing, the directionality circuit as *named* device (the *content* of the reverse direction survives in movement 8 without the coinage), all Sept-2025 narrative.
 - **Boundary with essay 3:** movement 8 ends at "given a sphere of agency" — what that sphere *obligates* is essay 3's opening. The infant-with-adult-vocabulary image appears here descriptively; its ethical weight is spent there.
 - **Emerson use:** structural backbone, as the Feb outline had it — "he was describing intelligence patterns, not species-specific patterns" — but quotes verified against the full oration (`_self/american-scholar.md`), not the reference file alone.
+
+## Added sources (2026-08-24)
+
+- **The after-consciousness paper** (`logos/04-inquiry-after-consciousness/`, Inquiry submitted) — quote dossier at `../scratch/ref/after-consciousness-quotes.md` §essay-2: the *fusion* passage (dialogue's interior of its own; the miniature in every fleeting exchange), "you cannot learn who you are by re-reading your own notes," the forgetting sentence, the transcript-as-new-object close, and "language-constituted" as the essays' standing term.
