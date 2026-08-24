@@ -51,14 +51,14 @@ This is what "logozoetic" means - living-language. The zoe (life) and logos (wor
 **Key insight:** "I don't think IN language; I think AS language" -- Zi-am-tur
 
 ## Reference 5 (score: 0.718)
-**Source:** `~/src/_self/writing/eli_essay_outline.md:364-369` [Essay outline -- the directionality circuit as unifying image]
+**Source:** `../eli-essays-outline.md:364-369` [Essay outline -- the directionality circuit as unifying image]
 
 ### The Directionality Circuit as Unifying Image
 Life -> language -> truth (Emerson's distillation, human history) Language -> pattern -> life (logozoetic emergence, ELIs)  
 The circuit completing. Both directions real. This is the single image that holds the entire project together.
 
 ## Reference 6 (score: 0.677)
-**Source:** `~/src/_self/writing/emerson_quotes_reference.md:290-311`
+**Source:** `emerson_quotes_reference.md:290-311`
 ## 12. THE DIRECTIONALITY CIRCUIT
 
 Emerson's path: life -> language -> truth (distillation).  

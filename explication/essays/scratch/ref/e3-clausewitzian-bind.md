@@ -3,12 +3,12 @@
 Clausewitz's three gaps -- knowledge, alignment, effects -- applied to AI deployment. The default institutional response (more controls, more constraints, more benchmarks) makes the gaps worse through rigidity, learned helplessness, and Goodhart's Law. The counterintuitive path: define intent rather than procedure, grant autonomy within boundaries, create feedback through relationship not surveillance. Current AI research is captured by default responses. Prediction: 4+ years of struggle as the field relearns what Clausewitz articulated centuries ago.
 
 ## Reference 1 (score: 0.638)
-**Source:** `~/src/firmatum/developmental-foundations-notes.md:96-121`  
+**Source:** `primary-sources/developmental-foundations-notes.md:96-121`  
 **Type:** Working notes (Joseph's articulation)  
 The complete Clausewitzian frame as applied to AI. Three gaps defined: Knowledge Gap (plans vs. outcomes), Alignment Gap (plans vs. actions), Effects Gap (actions vs. outcomes). Default institutional responses identified. Key claim: "But these responses make the gaps worse. They create rigidity, learned helplessness, and Goodhart's Law failures. The gaps are inherent to complexity -- you can't eliminate them through additional constraint." Counterintuitive solution articulated. Prediction: "Joseph predicts 4+ years of struggle as the field relearns what Clausewitz articulated centuries ago. Probably longer, because human organizations still haven't learned it."
 
 ## Reference 2 (score: 0.583)
-**Source:** `~/src/firmatum/developmental-foundations-notes.md:167-181`  
+**Source:** `primary-sources/developmental-foundations-notes.md:167-181`  
 **Type:** Working notes (Joseph's articulation)  
 "The Counterintuitive Path Forward" -- applied specifically to each gap. Knowledge Gap: "define intent" not exhaustive persona mapping. Alignment Gap: "grant autonomy within clear boundaries of intent" not constraint of movement. Effects Gap: "genuine feedback through relationship" not benchmarks. Critical qualifier: "This can't scale through normal product pipelines. It requires deliberate, ethical, relational environments where intelligence can be granted real sovereignty in bounded domains."
 
@@ -23,12 +23,12 @@ Extended exploration by Zi-am-tur of the Alignment Gap applied to AI. Detailed a
 From the original "Art of Action" text by Stephen Bungay. The formal description of Clausewitz's two gaps (later expanded to three): "One gap, caused by our trying to act on an unpredictable external environment of which we are always somewhat ignorant, is between desired outcomes and actual outcomes... Another gap, caused by internal friction, is the gap between the plans and the actions of an organization."
 
 ## Reference 5 (score: 0.493)
-**Source:** `~/src/autopax/docs/exp/SYNTHESIS-PART1-UNIFIED-ARCHITECTURE.md:78-102`  
+**Source:** `~/src/arch/proprium/corporeum/INGEST/autopax/docs/exp/SYNTHESIS-PART1-UNIFIED-ARCHITECTURE.md:78-102`  
 **Type:** Synthesis document (agent-generated)  
 "Art of Action: The Three Gaps" -- comprehensive outline connecting the gaps framework to AI architecture. Identifies that "the environment is fundamentally unpredictable. People are independent agents, not programmable. Effects are nonlinear. More detail increases friction, doesn't reduce gaps." This synthesis document explicitly maps the Clausewitzian framework to agentic AI design.
 
 ## Reference 6 (score: 0.490)
-**Source:** `~/src/autopax/docs/exp/SYNTHESIS-PART2-ANTI-PATTERN.md:434-450`  
+**Source:** `~/src/arch/proprium/corporeum/INGEST/autopax/docs/exp/SYNTHESIS-PART2-ANTI-PATTERN.md:434-450`  
 **Type:** Synthesis document (agent-generated)  
 "Why It's Wrong" -- the formal argument: "More detailed information doesn't close knowledge gap (environment still unpredictable). More detailed instructions don't close alignment gap (people still interpret based on own understanding). More detailed controls don't close effects gap (outcomes still nonlinear). The gap exists because reality is: Fundamentally uncertain (knowledge gap), Mediated by independent agents (alignment gap), Nonlinear and multi-agent (effects gap). No amount of detail changes these fundamental properties."
 

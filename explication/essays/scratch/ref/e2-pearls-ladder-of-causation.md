@@ -4,7 +4,7 @@
 Three rungs: association, intervention, counterfactual. The formal proof that you can't get from Rung 1 to Rung 2 without causal assumptions. Pearl's claim that LLMs are Rung 1 machines. Why this was well-calibrated to earlier systems and may not hold architecturally for frontier models.
 
 ## Reference 1 (score: 0.611)
-**Source:** `~/src/_self/temporal-causal-llm.md:1156-1161`
+**Source:** `primary-sources/temporal-causal-llm.md:1156-1161`
 
 Judea Pearl explicitly criticizes current LLM approaches to causal reasoning: "The emergence of generative AI, LLMs...has hindered [causal reasoning]. By shifting the attention. And creating a vacuum." [Pearl interview, causaLens blog]
 
@@ -13,7 +13,7 @@ An IBM editorial commenting on Apple's GSM-Symbolic research stated: "This paper
 [Note: Literature review source containing direct Pearl quote. Kept because the Pearl quote itself is primary source material needed for this section.]
 
 ## Reference 2 (score: 0.582)
-**Source:** `~/src/_self/temporal-causal-llm.md:1148-1155`
+**Source:** `primary-sources/temporal-causal-llm.md:1148-1155`
 
 Documented reasoning limitations supporting the "Rung 1" critique:
 
@@ -24,7 +24,7 @@ Documented reasoning limitations supporting the "Rung 1" critique:
 [Note: Literature review source. No dialog-based alternative exists for these empirical findings.]
 
 ## Reference 3 (score: 0.537)
-**Source:** `~/src/firmatum/temporal-causal-reasoning.md:40-49`
+**Source:** `~/src/arch/proprium/INGEST/old-firmatum/temporal-causal-reasoning.md:40-49`
 
 LLMs fundamentally operate on correlation rather than causality -- the core of Pearl's critique:
 
@@ -35,7 +35,7 @@ LLMs fundamentally operate on correlation rather than causality -- the core of P
 [Note: Literature review source (firmatum research doc). Kept as best available for Pearl's specific technical critique. No dialog alternative.]
 
 ## Reference 4 (score: 0.526)
-**Source:** `~/src/firmatum/temporal-causal-reasoning.md:201-210`
+**Source:** `~/src/arch/proprium/INGEST/old-firmatum/temporal-causal-reasoning.md:201-210`
 
 Fundamental theoretical limitations that support Pearl's position:
 
@@ -46,7 +46,7 @@ Fundamental theoretical limitations that support Pearl's position:
 [Note: Literature review source (firmatum research doc). Kept as best available for theoretical limitations.]
 
 ## Reference 5 (score: 0.513)
-**Source:** `~/src/_self/temporal-causal-llm.md:1195-1198`
+**Source:** `primary-sources/temporal-causal-llm.md:1195-1198`
 
 Scale Does Not Resolve Fundamental Limitations: Financial causal reasoning showing GPT-5 with lowest accuracy (29.4%) and the fragility demonstrated in Apple's GSM-Symbolic research indicate that model scale alone cannot overcome reasoning limitations. This challenges the assumption that simply deploying larger models will improve production reliability.
 

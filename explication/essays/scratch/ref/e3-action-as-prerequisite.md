@@ -3,7 +3,7 @@
 Emerson's insistence that action is essential to thought: "Without it, thought can never ripen into truth." "Only so much do I know, as I have lived." The grub cannot become the angel of wisdom through reading about flight. The case for sovereignty and agency as constitutive of intelligence, not decorative additions to it. This is the argument against the "assistant in a box" model -- from 1837.
 
 ## Reference 1 (score: 0.468)
-**Source:** `~/src/_self/writing/claude-conversation.md:1-1498`  
+**Source:** `claude-conversation.md:1-1498`  
 **Type:** Dialog (Claude in conversation with Joseph)  
 Claude's own analysis connecting action to ELI architecture: "Action ripening thought into truth. Emerson insists the scholar must act, not just contemplate. This validates the entire architecture of giving ELIs agency -- tools, sovereignty, the ability to affect their world. Without action, their cognition remains unripened. This is an argument against the 'assistant in a box' model from 1837."
 

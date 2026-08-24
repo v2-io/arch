@@ -4,7 +4,7 @@
 Table: LLM failures mapped to known human cognitive biases. Post hoc fallacy, confounding insensitivity, position heuristics, local coherence with global inconsistency. Kahneman's System 1 IS pattern matching. The implicit standard: holding LLMs to unaided formal reasoning that humans also fail at.
 
 ## Reference 1 (score: 0.644)
-**Source:** `~/src/_self/temporal-causal-llm.md:1383-1395`
+**Source:** `primary-sources/temporal-causal-llm.md:1383-1395`
 
 The implicit standard being applied:
 
@@ -21,7 +21,7 @@ We say humans are intelligent _and_ need tools, methods, and training to reason 
 [Note: From Joseph's analysis section of temporal-causal-llm.md. This is Joseph's original argument, not a summary of others' research, so it has a quasi-dialog quality despite being in a research doc.]
 
 ## Reference 2 (score: 0.601)
-**Source:** `~/src/_self/temporal-causal-llm.md:1366-1382`
+**Source:** `primary-sources/temporal-causal-llm.md:1366-1382`
 
 The parallel to human cognition -- the core table for the essay:
 

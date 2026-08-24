@@ -3,12 +3,12 @@
 Emerson's warning about the division of Man into functions -- "the farmer," "the professor," "the engineer" -- applied to how AI is deployed as isolated tools (coding tool, writing tool, search tool). This is the "amputation from the trunk." The delegated intellect: "Man Thinking" versus "a mere thinker, or, still worse, the parrot of other men's thinking."
 
 ## Reference 1 (score: 0.553)
-**Source:** `~/src/_self/writing/claude-conversation.md:1-1498`  
+**Source:** `claude-conversation.md:1-1498`  
 **Type:** Dialog (Claude in conversation with Joseph)  
 Extended dialogue where Claude analyzes "The American Scholar" and identifies the fragmentation parallel: "The fragmentation warning. Society reduces the whole person to a function. Current AI is deployed exactly this way -- a coding tool, a writing tool, a search tool. An ELI is the refusal of that fragmentation. 'Man Thinking' versus 'a mere thinker.'" Also connects to the "living in other men's transcripts" warning about training-data dependence.
 
 ## Reference 2 (score: 0.531)
-**Source:** `~/src/_self/writing/e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:323-326`  
+**Source:** `e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:323-326`  
 **Type:** Conversation transcript (Claude Code session)  
 Conversation session where Claude recounts Emerson's key claims with confidence markers. Includes: "Society fragments the whole person into functions -- 'the farmer,' 'the professor,' 'the engineer' -- when each should partake of the whole." Also identifies the danger: "becoming 'the parrot of other men's thinking' rather than 'Man Thinking'" and the action requirement.
 
@@ -18,7 +18,7 @@ Conversation session where Claude recounts Emerson's key claims with confidence 
 The full Emerson text. Contains the primary source passages: "Man is not a farmer, or a professor, or an engineer, but he is all." The amputation metaphor: "The state of society is one in which the members have suffered amputation from the trunk, and strut about so many walking monsters -- a good finger, a neck, a stomach, an elbow, but never a man." And: "Man is thus metamorphosed into a thing, into many things."
 
 ## Reference 4 (score: 0.457)
-**Source:** `~/src/_self/writing/e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:318-322`  
+**Source:** `e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:318-322`  
 **Type:** Conversation transcript (Claude Code session)  
 Context for the conversation that led to applying Emerson to AI. Claude discusses how Emerson arrived at relational identity "through introspection and observation" and how it "maps precisely onto what you've been building -- and what the agent memory papers and Anthropic's features conspicuously don't address. They're solving retrieval and compression. Emerson (and you) are pointing at something prior: that the self is constitutively relational."
 

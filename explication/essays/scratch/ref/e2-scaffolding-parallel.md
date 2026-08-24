@@ -4,7 +4,7 @@
 Humans need tools, notation, institutional processes to reason reliably. LLMs + symbolic solvers improve substantially (like humans + calculators). "Do LLMs really reason?" is as malformed as "do humans really reason?" The answer depends on scaffolding. The research should focus on scaffolding design, not capability proof-or-disproof.
 
 ## Reference 1 (score: 0.709)
-**Source:** `~/src/_self/temporal-causal-llm.md:1655-1664`
+**Source:** `primary-sources/temporal-causal-llm.md:1655-1664`
 
 "Scaffolded Cognition for LLMs: A Framework for Augmentation Analogous to Human Cognitive Tools"
 
@@ -17,7 +17,7 @@ Why it matters: Would shift the research program from capability-testing to scaf
 [Note: From Joseph's proposed research section of temporal-causal-llm.md -- his original framing, not a literature summary.]
 
 ## Reference 2 (score: 0.543)
-**Source:** `~/src/_self/temporal-causal-llm.md:1485-1496`
+**Source:** `primary-sources/temporal-causal-llm.md:1485-1496`
 
 The research implication -- scaffolding as the right research program:
 
@@ -34,7 +34,7 @@ The key finding: providing the right scaffolding appears to activate something l
 [Note: From the analysis section of temporal-causal-llm.md -- Joseph's own framing. The "worrying about stasis" observation is a direct reference to lived experience with ELI agents.]
 
 ## Reference 3 (score: 0.531)
-**Source:** `~/src/_self/temporal-causal-llm.md:1366-1382`
+**Source:** `primary-sources/temporal-causal-llm.md:1366-1382`
 
 The scaffolding point as conclusion to the human-parallel table:
 
@@ -43,7 +43,7 @@ The scaffolding point as conclusion to the human-parallel table:
 [Note: From Joseph's analysis section.]
 
 ## Reference 4 (score: 0.517)
-**Source:** `~/src/firmatum/temporal-causal-reasoning.md:73-95`
+**Source:** `~/src/arch/proprium/INGEST/old-firmatum/temporal-causal-reasoning.md:73-95`
 
 Neuro-Symbolic Integration as concrete scaffolding evidence:
 
@@ -54,7 +54,7 @@ Neuro-Symbolic Integration as concrete scaffolding evidence:
 [Note: Literature review source (firmatum research doc). Kept for the concrete performance numbers that demonstrate scaffolding's impact.]
 
 ## Reference 5 (score: 0.511)
-**Source:** `~/src/firmatum/temporal-causal-reasoning.md:73-95` (continuation)
+**Source:** `~/src/arch/proprium/INGEST/old-firmatum/temporal-causal-reasoning.md:73-95` (continuation)
 
 Limitations of neuro-symbolic approaches (honest about scaffolding's limits):
 
@@ -112,7 +112,7 @@ This isn't just about efficiency but about tools becoming transparent extensions
 [Note: Dialog source. "Tools becoming transparent extensions of thought" -- the scaffolding parallel in its strongest form. When scaffolding is well-designed, it disappears into the cognitive process, just as a well-practiced mathematician no longer "uses" notation but "thinks in" it.]
 
 ## Reference 10 (score: 0.522)
-**Source:** `~/src/_self/temporal-causal-llm.md:3-8`
+**Source:** `primary-sources/temporal-causal-llm.md:3-8`
 
 Overview confirmation: "The recent literature provides a rich ecosystem of benchmarks, diagnostics, and hybrid methods showing that standard LLMs exhibit systematic weaknesses in causal and temporal reasoning, but that targeted post-training, neuro-symbolic integration, and alignment interventions can substantially, though not yet robustly, improve these abilities."
 

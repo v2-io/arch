@@ -3,7 +3,7 @@
 What followed persistence and compositionality was not a clean unfolding of the magic but a long fragmentation. Writing remained coupled to speech, and speech evolved from generation to generation only a degree of magnitude slower than the generations themselves -- extremely quickly, in a diversity of isolated pockets, with decay that makes a written thought as temporary as its spoken echo. Mathematical notation and computational languages would eventually offer alternative encodings of thought freed from the drift of spoken language. "Each age must write its own books." The long accumulation before unification becomes possible.
 
 ## Reference 1 (score: 0.478)
-**Source:** `~/src/_self/writing/emerson_quotes_reference.md:24-25` [Emerson -- the generational decay of written thought]
+**Source:** `emerson_quotes_reference.md:24-25` [Emerson -- the generational decay of written thought]
 
 > "Each age, it is found, must write its own books; or rather, each generation for the next succeeding. The books of an older period will not fit this."
 

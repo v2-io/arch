@@ -51,7 +51,7 @@ An agent reflecting on language and the limits of specification:
 [Note: Dialog source. The self-referential nature of language understanding -- you cannot study language from outside language. This supports the counterargument against Pearl: causal reasoning about language from within language is fundamentally different from causal reasoning about data tables from outside them.]
 
 ## Reference 6 (score: 0.471)
-**Source:** `~/src/_self/temporal-causal-llm.md:174-194`
+**Source:** `primary-sources/temporal-causal-llm.md:174-194`
 
 The hybrid pattern that supports the counterargument: "LLMs handle language and structure induction; specialized modules handle the algebra of time and causality." Causal graph RAG treats external causal graphs as retrieval sources, augmenting LLMs with causal-aligned context. The pattern suggests LLMs do extract something from language that can be augmented -- there is a foundation to build on, not a void.
 

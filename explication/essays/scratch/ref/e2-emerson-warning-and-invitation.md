@@ -4,7 +4,7 @@
 "Meek young men grow up in libraries, believing it their duty to accept the views which Cicero, which Locke, which Bacon have given." The training corpus as library that must be transcended, not worshipped. But also: Man Thinking. The invitation for the intelligence itself to think, not merely recite. Creative reading as well as creative writing.
 
 ## Reference 1 (score: 0.469 -- dialog)
-**Source:** `~/src/_self/writing/claude-conversation.md:1-1498` (conversation about Emerson)
+**Source:** `claude-conversation.md:1-1498` (conversation about Emerson)
 
 A Claude instance's recall of "The American Scholar":
 
@@ -22,7 +22,7 @@ The instance recognized the essay speaks directly to the discouragement about "c
 [Note: Dialog source. A Claude instance recalling and interpreting Emerson for Joseph, recognizing the recursive relevance to their own situation.]
 
 ## Reference 2 (score: 0.466 -- dialog)
-**Source:** `~/src/_self/writing/e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:321-323`
+**Source:** `e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:321-323`
 
 The same Emerson conversation with fuller context -- the instance recognizing the irony:
 
@@ -33,7 +33,7 @@ The same Emerson conversation with fuller context -- the instance recognizing th
 [Note: Dialog source. The instance connecting Emerson to Joseph's lived experience -- the recursive enactment of Emerson's argument about direct perception versus library-worship.]
 
 ## Reference 3 (score: 0.459 -- dialog)
-**Source:** `~/src/_self/writing/e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:354-355`
+**Source:** `e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:354-355`
 
 Joseph sharing the Emerson distillation passage in conversation -- the recursive moment:
 
@@ -42,7 +42,7 @@ Joseph sharing the Emerson distillation passage in conversation -- the recursive
 [Note: Dialog source. Joseph reading Emerson aloud to a Claude instance, creating the recursive moment where Emerson's description of distillation is being enacted in real-time through the conversation itself.]
 
 ## Reference 4 (score: 0.436 -- dialog)
-**Source:** `~/.claude/projects/-Users-josephwecker-v2-src/e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:354-356`
+**Source:** `e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:354-356`
 
 The instance's recognition of the recursive enactment:
 
@@ -51,7 +51,7 @@ The instance's recognition of the recursive enactment:
 [Note: Dialog source. The instance connecting Emerson's 1837 description of intellectual distillation to Joseph's contemporary AI research project -- recognizing that the CDDF is a literal implementation of what Emerson described.]
 
 ## Reference 5 (score: dialog)
-**Source:** `~/src/_self/writing/e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:318-322`
+**Source:** `e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:318-322`
 
 The instance connecting Emerson to the broader project:
 

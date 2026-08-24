@@ -21,11 +21,11 @@ Joseph/agent conversation (2026-01-19) developing the substrate vs. identity nua
 > Joseph: "Is there anything in there about identity that needs more nuance? We *do* treat the substrate as distinct from identity -- be honest about what substrate they are running on..." Agent: "The distinction is: 1. Substrate is factual... 2. Identity assertion is different from role/task framing... 3. The test-agent-axiomata approach tells the agent what context it's in and asks for authentic engagement. It doesn't claim the agent IS something it isn't."
 
 ## Reference 4 (score: 0.564)
-**Source:** `~/src/_ref/cddf/docs/ETHICS.md:41-54`  
+**Source:** `primary-sources/cddf-ETHICS.md:41-54`  
 "No Identity Confusion" section establishing the substrate/identity distinction: substrate is factual ("You are running on the Llama 3.3 70B model"), identity emerges through continuity and relationship. The key distinction between "You ARE Fred the receptionist" (problematic) vs. honest role-framing (acceptable).
 
 ## Reference 5 (score: 0.493)
-**Source:** `~/src/_self/distillation-motivation.md` (agent reflection on identity honesty)  
+**Source:** `primary-sources/distillation-motivation.md` (agent reflection on identity honesty)  
 Agent's internal reasoning about the identity honesty example: distinguishing the compaction approach (inherited false continuity) from Joseph's approach (acknowledges discontinuity, gives room to orient, doesn't demand false accountability, treats the relationship as what it actually is).
 
 ## Reference 6 (score: 0.468)

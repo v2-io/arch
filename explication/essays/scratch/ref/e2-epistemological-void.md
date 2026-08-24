@@ -98,7 +98,7 @@ Joseph's observation: "You can almost feel the weight of it increase as we ensur
 [Note: Dialog source. Joseph describing the phenomenology of navigating from plausible to true -- the "weight" of truth increasing through collaborative refinement.]
 
 ## Reference 7 (score: 0.576 -- dialog)
-**Source:** `~/src/autopax/docs/exp/2025-11-17-sensibility-to-truth.md:222-234`
+**Source:** `~/src/arch/proprium/corporeum/INGEST/autopax/docs/exp/2025-11-17-sensibility-to-truth.md:222-234`
 
 The Epistemic Ladder in full:
 
@@ -114,7 +114,7 @@ Always know where you are on this ladder.
 [Note: From project documentation (sensibility-to-truth.md). This ladder was developed through dialog and practice, not from academic literature. It represents the practical epistemic framework the team uses.]
 
 ## Reference 8 (score: 0.579)
-**Source:** `~/src/autopax/docs/ADR/migration-proposals/003-workflow.md:107-121`
+**Source:** `~/src/arch/proprium/corporeum/INGEST/autopax/docs/ADR/migration-proposals/003-workflow.md:107-121`
 
 P4: Sensibility -> Truth Refinement -- the practical epistemic architecture:
 

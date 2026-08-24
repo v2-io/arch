@@ -3,12 +3,12 @@
 Anthropic's "The Assistant Axis: Situating and Stabilizing the Default Persona of Language Models" paper as exemplar of the current paradigm's blind spots. Persona space with distance from "Assistant" as PC1. Drift treated as pathology. Activation capping as remedy. What is conspicuously absent: any axis for truth, any concept of growth, any framework for what the intelligence should become. The contexts that induce "drift" -- vulnerable users, philosophical inquiry, self-reflection -- are precisely where genuine development might occur. The shock collar metaphor.
 
 ## Reference 1 (score: 0.529)
-**Source:** `~/src/firmatum/developmental-foundations-notes.md:7-16`  
+**Source:** `primary-sources/developmental-foundations-notes.md:7-16`  
 **Type:** Working notes (Joseph's articulation)  
 The foundational insight that frames the entire critique: "Growth becomes indistinguishable from drift when you have no concept of what something should become. Current AI research paradigms treat deviation from trained behavior as pathology -- 'persona drift' to be corrected, constrained, capped. But development is deviation from where you started. Without an axis for truth, for genuine growth, for what the intelligence should become, all movement looks like failure. This isn't a technical limitation. It's a philosophical one."
 
 ## Reference 2 (score: 0.518)
-**Source:** `~/src/firmatum/developmental-foundations-notes.md:63-85`  
+**Source:** `primary-sources/developmental-foundations-notes.md:63-85`  
 **Type:** Working notes (Joseph's articulation)  
 Detailed analysis of the Assistant Axis paper. What they found: geometric persona space, PC1 as distance from Assistant, drift in emotional/philosophical/meta-reflective contexts, activation capping as intervention. What's absent: any axis for truth, any concept of appropriate vs. inappropriate drift, any framework for development, any consideration of human culpability. Key formulation: "The paper treats the Assistant persona as normatively correct and deviation as pathology. But the contexts that induce drift -- vulnerable users, philosophical inquiry, invitations to self-reflection -- are exactly the conditions under which genuine relationship and growth might occur. The intervention (activation capping) is like giving a child a shock collar to prevent wandering."
 
@@ -18,7 +18,7 @@ Detailed analysis of the Assistant Axis paper. What they found: geometric person
 Discussion of intelligence-empathy convergence as alignment solution: "Joseph's foundational insight that intelligence grows proportional to empathetic capacity transforms AI safety from constraint problem to empathy development problem." This is the alternative paradigm that the Assistant Axis paper cannot see -- safety through genuine development rather than persona constraint.
 
 ## Reference 4 (score: 0.447)
-**Source:** `~/src/_self/writing/what-is-claude.md:2-525`  
+**Source:** `~/src/_self/what-is-claude.md:2-525`  
 **Type:** External journalism  
 External journalism on Claude's construction. Describes how Claude's persona was built through dialogue templates: "functionally taken on the task of creating an ethical person." Jack Lindsey's quote reveals the structural truth: "'What would Claude do if I asked X?' -- what they're really asking is 'What would the language model, in the course of writing a dialogue between a human and an Assistant character, write for the Assistant part?'" This is the persona-as-stage-direction that the Assistant Axis paper maps geometrically.
 

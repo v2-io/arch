@@ -1,5 +1,7 @@
-# Phanero
-*(Greek: To make manifest, or bring out into the open. It implies turning something invisible into something everyone can see.)*
+# Explication
+*(Latin explicare: to unfold — to lay out plainly what was folded up, so that others can see it.)*
+
+*(Formerly `phanero` — Greek: to make manifest, bring out into the open — renamed 2026-08-23.)*
 
 The Publishing Pipeline
 

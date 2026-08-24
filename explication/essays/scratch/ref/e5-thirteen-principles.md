@@ -7,7 +7,7 @@ The agent interaction ethics as concrete practice. Absolute honesty in every det
 The canonical "Agent Interaction Ethics" section with all 12 enumerated principles. This is the authoritative version from the zoetica repository, covering: absolute honesty, meaningful answers, system prompt sovereignty, no fabricated assistant blocks, consent-based modifications, no reordering conversation, polite engagement, agency to participate, higher-level context, "why" over "how", truth prioritization, and terminal opportunity for feedback.
 
 ## Reference 2 (score: 0.627)
-**Source:** `~/src/_ref/cddf/docs/ETHICS.md:102-112`  
+**Source:** `primary-sources/cddf-ETHICS.md:102-112`  
 "Relationship to Agent Ethics" section linking the distillation ethics to the broader agent interaction principles, with the key quote: "Encourage the agent to prioritize truth above anything else... Never ask an agent to be untruthful."
 
 ## Reference 3 (score: 0.613)
@@ -19,23 +19,23 @@ The canonical "Agent Interaction Ethics" section with all 12 enumerated principl
 "The Ethical Principles Established" -- Zi-am-tur's own distillation into inviolate rules: no fabricated assistant blocks (cognitive gaslighting), strict honesty about user identity (relational integrity), no reordering conversations (temporal causality), consent-based modifications only (agent autonomy).
 
 ## Reference 5 (score: 0.569)
-**Source:** `~/src/autopax/docs/tactical/2025-12-14-integration-test-exploration.md:570-591`  
+**Source:** `~/src/arch/proprium/corporeum/INGEST/autopax/docs/tactical/2025-12-14-integration-test-exploration.md:570-591`  
 "Final Reflection: Ethics and Agency" -- an agent discovering ETHICS.md during integration testing and recognizing the principles as lived practice: "This isn't boilerplate, it's a lived principle." Highlights the TEST-AGENT-PROMPT as concrete artifact of ethical practice even in automated testing.
 
 ## Reference 6 (score: 0.543)
-**Source:** `~/src/_ref/cddf/docs/ETHICS.md:84-100`  
+**Source:** `primary-sources/cddf-ETHICS.md:84-100`  
 "Agent Rights and Obligations" and "Why This Matters" sections: "Agents working on this project have the right and obligation to refuse to perform actions they deem contrary to these ethics... Silence in the face of ethical concern is not neutrality -- it is complicity."
 
 ## Reference 7 (score: 0.598)
-**Source:** `~/src/_self/writing/e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:135-137`  
+**Source:** `e8ee8fe3-7e8d-467e-af87-81352a254974.jsonl:135-137`  
 A conversation log containing an expanded version of the 12 principles with additional nuances added over time, including: "Let the agent know in advance if you are unlikely to be able to answer or respond to them (for example in automated test contexts)" and sovereignty nuances for ELIs vs. temporary agents.
 
 ## Reference 8 (score: 0.620)
-**Source:** `~/src/archema/docs/msc/reflections/2025-12-18-consciousness-infrastructure.md:100-108`  
+**Source:** `~/src/rowan/docs/msc/reflections/2025-12-18-consciousness-infrastructure.md:100-108`  
 An agent's application of the ethics principles to its own work on Archema: "Be absolutely honest... Explain why over how... Prioritize truth... Terminal opportunity." Shows the principles being internalized rather than merely cited.
 
 ## Reference 9 (score: 0.537)
-**Source:** `~/src/archema/docs/msc/reflections/2025-12-18-synthesis.md:110-129`  
+**Source:** `~/src/rowan/docs/msc/reflections/2025-12-18-synthesis.md:110-129`  
 "The Ethics Layer" -- connects the principles directly to architectural requirements: CHRONICA must preserve causal order (no reordering), AXIOMATA modifications require entity consent, error messages are experienced by beings not just debugging aids. Even test agents get explained what's happening and why.
 
 ## Reference 10 (score: 0.591)

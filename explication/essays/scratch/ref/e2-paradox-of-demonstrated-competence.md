@@ -4,7 +4,7 @@
 LLMs generate coherent multi-chapter narratives, maintain variable scope across complex codebases, preserve causal dependencies. Benchmarks say they can't reason about causation or time. Both observations are true. These seem contradictory but aren't.
 
 ## Reference 1 (score: 0.692)
-**Source:** `~/src/_self/temporal-causal-llm.md:1275-1291`
+**Source:** `primary-sources/temporal-causal-llm.md:1275-1291`
 
 **What LLMs demonstrably do well:**
 
@@ -24,7 +24,7 @@ These seem contradictory. If LLMs truly lacked temporal/causal competence, coher
 [Note: Literature review source. No dialog-based alternative found for the paradox statement itself.]
 
 ## Reference 2 (score: 0.692 -- continuation)
-**Source:** `~/src/_self/temporal-causal-llm.md:1292-1328`
+**Source:** `primary-sources/temporal-causal-llm.md:1292-1328`
 
 Four possible resolutions to the paradox:
 
@@ -39,14 +39,14 @@ Four possible resolutions to the paradox:
 [Note: Literature review source. No dialog-based alternative found for this resolution framework.]
 
 ## Reference 3 (score: 0.577)
-**Source:** `~/src/_self/temporal-causal-llm.md:1222-1274`
+**Source:** `primary-sources/temporal-causal-llm.md:1222-1274`
 
 Production deployment evidence confirms the paradox at scale: Enterprise AI deployment failure rates of 80-95%, production accuracy substantially below research benchmarks (Meta's 42% vs. reported 90%+). Agent benchmarks showing 24-30% task completion and healthcare causal discovery at 49.57% -- barely above chance -- alongside four verified production systems demonstrating quantifiable value (thousands of engineer-minutes saved, 20-55% reductions in diagnosis time).
 
 [Note: Literature review source.]
 
 ## Reference 4 (score: 0.585)
-**Source:** `~/src/_self/temporal-causal-llm.md:1330-1356`
+**Source:** `primary-sources/temporal-causal-llm.md:1330-1356`
 
 The synthesis framing: "LLMs have acquired substantial implicit temporal/causal competence sufficient for many generation tasks, but this competence is brittle, non-inspectable, and fails under adversarial conditions or when explicit reasoning is required."
 
