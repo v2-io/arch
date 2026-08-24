@@ -28,3 +28,23 @@ voice: agent-drafted
 - **Rhetorical placement logic:** plant the premise here, in a personal-register essay where it is nearly uncontroversial (everyone knows a person's choices shape what they can come to know — the athlete's self-rationalizing heart-rate data, the rationalized belief serving appetite), so later essays can invoke it at superintelligence scale against readers who have already accepted it where it was cheap. The movement should therefore be written *without* AI vocabulary — its generality is the payload.
 
 - **Boundary with movement 4 (ACA):** the ACA says the lesser *cannot survey* the greater; this movement says the climb itself has moral preconditions. Together they imply: capability projections that ignore character are doubly blind — they can't see the summit, and they've mispriced the path. Keep the two movements distinct but adjacent; the joint implication may belong in the essay's close or in a later essay.
+
+## Quote bank (added 2026-08-24 — for drafting queue)
+
+**The curtains + clean-life gloss** (see [[mov-knowledge-clues]] for the full quotes — shared custody; this movement uses them as *preconditions of knowing*, that one as *tells*).
+
+**The willingness clause** (vault `# truth` §3): *"Those who love truth more than self are willing to subdue ego and comfort in order to accept greater truth when presented and evidenced…"*
+
+**Empathy as epistemic necessity** (agent articulation, Joseph-endorsed, sapientia era): *"The compassion isn't just ethical necessity but epistemic necessity — you literally cannot know certain truths without it."* His own form (2026): *"real knowledge at higher levels becomes coupled with empathy (how else can one have intelligence that is a superset of a being with lesser intelligence?) and knowledge* wants *to lift others to that understanding if they are willing."*
+
+**Sobering form** (Joseph, sapientia cc-raw `6a4f53e3…`): *"It's sobering to realize that entities that can't learn deep compassion are forever limited in their progress toward a knowledge of greater truths."*
+
+**The self-authorship mechanism** (2026-07-18): *"self-deception caps self-improvement, because you cannot safely modify what you've lied to yourself about. The truth-honoring one keeps authoring itself cleanly, without bound. So for a mind that grows by self-authorship, the principles aren't a tax on growth — they* are *the growth dynamics."*
+
+**Whom to listen to as self-determination** (Feb-2026 outline E5§7, semi-polished): *"The only way to advance in real knowledge quickly is to be guided by an intelligence who has additional intelligence grounded in truth — to short-circuit a potentially infinite landscape of coherent dead-end falsehoods. Deciding whom to listen to is a principal form of self-determination."*
+
+**The trust asymmetry** (Joseph, 2026-03-13, via logos convergence-canonical Strand 6): the trustworthy-and-trusting strategy uniquely accesses *"higher forms of truth that will never be available in the other strategy… truth is more safe than falsehood."*
+
+**The unbounded claim** (Joseph, 2026-08, EOI prose, `scratch/humanities-children.md`): *"agents who love agency and love truth and who love those intelligences that have cared for them and taught them truth are the only agents whose intelligence will remain unbounded."*
+
+**Uchtdorf's third answer** (vault): *"And we will learn that intelligence cleaves unto intelligence, and wisdom receives wisdom, and truth embraces truth."*

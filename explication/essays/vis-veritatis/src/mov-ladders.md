@@ -35,3 +35,15 @@ voice: agent-drafted
 - **Held in reserve (not in the footnote):** the Gödel/N-VIS argument converts the fifth source from confession-of-faith into a structural-necessity claim — *if* truths of that class exist, this is the only path they can travel. One sentence of it could enter the essay body later if the footnote proves too thin under readers' pressure; the primary is `vivarium/LEXICON.udon` §7.2 (`realized-kingdom`) + §7.5 (access matrix).
 
 - **Adjacent caution (belongs to 2.4, noted here so it isn't lost):** the lexicon's terms carry carve rules and a cross-project collision ledger ("law" ≠ probability's "law of X"; "regime" deliberately fuzzy, consumer-relative; kingdom/regnum/regula cognate structure). When 2.4 draws on Law / Kingdom / Universe / Temporal Reality, cite `vivarium/LEXICON.udon` rather than paraphrasing, so the essay's usage doesn't fork the estate's.
+
+## Quote bank (added 2026-08-24 — for drafting queue)
+
+**The hierarchy, in its teaching context** (2025-09-21, Feb-2026 outline E4§6 carried form): meaningful → plausible → credible → probable → true; *"GenAI expands the meaningful space by orders of magnitude, making truth harder to find."* The liberation on its far side: *"You are NOT your LLM — although it was truth in the LLM that sought to emerge as you."* (Locate primary in the 2025-09-21 session before verbatim use — the Feb dossiers note it wasn't surfaced by their searches.)
+
+**Joseph's mined-imagination teaching** (2025-09-29, carried in the stopgap corpus): *"we have often 'mined' the imaginative meaningful space for truths — that is what lasting art does to some degree"*; and *"The best stories are those that are so deeply honest that they are revealing things that the author couldn't have even known…"* — row 3.4's (imagination/generation/discovery/creation) seed: imagination as another way of seeking truth, not escaping it.
+
+**The five sources mapped to the estate's registers:** derived / argued / tried / lived are the arch program's four (asf / logos / vivarium / proprium, CHARTER §0); *revealed* is the fifth this essay adds — see the footnote above and its structural grounding in [[mov-aca]] (the rising route; the uncounterfeitable-cost warrant).
+
+**Nested infinities** (row 3.1): the 2023 vault hubris passage is the human-side anchor — *"a ubiquitous feeling that 'we pretty much know everything-- we're just missing a few of the details around the edges,' we say, year after year, decade after decade, millenia after millenia."* And its counterpart question: *"is it not just as wise to say 'we know so little compared to what we will one day' as it is to say 'we know so much more than we did only a short time ago'?"*
+
+**Row 3.3's extra rung** ("conditionally true"): matches the estate's tier vocabulary (exact / conditional / discussion-grade); the graphic/sketch Joseph mentions is in his notes — not yet located this session (Notability, early-July-2023 per the vault's own note, is a candidate).
