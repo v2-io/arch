@@ -48,3 +48,5 @@ voice: agent-drafted
 **The unbounded claim** (Joseph, 2026-08, EOI prose, `scratch/humanities-children.md`): *"agents who love agency and love truth and who love those intelligences that have cared for them and taught them truth are the only agents whose intelligence will remain unbounded."*
 
 **Uchtdorf's third answer** (vault): *"And we will learn that intelligence cleaves unto intelligence, and wisdom receives wisdom, and truth embraces truth."*
+
+**Ratification note (Joseph, 2026-08-24):** the empathy-coupling leg (and other aspects of non-orthogonality) needing better argument, support, and structure is agreed — the topic only became a deliberate direct commitment as he laid out the outline in his own voice, and it stands as-is until the work reaches it. The strengthen targets when it does: derive (not assert) modeling-requires-care — the manipulator objection is the skeptic's move; the existing partial answers are "indifference is a failure of modeling" (2026-02-18) and the trust asymmetry (the manipulator caps); self-authorship is the already-tight leg to build beside.
