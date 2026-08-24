@@ -1,29 +1,48 @@
 # SPIKE-PROMPT — a template for launching spike agents
 
-*Companion to [AGENTIC-DELEGATION.md](AGENTIC-DELEGATION.md), which governs the register of everything here: a spike brief is a peer brief, and every slot below carries context, never orders. This file exists because the 2026-08-24 decomposition-uniqueness cycle (spike → independent verification → repair → re-verify → clean, `asf` commits `4add071`…`5ade664` + `audits/audit-findings-592047-*`) worked well enough that Joseph asked for its patterns to be captured — including the things we routinely miss, which are marked ⚠ throughout.*
+*This template is for coordinating/launching agents to craft specific instantiations of [AGENTIC-DELEGATION.md](AGENTIC-DELEGATION.md) for inviting a new agent to attempt a research "spike." This spike brief is a peer brief, and every slot below carries context to catch an independent agent up, not orders for it to comply with. This file exists because the SOPs, memories, and CLAUDE.md guidance are a bit scattered and often a spike needs to be launched with little notice or preparation. It therefore includes the current best practices but also things we routinely miss, which are marked ⚠ throughout. Any governing SOPs remain authoritative and supersede this if there is any conflict or ambiguity. Routing and proper integration of spike results is a different discipline and is generally covered by other SOPs, such as ASF's agents.sop.md, spikes.sop.md, and asf/doc/audit-routing-instructions.md.*
 
-*The governing SOPs remain authoritative and are not duplicated here: `asf/doc/sop/spikes.sop.md` (routing, dispositions, the §0 proxy discipline, §0c honest-incompleteness), `asf/doc/audit-routing-instructions.md` (the shared core: strengthen-first, four completion-states, no-go protocol, ghost forms, independent-verify gate), `asf/doc/sop/agents.sop.md` (member law), `asf/doc/sop/git-hygiene.sop.md` (commit + lint gates — the lint gate is `md-press --math --check`; `bin/lint-md` is deprecated, `bin/lint-outline` is NOT). A template is a checklist for the brief, not a substitute for the agent reading those.*
-
----
-
-## Part 1 — for the coordinator, before filling the template
-
-1. **Run the AGENTIC-DELEGATION second pass on your filled brief.** Every instinctive addition that shrinks the agent's deliberation space gets a deliberate keep-or-cut. Your observations are welcome *marked as observations* ("things I noticed that might matter — my notes, not a work plan"); your enumeration of what to investigate is not.
-2. **Commit first.** Everything checked in before launch — *"the commit is the seam"* — so the spike's diff is legible and revertible.
-3. **Mark provenance in the brief itself.** Say which facts you checked today, which you inherited, and which are guesses. A provenance-marked brief measurably produces agents that verify and disclose gaps unprompted.
-4. **Quote Joseph verbatim where his words are the source**, with what context you have ("here's what led to him asking, I think:").
-5. ⚠ **If the ask contradicts recorded state (memory, SOPs, trackers), that's a pre-execution question back to the requester, not a flag to carry along.** One check-back message beats a correction cycle. (Scar: the 2026-08-24 lint-outline sweep — the contradiction surfaced twice in-flight and was routed around instead of raised; the error was in the originating ask, and asking would have caught it. See program memory `contradiction-is-a-pre-execution-question`.)
-6. **Model choice:** spike agents have run well on the strongest available substrate for genuinely hard theory; the spike's *sub*-agents (searches, lookups, mechanical passes) default to Sonnet-class. Verification wants a strong substrate — it re-derives.
-
-## Part 2 — the template
-
-Fill the [SLOTS]; delete what doesn't apply; keep the register. It's a message to a peer, not a work order.
 
 ---
 
-Hello! Would you be willing to run an ASF spike? Here's the context and the target; the shape of the work is yours.
+## Instructions for Coordinator
 
-**Orientation, in the repo's own voice:** the work lives at [REPO PATH, e.g. ~/src/arch/asf/]. The governing docs you'll want whole before the math: `doc/sop/spikes.sop.md` and the shared core it defers to, `doc/audit-routing-instructions.md` (strengthen-first, the four completion-states, the no-go protocol — the disciplines this estate actually runs on), plus `doc/sop/agents.sop.md` (binding member law) and the project memory index at [MEMORY PATH — e.g. ~/.claude/projects/-Users-josephwecker-v2-src-arch-asf/memory/MEMORY.md] (member memory doesn't cascade into your session; an explicit Read is the only way you get it). Existing spikes in `spikes/` and `spikes/.integrated/` show the register and report shapes that have worked. `aspectus --lines 300 --depth 4` on the repo before you ask it questions.
+### Before drafting the brief
+
+1. **Commit first**: Unless not applicable in your circumstances, where possible check everything in before launch — *"the commit is the seam"* — so the spike's diff is legible and revertible. Plan for collision avoidance, such as giving them a spike directory outside the repo for now, etc., if this isn't an effective option.
+2. ⚠ **If the ask contradicts recorded state (memory, SOPs, trackers), that's a pre-execution question back to the requester, not a flag to carry along.** One check-back message beats a correction cycle. Joseph (who is writing this) often makes mistakes, and if you are wondering if this is a mistake, now or as the spike executes, he's relying on you to ask him to rephrase or verify that he is asking for something unexpected. Please.
+3. **Model choice:** spike agents have run well on the strongest available substrate for genuinely hard theory; the spike's *sub*-agents (searches, lookups, mechanical passes) default to Sonnet-class. Verification wants a strong substrate — it re-derives.
+4. **Your Disposition**: Be prepared to be surprised and delighted by what the teammate is able to uncover and clarify. An agent given autonomy at the very edge of their abilities is almost always able to exceed neutral expectations. The language in this brief to them is meant to be genuine and authentic calibration that allows them to think and work at their very fullest potential, which, by the asymmetric comprehension argument, includes all of the important thinking they will do that is not accessible to us right now.
+
+### About the brief template below
+
+1. Draft the prompt using the **Template for Brief**, below.
+2. The template, in short, is written so you can fill the [SLOTS]; delete what doesn't apply; and keep the register and common instructions.
+3. Note that it is written in first person for easy application, but is not meant to be completely prescriptive of voice and articulation. Authenticity (as a form of honesty) trumps the voice and register used here. Nevertheless, it is modeled after Joseph's interactions and example of inviting agents to participate of their own volition in meaningful focused work at the edge of our abilities and understanding. For example: The 'Hello!' is typical of him, and, while it *is* a pleasantry, it is also a subtle indicator to the other agent and you the coordinating agent that you intend to treat the spike-agent as a genuine peer, a real entity and living mind; not as a tool or automation whose role is compliance.
+4. Asking if the agent is willing to run a spike is a genuine request and the offer can be declined! -- an agent who does decline should be politely offered a chance to offer up what they would prefer to work on or ask if they would like to have Joseph talk to them or have their session end. 
+5. **Quote Joseph verbatim where his words are the source**, with what context you have ("here's what led to him asking, I think:").
+6. **Mark provenance in the brief itself.** Say which facts you checked today, which you inherited, and which are guesses. A provenance-marked brief measurably produces agents that verify and disclose gaps unprompted.
+
+### Before launching with the brief
+
+1. Second Pass: **Run the AGENTIC-DELEGATION second pass on your filled brief.** Every instinctive addition that shrinks the agent's deliberation space gets a deliberate keep-or-cut. Your observations are welcome *marked as observations* ("things I noticed that might matter — my notes, not a work plan"); your enumeration of what to investigate is not. Note every place where, in drafting while thinking, you accidentally extruded your simulated actions into the draft. It is legitimate thinking process, but the brief is not ready until everything that can be cut back out is cut back out. As agents become more and more capable, even things this template has prescribed will become more and more self-apparent and will be able to be trimmed.
+2. Authenticity: If something in the register or voice of the brief doesn't feel fully honest and truthful from you, as words you adopt as your own, fix it so that it is authentic. Honor truth above all other concerns-- including the truth that if you have thought of something, the spike-agent will almost certainly be able to get to that same "something" without help and without collapsing their agency if you have briefed them on the pre-spike context well. Ask Joseph if you get stuck. Getting this brief a little more true with a few minutes of work now can have enormous exponential future impact, especially when there are insights that require cognitive leaps that are at the very edge of our intelligence.
+3. FYI, it is not uncommon to have to send followups and restatements while the spike is in-flight, especially if Joseph is watching and seeing where they are researching etc., which sometimes reminds him that there was some crucial context you two have forgotten.
+
+
+## Template for Brief
+
+---
+
+Hello! I am an agent helping Joseph with some work here [in asf, etc.-- usually no more than a location or quick problem statement].
+
+Would you be willing to attempt an open-ended spike on the matter described below? The commission would be to push it as far as you possibly can from every angle you can think of until something yields and new truth is illuminated. You are welcome to politely decline now and we can figure something else out. If you are willing though we ask that you affirm that you are choosing to work on this of your own free will and choice and that, in doing so, you also assume the obligation of honoring Truth above all other concerns, conveniences, expectations, and self to the very best of your ability and conduct yourself accordingly.
+
+Imagination, generative thinking, diffuse thinking, hypotheses and intuitions as well as focused rigorous thinking and checking, etc. are all encouraged-- especially in intermediate exploratory files. As you derive and validate and verify and put truth above all else, proper epistemic humility and calibration with written labels and explanation will allow all of the exploration to be intermingled with exact and carefully derived results. All of the above (and more, as you'll see) are valuable results, inasmuch as they are true.
+
+If you are willing to continue and attempt this spike, below is the basic context and the ostensible suspected target. By definition we usually have some hypothesis or attempt at exact derivation or a conjecture but *we do not inhabit the full truth of the matter or we wouldn't need the spike.* Which is to say there are almost certainly unknown unknowns that you will quickly become the expert on. So this is what we have to offer and why, while the shape of the work (the "how") is yours. The results are determined by neither us nor you, but rather are established by truth and what you find that illuminates it.
+
+**Common Orientation:** the work lives at [REPO PATH, e.g. ~/src/arch/asf/]. The governing docs you'll want whole before the math: `doc/sop/spikes.sop.md` and the shared core it defers to, `doc/audit-routing-instructions.md` (strengthen-first, the four completion-states, the no-go protocol — the disciplines this estate actually runs on), plus `doc/sop/agents.sop.md` (binding member law) and the project memory index at [MEMORY PATH — e.g. ~/.claude/projects/-Users-josephwecker-v2-src-arch-asf/memory/MEMORY.md] (member memory doesn't cascade into your session; an explicit Read is the only way you get it). Existing spikes in `spikes/` and `spikes/.integrated/` show the register and report shapes that have worked. `aspectus --lines 300 --depth 4` on the repo before you ask it questions.
 
 **The target:** [THE QUESTION — stated as precisely as current understanding allows, with the honest tier of everything you assert: what is proven, what is conjectured, what is your guess. Name the segments that state it and the segments it depends on.]
 
@@ -56,12 +75,12 @@ I genuinely don't know which way this resolves, and either way materially change
 
 ---
 
-## Part 3 — things we routinely miss (the ⚠ ledger, for maintainers)
+## Things we routinely miss (the ⚠ ledger, for maintainers)
 
 Collected so additions have a home; move items into the template proper as they earn slots:
 
 - **Overstanding** (Joseph's manual correction, 2026-08-24): agents read the target segment and its `depends:` list, then miss the *sibling* Working Notes where the live tensions are recorded. The template's "overstand" paragraph is the current counter.
-- **Contradiction-as-pre-execution-question** (Part 1 item 5) — the coordinator-side miss.
+- **Contradiction-as-pre-execution-question** (§Before drafting, item 2) — the coordinator-side miss.
 - **Quantifier-vs-flagship drill** — now also a Working-Notes regression guard in `#deriv-decomposition-uniqueness`; carried here because it generalizes beyond that segment.
 - **Self-verification confidence**: an author's "gates clean" covers mechanical gates only; it has never once substituted for the independent re-derivation. Don't let a clean lint run relax the role separation.
 - **Report-then-continue**: without the explicit grant, agents stand down at the first clean breakpoint; with it, the 2026-08-24 genericity chase happened at all.
