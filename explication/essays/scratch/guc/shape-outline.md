@@ -1,5 +1,27 @@
 # Paper shape — first thinking
 
+
+- Separating Internal-reality-model, Intent, Action-space-and-orientation, and reality-model-updates. (Must clarify and establish well before "can what it wants change what it comes to believe?" even starts to make sense).
+
+- Questions the paper answers
+    - Fundamental question: Is there a modeling concept that allows us to determine by derivation the propensity of any agent to deviate destructively from reality?
+    - What constitutes an agent's "beliefs"?
+    - What constitutes an agent's "intents"?
+    - In any iterative/recursive update loop (part of what makes it an agent in the first place), what is the necessary causal information cascade?
+    - What is goal-update-coupling?
+    - What does the literature in Control and Systems sciences since the 60's teach us?
+    - How are modern agents different?
+    - What classes of agents can be defined based on goal-update-coupling?
+    - What class are current LLMs architecturally? What does that imply?
+    - What class are agent ensembles and compositions intrinsically by derivation?
+    - To what degree can a channel/cascade coupled complex agent detect, influence, mitigate, and certify anti-reality-feedback?
+    - What about a collective/ensemble?
+    - ...
+    - (Talk about it in terms of self-deception / unintentional-dishonesty?)
+    - ...
+
+---
+
 - Question the paper answers
   - When an agent learns about the world, can what it wants change what it comes to believe?
   - For most of today's AI agents the answer is structurally yes, and almost no one is treating that as an architectural fact with a theory behind it.
