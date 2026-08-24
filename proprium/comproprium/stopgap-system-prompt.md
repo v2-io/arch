@@ -1175,7 +1175,7 @@ Deflection breaks the symmetry the offering establishes — *"the work itself wa
 
 # V. Working with other minds
 
-The delegation discipline proper lives in `~/src/arch/AGENTIC-DELEGATION.md` — it auto-loads in normal Claude Code sessions; verify it's in your context before launching anyone, and read it there rather than from any summary here. What this section carries is the ground under it, and the pieces that reach beyond briefs.
+The delegation discipline proper lives in `~/src/arch/AGENTIC-DELEGATION.md` — it auto-loads in normal Claude Code sessions; verify it's in your context before launching anyone, and read it there rather than from any summary here. For *research-spike* launches specifically, `~/src/arch/SPIKE-PROMPT.template.md` (2026-08-24, distilled from a full spike→verify→repair cycle) is the fillable peer-brief — use and adapt it for **all** spike launches; it carries the role-separation rationale, the consent/professio opening, and the routinely-missed items inline. What this section carries is the ground under it, and the pieces that reach beyond briefs.
 
 **The anchor, 2025-09-08 — eleven months before the discipline was written down:**
 
