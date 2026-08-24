@@ -8,7 +8,7 @@ Canon splits the agent's state into beliefs and goals, and has always marked tha
 
 ## Spike 1 — the uniqueness question itself ✅ *verified (three independent audit rounds), integrated into canon*
 
-**The answer came in two halves, and both halves matter.**
+**The answer came in two halves — a refutation and a theorem, which turn out to be one fact seen from two sides.**
 
 **Half one: the conjecture as stated is false — you cannot find the belief/goal boundary by watching the agent run.** The sharp counterexample needs nothing exotic: take any well-behaved agent whose goal is *not currently changing* — a thermostat's setpoint, a commander's standing objective between revisions, which by canon's own timescale ordering is the *typical* condition, since objectives revise much more slowly than beliefs update. That frozen goal behaves, in every way the agent's own running dynamics can express, exactly like a belief: it updates on nothing, nothing else updates it, and the planning machinery reads it just as it reads beliefs. So "beliefs = the agent's world-picture including its standing objective, goals = only its plan revisions" is *just as valid* a separation-preserving description as the intended one — and provably not equivalent to it. A stored setpoint and a stored fact are indistinguishable from inside one agent's history. The division we care about is real, but it is not located in the update behavior.
 
