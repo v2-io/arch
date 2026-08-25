@@ -1,0 +1,737 @@
+#!/usr/bin/env python3
+"""Second-tier rasters: Ghostty-face paint, packed vs roomy.
+
+Reads bmp-metrics.tsv (does not overwrite it). Skips ghostty-sprite, not-found,
+and LastResort. Cell grid is still the primary terminal font.
+
+Mimics Ghostty's symbol constraint (not nerd-font ``fit_cover1`` / ``center1``):
+
+  clone: ~/src-ext/ghostty  @ 600a86dcfd70ac6a16db199367ee6aad337b99cc
+  src/renderer/generic.zig  addGlyph ~3302–3310
+      getConstraint(cp) orelse (isSymbol(cp) ? .{ .size = .fit } : .none)
+      constraint_width from constraintWidth()  (1, or 2 if next cell is space/empty)
+  src/renderer/cell.zig     isSymbol ~244, constraintWidth ~250–289
+  src/build/uucode_config.zig  IsSymbolComponent ~125–136
+      Co/PUA, or blocks Arrows / Dingbats / Emoticons / Miscellaneous Symbols /
+      Enclosed Alphanumerics (+ supplement) / Miscellaneous Symbols and Pictographs /
+      Transport and Map Symbols.  Number Forms (Nl/No) is **not** a symbol —
+      constraint stays ``.none`` (native size and bearings, no clamp).
+  src/font/Glyph.zig        Constraint.size.fit ~122–126
+                            constrainInner ~216–270
+                            scale_factors .fit ~306–310  (.none → 1,1)
+                            aligned_x / aligned_y .none clamp ~351–433
+                            (.none size + .none align → x/y untouched)
+
+.fit does **not** vertically center in the cell. It scales the ink bbox about
+its center (so a shrink doesn't stay glued to the baseline), then **clamps**
+so the bbox doesn't protrude. Alignment stays ``.none``.
+
+Writes:
+  .rasters/4x/packed/HH/HHHH.png
+  .rasters/4x/roomy/HH/HHHH.png
+  bmp-metrics-ghostty.tsv
+
+Then (unless ``--no-sprites``) runs ``measure-sprites`` so sprite rows are
+appended in the same pass, then ``recount-density`` (optical coverage).
+"""
+
+from __future__ import annotations
+
+import argparse
+import ctypes
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+import numpy as np
+
+OVERFLOW_THRESH = 0.04
+SCALE = 4
+GHOSTTY_RES = Path.home() / "src-ext/ghostty/src/font/res"
+JETBRAINS_TTFS = (
+    GHOSTTY_RES / "JetBrainsMonoNerdFont-Regular.ttf",
+    GHOSTTY_RES / "JetBrainsMonoNoNF-Regular.ttf",
+)
+SUBSTITUTE_NAMES = frozenset(
+    {"helvetica", "timesnewromanpsmt", "times new roman", "times"}
+)
+
+# Ghostty IsSymbolComponent (uucode_config.zig ~125–136 @ 600a86dc).
+# Category Co covers BMP PUA and the supplementary PUAs.
+SYMBOL_BLOCKS = frozenset(
+    {
+        "Arrows",
+        "Dingbats",
+        "Emoticons",
+        "Miscellaneous Symbols",
+        "Enclosed Alphanumerics",
+        "Enclosed Alphanumeric Supplement",
+        "Miscellaneous Symbols and Pictographs",
+        "Transport and Map Symbols",
+    }
+)
+
+
+def is_symbol(r: dict[str, str]) -> bool:
+    """True iff Ghostty would apply ``.{ .size = .fit }`` (not nerd getConstraint)."""
+    if (r.get("category") or "") == "Co":
+        return True
+    return (r.get("block") or "") in SYMBOL_BLOCKS
+
+
+def ghostty_faces(codepoints: list[int], chunk: int = 128) -> dict[int, str]:
+    """Live ``ghostty +show-face`` (current config / embedded fallbacks)."""
+    if not codepoints:
+        return {}
+    faces: dict[int, str] = {}
+    pat = re.compile(
+        r"U\+([0-9A-Fa-f]+)\s+«.*?»\s+"
+        r"(found in face “(?P<face>.*)”"
+        r"|is handled by Ghostty's internal sprites"
+        r"|not found)\."
+    )
+    for i in range(0, len(codepoints), chunk):
+        part = codepoints[i : i + chunk]
+        s = "".join(chr(cp) for cp in part)
+        try:
+            out = subprocess.check_output(
+                ["ghostty", "+show-face", f"--string={s}"],
+                text=True,
+                stderr=subprocess.STDOUT,
+            )
+        except (FileNotFoundError, subprocess.CalledProcessError) as e:
+            if i == 0:
+                print(f"note: ghostty +show-face unavailable ({e!r})", file=sys.stderr)
+                return {}
+            continue
+        for m in pat.finditer(out):
+            cp = int(m.group(1), 16)
+            if m.group("face") is not None:
+                faces[cp] = m.group("face")
+            elif "sprites" in m.group(2):
+                faces[cp] = "ghostty-sprite"
+            else:
+                faces[cp] = "not-found"
+        if i == 0 or (i // chunk) % 20 == 0:
+            print(f"  +show-face {min(i + chunk, len(codepoints))}/{len(codepoints)}", file=sys.stderr)
+    return faces
+
+
+def ghostty_config() -> tuple[str, float]:
+    family = "VictorMono NFM SemiBold"
+    size = 17.0
+    try:
+        out = subprocess.check_output(
+            ["ghostty", "+show-config"], text=True, stderr=subprocess.DEVNULL
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return family, size
+    for line in out.splitlines():
+        if line.startswith("font-family = ") and "font-family-" not in line:
+            val = line.split("=", 1)[1].strip()
+            if val:
+                family = val
+        elif line.startswith("font-size = "):
+            try:
+                size = float(line.split("=", 1)[1].strip())
+            except ValueError:
+                pass
+    return family, size
+
+
+def load_tsv(path: Path) -> list[dict[str, str]]:
+    rows = []
+    with path.open(encoding="utf-8") as f:
+        hdr = f.readline().rstrip("\n").split("\t")
+        for line in f:
+            rows.append(dict(zip(hdr, line.rstrip("\n").split("\t"))))
+    return rows
+
+
+def skip_row(r: dict[str, str]) -> str | None:
+    gt = r.get("ghostty") or ""
+    if gt in ("ghostty-sprite", "not-found", ""):
+        return gt or "no-ghostty-face"
+    if r.get("class") == "missing" or "LastResort" in (r.get("face") or ""):
+        return "missing"
+    return None
+
+
+def raster_rel(kind: str, cp: int, scale: int = SCALE) -> str:
+    return f".rasters/{scale}x/{kind}/{cp >> 8:02x}/{cp:04x}.png"
+
+
+class GhosttyMeasurer:
+    def __init__(self, primary_family: str, point_size: float, scale: int = SCALE) -> None:
+        from AppKit import (  # noqa: PLC0415
+            NSAttributedString,
+            NSBitmapImageFileTypePNG,
+            NSBitmapImageRep,
+            NSCalibratedRGBColorSpace,
+            NSColor,
+            NSFont,
+            NSFontAttributeName,
+            NSForegroundColorAttributeName,
+            NSGraphicsContext,
+        )
+        import CoreText  # noqa: PLC0415
+        import Quartz  # noqa: PLC0415
+
+        self._NSAttributedString = NSAttributedString
+        self._NSBitmapImageFileTypePNG = NSBitmapImageFileTypePNG
+        self._NSColor = NSColor
+        self._NSFontAttributeName = NSFontAttributeName
+        self._NSForegroundColorAttributeName = NSForegroundColorAttributeName
+        self._NSGraphicsContext = NSGraphicsContext
+        self._NSFont = NSFont
+        self.CoreText = CoreText
+        self.Quartz = Quartz
+
+        self.primary_family = primary_family
+        self.point_size = point_size
+        self.scale = scale
+        self.raster_pt = point_size * scale
+        primary = NSFont.fontWithName_size_(primary_family, self.raster_pt)
+        if primary is None:
+            raise SystemExit(f"could not open primary {primary_family!r}")
+        self.primary = primary
+        # Ghostty Metrics.calc @ 600a86dc: descent stored negative in FaceMetrics;
+        # CTFontGetDescent is positive. face_baseline = half_line_gap - (neg descent).
+        self.descent = CoreText.CTFontGetDescent(primary)
+        ascent = CoreText.CTFontGetAscent(primary)
+        leading = CoreText.CTFontGetLeading(primary)
+        self.face_height = ascent + self.descent + leading
+        # face_width = max visible-ASCII advance (coretext.zig getMetrics ~768–805).
+        self.face_width = 0.0
+        for i in range(32, 127):
+            adv = CoreText.CTLineGetTypographicBounds(
+                self._line(primary, chr(i)), None, None, None
+            )[0]
+            if adv > self.face_width:
+                self.face_width = float(adv)
+        if self.face_width <= 0:
+            raise SystemExit("primary ASCII advance is 0")
+        self.cell_w = int(round(self.face_width))
+        self.cell_h = int(round(self.face_height))
+        # Center the face in the rounded cell (Metrics.calc cell_baseline / face_y).
+        half_gap = leading / 2.0
+        face_baseline = half_gap + self.descent
+        self.cell_baseline = int(round(face_baseline - (self.cell_h - self.face_height) / 2.0))
+        self.face_y = self.cell_baseline - face_baseline
+        # (cell_width - face_width)/2 — coretext.zig ~371–373, not .stretch.
+        self.cell_dx = (self.cell_w - self.face_width) / 2.0
+
+        self.px_w = self.cell_w * 3
+        self.px_h = self.cell_h * 2
+        self.origin_x = (self.px_w - 2 * self.cell_w) // 2
+        self.cell_bottom = (self.px_h - self.cell_h) // 2
+        self.spp = 4
+        self.rep = NSBitmapImageRep.alloc().initWithBitmapDataPlanes_pixelsWide_pixelsHigh_bitsPerSample_samplesPerPixel_hasAlpha_isPlanar_colorSpaceName_bytesPerRow_bitsPerPixel_(
+            None,
+            self.px_w,
+            self.px_h,
+            8,
+            self.spp,
+            True,
+            False,
+            NSCalibratedRGBColorSpace,
+            self.px_w * self.spp,
+            32,
+        )
+        self.ns_ctx = NSGraphicsContext.graphicsContextWithBitmapImageRep_(self.rep)
+        if self.ns_ctx is None:
+            raise SystemExit("could not create bitmap graphics context")
+        self._font_cache: dict[str, object] = {}
+        self._fail_names: set[str] = set()
+
+    def _line(self, font, ch: str):
+        attr = self._NSAttributedString.alloc().initWithString_attributes_(
+            ch,
+            {
+                self._NSFontAttributeName: font,
+                self._NSForegroundColorAttributeName: self._NSColor.blackColor(),
+            },
+        )
+        return self.CoreText.CTLineCreateWithAttributedString(attr)
+
+    def glyph_bounds(self, font, ch: str) -> tuple[float, float, float, float]:
+        """Ink bbox vs pen (x) / baseline (y). Ghostty ``getBoundingRectsForGlyphs``."""
+        cp = ord(ch)
+        chars = (ctypes.c_ushort * 1)(cp)
+        glyphs = (ctypes.c_ushort * 1)(0)
+        ok = self.CoreText.CTFontGetGlyphsForCharacters(font, chars, glyphs, 1)
+        if ok and glyphs[0] != 0:
+            orient = getattr(self.CoreText, "kCTFontOrientationDefault", 0)
+            rect = self.CoreText.CTFontGetBoundingRectsForGlyphs(
+                font, orient, glyphs, None, 1
+            )
+            if isinstance(rect, tuple):
+                rect = rect[0]
+            return (
+                float(rect.origin.x),
+                float(rect.origin.y),
+                float(rect.size.width),
+                float(rect.size.height),
+            )
+        img = self.CoreText.CTLineGetImageBounds(self._line(font, ch), None)
+        return (
+            float(img.origin.x),
+            float(img.origin.y),
+            float(img.size.width),
+            float(img.size.height),
+        )
+
+    def _font_from_file(self, path: Path):
+        if not path.is_file():
+            return None
+        from Foundation import NSURL  # noqa: PLC0415
+
+        url = NSURL.fileURLWithPath_(str(path))
+        descs = self.CoreText.CTFontManagerCreateFontDescriptorsFromURL(url)
+        if not descs:
+            return None
+        desc = descs[0]
+        return self.CoreText.CTFontCreateWithFontDescriptor(desc, self.raster_pt, None)
+
+    def _is_substitute(self, font, requested: str) -> bool:
+        full = (self.CoreText.CTFontCopyFullName(font) or "").casefold()
+        req = requested.casefold()
+        if full in SUBSTITUTE_NAMES and not req.startswith(full.split()[0]):
+            return True
+        if "lastresort" in full:
+            return True
+        return False
+
+    def resolve_font(self, ghostty_name: str):
+        """Map +show-face name to an NSFont at raster_pt. None if unusable.
+
+        JetBrains Mono is Ghostty-embedded, not in AppKit — load the TTF
+        from the clone. ``CTFontCreateWithName`` on a missing family
+        silently returns Helvetica; treat that as a miss.
+        """
+        key = ghostty_name
+        if key in self._font_cache:
+            return self._font_cache[key]
+        if key in self._fail_names:
+            return None
+        font = None
+        candidates = [ghostty_name]
+        if "victormono" in ghostty_name.casefold():
+            candidates.insert(0, self.primary_family)
+        if " Regular" not in ghostty_name:
+            candidates.append(ghostty_name + " Regular")
+        if "jetbrains" in ghostty_name.casefold():
+            for path in JETBRAINS_TTFS:
+                font = self._font_from_file(path)
+                if font is not None and not self._is_substitute(font, ghostty_name):
+                    break
+                font = None
+        if font is None:
+            for name in candidates:
+                got = self._NSFont.fontWithName_size_(name, self.raster_pt)
+                if got is not None and not self._is_substitute(got, ghostty_name):
+                    font = got
+                    break
+        if font is None:
+            got = self.CoreText.CTFontCreateWithName(ghostty_name, self.raster_pt, None)
+            if got is not None and not self._is_substitute(got, ghostty_name):
+                font = got
+        if font is None:
+            self._fail_names.add(key)
+            print(f"  no font for {ghostty_name!r}", file=sys.stderr)
+            return None
+        self._font_cache[key] = font
+        return font
+
+    def used_face_name(self, font) -> str:
+        return self.CoreText.CTFontCopyFullName(font) or ""
+
+    def constrain(
+        self, x: float, y: float, w: float, h: float, budget_cells: int
+    ) -> tuple[float, float, float]:
+        """Ghostty ``.{ .size = .fit }`` at 600a86dc (Glyph.zig constrainInner).
+
+        1. Scale down about bbox center — ``scale_factors`` ``.fit``:
+           ``height_factor = min(1, width_factor, height_factor)``.
+           This is *not* "center in the cell"; it only keeps the bbox
+           from drifting when the size changes.
+        2. Clamp x/y — ``aligned_x`` / ``aligned_y`` ``.none``:
+           ``max(start, min(group.x, end))``. Glyphs whose *size* already
+           fits (``⒈`` ink width < 1 cell) still get pulled in if the
+           left bearing would overflow the right edge. Too-tall only
+           then falls back to vertical center (Ghostty's ``end_y < start_y``).
+
+        Scale/clamp use **face** span (Glyph.zig aligned_x full_face_span),
+        not the rounded cell. ``x,y`` = ink origin vs origin-cell left / cell bottom.
+        """
+        n = max(1, budget_cells)
+        budget_w = self.face_width + (n - 1) * self.cell_w
+        budget_h = self.face_height
+        s = 1.0
+        if w > 1e-6:
+            s = min(s, budget_w / w)
+        if h > 1e-6:
+            s = min(s, budget_h / h)
+        s = min(1.0, max(s, 0.0))
+        cx, cy = x + w / 2.0, y + h / 2.0
+        w2, h2 = w * s, h * s
+        x2, y2 = cx - w2 / 2.0, cy - h2 / 2.0
+        start_x, end_x = 0.0, budget_w - w2
+        x2 = start_x if end_x < start_x else max(start_x, min(x2, end_x))
+        start_y = self.face_y
+        end_y = self.face_y + budget_h - h2
+        if end_y < start_y:
+            y2 = (start_y + end_y) / 2.0
+        else:
+            y2 = max(start_y, min(y2, end_y))
+        return s, x2, y2
+
+    def place(
+        self, gx: float, gy: float, gw: float, gh: float, budget_cells: int, do_fit: bool
+    ) -> tuple[float, float, float]:
+        """Constrain if symbol, then the CoreText cell-centering dx."""
+        if do_fit:
+            s, x, y = self.constrain(gx, gy, gw, gh, budget_cells)
+        else:
+            s, x, y = 1.0, gx, gy
+        return s, x + self.cell_dx, y
+
+    def font_sized(self, font, s: float):
+        """Same face as `font`, size raster_pt * s. Avoids CTM (flipped AppKit ctx)."""
+        ps = self.CoreText.CTFontCopyPostScriptName(font) or self.CoreText.CTFontCopyFullName(font)
+        sized = self._NSFont.fontWithName_size_(ps, self.raster_pt * s)
+        if sized is None:
+            sized = self.CoreText.CTFontCreateWithName(ps, self.raster_pt * s, None)
+        return sized or font
+
+    def paint(
+        self,
+        font,
+        ch: str,
+        s: float,
+        ink_x: float,
+        ink_y: float,
+        dest_x: float,
+        dest_y: float,
+        alloc_cells: int,
+        occupancy_cells: int,
+        png_path: Path | None,
+    ) -> tuple[float, float, float]:
+        """Draw glyph at size s so unscaled ink (ink_x, ink_y) lands at dest_*.
+
+        dest_* and ink_* are relative to origin-cell left / cell bottom.
+        Density uses occupancy (wcwidth cells); overflow uses alloc_cells
+        (Ghostty constraint_width).
+        """
+        Quartz = self.Quartz
+        NSGraphicsContext = self._NSGraphicsContext
+        line = self._line(self.font_sized(font, s), ch)
+        # Unscaled ink from glyph origin: (ink_x, ink_y - descent) in baseline space.
+        # After font-size * s, that vector is scaled by s. Place origin so
+        # scaled ink matches dest.
+        tx = self.origin_x + dest_x - ink_x * s
+        # ink_y is cell-relative (origin.y + cell_baseline). Undo to baseline space.
+        ty = self.cell_bottom + dest_y - (ink_y - self.cell_baseline) * s
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.setCurrentContext_(self.ns_ctx)
+        cg = self.ns_ctx.CGContext()
+        Quartz.CGContextSetRGBFillColor(cg, 1, 1, 1, 1)
+        Quartz.CGContextFillRect(cg, Quartz.CGRectMake(0, 0, self.px_w, self.px_h))
+        Quartz.CGContextSetTextPosition(cg, tx, ty)
+        self.CoreText.CTLineDraw(line, cg)
+        NSGraphicsContext.restoreGraphicsState()
+
+        density = self._density(occupancy_cells)
+        overflow, ink_w = self._overflow_from_pixels(alloc_cells)
+
+        if png_path is not None:
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.setCurrentContext_(self.ns_ctx)
+            self._stroke_cell_grid(self.ns_ctx.CGContext())
+            NSGraphicsContext.restoreGraphicsState()
+            png_path.parent.mkdir(parents=True, exist_ok=True)
+            data = self.rep.representationUsingType_properties_(
+                self._NSBitmapImageFileTypePNG, None
+            )
+            if data is None or not data.writeToFile_atomically_(str(png_path), True):
+                raise RuntimeError(f"failed to write {png_path}")
+
+        return density, overflow, ink_w
+
+    def _rgb(self) -> np.ndarray:
+        ptr = self.rep.bitmapData()
+        bpr = int(self.rep.bytesPerRow())
+        buf = (
+            bytes(ptr)[: bpr * self.px_h]
+            if isinstance(ptr, (bytes, bytearray, memoryview))
+            else ctypes.string_at(ptr, bpr * self.px_h)
+        )
+        row = np.frombuffer(buf, dtype=np.uint8).reshape(self.px_h, bpr)
+        return row[:, : self.px_w * self.spp].reshape(self.px_h, self.px_w, self.spp)
+
+    def _guide_red(self, rgb: np.ndarray) -> np.ndarray:
+        return (
+            (rgb[:, :, 0] > 180)
+            & (rgb[:, :, 1] < 220)
+            & (rgb[:, :, 2] < 220)
+            & (rgb[:, :, 0] > rgb[:, :, 1] + 15)
+        )
+
+    def _glyph_mask(self) -> np.ndarray:
+        """Binary ink for overflow. Coverage > ~6% (min RGB < 240)."""
+        rgb = self._rgb()[:, :, :3]
+        return (rgb.min(axis=2) < 240) & ~self._guide_red(rgb)
+
+    def _density(self, alloc_cells: int) -> float:
+        """Mean optical coverage in the occupancy rect.
+
+        Ghostty sprite shades are alpha8 (common.zig Shade: light=0x40,
+        medium=0x80, dark=0xC0, on=0xFF). Binary ink would count ░▒▓ as
+        full-cell density; ``(255-min(R,G,B))/255`` keeps those as
+        ~0.25 / ~0.50 / ~0.75 and matches black-on-white glyphs.
+        Keep in sync with recount-density.
+        """
+        rgb = self._rgb()[:, :, :3]
+        coverage = (255.0 - rgb.min(axis=2).astype(np.float64)) / 255.0
+        coverage[self._guide_red(rgb)] = 0.0
+        x0 = int(round(self.origin_x))
+        x1 = int(round(self.origin_x + self.cell_w * alloc_cells))
+        y0 = int(round(self.cell_bottom))
+        y1 = int(round(self.cell_bottom + self.cell_h))
+        x0, x1 = max(0, x0), min(self.px_w, max(x0 + 1, x1))
+        y0, y1 = max(0, y0), min(self.px_h, max(y0 + 1, y1))
+        top, bot = self.px_h - y1, self.px_h - y0
+        cell = coverage[top:bot, x0:x1]
+        return float(cell.mean()) if cell.size else 0.0
+
+    def _overflow_from_pixels(self, alloc_cells: int) -> tuple[float, float]:
+        """overflow_cells past allocated right edge; ink_width_cells of glyph bbox."""
+        mask = self._glyph_mask()
+        ys, xs = np.where(mask)
+        if xs.size == 0:
+            return 0.0, 0.0
+        # Integer cell: pixels [origin, origin + cell_w * alloc). Ghostty
+        # Metrics.cell_width is u32; a fractional edge was producing 0.0098
+        # "overflow" from one AA pixel straddling 55.635.
+        alloc_right = self.origin_x + self.cell_w * alloc_cells
+        overflow = max(0.0, float(xs.max() + 1) - alloc_right) / self.cell_w
+        ink_w = float(xs.max() - xs.min() + 1) / self.cell_w
+        return float(overflow), float(ink_w)
+
+    def _stroke_cell_grid(self, cg) -> None:
+        Quartz = self.Quartz
+        x_left = float(self.origin_x)
+        x_mid = float(self.origin_x + self.cell_w)
+        x_right = float(self.origin_x + 2 * self.cell_w)
+        y_bot = float(self.cell_bottom)
+        y_top = float(self.cell_bottom + self.cell_h)
+        Quartz.CGContextSaveGState(cg)
+        Quartz.CGContextSetShouldAntialias(cg, False)
+        Quartz.CGContextSetLineWidth(cg, 1.0)
+        Quartz.CGContextSetRGBStrokeColor(cg, 1.0, 0.72, 0.72, 1.0)
+
+        def vline(x: float) -> None:
+            Quartz.CGContextMoveToPoint(cg, x + 0.5, y_bot)
+            Quartz.CGContextAddLineToPoint(cg, x + 0.5, y_top)
+
+        def hline(y: float) -> None:
+            Quartz.CGContextMoveToPoint(cg, x_left, y + 0.5)
+            Quartz.CGContextAddLineToPoint(cg, x_right, y + 0.5)
+
+        vline(x_left)
+        vline(x_mid)
+        vline(x_right)
+        hline(y_bot)
+        hline(y_top)
+        Quartz.CGContextStrokePath(cg)
+        Quartz.CGContextRestoreGState(cg)
+
+
+def classify(cells: int, overflow: float) -> str:
+    if cells >= 2:
+        return "wide"
+    if overflow > OVERFLOW_THRESH:
+        return "overlarge"
+    return "narrow"
+
+
+TSV_HEADER = (
+    "cp\thex\tchar\tname\tcategory\teaw\tcells\tblock\tghostty\tused_face\t"
+    "packed_scale\tpacked_class\tpacked_density\tpacked_overflow_cells\tpacked_ink_width_cells\tpacked_raster\t"
+    "roomy_scale\troomy_class\troomy_density\troomy_overflow_cells\troomy_ink_width_cells\troomy_raster"
+)
+
+
+def tsv_line(
+    r: dict[str, str],
+    used: str,
+    cells: int,
+    p_s: float,
+    p_ov: float,
+    p_den: float,
+    p_ink: float,
+    r_s: float,
+    r_ov: float,
+    r_den: float,
+    r_ink: float,
+) -> str:
+    cp = int(r["cp"])
+    char = r["char"].replace("\\", "\\\\").replace("\t", "\\t")
+    return (
+        f"{cp}\t{r['hex']}\t{char}\t{r['name']}\t{r['category']}\t{r['eaw']}\t"
+        f"{cells}\t{r['block']}\t{r['ghostty']}\t{used}\t"
+        f"{p_s:.4f}\t{classify(cells, p_ov)}\t{p_den:.4f}\t{p_ov:.4f}\t{p_ink:.4f}\t"
+        f"{raster_rel('packed', cp)}\t"
+        f"{r_s:.4f}\t{classify(cells, r_ov)}\t{r_den:.4f}\t{r_ov:.4f}\t{r_ink:.4f}\t"
+        f"{raster_rel('roomy', cp)}"
+    )
+
+
+def merge_write(path: Path, new_by_cp: dict[int, str], ranged: bool) -> None:
+    """Write TSV. A ranged run keeps rows this pass didn't touch (incl. sprites)."""
+    by_cp: dict[int, str] = {}
+    if ranged and path.exists():
+        with path.open(encoding="utf-8") as f:
+            hdr = f.readline()
+            for line in f:
+                line = line.rstrip("\n")
+                if not line:
+                    continue
+                by_cp[int(line.split("\t", 1)[0])] = line
+    by_cp.update(new_by_cp)
+    with path.open("w", encoding="utf-8") as f:
+        f.write(TSV_HEADER + "\n")
+        for cp in sorted(by_cp):
+            f.write(by_cp[cp] + "\n")
+
+
+def run_follow_on(here: Path, out: Path, out_tsv: Path, rasters: bool) -> None:
+    sprites = here / "measure-sprites"
+    recount = here / "recount-density"
+    print("running measure-sprites…", file=sys.stderr)
+    subprocess.check_call([sys.executable, str(sprites), "--out", str(out)])
+    if rasters:
+        print("running recount-density…", file=sys.stderr)
+        subprocess.check_call([sys.executable, str(recount), "--tsv", str(out_tsv)])
+
+
+def main() -> None:
+    here = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
+    ap.add_argument("--tsv", type=Path, default=here / "bmp-metrics.tsv")
+    ap.add_argument("--out", type=Path, default=here)
+    ap.add_argument("--from-cp", dest="start", default=None)
+    ap.add_argument("--to-cp", dest="end", default=None)
+    ap.add_argument("--no-rasters", action="store_true")
+    ap.add_argument(
+        "--no-sprites",
+        action="store_true",
+        help="skip the automatic measure-sprites + recount-density pass",
+    )
+    ap.add_argument(
+        "--no-refresh-faces",
+        action="store_true",
+        help="reuse bmp-metrics.tsv ghostty column instead of live +show-face",
+    )
+    args = ap.parse_args()
+
+    def parse_cp(s: str | None) -> int | None:
+        if s is None:
+            return None
+        s = s.strip().lower().removeprefix("u+").removeprefix("0x")
+        return int(s, 16)
+
+    start, end = parse_cp(args.start), parse_cp(args.end)
+    src = load_tsv(args.tsv)
+    rows = []
+    skipped = 0
+    n_symbol = 0
+    for r in src:
+        cp = int(r["cp"])
+        if start is not None and cp < start:
+            continue
+        if end is not None and cp > end:
+            continue
+        if skip_row(r):
+            skipped += 1
+            continue
+        rows.append(r)
+    if not args.no_refresh_faces:
+        print(f"ghostty +show-face ({len(rows)} cps)…", file=sys.stderr)
+        live = ghostty_faces([int(r["cp"]) for r in rows])
+        kept: list[dict[str, str]] = []
+        for r in rows:
+            cp = int(r["cp"])
+            if cp in live:
+                r = dict(r)
+                r["ghostty"] = live[cp]
+            if skip_row(r):
+                skipped += 1
+                continue
+            kept.append(r)
+        rows = kept
+    n_symbol = sum(1 for r in rows if is_symbol(r))
+    print(
+        f"measuring {len(rows)} ({n_symbol} isSymbol .fit, "
+        f"{len(rows) - n_symbol} unconstrained; skipped {skipped} sprite/not-found/missing)",
+        file=sys.stderr,
+    )
+
+    family, pt = ghostty_config()
+    measurer = GhosttyMeasurer(family, pt, SCALE)
+    print(
+        f"primary {family!r} @ {pt}pt  face {measurer.face_width:.2f}×{measurer.face_height:.2f}  "
+        f"cell {measurer.cell_w}×{measurer.cell_h}  dx {measurer.cell_dx:.3f}  "
+        f"canvas {measurer.px_w}×{measurer.px_h}",
+        file=sys.stderr,
+    )
+
+    args.out.mkdir(parents=True, exist_ok=True)
+    out_tsv = args.out / "bmp-metrics-ghostty.tsv"
+    n = len(rows)
+    written = 0
+    new_by_cp: dict[int, str] = {}
+    for i, r in enumerate(rows):
+        cp = int(r["cp"])
+        if i % 2000 == 0:
+            print(f"  {i}/{n} U+{cp:04X}", file=sys.stderr)
+        font = measurer.resolve_font(r["ghostty"])
+        if font is None:
+            continue
+        ch = chr(cp)
+        bx, by, gw, gh = measurer.glyph_bounds(font, ch)
+        gx = bx
+        gy = by + measurer.cell_baseline
+        cells = int(r["cells"])
+        packed_cells = cells
+        # Ghostty constraintWidth: non-symbols always grid_width (never 2).
+        roomy_cells = 2 if is_symbol(r) and cells == 1 else cells
+        fit = is_symbol(r)
+        p_s, p_x, p_y = measurer.place(gx, gy, gw, gh, packed_cells, fit)
+        r_s, r_x, r_y = measurer.place(gx, gy, gw, gh, roomy_cells, fit)
+        packed_path = None if args.no_rasters else args.out / raster_rel("packed", cp)
+        roomy_path = None if args.no_rasters else args.out / raster_rel("roomy", cp)
+        p_den, p_ov, p_ink = measurer.paint(
+            font, ch, p_s, gx, gy, p_x, p_y, packed_cells, cells, packed_path
+        )
+        r_den, r_ov, r_ink = measurer.paint(
+            font, ch, r_s, gx, gy, r_x, r_y, roomy_cells, cells, roomy_path
+        )
+        used = measurer.used_face_name(font)
+        new_by_cp[cp] = tsv_line(
+            r, used, cells, p_s, p_ov, p_den, p_ink, r_s, r_ov, r_den, r_ink
+        )
+        written += 1
+    merge_write(out_tsv, new_by_cp, ranged=start is not None or end is not None)
+    print(f"  {n}/{n} done — wrote {written} rows → {out_tsv}", file=sys.stderr)
+    print(
+        f"fonts resolved: {len(measurer._font_cache)}  failed: {len(measurer._fail_names)}",
+        file=sys.stderr,
+    )
+    if not args.no_sprites:
+        run_follow_on(here, args.out, out_tsv, rasters=not args.no_rasters)
+
+
+if __name__ == "__main__":
+    main()

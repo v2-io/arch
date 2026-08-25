@@ -1,0 +1,162 @@
+#!/usr/bin/env python3
+"""Rewrite packed/roomy density in bmp-metrics-ghostty.tsv from the PNG pixels.
+
+Narrow (cells=1): origin cell only.
+Wide (cells=2): origin + second cell.
+Density = mean optical coverage: ``(255 - min(R,G,B)) / 255``, guide-red
+zeroed. Ghostty sprite shades are alpha8 (Shade light=0x40, medium=0x80,
+dark=0xC0) so ░▒▓ land near 0.25 / 0.50 / 0.75 instead of binary-full.
+Keep in sync with measure-ghostty ``_density``.
+
+Also rewrites packed/roomy overflow_cells and ink_width_cells from the same
+PNGs (binary ink = coverage > 15/255, matching measure-ghostty overflow).
+Does not re-raster. Does not retouch class.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+
+# Same geometry as measure-ghostty (VictorMono NFM SemiBold @ 17×4).
+# Keep in sync with GhosttyMeasurer.__init__ (Ghostty Metrics.calc integers).
+def cell_metrics():
+    from AppKit import NSFont, NSAttributedString, NSFontAttributeName
+    import CoreText
+
+    font = NSFont.fontWithName_size_("VictorMono NFM SemiBold", 17.0 * 4)
+    descent = CoreText.CTFontGetDescent(font)
+    ascent = CoreText.CTFontGetAscent(font)
+    leading = CoreText.CTFontGetLeading(font)
+    face_h = ascent + descent + leading
+    face_w = 0.0
+    for i in range(32, 127):
+        attr = NSAttributedString.alloc().initWithString_attributes_(
+            chr(i), {NSFontAttributeName: font}
+        )
+        w = CoreText.CTLineGetTypographicBounds(
+            CoreText.CTLineCreateWithAttributedString(attr), None, None, None
+        )[0]
+        if w > face_w:
+            face_w = float(w)
+    return int(round(face_w)), int(round(face_h))
+
+
+def guide_red(rgb: np.ndarray) -> np.ndarray:
+    return (
+        (rgb[:, :, 0] > 180)
+        & (rgb[:, :, 1] < 220)
+        & (rgb[:, :, 2] < 220)
+        & (rgb[:, :, 0] > rgb[:, :, 1] + 15)
+    )
+
+
+def coverage(arr: np.ndarray) -> np.ndarray:
+    rgb = arr[:, :, :3]
+    cov = (255.0 - rgb.min(axis=2).astype(np.float64)) / 255.0
+    cov[guide_red(rgb)] = 0.0
+    return cov
+
+
+def origin_rect(cell_w: int, cell_h: int, px_w: int, px_h: int, alloc_cells: int):
+    ox = (px_w - 2 * cell_w) // 2
+    oy = (px_h - cell_h) // 2  # CG cell_bottom; PNG top = px_h - (oy+cell_h)
+    x0 = ox
+    x1 = ox + cell_w * alloc_cells
+    top = px_h - (oy + cell_h)
+    bot = px_h - oy
+    return x0, x1, top, bot
+
+
+def density_png(path: Path, cell_w: int, cell_h: int, alloc_cells: int) -> float | None:
+    if not path.is_file():
+        return None
+    im = np.array(Image.open(path).convert("RGBA"))
+    h, w = im.shape[:2]
+    x0, x1, top, bot = origin_rect(cell_w, cell_h, w, h, alloc_cells)
+    x0, x1 = max(0, x0), min(w, x1)
+    top, bot = max(0, top), min(h, bot)
+    if x1 <= x0 or bot <= top:
+        return None
+    cell = coverage(im)[top:bot, x0:x1]
+    return float(cell.mean()) if cell.size else 0.0
+
+
+def overflow_ink_png(
+    path: Path, cell_w: int, origin_x: int, alloc_cells: int
+) -> tuple[float, float] | None:
+    """overflow past allocated right edge; ink_width of glyph bbox. None if missing."""
+    if not path.is_file():
+        return None
+    im = np.array(Image.open(path).convert("RGBA"))
+    cov = coverage(im)
+    ys, xs = np.where(cov > 15.0 / 255.0)
+    if xs.size == 0:
+        return 0.0, 0.0
+    alloc_right = origin_x + cell_w * alloc_cells
+    overflow = max(0.0, float(xs.max() + 1) - alloc_right) / cell_w
+    ink_w = float(xs.max() - xs.min() + 1) / cell_w
+    return float(overflow), float(ink_w)
+
+
+def main() -> None:
+    here = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
+    ap.add_argument("--tsv", type=Path, default=here / "bmp-metrics-ghostty.tsv")
+    args = ap.parse_args()
+
+    cell_w, cell_h = cell_metrics()
+    origin_x = (cell_w * 3 - 2 * cell_w) // 2
+    print(f"cell {cell_w}×{cell_h}", file=sys.stderr)
+
+    symbol_blocks = {
+        "Arrows",
+        "Dingbats",
+        "Emoticons",
+        "Miscellaneous Symbols",
+        "Enclosed Alphanumerics",
+        "Enclosed Alphanumeric Supplement",
+        "Miscellaneous Symbols and Pictographs",
+        "Transport and Map Symbols",
+    }
+
+    lines = args.tsv.read_text(encoding="utf-8").splitlines()
+    hdr = lines[0].split("\t")
+    col = {name: i for i, name in enumerate(hdr)}
+    out = [lines[0]]
+    n = 0
+    for line in lines[1:]:
+        cols = line.split("\t")
+        cells = int(cols[col["cells"]])
+        occ = 1 if cells == 1 else 2
+        is_sym = cols[col["category"]] == "Co" or cols[col["block"]] in symbol_blocks
+        # Ghostty constraintWidth: non-symbols never get a 2-cell budget.
+        roomy_alloc = 2 if is_sym and cells == 1 else occ
+        for kind, dcol, rcol, ocol, icol, alloc in (
+            ("packed", "packed_density", "packed_raster", "packed_overflow_cells", "packed_ink_width_cells", occ),
+            ("roomy", "roomy_density", "roomy_raster", "roomy_overflow_cells", "roomy_ink_width_cells", roomy_alloc),
+        ):
+            rel = cols[col[rcol]]
+            path = args.tsv.parent / rel
+            d = density_png(path, cell_w, cell_h, occ)
+            if d is not None:
+                cols[col[dcol]] = f"{d:.4f}"
+            ext = overflow_ink_png(path, cell_w, origin_x, alloc)
+            if ext is not None:
+                ov, ink = ext
+                cols[col[ocol]] = f"{ov:.4f}"
+                cols[col[icol]] = f"{ink:.4f}"
+        out.append("\t".join(cols))
+        n += 1
+        if n % 5000 == 0:
+            print(f"  {n}", file=sys.stderr)
+    args.tsv.write_text("\n".join(out) + "\n", encoding="utf-8")
+    print(f"updated {n} rows in {args.tsv}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

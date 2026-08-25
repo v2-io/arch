@@ -1,0 +1,772 @@
+#!/usr/bin/env python3
+"""Measure how standalone Unicode glyphs paint in this Ghostty + Nerd Font setup.
+
+Covers UTF-8 1-, 2-, and 3-byte scalars (U+0000–U+FFFF). Combining marks,
+controls, format chars, surrogates, and whitespace are skipped. Private Use
+is included (Nerd Fonts live there).
+
+What is measured
+----------------
+- **cells** — terminal occupancy from ``wcwidth`` (Ghostty's
+  ``grapheme-width-method = unicode``).
+- **class** — ``narrow`` (fits one cell), ``overlarge`` (occupies one cell but
+  ink crosses into the next), ``wide`` (two-cell occupancy), ``missing``
+  (assigned, but no ink / no glyph in the cascade).
+- **density** — inked pixels / allocated-cell pixels, from a CoreText raster.
+- **overflow_cells** — how far the ink bbox extends past the allocated cells,
+  in units of one primary-font cell width.
+
+The raster uses CoreText (Ghostty's engine on this Mac) at the configured
+primary face plus the system fallback cascade. That is *not* 1:1 with
+Ghostty's paint: Ghostty replaces box-drawing / block / braille / some
+Powerline with internal sprites, and scales some Nerd icons. ``ghostty``
+records ``+show-face`` when that tool is available.
+
+Rasters (default on) are written to ``.rasters/{scale}x/{hi:02x}/{cp:04x}.png``.
+Each PNG is 3×2 cells: half-cell pad left, origin cell, second cell, half-cell
+pad right; half-cell pad above and below. Light 1px red lines mark the cell
+boundaries. Density is measured on the allocated cell rectangle *before* the
+grid is drawn.
+
+Shape taxonomy is out of scope for this script.
+
+Writes a TSV (the measurements), rasters, and hex-grid markdown tables.
+"""
+
+from __future__ import annotations
+
+import argparse
+import ctypes
+import math
+import re
+import subprocess
+import sys
+import unicodedata
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterable
+
+import numpy as np
+from wcwidth import wcwidth
+
+# AppKit/CoreText import is deferred to Measurer so --help works without GUI bits.
+
+# Combining / control / format / separators / surrogates. Not Co (PUA / Nerd Fonts).
+SKIP_CATS = frozenset({"Mn", "Mc", "Me", "Cc", "Cf", "Zl", "Zp", "Cs", "Zs"})
+
+# Ink-bbox past this fraction of a cell, to the right, counts as overlarge.
+# ~1.5px at the 4× raster is ~4% of a cell; still well under a designed
+# joiner such as U+2500 (~8–17%).
+OVERFLOW_THRESH = 0.04
+
+DEFAULT_RANGE_END = 0xFFFF  # last 3-byte UTF-8 scalar
+SCALE = 4  # raster = font-size × this
+
+# PNG cache: .rasters/{scale}x/{hi:02x}/{cp:04x}.png
+# Canvas is 3 cells wide × 2 cells tall:
+#   [½][origin][second][½]  horizontally
+#   [½][cell][½]            vertically
+# Light 1px red strokes on the origin/second cell boundaries.
+
+# Unicode BMP blocks (UCD latest, clipped to U+FFFF). Used for markdown headings.
+BLOCKS: list[tuple[int, int, str]] = [
+    (0x0000, 0x007F, "Basic Latin"),
+    (0x0080, 0x00FF, "Latin-1 Supplement"),
+    (0x0100, 0x017F, "Latin Extended-A"),
+    (0x0180, 0x024F, "Latin Extended-B"),
+    (0x0250, 0x02AF, "IPA Extensions"),
+    (0x02B0, 0x02FF, "Spacing Modifier Letters"),
+    (0x0300, 0x036F, "Combining Diacritical Marks"),
+    (0x0370, 0x03FF, "Greek and Coptic"),
+    (0x0400, 0x04FF, "Cyrillic"),
+    (0x0500, 0x052F, "Cyrillic Supplement"),
+    (0x0530, 0x058F, "Armenian"),
+    (0x0590, 0x05FF, "Hebrew"),
+    (0x0600, 0x06FF, "Arabic"),
+    (0x0700, 0x074F, "Syriac"),
+    (0x0750, 0x077F, "Arabic Supplement"),
+    (0x0780, 0x07BF, "Thaana"),
+    (0x07C0, 0x07FF, "NKo"),
+    (0x0800, 0x083F, "Samaritan"),
+    (0x0840, 0x085F, "Mandaic"),
+    (0x0860, 0x086F, "Syriac Supplement"),
+    (0x0870, 0x089F, "Arabic Extended-B"),
+    (0x08A0, 0x08FF, "Arabic Extended-A"),
+    (0x0900, 0x097F, "Devanagari"),
+    (0x0980, 0x09FF, "Bengali"),
+    (0x0A00, 0x0A7F, "Gurmukhi"),
+    (0x0A80, 0x0AFF, "Gujarati"),
+    (0x0B00, 0x0B7F, "Oriya"),
+    (0x0B80, 0x0BFF, "Tamil"),
+    (0x0C00, 0x0C7F, "Telugu"),
+    (0x0C80, 0x0CFF, "Kannada"),
+    (0x0D00, 0x0D7F, "Malayalam"),
+    (0x0D80, 0x0DFF, "Sinhala"),
+    (0x0E00, 0x0E7F, "Thai"),
+    (0x0E80, 0x0EFF, "Lao"),
+    (0x0F00, 0x0FFF, "Tibetan"),
+    (0x1000, 0x109F, "Myanmar"),
+    (0x10A0, 0x10FF, "Georgian"),
+    (0x1100, 0x11FF, "Hangul Jamo"),
+    (0x1200, 0x137F, "Ethiopic"),
+    (0x1380, 0x139F, "Ethiopic Supplement"),
+    (0x13A0, 0x13FF, "Cherokee"),
+    (0x1400, 0x167F, "Unified Canadian Aboriginal Syllabics"),
+    (0x1680, 0x169F, "Ogham"),
+    (0x16A0, 0x16FF, "Runic"),
+    (0x1700, 0x171F, "Tagalog"),
+    (0x1720, 0x173F, "Hanunoo"),
+    (0x1740, 0x175F, "Buhid"),
+    (0x1760, 0x177F, "Tagbanwa"),
+    (0x1780, 0x17FF, "Khmer"),
+    (0x1800, 0x18AF, "Mongolian"),
+    (0x18B0, 0x18FF, "Unified Canadian Aboriginal Syllabics Extended"),
+    (0x1900, 0x194F, "Limbu"),
+    (0x1950, 0x197F, "Tai Le"),
+    (0x1980, 0x19DF, "New Tai Lue"),
+    (0x19E0, 0x19FF, "Khmer Symbols"),
+    (0x1A00, 0x1A1F, "Buginese"),
+    (0x1A20, 0x1AAF, "Tai Tham"),
+    (0x1AB0, 0x1AFF, "Combining Diacritical Marks Extended"),
+    (0x1B00, 0x1B7F, "Balinese"),
+    (0x1B80, 0x1BBF, "Sundanese"),
+    (0x1BC0, 0x1BFF, "Batak"),
+    (0x1C00, 0x1C4F, "Lepcha"),
+    (0x1C50, 0x1C7F, "Ol Chiki"),
+    (0x1C80, 0x1C8F, "Cyrillic Extended-C"),
+    (0x1C90, 0x1CBF, "Georgian Extended"),
+    (0x1CC0, 0x1CCF, "Sundanese Supplement"),
+    (0x1CD0, 0x1CFF, "Vedic Extensions"),
+    (0x1D00, 0x1D7F, "Phonetic Extensions"),
+    (0x1D80, 0x1DBF, "Phonetic Extensions Supplement"),
+    (0x1DC0, 0x1DFF, "Combining Diacritical Marks Supplement"),
+    (0x1E00, 0x1EFF, "Latin Extended Additional"),
+    (0x1F00, 0x1FFF, "Greek Extended"),
+    (0x2000, 0x206F, "General Punctuation"),
+    (0x2070, 0x209F, "Superscripts and Subscripts"),
+    (0x20A0, 0x20CF, "Currency Symbols"),
+    (0x20D0, 0x20FF, "Combining Diacritical Marks for Symbols"),
+    (0x2100, 0x214F, "Letterlike Symbols"),
+    (0x2150, 0x218F, "Number Forms"),
+    (0x2190, 0x21FF, "Arrows"),
+    (0x2200, 0x22FF, "Mathematical Operators"),
+    (0x2300, 0x23FF, "Miscellaneous Technical"),
+    (0x2400, 0x243F, "Control Pictures"),
+    (0x2440, 0x245F, "Optical Character Recognition"),
+    (0x2460, 0x24FF, "Enclosed Alphanumerics"),
+    (0x2500, 0x257F, "Box Drawing"),
+    (0x2580, 0x259F, "Block Elements"),
+    (0x25A0, 0x25FF, "Geometric Shapes"),
+    (0x2600, 0x26FF, "Miscellaneous Symbols"),
+    (0x2700, 0x27BF, "Dingbats"),
+    (0x27C0, 0x27EF, "Miscellaneous Mathematical Symbols-A"),
+    (0x27F0, 0x27FF, "Supplemental Arrows-A"),
+    (0x2800, 0x28FF, "Braille Patterns"),
+    (0x2900, 0x297F, "Supplemental Arrows-B"),
+    (0x2980, 0x29FF, "Miscellaneous Mathematical Symbols-B"),
+    (0x2A00, 0x2AFF, "Supplemental Mathematical Operators"),
+    (0x2B00, 0x2BFF, "Miscellaneous Symbols and Arrows"),
+    (0x2C00, 0x2C5F, "Glagolitic"),
+    (0x2C60, 0x2C7F, "Latin Extended-C"),
+    (0x2C80, 0x2CFF, "Coptic"),
+    (0x2D00, 0x2D2F, "Georgian Supplement"),
+    (0x2D30, 0x2D7F, "Tifinagh"),
+    (0x2D80, 0x2DDF, "Ethiopic Extended"),
+    (0x2DE0, 0x2DFF, "Cyrillic Extended-A"),
+    (0x2E00, 0x2E7F, "Supplemental Punctuation"),
+    (0x2E80, 0x2EFF, "CJK Radicals Supplement"),
+    (0x2F00, 0x2FDF, "Kangxi Radicals"),
+    (0x2FF0, 0x2FFF, "Ideographic Description Characters"),
+    (0x3000, 0x303F, "CJK Symbols and Punctuation"),
+    (0x3040, 0x309F, "Hiragana"),
+    (0x30A0, 0x30FF, "Katakana"),
+    (0x3100, 0x312F, "Bopomofo"),
+    (0x3130, 0x318F, "Hangul Compatibility Jamo"),
+    (0x3190, 0x319F, "Kanbun"),
+    (0x31A0, 0x31BF, "Bopomofo Extended"),
+    (0x31C0, 0x31EF, "CJK Strokes"),
+    (0x31F0, 0x31FF, "Katakana Phonetic Extensions"),
+    (0x3200, 0x32FF, "Enclosed CJK Letters and Months"),
+    (0x3300, 0x33FF, "CJK Compatibility"),
+    (0x3400, 0x4DBF, "CJK Unified Ideographs Extension A"),
+    (0x4DC0, 0x4DFF, "Yijing Hexagram Symbols"),
+    (0x4E00, 0x9FFF, "CJK Unified Ideographs"),
+    (0xA000, 0xA48F, "Yi Syllables"),
+    (0xA490, 0xA4CF, "Yi Radicals"),
+    (0xA4D0, 0xA4FF, "Lisu"),
+    (0xA500, 0xA63F, "Vai"),
+    (0xA640, 0xA69F, "Cyrillic Extended-B"),
+    (0xA6A0, 0xA6FF, "Bamum"),
+    (0xA700, 0xA71F, "Modifier Tone Letters"),
+    (0xA720, 0xA7FF, "Latin Extended-D"),
+    (0xA800, 0xA82F, "Syloti Nagri"),
+    (0xA830, 0xA83F, "Common Indic Number Forms"),
+    (0xA840, 0xA87F, "Phags-pa"),
+    (0xA880, 0xA8DF, "Saurashtra"),
+    (0xA8E0, 0xA8FF, "Devanagari Extended"),
+    (0xA900, 0xA92F, "Kayah Li"),
+    (0xA930, 0xA95F, "Rejang"),
+    (0xA960, 0xA97F, "Hangul Jamo Extended-A"),
+    (0xA980, 0xA9DF, "Javanese"),
+    (0xA9E0, 0xA9FF, "Myanmar Extended-B"),
+    (0xAA00, 0xAA5F, "Cham"),
+    (0xAA60, 0xAA7F, "Myanmar Extended-A"),
+    (0xAA80, 0xAADF, "Tai Viet"),
+    (0xAAE0, 0xAAFF, "Meetei Mayek Extensions"),
+    (0xAB00, 0xAB2F, "Ethiopic Extended-A"),
+    (0xAB30, 0xAB6F, "Latin Extended-E"),
+    (0xAB70, 0xABBF, "Cherokee Supplement"),
+    (0xABC0, 0xABFF, "Meetei Mayek"),
+    (0xAC00, 0xD7AF, "Hangul Syllables"),
+    (0xD7B0, 0xD7FF, "Hangul Jamo Extended-B"),
+    (0xD800, 0xDB7F, "High Surrogates"),
+    (0xDB80, 0xDBFF, "High Private Use Surrogates"),
+    (0xDC00, 0xDFFF, "Low Surrogates"),
+    (0xE000, 0xF8FF, "Private Use Area"),
+    (0xF900, 0xFAFF, "CJK Compatibility Ideographs"),
+    (0xFB00, 0xFB4F, "Alphabetic Presentation Forms"),
+    (0xFB50, 0xFDFF, "Arabic Presentation Forms-A"),
+    (0xFE00, 0xFE0F, "Variation Selectors"),
+    (0xFE10, 0xFE1F, "Vertical Forms"),
+    (0xFE20, 0xFE2F, "Combining Half Marks"),
+    (0xFE30, 0xFE4F, "CJK Compatibility Forms"),
+    (0xFE50, 0xFE6F, "Small Form Variants"),
+    (0xFE70, 0xFEFF, "Arabic Presentation Forms-B"),
+    (0xFF00, 0xFFEF, "Halfwidth and Fullwidth Forms"),
+    (0xFFF0, 0xFFFF, "Specials"),
+]
+
+
+@dataclass(frozen=True)
+class Row:
+    cp: int
+    category: str
+    eaw: str
+    cells: int
+    klass: str  # narrow | overlarge | wide | missing
+    density: float
+    overflow_cells: float
+    ink_width_cells: float
+    face: str
+    ghostty: str
+    block: str
+    raster: str = ""
+
+    @property
+    def ch(self) -> str:
+        return chr(self.cp)
+
+
+def ghostty_config() -> tuple[str, float]:
+    """Primary face and size from ``ghostty +show-config``, with fallbacks."""
+    family = "VictorMono NFM SemiBold"
+    size = 17.0
+    try:
+        out = subprocess.check_output(
+            ["ghostty", "+show-config"], text=True, stderr=subprocess.DEVNULL
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return family, size
+    for line in out.splitlines():
+        if line.startswith("font-family = ") and "font-family-" not in line:
+            val = line.split("=", 1)[1].strip()
+            if val:
+                family = val
+        elif line.startswith("font-size = "):
+            try:
+                size = float(line.split("=", 1)[1].strip())
+            except ValueError:
+                pass
+    return family, size
+
+
+def ghostty_faces(codepoints: list[int], chunk: int = 128) -> dict[int, str]:
+    """Map codepoint → '+show-face' painter string. Empty dict if Ghostty missing."""
+    if not codepoints:
+        return {}
+    faces: dict[int, str] = {}
+    pat = re.compile(
+        r"U\+([0-9A-Fa-f]+)\s+«.*?»\s+"
+        r"(found in face “(?P<face>.*)”"
+        r"|is handled by Ghostty's internal sprites"
+        r"|not found)\."
+    )
+    for i in range(0, len(codepoints), chunk):
+        part = codepoints[i : i + chunk]
+        s = "".join(chr(cp) for cp in part)
+        try:
+            out = subprocess.check_output(
+                ["ghostty", "+show-face", f"--string={s}"],
+                text=True,
+                stderr=subprocess.STDOUT,
+            )
+        except (FileNotFoundError, subprocess.CalledProcessError) as e:
+            if i == 0:
+                print(f"note: ghostty +show-face unavailable ({e!r})", file=sys.stderr)
+                return {}
+            continue
+        for m in pat.finditer(out):
+            cp = int(m.group(1), 16)
+            if m.group("face") is not None:
+                faces[cp] = m.group("face")
+            elif "sprites" in m.group(2):
+                faces[cp] = "ghostty-sprite"
+            else:
+                faces[cp] = "not-found"
+    return faces
+
+
+def block_name(cp: int) -> str:
+    for start, end, name in BLOCKS:
+        if start <= cp <= end:
+            return name
+    return "Unassigned block"
+
+
+def skip_reason(cp: int) -> str | None:
+    """None if we should measure; otherwise a table-cell mark ('x' or '')."""
+    try:
+        ch = chr(cp)
+    except ValueError:
+        return "x"
+    cat = unicodedata.category(ch)
+    if cat == "Cn":
+        return ""
+    if cat in SKIP_CATS:
+        return "x"
+    return None
+
+
+def raster_relpath(cp: int, scale: int) -> str:
+    """`.rasters/4x/25/2500.png` for U+2500 at 4×."""
+    return f".rasters/{scale}x/{cp >> 8:02x}/{cp:04x}.png"
+
+
+class Measurer:
+    def __init__(self, family: str, point_size: float, scale: int = SCALE) -> None:
+        from AppKit import (  # noqa: PLC0415
+            NSAttributedString,
+            NSBitmapImageFileTypePNG,
+            NSBitmapImageRep,
+            NSCalibratedRGBColorSpace,
+            NSColor,
+            NSFont,
+            NSFontAttributeName,
+            NSForegroundColorAttributeName,
+            NSGraphicsContext,
+        )
+        import CoreText  # noqa: PLC0415
+        import Quartz  # noqa: PLC0415
+
+        self._NSAttributedString = NSAttributedString
+        self._NSBitmapImageFileTypePNG = NSBitmapImageFileTypePNG
+        self._NSColor = NSColor
+        self._NSFontAttributeName = NSFontAttributeName
+        self._NSForegroundColorAttributeName = NSForegroundColorAttributeName
+        self._NSGraphicsContext = NSGraphicsContext
+        self.CoreText = CoreText
+        self.Quartz = Quartz
+
+        self.family = family
+        self.point_size = point_size
+        self.scale = scale
+        raster_pt = point_size * scale
+        font = NSFont.fontWithName_size_(family, raster_pt)
+        if font is None:
+            raise SystemExit(
+                f"CoreText could not open {family!r} at {raster_pt}pt. "
+                f"Check `ghostty +list-fonts` / font-family."
+            )
+        self.font = font
+        self.ascent = CoreText.CTFontGetAscent(font)
+        self.descent = CoreText.CTFontGetDescent(font)
+        self.leading = CoreText.CTFontGetLeading(font)
+        self.cell_h = self.ascent + self.descent + self.leading
+        space = self._line(" ")
+        self.cell_w = CoreText.CTLineGetTypographicBounds(space, None, None, None)[0]
+        if self.cell_w <= 0:
+            raise SystemExit("primary font space advance is 0; not a usable cell")
+
+        # 3 cells wide (½ + origin + second + ½), 2 cells tall (½ + cell + ½).
+        self.px_w = int(round(self.cell_w * 3))
+        self.px_h = int(round(self.cell_h * 2))
+        self.origin_x = 0.5 * self.cell_w
+        self.cell_bottom = 0.5 * self.cell_h  # CG y; baseline sits descent above this
+        # RGBA is required: NSGraphicsContext refuses RGB-without-alpha bitmap reps.
+        self.spp = 4
+        self.rep = NSBitmapImageRep.alloc().initWithBitmapDataPlanes_pixelsWide_pixelsHigh_bitsPerSample_samplesPerPixel_hasAlpha_isPlanar_colorSpaceName_bytesPerRow_bitsPerPixel_(
+            None,
+            self.px_w,
+            self.px_h,
+            8,
+            self.spp,
+            True,
+            False,
+            NSCalibratedRGBColorSpace,
+            self.px_w * self.spp,
+            32,
+        )
+        self.ns_ctx = NSGraphicsContext.graphicsContextWithBitmapImageRep_(self.rep)
+        if self.ns_ctx is None:
+            raise SystemExit("could not create bitmap graphics context")
+
+    def _line(self, ch: str):
+        attr = self._NSAttributedString.alloc().initWithString_attributes_(
+            ch,
+            {
+                self._NSFontAttributeName: self.font,
+                self._NSForegroundColorAttributeName: self._NSColor.blackColor(),
+            },
+        )
+        return self.CoreText.CTLineCreateWithAttributedString(attr)
+
+    def measure(self, cp: int, ghostty: str, png_path: Path | None = None) -> Row:
+        ch = chr(cp)
+        cat = unicodedata.category(ch)
+        try:
+            eaw = unicodedata.east_asian_width(ch)
+        except ValueError:
+            eaw = "?"
+        occ = wcwidth(ch)
+        cells = 2 if occ is not None and occ >= 2 else 1
+
+        line = self._line(ch)
+        runs = self.CoreText.CTLineGetGlyphRuns(line)
+        face = ""
+        glyph_id = 0
+        if runs:
+            run = runs[0]
+            attrs = dict(self.CoreText.CTRunGetAttributes(run))
+            run_font = attrs.get("NSFont")
+            if run_font is not None:
+                face = self.CoreText.CTFontCopyFullName(run_font) or ""
+            glyphs = self.CoreText.CTRunGetGlyphs(
+                run, self.Quartz.CFRange(0, 1), None
+            )
+            if glyphs:
+                glyph_id = int(glyphs[0])
+
+        img = self.CoreText.CTLineGetImageBounds(line, None)
+        img_x = float(img.origin.x)
+        img_w = float(img.size.width)
+        img_h = float(img.size.height)
+        ink_width_cells = img_w / self.cell_w if self.cell_w else 0.0
+        alloc_w = self.cell_w * cells
+        overflow_cells = max(0.0, (img_x + img_w) - alloc_w) / self.cell_w
+
+        density = self._paint(line, cells, png_path=png_path)
+
+        no_ink = img_w < 0.5 and img_h < 0.5
+        last_resort = "LastResort" in (face or "")
+        if last_resort or (no_ink and glyph_id == 0):
+            klass = "missing"
+        elif cells >= 2:
+            klass = "wide"
+        elif overflow_cells > OVERFLOW_THRESH:
+            klass = "overlarge"
+        else:
+            klass = "narrow"
+
+        return Row(
+            cp=cp,
+            category=cat,
+            eaw=eaw,
+            cells=cells,
+            klass=klass,
+            density=float(density),
+            overflow_cells=float(overflow_cells),
+            ink_width_cells=float(ink_width_cells),
+            face=face,
+            ghostty=ghostty,
+            block=block_name(cp),
+            raster=raster_relpath(cp, self.scale) if png_path is not None else "",
+        )
+
+    def _paint(self, line, cells: int, png_path: Path | None) -> float:
+        """Draw glyph into the 3×2-cell canvas. Return density of allocated cells.
+
+        If ``png_path`` is set, stroke the cell grid afterwards and write PNG.
+        Density is always taken *before* the red lines.
+        """
+        Quartz = self.Quartz
+        NSGraphicsContext = self._NSGraphicsContext
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.setCurrentContext_(self.ns_ctx)
+        cg = self.ns_ctx.CGContext()
+        Quartz.CGContextSetRGBFillColor(cg, 1, 1, 1, 1)
+        Quartz.CGContextFillRect(cg, Quartz.CGRectMake(0, 0, self.px_w, self.px_h))
+        Quartz.CGContextSetTextPosition(
+            cg, self.origin_x, self.cell_bottom + self.descent
+        )
+        self.CoreText.CTLineDraw(line, cg)
+        NSGraphicsContext.restoreGraphicsState()
+
+        density = self._density_from_bitmap(cells)
+
+        if png_path is not None:
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.setCurrentContext_(self.ns_ctx)
+            self._stroke_cell_grid(self.ns_ctx.CGContext())
+            NSGraphicsContext.restoreGraphicsState()
+            png_path.parent.mkdir(parents=True, exist_ok=True)
+            data = self.rep.representationUsingType_properties_(
+                self._NSBitmapImageFileTypePNG, None
+            )
+            if data is None or not data.writeToFile_atomically_(str(png_path), True):
+                raise RuntimeError(f"failed to write {png_path}")
+
+        return density
+
+    def _rgb(self) -> np.ndarray:
+        ptr = self.rep.bitmapData()
+        bpr = int(self.rep.bytesPerRow())
+        buf = (
+            bytes(ptr)[: bpr * self.px_h]
+            if isinstance(ptr, (bytes, bytearray, memoryview))
+            else ctypes.string_at(ptr, bpr * self.px_h)
+        )
+        row = np.frombuffer(buf, dtype=np.uint8).reshape(self.px_h, bpr)
+        return row[:, : self.px_w * self.spp].reshape(self.px_h, self.px_w, self.spp)
+
+    def _density_from_bitmap(self, cells: int) -> float:
+        rgba = self._rgb()
+        # Ink: not-white on RGB (ignore alpha). Grid is not drawn yet.
+        ink = rgba[:, :, :3].min(axis=2) < 240
+        x0 = int(round(self.origin_x))
+        x1 = int(round(self.origin_x + self.cell_w * cells))
+        y0 = int(round(self.cell_bottom))
+        y1 = int(round(self.cell_bottom + self.cell_h))
+        x0 = max(0, min(self.px_w, x0))
+        x1 = max(x0 + 1, min(self.px_w, x1))
+        y0 = max(0, min(self.px_h, y0))
+        y1 = max(y0 + 1, min(self.px_h, y1))
+        # NSBitmapImageRep.bitmapData is top-row-first; CG y is bottom-up.
+        top = self.px_h - y1
+        bot = self.px_h - y0
+        cell = ink[top:bot, x0:x1]
+        area = cell.size
+        return float(cell.sum() / area) if area else 0.0
+
+    def _stroke_cell_grid(self, cg) -> None:
+        """1px light red lines at origin/second cell edges (not the outer pad)."""
+        Quartz = self.Quartz
+        x_left = 0.5 * self.cell_w
+        x_mid = 1.5 * self.cell_w
+        x_right = 2.5 * self.cell_w
+        y_bot = 0.5 * self.cell_h
+        y_top = 1.5 * self.cell_h
+        Quartz.CGContextSaveGState(cg)
+        Quartz.CGContextSetShouldAntialias(cg, False)
+        Quartz.CGContextSetLineWidth(cg, 1.0)
+        # Very light red — visible on white, not a second subject.
+        Quartz.CGContextSetRGBStrokeColor(cg, 1.0, 0.72, 0.72, 1.0)
+
+        def vline(x: float) -> None:
+            Quartz.CGContextMoveToPoint(cg, x + 0.5, y_bot)
+            Quartz.CGContextAddLineToPoint(cg, x + 0.5, y_top)
+
+        def hline(y: float) -> None:
+            Quartz.CGContextMoveToPoint(cg, x_left, y + 0.5)
+            Quartz.CGContextAddLineToPoint(cg, x_right, y + 0.5)
+
+        vline(x_left)
+        vline(x_mid)
+        vline(x_right)
+        hline(y_bot)
+        hline(y_top)
+        Quartz.CGContextStrokePath(cg)
+        Quartz.CGContextRestoreGState(cg)
+
+
+TSV_HEADER = (
+    "cp\thex\tchar\tname\tcategory\teaw\tcells\tclass\t"
+    "density\toverflow_cells\tink_width_cells\tface\tghostty\tblock\traster"
+)
+
+
+def tsv_line(row: Row) -> str:
+    ch = row.ch.replace("\\", "\\\\").replace("\t", "\\t").replace("\n", "\\n")
+    name = unicodedata.name(row.ch, "")
+    return (
+        f"{row.cp}\tU+{row.cp:04X}\t{ch}\t{name}\t{row.category}\t{row.eaw}\t"
+        f"{row.cells}\t{row.klass}\t{row.density:.4f}\t{row.overflow_cells:.4f}\t"
+        f"{row.ink_width_cells:.4f}\t{row.face}\t{row.ghostty}\t{row.block}\t"
+        f"{row.raster}"
+    )
+
+
+def md_escape(ch: str) -> str:
+    shown = ch.replace("\\", "\\\\")
+    for spec in "|*_`":
+        shown = shown.replace(spec, "\\" + spec)
+    return shown
+
+
+def md_cell(row: Row | None, mark: str | None) -> str:
+    if mark is not None:
+        return mark
+    assert row is not None
+    shown = md_escape(row.ch)
+    if row.klass == "missing":
+        return "·"
+    if row.klass == "overlarge":
+        return f"[{shown}>"
+    return f"[{shown}]"
+
+
+def rows_for(start: int, end: int) -> Iterable[int]:
+    row0 = start & ~0xF
+    row1 = end & ~0xF
+    return range(row0, row1 + 1, 16)
+
+
+def emit_md_table(
+    start: int,
+    end: int,
+    by_cp: dict[int, Row],
+    skip: dict[int, str],
+) -> list[str]:
+    header = "|        | " + " | ".join("0123456789ABCDEF") + " |"
+    sep = "|:-------|" + "|".join([":---:"] * 16) + "|"
+    lines = [header, sep]
+    for row in rows_for(start, end):
+        cells = []
+        for nibble in range(16):
+            cp = row + nibble
+            if cp < start or cp > end:
+                cells.append("")
+            elif cp in skip:
+                cells.append(skip[cp])
+            elif cp in by_cp:
+                cells.append(md_cell(by_cp[cp], None))
+            else:
+                cells.append("")
+        label = f"U+{row:04X}"[:-1] + "x"
+        lines.append(f"| {label} | " + " | ".join(cells) + " |")
+    return lines
+
+
+def parse_cp(s: str) -> int:
+    s = s.strip().lower()
+    if s.startswith("u+"):
+        s = s[2:]
+    if s.startswith("0x"):
+        return int(s, 16)
+    if any(c in s for c in "abcdef"):
+        return int(s, 16)
+    # Bare numbers: treat as hex (U+… style), so --to FFFF works and --from 0 works.
+    return int(s, 16)
+
+
+def main() -> None:
+    here = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
+    ap.add_argument("--from", dest="start", default="0", help="first codepoint (hex or U+)")
+    ap.add_argument("--to", dest="end", default=f"{DEFAULT_RANGE_END:X}", help="last codepoint (inclusive)")
+    ap.add_argument("--out", type=Path, default=here, help="directory for TSV and markdown")
+    ap.add_argument("--scale", type=int, default=SCALE, help="raster scale vs configured font-size")
+    ap.add_argument("--no-ghostty", action="store_true", help="skip ghostty +show-face")
+    ap.add_argument("--no-md", action="store_true", help="write TSV only")
+    ap.add_argument("--no-rasters", action="store_true", help="do not write PNG cache")
+    args = ap.parse_args()
+
+    start = parse_cp(args.start)
+    end = parse_cp(args.end)
+    if start < 0 or end > 0x10FFFF or start > end:
+        raise SystemExit(f"bad range U+{start:X}..U+{end:X}")
+
+    family, pt = ghostty_config()
+    print(f"primary face: {family!r} @ {pt}pt  range U+{start:04X}–U+{end:04X}", file=sys.stderr)
+
+    to_measure: list[int] = []
+    skip: dict[int, str] = {}
+    for cp in range(start, end + 1):
+        mark = skip_reason(cp)
+        if mark is None:
+            to_measure.append(cp)
+        else:
+            skip[cp] = mark
+
+    print(f"measuring {len(to_measure)} codepoints (skipped {len(skip)})", file=sys.stderr)
+
+    faces: dict[int, str] = {}
+    if not args.no_ghostty:
+        print("ghostty +show-face …", file=sys.stderr)
+        faces = ghostty_faces(to_measure)
+        print(f"  faces for {len(faces)} codepoints", file=sys.stderr)
+
+    measurer = Measurer(family, pt, scale=args.scale)
+    print(
+        f"cell {measurer.cell_w:.2f}×{measurer.cell_h:.2f}px at {pt * args.scale}pt raster "
+        f"(aspect {measurer.cell_h / measurer.cell_w:.3f})  "
+        f"canvas {measurer.px_w}×{measurer.px_h}",
+        file=sys.stderr,
+    )
+
+    args.out.mkdir(parents=True, exist_ok=True)
+
+    by_cp: dict[int, Row] = {}
+    n = len(to_measure)
+    for i, cp in enumerate(to_measure):
+        if i % 2000 == 0:
+            print(f"  {i}/{n} U+{cp:04X}", file=sys.stderr)
+        png = None
+        if not args.no_rasters:
+            png = args.out / raster_relpath(cp, args.scale)
+        by_cp[cp] = measurer.measure(cp, faces.get(cp, ""), png_path=png)
+    print(f"  {n}/{n} done", file=sys.stderr)
+
+    tsv_path = args.out / "bmp-metrics.tsv"
+    with tsv_path.open("w", encoding="utf-8") as f:
+        f.write(TSV_HEADER + "\n")
+        for cp in to_measure:
+            f.write(tsv_line(by_cp[cp]) + "\n")
+    print(f"wrote {tsv_path} ({len(to_measure)} rows)", file=sys.stderr)
+
+    counts: dict[str, int] = {}
+    for row in by_cp.values():
+        counts[row.klass] = counts.get(row.klass, 0) + 1
+    print("classes: " + ", ".join(f"{k}={v}" for k, v in sorted(counts.items())), file=sys.stderr)
+
+    if args.no_md:
+        return
+
+    md_path = args.out / "bmp-tables.md"
+    lines: list[str] = [
+        f"# Glyph metrics (U+{start:04X}–U+{end:04X})",
+        "",
+        f"Generated by `measure-glyphs`. Primary face **{family}** at {pt:g}pt. "
+        f"Unicode {unicodedata.unidata_version}.",
+        "",
+        "Raster is CoreText (Ghostty's macOS engine) + system fallback, **not** "
+        "Ghostty sprites or nerd-icon constraint. Occupancy is `wcwidth`.",
+        "",
+        "- `[…]` — standalone glyph, ink fits the allocated cell(s)",
+        "- `[…>` — single-cell occupancy, ink overlaps the next cell",
+        "- `·` — assigned but no glyph/ink in the cascade",
+        "- `x` — combining, control, format, surrogate, or whitespace",
+        "- empty — unassigned (`Cn`)",
+        "",
+        f"Cell (raster): {measurer.cell_w:.1f}×{measurer.cell_h:.1f}px at {pt * args.scale:g}pt "
+        f"(canvas {measurer.px_w}×{measurer.px_h}, 3×2 cells). "
+        f"PNGs in `.rasters/{args.scale}x/`. "
+        f"Overlarge threshold: ink bbox more than {OVERFLOW_THRESH:.0%} of a cell past the right edge.",
+        "",
+        "Counts: " + ", ".join(f"{k} {v}" for k, v in sorted(counts.items())) + ".",
+        "",
+    ]
+    for b_start, b_end, name in BLOCKS:
+        lo = max(b_start, start)
+        hi = min(b_end, end)
+        if lo > hi:
+            continue
+        lines.append(f"## {name} (U+{b_start:04X}–U+{b_end:04X})")
+        lines.append("")
+        lines.extend(emit_md_table(lo, hi, by_cp, skip))
+        lines.append("")
+    md_path.write_text("\n".join(lines), encoding="utf-8")
+    print(f"wrote {md_path}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

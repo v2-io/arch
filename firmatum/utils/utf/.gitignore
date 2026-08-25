@@ -1,0 +1,4 @@
+.rasters/
+corpus/
+__pycache__/
+*.pyc

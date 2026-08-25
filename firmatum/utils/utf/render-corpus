@@ -1,0 +1,334 @@
+#!/usr/bin/env python3
+"""Build an HTML corpus from measure-ghostty TSV + packed/roomy 4× rasters.
+
+Reads bmp-metrics-ghostty.tsv by default (Ghostty face, bbox-size shrink).
+One page per Unicode block, split into 16-row chunks when large. Each cell
+shows packed (top) and roomy (bottom) PNGs. Meta fields are packed (unlabeled);
+``r *`` only when roomy differs; ``used face`` only when it differs from ghostty.
+
+Usage:
+    ./render-corpus
+    ./render-corpus --tsv bmp-metrics-ghostty.tsv --out corpus
+"""
+
+from __future__ import annotations
+
+import argparse
+import html
+import re
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+SKIP_CLASSES = frozenset({"missing"})
+# 16 hex rows per page. CJK / Hangul / PUA cannot live on one document.
+ROWS_PER_PAGE = 16
+
+CSS = """\
+:root { font: 14px/1.4 ui-sans-serif, system-ui, sans-serif; color: #1e1e2e; background: #eff1f5; }
+body { margin: 1.5rem; }
+h1 { font-size: 1.2rem; font-weight: 600; margin: 0 0 .3rem; }
+h2 { font-size: 1rem; margin: 1.2rem 0 .4rem; }
+.lede { max-width: 58rem; color: #5c5f77; margin: 0 0 1rem; }
+nav a { color: #1e66f5; }
+.legend { display: flex; flex-wrap: wrap; gap: .6rem 1.2rem; margin: 1rem 0 1.5rem; font-size: 13px; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: .35rem; vertical-align: -1px; }
+table.grid { border-collapse: collapse; background: #fff; }
+table.grid th, table.grid td { border: 1px solid #ccd0da; padding: 2px; vertical-align: top; }
+table.grid th { font: 11px/1.2 ui-monospace, Menlo, monospace; color: #6c6f85; font-weight: 500; background: #e6e9ef; }
+table.grid td.lab { font: 11px/1.2 ui-monospace, Menlo, monospace; color: #6c6f85; padding: 4px 6px; white-space: nowrap; }
+table.grid td.cell { padding: 0; width: 148px; }
+table.grid td.cell img { display: block; width: 111px; height: 192px; background: #fff; }
+table.grid td.hole { background: #f5f5f7; width: 24px; min-width: 24px; }
+.ctx { font: 9px/1.2 ui-monospace, Menlo, monospace; color: #9ca0b0; padding: 2px 5px 0; }
+.narrow { outline: 2px solid #7c7f93; outline-offset: -2px; }
+.overlarge { outline: 2px solid #d20f39; outline-offset: -2px; }
+.wide { outline: 2px solid #1e66f5; outline-offset: -2px; }
+.meta { font: 10px/1.3 ui-monospace, Menlo, monospace; color: #4c4f69; padding: 5px 6px 6px; border-top: 1px solid #ccd0da; }
+.meta .glyph { font-size: 13px; margin-bottom: 2px; }
+.meta .name { color: #6c6f85; overflow-wrap: anywhere; margin-bottom: 4px; }
+.kv { display: flex; gap: 6px; }
+.kv .k { flex: 0 0 5.4em; color: #9ca0b0; }
+.kv .v { overflow-wrap: anywhere; }
+.kv.diff .v { color: #fe640b; }
+.wrap { overflow-x: auto; }
+.index { columns: 3; column-gap: 2rem; font-size: 13px; }
+.index h2 { break-after: avoid; margin-top: 0; }
+.index ul { list-style: none; padding: 0; margin: 0 0 1rem; }
+.index li { margin: .15rem 0; }
+.index .n { color: #9ca0b0; }
+.pager { margin: .4rem 0 1rem; font-size: 13px; }
+"""
+
+
+def esc(s: str) -> str:
+    return html.escape(s, quote=True)
+
+
+def slug(name: str) -> str:
+    s = name.lower()
+    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
+    return s or "block"
+
+
+def faces_agree(face: str, ghostty: str) -> bool:
+    if not face or not ghostty:
+        return False
+    a, b = face.casefold(), ghostty.casefold()
+    if a == b:
+        return True
+    if ghostty in ("ghostty-sprite", "not-found"):
+        return False
+    return a.startswith(b) or (a.split() and b.startswith(a.split()[0]))
+
+
+def kv(label: str, value: str, extra: str = "") -> str:
+    cls = "kv " + extra if extra else "kv"
+    return (
+        f"<div class='{cls}'><span class='k'>{esc(label)}</span>"
+        f"<span class='v'>{esc(value)}</span></div>"
+    )
+
+
+def load_tsv(path: Path) -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+    with path.open(encoding="utf-8") as f:
+        hdr = f.readline().rstrip("\n").split("\t")
+        for line in f:
+            r = dict(zip(hdr, line.rstrip("\n").split("\t")))
+            if r.get("class") in SKIP_CLASSES:
+                continue
+            rows.append(r)
+    return rows
+
+
+def hex_rows(start: int, end: int) -> range:
+    return range(start & ~0xF, (end & ~0xF) + 1, 16)
+
+
+def _src(rel: str, raster_prefix: str) -> str:
+    if rel.startswith("./"):
+        rel = rel[2:]
+    return raster_prefix + rel
+
+
+def _differs(a: str, b: str) -> bool:
+    return (a or "") != (b or "")
+
+
+def cell_html(r: dict[str, str], raster_prefix: str) -> str:
+    """Ghostty-tier row. Unlabeled stats are packed; ``r *`` only if different."""
+    klass = r.get("packed_class") or r.get("class") or "narrow"
+    packed_rel = r.get("packed_raster") or r.get("raster") or ""
+    roomy_rel = r.get("roomy_raster") or packed_rel
+    packed_src = _src(packed_rel, raster_prefix)
+    roomy_src = _src(roomy_rel, raster_prefix)
+    used = r.get("used_face") or r.get("face") or ""
+    gt = r.get("ghostty") or ""
+    p_scale = r.get("packed_scale", "")
+    r_scale = r.get("roomy_scale", "")
+    p_class = r.get("packed_class", "")
+    r_class = r.get("roomy_class", "")
+    p_den = r.get("packed_density", r.get("density", ""))
+    r_den = r.get("roomy_density", "")
+    p_ov = r.get("packed_overflow_cells", r.get("overflow_cells", ""))
+    r_ov = r.get("roomy_overflow_cells", "")
+    p_ink = r.get("packed_ink_width_cells", r.get("ink_width_cells", ""))
+    r_ink = r.get("roomy_ink_width_cells", "")
+    roomy_ctx = ""
+    if _differs(r_scale, p_scale):
+        roomy_ctx = f"<div class='ctx'>roomy s={esc(r_scale)}</div>"
+    parts = [
+        f"<td class='cell {esc(klass)}'>",
+        f"<div class='ctx'>packed s={esc(p_scale)}</div>",
+        f"<img src='{esc(packed_src)}' width='111' height='192' alt='{esc(r['hex'])} packed' loading='lazy'>",
+        roomy_ctx,
+        f"<img src='{esc(roomy_src)}' width='111' height='192' alt='{esc(r['hex'])} roomy' loading='lazy'>",
+        "<div class='meta'>",
+        f"<div class='glyph'>{esc(r['hex'])} {esc(r['char'])}</div>",
+        f"<div class='name'>{esc(r['name'] or '(no Unicode name)')}</div>",
+        kv("cells", r["cells"]),
+        kv("eaw", r["eaw"]),
+        kv("cat", r["category"]),
+        kv("class", p_class),
+        kv("density", p_den),
+        kv("overflow", p_ov),
+        kv("ink w", p_ink),
+    ]
+    if _differs(r_class, p_class):
+        parts.append(kv("r class", r_class, "diff"))
+    if _differs(r_den, p_den):
+        parts.append(kv("r density", r_den, "diff"))
+    if _differs(r_ov, p_ov):
+        parts.append(kv("r overflow", r_ov, "diff"))
+    if _differs(r_ink, p_ink):
+        parts.append(kv("r ink w", r_ink, "diff"))
+    if used and not faces_agree(used, gt):
+        parts.append(kv("used face", used, "diff"))
+    parts.append(kv("ghostty", gt))
+    parts.append("</div></td>")
+    return "".join(parts)
+
+
+def page_shell(title: str, body: str, root_href: str = "index.html") -> str:
+    return (
+        "<!DOCTYPE html>\n<html lang='en'><head><meta charset='utf-8'>"
+        f"<title>{esc(title)}</title>"
+        "<link rel='stylesheet' href='style.css'></head><body>\n"
+        f"<p class='pager'><a href='{esc(root_href)}'>corpus index</a></p>\n"
+        f"{body}\n</body></html>\n"
+    )
+
+
+def render_grid(
+    by_cp: dict[int, dict[str, str]],
+    lo: int,
+    hi: int,
+    raster_prefix: str,
+) -> str:
+    parts = ["<div class='wrap'><table class='grid'>"]
+    parts.append(
+        "<tr><th></th>" + "".join(f"<th>{h}</th>" for h in "0123456789ABCDEF") + "</tr>"
+    )
+    for row in hex_rows(lo, hi):
+        if not any(row + n in by_cp for n in range(16) if lo <= row + n <= hi):
+            continue
+        label = f"U+{row:04X}"[:-1] + "x"
+        tds = [f"<td class='lab'>{label}</td>"]
+        for n in range(16):
+            cp = row + n
+            if cp < lo or cp > hi:
+                tds.append("<td class='hole'></td>")
+            elif cp in by_cp:
+                tds.append(cell_html(by_cp[cp], raster_prefix))
+            else:
+                tds.append("<td class='hole'></td>")
+        parts.append("<tr>" + "".join(tds) + "</tr>")
+    parts.append("</table></div>")
+    return "".join(parts)
+
+
+def chunk_ranges(min_cp: int, max_cp: int) -> list[tuple[int, int]]:
+    """Inclusive ranges, aligned to hex rows, at most ROWS_PER_PAGE rows."""
+    span = ROWS_PER_PAGE * 16
+    start = min_cp & ~0xF
+    end = max_cp
+    out = []
+    r0 = start
+    while r0 <= end:
+        r1 = min(r0 + span - 1, end | 0xF)
+        out.append((r0, min(r1, end)))
+        r0 = r1 + 1
+    return out
+
+
+def main() -> None:
+    here = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
+    ap.add_argument("--tsv", type=Path, default=here / "bmp-metrics-ghostty.tsv")
+    ap.add_argument("--out", type=Path, default=here / "corpus")
+    args = ap.parse_args()
+
+    rows = load_tsv(args.tsv)
+    if not rows:
+        raise SystemExit(f"no rows in {args.tsv}")
+
+    by_block: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for r in rows:
+        by_block[r["block"]].append(r)
+
+    out = args.out
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "style.css").write_text(CSS, encoding="utf-8")
+
+    raster_prefix = "../"
+    pages: list[tuple[str, str, int, str]] = []  # slug, title, n, href
+
+    for block_name in sorted(by_block, key=lambda n: int(by_block[n][0]["cp"])):
+        items = by_block[block_name]
+        by_cp = {int(r["cp"]): r for r in items}
+        min_cp = min(by_cp)
+        max_cp = max(by_cp)
+        chunks = chunk_ranges(min_cp, max_cp)
+        # Drop chunks that have no remaining glyphs after skip.
+        chunks = [
+            (a, b) for a, b in chunks if any(a <= cp <= b for cp in by_cp)
+        ]
+        multi = len(chunks) > 1
+        for i, (lo, hi) in enumerate(chunks, 1):
+            n = sum(1 for cp in by_cp if lo <= cp <= hi)
+            if n == 0:
+                continue
+            title = (
+                f"{block_name} (U+{lo:04X}–U+{hi:04X})"
+                if multi
+                else f"{block_name} (U+{min_cp:04X}–U+{max_cp:04X})"
+            )
+            fname = f"{int(items[0]['cp']):04x}-{slug(block_name)}"
+            if multi:
+                fname = f"{fname}-{lo:04x}"
+            fname += ".html"
+            pager = ""
+            if multi:
+                links = []
+                if i > 1:
+                    prev = chunks[i - 2]
+                    prev_name = f"{int(items[0]['cp']):04x}-{slug(block_name)}-{prev[0]:04x}.html"
+                    links.append(f"<a href='{prev_name}'>prev</a>")
+                links.append(f"{i}/{len(chunks)}")
+                if i < len(chunks):
+                    nxt = chunks[i]
+                    next_name = f"{int(items[0]['cp']):04x}-{slug(block_name)}-{nxt[0]:04x}.html"
+                    links.append(f"<a href='{next_name}'>next</a>")
+                pager = "<p class='pager'>" + " · ".join(links) + "</p>"
+            body = (
+                f"<h1>{esc(title)}</h1>"
+                f"<p class='lede'>{n} glyphs. Packed (top) vs roomy (bottom). "
+                f"Holes are unassigned, skipped, sprites, or LastResort.</p>"
+                f"{pager}"
+                f"{render_grid(by_cp, lo, hi, raster_prefix)}"
+            )
+            (out / fname).write_text(page_shell(title, body), encoding="utf-8")
+            pages.append((block_name, title, n, fname))
+
+    # Index grouped by original block name (first page of each).
+    index_parts = [
+        "<h1>Glyph corpus</h1>",
+        "<p class='lede'>Ghostty-face rasters from <code>bmp-metrics-ghostty.tsv</code> "
+        f"({len(rows)} glyphs). Packed (crowded, 1-cell size budget) on top; "
+        "roomy (2-cell width budget) below. Outline color is packed class. "
+        "Unlabeled stats are packed; <code>r</code> rows appear only when roomy differs. "
+        "Only symbols get Ghostty <code>.fit</code> (Number Forms do not).</p>",
+        """<div class='legend'>
+  <span><i class='swatch' style='background:#7c7f93'></i>narrow</span>
+  <span><i class='swatch' style='background:#d20f39'></i>overlarge</span>
+  <span><i class='swatch' style='background:#1e66f5'></i>wide</span>
+</div>""",
+        "<div class='index'>",
+    ]
+    current = None
+    for block_name, title, n, href in pages:
+        if block_name != current:
+            if current is not None:
+                index_parts.append("</ul>")
+            index_parts.append(f"<h2>{esc(block_name)}</h2><ul>")
+            current = block_name
+        index_parts.append(
+            f"<li><a href='{esc(href)}'>{esc(title)}</a> <span class='n'>{n}</span></li>"
+        )
+    if current is not None:
+        index_parts.append("</ul>")
+    index_parts.append("</div>")
+    (out / "index.html").write_text(
+        page_shell("Glyph corpus", "".join(index_parts), root_href="index.html"),
+        encoding="utf-8",
+    )
+
+    print(
+        f"wrote {out}/index.html — {len(pages)} pages, {len(rows)} glyphs",
+        file=sys.stderr,
+    )
+
+
+if __name__ == "__main__":
+    main()

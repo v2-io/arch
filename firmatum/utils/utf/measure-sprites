@@ -1,0 +1,755 @@
+#!/usr/bin/env python3
+"""Paint Ghostty *sprite* codepoints (no font) onto the same 4× canvas.
+
+Mimics the sprite face at ~/src-ext/ghostty @ 600a86dc
+  src/font/sprite/Face.zig          ranges from draw* names
+  src/font/sprite/draw/box.zig      U+2500–257F
+  src/font/sprite/draw/block.zig    U+2580–259F
+  src/font/sprite/draw/braille.zig  U+2800–28FF
+  src/font/sprite/draw/geometric_shapes.zig  subset
+  src/font/sprite/draw/powerline.zig
+  src/font/sprite/draw/branch.zig   U+F5D0–F60D (simplified nodes/lines)
+
+Packed and roomy PNGs are identical (sprites ignore neighbor cells).
+Appends rows to bmp-metrics-ghostty.tsv.
+"""
+
+from __future__ import annotations
+
+import argparse
+import math
+import sys
+import unicodedata
+from pathlib import Path
+
+import numpy as np
+from PIL import Image, ImageDraw
+
+SCALE = 4
+
+
+def cell_metrics():
+    from AppKit import NSFont, NSAttributedString, NSFontAttributeName
+    import CoreText
+
+    font = NSFont.fontWithName_size_("VictorMono NFM SemiBold", 17.0 * SCALE)
+    descent = CoreText.CTFontGetDescent(font)
+    ascent = CoreText.CTFontGetAscent(font)
+    leading = CoreText.CTFontGetLeading(font)
+    face_h = ascent + descent + leading
+    face_w = 0.0
+    for i in range(32, 127):
+        attr = NSAttributedString.alloc().initWithString_attributes_(
+            chr(i), {NSFontAttributeName: font}
+        )
+        w = CoreText.CTLineGetTypographicBounds(
+            CoreText.CTLineCreateWithAttributedString(attr), None, None, None
+        )[0]
+        if w > face_w:
+            face_w = float(w)
+    return float(int(round(face_w))), float(int(round(face_h)))
+
+
+class Cell:
+    """PNG canvas matching measure-ghostty: 3×2 cells, origin in the middle."""
+
+    def __init__(self, cw: float, ch: float):
+        self.cw = cw
+        self.ch = ch
+        self.pw = int(round(cw * 3))
+        self.ph = int(round(ch * 2))
+        self.ox = int(round(0.5 * cw))  # origin-cell left
+        self.oy = int(round(0.5 * ch))  # origin-cell top (PNG)
+        self.iw = max(1, int(round(cw)))
+        self.ih = max(1, int(round(ch)))
+        self.thick = max(1, int(round(cw / 9)))
+        self.arr = np.full((self.ph, self.pw, 4), 255, np.uint8)
+
+    def ink(self, x: int, y: int, x2: int, y2: int, v: int = 0) -> None:
+        """Fill [x,x2)×[y,y2) in *cell* coords (y down from origin-cell top)."""
+        x0, x1 = sorted((x, x2))
+        y0, y1 = sorted((y, y2))
+        px0 = max(0, self.ox + x0)
+        px1 = min(self.pw, self.ox + x1)
+        py0 = max(0, self.oy + y0)
+        py1 = min(self.ph, self.oy + y1)
+        if px1 > px0 and py1 > py0:
+            self.arr[py0:py1, px0:px1, :3] = v
+
+    def shade(self, x, y, x2, y2, level: int) -> None:
+        """level 0..255, 255=black."""
+        self.ink(x, y, x2, y2, 255 - level)
+
+    def add_grid(self) -> None:
+        # Same light-red 1px guides as measure-ghostty (PNG top-origin).
+        xs = [
+            int(round(0.5 * self.cw)),
+            int(round(1.5 * self.cw)),
+            int(round(2.5 * self.cw)),
+        ]
+        ys = [
+            int(round(0.5 * self.ch)),
+            int(round(1.5 * self.ch)),
+        ]
+        r, g, b = 255, 184, 184
+        for x in xs:
+            if 0 <= x < self.pw:
+                self.arr[ys[0] : ys[1] + 1, x, 0] = r
+                self.arr[ys[0] : ys[1] + 1, x, 1] = g
+                self.arr[ys[0] : ys[1] + 1, x, 2] = b
+        for y in ys:
+            if 0 <= y < self.ph:
+                self.arr[y, xs[0] : xs[2] + 1, 0] = r
+                self.arr[y, xs[0] : xs[2] + 1, 1] = g
+                self.arr[y, xs[0] : xs[2] + 1, 2] = b
+
+    def save(self, path: Path) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        Image.fromarray(self.arr, "RGBA").save(path)
+
+
+def light_px(c: Cell) -> int:
+    return c.thick
+
+
+def heavy_px(c: Cell) -> int:
+    return c.thick * 2
+
+
+def lines_char(c: Cell, up: int, right: int, down: int, left: int) -> None:
+    """Style 0 none, 1 light, 2 heavy, 3 double. Port of box.zig linesChar."""
+    w, h = c.iw, c.ih
+    lp, hp = light_px(c), heavy_px(c)
+    h_lt = (h - lp) // 2
+    h_lb = h_lt + lp
+    h_ht = (h - hp) // 2
+    h_hb = h_ht + hp
+    h_dt = h_lt - lp
+    h_db = h_lb + lp
+    v_ll = (w - lp) // 2
+    v_lr = v_ll + lp
+    v_hl = (w - hp) // 2
+    v_hr = v_hl + hp
+    v_dl = v_ll - lp
+    v_dr = v_lr + lp
+
+    def saturating_sub(a, b):
+        return max(0, a - b)
+
+    h_lt = saturating_sub(h, lp) // 2
+    h_lb = h_lt + lp
+    h_ht = saturating_sub(h, hp) // 2
+    h_hb = h_ht + hp
+    h_dt = saturating_sub(h_lt, lp)
+    h_db = h_lb + lp
+    v_ll = saturating_sub(w, lp) // 2
+    v_lr = v_ll + lp
+    v_hl = saturating_sub(w, hp) // 2
+    v_hr = v_hl + hp
+    v_dl = saturating_sub(v_ll, lp)
+    v_dr = v_lr + lp
+
+    if left == 2 or right == 2:
+        up_bottom = h_hb
+    elif left != right or down == up:
+        up_bottom = h_db if (left == 3 or right == 3) else h_lb
+    elif left == 0 and right == 0:
+        up_bottom = h_lb
+    else:
+        up_bottom = h_lt
+
+    if left == 2 or right == 2:
+        down_top = h_ht
+    elif left != right or up == down:
+        down_top = h_dt if (left == 3 or right == 3) else h_lt
+    elif left == 0 and right == 0:
+        down_top = h_lt
+    else:
+        down_top = h_lb
+
+    if up == 2 or down == 2:
+        left_right = v_hr
+    elif up != down or left == right:
+        left_right = v_dr if (up == 3 or down == 3) else v_lr
+    elif up == 0 and down == 0:
+        left_right = v_lr
+    else:
+        left_right = v_ll
+
+    if up == 2 or down == 2:
+        right_left = v_hl
+    elif up != down or right == left:
+        right_left = v_dl if (up == 3 or down == 3) else v_ll
+    elif up == 0 and down == 0:
+        right_left = v_ll
+    else:
+        right_left = v_lr
+
+    if up == 1:
+        c.ink(v_ll, 0, v_lr, up_bottom)
+    elif up == 2:
+        c.ink(v_hl, 0, v_hr, up_bottom)
+    elif up == 3:
+        lb = h_lt if left == 3 else up_bottom
+        rb = h_lt if right == 3 else up_bottom
+        c.ink(v_dl, 0, v_ll, lb)
+        c.ink(v_lr, 0, v_dr, rb)
+
+    if right == 1:
+        c.ink(right_left, h_lt, w, h_lb)
+    elif right == 2:
+        c.ink(right_left, h_ht, w, h_hb)
+    elif right == 3:
+        tl = v_lr if up == 3 else right_left
+        bl = v_lr if down == 3 else right_left
+        c.ink(tl, h_dt, w, h_lt)
+        c.ink(bl, h_lb, w, h_db)
+
+    if down == 1:
+        c.ink(v_ll, down_top, v_lr, h)
+    elif down == 2:
+        c.ink(v_hl, down_top, v_hr, h)
+    elif down == 3:
+        lt = v_ll if left == 3 else v_ll  # noqa
+        # mirror zig: left_top / right_top
+        left_top = h_lb if left == 3 else down_top
+        right_top = h_lb if right == 3 else down_top
+        # actually zig uses down double with left_top based on left==double -> h_light_bottom
+        lt_y = h_lb if left == 3 else down_top
+        rt_y = h_lb if right == 3 else down_top
+        c.ink(v_dl, lt_y, v_ll, h)
+        c.ink(v_lr, rt_y, v_dr, h)
+
+    if left == 1:
+        c.ink(0, h_lt, left_right, h_lb)
+    elif left == 2:
+        c.ink(0, h_ht, left_right, h_hb)
+    elif left == 3:
+        tr = v_ll if up == 3 else left_right
+        br = v_ll if down == 3 else left_right
+        c.ink(0, h_dt, tr, h_lt)
+        c.ink(0, h_lb, br, h_db)
+
+
+# up, right, down, left  — 0 none 1 light 2 heavy 3 double
+BOX = {}
+N, L, H, D = 0, 1, 2, 3
+
+
+def _b(cp, u, r, d, l):
+    BOX[cp] = (u, r, d, l)
+
+
+_b(0x2500, N, L, N, L)
+_b(0x2501, N, H, N, H)
+_b(0x2502, L, N, L, N)
+_b(0x2503, H, N, H, N)
+_b(0x250C, N, L, L, N)
+_b(0x250D, N, H, L, N)
+_b(0x250E, N, L, H, N)
+_b(0x250F, N, H, H, N)
+_b(0x2510, N, N, L, L)
+_b(0x2511, N, N, L, H)
+_b(0x2512, N, N, H, L)
+_b(0x2513, N, N, H, H)
+_b(0x2514, L, L, N, N)
+_b(0x2515, L, H, N, N)
+_b(0x2516, H, L, N, N)
+_b(0x2517, H, H, N, N)
+_b(0x2518, L, N, N, L)
+_b(0x2519, L, N, N, H)
+_b(0x251A, H, N, N, L)
+_b(0x251B, H, N, N, H)
+_b(0x251C, L, L, L, N)
+_b(0x251D, L, H, L, N)
+_b(0x251E, H, L, L, N)
+_b(0x251F, L, L, H, N)
+_b(0x2520, H, L, H, N)
+_b(0x2521, H, H, L, N)
+_b(0x2522, L, H, H, N)
+_b(0x2523, H, H, H, N)
+_b(0x2524, L, N, L, L)
+_b(0x2525, L, N, L, H)
+_b(0x2526, H, N, L, L)
+_b(0x2527, L, N, H, L)
+_b(0x2528, H, N, H, L)
+_b(0x2529, H, N, L, H)
+_b(0x252A, L, N, H, H)
+_b(0x252B, H, N, H, H)
+_b(0x252C, N, L, L, L)
+_b(0x252D, N, L, L, H)
+_b(0x252E, N, H, L, L)
+_b(0x252F, N, H, L, H)
+_b(0x2530, N, L, H, L)
+_b(0x2531, N, L, H, H)
+_b(0x2532, N, H, H, L)
+_b(0x2533, N, H, H, H)
+_b(0x2534, L, L, N, L)
+_b(0x2535, L, L, N, H)
+_b(0x2536, L, H, N, L)
+_b(0x2537, L, H, N, H)
+_b(0x2538, H, L, N, L)
+_b(0x2539, H, L, N, H)
+_b(0x253A, H, H, N, L)
+_b(0x253B, H, H, N, H)
+_b(0x253C, L, L, L, L)
+_b(0x253D, L, L, L, H)
+_b(0x253E, L, H, L, L)
+_b(0x253F, L, H, L, H)
+_b(0x2540, H, L, L, L)
+_b(0x2541, L, L, H, L)
+_b(0x2542, H, L, H, L)
+_b(0x2543, H, L, L, H)
+_b(0x2544, H, H, L, L)
+_b(0x2545, L, L, H, H)
+_b(0x2546, L, H, H, L)
+_b(0x2547, H, H, L, H)
+_b(0x2548, L, H, H, H)
+_b(0x2549, H, L, H, H)
+_b(0x254A, H, H, H, L)
+_b(0x254B, H, H, H, H)
+_b(0x2550, N, D, N, D)
+_b(0x2551, D, N, D, N)
+_b(0x2552, N, D, L, N)
+_b(0x2553, N, L, D, N)
+_b(0x2554, N, D, D, N)
+_b(0x2555, N, N, L, D)
+_b(0x2556, N, N, D, L)
+_b(0x2557, N, N, D, D)
+_b(0x2558, L, D, N, N)
+_b(0x2559, D, L, N, N)
+_b(0x255A, D, D, N, N)
+_b(0x255B, L, N, N, D)
+_b(0x255C, D, N, N, L)
+_b(0x255D, D, N, N, D)
+_b(0x255E, L, D, L, N)
+_b(0x255F, D, L, D, N)
+_b(0x2560, D, D, D, N)
+_b(0x2561, L, N, L, D)
+_b(0x2562, D, N, D, L)
+_b(0x2563, D, N, D, D)
+_b(0x2564, N, D, L, D)
+_b(0x2565, N, L, D, L)
+_b(0x2566, N, D, D, D)
+_b(0x2567, L, D, N, D)
+_b(0x2568, D, L, N, L)
+_b(0x2569, D, D, N, D)
+_b(0x256A, L, D, L, D)
+_b(0x256B, D, L, D, L)
+_b(0x256C, D, D, D, D)
+_b(0x2574, N, N, N, L)
+_b(0x2575, L, N, N, N)
+_b(0x2576, N, L, N, N)
+_b(0x2577, N, N, L, N)
+_b(0x2578, N, N, N, H)
+_b(0x2579, H, N, N, N)
+_b(0x257A, N, H, N, N)
+_b(0x257B, N, N, H, N)
+_b(0x257C, N, H, N, L)
+_b(0x257D, L, N, H, N)
+_b(0x257E, N, L, N, H)
+_b(0x257F, H, N, L, N)
+
+
+def dash_h(c: Cell, n: int, thick: int) -> None:
+    w, h = c.iw, c.ih
+    y = (h - thick) // 2
+    gap = max(1, thick)
+    total = n * 2 - 1
+    seg = max(1, (w - (n - 1) * gap) // n)
+    x = 0
+    for i in range(n):
+        c.ink(x, y, min(w, x + seg), y + thick)
+        x += seg + gap
+
+
+def dash_v(c: Cell, n: int, thick: int) -> None:
+    w, h = c.iw, c.ih
+    x = (w - thick) // 2
+    gap = max(1, thick)
+    seg = max(1, (h - (n - 1) * gap) // n)
+    y = 0
+    for i in range(n):
+        c.ink(x, y, x + thick, min(h, y + seg))
+        y += seg + gap
+
+
+def diagonals(c: Cell, which: str) -> None:
+    im = Image.fromarray(c.arr, "RGBA")
+    dr = ImageDraw.Draw(im)
+    t = light_px(c)
+    x0, y0 = c.ox, c.oy
+    x1, y1 = c.ox + c.iw, c.oy + c.ih
+    col = (0, 0, 0, 255)
+    if which in ("urll", "cross"):
+        dr.line([(x1, y0), (x0, y1)], fill=col, width=t)
+    if which in ("ullr", "cross"):
+        dr.line([(x0, y0), (x1, y1)], fill=col, width=t)
+    c.arr[:] = np.array(im)
+
+
+def arc_corner(c: Cell, corner: str) -> None:
+    im = Image.fromarray(c.arr, "RGBA")
+    dr = ImageDraw.Draw(im)
+    t = light_px(c)
+    x0, y0 = c.ox, c.oy
+    w, h = c.iw, c.ih
+    col = (0, 0, 0, 255)
+    # quarter-ellipses into the cell; extend slightly into pad so seams join
+    if corner == "br":  # ╭  from center to right+down
+        bbox = [x0 - w, y0 - h, x0 + w, y0 + h]
+        dr.arc(bbox, 0, 90, fill=col, width=t)
+        dr.line([(x0 + w // 2, y0 + h), (x0 + w, y0 + h)], fill=col, width=t)  # noop
+    elif corner == "bl":
+        bbox = [x0, y0 - h, x0 + 2 * w, y0 + h]
+        dr.arc(bbox, 90, 180, fill=col, width=t)
+    elif corner == "tl":
+        bbox = [x0, y0, x0 + 2 * w, y0 + 2 * h]
+        dr.arc(bbox, 180, 270, fill=col, width=t)
+    elif corner == "tr":
+        bbox = [x0 - w, y0, x0 + w, y0 + 2 * h]
+        dr.arc(bbox, 270, 360, fill=col, width=t)
+    c.arr[:] = np.array(im)
+    # also draw the outgoing stems from mid to edge
+    mx, my = w // 2, h // 2
+    lp = light_px(c)
+    if corner == "br":  # ╭ down+right
+        c.ink(mx, my, mx + lp, h)
+        c.ink(mx, my, w, my + lp)
+    elif corner == "bl":
+        c.ink(mx, my, mx + lp, h)
+        c.ink(0, my, mx, my + lp)
+    elif corner == "tl":
+        c.ink(mx, 0, mx + lp, my)
+        c.ink(0, my, mx, my + lp)
+    elif corner == "tr":
+        c.ink(mx, 0, mx + lp, my)
+        c.ink(mx, my, w, my + lp)
+
+
+def draw_box(c: Cell, cp: int) -> None:
+    if cp in BOX:
+        u, r, d, l = BOX[cp]
+        lines_char(c, u, r, d, l)
+        return
+    dashes = {
+        0x2504: ("h", 3, light_px(c)),
+        0x2505: ("h", 3, heavy_px(c)),
+        0x2506: ("v", 3, light_px(c)),
+        0x2507: ("v", 3, heavy_px(c)),
+        0x2508: ("h", 4, light_px(c)),
+        0x2509: ("h", 4, heavy_px(c)),
+        0x250A: ("v", 4, light_px(c)),
+        0x250B: ("v", 4, heavy_px(c)),
+        0x254C: ("h", 2, light_px(c)),
+        0x254D: ("h", 2, heavy_px(c)),
+        0x254E: ("v", 2, light_px(c)),
+        0x254F: ("v", 2, heavy_px(c)),
+    }
+    if cp in dashes:
+        axis, n, t = dashes[cp]
+        (dash_h if axis == "h" else dash_v)(c, n, t)
+        return
+    if cp == 0x256D:
+        arc_corner(c, "br")
+    elif cp == 0x256E:
+        arc_corner(c, "bl")
+    elif cp == 0x256F:
+        arc_corner(c, "tl")
+    elif cp == 0x2570:
+        arc_corner(c, "tr")
+    elif cp == 0x2571:
+        diagonals(c, "urll")
+    elif cp == 0x2572:
+        diagonals(c, "ullr")
+    elif cp == 0x2573:
+        diagonals(c, "cross")
+
+
+def draw_block(c: Cell, cp: int) -> None:
+    w, h = c.iw, c.ih
+    e = 0.125
+    # (align h, align v, fw, fh) or shade full
+    if cp == 0x2588:
+        c.ink(0, 0, w, h)
+        return
+    # Ghostty src/font/sprite/draw/common.zig Shade @ 600a86dc
+    # (alpha8: light=0x40, medium=0x80, dark=0xC0). Density uses
+    # optical coverage so these are ~0.25 / ~0.50 / ~0.75, not binary 1.
+    shades = {0x2591: 0x40, 0x2592: 0x80, 0x2593: 0xC0}
+    if cp in shades:
+        c.shade(0, 0, w, h, shades[cp])
+        return
+    fracs = {
+        0x2580: ("full", "top", 1, 0.5),
+        0x2581: ("full", "bot", 1, e),
+        0x2582: ("full", "bot", 1, 0.25),
+        0x2583: ("full", "bot", 1, 0.375),
+        0x2584: ("full", "bot", 1, 0.5),
+        0x2585: ("full", "bot", 1, 0.625),
+        0x2586: ("full", "bot", 1, 0.75),
+        0x2587: ("full", "bot", 1, 0.875),
+        0x2589: ("left", "full", 0.875, 1),
+        0x258A: ("left", "full", 0.75, 1),
+        0x258B: ("left", "full", 0.625, 1),
+        0x258C: ("left", "full", 0.5, 1),
+        0x258D: ("left", "full", 0.375, 1),
+        0x258E: ("left", "full", 0.25, 1),
+        0x258F: ("left", "full", e, 1),
+        0x2590: ("right", "full", 0.5, 1),
+        0x2594: ("full", "top", 1, e),
+        0x2595: ("right", "full", e, 1),
+    }
+    if cp in fracs:
+        ah, av, fw, fh = fracs[cp]
+        bw, bh = max(1, round(w * fw)), max(1, round(h * fh))
+        x = 0 if ah == "left" else (w - bw if ah == "right" else (w - bw) // 2)
+        y = 0 if av == "top" else (h - bh if av == "bot" else (h - bh) // 2)
+        if ah == "full":
+            x, bw = 0, w
+        if av == "full":
+            y, bh = 0, h
+        c.ink(x, y, x + bw, y + bh)
+        return
+    quads = {
+        0x2596: (0, 0, 1, 0),
+        0x2597: (0, 0, 0, 1),
+        0x2598: (1, 0, 0, 0),
+        0x2599: (1, 0, 1, 1),
+        0x259A: (1, 0, 0, 1),
+        0x259B: (1, 1, 1, 0),
+        0x259C: (1, 1, 0, 1),
+        0x259D: (0, 1, 0, 0),
+        0x259E: (0, 1, 1, 0),
+        0x259F: (0, 1, 1, 1),
+    }
+    if cp in quads:
+        tl, tr, bl, br = quads[cp]
+        mw, mh = w // 2, h // 2
+        if tl:
+            c.ink(0, 0, mw, mh)
+        if tr:
+            c.ink(mw, 0, w, mh)
+        if bl:
+            c.ink(0, mh, mw, h)
+        if br:
+            c.ink(mw, mh, w, h)
+
+
+def draw_braille(c: Cell, cp: int) -> None:
+    bits = cp & 0xFF
+    w, h = c.iw, c.ih
+    # 2×4 dots: (x,y) order per Unicode: 1=tl 2=ul 3=ll 4=tr 5=ur 6=lr 7=bl 8=br
+    positions = [
+        (0, 0),
+        (0, 1),
+        (0, 2),
+        (1, 0),
+        (1, 1),
+        (1, 2),
+        (0, 3),
+        (1, 3),
+    ]
+    dw = max(1, w // 6)
+    xsp, ysp = w // 2, h // 4
+    xm, ym = xsp // 4, ysp // 4
+    for i, (cx, cy) in enumerate(positions):
+        if bits & (1 << i):
+            x = xm + cx * xsp + (xsp - dw) // 2
+            y = ym + cy * ysp + (ysp - dw) // 2
+            c.ink(x, y, x + dw, y + dw)
+
+
+def draw_geo(c: Cell, cp: int) -> None:
+    im = Image.fromarray(c.arr, "RGBA")
+    dr = ImageDraw.Draw(im)
+    x0, y0 = c.ox, c.oy
+    x1, y1 = x0 + c.iw, y0 + c.ih
+    col = (0, 0, 0, 255)
+    tris = {
+        0x25E2: [(x1, y1), (x0, y1), (x1, y0)],  # br filled
+        0x25E3: [(x0, y1), (x0, y0), (x1, y1)],
+        0x25E4: [(x0, y0), (x1, y0), (x0, y1)],
+        0x25E5: [(x1, y0), (x1, y1), (x0, y0)],
+    }
+    outlines = {
+        0x25F8: [(x0, y0), (x0, y1), (x1, y0)],
+        0x25F9: [(x1, y0), (x0, y0), (x1, y1)],
+        0x25FA: [(x0, y1), (x0, y0), (x1, y1)],
+        0x25FF: [(x1, y1), (x1, y0), (x0, y1)],
+    }
+    if cp in tris:
+        dr.polygon(tris[cp], fill=col)
+    elif cp in outlines:
+        t = light_px(c)
+        dr.line(outlines[cp] + outlines[cp][:1], fill=col, width=t)
+    c.arr[:] = np.array(im)
+
+
+def draw_powerline(c: Cell, cp: int) -> None:
+    im = Image.fromarray(c.arr, "RGBA")
+    dr = ImageDraw.Draw(im)
+    x0, y0 = c.ox, c.oy
+    x1, y1 = x0 + c.iw, y0 + c.ih
+    ym = (y0 + y1) // 2
+    xm = (x0 + x1) // 2
+    col = (0, 0, 0, 255)
+    t = light_px(c)
+    # geometric subset — filled wedges / chevrons
+    if cp == 0xE0B0:  # 
+        dr.polygon([(x0, y0), (x1, ym), (x0, y1)], fill=col)
+    elif cp == 0xE0B2:
+        dr.polygon([(x1, y0), (x0, ym), (x1, y1)], fill=col)
+    elif cp == 0xE0B1:
+        dr.line([(x0, y0), (x1, ym), (x0, y1)], fill=col, width=t)
+    elif cp == 0xE0B3:
+        dr.line([(x1, y0), (x0, ym), (x1, y1)], fill=col, width=t)
+    elif cp in (0xE0B4, 0xE0B6):  # round
+        dr.pieslice([x0, y0, x1 + c.iw, y1], 90, 270, fill=col)
+    elif cp in (0xE0B8, 0xE0BC, 0xE0BE):
+        dr.polygon([(x0, y1), (x1, y0), (x1, y1)], fill=col)
+    elif cp in (0xE0BA, 0xE0B9):
+        dr.polygon([(x0, y0), (x1, y0), (x0, y1)], fill=col)
+    else:
+        dr.polygon([(x0, y0), (x1, ym), (x0, y1)], fill=col)
+    c.arr[:] = np.array(im)
+
+
+def draw_branch(c: Cell, cp: int) -> None:
+    """Simplified git-graph set: h/v, arcs, and a node+arms for the rest."""
+    w, h = c.iw, c.ih
+    t = light_px(c)
+    mx, my = (w - t) // 2, (h - t) // 2
+    if cp == 0xF5D0:
+        c.ink(0, my, w, my + t)
+        return
+    if cp == 0xF5D1:
+        c.ink(mx, 0, mx + t, h)
+        return
+    if 0xF5D6 <= cp <= 0xF5D9:
+        corners = {0xF5D6: "br", 0xF5D7: "bl", 0xF5D8: "tr", 0xF5D9: "tl"}
+        arc_corner(c, corners[cp])
+        return
+    # node
+    r = max(2, w // 6)
+    im = Image.fromarray(c.arr, "RGBA")
+    dr = ImageDraw.Draw(im)
+    cx, cy = c.ox + w // 2, c.oy + h // 2
+    col = (0, 0, 0, 255)
+    filled = (cp - 0xF5D0) & 1 == 0
+    box = [cx - r, cy - r, cx + r, cy + r]
+    if filled:
+        dr.ellipse(box, fill=col)
+    else:
+        dr.ellipse(box, outline=col, width=t)
+    dr.line([(c.ox + mx, c.oy), (c.ox + mx, c.oy + h)], fill=col, width=t)
+    c.arr[:] = np.array(im)
+
+
+def paint(cp: int, cw: float, ch: float) -> Cell:
+    cell = Cell(cw, ch)
+    if 0x2500 <= cp <= 0x257F:
+        draw_box(cell, cp)
+    elif 0x2580 <= cp <= 0x259F:
+        draw_block(cell, cp)
+    elif 0x2800 <= cp <= 0x28FF:
+        draw_braille(cell, cp)
+    elif cp in (0x25E2, 0x25E3, 0x25E4, 0x25E5, 0x25F8, 0x25F9, 0x25FA, 0x25FF):
+        draw_geo(cell, cp)
+    elif 0xE0B0 <= cp <= 0xE0BF or cp in (0xE0D2, 0xE0D4):
+        draw_powerline(cell, cp)
+    elif 0xF5D0 <= cp <= 0xF60D:
+        draw_branch(cell, cp)
+    cell.add_grid()
+    return cell
+
+
+SPRITE_CPS = (
+    list(range(0x2500, 0x2580))
+    + list(range(0x2580, 0x25A0))
+    + [0x25E2, 0x25E3, 0x25E4, 0x25E5, 0x25F8, 0x25F9, 0x25FA, 0x25FF]
+    + list(range(0x2800, 0x2900))
+    + list(range(0xE0B0, 0xE0C0))
+    + [0xE0D2, 0xE0D4]
+    + list(range(0xF5D0, 0xF60E))
+)
+
+
+def raster_rel(kind: str, cp: int) -> str:
+    return f".rasters/4x/{kind}/{cp >> 8:02x}/{cp:04x}.png"
+
+
+def main() -> None:
+    here = Path(__file__).resolve().parent
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", type=Path, default=here)
+    args = ap.parse_args()
+    cw, ch = cell_metrics()
+    print(f"cell {cw:.2f}×{ch:.2f}  sprites {len(SPRITE_CPS)}", file=sys.stderr)
+
+    tsv = args.out / "bmp-metrics-ghostty.tsv"
+    existing = set()
+    if tsv.exists():
+        hdr = tsv.read_text(encoding="utf-8").splitlines()[0]
+        for line in tsv.read_text(encoding="utf-8").splitlines()[1:]:
+            existing.add(int(line.split("\t", 1)[0]))
+    else:
+        hdr = (
+            "cp\thex\tchar\tname\tcategory\teaw\tcells\tblock\tghostty\tused_face\t"
+            "packed_scale\tpacked_class\tpacked_density\tpacked_overflow_cells\t"
+            "packed_ink_width_cells\tpacked_raster\t"
+            "roomy_scale\troomy_class\troomy_density\troomy_overflow_cells\t"
+            "roomy_ink_width_cells\troomy_raster"
+        )
+
+    blocks = {
+        range(0x2500, 0x2580): "Box Drawing",
+        range(0x2580, 0x25A0): "Block Elements",
+        range(0x25E2, 0x25E6): "Geometric Shapes",
+        range(0x25F8, 0x25FB): "Geometric Shapes",
+        range(0x25FF, 0x2600): "Geometric Shapes",
+        range(0x2800, 0x2900): "Braille Patterns",
+        range(0xE000, 0xF900): "Private Use Area",
+    }
+
+    def block_name(cp: int) -> str:
+        for rng, name in blocks.items():
+            if cp in rng:
+                return name
+        return "Private Use Area"
+
+    new_rows = []
+    for i, cp in enumerate(SPRITE_CPS):
+        if i % 100 == 0:
+            print(f"  {i}/{len(SPRITE_CPS)} U+{cp:04X}", file=sys.stderr)
+        cell = paint(cp, cw, ch)
+        for kind in ("packed", "roomy"):
+            cell.save(args.out / raster_rel(kind, cp))
+        if cp in existing:
+            continue
+        chs = chr(cp)
+        try:
+            name = unicodedata.name(chs, "")
+        except ValueError:
+            name = ""
+        try:
+            cat = unicodedata.category(chs)
+            eaw = unicodedata.east_asian_width(chs)
+        except ValueError:
+            cat, eaw = "Co", "A"
+        new_rows.append(
+            f"{cp}\tU+{cp:04X}\t{chs}\t{name}\t{cat}\t{eaw}\t1\t{block_name(cp)}\t"
+            f"ghostty-sprite\tghostty-sprite\t"
+            f"1.0000\tnarrow\t0.0000\t0.0000\t0.0000\t{raster_rel('packed', cp)}\t"
+            f"1.0000\tnarrow\t0.0000\t0.0000\t0.0000\t{raster_rel('roomy', cp)}"
+        )
+    if new_rows:
+        with tsv.open("a", encoding="utf-8") as f:
+            if tsv.stat().st_size == 0:
+                f.write(hdr + "\n")
+            f.write("\n".join(new_rows) + "\n")
+    print(f"appended {len(new_rows)} sprite rows", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()
