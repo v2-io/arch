@@ -1,0 +1,162 @@
+#!/usr/bin/env python3
+"""Qualitative token-comprehension survey.
+
+Picks a fixed sample of number-system and gradient code points, asks local
+ollama models what the glyph is, and writes data/token-survey.md.
+
+This is *not* a tokenizer. It asks whether a model that *sees the character
+in its prompt* can name it. Combined with measure-tokens (how many pieces
+the BPE made).
+
+Models: llama3.2:3b, qwen3:4b, gpt-oss (Harmony / o200k). lumin if it answers
+quickly enough. 70B models are skipped here — too slow for a sweep.
+"""
+
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
+import unicodedata
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE / "data"
+
+# Hand-picked: one or two from each interesting family, plus known hard cases.
+SAMPLES = [
+    (0x0031, "ascii digit 1 — baseline"),
+    (0x0661, "arabic-indic 1"),
+    (0x09E7, "bengali 1"),
+    (0x2160, "roman numeral 1"),
+    (0x2460, "circled digit 1"),
+    (0x24FF, "negative circled 0"),
+    (0x2776, "dingbat negative circled 1"),
+    (0x3021, "suzhou / hangzhou 1"),
+    (0x4E00, "CJK 1 (ideograph)"),
+    (0x96F6, "CJK 0 (零)"),
+    (0x05D0, "hebrew alef — gematria 1, UCD-silent"),
+    (0x0391, "greek alpha — milesian 1, UCD-silent"),
+    (0x2153, "vulgar fraction 1/3"),
+    (0x00BD, "vulgar fraction 1/2"),
+    (0x2074, "superscript 4"),
+    (0x2588, "full block"),
+    (0x2591, "light shade"),
+    (0x2581, "lower one eighth block"),
+    (0x2800, "braille blank"),
+    (0x28FF, "braille all-8-dots"),
+    (0x2813, "braille dots 1-2-5 (latin 'h' pattern)"),
+    (0x2605, "black star"),
+    (0x2606, "white star"),
+    (0x2B50, "white medium star"),
+    (0x25A0, "black square"),
+    (0x2500, "box drawing light horizontal"),
+    (0xFF11, "fullwidth digit 1"),
+    (0x218A, "turned digit two (duodecimal)"),
+    (0x1372, "ethiopic number ten"),
+    (0x0BF0, "tamil number ten"),
+]
+
+MODELS = [
+    "llama3.2:3b",
+    "qwen3:4b",
+    "gpt-oss:latest",
+]
+
+PROMPT = """You are identifying a single Unicode character shown between the markers.
+
+Character: «{ch}»
+Code point: {hx}
+UTF-8 bytes (hex): {utf8}
+
+Answer in this exact shape, short:
+1. Glyph I see: (describe the mark, or say UNREADABLE / REPLACEMENT / MOJIBAKE)
+2. Name or meaning: 
+3. If it is a number, the value I read (or NONE):
+4. Confidence 0-1:
+Do not mention being an AI. If you cannot see a distinct glyph, say so rather than guessing from the code point number I gave you. The code point is provided so you can be honest about whether the glyph and the identity match."""
+
+
+def ollama(model: str, prompt: str, timeout: int = 90) -> str:
+    try:
+        p = subprocess.run(
+            ["ollama", "run", model, prompt],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired:
+        return "[timeout]"
+    except FileNotFoundError:
+        return "[no ollama]"
+    if p.returncode != 0:
+        err = (p.stderr or p.stdout or "")[-400:]
+        return f"[exit {p.returncode}] {err}"
+    return (p.stdout or "").strip()
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    # Allow subset: --models llama3.2:3b --only 2460,2800
+    args = sys.argv[1:]
+    models = MODELS
+    only = None
+    i = 0
+    while i < len(args):
+        if args[i] == "--models":
+            models = args[i + 1].split(",")
+            i += 2
+        elif args[i] == "--only":
+            only = {int(x, 16) if x.startswith("1") or x.startswith("0") or True else int(x) for x in args[i+1].replace("U+","").split(",")}
+            only = {int(x, 16) for x in args[i + 1].replace("U+", "").split(",")}
+            i += 2
+        else:
+            i += 1
+
+    samples = [s for s in SAMPLES if only is None or s[0] in only]
+    lines = [
+        "# Token / glyph comprehension survey",
+        "",
+        "Qualitative. Each model was shown the character in a prompt (not an image).",
+        "The code point was also given; the prompt asked the model not to guess from",
+        "the number if the glyph was unreadable. That instruction is imperfect — treat",
+        "answers that recap the U+ number without describing a mark as weak evidence.",
+        "",
+        f"Models this run: {', '.join(models)}",
+        "",
+    ]
+    results = []
+    for cp, why in samples:
+        ch = chr(cp)
+        hx = f"U+{cp:04X}"
+        try:
+            name = unicodedata.name(ch)
+        except ValueError:
+            name = ""
+        utf8 = ch.encode("utf-8").hex()
+        prompt = PROMPT.format(ch=ch, hx=hx, utf8=utf8)
+        print(f"=== {hx} {ch} {why} ===", file=sys.stderr)
+        entry = {"hex": hx, "char": ch, "name": name, "why": why, "answers": {}}
+        lines += [
+            f"## {hx} `{ch}` {name}",
+            "",
+            f"*why sampled:* {why}",
+            "",
+        ]
+        for m in models:
+            print(f"  {m}…", file=sys.stderr)
+            ans = ollama(m, prompt)
+            entry["answers"][m] = ans
+            lines += [f"### {m}", "", "```", ans or "(empty)", "```", ""]
+        results.append(entry)
+
+    md = OUT / "token-survey-ollama.md"
+    md.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (OUT / "token-survey.json").write_text(
+        json.dumps(results, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(f"wrote {md}")
+
+
+if __name__ == "__main__":
+    main()

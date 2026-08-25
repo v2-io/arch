@@ -1,0 +1,128 @@
+# Font database for measure-coverage.
+#
+# inherit_ghostty_tsv: also measure every distinct `ghostty` / `used_face`
+# name from ../bmp-metrics-ghostty.tsv (the live stack, whatever it currently is).
+#
+# [[extra]] entries are always measured, even if Ghostty is not using them.
+# `name` is a CoreText family name (NSFont.fontWithName). `path` is optional;
+# when set, fontTools cmap is used as well (native file coverage).
+#
+# lineage: native | nerd-patch | pan-unicode-dump | apple-cjk | apple-system
+#          | noto | math | embedded-ghostty | last-resort | unknown
+#
+# Re-run ./measure-coverage after editing.
+
+inherit_ghostty_tsv = true
+
+# Ghostty-embedded faces (may not appear in AppKit under the +show-face name).
+[[extra]]
+name = "JetBrains Mono"
+path = "/Users/josephwecker-v2/src-ext/ghostty/src/font/res/JetBrainsMonoNerdFont-Regular.ttf"
+lineage = "embedded-ghostty"
+predecessor = "JetBrains Mono + Nerd Font patch"
+notes = "Ghostty fallback for Control Pictures etc. AppKit name 'JetBrains Mono' silently becomes Helvetica unless this TTF is loaded by URL."
+
+[[extra]]
+name = "JetBrains Mono NoNF"
+path = "/Users/josephwecker-v2/src-ext/ghostty/src/font/res/JetBrainsMonoNoNF-Regular.ttf"
+lineage = "embedded-ghostty"
+predecessor = "JetBrains Mono (unpatched)"
+notes = "Embedded without Nerd PUA. Useful to see which Control Pictures / PUA are the patch."
+
+[[extra]]
+name = "JuliaMono"
+path = "/Users/josephwecker-v2/src-ext/ghostty/src/font/res/JuliaMono-Regular.ttf"
+lineage = "embedded-ghostty"
+notes = "Ghostty embedded; strong Unicode / math coverage for a mono."
+
+[[extra]]
+name = "Lilex"
+path = "/Users/josephwecker-v2/src-ext/ghostty/src/font/res/Lilex-VF.ttf"
+lineage = "embedded-ghostty"
+
+[[extra]]
+name = "Monaspace Neon"
+path = "/Users/josephwecker-v2/src-ext/ghostty/src/font/res/MonaspaceNeon-Regular.otf"
+lineage = "embedded-ghostty"
+predecessor = "GitHub Monaspace"
+
+[[extra]]
+name = "Noto Color Emoji"
+path = "/Users/josephwecker-v2/src-ext/ghostty/src/font/res/NotoColorEmoji.ttf"
+lineage = "noto"
+
+# System faces that matter for Enclosed Alphanumerics / symbols, even when
+# +show-face picked a mix.
+[[extra]]
+name = "Apple Symbols"
+lineage = "apple-system"
+notes = "Likely the cleanest Apple-native coverage for circled alphanumerics / geometric. Candidate to unify U+2460–24FF."
+
+[[extra]]
+name = "STIX Two Math"
+lineage = "math"
+notes = "Partial enclosed alphanumerics in the current Ghostty mix (23 of 160)."
+
+[[extra]]
+name = "Arial Unicode MS"
+lineage = "pan-unicode-dump"
+predecessor = "Bitstream Cyberbit / Monotype pan-CJK+legacy, Microsoft 2002"
+notes = "Largest single fallback on this machine (~14k Ghostty cps). Coverage is real but the outlines are a dump, not a designed family. Mixing it with Monaspace/STIX inside one block is the Enclosed Alphanumerics problem."
+
+[[extra]]
+name = "LastResort"
+path = "/System/Library/Fonts/LastResort.otf"
+lineage = "last-resort"
+notes = "Apple last-resort. Treat a hit here as missing, not coverage."
+
+[[extra]]
+name = "Apple Color Emoji"
+lineage = "apple-system"
+
+[[extra]]
+name = "PingFang SC"
+lineage = "apple-cjk"
+notes = "Apple's current SC sans. Native CJK; not a Noto copy. Dominates the Ghostty stack by volume (CJK)."
+
+[[extra]]
+name = "Songti SC"
+lineage = "apple-cjk"
+
+[[extra]]
+name = "Hiragino Sans"
+lineage = "apple-cjk"
+
+# Primary terminal face (also inherited, listed so lineage is explicit).
+[[extra]]
+name = "VictorMono NFM SemiBold"
+lineage = "nerd-patch"
+predecessor = "Victor Mono"
+notes = "Nerd Font Mono SemiBold — Latin/mono is Victor Mono; PUA is the Nerd patch."
+
+[[extra]]
+name = "Monaspace Xenon"
+lineage = "native"
+predecessor = "GitHub Monaspace"
+notes = "Shows up for 28 Enclosed Alphanumeric cps in the current mix."
+
+# Not installed on this machine as of 2026-08-24; listed so measure-coverage
+# can report MISSING and so they are the first things to try adding.
+[[extra]]
+name = "Noto Sans Symbols"
+lineage = "noto"
+notes = "NOT INSTALLED. Designed coverage for enclosed alphanumerics / geometric. First candidate to unify U+2460–24FF."
+
+[[extra]]
+name = "Noto Sans Symbols 2"
+lineage = "noto"
+notes = "NOT INSTALLED. Extended symbols (including later enclosed). Pair with Noto Sans Symbols."
+
+[[extra]]
+name = "DejaVu Sans"
+lineage = "unknown"
+notes = "NOT INSTALLED. Often complete for circled numbers."
+
+[[extra]]
+name = "Symbola"
+lineage = "unknown"
+notes = "NOT INSTALLED. George Douros; very wide symbol cmap, outlines are a grab-bag."

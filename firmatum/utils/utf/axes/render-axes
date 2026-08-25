@@ -1,0 +1,361 @@
+#!/usr/bin/env python3
+"""Build axes/index.html — exploration dashboard joining this track with
+the parent Ghostty rasters (packed) and metrics TSV when present.
+
+file:// friendly: rasters are referenced as ../.rasters/4x/packed/HH/HHHH.png
+and no fetch(). Regenerated whenever the data TSVs/JSON change.
+"""
+
+from __future__ import annotations
+
+import html
+import json
+from collections import Counter, defaultdict
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE / "data"
+ROOT = HERE.parent
+HTML = HERE / "index.html"
+
+CSS = """
+:root { font: 14px/1.45 ui-sans-serif, system-ui, sans-serif; color: #1e1e2e; background: #eff1f5; }
+body { margin: 1.5rem auto; max-width: 72rem; padding: 0 1rem 3rem; }
+h1 { font-size: 1.25rem; font-weight: 600; margin: 0 0 .3rem; }
+h2 { font-size: 1.05rem; margin: 2rem 0 .4rem; border-top: 1px solid #ccd0da; padding-top: 1.2rem; }
+h3 { font-size: .95rem; margin: 1.2rem 0 .3rem; }
+.lede, .note { color: #5c5f77; max-width: 46rem; }
+.note { font-size: 13px; }
+nav a { color: #1e66f5; margin-right: 1rem; }
+table { border-collapse: collapse; background: #fff; font-size: 13px; margin: .6rem 0 1rem; }
+th, td { border: 1px solid #ccd0da; padding: 4px 8px; vertical-align: top; }
+th { background: #e6e9ef; font-weight: 500; text-align: left; }
+.mono { font-family: ui-monospace, Menlo, monospace; }
+.glyph { font-size: 1.4rem; line-height: 1; }
+img.r { width: 74px; height: 128px; background: #fff; image-rendering: pixelated; display: block; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+.card { background: #fff; border: 1px solid #ccd0da; padding: 6px; width: 92px; }
+.card .k { font: 10px/1.2 ui-monospace, Menlo, monospace; color: #6c6f85; }
+.warn { color: #d20f39; }
+.ok { color: #40a02b; }
+.pill { display: inline-block; background: #e6e9ef; border-radius: 999px; padding: 0 8px; font-size: 12px; margin-right: 4px; }
+"""
+
+
+def esc(s) -> str:
+    return html.escape("" if s is None else str(s), quote=True)
+
+
+def raster(cp: int) -> str:
+    return f"../.rasters/4x/packed/{cp >> 8:02x}/{cp:04x}.png"
+
+
+def load_json(name: str, default=None):
+    p = OUT / name
+    if not p.is_file():
+        return default
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def load_tsv(name: str) -> list[dict]:
+    p = OUT / name
+    if not p.is_file():
+        return []
+    rows = []
+    with p.open(encoding="utf-8") as f:
+        hdr = f.readline().rstrip("\n").split("\t")
+        for line in f:
+            rows.append(dict(zip(hdr, line.rstrip("\n").split("\t"))))
+    return rows
+
+
+def glyph_card(cp: int, caption: str) -> str:
+    hx = f"U+{cp:04X}"
+    ch = chr(cp)
+    return (
+        f"<div class='card'><img class='r' src='{esc(raster(cp))}' alt='{esc(hx)}'>"
+        f"<div class='k'>{esc(hx)}</div>"
+        f"<div class='glyph'>{esc(ch)}</div>"
+        f"<div class='k'>{esc(caption)}</div></div>"
+    )
+
+
+def main() -> None:
+    systems = load_json("number-systems.json", {"systems": []})
+    grads = load_json("gradients.json", {"gradients": []})
+    lineage = load_json("font-lineage.json", {})
+    clusters = load_json("png-clusters.json", {"clusters": []})
+    shape = load_json("shape-agreement.json", {})
+    toksum = load_json("tokenization-summary.json", {"engines": []})
+    catalog = load_tsv("font-catalog.tsv")
+    enclosed = load_tsv("enclosed-alphanumerics.tsv")
+    blocksum = load_tsv("font-block-summary.tsv")
+
+    parts = [
+        "<!DOCTYPE html><html lang='en'><head><meta charset='utf-8'>",
+        "<title>unicode axes — numbers, gradients, fonts, tokens, shape</title>",
+        f"<style>{CSS}</style></head><body>",
+        "<h1>unicode axes</h1>",
+        "<p class='lede'>Classification track beside the Ghostty paint metrics. "
+        "Join key with <span class='mono'>bmp-metrics-ghostty.tsv</span> is "
+        "<span class='mono'>hex</span> / <span class='mono'>cp</span>. "
+        "Rasters are the existing packed 4× Ghostty captures — this page does not re-paint.</p>",
+        "<nav>",
+        "<a href='#numbers'>numbers</a>",
+        "<a href='#gradients'>gradients</a>",
+        "<a href='#fonts'>fonts</a>",
+        "<a href='#enclosed'>enclosed alphanumerics</a>",
+        "<a href='#tokens'>tokens</a>",
+        "<a href='#png'>png clusters</a>",
+        "<a href='../corpus/index.html'>paint corpus</a>",
+        "</nav>",
+        "<p class='note'>Unicode 14.0.0. UCD numeric ≠ counting system: Hebrew / Greek / "
+        "Armenian / Georgian letters are culturally ciphered numerals with "
+        "<span class='mono'>ucd_numeric=no</span>. Grok’s tokenizer is unpublished; "
+        "o200k_base is a modern-BPE proxy, not a claim about Grok.</p>",
+    ]
+
+    # ---- numbers ----
+    parts += ["<h2 id='numbers'>Number systems</h2>"]
+    by_form = defaultdict(list)
+    for s in systems.get("systems", []):
+        form = s.get("form")
+        if isinstance(form, list):
+            form = ",".join(form)
+        by_form[form or "?"].append(s)
+
+    parts.append("<p class='note'>positional-decimal sets are auto-detected Nd 0–9 runs. "
+                 "Everything else is a curated overlay checked against UCD numeric values.</p>")
+    for form, ss in by_form.items():
+        parts += [f"<h3>{esc(form)} <span class='pill'>{len(ss)}</span></h3>"]
+        parts.append("<table><tr><th>id</th><th>n</th><th>UCD</th><th>examples</th></tr>")
+        for s in ss:
+            ucd = s.get("ucd_numeric")
+            ucd_s = "yes" if ucd is True else ("no" if ucd is False else str(ucd))
+            ex = " ".join(esc(x) for x in (s.get("example") or [])[:8])
+            parts.append(
+                f"<tr><td class='mono'>{esc(s.get('id'))}</td><td>{s.get('n')}</td>"
+                f"<td>{esc(ucd_s)}</td><td>{ex}</td></tr>"
+            )
+        parts.append("</table>")
+
+    # sample cards: ascii, arabic-indic, roman, circled, suzhou, cjk, hebrew, braille-not
+    showcase = [
+        (0x0030, "ascii 0"),
+        (0x0661, "arabic-indic 1"),
+        (0x2160, "roman 1"),
+        (0x2460, "circled 1"),
+        (0x3021, "suzhou 1"),
+        (0x4E00, "cjk 1"),
+        (0x05D0, "alef / gematria 1"),
+        (0x2153, "⅓"),
+        (0xFF11, "fullwidth 1"),
+        (0x1372, "ethiopic 10"),
+    ]
+    parts.append("<div class='row'>")
+    parts.extend(glyph_card(cp, cap) for cp, cap in showcase)
+    parts.append("</div>")
+
+    # ---- gradients ----
+    parts += ["<h2 id='gradients'>Gradients</h2>",
+              "<p class='note'><b>specific</b> = the code point <i>is</i> a designed fill "
+              "(block eighths, shade steps). <b>derived</b> = a parameter (dot popcount, "
+              "quadrant bits) that yields a density. Stars are a fill series, not a count.</p>"]
+    parts.append("<table><tr><th>family</th><th>kind</th><th>axis</th><th>n</th><th>span</th></tr>")
+    for g in grads.get("gradients", []):
+        parts.append(
+            f"<tr><td class='mono'>{esc(g.get('id'))}</td><td>{esc(g.get('kind'))}</td>"
+            f"<td>{esc(g.get('axis'))}</td><td>{g.get('n')}</td>"
+            f"<td class='mono'>{esc(g.get('lo'))}–{esc(g.get('hi'))}</td></tr>"
+        )
+    parts.append("</table>")
+    gshow = [
+        (0x2581, "lower 1/8"),
+        (0x2584, "lower 1/2"),
+        (0x2588, "full"),
+        (0x2591, "light shade"),
+        (0x2592, "medium"),
+        (0x2593, "dark"),
+        (0x2800, "braille 0/8"),
+        (0x28FF, "braille 8/8"),
+        (0x2605, "black star"),
+        (0x2606, "white star"),
+    ]
+    parts.append("<div class='row'>")
+    parts.extend(glyph_card(cp, cap) for cp, cap in gshow)
+    parts.append("</div>")
+
+    # ---- fonts ----
+    parts += ["<h2 id='fonts'>Font coverage</h2>"]
+    enc = lineage.get("enclosed_alphanumerics") or {}
+    parts.append(
+        f"<p class='note'>Preferred face is Ghostty <span class='mono'>+show-face</span> "
+        f"(from the paint TSV), not re-queried here. Native coverage is CoreText cmap. "
+        f"LastResort is a hole-filler. Add fonts in <span class='mono'>fonts.toml</span>.</p>"
+    )
+    if catalog:
+        parts.append("<table><tr><th>face</th><th>status</th><th>lineage</th>"
+                     "<th>BMP covered</th><th>predecessor</th></tr>")
+        for r in sorted(catalog, key=lambda x: -int(x.get("n_covered") or 0))[:40]:
+            st = r.get("status") or ""
+            cls = "warn" if st not in {"ok", "url"} else ""
+            parts.append(
+                f"<tr><td>{esc(r.get('name'))}</td><td class='{cls}'>{esc(st)}</td>"
+                f"<td class='mono'>{esc(r.get('lineage'))}</td>"
+                f"<td>{esc(r.get('n_covered'))} ({esc(r.get('pct_bmp_assigned'))}%)</td>"
+                f"<td>{esc(r.get('predecessor'))}</td></tr>"
+            )
+        parts.append("</table>")
+        parts.append(f"<p class='note'>{len(catalog)} faces measured; table shows top 40 by coverage.</p>")
+
+    # ---- enclosed ----
+    parts += ["<h2 id='enclosed'>Enclosed Alphanumerics (U+2460–U+24FF)</h2>"]
+    mix = enc.get("ghostty_preferred_mix") or []
+    full = enc.get("full_coverage_fonts") or []
+    parts.append(
+        f"<p>Ghostty currently paints this block with a <b>mix of {len(mix)} preferred faces</b>: "
+        f"{esc(', '.join(mix))}. Fonts in the DB that cover the whole assigned block: "
+        f"{esc(', '.join(full) if full else 'none of those measured')}.</p>"
+    )
+    if enclosed:
+        pref_c = Counter(r.get("preferred") for r in enclosed)
+        parts.append("<table><tr><th>preferred (Ghostty)</th><th>n in block</th></tr>")
+        for name, n in pref_c.most_common():
+            parts.append(f"<tr><td>{esc(name)}</td><td>{n}</td></tr>")
+        parts.append("</table>")
+        parts.append("<p class='note'>First 24 of the block, packed raster + preferred face:</p>")
+        parts.append("<div class='row'>")
+        for r in enclosed[:24]:
+            try:
+                cp = int(r["hex"].replace("U+", ""), 16)
+            except Exception:
+                continue
+            parts.append(glyph_card(cp, r.get("preferred") or ""))
+        parts.append("</div>")
+
+    # interesting block coverage: who can unify circled numbers
+    if blocksum:
+        want = "Enclosed Alphanumerics"
+        rows = [r for r in blocksum if r.get("block") == want]
+        rows.sort(key=lambda r: -float(r.get("pct") or 0))
+        if rows:
+            parts.append("<h3>Who covers the block (cmap %)</h3>")
+            parts.append("<table><tr><th>font</th><th>covered</th><th>%</th><th>lineage</th></tr>")
+            for r in rows[:25]:
+                parts.append(
+                    f"<tr><td>{esc(r.get('font'))}</td><td>{esc(r.get('covered'))}/{esc(r.get('assigned'))}</td>"
+                    f"<td>{esc(r.get('pct'))}</td><td class='mono'>{esc(r.get('lineage'))}</td></tr>"
+                )
+            parts.append("</table>")
+
+    # ---- tokens ----
+    parts += ["<h2 id='tokens'>Tokenization</h2>"]
+    parts.append(
+        "<p class='note'>Quantitative. <span class='mono'>single-token</span> is the best "
+        "count. <span class='mono'>byte-ish</span> = UTF-8 byte fallback. "
+        "<span class='mono'>fragmented</span> = more tokens than bytes. "
+        "Comprehension is a different question — see data/token-survey.md.</p>"
+    )
+    for e in toksum.get("engines") or []:
+        parts.append(f"<h3 class='mono'>{esc(e.get('name'))}</h3>")
+        parts.append(f"<p class='note'>{esc(e.get('what'))} · mean tokens/cp {esc(e.get('mean_tokens'))}</p>")
+        buckets = e.get("buckets") or {}
+        parts.append("<table><tr><th>bucket</th><th>n</th></tr>")
+        for b, n in sorted(buckets.items(), key=lambda kv: -kv[1]):
+            parts.append(f"<tr><td class='mono'>{esc(b)}</td><td>{n}</td></tr>")
+        parts.append("</table>")
+        hard = e.get("hard_sample") or []
+        if hard:
+            parts.append("<p class='note'>sample of fragmented / roundtrip-fail:</p><div class='row'>")
+            for h in hard[:12]:
+                try:
+                    cp = int(h["hex"].replace("U+", ""), 16)
+                except Exception:
+                    continue
+                parts.append(glyph_card(cp, f"{h.get('bucket')} n={h.get('n')}"))
+            parts.append("</div>")
+
+    survey = OUT / "token-survey.md"
+    if survey.is_file():
+        parts.append(f"<p><a href='data/token-survey.md'>qualitative survey</a> ({survey.stat().st_size} bytes)</p>")
+
+    # ---- png / shape ----
+    parts += ["<h2 id='png'>Shape (rasters + theory + Ghostty density)</h2>"]
+    parts.append(
+        "<p class='note'>Rasters are the other track's packed 4× Ghostty PNGs "
+        "(<span class='mono'>.rasters/4x/packed/</span>) — not re-painted here. "
+        "Visual cluster = k-means on 16×16 occupancy only. Hybrid cluster adds "
+        "designed fill, Unicode name-shape tags, theory family, and the paint TSV's "
+        "<span class='mono'>packed_density</span>.</p>"
+    )
+    br = shape.get("braille") or {}
+    if br:
+        parts.append(
+            f"<p>Braille 2×4 readout vs code-point bits: "
+            f"<b>{esc(br.get('grid_matches_codepoint'))}</b> match / "
+            f"{esc(br.get('n'))} "
+            f"({esc(br.get('mismatch'))} mismatch).</p>"
+        )
+    dvm = shape.get("designed_vs_measured") or []
+    if dvm:
+        parts.append("<h3>Designed fill vs Ghostty packed_density</h3>")
+        parts.append(
+            "<table><tr><th>family</th><th>n</th><th>designed μ</th>"
+            "<th>measured μ</th><th>MAE</th></tr>"
+        )
+        for fam in dvm:
+            parts.append(
+                f"<tr><td class='mono'>{esc(fam.get('family') or '(none)')}</td>"
+                f"<td>{fam.get('n')}</td><td>{fam.get('mean_designed')}</td>"
+                f"<td>{fam.get('mean_measured')}</td><td>{fam.get('mae')}</td></tr>"
+            )
+        parts.append("</table>")
+    parts.append(
+        f"<p class='note'>Visual-only k-means: k={esc(clusters.get('k'))}, "
+        f"n={esc(clusters.get('n'))}. majority_block describes the members; "
+        f"a low fraction means the cluster cut across Unicode theory.</p>"
+    )
+    cl = clusters.get("clusters") or []
+    # show clusters that mix, and a few pure ones
+    mixed = [c for c in cl if (c.get("majority_block_frac") or 1) < 0.6]
+    parts.append(f"<p>{len(mixed)} / {len(cl)} clusters have majority-block fraction &lt; 0.6.</p>")
+    parts.append("<table><tr><th>id</th><th>n</th><th>majority block</th><th>frac</th>"
+                 "<th>gradients</th><th>rep</th></tr>")
+    show = sorted(cl, key=lambda c: (c.get("majority_block_frac") or 0, -c.get("n", 0)))[:30]
+    for c in show:
+        grads_s = ", ".join(f"{a}×{b}" for a, b in (c.get("gradients") or [])[:3])
+        parts.append(
+            f"<tr><td>{c.get('cluster')}</td><td>{c.get('n')}</td>"
+            f"<td>{esc(c.get('majority_block'))}</td><td>{c.get('majority_block_frac')}</td>"
+            f"<td>{esc(grads_s)}</td><td class='mono'>{esc(c.get('representative'))}</td></tr>"
+        )
+    parts.append("</table>")
+    # representative rasters of the 12 most mixed
+    parts.append("<div class='row'>")
+    for c in mixed[:12]:
+        hx = c.get("representative") or ""
+        try:
+            cp = int(hx.replace("U+", ""), 16)
+        except Exception:
+            continue
+        parts.append(glyph_card(cp, f"c{c.get('cluster')} n={c.get('n')} {c.get('majority_block_frac')}"))
+    parts.append("</div>")
+
+    parts += [
+        "<h2>Files</h2><ul class='mono'>",
+        "<li>data/unicode-axes.tsv — per-cp join table</li>",
+        "<li>data/number-systems.json / gradients.json</li>",
+        "<li>data/font-coverage.tsv / font-catalog.tsv / font-lineage.json</li>",
+        "<li>data/tokenization.tsv / tokenization-summary.json</li>",
+        "<li>data/png-features.tsv / png-clusters.json — visual occupancy from packed rasters</li>",
+        "<li>data/shape-axes.tsv / shape-agreement.json — hybrid (raster + theory + Ghostty density)</li>",
+        "<li>fonts.toml — add a face, re-run measure-coverage</li>",
+        "</ul>",
+        "</body></html>",
+    ]
+    HTML.write_text("\n".join(parts), encoding="utf-8")
+    print(f"wrote {HTML} ({HTML.stat().st_size} bytes)")
+
+
+if __name__ == "__main__":
+    main()

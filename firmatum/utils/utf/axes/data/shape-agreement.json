@@ -1,0 +1,1931 @@
+{
+  "raster_source": "../.rasters/4x/packed/ (measure-ghostty packed PNGs; not re-painted)",
+  "n": 57151,
+  "braille": {
+    "n": 256,
+    "grid_matches_codepoint": 256,
+    "mismatch": 0,
+    "note": "bits_cp is U+2800+pattern. bits_grid is a 2×4 readout of the 16×16 occupancy. Mismatch means the raster (Ghostty sprite or face) is not a clean 2×4 of the Unicode dots — or the readout threshold is wrong."
+  },
+  "designed_vs_measured": [
+    {
+      "family": "braille",
+      "n": 256,
+      "mean_designed": 0.5,
+      "mean_measured": 0.0405,
+      "mean_err": -0.4595,
+      "mae": 0.4595,
+      "worst": [
+        {
+          "hex": "U+28FF",
+          "designed": 1.0,
+          "measured": 0.0811,
+          "err": -0.9189,
+          "name": "BRAILLE PATTERN DOTS-12345678"
+        },
+        {
+          "hex": "U+287F",
+          "designed": 0.875,
+          "measured": 0.0709,
+          "err": -0.8041,
+          "name": "BRAILLE PATTERN DOTS-1234567"
+        },
+        {
+          "hex": "U+28BF",
+          "designed": 0.875,
+          "measured": 0.0709,
+          "err": -0.8041,
+          "name": "BRAILLE PATTERN DOTS-1234568"
+        },
+        {
+          "hex": "U+28DF",
+          "designed": 0.875,
+          "measured": 0.0709,
+          "err": -0.8041,
+          "name": "BRAILLE PATTERN DOTS-1234578"
+        },
+        {
+          "hex": "U+28EF",
+          "designed": 0.875,
+          "measured": 0.0709,
+          "err": -0.8041,
+          "name": "BRAILLE PATTERN DOTS-1234678"
+        }
+      ]
+    },
+    {
+      "family": "quadrant",
+      "n": 10,
+      "mean_designed": 0.5,
+      "mean_measured": 0.4814,
+      "mean_err": -0.0186,
+      "mae": 0.0202,
+      "worst": [
+        {
+          "hex": "U+259B",
+          "designed": 0.75,
+          "measured": 0.7061,
+          "err": -0.0439,
+          "name": "QUADRANT UPPER LEFT AND UPPER RIGHT AND LOWER LEFT"
+        },
+        {
+          "hex": "U+2599",
+          "designed": 0.75,
+          "measured": 0.7114,
+          "err": -0.0386,
+          "name": "QUADRANT UPPER LEFT AND LOWER LEFT AND LOWER RIGHT"
+        },
+        {
+          "hex": "U+2598",
+          "designed": 0.25,
+          "measured": 0.2249,
+          "err": -0.0251,
+          "name": "QUADRANT UPPER LEFT"
+        },
+        {
+          "hex": "U+2596",
+          "designed": 0.25,
+          "measured": 0.2297,
+          "err": -0.0203,
+          "name": "QUADRANT LOWER LEFT"
+        },
+        {
+          "hex": "U+259E",
+          "designed": 0.5,
+          "measured": 0.4811,
+          "err": -0.0189,
+          "name": "QUADRANT UPPER RIGHT AND LOWER LEFT"
+        }
+      ]
+    },
+    {
+      "family": "block-fill-vertical",
+      "n": 9,
+      "mean_designed": 0.4583,
+      "mean_measured": 0.4437,
+      "mean_err": -0.0146,
+      "mae": 0.0146,
+      "worst": [
+        {
+          "hex": "U+2580",
+          "designed": 0.5,
+          "measured": 0.4764,
+          "err": -0.0236,
+          "name": "UPPER HALF BLOCK"
+        },
+        {
+          "hex": "U+2587",
+          "designed": 0.875,
+          "measured": 0.8514,
+          "err": -0.0236,
+          "name": "LOWER SEVEN EIGHTHS BLOCK"
+        },
+        {
+          "hex": "U+2586",
+          "designed": 0.75,
+          "measured": 0.7297,
+          "err": -0.0203,
+          "name": "LOWER THREE QUARTERS BLOCK"
+        },
+        {
+          "hex": "U+2585",
+          "designed": 0.625,
+          "measured": 0.6081,
+          "err": -0.0169,
+          "name": "LOWER FIVE EIGHTHS BLOCK"
+        },
+        {
+          "hex": "U+2584",
+          "designed": 0.5,
+          "measured": 0.4865,
+          "err": -0.0135,
+          "name": "LOWER HALF BLOCK"
+        }
+      ]
+    },
+    {
+      "family": "block-fill-horizontal",
+      "n": 9,
+      "mean_designed": 0.4583,
+      "mean_measured": 0.4309,
+      "mean_err": -0.0274,
+      "mae": 0.0294,
+      "worst": [
+        {
+          "hex": "U+2589",
+          "designed": 0.875,
+          "measured": 0.8291,
+          "err": -0.0459,
+          "name": "LEFT SEVEN EIGHTHS BLOCK"
+        },
+        {
+          "hex": "U+258C",
+          "designed": 0.5,
+          "measured": 0.4547,
+          "err": -0.0453,
+          "name": "LEFT HALF BLOCK"
+        },
+        {
+          "hex": "U+258B",
+          "designed": 0.625,
+          "measured": 0.5884,
+          "err": -0.0366,
+          "name": "LEFT FIVE EIGHTHS BLOCK"
+        },
+        {
+          "hex": "U+258E",
+          "designed": 0.25,
+          "measured": 0.214,
+          "err": -0.036,
+          "name": "LEFT ONE QUARTER BLOCK"
+        },
+        {
+          "hex": "U+258A",
+          "designed": 0.75,
+          "measured": 0.7221,
+          "err": -0.0279,
+          "name": "LEFT THREE QUARTERS BLOCK"
+        }
+      ]
+    },
+    {
+      "family": "shade",
+      "n": 3,
+      "mean_designed": 0.5,
+      "mean_measured": 0.4833,
+      "mean_err": -0.0167,
+      "mae": 0.0167,
+      "worst": [
+        {
+          "hex": "U+2593",
+          "designed": 0.75,
+          "measured": 0.725,
+          "err": -0.025,
+          "name": "DARK SHADE"
+        },
+        {
+          "hex": "U+2592",
+          "designed": 0.5,
+          "measured": 0.4833,
+          "err": -0.0167,
+          "name": "MEDIUM SHADE"
+        },
+        {
+          "hex": "U+2591",
+          "designed": 0.25,
+          "measured": 0.2417,
+          "err": -0.0083,
+          "name": "LIGHT SHADE"
+        }
+      ]
+    },
+    {
+      "family": "block-fill-full",
+      "n": 1,
+      "mean_designed": 1.0,
+      "mean_measured": 0.9628,
+      "mean_err": -0.0372,
+      "mae": 0.0372,
+      "worst": [
+        {
+          "hex": "U+2588",
+          "designed": 1.0,
+          "measured": 0.9628,
+          "err": -0.0372,
+          "name": "FULL BLOCK"
+        }
+      ]
+    }
+  ],
+  "hybrid_clusters": [
+    {
+      "cluster": 31,
+      "n": 3590,
+      "majority_theory": "(none)",
+      "frac": 0.999,
+      "shape_tags": [
+        [
+          "(none)",
+          3590
+        ]
+      ],
+      "sample": [
+        "U+0069 i",
+        "U+00EC ì",
+        "U+00ED í",
+        "U+00EE î",
+        "U+00EF ï",
+        "U+00F1 ñ",
+        "U+00F9 ù",
+        "U+00FA ú",
+        "U+00FB û",
+        "U+00FC ü",
+        "U+0129 ĩ",
+        "U+0144 ń"
+      ]
+    },
+    {
+      "cluster": 34,
+      "n": 3364,
+      "majority_theory": "(none)",
+      "frac": 1.0,
+      "shape_tags": [
+        [
+          "(none)",
+          3360
+        ],
+        [
+          "bar",
+          2
+        ],
+        [
+          "circle",
+          1
+        ],
+        [
+          "circle,bar",
+          1
+        ]
+      ],
+      "sample": [
+        "U+0478 Ѹ",
+        "U+04DC Ӝ",
+        "U+17AA ឪ",
+        "U+234D ⍍",
+        "U+2354 ⍔",
+        "U+2648 ♈",
+        "U+2649 ♉",
+        "U+264B ♋",
+        "U+264C ♌",
+        "U+264E ♎",
+        "U+264F ♏",
+        "U+2652 ♒"
+      ]
+    },
+    {
+      "cluster": 1,
+      "n": 2939,
+      "majority_theory": "(none)",
+      "frac": 0.999,
+      "shape_tags": [
+        [
+          "(none)",
+          2938
+        ],
+        [
+          "circle",
+          1
+        ]
+      ],
+      "sample": [
+        "U+026E ɮ",
+        "U+02A4 ʤ",
+        "U+0444 ф",
+        "U+04F8 Ӹ",
+        "U+0528 Ԩ",
+        "U+0586 ֆ",
+        "U+0B87 இ",
+        "U+0BF9 ௹",
+        "U+0C59 ౙ",
+        "U+0E3F ฿",
+        "U+10B4 Ⴔ",
+        "U+1300 ጀ"
+      ]
+    },
+    {
+      "cluster": 27,
+      "n": 2746,
+      "majority_theory": "(none)",
+      "frac": 0.999,
+      "shape_tags": [
+        [
+          "(none)",
+          2746
+        ]
+      ],
+      "sample": [
+        "U+051A Ԛ",
+        "U+06B1 ڱ",
+        "U+0F43 གྷ",
+        "U+1335 ጵ",
+        "U+1E8C Ẍ",
+        "U+1FB9 Ᾱ",
+        "U+2104 ℄",
+        "U+22DA ⋚",
+        "U+22DB ⋛",
+        "U+2CE5 ⳥",
+        "U+2DAC ⶬ",
+        "U+2FA3 ⾣"
+      ]
+    },
+    {
+      "cluster": 17,
+      "n": 2645,
+      "majority_theory": "(none)",
+      "frac": 1.0,
+      "shape_tags": [
+        [
+          "(none)",
+          2644
+        ],
+        [
+          "circle",
+          1
+        ]
+      ],
+      "sample": [
+        "U+04DF ӟ",
+        "U+0506 Ԇ",
+        "U+1154 ᅔ",
+        "U+1193 ᆓ",
+        "U+1227 ሧ",
+        "U+1250 ቐ",
+        "U+125A ቚ",
+        "U+125D ቝ",
+        "U+1268 ቨ",
+        "U+1269 ቩ",
+        "U+126A ቪ",
+        "U+126C ቬ"
+      ]
+    },
+    {
+      "cluster": 43,
+      "n": 2600,
+      "majority_theory": "(none)",
+      "frac": 0.999,
+      "shape_tags": [
+        [
+          "(none)",
+          2600
+        ]
+      ],
+      "sample": [
+        "U+0994 ঔ",
+        "U+1183 ᆃ",
+        "U+118D ᆍ",
+        "U+123B ሻ",
+        "U+1245 ቅ",
+        "U+1251 ቑ",
+        "U+1252 ቒ",
+        "U+1256 ቖ",
+        "U+1258 ቘ",
+        "U+126B ቫ",
+        "U+127C ቼ",
+        "U+127D ች"
+      ]
+    },
+    {
+      "cluster": 28,
+      "n": 2584,
+      "majority_theory": "(none)",
+      "frac": 1.0,
+      "shape_tags": [
+        [
+          "(none)",
+          2582
+        ],
+        [
+          "arrow",
+          2
+        ]
+      ],
+      "sample": [
+        "U+0051 Q",
+        "U+00E5 å",
+        "U+0100 Ā",
+        "U+0104 Ą",
+        "U+01A6 Ʀ",
+        "U+01FE Ǿ",
+        "U+03B0 ΰ",
+        "U+03CF Ϗ",
+        "U+04A6 Ҧ",
+        "U+04C1 Ӂ",
+        "U+04C3 Ӄ",
+        "U+0520 Ԡ"
+      ]
+    },
+    {
+      "cluster": 46,
+      "n": 2435,
+      "majority_theory": "(none)",
+      "frac": 0.999,
+      "shape_tags": [
+        [
+          "(none)",
+          2433
+        ],
+        [
+          "arrow",
+          2
+        ]
+      ],
+      "sample": [
+        "U+0191 Ƒ",
+        "U+01AF Ư",
+        "U+04EF ӯ",
+        "U+04FC Ӽ",
+        "U+0988 ঈ",
+        "U+09E1 ৡ",
+        "U+0AF1 ૱",
+        "U+0B5C ଡ଼",
+        "U+0B5D ଢ଼",
+        "U+0F69 ཀྵ",
+        "U+10BA Ⴚ",
+        "U+12ED ይ"
+      ]
+    },
+    {
+      "cluster": 8,
+      "n": 2382,
+      "majority_theory": "(none)",
+      "frac": 0.999,
+      "shape_tags": [
+        [
+          "(none)",
+          2378
+        ],
+        [
+          "bar",
+          2
+        ],
+        [
+          "arrow",
+          1
+        ],
+        [
+          "circle,arrow",
+          1
+        ]
+      ],
+      "sample": [
+        "U+00D8 Ø",
+        "U+0194 Ɣ",
+        "U+01A0 Ơ",
+        "U+0414 Д",
+        "U+0426 Ц",
+        "U+0429 Щ",
+        "U+0496 Җ",
+        "U+049A Қ",
+        "U+04A2 Ң",
+        "U+04B4 Ҵ",
+        "U+04BE Ҿ",
+        "U+04C9 Ӊ"
+      ]
+    },
+    {
+      "cluster": 20,
+      "n": 2059,
+      "majority_theory": "(none)",
+      "frac": 1.0,
+      "shape_tags": [
+        [
+          "(none)",
+          2059
+        ]
+      ],
+      "sample": [
+        "U+1247 ቇ",
+        "U+1254 ቔ",
+        "U+125B ቛ",
+        "U+2FC8 ⿈",
+        "U+341A 㐚",
+        "U+3426 㐦",
+        "U+3499 㒙",
+        "U+34BC 㒼",
+        "U+35A2 㖢",
+        "U+35AE 㖮",
+        "U+35B8 㖸",
+        "U+35BA 㖺"
+      ]
+    },
+    {
+      "cluster": 26,
+      "n": 1981,
+      "majority_theory": "(none)",
+      "frac": 0.998,
+      "shape_tags": [
+        [
+          "(none)",
+          1981
+        ]
+      ],
+      "sample": [
+        "U+2DAD ⶭ",
+        "U+2EF2 ⻲",
+        "U+2EF3 ⻳",
+        "U+2FC3 ⿃",
+        "U+2FCB ⿋",
+        "U+2FD2 ⿒",
+        "U+2FD5 ⿕",
+        "U+3417 㐗",
+        "U+341B 㐛",
+        "U+341E 㐞",
+        "U+3423 㐣",
+        "U+342F 㐯"
+      ]
+    },
+    {
+      "cluster": 4,
+      "n": 1859,
+      "majority_theory": "pua-nerd",
+      "frac": 0.938,
+      "shape_tags": [
+        [
+          "(none)",
+          1765
+        ],
+        [
+          "circle,digit",
+          47
+        ],
+        [
+          "circle,number",
+          25
+        ],
+        [
+          "digit",
+          18
+        ]
+      ],
+      "sample": [
+        "U+05D0 א",
+        "U+09F4 ৴",
+        "U+09F8 ৸",
+        "U+0B75 ୵",
+        "U+0B76 ୶",
+        "U+0B77 ୷",
+        "U+0BE6 ௦",
+        "U+0BEE ௮",
+        "U+0C67 ౧",
+        "U+0C68 ౨",
+        "U+0C6B ౫",
+        "U+0C6C ౬"
+      ]
+    },
+    {
+      "cluster": 6,
+      "n": 1803,
+      "majority_theory": "(none)",
+      "frac": 0.996,
+      "shape_tags": [
+        [
+          "(none)",
+          1792
+        ],
+        [
+          "arrow",
+          5
+        ],
+        [
+          "circle",
+          5
+        ],
+        [
+          "bar",
+          1
+        ]
+      ],
+      "sample": [
+        "U+0134 Ĵ",
+        "U+01AE Ʈ",
+        "U+03E0 Ϡ",
+        "U+061D ؝",
+        "U+06B5 ڵ",
+        "U+071E ܞ",
+        "U+0977 ॷ",
+        "U+0F57 བྷ",
+        "U+10F6 ჶ",
+        "U+123F ሿ",
+        "U+124C ቌ",
+        "U+1255 ቕ"
+      ]
+    },
+    {
+      "cluster": 2,
+      "n": 1755,
+      "majority_theory": "(none)",
+      "frac": 0.999,
+      "shape_tags": [
+        [
+          "(none)",
+          1696
+        ],
+        [
+          "circle",
+          57
+        ],
+        [
+          "circle,plus",
+          1
+        ],
+        [
+          "circle,moon",
+          1
+        ]
+      ],
+      "sample": [
+        "U+014E Ŏ",
+        "U+0176 Ŷ",
+        "U+0178 Ÿ",
+        "U+03AB Ϋ",
+        "U+03D4 ϔ",
+        "U+1253 ቓ",
+        "U+129B ኛ",
+        "U+1E20 Ḡ",
+        "U+1E7C Ṽ",
+        "U+1EF8 Ỹ",
+        "U+1F56 ὖ",
+        "U+1F57 ὗ"
+      ]
+    },
+    {
+      "cluster": 5,
+      "n": 1582,
+      "majority_theory": "(none)",
+      "frac": 0.996,
+      "shape_tags": [
+        [
+          "(none)",
+          1574
+        ],
+        [
+          "arrow",
+          4
+        ],
+        [
+          "bar",
+          3
+        ],
+        [
+          "circle,bar",
+          1
+        ]
+      ],
+      "sample": [
+        "U+0149 ŉ",
+        "U+01EC Ǭ",
+        "U+024A Ɋ",
+        "U+0477 ѷ",
+        "U+04AC Ҭ",
+        "U+04B2 Ҳ",
+        "U+04C5 Ӆ",
+        "U+0524 Ԥ",
+        "U+052E Ԯ",
+        "U+0768 ݨ",
+        "U+076A ݪ",
+        "U+08A6 ࢦ"
+      ]
+    },
+    {
+      "cluster": 0,
+      "n": 1308,
+      "majority_theory": "(none)",
+      "frac": 0.985,
+      "shape_tags": [
+        [
+          "(none)",
+          1175
+        ],
+        [
+          "circle",
+          71
+        ],
+        [
+          "arrow",
+          43
+        ],
+        [
+          "bar",
+          12
+        ]
+      ],
+      "sample": [
+        "U+002A *",
+        "U+0061 a",
+        "U+006D m",
+        "U+0076 v",
+        "U+0077 w",
+        "U+0078 x",
+        "U+00A4 ¤",
+        "U+00AE ®",
+        "U+00E6 æ",
+        "U+01B6 ƶ",
+        "U+01C7 Ǉ",
+        "U+01CA Ǌ"
+      ]
+    },
+    {
+      "cluster": 21,
+      "n": 1282,
+      "majority_theory": "(none)",
+      "frac": 0.995,
+      "shape_tags": [
+        [
+          "(none)",
+          1282
+        ]
+      ],
+      "sample": [
+        "U+0904 ऄ",
+        "U+0911 ऑ",
+        "U+0912 ऒ",
+        "U+0914 औ",
+        "U+0972 ॲ",
+        "U+0F06 ༆",
+        "U+10B5 Ⴕ",
+        "U+1277 ቷ",
+        "U+1287 ኇ",
+        "U+1349 ፉ",
+        "U+134B ፋ",
+        "U+138A ᎊ"
+      ]
+    },
+    {
+      "cluster": 13,
+      "n": 1265,
+      "majority_theory": "(none)",
+      "frac": 0.99,
+      "shape_tags": [
+        [
+          "(none)",
+          1260
+        ],
+        [
+          "bar",
+          3
+        ],
+        [
+          "circle",
+          1
+        ],
+        [
+          "arrow",
+          1
+        ]
+      ],
+      "sample": [
+        "U+0024 $",
+        "U+00C0 À",
+        "U+00C1 Á",
+        "U+00C2 Â",
+        "U+00C3 Ã",
+        "U+00C4 Ä",
+        "U+00C5 Å",
+        "U+00C7 Ç",
+        "U+00D4 Ô",
+        "U+00D5 Õ",
+        "U+00D6 Ö",
+        "U+00DD Ý"
+      ]
+    },
+    {
+      "cluster": 40,
+      "n": 1234,
+      "majority_theory": "(none)",
+      "frac": 0.995,
+      "shape_tags": [
+        [
+          "(none)",
+          1232
+        ],
+        [
+          "bar",
+          2
+        ]
+      ],
+      "sample": [
+        "U+004A J",
+        "U+0186 Ɔ",
+        "U+018C ƌ",
+        "U+018E Ǝ",
+        "U+01FC Ǽ",
+        "U+0232 Ȳ",
+        "U+037F Ϳ",
+        "U+03D1 ϑ",
+        "U+03FD Ͻ",
+        "U+0408 Ј",
+        "U+042D Э",
+        "U+04B6 Ҷ"
+      ]
+    },
+    {
+      "cluster": 25,
+      "n": 933,
+      "majority_theory": "(none)",
+      "frac": 0.961,
+      "shape_tags": [
+        [
+          "(none)",
+          883
+        ],
+        [
+          "box-drawings",
+          27
+        ],
+        [
+          "bar",
+          14
+        ],
+        [
+          "circle,arrow",
+          3
+        ]
+      ],
+      "sample": [
+        "U+002F /",
+        "U+005C \\",
+        "U+006A j",
+        "U+007B {",
+        "U+007D }",
+        "U+00A7 §",
+        "U+00C8 È",
+        "U+00C9 É",
+        "U+00CA Ê",
+        "U+00CB Ë",
+        "U+00CC Ì",
+        "U+00CD Í"
+      ]
+    },
+    {
+      "cluster": 23,
+      "n": 911,
+      "majority_theory": "(none)",
+      "frac": 0.982,
+      "shape_tags": [
+        [
+          "(none)",
+          851
+        ],
+        [
+          "circle",
+          58
+        ],
+        [
+          "circle,bar",
+          1
+        ],
+        [
+          "circle,plus",
+          1
+        ]
+      ],
+      "sample": [
+        "U+0107 ć",
+        "U+0155 ŕ",
+        "U+0157 ŗ",
+        "U+0162 Ţ",
+        "U+01FA Ǻ",
+        "U+01FB ǻ",
+        "U+03CA ϊ",
+        "U+0453 ѓ",
+        "U+04AA Ҫ",
+        "U+04F6 Ӷ",
+        "U+080B ࠋ",
+        "U+0A8A ઊ"
+      ]
+    },
+    {
+      "cluster": 35,
+      "n": 852,
+      "majority_theory": "(none)",
+      "frac": 0.975,
+      "shape_tags": [
+        [
+          "(none)",
+          840
+        ],
+        [
+          "circle",
+          4
+        ],
+        [
+          "bar",
+          3
+        ],
+        [
+          "arrow",
+          3
+        ]
+      ],
+      "sample": [
+        "U+0026 &",
+        "U+003F ?",
+        "U+0040 @",
+        "U+0044 D",
+        "U+0047 G",
+        "U+004D M",
+        "U+004F O",
+        "U+0052 R",
+        "U+0053 S",
+        "U+0074 t",
+        "U+00A3 £",
+        "U+00D0 Ð"
+      ]
+    },
+    {
+      "cluster": 44,
+      "n": 828,
+      "majority_theory": "(none)",
+      "frac": 0.989,
+      "shape_tags": [
+        [
+          "(none)",
+          817
+        ],
+        [
+          "arrow",
+          5
+        ],
+        [
+          "bar",
+          4
+        ],
+        [
+          "circle",
+          2
+        ]
+      ],
+      "sample": [
+        "U+0146 ņ",
+        "U+015B ś",
+        "U+015F ş",
+        "U+0173 ų",
+        "U+018D ƍ",
+        "U+019E ƞ",
+        "U+01BA ƺ",
+        "U+01EF ǯ",
+        "U+0219 ș",
+        "U+021C Ȝ",
+        "U+0261 ɡ",
+        "U+0265 ɥ"
+      ]
+    },
+    {
+      "cluster": 18,
+      "n": 824,
+      "majority_theory": "(none)",
+      "frac": 0.956,
+      "shape_tags": [
+        [
+          "(none)",
+          796
+        ],
+        [
+          "arrow",
+          10
+        ],
+        [
+          "box-drawings",
+          8
+        ],
+        [
+          "bar",
+          7
+        ]
+      ],
+      "sample": [
+        "U+0025 %",
+        "U+003C <",
+        "U+003E >",
+        "U+0041 A",
+        "U+004B K",
+        "U+0054 T",
+        "U+0056 V",
+        "U+0057 W",
+        "U+0058 X",
+        "U+005A Z",
+        "U+0066 f",
+        "U+00C6 Æ"
+      ]
+    },
+    {
+      "cluster": 19,
+      "n": 805,
+      "majority_theory": "(none)",
+      "frac": 0.991,
+      "shape_tags": [
+        [
+          "(none)",
+          778
+        ],
+        [
+          "arrow",
+          11
+        ],
+        [
+          "circle",
+          4
+        ],
+        [
+          "arrow,bar",
+          3
+        ]
+      ],
+      "sample": [
+        "U+00A9 ©",
+        "U+0153 œ",
+        "U+01C5 ǅ",
+        "U+01C6 ǆ",
+        "U+01F3 ǳ",
+        "U+0217 ȗ",
+        "U+0238 ȸ",
+        "U+0241 Ɂ",
+        "U+024E Ɏ",
+        "U+0275 ɵ",
+        "U+02AD ʭ",
+        "U+03B1 α"
+      ]
+    },
+    {
+      "cluster": 29,
+      "n": 795,
+      "majority_theory": "(none)",
+      "frac": 0.995,
+      "shape_tags": [
+        [
+          "(none)",
+          791
+        ],
+        [
+          "arrow",
+          3
+        ],
+        [
+          "circle,dot",
+          1
+        ]
+      ],
+      "sample": [
+        "U+004C L",
+        "U+00BF ¿",
+        "U+0209 ȉ",
+        "U+0223 ȣ",
+        "U+0224 Ȥ",
+        "U+0236 ȶ",
+        "U+023C ȼ",
+        "U+0240 ɀ",
+        "U+0247 ɇ",
+        "U+0287 ʇ",
+        "U+03EF ϯ",
+        "U+045F џ"
+      ]
+    },
+    {
+      "cluster": 14,
+      "n": 789,
+      "majority_theory": "pua-nerd",
+      "frac": 0.946,
+      "shape_tags": [
+        [
+          "(none)",
+          755
+        ],
+        [
+          "digit",
+          30
+        ],
+        [
+          "number",
+          4
+        ]
+      ],
+      "sample": [
+        "U+09F5 ৵",
+        "U+09F6 ৶",
+        "U+09F9 ৹",
+        "U+0BE7 ௧",
+        "U+0BE8 ௨",
+        "U+0BE9 ௩",
+        "U+0BEA ௪",
+        "U+0BEC ௬",
+        "U+0BED ௭",
+        "U+0BEF ௯",
+        "U+0BF1 ௱",
+        "U+0D76 ൶"
+      ]
+    },
+    {
+      "cluster": 11,
+      "n": 762,
+      "majority_theory": "(none)",
+      "frac": 0.988,
+      "shape_tags": [
+        [
+          "(none)",
+          749
+        ],
+        [
+          "box-drawings",
+          4
+        ],
+        [
+          "arrow",
+          3
+        ],
+        [
+          "bar",
+          3
+        ]
+      ],
+      "sample": [
+        "U+0059 Y",
+        "U+00A5 ¥",
+        "U+0101 ā",
+        "U+010F ď",
+        "U+0132 Ĳ",
+        "U+0184 Ƅ",
+        "U+0188 ƈ",
+        "U+01A1 ơ",
+        "U+01B1 Ʊ",
+        "U+01E2 Ǣ",
+        "U+0201 ȁ",
+        "U+0203 ȃ"
+      ]
+    },
+    {
+      "cluster": 15,
+      "n": 655,
+      "majority_theory": "(none)",
+      "frac": 0.977,
+      "shape_tags": [
+        [
+          "(none)",
+          567
+        ],
+        [
+          "arrow",
+          35
+        ],
+        [
+          "bar",
+          17
+        ],
+        [
+          "dot",
+          7
+        ]
+      ],
+      "sample": [
+        "U+003D =",
+        "U+005E ^",
+        "U+00AC ¬",
+        "U+02B7 ʷ",
+        "U+02C6 ˆ",
+        "U+02C7 ˇ",
+        "U+02D4 ˔",
+        "U+02D5 ˕",
+        "U+02D8 ˘",
+        "U+02DC ˜",
+        "U+02DD ˝",
+        "U+02EC ˬ"
+      ]
+    },
+    {
+      "cluster": 36,
+      "n": 640,
+      "majority_theory": "(none)",
+      "frac": 0.931,
+      "shape_tags": [
+        [
+          "(none)",
+          570
+        ],
+        [
+          "box-drawings",
+          28
+        ],
+        [
+          "bar",
+          22
+        ],
+        [
+          "bar,dot",
+          10
+        ]
+      ],
+      "sample": [
+        "U+0027 '",
+        "U+0028 (",
+        "U+0029 )",
+        "U+0049 I",
+        "U+012D ĭ",
+        "U+017F ſ",
+        "U+01C1 ǁ",
+        "U+01F0 ǰ",
+        "U+0208 Ȉ",
+        "U+020A Ȋ",
+        "U+0234 ȴ",
+        "U+0248 Ɉ"
+      ]
+    },
+    {
+      "cluster": 38,
+      "n": 639,
+      "majority_theory": "(none)",
+      "frac": 0.997,
+      "shape_tags": [
+        [
+          "(none)",
+          619
+        ],
+        [
+          "bar",
+          14
+        ],
+        [
+          "arrow",
+          3
+        ],
+        [
+          "arrow,bar",
+          2
+        ]
+      ],
+      "sample": [
+        "U+0063 c",
+        "U+0065 e",
+        "U+006E n",
+        "U+006F o",
+        "U+0072 r",
+        "U+0073 s",
+        "U+0075 u",
+        "U+007A z",
+        "U+00F8 ø",
+        "U+0138 ĸ",
+        "U+01A8 ƨ",
+        "U+01E4 Ǥ"
+      ]
+    },
+    {
+      "cluster": 22,
+      "n": 632,
+      "majority_theory": "(none)",
+      "frac": 0.96,
+      "shape_tags": [
+        [
+          "(none)",
+          608
+        ],
+        [
+          "arrow",
+          12
+        ],
+        [
+          "arrow,cross",
+          6
+        ],
+        [
+          "bar",
+          3
+        ]
+      ],
+      "sample": [
+        "U+0042 B",
+        "U+0043 C",
+        "U+0045 E",
+        "U+0046 F",
+        "U+0048 H",
+        "U+004E N",
+        "U+0050 P",
+        "U+0055 U",
+        "U+0062 b",
+        "U+0064 d",
+        "U+0067 g",
+        "U+0068 h"
+      ]
+    },
+    {
+      "cluster": 7,
+      "n": 562,
+      "majority_theory": "(none)",
+      "frac": 0.975,
+      "shape_tags": [
+        [
+          "(none)",
+          539
+        ],
+        [
+          "box-drawings",
+          10
+        ],
+        [
+          "bar",
+          4
+        ],
+        [
+          "circle",
+          4
+        ]
+      ],
+      "sample": [
+        "U+0079 y",
+        "U+0105 ą",
+        "U+01A3 ƣ",
+        "U+01B0 ư",
+        "U+01B4 ƴ",
+        "U+01B9 ƹ",
+        "U+01BD ƽ",
+        "U+01C8 ǈ",
+        "U+01C9 ǉ",
+        "U+01CC ǌ",
+        "U+01DF ǟ",
+        "U+01EB ǫ"
+      ]
+    },
+    {
+      "cluster": 39,
+      "n": 558,
+      "majority_theory": "(none)",
+      "frac": 0.93,
+      "shape_tags": [
+        [
+          "(none)",
+          477
+        ],
+        [
+          "arrow",
+          45
+        ],
+        [
+          "circle",
+          12
+        ],
+        [
+          "bar",
+          10
+        ]
+      ],
+      "sample": [
+        "U+00AB «",
+        "U+00B0 °",
+        "U+00BB »",
+        "U+00D7 ×",
+        "U+00F7 ÷",
+        "U+01DD ǝ",
+        "U+0298 ʘ",
+        "U+02C4 ˄",
+        "U+02C5 ˅",
+        "U+03E7 ϧ",
+        "U+03ED ϭ",
+        "U+0641 ف"
+      ]
+    },
+    {
+      "cluster": 10,
+      "n": 546,
+      "majority_theory": "pua-nerd",
+      "frac": 0.868,
+      "shape_tags": [
+        [
+          "(none)",
+          545
+        ],
+        [
+          "circle,star",
+          1
+        ]
+      ],
+      "sample": [
+        "U+00B2 ²",
+        "U+00B3 ³",
+        "U+00BD ½",
+        "U+0B74 ୴",
+        "U+0D58 ൘",
+        "U+0D74 ൴",
+        "U+16EE ᛮ",
+        "U+17F0 ៰",
+        "U+17F9 ៹",
+        "U+2070 ⁰",
+        "U+2074 ⁴",
+        "U+2075 ⁵"
+      ]
+    },
+    {
+      "cluster": 33,
+      "n": 460,
+      "majority_theory": "(none)",
+      "frac": 0.652,
+      "shape_tags": [
+        [
+          "(none)",
+          396
+        ],
+        [
+          "box-drawings",
+          35
+        ],
+        [
+          "square",
+          9
+        ],
+        [
+          "dot",
+          7
+        ]
+      ],
+      "sample": [
+        "U+0021 !",
+        "U+003A :",
+        "U+003B ;",
+        "U+007C |",
+        "U+00A1 ¡",
+        "U+00A6 ¦",
+        "U+012C Ĭ",
+        "U+01C0 ǀ",
+        "U+01C3 ǃ",
+        "U+0249 ɉ",
+        "U+02B2 ʲ",
+        "U+02B9 ʹ"
+      ]
+    },
+    {
+      "cluster": 45,
+      "n": 440,
+      "majority_theory": "(none)",
+      "frac": 0.92,
+      "shape_tags": [
+        [
+          "(none)",
+          337
+        ],
+        [
+          "arrow",
+          66
+        ],
+        [
+          "bar",
+          11
+        ],
+        [
+          "arrow,bar",
+          7
+        ]
+      ],
+      "sample": [
+        "U+02C2 ˂",
+        "U+02C3 ˃",
+        "U+02CE ˎ",
+        "U+02CF ˏ",
+        "U+02DB ˛",
+        "U+055B ՛",
+        "U+055D ՝",
+        "U+06AA ڪ",
+        "U+06BA ں",
+        "U+06BE ھ",
+        "U+06E6 ۦ",
+        "U+0710 ܐ"
+      ]
+    },
+    {
+      "cluster": 42,
+      "n": 394,
+      "majority_theory": "(none)",
+      "frac": 0.607,
+      "shape_tags": [
+        [
+          "square",
+          86
+        ],
+        [
+          "digit",
+          77
+        ],
+        [
+          "dot",
+          52
+        ],
+        [
+          "triangle",
+          33
+        ]
+      ],
+      "sample": [
+        "U+002B +",
+        "U+00B1 ±",
+        "U+02D6 ˖",
+        "U+02DF ˟",
+        "U+061E ؞",
+        "U+063E ؾ",
+        "U+0665 ٥",
+        "U+066D ٭",
+        "U+066E ٮ",
+        "U+066F ٯ",
+        "U+069A ښ",
+        "U+069B ڛ"
+      ]
+    },
+    {
+      "cluster": 16,
+      "n": 362,
+      "majority_theory": "pua-nerd",
+      "frac": 0.925,
+      "shape_tags": [
+        [
+          "(none)",
+          338
+        ],
+        [
+          "digit",
+          14
+        ],
+        [
+          "number",
+          8
+        ],
+        [
+          "star",
+          2
+        ]
+      ],
+      "sample": [
+        "U+0C7B ౻",
+        "U+0D73 ൳",
+        "U+0F24 ༤",
+        "U+0F27 ༧",
+        "U+0F2D ༭",
+        "U+0F2E ༮",
+        "U+0F30 ༰",
+        "U+0F33 ༳",
+        "U+1810 ᠐",
+        "U+1812 ᠒",
+        "U+1815 ᠕",
+        "U+1816 ᠖"
+      ]
+    },
+    {
+      "cluster": 30,
+      "n": 330,
+      "majority_theory": "(none)",
+      "frac": 0.979,
+      "shape_tags": [
+        [
+          "(none)",
+          307
+        ],
+        [
+          "arrow",
+          10
+        ],
+        [
+          "bar",
+          8
+        ],
+        [
+          "arrow,bar",
+          2
+        ]
+      ],
+      "sample": [
+        "U+002C ,",
+        "U+00AA ª",
+        "U+00BA º",
+        "U+0242 ɂ",
+        "U+029F ʟ",
+        "U+02B0 ʰ",
+        "U+02B1 ʱ",
+        "U+02B3 ʳ",
+        "U+02B4 ʴ",
+        "U+02B5 ʵ",
+        "U+02B8 ʸ",
+        "U+02BA ʺ"
+      ]
+    },
+    {
+      "cluster": 32,
+      "n": 327,
+      "majority_theory": "(none)",
+      "frac": 0.911,
+      "shape_tags": [
+        [
+          "square",
+          115
+        ],
+        [
+          "dot",
+          94
+        ],
+        [
+          "sun",
+          41
+        ],
+        [
+          "digit",
+          32
+        ]
+      ],
+      "sample": [
+        "U+0023 #",
+        "U+0030 0",
+        "U+0032 2",
+        "U+0033 3",
+        "U+0034 4",
+        "U+0035 5",
+        "U+0036 6",
+        "U+0037 7",
+        "U+0038 8",
+        "U+0039 9",
+        "U+0117 ė",
+        "U+0131 ı"
+      ]
+    },
+    {
+      "cluster": 24,
+      "n": 307,
+      "majority_theory": "pua-nerd",
+      "frac": 0.655,
+      "shape_tags": [
+        [
+          "(none)",
+          243
+        ],
+        [
+          "circle,number",
+          30
+        ],
+        [
+          "digit",
+          16
+        ],
+        [
+          "circle",
+          10
+        ]
+      ],
+      "sample": [
+        "U+00B9 ¹",
+        "U+00BC ¼",
+        "U+00BE ¾",
+        "U+05DA ך",
+        "U+05E3 ף",
+        "U+05E7 ק",
+        "U+07C3 ߃",
+        "U+07C4 ߄",
+        "U+07C5 ߅",
+        "U+07C6 ߆",
+        "U+0B73 ୳",
+        "U+1046 ၆"
+      ]
+    },
+    {
+      "cluster": 41,
+      "n": 306,
+      "majority_theory": "(none)",
+      "frac": 0.837,
+      "shape_tags": [
+        [
+          "dot",
+          130
+        ],
+        [
+          "square",
+          76
+        ],
+        [
+          "digit",
+          34
+        ],
+        [
+          "number",
+          13
+        ]
+      ],
+      "sample": [
+        "U+0031 1",
+        "U+005B [",
+        "U+005D ]",
+        "U+010A Ċ",
+        "U+010B ċ",
+        "U+0116 Ė",
+        "U+0120 Ġ",
+        "U+0121 ġ",
+        "U+0130 İ",
+        "U+0140 ŀ",
+        "U+017B Ż",
+        "U+017C ż"
+      ]
+    },
+    {
+      "cluster": 9,
+      "n": 271,
+      "majority_theory": "braille",
+      "frac": 0.897,
+      "shape_tags": [
+        [
+          "braille,dot",
+          243
+        ],
+        [
+          "block",
+          15
+        ],
+        [
+          "quadrant",
+          10
+        ],
+        [
+          "shade",
+          3
+        ]
+      ],
+      "sample": [
+        "U+2580 ▀",
+        "U+2584 ▄",
+        "U+2585 ▅",
+        "U+2586 ▆",
+        "U+2587 ▇",
+        "U+2588 █",
+        "U+2589 ▉",
+        "U+258A ▊",
+        "U+258B ▋",
+        "U+258C ▌",
+        "U+258D ▍",
+        "U+258E ▎"
+      ]
+    },
+    {
+      "cluster": 3,
+      "n": 245,
+      "majority_theory": "(none)",
+      "frac": 0.657,
+      "shape_tags": [
+        [
+          "(none)",
+          201
+        ],
+        [
+          "box-drawings",
+          15
+        ],
+        [
+          "arrow",
+          8
+        ],
+        [
+          "bar",
+          4
+        ]
+      ],
+      "sample": [
+        "U+002D -",
+        "U+005F _",
+        "U+007E ~",
+        "U+00A8 ¨",
+        "U+00AF ¯",
+        "U+02C9 ˉ",
+        "U+02CD ˍ",
+        "U+02D7 ˗",
+        "U+02F7 ˷",
+        "U+055F ՟",
+        "U+058A ֊",
+        "U+05BE ־"
+      ]
+    },
+    {
+      "cluster": 37,
+      "n": 235,
+      "majority_theory": "(none)",
+      "frac": 0.953,
+      "shape_tags": [
+        [
+          "(none)",
+          209
+        ],
+        [
+          "dot",
+          12
+        ],
+        [
+          "braille,dot",
+          8
+        ],
+        [
+          "bar",
+          3
+        ]
+      ],
+      "sample": [
+        "U+0022 \"",
+        "U+002E .",
+        "U+0060 `",
+        "U+00B4 ´",
+        "U+00B7 ·",
+        "U+00B8 ¸",
+        "U+02B6 ʶ",
+        "U+02CA ˊ",
+        "U+02CB ˋ",
+        "U+02D1 ˑ",
+        "U+02D9 ˙",
+        "U+02DA ˚"
+      ]
+    },
+    {
+      "cluster": 12,
+      "n": 199,
+      "majority_theory": "oriya",
+      "frac": 0.05,
+      "shape_tags": [
+        [
+          "digit",
+          175
+        ],
+        [
+          "digit,sun",
+          10
+        ],
+        [
+          "star",
+          8
+        ],
+        [
+          "number",
+          4
+        ]
+      ],
+      "sample": [
+        "U+06F2 ۲",
+        "U+06F3 ۳",
+        "U+06F4 ۴",
+        "U+06F6 ۶",
+        "U+06F7 ۷",
+        "U+06F8 ۸",
+        "U+06F9 ۹",
+        "U+07C0 ߀",
+        "U+07C1 ߁",
+        "U+07C2 ߂",
+        "U+07C7 ߇",
+        "U+07C8 ߈"
+      ]
+    },
+    {
+      "cluster": 47,
+      "n": 131,
+      "majority_theory": "georgian-alphabetic",
+      "frac": 0.45,
+      "shape_tags": [
+        [
+          "(none)",
+          129
+        ],
+        [
+          "circle",
+          2
+        ]
+      ],
+      "sample": [
+        "U+0391 Α",
+        "U+0392 Β",
+        "U+0393 Γ",
+        "U+0394 Δ",
+        "U+0395 Ε",
+        "U+0396 Ζ",
+        "U+0397 Η",
+        "U+0398 Θ",
+        "U+039A Κ",
+        "U+039B Λ",
+        "U+039C Μ",
+        "U+039D Ν"
+      ]
+    }
+  ],
+  "note": "visual_cluster is k-means on 16×16 occupancy only. hybrid_cluster adds designed fill, shape_tag, theory_family, bbox. packed_density is the other track's optical coverage, reused."
+}

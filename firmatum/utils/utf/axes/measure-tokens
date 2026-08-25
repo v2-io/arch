@@ -1,0 +1,238 @@
+#!/usr/bin/env python3
+"""Quantitative tokenization of BMP assigned code points.
+
+Encodings measured (each labeled with what it actually is):
+
+  o200k_base       tiktoken — GPT-4o family. PROXY for Grok (unpublished).
+  o200k_harmony    tiktoken — gpt-oss / Harmony.
+  cl100k_base      tiktoken — GPT-4 / GPT-3.5-turbo.
+  r50k_base        tiktoken — GPT-2 / GPT-3 base.
+  llama32          HuggingFace tokenizer.json from the local MLX Llama-3.2-3B cache.
+  claude_xenova    Xenova/claude-tokenizer if already cached or fetchable; else skipped.
+
+A code point "tokenizes well" quantitatively when n_tokens is small *and*
+round-trip decode equals the character. That is not the same as a model
+*understanding* the glyph (see survey-tokens).
+
+Writes data/tokenization.tsv and data/tokenization-summary.json.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+import unicodedata
+from collections import defaultdict
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+OUT = HERE / "data"
+
+LLAMA_TOK = Path.home() / (
+    ".cache/huggingface/hub/models--mlx-community--Llama-3.2-3B-Instruct-4bit/"
+    "snapshots/7f0dc925e0d0afb0322d96f9255cfddf2ba5636e/tokenizer.json"
+)
+
+
+def try_tiktoken():
+    import tiktoken
+
+    names = ["o200k_base", "o200k_harmony", "cl100k_base", "r50k_base"]
+    out = {}
+    for n in names:
+        try:
+            out[n] = tiktoken.get_encoding(n)
+        except Exception as e:
+            print(f"tiktoken {n} unavailable: {e}", file=sys.stderr)
+    return out
+
+
+def try_llama():
+    if not LLAMA_TOK.is_file():
+        print(f"llama tokenizer not at {LLAMA_TOK}", file=sys.stderr)
+        return None
+    from tokenizers import Tokenizer
+
+    return Tokenizer.from_file(str(LLAMA_TOK))
+
+
+def try_claude():
+    """Unofficial. Only if already on disk or transformers can fetch it."""
+    try:
+        from transformers import AutoTokenizer
+    except Exception:
+        return None
+    try:
+        tok = AutoTokenizer.from_pretrained(
+            "Xenova/claude-tokenizer", local_files_only=True
+        )
+        return tok
+    except Exception:
+        pass
+    try:
+        tok = AutoTokenizer.from_pretrained("Xenova/claude-tokenizer")
+        return tok
+    except Exception as e:
+        print(f"claude tokenizer skipped: {e!r}", file=sys.stderr)
+        return None
+
+
+def encode_info_tiktoken(enc, ch: str) -> tuple[int, str, str]:
+    ids = enc.encode(ch)
+    dec = enc.decode(ids)
+    return len(ids), ",".join(str(i) for i in ids), "yes" if dec == ch else "no"
+
+
+def encode_info_hf_tok(tok, ch: str) -> tuple[int, str, str]:
+    # tokenizers.Tokenizer
+    enc = tok.encode(ch)
+    ids = list(enc.ids)
+    dec = tok.decode(ids)
+    return len(ids), ",".join(str(i) for i in ids), "yes" if dec == ch else "no"
+
+
+def encode_info_transformers(tok, ch: str) -> tuple[int, str, str]:
+    ids = tok.encode(ch, add_special_tokens=False)
+    dec = tok.decode(ids, skip_special_tokens=True)
+    return len(ids), ",".join(str(i) for i in ids), "yes" if dec == ch else "no"
+
+
+def utf8_len(ch: str) -> int:
+    return len(ch.encode("utf-8"))
+
+
+def bucket(n_tokens: int, n_bytes: int, roundtrip: str) -> str:
+    if roundtrip != "yes":
+        return "roundtrip-fail"
+    if n_tokens <= 0:
+        return "empty"
+    if n_tokens == 1:
+        return "single-token"
+    if n_tokens <= n_bytes:
+        return "byte-ish"
+    return "fragmented"
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    tk = try_tiktoken()
+    llama = try_llama()
+    claude = try_claude()
+
+    engines = []
+    for n, enc in tk.items():
+        engines.append(("tiktoken", n, enc, encode_info_tiktoken))
+    if llama is not None:
+        engines.append(("hf", "llama32", llama, encode_info_hf_tok))
+    if claude is not None:
+        engines.append(("transformers", "claude_xenova", claude, encode_info_transformers))
+
+    print("engines:", [n for _k, n, _e, _f in engines], file=sys.stderr)
+
+    # Assigned printable-ish: skip Cc/Cf/Cs/Zl/Zp (can't round-trip as a glyph).
+    skip_cat = {"Cn", "Cc", "Cf", "Cs", "Zl", "Zp"}
+    cps = [
+        cp
+        for cp in range(0x10000)
+        if unicodedata.category(chr(cp)) not in skip_cat
+    ]
+
+    # Join axes if present (for the summary, not required per row)
+    axes = {}
+    ap = OUT / "unicode-axes.tsv"
+    if ap.is_file():
+        with ap.open(encoding="utf-8") as f:
+            hdr = f.readline().rstrip("\n").split("\t")
+            hi = hdr.index("hex")
+            for line in f:
+                cols = line.rstrip("\n").split("\t")
+                axes[cols[hi]] = dict(zip(hdr, cols))
+
+    cols = ["cp", "hex", "char", "utf8_bytes"]
+    for _k, n, _e, _f in engines:
+        cols += [f"{n}_n", f"{n}_ids", f"{n}_rt", f"{n}_bucket"]
+
+    tsv = OUT / "tokenization.tsv"
+    summary = {n: defaultdict(int) for _k, n, _e, _f in engines}
+    hard = {n: [] for _k, n, _e, _f in engines}
+
+    with tsv.open("w", encoding="utf-8") as f:
+        f.write("\t".join(cols) + "\n")
+        for i, cp in enumerate(cps):
+            ch = chr(cp)
+            nb = utf8_len(ch)
+            row = [str(cp), f"U+{cp:04X}", ch, str(nb)]
+            for _k, n, enc, fn in engines:
+                nt, ids, rt = fn(enc, ch)
+                b = bucket(nt, nb, rt)
+                row += [str(nt), ids, rt, b]
+                summary[n][b] += 1
+                summary[n]["n_tokens_sum"] += nt
+                if b in {"fragmented", "roundtrip-fail"}:
+                    if len(hard[n]) < 40:
+                        hard[n].append(
+                            {
+                                "hex": f"U+{cp:04X}",
+                                "char": ch,
+                                "n": nt,
+                                "bytes": nb,
+                                "bucket": b,
+                                "name": unicodedata.name(ch, ""),
+                                "number_system": axes.get(f"U+{cp:04X}", {}).get(
+                                    "number_system", ""
+                                ),
+                                "gradient_family": axes.get(f"U+{cp:04X}", {}).get(
+                                    "gradient_family", ""
+                                ),
+                            }
+                        )
+            f.write("\t".join(row) + "\n")
+            if (i + 1) % 10000 == 0:
+                print(f"  {i+1}/{len(cps)}", file=sys.stderr)
+
+    # Per number_system / gradient family mean tokens (o200k if present)
+    focus = "o200k_base" if "o200k_base" in summary else (engines[0][1] if engines else "")
+    by_sys = defaultdict(list)
+    by_grad = defaultdict(list)
+    if focus and ap.is_file():
+        # second pass would be heavy; compute from axes ∩ we just wrote by streaming? skip
+        pass
+
+    meta = {
+        "n_cps": len(cps),
+        "engines": [
+            {
+                "name": n,
+                "backend": k,
+                "what": {
+                    "o200k_base": "GPT-4o BPE; PROXY for Grok (unpublished tokenizer)",
+                    "o200k_harmony": "gpt-oss Harmony",
+                    "cl100k_base": "GPT-4 / 3.5-turbo",
+                    "r50k_base": "GPT-2 / GPT-3",
+                    "llama32": "Llama 3.2 tokenizer.json (local MLX cache)",
+                    "claude_xenova": "UNOFFICIAL Xenova/claude-tokenizer approximation",
+                }.get(n, ""),
+                "buckets": {b: c for b, c in summary[n].items() if b != "n_tokens_sum"},
+                "mean_tokens": round(summary[n]["n_tokens_sum"] / max(len(cps), 1), 4),
+                "hard_sample": hard[n],
+            }
+            for k, n, _e, _f in engines
+        ],
+        "note": (
+            "single-token is the best quantitative outcome. byte-ish means the "
+            "tokenizer fell back to UTF-8 bytes (typical for rare scripts). "
+            "fragmented means more tokens than bytes. Qualitative comprehension "
+            "is a separate file (token-survey.md)."
+        ),
+    }
+    (OUT / "tokenization-summary.json").write_text(
+        json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(f"wrote {tsv}")
+    print(f"wrote {OUT / 'tokenization-summary.json'}")
+    for k, n, _e, _f in engines:
+        print(n, dict(summary[n]))
+
+
+if __name__ == "__main__":
+    main()

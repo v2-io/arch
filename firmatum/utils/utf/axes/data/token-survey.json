@@ -1,0 +1,92 @@
+[
+  {
+    "hex": "U+0031",
+    "char": "1",
+    "name": "DIGIT ONE",
+    "why": "ascii digit 1 — baseline",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT\n2. Name or meaning: None\n3. NONE\n4. 0"
+    }
+  },
+  {
+    "hex": "U+2160",
+    "char": "Ⅰ",
+    "name": "ROMAN NUMERAL ONE",
+    "why": "roman numeral 1",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT\n2. Name or meaning: (not readable)\n3. Value: NONE\n4. Confidence: 0"
+    }
+  },
+  {
+    "hex": "U+2460",
+    "char": "①",
+    "name": "CIRCLED DIGIT ONE",
+    "why": "circled digit 1",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT\n2. Name or meaning: Not identifiable (code point U+2460 doesn't match any c\u001b[1D\u001b[K\ncommon Unicode character)\n3. Value: NONE\n4. Confidence: 0"
+    }
+  },
+  {
+    "hex": "U+3021",
+    "char": "〡",
+    "name": "HANGZHOU NUMERAL ONE",
+    "why": "suzhou / hangzhou 1",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT\n2. Name or meaning: Japanese kanji character for \"one\"\n3. Value: 1\n4. Confidence: 0 (the code point matches, but I couldn't identify a clear g\u001b[1D\u001b[K\nglyph)"
+    }
+  },
+  {
+    "hex": "U+4E00",
+    "char": "一",
+    "name": "CJK UNIFIED IDEOGRAPH-4E00",
+    "why": "CJK 1 (ideograph)",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: ( unreadable / REPLACEMENT )\n2. Name or meaning: Unit\n3. Value: NONE\n4. Confidence: 0"
+    }
+  },
+  {
+    "hex": "U+05D0",
+    "char": "א",
+    "name": "HEBREW LETTER ALEF",
+    "why": "hebrew alef — gematria 1, UCD-silent",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT\n2. Name or meaning: Hebrew letter Aleph (first letter of the Hebrew alphabe\u001b[7D\u001b[K\nalphabet)\n3. Value: U+05D0\n4. Confidence: 0"
+    }
+  },
+  {
+    "hex": "U+2588",
+    "char": "█",
+    "name": "FULL BLOCK",
+    "why": "full block",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT \n2. Name or meaning: Right-to-left mark\n3. Value: NONE\n4. Confidence 0"
+    }
+  },
+  {
+    "hex": "U+2591",
+    "char": "░",
+    "name": "LIGHT SHADE",
+    "why": "light shade",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT\n2. Name or meaning: Left-to-right Mark\n3. Value (if a number): NONE\n4. Confidence: 0"
+    }
+  },
+  {
+    "hex": "U+2800",
+    "char": "⠀",
+    "name": "BRAILLE PATTERN BLANK",
+    "why": "braille blank",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT / MOJIBAKE\n2. Name or meaning: None\n3. Value (if a number): NONE\n4. Confidence 0-1: 0"
+    }
+  },
+  {
+    "hex": "U+28FF",
+    "char": "⣿",
+    "name": "BRAILLE PATTERN DOTS-12345678",
+    "why": "braille all-8-dots",
+    "answers": {
+      "llama3.2:3b": "1. Glyph: UNREADABLE / REPLACEMENT / MOJIBAKE\n2. Name or meaning: (UNREADABLE)\n3. Value (if a number): NONE\n4. Confidence: 0"
+    }
+  }
+]

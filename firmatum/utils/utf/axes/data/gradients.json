@@ -1,0 +1,486 @@
+{
+  "unicode": "14.0.0",
+  "note": "block-fill-* are designed fractions (specific). braille density is popcount/8 of the 8-dot pattern (derived). shade values 0.25/0.50/0.75 are the conventional design, matching Ghostty sprite alpha8; optical density is in the paint TSV.",
+  "gradients": [
+    {
+      "id": "braille",
+      "kind": "derived",
+      "axis": "dot-density",
+      "n": 256,
+      "lo": "U+2800",
+      "hi": "U+28FF",
+      "example": [
+        {
+          "hex": "U+2800",
+          "char": "⠀",
+          "value": "0.0"
+        },
+        {
+          "hex": "U+2801",
+          "char": "⠁",
+          "value": "0.125"
+        },
+        {
+          "hex": "U+2802",
+          "char": "⠂",
+          "value": "0.125"
+        },
+        {
+          "hex": "U+2803",
+          "char": "⠃",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2804",
+          "char": "⠄",
+          "value": "0.125"
+        },
+        {
+          "hex": "U+2805",
+          "char": "⠅",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2806",
+          "char": "⠆",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2807",
+          "char": "⠇",
+          "value": "0.375"
+        },
+        {
+          "hex": "U+2808",
+          "char": "⠈",
+          "value": "0.125"
+        },
+        {
+          "hex": "U+2809",
+          "char": "⠉",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+280A",
+          "char": "⠊",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+280B",
+          "char": "⠋",
+          "value": "0.375"
+        },
+        {
+          "hex": "U+280C",
+          "char": "⠌",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+280D",
+          "char": "⠍",
+          "value": "0.375"
+        },
+        {
+          "hex": "U+280E",
+          "char": "⠎",
+          "value": "0.375"
+        },
+        {
+          "hex": "U+280F",
+          "char": "⠏",
+          "value": "0.5"
+        }
+      ]
+    },
+    {
+      "id": "geometric-fill-size",
+      "kind": "specific",
+      "axis": "fill-size",
+      "n": 74,
+      "lo": "U+25A0",
+      "hi": "U+25FE",
+      "example": [
+        {
+          "hex": "U+25A0",
+          "char": "■",
+          "value": ""
+        },
+        {
+          "hex": "U+25A1",
+          "char": "□",
+          "value": ""
+        },
+        {
+          "hex": "U+25A2",
+          "char": "▢",
+          "value": ""
+        },
+        {
+          "hex": "U+25A3",
+          "char": "▣",
+          "value": ""
+        },
+        {
+          "hex": "U+25AA",
+          "char": "▪",
+          "value": ""
+        },
+        {
+          "hex": "U+25AB",
+          "char": "▫",
+          "value": ""
+        },
+        {
+          "hex": "U+25AC",
+          "char": "▬",
+          "value": ""
+        },
+        {
+          "hex": "U+25AD",
+          "char": "▭",
+          "value": ""
+        },
+        {
+          "hex": "U+25AE",
+          "char": "▮",
+          "value": ""
+        },
+        {
+          "hex": "U+25AF",
+          "char": "▯",
+          "value": ""
+        },
+        {
+          "hex": "U+25B0",
+          "char": "▰",
+          "value": ""
+        },
+        {
+          "hex": "U+25B1",
+          "char": "▱",
+          "value": ""
+        },
+        {
+          "hex": "U+25B2",
+          "char": "▲",
+          "value": ""
+        },
+        {
+          "hex": "U+25B3",
+          "char": "△",
+          "value": ""
+        },
+        {
+          "hex": "U+25B4",
+          "char": "▴",
+          "value": ""
+        },
+        {
+          "hex": "U+25B5",
+          "char": "▵",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "stars-fill",
+      "kind": "specific",
+      "axis": "fill",
+      "n": 36,
+      "lo": "U+066D",
+      "hi": "U+2BEB",
+      "example": [
+        {
+          "hex": "U+066D",
+          "char": "٭",
+          "value": ""
+        },
+        {
+          "hex": "U+06DE",
+          "char": "۞",
+          "value": ""
+        },
+        {
+          "hex": "U+0F0C",
+          "char": "༌",
+          "value": ""
+        },
+        {
+          "hex": "U+235F",
+          "char": "⍟",
+          "value": ""
+        },
+        {
+          "hex": "U+2363",
+          "char": "⍣",
+          "value": ""
+        },
+        {
+          "hex": "U+2401",
+          "char": "␁",
+          "value": ""
+        },
+        {
+          "hex": "U+2402",
+          "char": "␂",
+          "value": ""
+        },
+        {
+          "hex": "U+2605",
+          "char": "★",
+          "value": ""
+        },
+        {
+          "hex": "U+2606",
+          "char": "☆",
+          "value": ""
+        },
+        {
+          "hex": "U+262A",
+          "char": "☪",
+          "value": ""
+        },
+        {
+          "hex": "U+269D",
+          "char": "⚝",
+          "value": ""
+        },
+        {
+          "hex": "U+2721",
+          "char": "✡",
+          "value": ""
+        },
+        {
+          "hex": "U+2726",
+          "char": "✦",
+          "value": ""
+        },
+        {
+          "hex": "U+2727",
+          "char": "✧",
+          "value": ""
+        },
+        {
+          "hex": "U+2729",
+          "char": "✩",
+          "value": ""
+        },
+        {
+          "hex": "U+272A",
+          "char": "✪",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "quadrant",
+      "kind": "derived",
+      "axis": "cell-quadrants",
+      "n": 10,
+      "lo": "U+2596",
+      "hi": "U+259F",
+      "example": [
+        {
+          "hex": "U+2596",
+          "char": "▖",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2597",
+          "char": "▗",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2598",
+          "char": "▘",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2599",
+          "char": "▙",
+          "value": "0.75"
+        },
+        {
+          "hex": "U+259A",
+          "char": "▚",
+          "value": "0.5"
+        },
+        {
+          "hex": "U+259B",
+          "char": "▛",
+          "value": "0.75"
+        },
+        {
+          "hex": "U+259C",
+          "char": "▜",
+          "value": "0.75"
+        },
+        {
+          "hex": "U+259D",
+          "char": "▝",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+259E",
+          "char": "▞",
+          "value": "0.5"
+        },
+        {
+          "hex": "U+259F",
+          "char": "▟",
+          "value": "0.75"
+        }
+      ]
+    },
+    {
+      "id": "block-fill-vertical",
+      "kind": "specific",
+      "axis": "fill-fraction",
+      "n": 9,
+      "lo": "U+2580",
+      "hi": "U+2594",
+      "example": [
+        {
+          "hex": "U+2580",
+          "char": "▀",
+          "value": "0.5"
+        },
+        {
+          "hex": "U+2581",
+          "char": "▁",
+          "value": "0.125"
+        },
+        {
+          "hex": "U+2582",
+          "char": "▂",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2583",
+          "char": "▃",
+          "value": "0.375"
+        },
+        {
+          "hex": "U+2584",
+          "char": "▄",
+          "value": "0.5"
+        },
+        {
+          "hex": "U+2585",
+          "char": "▅",
+          "value": "0.625"
+        },
+        {
+          "hex": "U+2586",
+          "char": "▆",
+          "value": "0.75"
+        },
+        {
+          "hex": "U+2587",
+          "char": "▇",
+          "value": "0.875"
+        },
+        {
+          "hex": "U+2594",
+          "char": "▔",
+          "value": "0.125"
+        }
+      ]
+    },
+    {
+      "id": "block-fill-horizontal",
+      "kind": "specific",
+      "axis": "fill-fraction",
+      "n": 9,
+      "lo": "U+2589",
+      "hi": "U+2595",
+      "example": [
+        {
+          "hex": "U+2589",
+          "char": "▉",
+          "value": "0.875"
+        },
+        {
+          "hex": "U+258A",
+          "char": "▊",
+          "value": "0.75"
+        },
+        {
+          "hex": "U+258B",
+          "char": "▋",
+          "value": "0.625"
+        },
+        {
+          "hex": "U+258C",
+          "char": "▌",
+          "value": "0.5"
+        },
+        {
+          "hex": "U+258D",
+          "char": "▍",
+          "value": "0.375"
+        },
+        {
+          "hex": "U+258E",
+          "char": "▎",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+258F",
+          "char": "▏",
+          "value": "0.125"
+        },
+        {
+          "hex": "U+2590",
+          "char": "▐",
+          "value": "0.5"
+        },
+        {
+          "hex": "U+2595",
+          "char": "▕",
+          "value": "0.125"
+        }
+      ]
+    },
+    {
+      "id": "shade",
+      "kind": "specific",
+      "axis": "optical-density",
+      "n": 3,
+      "lo": "U+2591",
+      "hi": "U+2593",
+      "example": [
+        {
+          "hex": "U+2591",
+          "char": "░",
+          "value": "0.25"
+        },
+        {
+          "hex": "U+2592",
+          "char": "▒",
+          "value": "0.50"
+        },
+        {
+          "hex": "U+2593",
+          "char": "▓",
+          "value": "0.75"
+        }
+      ]
+    },
+    {
+      "id": "block-fill-full",
+      "kind": "specific",
+      "axis": "fill-fraction",
+      "n": 1,
+      "lo": "U+2588",
+      "hi": "U+2588",
+      "example": [
+        {
+          "hex": "U+2588",
+          "char": "█",
+          "value": "1"
+        }
+      ]
+    }
+  ]
+}

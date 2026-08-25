@@ -1,0 +1,774 @@
+#!/usr/bin/env python3
+"""Classify BMP code points into number-system and gradient axes.
+
+Unicode 14.0.0 (this machine's unicodedata). Auto-detects positional-decimal
+Nd 0–9 runs from UCD; overlays curated systems (Roman, CJK, Suzhou, Ethiopic,
+presentation series, cultural ciphered alphabets that UCD does not mark
+numeric). Gradients: block-fill (specific), shade, braille (derived density),
+quadrants, stars.
+
+Writes:
+  data/unicode-axes.tsv
+  data/number-systems.json
+  data/gradients.json
+
+Does not touch parent-directory paint metrics.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import unicodedata
+from collections import defaultdict
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+UCD = HERE / "ucd"
+OUT = HERE / "data"
+
+# ---------------------------------------------------------------------------
+# UCD loaders
+# ---------------------------------------------------------------------------
+
+
+def parse_blocks(path: Path) -> list[tuple[int, int, str]]:
+    blocks = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.split("#", 1)[0].strip()
+        if not line or ".." not in line:
+            continue
+        rng, name = line.split(";", 1)
+        a, b = rng.split("..")
+        blocks.append((int(a, 16), int(b, 16), name.strip()))
+    return blocks
+
+
+def parse_scripts(path: Path) -> list[tuple[int, int, str]]:
+    scripts = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.split("#", 1)[0].strip()
+        if not line or ";" not in line:
+            continue
+        rng, name = line.split(";", 1)
+        name = name.strip()
+        if ".." in rng:
+            a, b = rng.split("..")
+            lo, hi = int(a, 16), int(b, 16)
+        else:
+            lo = hi = int(rng.strip(), 16)
+        scripts.append((lo, hi, name))
+    scripts.sort()
+    return scripts
+
+
+def lookup_range(table: list[tuple[int, int, str]], cp: int, default: str) -> str:
+    # linear is fine at 200 blocks; scripts is ~hundreds of ranges
+    for lo, hi, name in table:
+        if lo <= cp <= hi:
+            return name
+        if lo > cp:
+            break
+    return default
+
+
+# ---------------------------------------------------------------------------
+# Numeric type from Python UCD (Unicode 14)
+# ---------------------------------------------------------------------------
+
+
+def numeric_type(ch: str) -> str:
+    if unicodedata.decimal(ch, None) is not None:
+        return "decimal"
+    if unicodedata.digit(ch, None) is not None:
+        return "digit"
+    try:
+        unicodedata.numeric(ch)
+        return "numeric"
+    except ValueError:
+        return "none"
+
+
+def numeric_value(ch: str) -> str:
+    try:
+        v = unicodedata.numeric(ch)
+    except ValueError:
+        return ""
+    if v == int(v):
+        return str(int(v))
+    return repr(v)
+
+
+# ---------------------------------------------------------------------------
+# Auto positional-decimal digit sets (Unicode's own definition)
+# ---------------------------------------------------------------------------
+
+
+def discover_decimal_sets() -> list[dict]:
+    """Runs of 10 consecutive Nd with decimal values 0..9."""
+    zeros = []
+    for cp in range(0x10000):
+        ch = chr(cp)
+        if unicodedata.category(ch) != "Nd":
+            continue
+        if unicodedata.decimal(ch, None) != 0:
+            continue
+        ok = True
+        for i in range(10):
+            c2 = chr(cp + i)
+            if unicodedata.category(c2) != "Nd" or unicodedata.decimal(c2, None) != i:
+                ok = False
+                break
+        if ok:
+            zeros.append(cp)
+    sets = []
+    for z in zeros:
+        name0 = unicodedata.name(chr(z))
+        prefix = re.sub(r" DIGIT ZERO$", "", name0)
+        slug = re.sub(r"[^a-z0-9]+", "-", prefix.lower()).strip("-") or "decimal"
+        if slug in {"digit", "digit-zero"} or name0 == "DIGIT ZERO":
+            slug = "ascii-decimal"
+            prefix = "ASCII"
+        elif slug in {"fullwidth", "fullwidth-digit"}:
+            slug = "fullwidth-decimal"
+        form = "positional-decimal"
+        presentation = ""
+        if "fullwidth" in slug:
+            form = "positional-decimal"
+            presentation = "fullwidth"
+        sets.append(
+            {
+                "id": slug,
+                "form": form,
+                "role": "digit",
+                "presentation": presentation,
+                "ucd_numeric": True,
+                "lo": z,
+                "hi": z + 9,
+                "zero": z,
+                "label": prefix,
+                "notes": (
+                    "UCD Numeric_Type=Decimal; 10 consecutive digits 0–9. "
+                    "Place-value radix-10 repertoire."
+                    + (
+                        " Compatibility fullwidth presentation of ASCII decimal."
+                        if presentation == "fullwidth"
+                        else ""
+                    )
+                ),
+            }
+        )
+    return sets
+
+
+# ---------------------------------------------------------------------------
+# Curated overlays (ranges / explicit maps). Applied after auto-decimal.
+# A later overlay wins on the same code point for system/form/role/presentation.
+# ---------------------------------------------------------------------------
+
+# Cultural ciphered alphabets: NOT in UCD Numeric_Type.
+# Values are the traditional Milesian / gematria / acrophonic-descended mappings.
+
+HEBREW_GEMATRIA = {
+    # alef-tet 1-9
+    0x05D0: 1, 0x05D1: 2, 0x05D2: 3, 0x05D3: 4, 0x05D4: 5,
+    0x05D5: 6, 0x05D6: 7, 0x05D7: 8, 0x05D8: 9,
+    0x05D9: 10, 0x05DB: 20, 0x05DC: 30, 0x05DE: 40, 0x05E0: 50,
+    0x05E1: 60, 0x05E2: 70, 0x05E4: 80, 0x05E6: 90,
+    0x05E7: 100, 0x05E8: 200, 0x05E9: 300, 0x05EA: 400,
+    # finals: same value as non-final (standard); 500-900 is an alternate
+    0x05DA: 20, 0x05DD: 40, 0x05DF: 50, 0x05E3: 80, 0x05E5: 90,
+}
+
+# Greek Milesian: standard 24 letters plus stigma/koppa/sampi.
+# Capital and small. UCD *does* mark ϚϞϠ and a few coptic-era forms numeric;
+# it does *not* mark Α=1.
+GREEK_MILESIAN = {
+    0x0391: 1, 0x0392: 2, 0x0393: 3, 0x0394: 4, 0x0395: 5,
+    0x03DA: 6, 0x03DC: 6, 0x03DA: 6,  # stigma / digamma letterforms vary
+    0x03DC: 6,
+    0x0396: 7, 0x0397: 8, 0x0398: 9,
+    0x0399: 10, 0x039A: 20, 0x039B: 30, 0x039C: 40, 0x039D: 50,
+    0x039E: 60, 0x039F: 70, 0x03A0: 80, 0x03A1: 100,
+    0x03A3: 200, 0x03A4: 300, 0x03A5: 400, 0x03A6: 500,
+    0x03A7: 600, 0x03A8: 700, 0x03A9: 800,
+    0x03DE: 90, 0x03E0: 900,  # koppa, sampi
+    # small
+    0x03B1: 1, 0x03B2: 2, 0x03B3: 3, 0x03B4: 4, 0x03B5: 5,
+    0x03DB: 6, 0x03DD: 6,
+    0x03B6: 7, 0x03B7: 8, 0x03B8: 9,
+    0x03B9: 10, 0x03BA: 20, 0x03BB: 30, 0x03BC: 40, 0x03BD: 50,
+    0x03BE: 60, 0x03BF: 70, 0x03C0: 80, 0x03C1: 100,
+    0x03C3: 200, 0x03C2: 200, 0x03C4: 300, 0x03C5: 400, 0x03C6: 500,
+    0x03C7: 600, 0x03C8: 700, 0x03C9: 800,
+    0x03DF: 90, 0x03E1: 900,
+    # letter stigma/koppa/sampi as commonly encoded
+    0x03DA: 6, 0x03DB: 6, 0x03DE: 90, 0x03DF: 90, 0x03E0: 900, 0x03E1: 900,
+    0x03D8: 90, 0x03D9: 90,  # archaic koppa
+    0x03D0: 2,  # beta symbol — skip? leave
+}
+
+# Fix GREEK: 6 is stigma U+03DA/03DB or letter digamma U+03DC/03DD.
+GREEK_MILESIAN[0x03DC] = 6
+GREEK_MILESIAN[0x03DD] = 6
+GREEK_MILESIAN[0x03F2] = 6  # lunate sigma is not 6; remove later
+GREEK_MILESIAN.pop(0x03F2, None)
+GREEK_MILESIAN.pop(0x03D0, None)
+
+# Armenian classical (ayb=1 …). Capitals U+0531–0556.
+# 1-9, 10-90, 100-900. 36 letters historically; modern 39.
+ARMENIAN = {}
+# 0531 ayb=1 ... 0539=9, 053A=10 ... This is the standard table:
+_arm_caps = [
+    (0x0531, 1), (0x0532, 2), (0x0533, 3), (0x0534, 4), (0x0535, 5),
+    (0x0536, 6), (0x0537, 7), (0x0538, 8), (0x0539, 9),
+    (0x053A, 10), (0x053B, 20), (0x053C, 30), (0x053D, 40), (0x053E, 50),
+    (0x053F, 60), (0x0540, 70), (0x0541, 80), (0x0542, 90),
+    (0x0543, 100), (0x0544, 200), (0x0545, 300), (0x0546, 400), (0x0547, 500),
+    (0x0548, 600), (0x0549, 700), (0x054A, 800), (0x054B, 900),
+    (0x054C, 1000), (0x054D, 2000), (0x054E, 3000), (0x054F, 4000),
+    (0x0550, 5000), (0x0551, 6000), (0x0552, 7000), (0x0553, 8000),
+    (0x0554, 9000),
+]
+for cp, v in _arm_caps:
+    ARMENIAN[cp] = v
+    ARMENIAN[cp + 0x30] = v  # lowercase U+0561 = ayb small
+
+# Georgian mkhedruli 10D0–10F0 roughly an=1. Classical asomtavruli 10A0+.
+GEORGIAN = {}
+_geo = [
+    (0x10D0, 1), (0x10D1, 2), (0x10D2, 3), (0x10D3, 4), (0x10D4, 5),
+    (0x10D5, 6), (0x10D6, 7), (0x10D7, 8), (0x10D8, 9),
+    (0x10D9, 10), (0x10DA, 20), (0x10DB, 30), (0x10DC, 40), (0x10DD, 50),
+    (0x10DE, 60), (0x10DF, 70), (0x10E0, 80), (0x10E1, 90),
+    (0x10E2, 100), (0x10E3, 200), (0x10E4, 300), (0x10E5, 400), (0x10E6, 500),
+    (0x10E7, 600), (0x10E8, 700), (0x10E9, 800), (0x10EA, 900),
+    (0x10EB, 1000), (0x10EC, 2000), (0x10ED, 3000), (0x10EE, 4000),
+    (0x10EF, 5000), (0x10F0, 6000), (0x10F1, 7000), (0x10F2, 8000),
+    (0x10F3, 9000), (0x10F4, 10000),
+]
+for cp, v in _geo:
+    GEORGIAN[cp] = v
+    # asomtavruli is 10A0 + offset 0x30 down... 10A0=an=1 → 10A0 + (10D0-10D0)
+    aso = 0x10A0 + (cp - 0x10D0)
+    if 0x10A0 <= aso <= 0x10C5:
+        GEORGIAN[aso] = v
+
+
+def presentation_from_name(name: str) -> str:
+    n = name.upper()
+    if n.startswith("NEGATIVE CIRCLED") or "NEGATIVE CIRCLED" in n:
+        return "negative-circled"
+    if "DOUBLE CIRCLED" in n:
+        return "double-circled"
+    if n.startswith("CIRCLED") or " CIRCLED " in n:
+        return "circled"
+    if "PARENTHESIZED" in n:
+        return "parenthesized"
+    if "FULL STOP" in n and ("DIGIT" in n or "NUMBER" in n):
+        return "dotted"
+    if n.startswith("SUPERSCRIPT") or "SUPERSCRIPT " in n:
+        return "superscript"
+    if n.startswith("SUBSCRIPT") or "SUBSCRIPT " in n:
+        return "subscript"
+    if "FULLWIDTH" in n:
+        return "fullwidth"
+    if "DINGBAT" in n and "CIRCLED" in n:
+        return "dingbat-circled"
+    if "SANS-SERIF" in n and "CIRCLED" in n:
+        return "circled-sans"
+    if "IDEOGRAPH" in n and "CIRCLED" in n:
+        return "circled"
+    return ""
+
+
+# ---------------------------------------------------------------------------
+# Gradients
+# ---------------------------------------------------------------------------
+
+# Block Elements: specific fill fractions. Values are the designed fraction,
+# not the measured optical density (that's the paint TSV).
+BLOCK_FILL = {
+    0x2580: ("block-fill-vertical", "specific", "fill-fraction", 0.5, "top"),
+    0x2581: ("block-fill-vertical", "specific", "fill-fraction", 1 / 8, "bottom"),
+    0x2582: ("block-fill-vertical", "specific", "fill-fraction", 2 / 8, "bottom"),
+    0x2583: ("block-fill-vertical", "specific", "fill-fraction", 3 / 8, "bottom"),
+    0x2584: ("block-fill-vertical", "specific", "fill-fraction", 4 / 8, "bottom"),
+    0x2585: ("block-fill-vertical", "specific", "fill-fraction", 5 / 8, "bottom"),
+    0x2586: ("block-fill-vertical", "specific", "fill-fraction", 6 / 8, "bottom"),
+    0x2587: ("block-fill-vertical", "specific", "fill-fraction", 7 / 8, "bottom"),
+    0x2588: ("block-fill-full", "specific", "fill-fraction", 1.0, "full"),
+    0x2589: ("block-fill-horizontal", "specific", "fill-fraction", 7 / 8, "left"),
+    0x258A: ("block-fill-horizontal", "specific", "fill-fraction", 6 / 8, "left"),
+    0x258B: ("block-fill-horizontal", "specific", "fill-fraction", 5 / 8, "left"),
+    0x258C: ("block-fill-horizontal", "specific", "fill-fraction", 4 / 8, "left"),
+    0x258D: ("block-fill-horizontal", "specific", "fill-fraction", 3 / 8, "left"),
+    0x258E: ("block-fill-horizontal", "specific", "fill-fraction", 2 / 8, "left"),
+    0x258F: ("block-fill-horizontal", "specific", "fill-fraction", 1 / 8, "left"),
+    0x2590: ("block-fill-horizontal", "specific", "fill-fraction", 0.5, "right"),
+    0x2594: ("block-fill-vertical", "specific", "fill-fraction", 1 / 8, "top"),
+    0x2595: ("block-fill-horizontal", "specific", "fill-fraction", 1 / 8, "right"),
+}
+
+SHADE = {
+    0x2591: ("shade", "specific", "optical-density", 0.25, "light"),
+    0x2592: ("shade", "specific", "optical-density", 0.50, "medium"),
+    0x2593: ("shade", "specific", "optical-density", 0.75, "dark"),
+}
+
+# Quadrants: 4 bits, UL=1 UR=2 LL=4 LR=8 matching Unicode names.
+# 2596 LOWER LEFT, 2597 LOWER RIGHT, 2598 UPPER LEFT, 2599 UL+LL+LR,
+# 259A UL+LR, 259B UL+UR+LL, 259C UR+LL+LR, 259D UPPER RIGHT,
+# 259E UR+LL, 259F UR+LL+LR wait — encode from names at runtime.
+
+
+def quadrant_bits(name: str) -> int | None:
+    if "QUADRANT" not in name:
+        return None
+    bits = 0
+    # Unicode names list which quadrants are present.
+    # "QUADRANT UPPER LEFT AND LOWER LEFT AND LOWER RIGHT"
+    rest = name.split("QUADRANT", 1)[1]
+    if "UPPER LEFT" in rest:
+        bits |= 1
+    if "UPPER RIGHT" in rest:
+        bits |= 2
+    if "LOWER LEFT" in rest:
+        bits |= 4
+    if "LOWER RIGHT" in rest:
+        bits |= 8
+    return bits
+
+
+# Braille dots 1–8: bit0=dot1 … bit7=dot8. Pattern = cp - 0x2800.
+
+
+def braille_param(cp: int) -> dict:
+    bits = cp - 0x2800
+    dots = [i + 1 for i in range(8) if bits & (1 << i)]
+    return {
+        "bits": bits,
+        "dots": dots,
+        "popcount": len(dots),
+        "density": round(len(dots) / 8, 4),
+    }
+
+
+# ---------------------------------------------------------------------------
+# Classification of one CP
+# ---------------------------------------------------------------------------
+
+
+def classify_one(
+    cp: int,
+    blocks,
+    scripts,
+    decimal_sets: list[dict],
+    decimal_index: dict[int, dict],
+) -> dict:
+    ch = chr(cp)
+    cat = unicodedata.category(ch)
+    try:
+        name = unicodedata.name(ch)
+    except ValueError:
+        name = ""
+    block = lookup_range(blocks, cp, "")
+    script = lookup_range(scripts, cp, "Unknown")
+    nt = numeric_type(ch)
+    nv = numeric_value(ch)
+
+    rec = {
+        "cp": str(cp),
+        "hex": f"U+{cp:04X}",
+        "char": "" if cat in {"Cc", "Cf", "Zl", "Zp"} else ch,
+        "name": name,
+        "category": cat,
+        "block": block,
+        "script": script,
+        "numeric_type": nt,
+        "numeric_value": nv,
+        "number_system": "",
+        "number_form": "",
+        "number_role": "",
+        "presentation": "",
+        "ucd_numeric": "yes" if nt != "none" else "no",
+        "gradient_family": "",
+        "gradient_kind": "",
+        "gradient_axis": "",
+        "gradient_value": "",
+        "gradient_param": "",
+        "structured_family": "",
+    }
+
+    # --- number systems ---
+    if cp in decimal_index:
+        s = decimal_index[cp]
+        rec["number_system"] = s["id"]
+        rec["number_form"] = s["form"]
+        rec["number_role"] = "digit"
+        rec["presentation"] = s.get("presentation") or rec["presentation"]
+
+    pres = presentation_from_name(name) if name else ""
+    if pres and nt != "none":
+        rec["presentation"] = rec["presentation"] or pres
+        if not rec["number_form"]:
+            rec["number_form"] = "presentation"
+            rec["number_role"] = "presentation"
+        if not rec["number_system"]:
+            rec["number_system"] = f"presentation-{pres}"
+
+    # Fractions
+    if name.startswith("VULGAR FRACTION") or "FRACTION" in name and nt == "numeric":
+        rec["number_form"] = "fraction"
+        rec["number_role"] = "fraction"
+        rec["number_system"] = rec["number_system"] or "vulgar-fraction"
+
+    # Roman
+    if "ROMAN NUMERAL" in name:
+        rec["number_system"] = "roman"
+        rec["number_form"] = "additive"
+        rec["number_role"] = "numeral"
+
+    # Ethiopic
+    if name.startswith("ETHIOPIC DIGIT") or name.startswith("ETHIOPIC NUMBER"):
+        rec["number_system"] = "ethiopic"
+        rec["number_form"] = "hybrid-myriad"
+        rec["number_role"] = "digit" if name.startswith("ETHIOPIC DIGIT") else "numeral"
+
+    # Tamil / Malayalam named units
+    if name.startswith("TAMIL NUMBER") or name.startswith("MALAYALAM NUMBER"):
+        rec["number_system"] = "tamil-malayalam-unit"
+        rec["number_form"] = "unit-named"
+        rec["number_role"] = "numeral"
+
+    # Suzhou / Hangzhou (positional in use, not Nd)
+    if 0x3021 <= cp <= 0x3029 or 0x3038 <= cp <= 0x303A:
+        rec["number_system"] = "suzhou"
+        rec["number_form"] = "positional-decimal-not-Nd"
+        rec["number_role"] = "digit"
+        rec["notes_system"] = "Hangzhou-named; Suzhou numerals; positional decimal in commerce."
+
+    if cp == 0x3007:  # IDEOGRAPHIC NUMBER ZERO
+        rec["number_system"] = "cjk-ideographic"
+        rec["number_form"] = "hybrid-myriad"
+        rec["number_role"] = "digit"
+
+    # CJK ideographs with numeric values
+    if script == "Han" and nt != "none" and cat in {"Lo", "Nl"}:
+        rec["number_system"] = rec["number_system"] or "cjk-ideographic"
+        rec["number_form"] = rec["number_form"] or "hybrid-myriad"
+        rec["number_role"] = rec["number_role"] or "numeral"
+        if "COMPATIBILITY" in name:
+            rec["number_system"] = "cjk-compat"
+
+    # Runic golden numbers
+    if name.startswith("RUNIC") and nt != "none":
+        rec["number_system"] = "runic-golden"
+        rec["number_form"] = "unit-named"
+        rec["number_role"] = "numeral"
+
+    # Bamum letter-numbers (Nl with 0-9)
+    if 0xA6E6 <= cp <= 0xA6EF:
+        rec["number_system"] = "bamum-letter-numbers"
+        rec["number_form"] = "ciphered-ucd"
+        rec["number_role"] = "numeral"
+
+    # Coptic epact / numbers
+    if "COPTIC" in name and nt != "none":
+        rec["number_system"] = "coptic"
+        rec["number_form"] = rec["number_form"] or "ciphered-ucd"
+        rec["number_role"] = rec["number_role"] or "numeral"
+
+    # Turned digits (duodecimal, Number Forms)
+    if cp in (0x218A, 0x218B):
+        rec["number_system"] = "duodecimal-turned"
+        rec["number_form"] = "positional-other-radix"
+        rec["number_role"] = "digit"
+
+    # Cultural ciphered (overlay; does not invent UCD numeric_type)
+    if cp in HEBREW_GEMATRIA:
+        rec["number_system"] = "hebrew-gematria"
+        rec["number_form"] = "ciphered-cultural"
+        rec["number_role"] = "numeral"
+        rec["numeric_value"] = rec["numeric_value"] or str(HEBREW_GEMATRIA[cp])
+    if cp in GREEK_MILESIAN:
+        rec["number_system"] = rec["number_system"] or "greek-milesian"
+        rec["number_form"] = rec["number_form"] or "ciphered-cultural"
+        rec["number_role"] = rec["number_role"] or "numeral"
+        if not rec["numeric_value"]:
+            rec["numeric_value"] = str(GREEK_MILESIAN[cp])
+    if cp in ARMENIAN:
+        rec["number_system"] = rec["number_system"] or "armenian-alphabetic"
+        rec["number_form"] = rec["number_form"] or "ciphered-cultural"
+        rec["number_role"] = rec["number_role"] or "numeral"
+        if not rec["numeric_value"]:
+            rec["numeric_value"] = str(ARMENIAN[cp])
+    if cp in GEORGIAN:
+        rec["number_system"] = rec["number_system"] or "georgian-alphabetic"
+        rec["number_form"] = rec["number_form"] or "ciphered-cultural"
+        rec["number_role"] = rec["number_role"] or "numeral"
+        if not rec["numeric_value"]:
+            rec["numeric_value"] = str(GEORGIAN[cp])
+
+    # Script-local extra numeric (Bengali currency numerators, Oriya fractions,
+    # Telugu fraction digits, North Indic fractions, Khmer divination, …)
+    if nt == "numeric" and not rec["number_form"]:
+        rec["number_form"] = "numeric-other"
+        rec["number_role"] = "numeral"
+        rec["number_system"] = rec["number_system"] or f"ucd-numeric-{script.lower()}"
+
+    # --- gradients / structured families ---
+    if cp in BLOCK_FILL:
+        fam, kind, axis, val, region = BLOCK_FILL[cp]
+        rec["gradient_family"] = fam
+        rec["gradient_kind"] = kind
+        rec["gradient_axis"] = axis
+        rec["gradient_value"] = f"{val:.4f}".rstrip("0").rstrip(".")
+        rec["gradient_param"] = json.dumps({"region": region}, separators=(",", ":"))
+        rec["structured_family"] = "block-elements"
+    if cp in SHADE:
+        fam, kind, axis, val, region = SHADE[cp]
+        rec["gradient_family"] = fam
+        rec["gradient_kind"] = kind
+        rec["gradient_axis"] = axis
+        rec["gradient_value"] = f"{val:.2f}"
+        rec["gradient_param"] = json.dumps({"shade": region}, separators=(",", ":"))
+        rec["structured_family"] = "block-elements"
+
+    if 0x2580 <= cp <= 0x259F:
+        rec["structured_family"] = "block-elements"
+        qb = quadrant_bits(name)
+        if qb is not None:
+            rec["gradient_family"] = "quadrant"
+            rec["gradient_kind"] = "derived"
+            rec["gradient_axis"] = "cell-quadrants"
+            rec["gradient_value"] = str(bin(qb).count("1") / 4)
+            rec["gradient_param"] = json.dumps(
+                {"bits": qb, "density": bin(qb).count("1") / 4},
+                separators=(",", ":"),
+            )
+
+    if 0x2800 <= cp <= 0x28FF:
+        p = braille_param(cp)
+        rec["gradient_family"] = "braille"
+        rec["gradient_kind"] = "derived"
+        rec["gradient_axis"] = "dot-density"
+        rec["gradient_value"] = str(p["density"])
+        rec["gradient_param"] = json.dumps(p, separators=(",", ":"))
+        rec["structured_family"] = "braille"
+
+    if 0x2500 <= cp <= 0x257F:
+        rec["structured_family"] = "box-drawing"
+
+    if 0x25A0 <= cp <= 0x25FF:
+        rec["structured_family"] = rec["structured_family"] or "geometric-shapes"
+        # size / fill series by name
+        if any(w in name for w in ("BLACK", "WHITE", "SMALL", "MEDIUM", "LARGE")):
+            fill = "black" if "BLACK" in name else "white" if "WHITE" in name else ""
+            size = (
+                "small"
+                if "SMALL" in name
+                else "medium"
+                if "MEDIUM" in name
+                else "large"
+                if "LARGE" in name
+                else ""
+            )
+            if fill or size:
+                rec["gradient_family"] = rec["gradient_family"] or "geometric-fill-size"
+                rec["gradient_kind"] = rec["gradient_kind"] or "specific"
+                rec["gradient_axis"] = rec["gradient_axis"] or "fill-size"
+                rec["gradient_param"] = rec["gradient_param"] or json.dumps(
+                    {"fill": fill, "size": size}, separators=(",", ":")
+                )
+
+    if "STAR" in name and cat in {"So", "Po"}:
+        rec["structured_family"] = rec["structured_family"] or "star"
+        rec["gradient_family"] = rec["gradient_family"] or "stars-fill"
+        rec["gradient_kind"] = rec["gradient_kind"] or "specific"
+        rec["gradient_axis"] = rec["gradient_axis"] or "fill"
+        fill = (
+            "black"
+            if "BLACK" in name
+            else "white"
+            if "WHITE" in name
+            else "outlined"
+            if "OUTLINED" in name
+            else ""
+        )
+        rec["gradient_param"] = rec["gradient_param"] or json.dumps(
+            {"fill": fill, "name": name}, separators=(",", ":")
+        )
+
+    # Nerd Font battery / progress (common PUA). Not complete; tagged when name
+    # isn't available (PUA has no Unicode name). Leave for coverage/PNG.
+    if 0xE000 <= cp <= 0xF8FF:
+        rec["structured_family"] = rec["structured_family"] or "pua-nerd"
+
+    if 0x2190 <= cp <= 0x21FF:
+        rec["structured_family"] = rec["structured_family"] or "arrows"
+
+    return rec
+
+
+AXES_COLS = [
+    "cp",
+    "hex",
+    "char",
+    "name",
+    "category",
+    "block",
+    "script",
+    "numeric_type",
+    "numeric_value",
+    "number_system",
+    "number_form",
+    "number_role",
+    "presentation",
+    "ucd_numeric",
+    "gradient_family",
+    "gradient_kind",
+    "gradient_axis",
+    "gradient_value",
+    "gradient_param",
+    "structured_family",
+]
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    blocks = parse_blocks(UCD / "Blocks.txt")
+    scripts = parse_scripts(UCD / "Scripts.txt")
+    decimal_sets = discover_decimal_sets()
+    decimal_index: dict[int, dict] = {}
+    for s in decimal_sets:
+        for cp in range(s["lo"], s["hi"] + 1):
+            decimal_index[cp] = s
+
+    rows = []
+    for cp in range(0x10000):
+        ch = chr(cp)
+        cat = unicodedata.category(ch)
+        if cat in {"Cn", "Cs"}:  # unassigned or surrogates (not utf-8-encodable)
+            continue
+        rows.append(classify_one(cp, blocks, scripts, decimal_sets, decimal_index))
+
+    tsv = OUT / "unicode-axes.tsv"
+    with tsv.open("w", encoding="utf-8") as f:
+        f.write("\t".join(AXES_COLS) + "\n")
+        for r in rows:
+            f.write("\t".join(r.get(c, "") for c in AXES_COLS) + "\n")
+
+    # number-systems.json: auto decimal + curated summaries from the rows
+    by_sys = defaultdict(list)
+    for r in rows:
+        if r["number_system"]:
+            by_sys[r["number_system"]].append(r)
+
+    systems = []
+    for s in decimal_sets:
+        recs = by_sys.get(s["id"], [])
+        systems.append(
+            {
+                **{k: s[k] for k in s if k != "zero"},
+                "n": len(recs),
+                "example": [r["hex"] + " " + r["char"] for r in recs[:10]],
+            }
+        )
+    seen = {s["id"] for s in decimal_sets}
+    for sid, recs in sorted(by_sys.items(), key=lambda kv: -len(kv[1])):
+        if sid in seen:
+            continue
+        forms = sorted({r["number_form"] for r in recs if r["number_form"]})
+        roles = sorted({r["number_role"] for r in recs if r["number_role"]})
+        ucd = sorted({r["ucd_numeric"] for r in recs})
+        systems.append(
+            {
+                "id": sid,
+                "form": forms[0] if len(forms) == 1 else forms,
+                "role": roles[0] if len(roles) == 1 else roles,
+                "ucd_numeric": ucd == ["yes"],
+                "n": len(recs),
+                "lo": recs[0]["hex"],
+                "hi": recs[-1]["hex"],
+                "example": [r["hex"] + " " + r["char"] for r in recs[:12]],
+            }
+        )
+
+    (OUT / "number-systems.json").write_text(
+        json.dumps(
+            {
+                "unicode": unicodedata.unidata_version,
+                "note": (
+                    "positional-decimal sets are auto-detected Nd 0–9 runs. "
+                    "ciphered-cultural systems (hebrew-gematria, greek-milesian, "
+                    "armenian-alphabetic, georgian-alphabetic) are overlays: "
+                    "UCD Numeric_Type is none for those letters."
+                ),
+                "systems": systems,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    by_grad = defaultdict(list)
+    for r in rows:
+        if r["gradient_family"]:
+            by_grad[r["gradient_family"]].append(r)
+    grads = []
+    for gid, recs in sorted(by_grad.items(), key=lambda kv: -len(kv[1])):
+        kinds = sorted({r["gradient_kind"] for r in recs if r["gradient_kind"]})
+        axes = sorted({r["gradient_axis"] for r in recs if r["gradient_axis"]})
+        grads.append(
+            {
+                "id": gid,
+                "kind": kinds[0] if len(kinds) == 1 else kinds,
+                "axis": axes[0] if len(axes) == 1 else axes,
+                "n": len(recs),
+                "lo": recs[0]["hex"],
+                "hi": recs[-1]["hex"],
+                "example": [
+                    {
+                        "hex": r["hex"],
+                        "char": r["char"],
+                        "value": r["gradient_value"],
+                    }
+                    for r in recs[:16]
+                ],
+            }
+        )
+    (OUT / "gradients.json").write_text(
+        json.dumps(
+            {
+                "unicode": unicodedata.unidata_version,
+                "note": (
+                    "block-fill-* are designed fractions (specific). "
+                    "braille density is popcount/8 of the 8-dot pattern (derived). "
+                    "shade values 0.25/0.50/0.75 are the conventional design, "
+                    "matching Ghostty sprite alpha8; optical density is in the paint TSV."
+                ),
+                "gradients": grads,
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+    n_num = sum(1 for r in rows if r["number_system"])
+    n_grad = sum(1 for r in rows if r["gradient_family"])
+    print(
+        f"assigned BMP {len(rows)}; number-tagged {n_num}; "
+        f"gradient-tagged {n_grad}; decimal sets {len(decimal_sets)}"
+    )
+    print(f"wrote {tsv}")
+    print(f"wrote {OUT / 'number-systems.json'} ({len(systems)} systems)")
+    print(f"wrote {OUT / 'gradients.json'} ({len(grads)} families)")
+
+
+if __name__ == "__main__":
+    main()

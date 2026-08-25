@@ -1,0 +1,875 @@
+{
+  "n_cps": 61922,
+  "engines": [
+    {
+      "name": "o200k_base",
+      "backend": "tiktoken",
+      "what": "GPT-4o BPE; PROXY for Grok (unpublished tokenizer)",
+      "buckets": {
+        "single-token": 5190,
+        "byte-ish": 56732
+      },
+      "mean_tokens": 2.335,
+      "hard_sample": []
+    },
+    {
+      "name": "o200k_harmony",
+      "backend": "tiktoken",
+      "what": "gpt-oss Harmony",
+      "buckets": {
+        "single-token": 5190,
+        "byte-ish": 56732
+      },
+      "mean_tokens": 2.335,
+      "hard_sample": []
+    },
+    {
+      "name": "cl100k_base",
+      "backend": "tiktoken",
+      "what": "GPT-4 / 3.5-turbo",
+      "buckets": {
+        "single-token": 1316,
+        "byte-ish": 60606
+      },
+      "mean_tokens": 2.6081,
+      "hard_sample": []
+    },
+    {
+      "name": "r50k_base",
+      "backend": "tiktoken",
+      "what": "GPT-2 / GPT-3",
+      "buckets": {
+        "single-token": 398,
+        "byte-ish": 61524
+      },
+      "mean_tokens": 2.8334,
+      "hard_sample": []
+    },
+    {
+      "name": "llama32",
+      "backend": "hf",
+      "what": "Llama 3.2 tokenizer.json (local MLX cache)",
+      "buckets": {
+        "fragmented": 28372,
+        "byte-ish": 33550
+      },
+      "mean_tokens": 3.369,
+      "hard_sample": [
+        {
+          "hex": "U+0020",
+          "char": " ",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "SPACE",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0021",
+          "char": "!",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "EXCLAMATION MARK",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0022",
+          "char": "\"",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "QUOTATION MARK",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0023",
+          "char": "#",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "NUMBER SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0024",
+          "char": "$",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DOLLAR SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0025",
+          "char": "%",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "PERCENT SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0026",
+          "char": "&",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "AMPERSAND",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0027",
+          "char": "'",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "APOSTROPHE",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0028",
+          "char": "(",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LEFT PARENTHESIS",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0029",
+          "char": ")",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "RIGHT PARENTHESIS",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+002A",
+          "char": "*",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "ASTERISK",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+002B",
+          "char": "+",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "PLUS SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+002C",
+          "char": ",",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "COMMA",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+002D",
+          "char": "-",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "HYPHEN-MINUS",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+002E",
+          "char": ".",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "FULL STOP",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+002F",
+          "char": "/",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "SOLIDUS",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0030",
+          "char": "0",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT ZERO",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0031",
+          "char": "1",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT ONE",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0032",
+          "char": "2",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT TWO",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0033",
+          "char": "3",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT THREE",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0034",
+          "char": "4",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT FOUR",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0035",
+          "char": "5",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT FIVE",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0036",
+          "char": "6",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT SIX",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0037",
+          "char": "7",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT SEVEN",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0038",
+          "char": "8",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT EIGHT",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0039",
+          "char": "9",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "DIGIT NINE",
+          "number_system": "ascii-decimal",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+003A",
+          "char": ":",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "COLON",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+003B",
+          "char": ";",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "SEMICOLON",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+003C",
+          "char": "<",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LESS-THAN SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+003D",
+          "char": "=",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "EQUALS SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+003E",
+          "char": ">",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "GREATER-THAN SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+003F",
+          "char": "?",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "QUESTION MARK",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0040",
+          "char": "@",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "COMMERCIAL AT",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0041",
+          "char": "A",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LATIN CAPITAL LETTER A",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0042",
+          "char": "B",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LATIN CAPITAL LETTER B",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0043",
+          "char": "C",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LATIN CAPITAL LETTER C",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0044",
+          "char": "D",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LATIN CAPITAL LETTER D",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0045",
+          "char": "E",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LATIN CAPITAL LETTER E",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0046",
+          "char": "F",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LATIN CAPITAL LETTER F",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0047",
+          "char": "G",
+          "n": 2,
+          "bytes": 1,
+          "bucket": "fragmented",
+          "name": "LATIN CAPITAL LETTER G",
+          "number_system": "",
+          "gradient_family": ""
+        }
+      ]
+    },
+    {
+      "name": "claude_xenova",
+      "backend": "transformers",
+      "what": "UNOFFICIAL Xenova/claude-tokenizer approximation",
+      "buckets": {
+        "single-token": 1341,
+        "roundtrip-fail": 2967,
+        "byte-ish": 57614
+      },
+      "mean_tokens": 2.4975,
+      "hard_sample": [
+        {
+          "hex": "U+00A0",
+          "char": " ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "NO-BREAK SPACE",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00A8",
+          "char": "¨",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "DIAERESIS",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00AA",
+          "char": "ª",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "FEMININE ORDINAL INDICATOR",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00AF",
+          "char": "¯",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MACRON",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00B2",
+          "char": "²",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "SUPERSCRIPT TWO",
+          "number_system": "presentation-superscript",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00B3",
+          "char": "³",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "SUPERSCRIPT THREE",
+          "number_system": "presentation-superscript",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00B4",
+          "char": "´",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "ACUTE ACCENT",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00B5",
+          "char": "µ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MICRO SIGN",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00B8",
+          "char": "¸",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "CEDILLA",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00B9",
+          "char": "¹",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "SUPERSCRIPT ONE",
+          "number_system": "presentation-superscript",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00BA",
+          "char": "º",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MASCULINE ORDINAL INDICATOR",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00BC",
+          "char": "¼",
+          "n": 3,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "VULGAR FRACTION ONE QUARTER",
+          "number_system": "vulgar-fraction",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00BD",
+          "char": "½",
+          "n": 3,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "VULGAR FRACTION ONE HALF",
+          "number_system": "vulgar-fraction",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+00BE",
+          "char": "¾",
+          "n": 3,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "VULGAR FRACTION THREE QUARTERS",
+          "number_system": "vulgar-fraction",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0132",
+          "char": "Ĳ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LIGATURE IJ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0133",
+          "char": "ĳ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LIGATURE IJ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+013F",
+          "char": "Ŀ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER L WITH MIDDLE DOT",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0140",
+          "char": "ŀ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LETTER L WITH MIDDLE DOT",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+0149",
+          "char": "ŉ",
+          "n": 3,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LETTER N PRECEDED BY APOSTROPHE",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+017F",
+          "char": "ſ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LETTER LONG S",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01C4",
+          "char": "Ǆ",
+          "n": 3,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER DZ WITH CARON",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01C5",
+          "char": "ǅ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH CARON",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01C6",
+          "char": "ǆ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LETTER DZ WITH CARON",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01C7",
+          "char": "Ǉ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER LJ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01C8",
+          "char": "ǈ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER L WITH SMALL LETTER J",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01C9",
+          "char": "ǉ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LETTER LJ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01CA",
+          "char": "Ǌ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER NJ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01CB",
+          "char": "ǋ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER N WITH SMALL LETTER J",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01CC",
+          "char": "ǌ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LETTER NJ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01F1",
+          "char": "Ǳ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER DZ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01F2",
+          "char": "ǲ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN CAPITAL LETTER D WITH SMALL LETTER Z",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+01F3",
+          "char": "ǳ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "LATIN SMALL LETTER DZ",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B0",
+          "char": "ʰ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL H",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B1",
+          "char": "ʱ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL H WITH HOOK",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B2",
+          "char": "ʲ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL J",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B3",
+          "char": "ʳ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL R",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B4",
+          "char": "ʴ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL TURNED R",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B5",
+          "char": "ʵ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL TURNED R WITH HOOK",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B6",
+          "char": "ʶ",
+          "n": 2,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL CAPITAL INVERTED R",
+          "number_system": "",
+          "gradient_family": ""
+        },
+        {
+          "hex": "U+02B7",
+          "char": "ʷ",
+          "n": 1,
+          "bytes": 2,
+          "bucket": "roundtrip-fail",
+          "name": "MODIFIER LETTER SMALL W",
+          "number_system": "",
+          "gradient_family": ""
+        }
+      ]
+    }
+  ],
+  "note": "single-token is the best quantitative outcome. byte-ish means the tokenizer fell back to UTF-8 bytes (typical for rare scripts). fragmented means more tokens than bytes. Qualitative comprehension is a separate file (token-survey.md)."
+}

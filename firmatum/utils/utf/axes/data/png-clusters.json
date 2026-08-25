@@ -1,0 +1,2960 @@
+{
+  "k": 64,
+  "n": 57151,
+  "grid": 16,
+  "note": "Clusters are k-means on 16×16 origin-cell occupancy of Ghostty packed rasters. majority_block is a description of the members, not a claim that the cluster *is* that block. Low majority_block_frac is the interesting case.",
+  "clusters": [
+    {
+      "cluster": 0,
+      "n": 590,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.798,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+953A",
+      "sample": [
+        "U+01A4",
+        "U+33FE",
+        "U+34E2",
+        "U+3757",
+        "U+376D",
+        "U+37DB",
+        "U+3805",
+        "U+38DF",
+        "U+3B85",
+        "U+3DEF",
+        "U+3E57",
+        "U+3E5A",
+        "U+3ECE",
+        "U+3F4F",
+        "U+4089",
+        "U+408A",
+        "U+408D",
+        "U+408E",
+        "U+41D6",
+        "U+41E2",
+        "U+41E6",
+        "U+41F2",
+        "U+41FD",
+        "U+4210"
+      ]
+    },
+    {
+      "cluster": 1,
+      "n": 1091,
+      "majority_block": "Private Use Area",
+      "majority_block_frac": 0.679,
+      "number_systems": [
+        [
+          "presentation-circled",
+          14
+        ],
+        [
+          "presentation-parenthesized",
+          6
+        ],
+        [
+          "kannada",
+          5
+        ],
+        [
+          "gurmukhi",
+          2
+        ],
+        [
+          "meetei-mayek",
+          2
+        ]
+      ],
+      "gradients": [
+        [
+          "geometric-fill-size",
+          2
+        ]
+      ],
+      "representative": "U+F0CA",
+      "sample": [
+        "U+0241",
+        "U+02AD",
+        "U+0802",
+        "U+0804",
+        "U+090C",
+        "U+0915",
+        "U+0918",
+        "U+091A",
+        "U+091C",
+        "U+091E",
+        "U+0920",
+        "U+0925",
+        "U+0926",
+        "U+0927",
+        "U+092C",
+        "U+092F",
+        "U+0932",
+        "U+0933",
+        "U+0934",
+        "U+0935",
+        "U+0950",
+        "U+095B",
+        "U+0960",
+        "U+0961"
+      ]
+    },
+    {
+      "cluster": 2,
+      "n": 358,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.883,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+BBC2",
+      "sample": [
+        "U+1245",
+        "U+1250",
+        "U+1251",
+        "U+1252",
+        "U+1254",
+        "U+1258",
+        "U+125A",
+        "U+125C",
+        "U+125D",
+        "U+127E",
+        "U+129B",
+        "U+129E",
+        "U+129F",
+        "U+13CE",
+        "U+2D89",
+        "U+2DB5",
+        "U+2DC0",
+        "U+2DC1",
+        "U+2DC2",
+        "U+2DC4",
+        "U+2DC5",
+        "U+2DC6",
+        "U+2F51",
+        "U+3092"
+      ]
+    },
+    {
+      "cluster": 3,
+      "n": 765,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.833,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          3
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+BBC7",
+      "sample": [
+        "U+2EE1",
+        "U+2F6C",
+        "U+2F83",
+        "U+2F8A",
+        "U+2F95",
+        "U+2FA7",
+        "U+2FAB",
+        "U+3514",
+        "U+357B",
+        "U+357F",
+        "U+3752",
+        "U+3AB3",
+        "U+3AC8",
+        "U+3ADA",
+        "U+3AE1",
+        "U+3AFA",
+        "U+3B31",
+        "U+3FE6",
+        "U+4343",
+        "U+435C",
+        "U+44A4",
+        "U+46D2",
+        "U+4733",
+        "U+4B8D"
+      ]
+    },
+    {
+      "cluster": 4,
+      "n": 650,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.792,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+7DDF",
+      "sample": [
+        "U+2EAF",
+        "U+3F0B",
+        "U+42B5",
+        "U+42B6",
+        "U+42B7",
+        "U+42B8",
+        "U+42B9",
+        "U+42BA",
+        "U+42BB",
+        "U+42BC",
+        "U+42BD",
+        "U+42BE",
+        "U+42BF",
+        "U+42C1",
+        "U+42C2",
+        "U+42C3",
+        "U+42C4",
+        "U+42C5",
+        "U+42C6",
+        "U+42C7",
+        "U+42C9",
+        "U+42CA",
+        "U+42CB",
+        "U+42CC"
+      ]
+    },
+    {
+      "cluster": 5,
+      "n": 1946,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.691,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          7
+        ],
+        [
+          "cjk-compat",
+          2
+        ]
+      ],
+      "gradients": [
+        [
+          "quadrant",
+          2
+        ],
+        [
+          "geometric-fill-size",
+          2
+        ],
+        [
+          "block-fill-horizontal",
+          1
+        ]
+      ],
+      "representative": "U+756B",
+      "sample": [
+        "U+052C",
+        "U+13DC",
+        "U+2136",
+        "U+231A",
+        "U+2388",
+        "U+23B3",
+        "U+2590",
+        "U+259C",
+        "U+259F",
+        "U+25D8",
+        "U+25E2",
+        "U+25E5",
+        "U+2E29",
+        "U+2EE8",
+        "U+2EE9",
+        "U+2EEA",
+        "U+2EED",
+        "U+2EEF",
+        "U+2EF2",
+        "U+2F7C",
+        "U+2F80",
+        "U+2FA4",
+        "U+2FA5",
+        "U+2FAA"
+      ]
+    },
+    {
+      "cluster": 6,
+      "n": 536,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.183,
+      "number_systems": [
+        [
+          "greek-milesian",
+          4
+        ],
+        [
+          "roman",
+          3
+        ],
+        [
+          "bamum-letter-numbers",
+          3
+        ],
+        [
+          "oriya",
+          2
+        ],
+        [
+          "suzhou",
+          2
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+E64E",
+      "sample": [
+        "U+01F8",
+        "U+03B3",
+        "U+03BD",
+        "U+03DE",
+        "U+03DF",
+        "U+03F7",
+        "U+03FF",
+        "U+0477",
+        "U+058D",
+        "U+058E",
+        "U+0606",
+        "U+0669",
+        "U+06F9",
+        "U+0805",
+        "U+0807",
+        "U+0809",
+        "U+0812",
+        "U+0813",
+        "U+092D",
+        "U+092E",
+        "U+0959",
+        "U+0978",
+        "U+0988",
+        "U+09A7"
+      ]
+    },
+    {
+      "cluster": 7,
+      "n": 945,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.732,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          4
+        ],
+        [
+          "georgian-alphabetic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+35F2",
+      "sample": [
+        "U+019C",
+        "U+0514",
+        "U+0520",
+        "U+0556",
+        "U+10BC",
+        "U+210D",
+        "U+2114",
+        "U+2119",
+        "U+2980",
+        "U+2A04",
+        "U+3237",
+        "U+3242",
+        "U+3564",
+        "U+3565",
+        "U+3567",
+        "U+3568",
+        "U+3569",
+        "U+356A",
+        "U+356B",
+        "U+356C",
+        "U+356D",
+        "U+356E",
+        "U+3570",
+        "U+3571"
+      ]
+    },
+    {
+      "cluster": 8,
+      "n": 1490,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.968,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+D08F",
+      "sample": [
+        "U+2F90",
+        "U+351C",
+        "U+369A",
+        "U+36BB",
+        "U+37D2",
+        "U+4077",
+        "U+4532",
+        "U+4674",
+        "U+5249",
+        "U+5377",
+        "U+53C0",
+        "U+541B",
+        "U+58F1",
+        "U+5962",
+        "U+599B",
+        "U+599F",
+        "U+59D4",
+        "U+5BAD",
+        "U+5C1D",
+        "U+5CA9",
+        "U+5E0C",
+        "U+5FE5",
+        "U+6569",
+        "U+6625"
+      ]
+    },
+    {
+      "cluster": 9,
+      "n": 1349,
+      "majority_block": "Arabic Presentation Forms-A",
+      "majority_block_frac": 0.245,
+      "number_systems": [
+        [
+          "georgian-alphabetic",
+          14
+        ],
+        [
+          "ucd-numeric-tibetan",
+          9
+        ],
+        [
+          "tibetan",
+          8
+        ],
+        [
+          "presentation-subscript",
+          8
+        ],
+        [
+          "vulgar-fraction",
+          7
+        ]
+      ],
+      "gradients": [
+        [
+          "stars-fill",
+          10
+        ],
+        [
+          "block-fill-vertical",
+          2
+        ],
+        [
+          "quadrant",
+          2
+        ],
+        [
+          "geometric-fill-size",
+          1
+        ]
+      ],
+      "representative": "U+2263",
+      "sample": [
+        "U+0078",
+        "U+0079",
+        "U+00BF",
+        "U+0194",
+        "U+01B4",
+        "U+01B9",
+        "U+01BA",
+        "U+01DD",
+        "U+01E1",
+        "U+01E5",
+        "U+0201",
+        "U+021D",
+        "U+0221",
+        "U+0227",
+        "U+0229",
+        "U+023C",
+        "U+023F",
+        "U+0247",
+        "U+024F",
+        "U+025F",
+        "U+0263",
+        "U+0264",
+        "U+0287",
+        "U+028C"
+      ]
+    },
+    {
+      "cluster": 10,
+      "n": 1565,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.993,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+D094",
+      "sample": [
+        "U+1BFE",
+        "U+3422",
+        "U+3F47",
+        "U+3F66",
+        "U+44CA",
+        "U+4E7B",
+        "U+4FB4",
+        "U+66BC",
+        "U+6701",
+        "U+90E1",
+        "U+9AF0",
+        "U+AC25",
+        "U+AC26",
+        "U+AC27",
+        "U+AC28",
+        "U+AC29",
+        "U+AC2A",
+        "U+AC2B",
+        "U+AC2E",
+        "U+AC5D",
+        "U+AC5E",
+        "U+AC5F",
+        "U+AC60",
+        "U+AC61"
+      ]
+    },
+    {
+      "cluster": 11,
+      "n": 576,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.769,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+60F6",
+      "sample": [
+        "U+3849",
+        "U+3850",
+        "U+3868",
+        "U+38FC",
+        "U+38FE",
+        "U+38FF",
+        "U+3903",
+        "U+3904",
+        "U+3906",
+        "U+3907",
+        "U+3908",
+        "U+3909",
+        "U+390A",
+        "U+390B",
+        "U+390C",
+        "U+390F",
+        "U+3911",
+        "U+3912",
+        "U+3913",
+        "U+3914",
+        "U+3915",
+        "U+3916",
+        "U+3918",
+        "U+391A"
+      ]
+    },
+    {
+      "cluster": 12,
+      "n": 1484,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.654,
+      "number_systems": [
+        [
+          "vulgar-fraction",
+          13
+        ],
+        [
+          "ethiopic",
+          2
+        ],
+        [
+          "greek-milesian",
+          1
+        ],
+        [
+          "georgian-alphabetic",
+          1
+        ],
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+8F7D",
+      "sample": [
+        "U+00A7",
+        "U+00BD",
+        "U+01B5",
+        "U+01BB",
+        "U+03BE",
+        "U+046A",
+        "U+0518",
+        "U+0C59",
+        "U+0F4D",
+        "U+0F52",
+        "U+0F5C",
+        "U+10B4",
+        "U+12FF",
+        "U+1369",
+        "U+136A",
+        "U+13D1",
+        "U+15FE",
+        "U+1BBE",
+        "U+1C5F",
+        "U+1E21",
+        "U+2151",
+        "U+2155",
+        "U+2156",
+        "U+2157"
+      ]
+    },
+    {
+      "cluster": 13,
+      "n": 1134,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.923,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+BBCB",
+      "sample": [
+        "U+275A",
+        "U+2ED5",
+        "U+2F82",
+        "U+2FA2",
+        "U+2FD2",
+        "U+3017",
+        "U+340F",
+        "U+358B",
+        "U+358C",
+        "U+359B",
+        "U+359C",
+        "U+359D",
+        "U+35B3",
+        "U+35DF",
+        "U+3AF1",
+        "U+3B57",
+        "U+3FFF",
+        "U+4000",
+        "U+4519",
+        "U+4ACA",
+        "U+4ADD",
+        "U+4EAF",
+        "U+517A",
+        "U+52D7"
+      ]
+    },
+    {
+      "cluster": 14,
+      "n": 857,
+      "majority_block": "Latin Extended Additional",
+      "majority_block_frac": 0.074,
+      "number_systems": [
+        [
+          "armenian-alphabetic",
+          15
+        ],
+        [
+          "greek-milesian",
+          14
+        ],
+        [
+          "hebrew-gematria",
+          13
+        ],
+        [
+          "tai-tham-hora",
+          7
+        ],
+        [
+          "georgian-alphabetic",
+          6
+        ]
+      ],
+      "gradients": [
+        [
+          "geometric-fill-size",
+          2
+        ],
+        [
+          "stars-fill",
+          1
+        ]
+      ],
+      "representative": "U+04E9",
+      "sample": [
+        "U+0041",
+        "U+0061",
+        "U+0062",
+        "U+0064",
+        "U+0065",
+        "U+0067",
+        "U+0068",
+        "U+006E",
+        "U+006F",
+        "U+0070",
+        "U+0071",
+        "U+0073",
+        "U+0075",
+        "U+00A4",
+        "U+00B5",
+        "U+00C0",
+        "U+00C1",
+        "U+00C2",
+        "U+00C3",
+        "U+00C4",
+        "U+00C5",
+        "U+00DE",
+        "U+00E0",
+        "U+00E1"
+      ]
+    },
+    {
+      "cluster": 15,
+      "n": 1083,
+      "majority_block": "Myanmar",
+      "majority_block_frac": 0.082,
+      "number_systems": [
+        [
+          "armenian-alphabetic",
+          9
+        ],
+        [
+          "myanmar",
+          9
+        ],
+        [
+          "javanese",
+          8
+        ],
+        [
+          "myanmar-tai-laing",
+          8
+        ],
+        [
+          "tai-tham-tham",
+          7
+        ]
+      ],
+      "gradients": [
+        [
+          "stars-fill",
+          1
+        ]
+      ],
+      "representative": "U+07DB",
+      "sample": [
+        "U+0063",
+        "U+00A2",
+        "U+00E7",
+        "U+0107",
+        "U+0109",
+        "U+010B",
+        "U+010D",
+        "U+0149",
+        "U+0157",
+        "U+0180",
+        "U+0185",
+        "U+0188",
+        "U+018C",
+        "U+018D",
+        "U+019E",
+        "U+01A3",
+        "U+01A5",
+        "U+01A8",
+        "U+01BD",
+        "U+01BF",
+        "U+01C8",
+        "U+01E4",
+        "U+01EC",
+        "U+01ED"
+      ]
+    },
+    {
+      "cluster": 16,
+      "n": 1060,
+      "majority_block": "Private Use Area",
+      "majority_block_frac": 0.735,
+      "number_systems": [
+        [
+          "georgian-alphabetic",
+          1
+        ],
+        [
+          "limbu",
+          1
+        ],
+        [
+          "lepcha",
+          1
+        ],
+        [
+          "meetei-mayek",
+          1
+        ]
+      ],
+      "gradients": [
+        [
+          "geometric-fill-size",
+          25
+        ],
+        [
+          "stars-fill",
+          5
+        ]
+      ],
+      "representative": "U+E257",
+      "sample": [
+        "U+002A",
+        "U+003D",
+        "U+00AB",
+        "U+00BB",
+        "U+024D",
+        "U+0436",
+        "U+07E6",
+        "U+098B",
+        "U+0996",
+        "U+09A3",
+        "U+09B6",
+        "U+0AAE",
+        "U+0CDD",
+        "U+0D34",
+        "U+0E11",
+        "U+0E1E",
+        "U+10E2",
+        "U+13E0",
+        "U+15D5",
+        "U+15D9",
+        "U+15DA",
+        "U+15DB",
+        "U+17D9",
+        "U+1917"
+      ]
+    },
+    {
+      "cluster": 17,
+      "n": 613,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.742,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+8B4A",
+      "sample": [
+        "U+199A",
+        "U+26CE",
+        "U+34AF",
+        "U+37DC",
+        "U+38AA",
+        "U+38AB",
+        "U+38AC",
+        "U+38AD",
+        "U+38AE",
+        "U+38AF",
+        "U+38B0",
+        "U+38B1",
+        "U+38B3",
+        "U+38B7",
+        "U+38BA",
+        "U+38BC",
+        "U+38C0",
+        "U+38C2",
+        "U+3BBA",
+        "U+4381",
+        "U+4459",
+        "U+445B",
+        "U+445C",
+        "U+455B"
+      ]
+    },
+    {
+      "cluster": 18,
+      "n": 959,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.709,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+5EDB",
+      "sample": [
+        "U+0023",
+        "U+0409",
+        "U+15FF",
+        "U+17B2",
+        "U+20AF",
+        "U+2AF4",
+        "U+2EDB",
+        "U+2EE7",
+        "U+2F3E",
+        "U+2F64",
+        "U+2F6A",
+        "U+2FA0",
+        "U+2FAC",
+        "U+2FAF",
+        "U+2FBA",
+        "U+2FC4",
+        "U+2FC5",
+        "U+2FC7",
+        "U+3421",
+        "U+3423",
+        "U+3424",
+        "U+3429",
+        "U+348B",
+        "U+34AC"
+      ]
+    },
+    {
+      "cluster": 19,
+      "n": 1005,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.837,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+9469",
+      "sample": [
+        "U+368B",
+        "U+368C",
+        "U+368D",
+        "U+3DC7",
+        "U+3E0B",
+        "U+434B",
+        "U+47D5",
+        "U+47D6",
+        "U+47D7",
+        "U+47D8",
+        "U+47D9",
+        "U+47DA",
+        "U+47DB",
+        "U+47DC",
+        "U+47DD",
+        "U+47DE",
+        "U+47E0",
+        "U+47E1",
+        "U+47E2",
+        "U+47E3",
+        "U+47E4",
+        "U+47E5",
+        "U+47E6",
+        "U+47E7"
+      ]
+    },
+    {
+      "cluster": 20,
+      "n": 475,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.84,
+      "number_systems": [
+        [
+          "cjk-compat",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+697B",
+      "sample": [
+        "U+38D6",
+        "U+38D8",
+        "U+38DD",
+        "U+38E2",
+        "U+39C4",
+        "U+39C5",
+        "U+39C8",
+        "U+39CB",
+        "U+39D1",
+        "U+39DA",
+        "U+39F6",
+        "U+3B41",
+        "U+3B42",
+        "U+3B43",
+        "U+3B45",
+        "U+3B47",
+        "U+3B48",
+        "U+3B4A",
+        "U+3B4B",
+        "U+3B4C",
+        "U+3B4E",
+        "U+3B4F",
+        "U+3B51",
+        "U+3B52"
+      ]
+    },
+    {
+      "cluster": 21,
+      "n": 1217,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.648,
+      "number_systems": [
+        [
+          "presentation-circled",
+          5
+        ]
+      ],
+      "gradients": [
+        [
+          "block-fill-horizontal",
+          3
+        ],
+        [
+          "geometric-fill-size",
+          2
+        ],
+        [
+          "quadrant",
+          1
+        ]
+      ],
+      "representative": "U+9E07",
+      "sample": [
+        "U+0024",
+        "U+0026",
+        "U+04C1",
+        "U+04DD",
+        "U+052A",
+        "U+23EA",
+        "U+23EB",
+        "U+23EC",
+        "U+2589",
+        "U+258A",
+        "U+258B",
+        "U+259B",
+        "U+25E3",
+        "U+25E4",
+        "U+2648",
+        "U+2649",
+        "U+264C",
+        "U+264D",
+        "U+264F",
+        "U+2650",
+        "U+2651",
+        "U+2653",
+        "U+267F",
+        "U+2770"
+      ]
+    },
+    {
+      "cluster": 22,
+      "n": 1718,
+      "majority_block": "Braille Patterns",
+      "majority_block_frac": 0.149,
+      "number_systems": [
+        [
+          "ucd-numeric-khmer",
+          4
+        ],
+        [
+          "presentation-superscript",
+          3
+        ],
+        [
+          "ucd-numeric-common",
+          3
+        ],
+        [
+          "kannada",
+          2
+        ],
+        [
+          "mongolian",
+          2
+        ]
+      ],
+      "gradients": [
+        [
+          "braille",
+          256
+        ],
+        [
+          "block-fill-vertical",
+          3
+        ],
+        [
+          "stars-fill",
+          2
+        ],
+        [
+          "block-fill-horizontal",
+          1
+        ]
+      ],
+      "representative": "U+274C",
+      "sample": [
+        "U+0027",
+        "U+002C",
+        "U+002E",
+        "U+003A",
+        "U+005E",
+        "U+005F",
+        "U+0060",
+        "U+00A8",
+        "U+00AF",
+        "U+00B4",
+        "U+00B7",
+        "U+00B8",
+        "U+00B9",
+        "U+01C9",
+        "U+02B2",
+        "U+02B3",
+        "U+02B9",
+        "U+02BA",
+        "U+02BB",
+        "U+02BC",
+        "U+02BD",
+        "U+02BE",
+        "U+02BF",
+        "U+02C0"
+      ]
+    },
+    {
+      "cluster": 23,
+      "n": 998,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.978,
+      "number_systems": [],
+      "gradients": [
+        [
+          "quadrant",
+          1
+        ]
+      ],
+      "representative": "U+B37F",
+      "sample": [
+        "U+1202",
+        "U+1204",
+        "U+13D5",
+        "U+13DA",
+        "U+1616",
+        "U+19E7",
+        "U+1CB4",
+        "U+259A",
+        "U+332E",
+        "U+374E",
+        "U+46D3",
+        "U+5752",
+        "U+59D5",
+        "U+5B89",
+        "U+5B8F",
+        "U+5B94",
+        "U+5B95",
+        "U+671B",
+        "U+6B24",
+        "U+7701",
+        "U+90B9",
+        "U+ADF7",
+        "U+AE13",
+        "U+AE1B"
+      ]
+    },
+    {
+      "cluster": 24,
+      "n": 1765,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.658,
+      "number_systems": [
+        [
+          "vulgar-fraction",
+          1
+        ],
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [
+        [
+          "shade",
+          1
+        ],
+        [
+          "geometric-fill-size",
+          1
+        ]
+      ],
+      "representative": "U+3CB7",
+      "sample": [
+        "U+1304",
+        "U+17A8",
+        "U+17AA",
+        "U+17B1",
+        "U+17B3",
+        "U+19F0",
+        "U+2051",
+        "U+20A1",
+        "U+2152",
+        "U+234D",
+        "U+2592",
+        "U+25D9",
+        "U+26AB",
+        "U+2771",
+        "U+29EB",
+        "U+2AF8",
+        "U+2FBD",
+        "U+2FD4",
+        "U+2FD5",
+        "U+3366",
+        "U+337C",
+        "U+337E",
+        "U+341F",
+        "U+3420"
+      ]
+    },
+    {
+      "cluster": 25,
+      "n": 359,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.621,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+7A2E",
+      "sample": [
+        "U+3C8C",
+        "U+3C8E",
+        "U+3C90",
+        "U+3C91",
+        "U+3C93",
+        "U+3C99",
+        "U+3C9D",
+        "U+3CA7",
+        "U+3CA9",
+        "U+3CAE",
+        "U+3CB1",
+        "U+3D07",
+        "U+3F0D",
+        "U+4127",
+        "U+4128",
+        "U+4129",
+        "U+412A",
+        "U+412B",
+        "U+412C",
+        "U+412D",
+        "U+412E",
+        "U+412F",
+        "U+4130",
+        "U+4131"
+      ]
+    },
+    {
+      "cluster": 26,
+      "n": 569,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.689,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+3809",
+      "sample": [
+        "U+01A2",
+        "U+1E86",
+        "U+1E88",
+        "U+323A",
+        "U+33D9",
+        "U+35C0",
+        "U+35DE",
+        "U+35E2",
+        "U+35E6",
+        "U+35F5",
+        "U+35F8",
+        "U+35FE",
+        "U+3608",
+        "U+360C",
+        "U+360D",
+        "U+360E",
+        "U+3610",
+        "U+3611",
+        "U+3616",
+        "U+361A",
+        "U+37A6",
+        "U+37A8",
+        "U+37B0",
+        "U+37B2"
+      ]
+    },
+    {
+      "cluster": 27,
+      "n": 1335,
+      "majority_block": "Yi Syllables",
+      "majority_block_frac": 0.209,
+      "number_systems": [
+        [
+          "presentation-circled",
+          30
+        ],
+        [
+          "hebrew-gematria",
+          10
+        ],
+        [
+          "ethiopic",
+          7
+        ],
+        [
+          "cjk-ideographic",
+          5
+        ],
+        [
+          "fullwidth-decimal",
+          5
+        ]
+      ],
+      "gradients": [
+        [
+          "shade",
+          1
+        ]
+      ],
+      "representative": "U+A124",
+      "sample": [
+        "U+0022",
+        "U+0029",
+        "U+0034",
+        "U+004A",
+        "U+0056",
+        "U+005D",
+        "U+006A",
+        "U+0076",
+        "U+00B0",
+        "U+00BA",
+        "U+00BC",
+        "U+00FD",
+        "U+00FF",
+        "U+010F",
+        "U+0134",
+        "U+0135",
+        "U+0177",
+        "U+01DF",
+        "U+01EE",
+        "U+01F0",
+        "U+01FB",
+        "U+0203",
+        "U+0233",
+        "U+0237"
+      ]
+    },
+    {
+      "cluster": 28,
+      "n": 1029,
+      "majority_block": "Yi Syllables",
+      "majority_block_frac": 0.362,
+      "number_systems": [
+        [
+          "greek-milesian",
+          3
+        ],
+        [
+          "myanmar-shan",
+          3
+        ],
+        [
+          "armenian-alphabetic",
+          2
+        ],
+        [
+          "hebrew-gematria",
+          2
+        ],
+        [
+          "vulgar-fraction",
+          2
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+299A",
+      "sample": [
+        "U+0021",
+        "U+002B",
+        "U+003B",
+        "U+007A",
+        "U+007B",
+        "U+007C",
+        "U+007D",
+        "U+00A1",
+        "U+00A6",
+        "U+00B1",
+        "U+01AB",
+        "U+01C6",
+        "U+01F3",
+        "U+0209",
+        "U+020B",
+        "U+0234",
+        "U+0236",
+        "U+023E",
+        "U+024E",
+        "U+025D",
+        "U+0269",
+        "U+026A",
+        "U+026D",
+        "U+027C"
+      ]
+    },
+    {
+      "cluster": 29,
+      "n": 920,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.688,
+      "number_systems": [
+        [
+          "presentation-circled",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+441C",
+      "sample": [
+        "U+0508",
+        "U+0E3F",
+        "U+2ADA",
+        "U+2AFC",
+        "U+2CE5",
+        "U+3248",
+        "U+3505",
+        "U+3621",
+        "U+3771",
+        "U+3772",
+        "U+38B5",
+        "U+38B6",
+        "U+38B9",
+        "U+3956",
+        "U+3ABD",
+        "U+3B33",
+        "U+3B34",
+        "U+3B35",
+        "U+3B36",
+        "U+3B38",
+        "U+3B39",
+        "U+3B3A",
+        "U+3B3B",
+        "U+3B3D"
+      ]
+    },
+    {
+      "cluster": 30,
+      "n": 909,
+      "majority_block": "Unified Canadian Aboriginal Syllabics",
+      "majority_block_frac": 0.166,
+      "number_systems": [
+        [
+          "greek-milesian",
+          7
+        ],
+        [
+          "armenian-alphabetic",
+          6
+        ],
+        [
+          "georgian-alphabetic",
+          6
+        ],
+        [
+          "ol-chiki",
+          5
+        ],
+        [
+          "roman",
+          5
+        ]
+      ],
+      "gradients": [
+        [
+          "block-fill-horizontal",
+          3
+        ],
+        [
+          "quadrant",
+          1
+        ]
+      ],
+      "representative": "U+2D4F",
+      "sample": [
+        "U+0028",
+        "U+0045",
+        "U+0046",
+        "U+004B",
+        "U+004C",
+        "U+005B",
+        "U+006B",
+        "U+0072",
+        "U+00A3",
+        "U+00C8",
+        "U+00C9",
+        "U+00CA",
+        "U+00CB",
+        "U+0112",
+        "U+0114",
+        "U+0116",
+        "U+0118",
+        "U+011A",
+        "U+012C",
+        "U+012D",
+        "U+0136",
+        "U+0137",
+        "U+0139",
+        "U+013B"
+      ]
+    },
+    {
+      "cluster": 31,
+      "n": 770,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.71,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+3F9D",
+      "sample": [
+        "U+0429",
+        "U+2A69",
+        "U+2AF5",
+        "U+2F8E",
+        "U+34DD",
+        "U+35EE",
+        "U+360F",
+        "U+375B",
+        "U+38DA",
+        "U+38DC",
+        "U+38E1",
+        "U+38E5",
+        "U+38E7",
+        "U+38E8",
+        "U+38EF",
+        "U+38F2",
+        "U+38F8",
+        "U+38F9",
+        "U+3958",
+        "U+3981",
+        "U+3995",
+        "U+3999",
+        "U+3A16",
+        "U+3A1B"
+      ]
+    },
+    {
+      "cluster": 32,
+      "n": 2222,
+      "majority_block": "Private Use Area",
+      "majority_block_frac": 0.283,
+      "number_systems": [
+        [
+          "presentation-dotted",
+          20
+        ],
+        [
+          "presentation-circled",
+          17
+        ],
+        [
+          "vulgar-fraction",
+          8
+        ],
+        [
+          "mongolian",
+          8
+        ],
+        [
+          "presentation-parenthesized",
+          8
+        ]
+      ],
+      "gradients": [
+        [
+          "geometric-fill-size",
+          14
+        ],
+        [
+          "stars-fill",
+          11
+        ]
+      ],
+      "representative": "U+EB17",
+      "sample": [
+        "U+002D",
+        "U+003C",
+        "U+003E",
+        "U+007E",
+        "U+00AC",
+        "U+00B2",
+        "U+00B3",
+        "U+00D7",
+        "U+00F7",
+        "U+01E0",
+        "U+01EF",
+        "U+01F9",
+        "U+0205",
+        "U+0207",
+        "U+0211",
+        "U+0213",
+        "U+021C",
+        "U+0223",
+        "U+0224",
+        "U+0225",
+        "U+0226",
+        "U+0235",
+        "U+023D",
+        "U+0240"
+      ]
+    },
+    {
+      "cluster": 33,
+      "n": 436,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.821,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+5839",
+      "sample": [
+        "U+07DA",
+        "U+3626",
+        "U+3627",
+        "U+3628",
+        "U+3629",
+        "U+362A",
+        "U+362B",
+        "U+362C",
+        "U+362D",
+        "U+362E",
+        "U+362F",
+        "U+3630",
+        "U+3631",
+        "U+3632",
+        "U+3635",
+        "U+3637",
+        "U+363A",
+        "U+363B",
+        "U+363C",
+        "U+363E",
+        "U+363F",
+        "U+3640",
+        "U+3641",
+        "U+3642"
+      ]
+    },
+    {
+      "cluster": 34,
+      "n": 699,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.78,
+      "number_systems": [
+        [
+          "vulgar-fraction",
+          2
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+705E",
+      "sample": [
+        "U+2153",
+        "U+2154",
+        "U+34C7",
+        "U+34CA",
+        "U+34CD",
+        "U+34CE",
+        "U+34CF",
+        "U+34D3",
+        "U+34D6",
+        "U+34D7",
+        "U+3CC1",
+        "U+3CCC",
+        "U+3CD0",
+        "U+3CD1",
+        "U+3CD3",
+        "U+3CD4",
+        "U+3CD6",
+        "U+3CDA",
+        "U+3CDE",
+        "U+3CE4",
+        "U+3CE6",
+        "U+3CE7",
+        "U+3CE9",
+        "U+3CEC"
+      ]
+    },
+    {
+      "cluster": 35,
+      "n": 1588,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.893,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+D09E",
+      "sample": [
+        "U+046E",
+        "U+06B1",
+        "U+06B4",
+        "U+1026",
+        "U+1256",
+        "U+12E5",
+        "U+131C",
+        "U+131D",
+        "U+131E",
+        "U+20B0",
+        "U+2A0A",
+        "U+2A0B",
+        "U+2D8E",
+        "U+2D95",
+        "U+2EC9",
+        "U+2EDA",
+        "U+2EE3",
+        "U+2F1C",
+        "U+2F22",
+        "U+2F25",
+        "U+2F40",
+        "U+2F41",
+        "U+2F42",
+        "U+2F4D"
+      ]
+    },
+    {
+      "cluster": 36,
+      "n": 403,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.764,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+40C0",
+      "sample": [
+        "U+2F65",
+        "U+33E9",
+        "U+389F",
+        "U+39BD",
+        "U+4097",
+        "U+4098",
+        "U+409A",
+        "U+409B",
+        "U+409C",
+        "U+409D",
+        "U+40A0",
+        "U+40A1",
+        "U+40A2",
+        "U+40A3",
+        "U+40A4",
+        "U+40A5",
+        "U+40A6",
+        "U+40A7",
+        "U+40A8",
+        "U+40A9",
+        "U+40AA",
+        "U+40AB",
+        "U+40AD",
+        "U+40AF"
+      ]
+    },
+    {
+      "cluster": 37,
+      "n": 461,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.809,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+71E3",
+      "sample": [
+        "U+2FB6",
+        "U+3698",
+        "U+3930",
+        "U+3AB1",
+        "U+3C7D",
+        "U+3DA4",
+        "U+3DA5",
+        "U+3DA6",
+        "U+3DA7",
+        "U+3DA9",
+        "U+3DAC",
+        "U+3DAD",
+        "U+3DAF",
+        "U+3DB0",
+        "U+3DB1",
+        "U+3DB2",
+        "U+3DB4",
+        "U+3DB6",
+        "U+3DB7",
+        "U+3DB8",
+        "U+3DB9",
+        "U+3DBA",
+        "U+3DBC",
+        "U+3DBD"
+      ]
+    },
+    {
+      "cluster": 38,
+      "n": 746,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.814,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          9
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+50EE",
+      "sample": [
+        "U+222C",
+        "U+2AFF",
+        "U+2EC7",
+        "U+2EEE",
+        "U+2F78",
+        "U+3358",
+        "U+3430",
+        "U+3432",
+        "U+3433",
+        "U+3434",
+        "U+3435",
+        "U+3436",
+        "U+3437",
+        "U+3438",
+        "U+3439",
+        "U+343A",
+        "U+343B",
+        "U+343C",
+        "U+343D",
+        "U+343E",
+        "U+343F",
+        "U+3440",
+        "U+3441",
+        "U+3442"
+      ]
+    },
+    {
+      "cluster": 39,
+      "n": 558,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.737,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+8908",
+      "sample": [
+        "U+369D",
+        "U+3742",
+        "U+3746",
+        "U+38D5",
+        "U+38D7",
+        "U+38D9",
+        "U+38DB",
+        "U+38DE",
+        "U+38E0",
+        "U+38E3",
+        "U+38E4",
+        "U+38E6",
+        "U+38E9",
+        "U+38EA",
+        "U+38EB",
+        "U+38EC",
+        "U+38ED",
+        "U+38EE",
+        "U+38F0",
+        "U+38F1",
+        "U+38F3",
+        "U+38F4",
+        "U+38F5",
+        "U+38F6"
+      ]
+    },
+    {
+      "cluster": 40,
+      "n": 941,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.849,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+6E5F",
+      "sample": [
+        "U+19E0",
+        "U+19F1",
+        "U+19F8",
+        "U+19F9",
+        "U+2341",
+        "U+2DAB",
+        "U+34C9",
+        "U+34D0",
+        "U+3829",
+        "U+3A7F",
+        "U+3CB8",
+        "U+3CB9",
+        "U+3CBA",
+        "U+3CBC",
+        "U+3CBD",
+        "U+3CBF",
+        "U+3CC0",
+        "U+3CC2",
+        "U+3CC3",
+        "U+3CC4",
+        "U+3CC5",
+        "U+3CC6",
+        "U+3CC7",
+        "U+3CC8"
+      ]
+    },
+    {
+      "cluster": 41,
+      "n": 1020,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.926,
+      "number_systems": [],
+      "gradients": [
+        [
+          "block-fill-vertical",
+          1
+        ],
+        [
+          "quadrant",
+          1
+        ],
+        [
+          "geometric-fill-size",
+          1
+        ]
+      ],
+      "representative": "U+D08A",
+      "sample": [
+        "U+12FE",
+        "U+1301",
+        "U+1302",
+        "U+1303",
+        "U+13C4",
+        "U+13C9",
+        "U+2580",
+        "U+259D",
+        "U+25DA",
+        "U+2E9C",
+        "U+2F38",
+        "U+305A",
+        "U+3084",
+        "U+323B",
+        "U+3516",
+        "U+357A",
+        "U+383E",
+        "U+383F",
+        "U+39B0",
+        "U+3AB2",
+        "U+3E26",
+        "U+4353",
+        "U+439E",
+        "U+4E13"
+      ]
+    },
+    {
+      "cluster": 42,
+      "n": 696,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.802,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+3A47",
+      "sample": [
+        "U+39C6",
+        "U+39C7",
+        "U+39C9",
+        "U+39CA",
+        "U+39CC",
+        "U+39CD",
+        "U+39CE",
+        "U+39CF",
+        "U+39D0",
+        "U+39D2",
+        "U+39D3",
+        "U+39D4",
+        "U+39D5",
+        "U+39D6",
+        "U+39D7",
+        "U+39D9",
+        "U+39DC",
+        "U+39DE",
+        "U+39DF",
+        "U+39E0",
+        "U+39E1",
+        "U+39E2",
+        "U+39E3",
+        "U+39E4"
+      ]
+    },
+    {
+      "cluster": 43,
+      "n": 884,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.691,
+      "number_systems": [],
+      "gradients": [
+        [
+          "block-fill-vertical",
+          3
+        ],
+        [
+          "block-fill-full",
+          1
+        ],
+        [
+          "shade",
+          1
+        ],
+        [
+          "quadrant",
+          1
+        ]
+      ],
+      "representative": "U+4C70",
+      "sample": [
+        "U+2585",
+        "U+2586",
+        "U+2587",
+        "U+2588",
+        "U+2593",
+        "U+2599",
+        "U+264A",
+        "U+264B",
+        "U+264E",
+        "U+2652",
+        "U+2705",
+        "U+274E",
+        "U+2B1B",
+        "U+3527",
+        "U+355E",
+        "U+3727",
+        "U+372B",
+        "U+37D7",
+        "U+37F9",
+        "U+3978",
+        "U+3AAD",
+        "U+3C3A",
+        "U+3CA2",
+        "U+3F13"
+      ]
+    },
+    {
+      "cluster": 44,
+      "n": 356,
+      "majority_block": "Private Use Area",
+      "majority_block_frac": 0.896,
+      "number_systems": [
+        [
+          "greek-milesian",
+          2
+        ],
+        [
+          "roman",
+          2
+        ],
+        [
+          "armenian-alphabetic",
+          1
+        ]
+      ],
+      "gradients": [
+        [
+          "geometric-fill-size",
+          1
+        ]
+      ],
+      "representative": "U+F1C0",
+      "sample": [
+        "U+0040",
+        "U+004D",
+        "U+00A9",
+        "U+00B6",
+        "U+039C",
+        "U+03A6",
+        "U+041C",
+        "U+0424",
+        "U+0468",
+        "U+046C",
+        "U+04CD",
+        "U+0553",
+        "U+1699",
+        "U+1E3E",
+        "U+1E40",
+        "U+1E42",
+        "U+2030",
+        "U+20A9",
+        "U+2117",
+        "U+216F",
+        "U+2188",
+        "U+21F6",
+        "U+2205",
+        "U+25AE"
+      ]
+    },
+    {
+      "cluster": 45,
+      "n": 721,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.632,
+      "number_systems": [
+        [
+          "greek-milesian",
+          1
+        ],
+        [
+          "oriya",
+          1
+        ],
+        [
+          "presentation-circled",
+          1
+        ],
+        [
+          "meetei-mayek",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+735F",
+      "sample": [
+        "U+0025",
+        "U+03A8",
+        "U+0470",
+        "U+04A6",
+        "U+04C2",
+        "U+0586",
+        "U+0B69",
+        "U+211A",
+        "U+222F",
+        "U+2230",
+        "U+2268",
+        "U+2279",
+        "U+2A68",
+        "U+2AF3",
+        "U+2B31",
+        "U+2C14",
+        "U+2CE6",
+        "U+2CE8",
+        "U+2CE9",
+        "U+2D4C",
+        "U+2F62",
+        "U+2FB7",
+        "U+2FBB",
+        "U+3231"
+      ]
+    },
+    {
+      "cluster": 46,
+      "n": 439,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.815,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+8757",
+      "sample": [
+        "U+3C29",
+        "U+3E87",
+        "U+3F32",
+        "U+459E",
+        "U+45A0",
+        "U+45A1",
+        "U+45A2",
+        "U+45A3",
+        "U+45A6",
+        "U+45A7",
+        "U+45A8",
+        "U+45A9",
+        "U+45AB",
+        "U+45AC",
+        "U+45AE",
+        "U+45B0",
+        "U+45B1",
+        "U+45B2",
+        "U+45B3",
+        "U+45B4",
+        "U+45B6",
+        "U+45B7",
+        "U+45B9",
+        "U+45BB"
+      ]
+    },
+    {
+      "cluster": 47,
+      "n": 616,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.153,
+      "number_systems": [
+        [
+          "greek-milesian",
+          6
+        ],
+        [
+          "sundanese",
+          6
+        ],
+        [
+          "georgian-alphabetic",
+          3
+        ],
+        [
+          "cjk-ideographic",
+          3
+        ],
+        [
+          "ascii-decimal",
+          2
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+0622",
+      "sample": [
+        "U+002F",
+        "U+0031",
+        "U+0037",
+        "U+003F",
+        "U+0049",
+        "U+0054",
+        "U+0059",
+        "U+005A",
+        "U+005C",
+        "U+0069",
+        "U+006C",
+        "U+00C6",
+        "U+00CC",
+        "U+00CD",
+        "U+00CE",
+        "U+00CF",
+        "U+00DD",
+        "U+00EC",
+        "U+00ED",
+        "U+00EE",
+        "U+00EF",
+        "U+0128",
+        "U+0129",
+        "U+012A"
+      ]
+    },
+    {
+      "cluster": 48,
+      "n": 1091,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.894,
+      "number_systems": [],
+      "gradients": [
+        [
+          "quadrant",
+          1
+        ]
+      ],
+      "representative": "U+D08E",
+      "sample": [
+        "U+123D",
+        "U+19E8",
+        "U+19E9",
+        "U+259E",
+        "U+2F04",
+        "U+2F14",
+        "U+2F16",
+        "U+2F30",
+        "U+2F47",
+        "U+2F52",
+        "U+2F69",
+        "U+2F89",
+        "U+2FBF",
+        "U+304D",
+        "U+304E",
+        "U+3402",
+        "U+3428",
+        "U+34B2",
+        "U+34B6",
+        "U+353E",
+        "U+3540",
+        "U+3563",
+        "U+3588",
+        "U+35FD"
+      ]
+    },
+    {
+      "cluster": 49,
+      "n": 675,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.587,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          2
+        ],
+        [
+          "ethiopic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+D09C",
+      "sample": [
+        "U+0232",
+        "U+04F3",
+        "U+061D",
+        "U+07D0",
+        "U+1300",
+        "U+1305",
+        "U+1306",
+        "U+131F",
+        "U+1370",
+        "U+13A9",
+        "U+19E2",
+        "U+1B9C",
+        "U+221B",
+        "U+221C",
+        "U+2370",
+        "U+276F",
+        "U+2A09",
+        "U+2C26",
+        "U+2C29",
+        "U+2D86",
+        "U+2D87",
+        "U+2DD9",
+        "U+2DDA",
+        "U+2E91"
+      ]
+    },
+    {
+      "cluster": 50,
+      "n": 806,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.655,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          2
+        ],
+        [
+          "sundanese",
+          1
+        ],
+        [
+          "presentation-parenthesized",
+          1
+        ],
+        [
+          "bamum-letter-numbers",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+7447",
+      "sample": [
+        "U+0181",
+        "U+018A",
+        "U+02AE",
+        "U+0402",
+        "U+0414",
+        "U+041B",
+        "U+042E",
+        "U+04BC",
+        "U+04BE",
+        "U+0512",
+        "U+1255",
+        "U+12ED",
+        "U+13A6",
+        "U+13A8",
+        "U+13AE",
+        "U+13AF",
+        "U+13F0",
+        "U+15EB",
+        "U+1650",
+        "U+1656",
+        "U+1657",
+        "U+1658",
+        "U+1669",
+        "U+166A"
+      ]
+    },
+    {
+      "cluster": 51,
+      "n": 631,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.742,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+568B",
+      "sample": [
+        "U+0416",
+        "U+0428",
+        "U+0496",
+        "U+04DC",
+        "U+3236",
+        "U+323C",
+        "U+323F",
+        "U+3371",
+        "U+3518",
+        "U+3580",
+        "U+3582",
+        "U+3584",
+        "U+3585",
+        "U+3586",
+        "U+3591",
+        "U+3594",
+        "U+3598",
+        "U+359F",
+        "U+35A0",
+        "U+35A1",
+        "U+35A2",
+        "U+35A4",
+        "U+35A5",
+        "U+35A6"
+      ]
+    },
+    {
+      "cluster": 52,
+      "n": 1020,
+      "majority_block": "Yi Syllables",
+      "majority_block_frac": 0.243,
+      "number_systems": [
+        [
+          "presentation-double-circled",
+          10
+        ],
+        [
+          "presentation-parenthesized",
+          9
+        ],
+        [
+          "vulgar-fraction",
+          8
+        ],
+        [
+          "armenian-alphabetic",
+          7
+        ],
+        [
+          "presentation-circled",
+          7
+        ]
+      ],
+      "gradients": [
+        [
+          "stars-fill",
+          2
+        ]
+      ],
+      "representative": "U+24F9",
+      "sample": [
+        "U+006D",
+        "U+0077",
+        "U+00E6",
+        "U+0138",
+        "U+0153",
+        "U+0195",
+        "U+0198",
+        "U+01C4",
+        "U+01C5",
+        "U+01C7",
+        "U+01CA",
+        "U+01CB",
+        "U+01CC",
+        "U+01E3",
+        "U+01F1",
+        "U+01F2",
+        "U+01F6",
+        "U+0238",
+        "U+0239",
+        "U+023B",
+        "U+025A",
+        "U+026F",
+        "U+0270",
+        "U+0271"
+      ]
+    },
+    {
+      "cluster": 53,
+      "n": 1068,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.699,
+      "number_systems": [
+        [
+          "cjk-compat",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+499C",
+      "sample": [
+        "U+0278",
+        "U+204B",
+        "U+222D",
+        "U+234B",
+        "U+2F79",
+        "U+2FB5",
+        "U+2FCF",
+        "U+34B3",
+        "U+34BA",
+        "U+34D9",
+        "U+34E0",
+        "U+34E6",
+        "U+34EE",
+        "U+34EF",
+        "U+34F0",
+        "U+34F4",
+        "U+34F9",
+        "U+34FA",
+        "U+34FE",
+        "U+3509",
+        "U+351D",
+        "U+3530",
+        "U+3532",
+        "U+3533"
+      ]
+    },
+    {
+      "cluster": 54,
+      "n": 649,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.227,
+      "number_systems": [
+        [
+          "georgian-alphabetic",
+          8
+        ],
+        [
+          "suzhou",
+          3
+        ],
+        [
+          "cjk-ideographic",
+          3
+        ],
+        [
+          "armenian-alphabetic",
+          2
+        ],
+        [
+          "ucd-numeric-bengali",
+          1
+        ]
+      ],
+      "gradients": [
+        [
+          "block-fill-horizontal",
+          1
+        ]
+      ],
+      "representative": "U+4E05",
+      "sample": [
+        "U+018E",
+        "U+01FC",
+        "U+029E",
+        "U+037F",
+        "U+03FA",
+        "U+053F",
+        "U+054A",
+        "U+058F",
+        "U+0644",
+        "U+06B5",
+        "U+06B6",
+        "U+06B7",
+        "U+06B8",
+        "U+0720",
+        "U+076A",
+        "U+0803",
+        "U+080D",
+        "U+08A6",
+        "U+09AA",
+        "U+09F8",
+        "U+0A9E",
+        "U+0B2E",
+        "U+0B38",
+        "U+0E1B"
+      ]
+    },
+    {
+      "cluster": 55,
+      "n": 434,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.657,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+8F59",
+      "sample": [
+        "U+0D95",
+        "U+165E",
+        "U+165F",
+        "U+3C32",
+        "U+3CA6",
+        "U+3F0A",
+        "U+408B",
+        "U+4390",
+        "U+456E",
+        "U+4842",
+        "U+4843",
+        "U+4844",
+        "U+4845",
+        "U+4846",
+        "U+4847",
+        "U+4848",
+        "U+4849",
+        "U+484A",
+        "U+484B",
+        "U+484C",
+        "U+484D",
+        "U+484E",
+        "U+484F",
+        "U+4850"
+      ]
+    },
+    {
+      "cluster": 56,
+      "n": 601,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.742,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+5A91",
+      "sample": [
+        "U+2444",
+        "U+36A4",
+        "U+36A5",
+        "U+36A6",
+        "U+36A7",
+        "U+36A8",
+        "U+36A9",
+        "U+36AA",
+        "U+36AB",
+        "U+36AC",
+        "U+36AD",
+        "U+36AE",
+        "U+36AF",
+        "U+36B0",
+        "U+36B1",
+        "U+36B2",
+        "U+36B3",
+        "U+36B4",
+        "U+36B5",
+        "U+36B6",
+        "U+36B7",
+        "U+36B8",
+        "U+36B9",
+        "U+36BA"
+      ]
+    },
+    {
+      "cluster": 57,
+      "n": 620,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.937,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+C807",
+      "sample": [
+        "U+2D8C",
+        "U+2F33",
+        "U+2F84",
+        "U+303F",
+        "U+3334",
+        "U+3633",
+        "U+36A3",
+        "U+36BD",
+        "U+3902",
+        "U+41DE",
+        "U+4E48",
+        "U+4E67",
+        "U+516C",
+        "U+520D",
+        "U+522D",
+        "U+52B2",
+        "U+5736",
+        "U+593D",
+        "U+59BE",
+        "U+5A11",
+        "U+5A6A",
+        "U+5B55",
+        "U+5C15",
+        "U+5E7A"
+      ]
+    },
+    {
+      "cluster": 58,
+      "n": 1273,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.686,
+      "number_systems": [
+        [
+          "cjk-ideographic",
+          5
+        ],
+        [
+          "ethiopic",
+          3
+        ],
+        [
+          "greek-milesian",
+          1
+        ],
+        [
+          "cjk-compat",
+          1
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+44AD",
+      "sample": [
+        "U+03E0",
+        "U+046F",
+        "U+1193",
+        "U+1373",
+        "U+1379",
+        "U+137C",
+        "U+19E4",
+        "U+19E5",
+        "U+19E6",
+        "U+22DA",
+        "U+22E3",
+        "U+26A8",
+        "U+2A93",
+        "U+2A94",
+        "U+2A9F",
+        "U+2B46",
+        "U+2C03",
+        "U+2ECB",
+        "U+2EE5",
+        "U+2EF3",
+        "U+2F4E",
+        "U+2F5E",
+        "U+2F61",
+        "U+2F77"
+      ]
+    },
+    {
+      "cluster": 59,
+      "n": 382,
+      "majority_block": "Hangul Syllables",
+      "majority_block_frac": 0.99,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+C3AF",
+      "sample": [
+        "U+5230",
+        "U+59BF",
+        "U+5F3C",
+        "U+5F53",
+        "U+C2F9",
+        "U+C2FA",
+        "U+C2FB",
+        "U+C2FF",
+        "U+C300",
+        "U+C301",
+        "U+C302",
+        "U+C303",
+        "U+C304",
+        "U+C305",
+        "U+C306",
+        "U+C307",
+        "U+C308",
+        "U+C309",
+        "U+C30A",
+        "U+C30B",
+        "U+C30C",
+        "U+C30D",
+        "U+C30E",
+        "U+C30F"
+      ]
+    },
+    {
+      "cluster": 60,
+      "n": 549,
+      "majority_block": "CJK Unified Ideographs",
+      "majority_block_frac": 0.811,
+      "number_systems": [],
+      "gradients": [],
+      "representative": "U+6AAF",
+      "sample": [
+        "U+3A94",
+        "U+3B44",
+        "U+3B53",
+        "U+3B56",
+        "U+3B5B",
+        "U+3B5C",
+        "U+3B61",
+        "U+3B62",
+        "U+3B63",
+        "U+3B65",
+        "U+3B68",
+        "U+3B6D",
+        "U+3B6E",
+        "U+3B6F",
+        "U+3B71",
+        "U+3B74",
+        "U+3B75",
+        "U+3B78",
+        "U+3B7A",
+        "U+3B7B",
+        "U+3B7D",
+        "U+3B7E",
+        "U+3B7F",
+        "U+3B80"
+      ]
+    },
+    {
+      "cluster": 61,
+      "n": 739,
+      "majority_block": "Private Use Area",
+      "majority_block_frac": 0.859,
+      "number_systems": [
+        [
+          "presentation-negative-circled",
+          31
+        ],
+        [
+          "roman",
+          1
+        ]
+      ],
+      "gradients": [
+        [
+          "geometric-fill-size",
+          22
+        ]
+      ],
+      "representative": "U+E883",
+      "sample": [
+        "U+00AE",
+        "U+1CC1",
+        "U+20B1",
+        "U+2187",
+        "U+21F3",
+        "U+23CF",
+        "U+23F9",
+        "U+23FA",
+        "U+23FC",
+        "U+24EB",
+        "U+24EC",
+        "U+24ED",
+        "U+24EE",
+        "U+24EF",
+        "U+24F0",
+        "U+24F1",
+        "U+24F2",
+        "U+24F3",
+        "U+24F4",
+        "U+24FF",
+        "U+25A0",
+        "U+25A3",
+        "U+25A4",
+        "U+25A5"
+      ]
+    },
+    {
+      "cluster": 62,
+      "n": 1039,
+      "majority_block": "Hangul Jamo",
+      "majority_block_frac": 0.112,
+      "number_systems": [
+        [
+          "khmer",
+          4
+        ],
+        [
+          "armenian-alphabetic",
+          3
+        ],
+        [
+          "extended-arabic-indic",
+          3
+        ],
+        [
+          "roman",
+          3
+        ],
+        [
+          "meetei-mayek",
+          3
+        ]
+      ],
+      "gradients": [],
+      "representative": "U+4DF7",
+      "sample": [
+        "U+0058",
+        "U+0066",
+        "U+0074",
+        "U+00A5",
+        "U+00AA",
+        "U+00BE",
+        "U+0163",
+        "U+0165",
+        "U+0167",
+        "U+019B",
+        "U+01C1",
+        "U+01DE",
+        "U+01E2",
+        "U+01E9",
+        "U+01FA",
+        "U+0200",
+        "U+0202",
+        "U+021B",
+        "U+023A",
+        "U+028E",
+        "U+03A7",
+        "U+03BB",
+        "U+0425",
+        "U+048C"
+      ]
+    },
+    {
+      "cluster": 63,
+      "n": 668,
+      "majority_block": "Latin Extended Additional",
+      "majority_block_frac": 0.102,
+      "number_systems": [
+        [
+          "armenian-alphabetic",
+          24
+        ],
+        [
+          "georgian-alphabetic",
+          18
+        ],
+        [
+          "greek-milesian",
+          11
+        ],
+        [
+          "ascii-decimal",
+          7
+        ],
+        [
+          "roman",
+          4
+        ]
+      ],
+      "gradients": [
+        [
+          "geometric-fill-size",
+          1
+        ]
+      ],
+      "representative": "U+1C50",
+      "sample": [
+        "U+0030",
+        "U+0032",
+        "U+0033",
+        "U+0035",
+        "U+0036",
+        "U+0038",
+        "U+0039",
+        "U+0042",
+        "U+0043",
+        "U+0044",
+        "U+0047",
+        "U+0048",
+        "U+004E",
+        "U+004F",
+        "U+0050",
+        "U+0051",
+        "U+0052",
+        "U+0053",
+        "U+0055",
+        "U+0057",
+        "U+00C7",
+        "U+00D0",
+        "U+00D1",
+        "U+00D2"
+      ]
+    }
+  ]
+}

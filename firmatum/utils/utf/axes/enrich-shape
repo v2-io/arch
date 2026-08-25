@@ -1,0 +1,390 @@
+#!/usr/bin/env python3
+"""Hybrid shape axis: packed rasters + Unicode theory + Ghostty metrics.
+
+Does **not** re-paint. Reads:
+
+  ../.rasters/4x/packed/           (other track's Ghostty packed PNGs)
+  data/png-features.tsv            (16×16 occupancy from analyze-png)
+  data/unicode-axes.tsv            (number systems / gradients)
+  ../bmp-metrics-ghostty.tsv       (optical density, class, overflow)
+
+Known structure is used, not just k-means on pixels:
+
+  - Braille: 8-dot pattern from the code point; 2×4 occupancy from the grid
+    to check whether the raster matches the bits.
+  - Block fill / shade: designed fraction vs Ghostty packed_density.
+  - Name-derived shape tags (CIRCLE, SQUARE, STAR, SHADE, …).
+  - Theory family (gradient / number_system / structured_family).
+
+Writes data/shape-axes.tsv and data/shape-agreement.json.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+import unicodedata
+from collections import Counter, defaultdict
+from pathlib import Path
+
+import numpy as np
+from sklearn.cluster import MiniBatchKMeans
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+OUT = HERE / "data"
+
+SHAPE_WORDS = (
+    "CIRCLE",
+    "SQUARE",
+    "RECTANGLE",
+    "DIAMOND",
+    "TRIANGLE",
+    "STAR",
+    "HEART",
+    "SHADE",
+    "BLOCK",
+    "BRAILLE",
+    "DIGIT",
+    "NUMBER",
+    "ARROW",
+    "BOX DRAWINGS",
+    "QUADRANT",
+    "BAR",
+    "DOT",
+    "CROSS",
+    "PLUS",
+    "SNOWFLAKE",
+    "FLOWER",
+    "MOON",
+    "SUN",
+    "FACE",
+    "HAND",
+)
+
+
+def load_tsv(path: Path) -> list[dict]:
+    if not path.is_file():
+        return []
+    rows = []
+    with path.open(encoding="utf-8") as f:
+        hdr = f.readline().rstrip("\n").split("\t")
+        n = len(hdr)
+        for line in f:
+            cols = line.rstrip("\n").split("\t")
+            if len(cols) < n:
+                cols += [""] * (n - len(cols))
+            elif len(cols) > n:
+                cols = cols[: n - 1] + ["\t".join(cols[n - 1 :])]
+            rows.append(dict(zip(hdr, cols)))
+    return rows
+
+
+def index_by_hex(rows: list[dict], key: str = "hex") -> dict[str, dict]:
+    out = {}
+    for r in rows:
+        hx = r.get(key) or ""
+        if hx:
+            out[hx] = r
+    return out
+
+
+def shape_tag(name: str) -> str:
+    n = name.upper()
+    hits = [w.lower().replace(" ", "-") for w in SHAPE_WORDS if w in n]
+    return ",".join(hits[:4])
+
+
+def grid_from_hex(h: str) -> np.ndarray | None:
+    if not h or len(h) != 64:
+        return None
+    try:
+        n = int(h, 16)
+    except ValueError:
+        return None
+    bits = np.zeros((16, 16), dtype=np.float32)
+    for i in range(256):
+        bits[i // 16, i % 16] = float((n >> (255 - i)) & 1)
+    return bits
+
+
+def braille_2x4_from_grid(g: np.ndarray) -> int:
+    """Guess 8-dot pattern from a 16×16 occupancy (col0 = dots 1,2,3,7)."""
+    # 4 vertical bands × 2 horizontal
+    bits = 0
+    # rows of dots: 0:dot1/4, 1:dot2/5, 2:dot3/6, 3:dot7/8
+    ys = [slice(0, 4), slice(4, 8), slice(8, 12), slice(12, 16)]
+    xs = [slice(0, 8), slice(8, 16)]
+    # Unicode braille: bit0=dot1,1=dot2,2=dot3,3=dot4,4=dot5,5=dot6,6=dot7,7=dot8
+    order = [(0, 0, 0), (1, 0, 1), (2, 0, 2), (0, 1, 3), (1, 1, 4), (2, 1, 5), (3, 0, 6), (3, 1, 7)]
+    for yi, xi, bit in order:
+        patch = g[ys[yi], xs[xi]]
+        if patch.mean() > 0.15:
+            bits |= 1 << bit
+    return bits
+
+
+def designed_fill(axes: dict) -> float | None:
+    gv = axes.get("gradient_value") or ""
+    if gv:
+        try:
+            return float(gv)
+        except ValueError:
+            return None
+    return None
+
+
+def main() -> None:
+    feat_path = OUT / "png-features.tsv"
+    if not feat_path.is_file():
+        sys.exit(f"need {feat_path} (run analyze-png first; it reads the packed rasters)")
+
+    feats = load_tsv(feat_path)
+    axes = index_by_hex(load_tsv(OUT / "unicode-axes.tsv"))
+    ghost = {}
+    gt = ROOT / "bmp-metrics-ghostty.tsv"
+    if gt.is_file():
+        for r in load_tsv(gt):
+            hx = r.get("hex") or ""
+            if hx:
+                ghost[hx] = r
+
+    rows = []
+    braille_ok = braille_bad = braille_n = 0
+    fill_pairs = []  # (hex, designed, measured, family)
+
+    for f in feats:
+        hx = f["hex"]
+        cp = int(f["cp"])
+        a = axes.get(hx, {})
+        g = ghost.get(hx, {})
+        name = a.get("name") or unicodedata.name(chr(cp), "")
+        tag = shape_tag(name)
+        fam = a.get("gradient_family") or ""
+        sys_id = a.get("number_system") or ""
+        struct = a.get("structured_family") or ""
+        theory = fam or sys_id or struct or ""
+        des = designed_fill(a)
+        meas = None
+        pd = g.get("packed_density") or ""
+        if pd:
+            try:
+                meas = float(pd)
+            except ValueError:
+                pass
+        if meas is None:
+            try:
+                meas = float(f.get("fill") or 0)
+            except ValueError:
+                meas = 0.0
+        fill_err = ""
+        if des is not None:
+            fill_err = f"{meas - des:.4f}"
+            fill_pairs.append((hx, des, meas, fam or struct, name))
+
+        braille_bits_cp = ""
+        braille_bits_grid = ""
+        braille_match = ""
+        if 0x2800 <= cp <= 0x28FF:
+            braille_n += 1
+            bits_cp = cp - 0x2800
+            braille_bits_cp = f"{bits_cp:02x}"
+            grid = grid_from_hex(f.get("grid16") or "")
+            if grid is not None:
+                bits_g = braille_2x4_from_grid(grid)
+                braille_bits_grid = f"{bits_g:02x}"
+                braille_match = "yes" if bits_g == bits_cp else "no"
+                if bits_g == bits_cp:
+                    braille_ok += 1
+                else:
+                    braille_bad += 1
+
+        rows.append(
+            {
+                "cp": str(cp),
+                "hex": hx,
+                "char": a.get("char") or (chr(cp) if unicodedata.category(chr(cp))[0] != "C" else ""),
+                "name": name,
+                "visual_cluster": f.get("cluster") or "",
+                "theory_family": theory,
+                "shape_tag": tag,
+                "gradient_family": fam,
+                "number_system": sys_id,
+                "structured_family": struct,
+                "designed_fill": "" if des is None else f"{des:.4f}",
+                "measured_fill": f"{meas:.4f}",
+                "fill_err": fill_err,
+                "packed_density": g.get("packed_density") or "",
+                "packed_class": g.get("packed_class") or "",
+                "cx": f.get("cx") or "",
+                "cy": f.get("cy") or "",
+                "aspect": f.get("aspect") or "",
+                "bbox_w": f.get("bbox_w") or "",
+                "bbox_h": f.get("bbox_h") or "",
+                "dhash": f.get("dhash") or "",
+                "braille_bits_cp": braille_bits_cp,
+                "braille_bits_grid": braille_bits_grid,
+                "braille_match": braille_match,
+            }
+        )
+
+    # Hybrid cluster: measured geometry + designed fill + coarse shape tag.
+    tag_ids = {t: i for i, t in enumerate(sorted({r["shape_tag"] for r in rows}))}
+    fam_ids = {t: i for i, t in enumerate(sorted({r["theory_family"] for r in rows}))}
+    X = []
+    for r in rows:
+        def fl(k, default=0.0):
+            try:
+                return float(r[k]) if r[k] != "" else default
+            except (ValueError, KeyError):
+                return default
+
+        des = fl("designed_fill", -1.0)
+        X.append(
+            [
+                fl("measured_fill"),
+                fl("cx", 0.5),
+                fl("cy", 0.5),
+                fl("aspect", 1.0),
+                fl("bbox_w"),
+                fl("bbox_h"),
+                des,
+                tag_ids.get(r["shape_tag"], 0) / max(len(tag_ids), 1),
+                fam_ids.get(r["theory_family"], 0) / max(len(fam_ids), 1),
+            ]
+        )
+    X = np.asarray(X, dtype=np.float32)
+    k = 48
+    print(f"hybrid k-means k={k} on {X.shape}", file=sys.stderr)
+    km = MiniBatchKMeans(n_clusters=k, random_state=1, batch_size=2048, n_init=3)
+    labels = km.fit_predict(X)
+    for r, lab in zip(rows, labels):
+        r["hybrid_cluster"] = str(int(lab))
+
+    cols = [
+        "cp",
+        "hex",
+        "char",
+        "name",
+        "visual_cluster",
+        "hybrid_cluster",
+        "theory_family",
+        "shape_tag",
+        "gradient_family",
+        "number_system",
+        "structured_family",
+        "designed_fill",
+        "measured_fill",
+        "fill_err",
+        "packed_density",
+        "packed_class",
+        "cx",
+        "cy",
+        "aspect",
+        "bbox_w",
+        "bbox_h",
+        "dhash",
+        "braille_bits_cp",
+        "braille_bits_grid",
+        "braille_match",
+    ]
+    out_tsv = OUT / "shape-axes.tsv"
+    with out_tsv.open("w", encoding="utf-8") as f:
+        f.write("\t".join(cols) + "\n")
+        for r in rows:
+            f.write("\t".join(r.get(c, "") for c in cols) + "\n")
+
+    # Agreement summaries
+    by_fam = defaultdict(list)
+    for hx, des, meas, fam, name in fill_pairs:
+        by_fam[fam].append((hx, des, meas, meas - des, name))
+
+    fam_report = []
+    for fam, ps in sorted(by_fam.items(), key=lambda kv: -len(kv[1])):
+        errs = [p[3] for p in ps]
+        fam_report.append(
+            {
+                "family": fam,
+                "n": len(ps),
+                "mean_designed": round(sum(p[1] for p in ps) / len(ps), 4),
+                "mean_measured": round(sum(p[2] for p in ps) / len(ps), 4),
+                "mean_err": round(sum(errs) / len(errs), 4),
+                "mae": round(sum(abs(e) for e in errs) / len(errs), 4),
+                "worst": sorted(ps, key=lambda p: -abs(p[3]))[:5],
+            }
+        )
+
+    # hybrid cluster purity vs theory_family
+    members = defaultdict(list)
+    for r in rows:
+        members[r["hybrid_cluster"]].append(r)
+    hybrid = []
+    for lab, rs in sorted(members.items(), key=lambda kv: -len(kv[1])):
+        c = Counter(r["theory_family"] or "(none)" for r in rs)
+        maj, n = c.most_common(1)[0]
+        hybrid.append(
+            {
+                "cluster": int(lab),
+                "n": len(rs),
+                "majority_theory": maj,
+                "frac": round(n / len(rs), 3),
+                "shape_tags": Counter(r["shape_tag"] or "(none)" for r in rs).most_common(4),
+                "sample": [r["hex"] + " " + r["char"] for r in rs[:12]],
+            }
+        )
+
+    agreement = {
+        "raster_source": "../.rasters/4x/packed/ (measure-ghostty packed PNGs; not re-painted)",
+        "n": len(rows),
+        "braille": {
+            "n": braille_n,
+            "grid_matches_codepoint": braille_ok,
+            "mismatch": braille_bad,
+            "note": (
+                "bits_cp is U+2800+pattern. bits_grid is a 2×4 readout of the "
+                "16×16 occupancy. Mismatch means the raster (Ghostty sprite or "
+                "face) is not a clean 2×4 of the Unicode dots — or the readout "
+                "threshold is wrong."
+            ),
+        },
+        "designed_vs_measured": fam_report,
+        "hybrid_clusters": hybrid,
+        "note": (
+            "visual_cluster is k-means on 16×16 occupancy only. hybrid_cluster "
+            "adds designed fill, shape_tag, theory_family, bbox. packed_density "
+            "is the other track's optical coverage, reused."
+        ),
+    }
+    # make worst tuples jsonable
+    for fam in agreement["designed_vs_measured"]:
+        fam["worst"] = [
+            {
+                "hex": p[0],
+                "designed": round(p[1], 4),
+                "measured": round(p[2], 4),
+                "err": round(p[3], 4),
+                "name": p[4],
+            }
+            for p in fam["worst"]
+        ]
+
+    (OUT / "shape-agreement.json").write_text(
+        json.dumps(agreement, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    print(f"wrote {out_tsv} ({len(rows)} rows)")
+    print(f"wrote {OUT / 'shape-agreement.json'}")
+    print(
+        f"braille 2×4 vs codepoint: {braille_ok}/{braille_n} match "
+        f"({braille_bad} mismatch)"
+    )
+    for fam in fam_report[:8]:
+        print(
+            f"  fill {fam['family'] or '(empty)'}: n={fam['n']} "
+            f"mae={fam['mae']} designed μ={fam['mean_designed']} "
+            f"measured μ={fam['mean_measured']}"
+        )
+
+
+if __name__ == "__main__":
+    main()

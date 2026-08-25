@@ -47,10 +47,13 @@ table.grid td.hole { background: #f5f5f7; width: 24px; min-width: 24px; }
 .meta { font: 10px/1.3 ui-monospace, Menlo, monospace; color: #4c4f69; padding: 5px 6px 6px; border-top: 1px solid #ccd0da; }
 .meta .glyph { font-size: 13px; margin-bottom: 2px; }
 .meta .name { color: #6c6f85; overflow-wrap: anywhere; margin-bottom: 4px; }
-.kv { display: flex; gap: 6px; }
-.kv .k { flex: 0 0 5.4em; color: #9ca0b0; }
+.stats { display: grid; grid-template-columns: 5.4em 1fr; column-gap: 6px; }
+.kv { display: contents; }
+.kv .k { color: #9ca0b0; }
 .kv .v { overflow-wrap: anywhere; }
 .kv.diff .v { color: #fe640b; }
+.kv.span { display: flex; flex-direction: column; grid-column: 1 / -1; gap: 0; margin-top: 3px; }
+.kv.span .k { flex: none; }
 .wrap { overflow-x: auto; }
 .index { columns: 3; column-gap: 2rem; font-size: 13px; }
 .index h2 { break-after: avoid; margin-top: 0; }
@@ -82,10 +85,14 @@ def faces_agree(face: str, ghostty: str) -> bool:
     return a.startswith(b) or (a.split() and b.startswith(a.split()[0]))
 
 
-def kv(label: str, value: str, extra: str = "") -> str:
-    cls = "kv " + extra if extra else "kv"
+def kv(label: str, value: str, extra: str = "", span: bool = False) -> str:
+    bits = ["kv"]
+    if span:
+        bits.append("span")
+    if extra:
+        bits.append(extra)
     return (
-        f"<div class='{cls}'><span class='k'>{esc(label)}</span>"
+        f"<div class='{' '.join(bits)}'><span class='k'>{esc(label)}</span>"
         f"<span class='v'>{esc(value)}</span></div>"
     )
 
@@ -147,6 +154,7 @@ def cell_html(r: dict[str, str], raster_prefix: str) -> str:
         "<div class='meta'>",
         f"<div class='glyph'>{esc(r['hex'])} {esc(r['char'])}</div>",
         f"<div class='name'>{esc(r['name'] or '(no Unicode name)')}</div>",
+        "<div class='stats'>",
         kv("cells", r["cells"]),
         kv("eaw", r["eaw"]),
         kv("cat", r["category"]),
@@ -158,15 +166,15 @@ def cell_html(r: dict[str, str], raster_prefix: str) -> str:
     if _differs(r_class, p_class):
         parts.append(kv("r class", r_class, "diff"))
     if _differs(r_den, p_den):
-        parts.append(kv("r density", r_den, "diff"))
+        parts.append(kv("r-dens", r_den, "diff"))
     if _differs(r_ov, p_ov):
         parts.append(kv("r overflow", r_ov, "diff"))
     if _differs(r_ink, p_ink):
         parts.append(kv("r ink w", r_ink, "diff"))
     if used and not faces_agree(used, gt):
-        parts.append(kv("used face", used, "diff"))
-    parts.append(kv("ghostty", gt))
-    parts.append("</div></td>")
+        parts.append(kv("used-face", used, "diff", span=True))
+    parts.append(kv("ghostty", gt, span=True))
+    parts.append("</div></div></td>")
     return "".join(parts)
 
 

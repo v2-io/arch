@@ -1,0 +1,470 @@
+#!/usr/bin/env python3
+"""BMP cmap coverage for the Ghostty stack plus fonts.toml extras.
+
+Preferred face per code point is the existing `ghostty` column from
+../bmp-metrics-ghostty.tsv (live +show-face). This script does **not**
+re-query Ghostty.
+
+For each font, coverage is native cmap via CoreText
+CTFontGetGlyphsForCharacters (glyph id 0 = missing). When a file path is
+known, fontTools cmap is recorded too (catches fonts CoreText substitutes).
+
+Writes:
+  data/font-catalog.tsv     one row per measured face
+  data/font-coverage.tsv    one row per assigned BMP CP
+  data/font-block-summary.tsv
+  data/font-lineage.json
+  data/enclosed-alphanumerics.tsv   the motivating mixed-block deep-dive
+
+Add fonts in fonts.toml [[extra]] and re-run.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+import sys
+import unicodedata
+from collections import defaultdict
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+OUT = HERE / "data"
+TOML = HERE / "fonts.toml"
+GHOSTTY_TSV = ROOT / "bmp-metrics-ghostty.tsv"
+
+BMP_ASSIGNED = [
+    cp
+    for cp in range(0x10000)
+    if unicodedata.category(chr(cp)) not in {"Cn", "Cs"}
+]
+
+
+def parse_toml_extras(path: Path) -> list[dict]:
+    """Minimal TOML subset: inherit flag + [[extra]] tables with string keys."""
+    text = path.read_text(encoding="utf-8")
+    inherit = True
+    extras: list[dict] = []
+    cur: dict | None = None
+    for raw in text.splitlines():
+        line = raw.split("#", 1)[0].strip()
+        if not line:
+            continue
+        if line == "inherit_ghostty_tsv = true":
+            inherit = True
+            continue
+        if line == "inherit_ghostty_tsv = false":
+            inherit = False
+            continue
+        if line == "[[extra]]":
+            cur = {}
+            extras.append(cur)
+            continue
+        if cur is None:
+            continue
+        if "=" in line:
+            k, v = line.split("=", 1)
+            cur[k.strip()] = v.strip().strip('"')
+    return extras, inherit
+
+
+def load_ghostty_faces(path: Path) -> tuple[dict[int, str], dict[int, str], dict[int, str]]:
+    """cp -> ghostty name, used_face, block."""
+    g, u, b = {}, {}, {}
+    if not path.is_file():
+        print(f"note: {path} missing; no preferred-face column", file=sys.stderr)
+        return g, u, b
+    with path.open(encoding="utf-8") as f:
+        hdr = f.readline().rstrip("\n").split("\t")
+        col = {n: i for i, n in enumerate(hdr)}
+        for line in f:
+            cols = line.rstrip("\n").split("\t")
+            try:
+                cp = int(cols[col["cp"]])
+            except (KeyError, ValueError):
+                continue
+            g[cp] = cols[col.get("ghostty", 0)] if "ghostty" in col else ""
+            u[cp] = cols[col.get("used_face", 0)] if "used_face" in col else ""
+            b[cp] = cols[col.get("block", 0)] if "block" in col else ""
+    return g, u, b
+
+
+def parse_blocks(path: Path) -> list[tuple[int, int, str]]:
+    blocks = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.split("#", 1)[0].strip()
+        if not line or ".." not in line:
+            continue
+        rng, name = line.split(";", 1)
+        a, b = rng.split("..")
+        blocks.append((int(a, 16), int(b, 16), name.strip()))
+    return blocks
+
+
+def block_of(blocks, cp: int) -> str:
+    for lo, hi, name in blocks:
+        if lo <= cp <= hi:
+            return name
+        if lo > cp:
+            break
+    return ""
+
+
+def coretext_url(font) -> str:
+    import CoreText
+
+    url = CoreText.CTFontCopyAttribute(font, CoreText.kCTFontURLAttribute)
+    return str(url) if url else ""
+
+
+def load_nsfont(name: str, path: str | None):
+    from AppKit import NSFont, NSURL
+    import CoreText
+
+    if path:
+        p = Path(path)
+        if p.is_file():
+            url = NSURL.fileURLWithPath_(str(p))
+            desc = CoreText.CTFontManagerCreateFontDescriptorsFromURL(url)
+            if desc:
+                font = CoreText.CTFontCreateWithFontDescriptor(desc[0], 12.0, None)
+                if font is not None:
+                    return font, str(p), "url"
+    font = NSFont.fontWithName_size_(name, 12.0)
+    if font is None:
+        return None, "", "missing"
+    url = coretext_url(font)
+    ps = str(font.fontName())
+    # Silent Helvetica/Times substitution (Ghostty JetBrains hole).
+    want = re.sub(r"[^a-z0-9]", "", name.lower())
+    got = re.sub(r"[^a-z0-9]", "", ps.lower())
+    if got.startswith("helvetica") and "helvetica" not in want:
+        return font, url, "substituted-helvetica"
+    if got.startswith("times") and "times" not in want:
+        return font, url, "substituted-times"
+    return font, url, "ok"
+
+
+def glyphs_for(font, codepoints: list[int], chunk: int = 1024) -> set[int]:
+    import CoreText
+    import ctypes
+
+    UniChar = ctypes.c_uint16
+    CGGlyph = ctypes.c_uint16
+    present: set[int] = set()
+    # BMP only: UniChar is UTF-16 code unit == code point.
+    for i in range(0, len(codepoints), chunk):
+        part = [cp for cp in codepoints[i : i + chunk] if cp <= 0xFFFF]
+        if not part:
+            continue
+        n = len(part)
+        chars = (UniChar * n)(*part)
+        glyphs = (CGGlyph * n)()
+        CoreText.CTFontGetGlyphsForCharacters(font, chars, glyphs, n)
+        for cp, g in zip(part, glyphs):
+            if g != 0:
+                present.add(cp)
+    return present
+
+
+def fonttools_cmap(path: str) -> set[int] | None:
+    try:
+        from fontTools.ttLib import TTFont
+    except ImportError:
+        return None
+    p = Path(path.replace("file://", ""))
+    # URL-decode
+    from urllib.parse import unquote, urlparse
+
+    if path.startswith("file://"):
+        p = Path(unquote(urlparse(path).path))
+    if not p.is_file():
+        return None
+    try:
+        font = TTFont(p, fontNumber=0, lazy=True)
+    except Exception:
+        return None
+    cps: set[int] = set()
+    try:
+        cmap = font.getBestCmap() or {}
+        cps = {cp for cp in cmap if cp <= 0xFFFF}
+    finally:
+        font.close()
+    return cps
+
+
+LINEAGE_DEFAULTS = {
+    "nerd font": "nerd-patch",
+    "nfm": "nerd-patch",
+    "nf ": "nerd-patch",
+    "noto": "noto",
+    "pingfang": "apple-cjk",
+    "songti": "apple-cjk",
+    "hiragino": "apple-cjk",
+    "heiti": "apple-cjk",
+    "arial unicode": "pan-unicode-dump",
+    "apple symbols": "apple-system",
+    "lastresort": "last-resort",
+    "stix": "math",
+    "jetbrains": "embedded-ghostty",
+}
+
+
+def guess_lineage(name: str, explicit: str | None) -> str:
+    if explicit:
+        return explicit
+    n = name.lower()
+    for needle, lin in LINEAGE_DEFAULTS.items():
+        if needle in n:
+            return lin
+    return "unknown"
+
+
+def nerd_predecessor(name: str) -> str:
+    n = name
+    n = re.sub(r"\s*Nerd Font.*$", "", n, flags=re.I)
+    n = re.sub(r"\s*NFM.*$", "", n, flags=re.I)
+    n = n.replace("CaskaydiaCove", "Cascadia Code")
+    n = n.replace("BlexMono", "IBM Plex Mono")
+    n = n.replace("MesloLGL", "Meslo / Menlo")
+    n = n.replace("MesloLGS", "Meslo / Menlo")
+    n = n.replace("MesloLGM", "Meslo / Menlo")
+    n = n.replace("MesloLGMDZ", "Meslo / Menlo")
+    n = n.replace("MesloLGSDZ", "Meslo / Menlo")
+    n = n.replace("MesloLGLDZ", "Meslo / Menlo")
+    return n.strip()
+
+
+def main() -> None:
+    OUT.mkdir(parents=True, exist_ok=True)
+    extras, inherit = parse_toml_extras(TOML)
+    preferred, used_face, gt_block = load_ghostty_faces(GHOSTTY_TSV)
+    blocks = parse_blocks(HERE / "ucd" / "Blocks.txt")
+
+    # Build the font list: extras first (explicit lineage), then inherited names.
+    catalog: list[dict] = []
+    seen_names: set[str] = set()
+
+    def add(name: str, extra: dict | None = None) -> None:
+        key = name.strip()
+        if not key or key in seen_names:
+            return
+        if key in {"ghostty-sprite", "not-found", ""}:
+            return
+        seen_names.add(key)
+        extra = extra or {}
+        catalog.append(
+            {
+                "name": key,
+                "path": extra.get("path") or "",
+                "lineage": guess_lineage(key, extra.get("lineage")),
+                "predecessor": extra.get("predecessor") or (
+                    nerd_predecessor(key) if "nerd" in key.lower() or "nfm" in key.lower() else ""
+                ),
+                "notes": extra.get("notes") or "",
+            }
+        )
+
+    for e in extras:
+        if e.get("name"):
+            add(e["name"], e)
+
+    if inherit:
+        from collections import Counter
+
+        counts = Counter(preferred.values())
+        for name, _n in counts.most_common():
+            add(name)
+
+    print(f"measuring {len(catalog)} faces over {len(BMP_ASSIGNED)} assigned BMP cps", file=sys.stderr)
+
+    # coverage[name] = set of cps
+    coverage: dict[str, set[int]] = {}
+    catalog_rows = []
+    for i, ent in enumerate(catalog):
+        name = ent["name"]
+        font, url, status = load_nsfont(name, ent["path"] or None)
+        n_hit = 0
+        present: set[int] = set()
+        ft_n = ""
+        if font is None or status.startswith("substituted"):
+            # still record substitution; coverage empty (don't trust Helvetica)
+            if status.startswith("substituted"):
+                print(f"  SUBSTITUTED {name} -> {status}", file=sys.stderr)
+            else:
+                print(f"  MISSING     {name}", file=sys.stderr)
+        else:
+            present = glyphs_for(font, BMP_ASSIGNED)
+            n_hit = len(present)
+            if url and not ent["path"]:
+                ent["path"] = url
+            ft = fonttools_cmap(ent["path"] or url)
+            if ft is not None:
+                ft_n = str(len(ft))
+                # Prefer union? No: CoreText is what paints. fontTools is native file.
+                # Keep CoreText as coverage; note cmap size separately.
+        coverage[name] = present
+        catalog_rows.append(
+            {
+                **ent,
+                "status": status if font is not None else "missing",
+                "url": url,
+                "n_covered": n_hit,
+                "pct_bmp_assigned": f"{100.0 * n_hit / len(BMP_ASSIGNED):.2f}" if n_hit else "0.00",
+                "fonttools_cmap_n": ft_n,
+            }
+        )
+        print(f"  [{i+1}/{len(catalog)}] {n_hit:5d}  {status:22s}  {name}", file=sys.stderr)
+
+    # Drop LastResort from "alternatives" (it covers everything).
+    lastresort_names = {e["name"] for e in catalog_rows if e["lineage"] == "last-resort"}
+
+    cat_tsv = OUT / "font-catalog.tsv"
+    cat_cols = [
+        "name",
+        "status",
+        "lineage",
+        "predecessor",
+        "n_covered",
+        "pct_bmp_assigned",
+        "fonttools_cmap_n",
+        "path",
+        "url",
+        "notes",
+    ]
+    with cat_tsv.open("w", encoding="utf-8") as f:
+        f.write("\t".join(cat_cols) + "\n")
+        for r in catalog_rows:
+            f.write("\t".join(str(r.get(c, "")) for c in cat_cols) + "\n")
+
+    # Per-CP coverage. Only list covering fonts (pipe-separated) to keep the
+    # file from becoming a 100-column matrix.
+    usable = [e["name"] for e in catalog_rows if e["status"] in {"ok", "url"}]
+    cov_tsv = OUT / "font-coverage.tsv"
+    with cov_tsv.open("w", encoding="utf-8") as f:
+        f.write(
+            "cp\thex\tchar\tblock\tpreferred\tused_face\tn_fonts\t"
+            "preferred_has_native\talt_fonts\n"
+        )
+        for cp in BMP_ASSIGNED:
+            ch = chr(cp)
+            try:
+                # skip controls in the char column
+                cat = unicodedata.category(ch)
+            except ValueError:
+                cat = ""
+            pref = preferred.get(cp, "")
+            used = used_face.get(cp, "")
+            blk = gt_block.get(cp) or block_of(blocks, cp)
+            holders = [n for n in usable if n not in lastresort_names and cp in coverage.get(n, ())]
+            pref_native = "yes" if pref in coverage and cp in coverage[pref] else "no"
+            # don't list preferred twice
+            alts = [n for n in holders if n != pref]
+            char_out = ch if cat not in {"Cc", "Cf", "Zl", "Zp", "Cs"} else ""
+            f.write(
+                f"{cp}\tU+{cp:04X}\t{char_out}\t{blk}\t{pref}\t{used}\t"
+                f"{len(holders)}\t{pref_native}\t{'|'.join(alts)}\n"
+            )
+
+    # Block × font summary (assigned cps in block vs covered).
+    assigned_by_block: dict[str, list[int]] = defaultdict(list)
+    for cp in BMP_ASSIGNED:
+        assigned_by_block[block_of(blocks, cp)].append(cp)
+
+    sum_tsv = OUT / "font-block-summary.tsv"
+    with sum_tsv.open("w", encoding="utf-8") as f:
+        f.write("block\tassigned\tfont\tcovered\tpct\tlineage\n")
+        for blk, cps in sorted(assigned_by_block.items(), key=lambda kv: kv[1][0] if kv[1] else 0):
+            n_ass = len(cps)
+            for ent in catalog_rows:
+                if ent["status"] not in {"ok", "url"}:
+                    continue
+                n = sum(1 for cp in cps if cp in coverage.get(ent["name"], ()))
+                if n == 0:
+                    continue
+                f.write(
+                    f"{blk}\t{n_ass}\t{ent['name']}\t{n}\t{100.0 * n / n_ass:.1f}\t{ent['lineage']}\n"
+                )
+
+    # Enclosed Alphanumerics deep-dive U+2460–24FF
+    enc_cps = [cp for cp in range(0x2460, 0x2500) if unicodedata.category(chr(cp)) != "Cn"]
+    enc_tsv = OUT / "enclosed-alphanumerics.tsv"
+    with enc_tsv.open("w", encoding="utf-8") as f:
+        f.write(
+            "hex\tchar\tname\tpreferred\tused_face\tn_fonts\t"
+            "full_cover_fonts\talt_fonts\n"
+        )
+        # fonts that cover the whole assigned block
+        full = [
+            n
+            for n in usable
+            if n not in lastresort_names
+            and all(cp in coverage.get(n, ()) for cp in enc_cps)
+        ]
+        for cp in enc_cps:
+            ch = chr(cp)
+            try:
+                name = unicodedata.name(ch)
+            except ValueError:
+                name = ""
+            holders = [n for n in usable if n not in lastresort_names and cp in coverage.get(n, ())]
+            pref = preferred.get(cp, "")
+            used = used_face.get(cp, "")
+            alts = [n for n in holders if n != pref]
+            f.write(
+                f"U+{cp:04X}\t{ch}\t{name}\t{pref}\t{used}\t{len(holders)}\t"
+                f"{'|'.join(full)}\t{'|'.join(alts)}\n"
+            )
+
+    lineage = {
+        "note": (
+            "Nerd Font families: Latin/mono outlines are the predecessor; "
+            "PUA (U+E000–F8FF) and often extra symbols are the Nerd patch, "
+            "copied from Font Awesome / Material / Seti / etc., not designed "
+            "for that family. Arial Unicode MS is a 2002 pan-Unicode dump "
+            "(Bitstream Cyberbit lineage), not a designed multi-script face. "
+            "PingFang is Apple-native CJK. LastResort is a hole-filler."
+        ),
+        "fonts": [
+            {
+                "name": r["name"],
+                "lineage": r["lineage"],
+                "predecessor": r["predecessor"],
+                "status": r["status"],
+                "n_covered": r["n_covered"],
+                "notes": r["notes"],
+            }
+            for r in catalog_rows
+        ],
+        "enclosed_alphanumerics": {
+            "range": "U+2460–U+24FF",
+            "assigned": len(enc_cps),
+            "full_coverage_fonts": [
+                n
+                for n in usable
+                if n not in lastresort_names
+                and all(cp in coverage.get(n, ()) for cp in enc_cps)
+            ],
+            "ghostty_preferred_mix": sorted(
+                {preferred.get(cp, "") for cp in enc_cps if preferred.get(cp)}
+            ),
+        },
+    }
+    (OUT / "font-lineage.json").write_text(
+        json.dumps(lineage, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+
+    print(f"wrote {cat_tsv}")
+    print(f"wrote {cov_tsv}")
+    print(f"wrote {sum_tsv}")
+    print(f"wrote {enc_tsv}")
+    print(f"wrote {OUT / 'font-lineage.json'}")
+    print(
+        "Enclosed Alphanumerics full-cover fonts:",
+        lineage["enclosed_alphanumerics"]["full_coverage_fonts"] or "(none of those measured)",
+    )
+
+
+if __name__ == "__main__":
+    main()
