@@ -13,8 +13,8 @@ firmatum/
   utils/              # programme-internal / pre-public tools only
     md-press/         # markdown canonicalizer (Rust; still listed as fmt-md in older notes)
     aspectus/         # the look of a locus — budgeted tree snapshot (Rust)
-    code/             # small installable CLIs (symlink → ~/.local/bin)
-      git-heat-decay/ # git-heat — commit-decay heatmap
+    git-heat/         # git-heat — per-path commit-decay heatmap (inside one repo)
+    repo-heat/        # repo-heat — per-repo commits/day EMA heatmap (across repos)
   udon/               # sm v2-io/udon  (independent product)
   ato/                # sm v2-io/ato   (private)
   relata/             # sm v2-io/relata
@@ -51,12 +51,22 @@ Queued (not done): rename, public crate/repo readiness, re-intern as `firmatum/<
 
 ### [`utils/git-heat/`](utils/git-heat/)
 
-Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer. Index: [`utils/git-heat/README.md`](utils/git-heat/README.md).
+Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer. Index: [`utils/git-heat/README.md`](utils/git-heat/README.md). Ages in *commits behind HEAD*, inside one repo.
 
 ```sh
 ln -sfn ~/src/arch/firmatum/utils/git-heat/git-heat-decay/git-heat ~/.local/bin/git-heat
 git-heat --help
 git-heat --html --serve
+```
+
+### [`utils/repo-heat/`](utils/repo-heat/)
+
+Per-repository commits/day heatmap across the josephwecker + v2-io GitHub catalog (plus local-only extras such as `~/src/AISI-responses`). Exponentially weighted wall-clock half-life (default 7 days). Ages in *days*, across repos — the sibling of git-heat. Index: [`utils/repo-heat/README.md`](utils/repo-heat/README.md).
+
+```sh
+ln -sfn ~/src/arch/firmatum/utils/repo-heat/repo-heat ~/.local/bin/repo-heat
+repo-heat
+repo-heat --half-life 3 --top 20
 ```
 
 ### [`udon/`](udon/)

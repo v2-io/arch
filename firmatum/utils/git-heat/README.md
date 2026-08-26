@@ -17,3 +17,4 @@ ln -sfn ~/src/arch/firmatum/utils/git-heat/git-heat-decay/git-heat ~/.local/bin/
 |---------|------|--------|
 | **`md-press`** | [`../md-press/`](../md-press/) | Markdown unwrap / canonicalize (Rust; `cargo install --path …`) |
 | **`aspectus`** | [`../aspectus/`](../aspectus/) | Budgeted locus snapshot (Rust) |
+| **`repo-heat`** | [`../repo-heat/`](../repo-heat/) | Per-repo commits/day EMA (calendar half-life; ranks repos against each other) |
