@@ -1,4 +1,5 @@
 .rasters/
 corpus/
+gallery/
 __pycache__/
 *.pyc

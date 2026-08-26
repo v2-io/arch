@@ -16,50 +16,37 @@ Basic Latin	128	VictorMono NFM SemiBold	98	76.6	nerd-patch
 Basic Latin	128	Monaspace Xenon	98	76.6	native
 Basic Latin	128	VictorMono Nerd Font Mono	98	76.6	nerd-patch
 Basic Latin	128	PingFang HK	98	76.6	apple-cjk
-Basic Latin	128	Euphemia UCAS	99	77.3	unknown
-Basic Latin	128	Courier New	98	76.6	unknown
 Basic Latin	128	Kefa III	99	77.3	unknown
-Basic Latin	128	CaskaydiaCove Nerd Font Mono	98	76.6	nerd-patch
-Basic Latin	128	MesloLGL Nerd Font Mono	98	76.6	nerd-patch
-Basic Latin	128	Gentium Book Plus	98	76.6	unknown
 Basic Latin	128	Noto Sans Vai	5	3.9	noto
-Basic Latin	128	Geneva	101	78.9	unknown
 Basic Latin	128	PingFang MO	98	76.6	apple-cjk
-Basic Latin	128	MesloLGS Nerd Font Mono	98	76.6	nerd-patch
+Basic Latin	128	Geneva	101	78.9	unknown
+Basic Latin	128	Courier New	98	76.6	unknown
+Basic Latin	128	CaskaydiaCove Nerd Font Mono	98	76.6	nerd-patch
 Basic Latin	128	Noto Serif Myanmar	6	4.7	noto
 Basic Latin	128	Noto Sans Coptic	6	4.7	noto
 Basic Latin	128	Khmer MN	99	77.3	unknown
 Basic Latin	128	.SF Malayalam	5	3.9	unknown
-Basic Latin	128	MesloLGMDZ Nerd Font Mono	98	76.6	nerd-patch
 Basic Latin	128	Noto Sans Glagolitic	5	3.9	noto
-Basic Latin	128	Hack Nerd Font Mono	99	77.3	nerd-patch
 Basic Latin	128	Noto Serif Balinese	5	3.9	noto
 Basic Latin	128	Noto Sans Tai Tham	5	3.9	noto
 Basic Latin	128	Noto Sans Bamum	5	3.9	noto
 Basic Latin	128	Noto Sans New Tai Lue	5	3.9	noto
-Basic Latin	128	MesloLGSDZ Nerd Font Mono	98	76.6	nerd-patch
-Basic Latin	128	FiraCode Nerd Font Mono	98	76.6	nerd-patch
 Basic Latin	128	Noto Sans Javanese	5	3.9	noto
 Basic Latin	128	Kohinoor Devanagari	99	77.3	unknown
-Basic Latin	128	Monaco	101	78.9	unknown
 Basic Latin	128	Noto Sans Cham	17	13.3	noto
 Basic Latin	128	Noto Sans Tai Viet	5	3.9	noto
-Basic Latin	128	AppleGothic	102	79.7	unknown
 Basic Latin	128	Noto Sans Saurashtra	5	3.9	noto
 Basic Latin	128	Noto Sans Meetei Mayek	5	3.9	noto
 Basic Latin	128	Sinhala Sangam MN	99	77.3	unknown
-Basic Latin	128	Snell Roundhand	99	77.3	unknown
 Basic Latin	128	PingFang TC	98	76.6	apple-cjk
-Basic Latin	128	MesloLGLDZ Nerd Font Mono	98	76.6	nerd-patch
-Basic Latin	128	Noto Sans Tifinagh	5	3.9	noto
 Basic Latin	128	Noto Sans Sundanese	6	4.7	noto
 Basic Latin	128	Noto Sans PhagsPa	5	3.9	noto
 Basic Latin	128	Noto Sans Lepcha	5	3.9	noto
 Basic Latin	128	Noto Sans NKo	5	3.9	noto
-Basic Latin	128	Noto Sans Syriac	18	14.1	noto
+Basic Latin	128	AppleGothic	102	79.7	unknown
 Basic Latin	128	Noto Sans Ol Chiki	5	3.9	noto
+Basic Latin	128	Noto Sans Syriac	18	14.1	noto
 Basic Latin	128	Noto Sans Limbu	5	3.9	noto
-Basic Latin	128	Menlo	98	76.6	unknown
 Basic Latin	128	Noto Sans Batak	5	3.9	noto
 Basic Latin	128	Noto Sans Samaritan	5	3.9	noto
 Basic Latin	128	Noto Sans Kayah Li	6	4.7	noto
@@ -67,46 +54,38 @@ Basic Latin	128	Noto Sans Thaana	12	9.4	noto
 Basic Latin	128	Noto Sans Syloti Nagri	5	3.9	noto
 Basic Latin	128	Noto Sans Tai Le	5	3.9	noto
 Basic Latin	128	Hiragino Sans GB	127	99.2	apple-cjk
-Basic Latin	128	Symbol	39	30.5	unknown
 Basic Latin	128	Noto Sans Mandaic	5	3.9	noto
-Basic Latin	128	MesloLGM Nerd Font Mono	98	76.6	nerd-patch
+Basic Latin	128	Symbol	39	30.5	unknown
 Basic Latin	128	Noto Sans Buginese	5	3.9	noto
 Basic Latin	128	Noto Sans Rejang	5	3.9	noto
 Basic Latin	128	Noto Sans Tagalog	5	3.9	noto
 Basic Latin	128	Noto Sans Hanunoo	5	3.9	noto
 Basic Latin	128	Noto Sans Buhid	5	3.9	noto
 Basic Latin	128	Noto Sans Tagbanwa	5	3.9	noto
-Basic Latin	128	Noto Nastaliq Urdu	31	24.2	noto
 Basic Latin	128	Grantha Sangam MN	98	76.6	unknown
 Basic Latin	128	Kohinoor Telugu	99	77.3	unknown
-Basic Latin	128	.CJK Symbols Fallback HK	3	2.3	unknown
 Basic Latin	128	Mukta Mahee	99	77.3	unknown
 Basic Latin	128	Athelas	98	76.6	unknown
 Basic Latin	128	Superclarendon	99	77.3	unknown
 Basic Latin	128	Noto Sans Oriya	43	33.6	noto
-Basic Latin	128	Helvetica Neue	101	78.9	unknown
-Basic Latin	128	DIN Condensed	99	77.3	unknown
 Basic Latin	128	Lucida Grande	99	77.3	unknown
+Basic Latin	128	Noto Nastaliq Urdu	31	24.2	noto
 Basic Latin	128	.SF Arabic	12	9.4	unknown
 Basic Latin	128	Kohinoor Bangla	99	77.3	unknown
 Basic Latin	128	Gujarati Sangam MN	99	77.3	unknown
 Basic Latin	128	Kannada MN	99	77.3	unknown
-Basic Latin	128	Noto Sans Armenian	6	4.7	noto
-Basic Latin	128	Geeza Pro	5	3.9	unknown
+Basic Latin	128	.CJK Symbols Fallback HK	3	2.3	unknown
 Basic Latin	128	Kokonor	5	3.9	unknown
 Basic Latin	128	Sukhumvit Set	100	78.1	unknown
 Basic Latin	128	.SF Telugu	5	3.9	unknown
 Basic Latin	128	.SF Kannada	5	3.9	unknown
 Basic Latin	128	Galvji	100	78.1	unknown
-Basic Latin	128	Lora	98	76.6	unknown
-Basic Latin	128	Terminess Nerd Font	99	77.3	nerd-patch
 Basic Latin	128	.DecoType Nastaleeq Urdu UI	41	32.0	unknown
 Basic Latin	128	Kohinoor Gujarati	47	36.7	unknown
 Basic Latin	128	Noto Sans Kannada	43	33.6	noto
-Basic Latin	128	.New York	98	76.6	unknown
-Basic Latin	128	Noto Sans Adlam	35	27.3	noto
 Basic Latin	128	Heiti SC	101	78.9	apple-cjk
 Basic Latin	128	.SF Devanagari	5	3.9	unknown
+Basic Latin	128	Geeza Pro	5	3.9	unknown
 Latin-1 Supplement	128	JetBrains Mono	96	75.0	embedded-ghostty
 Latin-1 Supplement	128	JetBrains Mono NoNF	96	75.0	embedded-ghostty
 Latin-1 Supplement	128	JuliaMono	95	74.2	embedded-ghostty
@@ -124,50 +103,37 @@ Latin-1 Supplement	128	VictorMono NFM SemiBold	96	75.0	nerd-patch
 Latin-1 Supplement	128	Monaspace Xenon	96	75.0	native
 Latin-1 Supplement	128	VictorMono Nerd Font Mono	96	75.0	nerd-patch
 Latin-1 Supplement	128	PingFang HK	3	2.3	apple-cjk
-Latin-1 Supplement	128	Euphemia UCAS	96	75.0	unknown
-Latin-1 Supplement	128	Courier New	96	75.0	unknown
 Latin-1 Supplement	128	Kefa III	96	75.0	unknown
-Latin-1 Supplement	128	CaskaydiaCove Nerd Font Mono	96	75.0	nerd-patch
-Latin-1 Supplement	128	MesloLGL Nerd Font Mono	96	75.0	nerd-patch
-Latin-1 Supplement	128	Gentium Book Plus	96	75.0	unknown
 Latin-1 Supplement	128	Noto Sans Vai	1	0.8	noto
-Latin-1 Supplement	128	Geneva	96	75.0	unknown
 Latin-1 Supplement	128	PingFang MO	3	2.3	apple-cjk
-Latin-1 Supplement	128	MesloLGS Nerd Font Mono	96	75.0	nerd-patch
+Latin-1 Supplement	128	Geneva	96	75.0	unknown
+Latin-1 Supplement	128	Courier New	96	75.0	unknown
+Latin-1 Supplement	128	CaskaydiaCove Nerd Font Mono	96	75.0	nerd-patch
 Latin-1 Supplement	128	Noto Serif Myanmar	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Coptic	1	0.8	noto
 Latin-1 Supplement	128	Khmer MN	5	3.9	unknown
 Latin-1 Supplement	128	.SF Malayalam	1	0.8	unknown
-Latin-1 Supplement	128	MesloLGMDZ Nerd Font Mono	96	75.0	nerd-patch
 Latin-1 Supplement	128	Noto Sans Glagolitic	1	0.8	noto
-Latin-1 Supplement	128	Hack Nerd Font Mono	96	75.0	nerd-patch
 Latin-1 Supplement	128	Noto Serif Balinese	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Tai Tham	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Bamum	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans New Tai Lue	1	0.8	noto
-Latin-1 Supplement	128	MesloLGSDZ Nerd Font Mono	96	75.0	nerd-patch
-Latin-1 Supplement	128	FiraCode Nerd Font Mono	96	75.0	nerd-patch
 Latin-1 Supplement	128	Noto Sans Javanese	1	0.8	noto
 Latin-1 Supplement	128	Kohinoor Devanagari	90	70.3	unknown
-Latin-1 Supplement	128	Monaco	96	75.0	unknown
 Latin-1 Supplement	128	Noto Sans Cham	2	1.6	noto
 Latin-1 Supplement	128	Noto Sans Tai Viet	1	0.8	noto
-Latin-1 Supplement	128	AppleGothic	49	38.3	unknown
 Latin-1 Supplement	128	Noto Sans Saurashtra	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Meetei Mayek	1	0.8	noto
 Latin-1 Supplement	128	Sinhala Sangam MN	5	3.9	unknown
-Latin-1 Supplement	128	Snell Roundhand	95	74.2	unknown
 Latin-1 Supplement	128	PingFang TC	3	2.3	apple-cjk
-Latin-1 Supplement	128	MesloLGLDZ Nerd Font Mono	96	75.0	nerd-patch
-Latin-1 Supplement	128	Noto Sans Tifinagh	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Sundanese	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans PhagsPa	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Lepcha	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans NKo	1	0.8	noto
-Latin-1 Supplement	128	Noto Sans Syriac	4	3.1	noto
+Latin-1 Supplement	128	AppleGothic	49	38.3	unknown
 Latin-1 Supplement	128	Noto Sans Ol Chiki	1	0.8	noto
+Latin-1 Supplement	128	Noto Sans Syriac	4	3.1	noto
 Latin-1 Supplement	128	Noto Sans Limbu	1	0.8	noto
-Latin-1 Supplement	128	Menlo	96	75.0	unknown
 Latin-1 Supplement	128	Noto Sans Batak	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Samaritan	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Kayah Li	1	0.8	noto
@@ -175,46 +141,38 @@ Latin-1 Supplement	128	Noto Sans Thaana	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Syloti Nagri	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Tai Le	1	0.8	noto
 Latin-1 Supplement	128	Hiragino Sans GB	24	18.8	apple-cjk
-Latin-1 Supplement	128	Symbol	8	6.2	unknown
 Latin-1 Supplement	128	Noto Sans Mandaic	1	0.8	noto
-Latin-1 Supplement	128	MesloLGM Nerd Font Mono	96	75.0	nerd-patch
+Latin-1 Supplement	128	Symbol	8	6.2	unknown
 Latin-1 Supplement	128	Noto Sans Buginese	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Rejang	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Tagalog	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Hanunoo	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Buhid	1	0.8	noto
 Latin-1 Supplement	128	Noto Sans Tagbanwa	1	0.8	noto
-Latin-1 Supplement	128	Noto Nastaliq Urdu	6	4.7	noto
 Latin-1 Supplement	128	Grantha Sangam MN	96	75.0	unknown
 Latin-1 Supplement	128	Kohinoor Telugu	90	70.3	unknown
-Latin-1 Supplement	128	.CJK Symbols Fallback HK	6	4.7	unknown
 Latin-1 Supplement	128	Mukta Mahee	96	75.0	unknown
 Latin-1 Supplement	128	Athelas	96	75.0	unknown
 Latin-1 Supplement	128	Superclarendon	95	74.2	unknown
 Latin-1 Supplement	128	Noto Sans Oriya	4	3.1	noto
-Latin-1 Supplement	128	Helvetica Neue	96	75.0	unknown
-Latin-1 Supplement	128	DIN Condensed	96	75.0	unknown
 Latin-1 Supplement	128	Lucida Grande	96	75.0	unknown
+Latin-1 Supplement	128	Noto Nastaliq Urdu	6	4.7	noto
 Latin-1 Supplement	128	.SF Arabic	4	3.1	unknown
 Latin-1 Supplement	128	Kohinoor Bangla	90	70.3	unknown
 Latin-1 Supplement	128	Gujarati Sangam MN	5	3.9	unknown
 Latin-1 Supplement	128	Kannada MN	5	3.9	unknown
-Latin-1 Supplement	128	Noto Sans Armenian	1	0.8	noto
-Latin-1 Supplement	128	Geeza Pro	1	0.8	unknown
+Latin-1 Supplement	128	.CJK Symbols Fallback HK	6	4.7	unknown
 Latin-1 Supplement	128	Kokonor	1	0.8	unknown
 Latin-1 Supplement	128	Sukhumvit Set	96	75.0	unknown
 Latin-1 Supplement	128	.SF Telugu	1	0.8	unknown
 Latin-1 Supplement	128	.SF Kannada	1	0.8	unknown
 Latin-1 Supplement	128	Galvji	96	75.0	unknown
-Latin-1 Supplement	128	Lora	95	74.2	unknown
-Latin-1 Supplement	128	Terminess Nerd Font	96	75.0	nerd-patch
 Latin-1 Supplement	128	.DecoType Nastaleeq Urdu UI	6	4.7	unknown
 Latin-1 Supplement	128	Kohinoor Gujarati	10	7.8	unknown
 Latin-1 Supplement	128	Noto Sans Kannada	4	3.1	noto
-Latin-1 Supplement	128	.New York	95	74.2	unknown
-Latin-1 Supplement	128	Noto Sans Adlam	3	2.3	noto
 Latin-1 Supplement	128	Heiti SC	96	75.0	apple-cjk
 Latin-1 Supplement	128	.SF Devanagari	1	0.8	unknown
+Latin-1 Supplement	128	Geeza Pro	1	0.8	unknown
 Latin Extended-A	128	JetBrains Mono	126	98.4	embedded-ghostty
 Latin Extended-A	128	JetBrains Mono NoNF	126	98.4	embedded-ghostty
 Latin Extended-A	128	JuliaMono	128	100.0	embedded-ghostty
@@ -228,40 +186,22 @@ Latin Extended-A	128	Hiragino Sans	10	7.8	apple-cjk
 Latin Extended-A	128	VictorMono NFM SemiBold	115	89.8	nerd-patch
 Latin Extended-A	128	Monaspace Xenon	126	98.4	native
 Latin Extended-A	128	VictorMono Nerd Font Mono	115	89.8	nerd-patch
-Latin Extended-A	128	Euphemia UCAS	8	6.2	unknown
-Latin Extended-A	128	Courier New	128	100.0	unknown
 Latin Extended-A	128	Kefa III	128	100.0	unknown
-Latin Extended-A	128	CaskaydiaCove Nerd Font Mono	128	100.0	nerd-patch
-Latin Extended-A	128	MesloLGL Nerd Font Mono	128	100.0	nerd-patch
-Latin Extended-A	128	Gentium Book Plus	127	99.2	unknown
 Latin Extended-A	128	Geneva	128	100.0	unknown
-Latin Extended-A	128	MesloLGS Nerd Font Mono	128	100.0	nerd-patch
-Latin Extended-A	128	MesloLGMDZ Nerd Font Mono	128	100.0	nerd-patch
-Latin Extended-A	128	Hack Nerd Font Mono	128	100.0	nerd-patch
-Latin Extended-A	128	MesloLGSDZ Nerd Font Mono	128	100.0	nerd-patch
-Latin Extended-A	128	FiraCode Nerd Font Mono	127	99.2	nerd-patch
+Latin Extended-A	128	Courier New	128	100.0	unknown
+Latin Extended-A	128	CaskaydiaCove Nerd Font Mono	128	100.0	nerd-patch
 Latin Extended-A	128	Kohinoor Devanagari	128	100.0	unknown
-Latin Extended-A	128	Monaco	128	100.0	unknown
 Latin Extended-A	128	AppleGothic	32	25.0	unknown
-Latin Extended-A	128	Snell Roundhand	120	93.8	unknown
-Latin Extended-A	128	MesloLGLDZ Nerd Font Mono	128	100.0	nerd-patch
-Latin Extended-A	128	Menlo	128	100.0	unknown
 Latin Extended-A	128	Hiragino Sans GB	8	6.2	apple-cjk
-Latin Extended-A	128	MesloLGM Nerd Font Mono	128	100.0	nerd-patch
 Latin Extended-A	128	Grantha Sangam MN	115	89.8	unknown
 Latin Extended-A	128	Kohinoor Telugu	128	100.0	unknown
 Latin Extended-A	128	Mukta Mahee	126	98.4	unknown
 Latin Extended-A	128	Athelas	128	100.0	unknown
 Latin Extended-A	128	Superclarendon	125	97.7	unknown
-Latin Extended-A	128	Helvetica Neue	128	100.0	unknown
-Latin Extended-A	128	DIN Condensed	128	100.0	unknown
 Latin Extended-A	128	Lucida Grande	128	100.0	unknown
 Latin Extended-A	128	Kohinoor Bangla	128	100.0	unknown
 Latin Extended-A	128	Sukhumvit Set	10	7.8	unknown
 Latin Extended-A	128	Galvji	11	8.6	unknown
-Latin Extended-A	128	Lora	127	99.2	unknown
-Latin Extended-A	128	Terminess Nerd Font	128	100.0	nerd-patch
-Latin Extended-A	128	.New York	125	97.7	unknown
 Latin Extended-A	128	Heiti SC	128	100.0	apple-cjk
 Latin Extended-B	208	JetBrains Mono	34	16.3	embedded-ghostty
 Latin Extended-B	208	JetBrains Mono NoNF	34	16.3	embedded-ghostty
@@ -277,41 +217,23 @@ Latin Extended-B	208	Hiragino Sans	1	0.5	apple-cjk
 Latin Extended-B	208	VictorMono NFM SemiBold	26	12.5	nerd-patch
 Latin Extended-B	208	Monaspace Xenon	31	14.9	native
 Latin Extended-B	208	VictorMono Nerd Font Mono	26	12.5	nerd-patch
-Latin Extended-B	208	Euphemia UCAS	1	0.5	unknown
-Latin Extended-B	208	Courier New	193	92.8	unknown
 Latin Extended-B	208	Kefa III	12	5.8	unknown
-Latin Extended-B	208	CaskaydiaCove Nerd Font Mono	50	24.0	nerd-patch
-Latin Extended-B	208	MesloLGL Nerd Font Mono	179	86.1	nerd-patch
-Latin Extended-B	208	Gentium Book Plus	208	100.0	unknown
 Latin Extended-B	208	Geneva	208	100.0	unknown
-Latin Extended-B	208	MesloLGS Nerd Font Mono	179	86.1	nerd-patch
-Latin Extended-B	208	MesloLGMDZ Nerd Font Mono	179	86.1	nerd-patch
-Latin Extended-B	208	Hack Nerd Font Mono	14	6.7	nerd-patch
-Latin Extended-B	208	MesloLGSDZ Nerd Font Mono	179	86.1	nerd-patch
-Latin Extended-B	208	FiraCode Nerd Font Mono	10	4.8	nerd-patch
+Latin Extended-B	208	Courier New	193	92.8	unknown
+Latin Extended-B	208	CaskaydiaCove Nerd Font Mono	50	24.0	nerd-patch
 Latin Extended-B	208	Kohinoor Devanagari	6	2.9	unknown
-Latin Extended-B	208	Monaco	159	76.4	unknown
 Latin Extended-B	208	AppleGothic	56	26.9	unknown
-Latin Extended-B	208	Snell Roundhand	105	50.5	unknown
-Latin Extended-B	208	MesloLGLDZ Nerd Font Mono	179	86.1	nerd-patch
-Latin Extended-B	208	Menlo	179	86.1	unknown
 Latin Extended-B	208	Hiragino Sans GB	9	4.3	apple-cjk
 Latin Extended-B	208	Symbol	1	0.5	unknown
-Latin Extended-B	208	MesloLGM Nerd Font Mono	179	86.1	nerd-patch
 Latin Extended-B	208	Grantha Sangam MN	10	4.8	unknown
 Latin Extended-B	208	Kohinoor Telugu	6	2.9	unknown
 Latin Extended-B	208	Mukta Mahee	9	4.3	unknown
 Latin Extended-B	208	Athelas	102	49.0	unknown
 Latin Extended-B	208	Superclarendon	14	6.7	unknown
-Latin Extended-B	208	Helvetica Neue	171	82.2	unknown
-Latin Extended-B	208	DIN Condensed	11	5.3	unknown
 Latin Extended-B	208	Lucida Grande	184	88.5	unknown
 Latin Extended-B	208	Kohinoor Bangla	6	2.9	unknown
 Latin Extended-B	208	Sukhumvit Set	1	0.5	unknown
 Latin Extended-B	208	Galvji	1	0.5	unknown
-Latin Extended-B	208	Lora	28	13.5	unknown
-Latin Extended-B	208	Terminess Nerd Font	46	22.1	nerd-patch
-Latin Extended-B	208	.New York	111	53.4	unknown
 Latin Extended-B	208	Heiti SC	112	53.8	apple-cjk
 IPA Extensions	96	JetBrains Mono	1	1.0	embedded-ghostty
 IPA Extensions	96	JetBrains Mono NoNF	1	1.0	embedded-ghostty
@@ -323,28 +245,13 @@ IPA Extensions	96	Arial Unicode MS	89	92.7	pan-unicode-dump
 IPA Extensions	96	LastResort	96	100.0	last-resort
 IPA Extensions	96	Songti SC	3	3.1	apple-cjk
 IPA Extensions	96	Monaspace Xenon	83	86.5	native
-IPA Extensions	96	Courier New	96	100.0	unknown
 IPA Extensions	96	Kefa III	1	1.0	unknown
-IPA Extensions	96	CaskaydiaCove Nerd Font Mono	21	21.9	nerd-patch
-IPA Extensions	96	MesloLGL Nerd Font Mono	96	100.0	nerd-patch
-IPA Extensions	96	Gentium Book Plus	96	100.0	unknown
 IPA Extensions	96	Geneva	96	100.0	unknown
-IPA Extensions	96	MesloLGS Nerd Font Mono	96	100.0	nerd-patch
-IPA Extensions	96	MesloLGMDZ Nerd Font Mono	96	100.0	nerd-patch
-IPA Extensions	96	MesloLGSDZ Nerd Font Mono	96	100.0	nerd-patch
-IPA Extensions	96	Monaco	78	81.2	unknown
-IPA Extensions	96	Snell Roundhand	96	100.0	unknown
-IPA Extensions	96	MesloLGLDZ Nerd Font Mono	96	100.0	nerd-patch
-IPA Extensions	96	Menlo	96	100.0	unknown
+IPA Extensions	96	Courier New	96	100.0	unknown
+IPA Extensions	96	CaskaydiaCove Nerd Font Mono	21	21.9	nerd-patch
 IPA Extensions	96	Hiragino Sans GB	2	2.1	apple-cjk
-IPA Extensions	96	MesloLGM Nerd Font Mono	96	100.0	nerd-patch
 IPA Extensions	96	Superclarendon	96	100.0	unknown
-IPA Extensions	96	Helvetica Neue	78	81.2	unknown
-IPA Extensions	96	DIN Condensed	96	100.0	unknown
 IPA Extensions	96	Lucida Grande	96	100.0	unknown
-IPA Extensions	96	Lora	2	2.1	unknown
-IPA Extensions	96	Terminess Nerd Font	6	6.2	nerd-patch
-IPA Extensions	96	.New York	96	100.0	unknown
 IPA Extensions	96	Heiti SC	10	10.4	apple-cjk
 Spacing Modifier Letters	80	JetBrains Mono	14	17.5	embedded-ghostty
 Spacing Modifier Letters	80	JetBrains Mono NoNF	14	17.5	embedded-ghostty
@@ -362,44 +269,26 @@ Spacing Modifier Letters	80	VictorMono NFM SemiBold	9	11.2	nerd-patch
 Spacing Modifier Letters	80	Monaspace Xenon	21	26.2	native
 Spacing Modifier Letters	80	VictorMono Nerd Font Mono	9	11.2	nerd-patch
 Spacing Modifier Letters	80	PingFang HK	5	6.2	apple-cjk
-Spacing Modifier Letters	80	Euphemia UCAS	8	10.0	unknown
-Spacing Modifier Letters	80	Courier New	73	91.2	unknown
 Spacing Modifier Letters	80	Kefa III	9	11.2	unknown
-Spacing Modifier Letters	80	CaskaydiaCove Nerd Font Mono	15	18.8	nerd-patch
-Spacing Modifier Letters	80	MesloLGL Nerd Font Mono	48	60.0	nerd-patch
-Spacing Modifier Letters	80	Gentium Book Plus	80	100.0	unknown
-Spacing Modifier Letters	80	Geneva	80	100.0	unknown
 Spacing Modifier Letters	80	PingFang MO	5	6.2	apple-cjk
-Spacing Modifier Letters	80	MesloLGS Nerd Font Mono	48	60.0	nerd-patch
-Spacing Modifier Letters	80	MesloLGMDZ Nerd Font Mono	48	60.0	nerd-patch
-Spacing Modifier Letters	80	Hack Nerd Font Mono	8	10.0	nerd-patch
-Spacing Modifier Letters	80	MesloLGSDZ Nerd Font Mono	48	60.0	nerd-patch
-Spacing Modifier Letters	80	FiraCode Nerd Font Mono	12	15.0	nerd-patch
+Spacing Modifier Letters	80	Geneva	80	100.0	unknown
+Spacing Modifier Letters	80	Courier New	73	91.2	unknown
+Spacing Modifier Letters	80	CaskaydiaCove Nerd Font Mono	15	18.8	nerd-patch
 Spacing Modifier Letters	80	Kohinoor Devanagari	9	11.2	unknown
-Spacing Modifier Letters	80	Monaco	79	98.8	unknown
-Spacing Modifier Letters	80	AppleGothic	10	12.5	unknown
-Spacing Modifier Letters	80	Snell Roundhand	17	21.2	unknown
 Spacing Modifier Letters	80	PingFang TC	5	6.2	apple-cjk
-Spacing Modifier Letters	80	MesloLGLDZ Nerd Font Mono	48	60.0	nerd-patch
-Spacing Modifier Letters	80	Menlo	48	60.0	unknown
+Spacing Modifier Letters	80	AppleGothic	10	12.5	unknown
 Spacing Modifier Letters	80	Hiragino Sans GB	5	6.2	apple-cjk
 Spacing Modifier Letters	80	Symbol	2	2.5	unknown
-Spacing Modifier Letters	80	MesloLGM Nerd Font Mono	48	60.0	nerd-patch
 Spacing Modifier Letters	80	Grantha Sangam MN	9	11.2	unknown
 Spacing Modifier Letters	80	Kohinoor Telugu	8	10.0	unknown
-Spacing Modifier Letters	80	.CJK Symbols Fallback HK	2	2.5	unknown
 Spacing Modifier Letters	80	Mukta Mahee	9	11.2	unknown
 Spacing Modifier Letters	80	Athelas	12	15.0	unknown
 Spacing Modifier Letters	80	Superclarendon	9	11.2	unknown
-Spacing Modifier Letters	80	Helvetica Neue	80	100.0	unknown
-Spacing Modifier Letters	80	DIN Condensed	9	11.2	unknown
 Spacing Modifier Letters	80	Lucida Grande	80	100.0	unknown
 Spacing Modifier Letters	80	Kohinoor Bangla	9	11.2	unknown
+Spacing Modifier Letters	80	.CJK Symbols Fallback HK	2	2.5	unknown
 Spacing Modifier Letters	80	Sukhumvit Set	8	10.0	unknown
 Spacing Modifier Letters	80	Galvji	8	10.0	unknown
-Spacing Modifier Letters	80	Lora	11	13.8	unknown
-Spacing Modifier Letters	80	Terminess Nerd Font	10	12.5	nerd-patch
-Spacing Modifier Letters	80	.New York	34	42.5	unknown
 Spacing Modifier Letters	80	Heiti SC	21	26.2	apple-cjk
 Combining Diacritical Marks	112	JetBrains Mono	23	20.5	embedded-ghostty
 Combining Diacritical Marks	112	JetBrains Mono NoNF	23	20.5	embedded-ghostty
@@ -415,42 +304,23 @@ Combining Diacritical Marks	112	Hiragino Sans	16	14.3	apple-cjk
 Combining Diacritical Marks	112	VictorMono NFM SemiBold	18	16.1	nerd-patch
 Combining Diacritical Marks	112	Monaspace Xenon	29	25.9	native
 Combining Diacritical Marks	112	VictorMono Nerd Font Mono	18	16.1	nerd-patch
-Combining Diacritical Marks	112	Euphemia UCAS	1	0.9	unknown
-Combining Diacritical Marks	112	Courier New	112	100.0	unknown
 Combining Diacritical Marks	112	Kefa III	1	0.9	unknown
-Combining Diacritical Marks	112	CaskaydiaCove Nerd Font Mono	26	23.2	nerd-patch
-Combining Diacritical Marks	112	MesloLGL Nerd Font Mono	67	59.8	nerd-patch
-Combining Diacritical Marks	112	Gentium Book Plus	108	96.4	unknown
 Combining Diacritical Marks	112	Geneva	112	100.0	unknown
-Combining Diacritical Marks	112	MesloLGS Nerd Font Mono	67	59.8	nerd-patch
+Combining Diacritical Marks	112	Courier New	112	100.0	unknown
+Combining Diacritical Marks	112	CaskaydiaCove Nerd Font Mono	26	23.2	nerd-patch
 Combining Diacritical Marks	112	Noto Sans Coptic	10	8.9	noto
-Combining Diacritical Marks	112	MesloLGMDZ Nerd Font Mono	67	59.8	nerd-patch
 Combining Diacritical Marks	112	Noto Sans Glagolitic	2	1.8	noto
-Combining Diacritical Marks	112	Hack Nerd Font Mono	5	4.5	nerd-patch
-Combining Diacritical Marks	112	MesloLGSDZ Nerd Font Mono	67	59.8	nerd-patch
-Combining Diacritical Marks	112	FiraCode Nerd Font Mono	21	18.8	nerd-patch
-Combining Diacritical Marks	112	Monaco	112	100.0	unknown
 Combining Diacritical Marks	112	AppleGothic	6	5.4	unknown
-Combining Diacritical Marks	112	Snell Roundhand	37	33.0	unknown
-Combining Diacritical Marks	112	MesloLGLDZ Nerd Font Mono	67	59.8	nerd-patch
-Combining Diacritical Marks	112	Noto Sans Tifinagh	9	8.0	noto
 Combining Diacritical Marks	112	Noto Sans Syriac	13	11.6	noto
-Combining Diacritical Marks	112	Menlo	67	59.8	unknown
 Combining Diacritical Marks	112	Noto Sans Tai Le	5	4.5	noto
 Combining Diacritical Marks	112	Symbol	1	0.9	unknown
-Combining Diacritical Marks	112	MesloLGM Nerd Font Mono	67	59.8	nerd-patch
 Combining Diacritical Marks	112	Grantha Sangam MN	18	16.1	unknown
-Combining Diacritical Marks	112	.CJK Symbols Fallback HK	2	1.8	unknown
 Combining Diacritical Marks	112	Athelas	28	25.0	unknown
 Combining Diacritical Marks	112	Superclarendon	3	2.7	unknown
-Combining Diacritical Marks	112	Helvetica Neue	112	100.0	unknown
-Combining Diacritical Marks	112	DIN Condensed	5	4.5	unknown
 Combining Diacritical Marks	112	Lucida Grande	106	94.6	unknown
 Combining Diacritical Marks	112	.SF Arabic	1	0.9	unknown
+Combining Diacritical Marks	112	.CJK Symbols Fallback HK	2	1.8	unknown
 Combining Diacritical Marks	112	Galvji	19	17.0	unknown
-Combining Diacritical Marks	112	Lora	20	17.9	unknown
-Combining Diacritical Marks	112	Terminess Nerd Font	13	11.6	nerd-patch
-Combining Diacritical Marks	112	.New York	39	34.8	unknown
 Combining Diacritical Marks	112	Heiti SC	46	41.1	apple-cjk
 Greek and Coptic	135	JetBrains Mono	79	58.5	embedded-ghostty
 Greek and Coptic	135	JetBrains Mono NoNF	79	58.5	embedded-ghostty
@@ -466,41 +336,24 @@ Greek and Coptic	135	Hiragino Sans	48	35.6	apple-cjk
 Greek and Coptic	135	VictorMono NFM SemiBold	77	57.0	nerd-patch
 Greek and Coptic	135	Monaspace Xenon	81	60.0	native
 Greek and Coptic	135	VictorMono Nerd Font Mono	77	57.0	nerd-patch
-Greek and Coptic	135	Courier New	124	91.9	unknown
 Greek and Coptic	135	Kefa III	5	3.7	unknown
-Greek and Coptic	135	CaskaydiaCove Nerd Font Mono	77	57.0	nerd-patch
-Greek and Coptic	135	MesloLGL Nerd Font Mono	110	81.5	nerd-patch
-Greek and Coptic	135	Gentium Book Plus	121	89.6	unknown
 Greek and Coptic	135	Geneva	113	83.7	unknown
-Greek and Coptic	135	MesloLGS Nerd Font Mono	110	81.5	nerd-patch
+Greek and Coptic	135	Courier New	124	91.9	unknown
+Greek and Coptic	135	CaskaydiaCove Nerd Font Mono	77	57.0	nerd-patch
 Greek and Coptic	135	Noto Sans Coptic	16	11.9	noto
-Greek and Coptic	135	MesloLGMDZ Nerd Font Mono	110	81.5	nerd-patch
-Greek and Coptic	135	Hack Nerd Font Mono	73	54.1	nerd-patch
-Greek and Coptic	135	MesloLGSDZ Nerd Font Mono	110	81.5	nerd-patch
-Greek and Coptic	135	FiraCode Nerd Font Mono	121	89.6	nerd-patch
 Greek and Coptic	135	Kohinoor Devanagari	1	0.7	unknown
-Greek and Coptic	135	Monaco	29	21.5	unknown
 Greek and Coptic	135	AppleGothic	55	40.7	unknown
-Greek and Coptic	135	Snell Roundhand	134	99.3	unknown
-Greek and Coptic	135	MesloLGLDZ Nerd Font Mono	110	81.5	nerd-patch
-Greek and Coptic	135	Menlo	110	81.5	unknown
 Greek and Coptic	135	Hiragino Sans GB	48	35.6	apple-cjk
 Greek and Coptic	135	Symbol	53	39.3	unknown
-Greek and Coptic	135	MesloLGM Nerd Font Mono	110	81.5	nerd-patch
 Greek and Coptic	135	Grantha Sangam MN	5	3.7	unknown
 Greek and Coptic	135	Kohinoor Telugu	1	0.7	unknown
 Greek and Coptic	135	Mukta Mahee	1	0.7	unknown
 Greek and Coptic	135	Athelas	134	99.3	unknown
 Greek and Coptic	135	Superclarendon	134	99.3	unknown
-Greek and Coptic	135	Helvetica Neue	93	68.9	unknown
-Greek and Coptic	135	DIN Condensed	135	100.0	unknown
 Greek and Coptic	135	Lucida Grande	106	78.5	unknown
 Greek and Coptic	135	Kohinoor Bangla	1	0.7	unknown
 Greek and Coptic	135	Sukhumvit Set	2	1.5	unknown
 Greek and Coptic	135	Galvji	2	1.5	unknown
-Greek and Coptic	135	Lora	6	4.4	unknown
-Greek and Coptic	135	Terminess Nerd Font	81	60.0	nerd-patch
-Greek and Coptic	135	.New York	74	54.8	unknown
 Greek and Coptic	135	Heiti SC	76	56.3	apple-cjk
 Cyrillic	256	JetBrains Mono	122	47.7	embedded-ghostty
 Cyrillic	256	JetBrains Mono NoNF	122	47.7	embedded-ghostty
@@ -514,68 +367,33 @@ Cyrillic	256	Hiragino Sans	66	25.8	apple-cjk
 Cyrillic	256	VictorMono NFM SemiBold	220	85.9	nerd-patch
 Cyrillic	256	Monaspace Xenon	124	48.4	native
 Cyrillic	256	VictorMono Nerd Font Mono	220	85.9	nerd-patch
+Cyrillic	256	Geneva	250	97.7	unknown
 Cyrillic	256	Courier New	248	96.9	unknown
 Cyrillic	256	CaskaydiaCove Nerd Font Mono	126	49.2	nerd-patch
-Cyrillic	256	MesloLGL Nerd Font Mono	176	68.8	nerd-patch
-Cyrillic	256	Gentium Book Plus	220	85.9	unknown
-Cyrillic	256	Geneva	250	97.7	unknown
-Cyrillic	256	MesloLGS Nerd Font Mono	176	68.8	nerd-patch
-Cyrillic	256	MesloLGMDZ Nerd Font Mono	176	68.8	nerd-patch
 Cyrillic	256	Noto Sans Glagolitic	2	0.8	noto
-Cyrillic	256	Hack Nerd Font Mono	180	70.3	nerd-patch
-Cyrillic	256	MesloLGSDZ Nerd Font Mono	176	68.8	nerd-patch
-Cyrillic	256	FiraCode Nerd Font Mono	240	93.8	nerd-patch
-Cyrillic	256	Monaco	191	74.6	unknown
 Cyrillic	256	AppleGothic	94	36.7	unknown
-Cyrillic	256	Snell Roundhand	256	100.0	unknown
-Cyrillic	256	MesloLGLDZ Nerd Font Mono	176	68.8	nerd-patch
-Cyrillic	256	Menlo	176	68.8	unknown
 Cyrillic	256	Hiragino Sans GB	66	25.8	apple-cjk
-Cyrillic	256	MesloLGM Nerd Font Mono	176	68.8	nerd-patch
 Cyrillic	256	Athelas	101	39.5	unknown
 Cyrillic	256	Superclarendon	256	100.0	unknown
-Cyrillic	256	Helvetica Neue	210	82.0	unknown
-Cyrillic	256	DIN Condensed	256	100.0	unknown
 Cyrillic	256	Lucida Grande	244	95.3	unknown
-Cyrillic	256	Lora	224	87.5	unknown
-Cyrillic	256	Terminess Nerd Font	176	68.8	nerd-patch
-Cyrillic	256	.New York	220	85.9	unknown
 Cyrillic	256	Heiti SC	129	50.4	apple-cjk
 Cyrillic Supplement	48	JuliaMono	48	100.0	embedded-ghostty
 Cyrillic Supplement	48	LastResort	48	100.0	last-resort
 Cyrillic Supplement	48	VictorMono NFM SemiBold	12	25.0	nerd-patch
 Cyrillic Supplement	48	VictorMono Nerd Font Mono	12	25.0	nerd-patch
-Cyrillic Supplement	48	Courier New	16	33.3	unknown
-Cyrillic Supplement	48	MesloLGL Nerd Font Mono	6	12.5	nerd-patch
-Cyrillic Supplement	48	Gentium Book Plus	48	100.0	unknown
 Cyrillic Supplement	48	Geneva	36	75.0	unknown
-Cyrillic Supplement	48	MesloLGS Nerd Font Mono	6	12.5	nerd-patch
-Cyrillic Supplement	48	MesloLGMDZ Nerd Font Mono	6	12.5	nerd-patch
-Cyrillic Supplement	48	Hack Nerd Font Mono	6	12.5	nerd-patch
-Cyrillic Supplement	48	MesloLGSDZ Nerd Font Mono	6	12.5	nerd-patch
-Cyrillic Supplement	48	FiraCode Nerd Font Mono	48	100.0	nerd-patch
-Cyrillic Supplement	48	Snell Roundhand	40	83.3	unknown
-Cyrillic Supplement	48	MesloLGLDZ Nerd Font Mono	6	12.5	nerd-patch
-Cyrillic Supplement	48	Menlo	6	12.5	unknown
-Cyrillic Supplement	48	MesloLGM Nerd Font Mono	6	12.5	nerd-patch
+Cyrillic Supplement	48	Courier New	16	33.3	unknown
 Cyrillic Supplement	48	Superclarendon	40	83.3	unknown
-Cyrillic Supplement	48	Helvetica Neue	6	12.5	unknown
-Cyrillic Supplement	48	DIN Condensed	48	100.0	unknown
 Cyrillic Supplement	48	Lucida Grande	16	33.3	unknown
-Cyrillic Supplement	48	Lora	16	33.3	unknown
-Cyrillic Supplement	48	.New York	12	25.0	unknown
 Armenian	91	JuliaMono	91	100.0	embedded-ghostty
 Armenian	91	Arial Unicode MS	85	93.4	pan-unicode-dump
 Armenian	91	LastResort	91	100.0	last-resort
-Armenian	91	Hack Nerd Font Mono	86	94.5	nerd-patch
-Armenian	91	Noto Sans Armenian	89	97.8	noto
 Hebrew	88	JuliaMono	88	100.0	embedded-ghostty
 Hebrew	88	Arial Unicode MS	82	93.2	pan-unicode-dump
 Hebrew	88	LastResort	88	100.0	last-resort
 Hebrew	88	Courier New	87	98.9	unknown
 Hebrew	88	CaskaydiaCove Nerd Font Mono	39	44.3	nerd-patch
 Hebrew	88	Lucida Grande	82	93.2	unknown
-Hebrew	88	Terminess Nerd Font	27	30.7	nerd-patch
 Arabic	256	JuliaMono	122	47.7	embedded-ghostty
 Arabic	256	Arial Unicode MS	194	75.8	pan-unicode-dump
 Arabic	256	LastResort	256	100.0	last-resort
@@ -587,9 +405,8 @@ Arabic	256	Noto Sans Thaana	16	6.2	noto
 Arabic	256	Noto Sans Mandaic	1	0.4	noto
 Arabic	256	Noto Nastaliq Urdu	178	69.5	noto
 Arabic	256	.SF Arabic	255	99.6	unknown
-Arabic	256	Geeza Pro	250	97.7	unknown
 Arabic	256	.DecoType Nastaleeq Urdu UI	223	87.1	unknown
-Arabic	256	Noto Sans Adlam	2	0.8	noto
+Arabic	256	Geeza Pro	250	97.7	unknown
 Syriac	77	JuliaMono	2	2.6	embedded-ghostty
 Syriac	77	LastResort	77	100.0	last-resort
 Syriac	77	Noto Sans Syriac	77	100.0	noto
@@ -598,8 +415,8 @@ Arabic Supplement	48	Courier New	30	62.5	unknown
 Arabic Supplement	48	CaskaydiaCove Nerd Font Mono	48	100.0	nerd-patch
 Arabic Supplement	48	Noto Nastaliq Urdu	26	54.2	noto
 Arabic Supplement	48	.SF Arabic	46	95.8	unknown
-Arabic Supplement	48	Geeza Pro	48	100.0	unknown
 Arabic Supplement	48	.DecoType Nastaleeq Urdu UI	47	97.9	unknown
+Arabic Supplement	48	Geeza Pro	48	100.0	unknown
 Thaana	50	LastResort	50	100.0	last-resort
 Thaana	50	Noto Sans Thaana	50	100.0	noto
 NKo	62	JuliaMono	1	1.6	embedded-ghostty
@@ -672,10 +489,7 @@ Thai	87	Arial Unicode MS	87	100.0	pan-unicode-dump
 Thai	87	LastResort	87	100.0	last-resort
 Thai	87	Monaspace Xenon	1	1.1	native
 Thai	87	CaskaydiaCove Nerd Font Mono	1	1.1	nerd-patch
-Thai	87	Hack Nerd Font Mono	1	1.1	nerd-patch
-Thai	87	Helvetica Neue	1	1.1	unknown
 Thai	87	Sukhumvit Set	87	100.0	unknown
-Thai	87	.New York	1	1.1	unknown
 Lao	82	Arial Unicode MS	65	79.3	pan-unicode-dump
 Lao	82	LastResort	82	100.0	last-resort
 Tibetan	211	JuliaMono	7	3.3	embedded-ghostty
@@ -689,19 +503,9 @@ Myanmar	160	Noto Sans Tai Le	10	6.2	noto
 Georgian	88	JuliaMono	88	100.0	embedded-ghostty
 Georgian	88	Arial Unicode MS	78	88.6	pan-unicode-dump
 Georgian	88	LastResort	88	100.0	last-resort
-Georgian	88	MesloLGL Nerd Font Mono	45	51.1	nerd-patch
-Georgian	88	MesloLGS Nerd Font Mono	45	51.1	nerd-patch
-Georgian	88	MesloLGMDZ Nerd Font Mono	45	51.1	nerd-patch
-Georgian	88	Hack Nerd Font Mono	45	51.1	nerd-patch
-Georgian	88	MesloLGSDZ Nerd Font Mono	45	51.1	nerd-patch
-Georgian	88	MesloLGLDZ Nerd Font Mono	45	51.1	nerd-patch
-Georgian	88	Menlo	45	51.1	unknown
-Georgian	88	MesloLGM Nerd Font Mono	45	51.1	nerd-patch
-Georgian	88	Helvetica Neue	48	54.5	unknown
 Hangul Jamo	256	Arial Unicode MS	240	93.8	pan-unicode-dump
 Hangul Jamo	256	LastResort	256	100.0	last-resort
 Hangul Jamo	256	AppleGothic	69	27.0	unknown
-Hangul Jamo	256	Snell Roundhand	2	0.8	unknown
 Ethiopic	358	LastResort	358	100.0	last-resort
 Ethiopic	358	Kefa III	358	100.0	unknown
 Ethiopic Supplement	26	LastResort	26	100.0	last-resort
@@ -711,8 +515,6 @@ Cherokee	92	Geneva	90	97.8	unknown
 Cherokee	92	Galvji	92	100.0	unknown
 Unified Canadian Aboriginal Syllabics	640	JuliaMono	640	100.0	embedded-ghostty
 Unified Canadian Aboriginal Syllabics	640	LastResort	640	100.0	last-resort
-Unified Canadian Aboriginal Syllabics	640	Euphemia UCAS	640	100.0	unknown
-Unified Canadian Aboriginal Syllabics	640	FiraCode Nerd Font Mono	2	0.3	nerd-patch
 Ogham	29	JuliaMono	29	100.0	embedded-ghostty
 Ogham	29	Apple Symbols	29	100.0	apple-system
 Ogham	29	LastResort	29	100.0	last-resort
@@ -740,7 +542,6 @@ Mongolian	158	Noto Sans PhagsPa	4	2.5	noto
 Mongolian	158	Heiti SC	151	95.6	apple-cjk
 Unified Canadian Aboriginal Syllabics Extended	70	JuliaMono	70	100.0	embedded-ghostty
 Unified Canadian Aboriginal Syllabics Extended	70	LastResort	70	100.0	last-resort
-Unified Canadian Aboriginal Syllabics Extended	70	Euphemia UCAS	70	100.0	unknown
 Limbu	68	LastResort	68	100.0	last-resort
 Limbu	68	Noto Sans Limbu	68	100.0	noto
 Tai Le	35	LastResort	35	100.0	last-resort
@@ -755,7 +556,6 @@ Tai Tham	127	LastResort	127	100.0	last-resort
 Tai Tham	127	Noto Sans Tai Tham	127	100.0	noto
 Combining Diacritical Marks Extended	31	JuliaMono	16	51.6	embedded-ghostty
 Combining Diacritical Marks Extended	31	LastResort	31	100.0	last-resort
-Combining Diacritical Marks Extended	31	Gentium Book Plus	11	35.5	unknown
 Balinese	124	LastResort	124	100.0	last-resort
 Balinese	124	Noto Serif Balinese	121	97.6	noto
 Sundanese	64	LastResort	64	100.0	last-resort
@@ -768,11 +568,8 @@ Ol Chiki	48	LastResort	48	100.0	last-resort
 Ol Chiki	48	Noto Sans Ol Chiki	48	100.0	noto
 Cyrillic Extended-C	9	JuliaMono	9	100.0	embedded-ghostty
 Cyrillic Extended-C	9	LastResort	9	100.0	last-resort
-Cyrillic Extended-C	9	Lora	2	22.2	unknown
 Georgian Extended	46	JuliaMono	46	100.0	embedded-ghostty
 Georgian Extended	46	LastResort	46	100.0	last-resort
-Georgian Extended	46	Menlo	43	93.5	unknown
-Georgian Extended	46	Helvetica Neue	46	100.0	unknown
 Sundanese Supplement	8	LastResort	8	100.0	last-resort
 Sundanese Supplement	8	Noto Sans Sundanese	8	100.0	noto
 Vedic Extensions	43	LastResort	43	100.0	last-resort
@@ -782,50 +579,24 @@ Phonetic Extensions	128	JuliaMono	128	100.0	embedded-ghostty
 Phonetic Extensions	128	STIX Two Math	3	2.3	math
 Phonetic Extensions	128	LastResort	128	100.0	last-resort
 Phonetic Extensions	128	Monaspace Xenon	45	35.2	native
+Phonetic Extensions	128	Geneva	123	96.1	unknown
 Phonetic Extensions	128	Courier New	128	100.0	unknown
 Phonetic Extensions	128	CaskaydiaCove Nerd Font Mono	1	0.8	nerd-patch
-Phonetic Extensions	128	MesloLGL Nerd Font Mono	62	48.4	nerd-patch
-Phonetic Extensions	128	Gentium Book Plus	128	100.0	unknown
-Phonetic Extensions	128	Geneva	123	96.1	unknown
-Phonetic Extensions	128	MesloLGS Nerd Font Mono	62	48.4	nerd-patch
-Phonetic Extensions	128	MesloLGMDZ Nerd Font Mono	62	48.4	nerd-patch
-Phonetic Extensions	128	MesloLGSDZ Nerd Font Mono	62	48.4	nerd-patch
-Phonetic Extensions	128	Monaco	109	85.2	unknown
-Phonetic Extensions	128	Snell Roundhand	128	100.0	unknown
-Phonetic Extensions	128	MesloLGLDZ Nerd Font Mono	62	48.4	nerd-patch
-Phonetic Extensions	128	Menlo	62	48.4	unknown
-Phonetic Extensions	128	MesloLGM Nerd Font Mono	62	48.4	nerd-patch
 Phonetic Extensions	128	Superclarendon	128	100.0	unknown
-Phonetic Extensions	128	Helvetica Neue	62	48.4	unknown
-Phonetic Extensions	128	DIN Condensed	128	100.0	unknown
 Phonetic Extensions	128	Lucida Grande	108	84.4	unknown
 Phonetic Extensions Supplement	64	JuliaMono	64	100.0	embedded-ghostty
 Phonetic Extensions Supplement	64	STIX Two Math	9	14.1	math
 Phonetic Extensions Supplement	64	LastResort	64	100.0	last-resort
 Phonetic Extensions Supplement	64	Monaspace Xenon	3	4.7	native
-Phonetic Extensions Supplement	64	Euphemia UCAS	1	1.6	unknown
+Phonetic Extensions Supplement	64	Geneva	60	93.8	unknown
 Phonetic Extensions Supplement	64	Courier New	64	100.0	unknown
 Phonetic Extensions Supplement	64	CaskaydiaCove Nerd Font Mono	2	3.1	nerd-patch
-Phonetic Extensions Supplement	64	MesloLGL Nerd Font Mono	37	57.8	nerd-patch
-Phonetic Extensions Supplement	64	Gentium Book Plus	64	100.0	unknown
-Phonetic Extensions Supplement	64	Geneva	60	93.8	unknown
-Phonetic Extensions Supplement	64	MesloLGS Nerd Font Mono	37	57.8	nerd-patch
-Phonetic Extensions Supplement	64	MesloLGMDZ Nerd Font Mono	37	57.8	nerd-patch
-Phonetic Extensions Supplement	64	MesloLGSDZ Nerd Font Mono	37	57.8	nerd-patch
-Phonetic Extensions Supplement	64	Snell Roundhand	64	100.0	unknown
-Phonetic Extensions Supplement	64	MesloLGLDZ Nerd Font Mono	37	57.8	nerd-patch
-Phonetic Extensions Supplement	64	Menlo	37	57.8	unknown
-Phonetic Extensions Supplement	64	MesloLGM Nerd Font Mono	37	57.8	nerd-patch
 Phonetic Extensions Supplement	64	Superclarendon	64	100.0	unknown
-Phonetic Extensions Supplement	64	Helvetica Neue	1	1.6	unknown
-Phonetic Extensions Supplement	64	DIN Condensed	64	100.0	unknown
 Combining Diacritical Marks Supplement	64	JuliaMono	58	90.6	embedded-ghostty
 Combining Diacritical Marks Supplement	64	LastResort	64	100.0	last-resort
-Combining Diacritical Marks Supplement	64	Courier New	4	6.2	unknown
-Combining Diacritical Marks Supplement	64	Gentium Book Plus	15	23.4	unknown
 Combining Diacritical Marks Supplement	64	Geneva	35	54.7	unknown
+Combining Diacritical Marks Supplement	64	Courier New	4	6.2	unknown
 Combining Diacritical Marks Supplement	64	Noto Sans Coptic	1	1.6	noto
-Combining Diacritical Marks Supplement	64	Helvetica Neue	9	14.1	unknown
 Combining Diacritical Marks Supplement	64	Galvji	2	3.1	unknown
 Latin Extended Additional	256	JetBrains Mono	97	37.9	embedded-ghostty
 Latin Extended Additional	256	JetBrains Mono NoNF	97	37.9	embedded-ghostty
@@ -839,61 +610,32 @@ Latin Extended Additional	256	Songti SC	9	3.5	apple-cjk
 Latin Extended Additional	256	VictorMono NFM SemiBold	97	37.9	nerd-patch
 Latin Extended Additional	256	Monaspace Xenon	99	38.7	native
 Latin Extended Additional	256	VictorMono Nerd Font Mono	97	37.9	nerd-patch
-Latin Extended Additional	256	Courier New	245	95.7	unknown
 Latin Extended Additional	256	Kefa III	111	43.4	unknown
-Latin Extended Additional	256	CaskaydiaCove Nerd Font Mono	119	46.5	nerd-patch
-Latin Extended Additional	256	MesloLGL Nerd Font Mono	178	69.5	nerd-patch
-Latin Extended Additional	256	Gentium Book Plus	256	100.0	unknown
 Latin Extended Additional	256	Geneva	256	100.0	unknown
-Latin Extended Additional	256	MesloLGS Nerd Font Mono	178	69.5	nerd-patch
-Latin Extended Additional	256	MesloLGMDZ Nerd Font Mono	178	69.5	nerd-patch
-Latin Extended Additional	256	Hack Nerd Font Mono	12	4.7	nerd-patch
-Latin Extended Additional	256	MesloLGSDZ Nerd Font Mono	178	69.5	nerd-patch
-Latin Extended Additional	256	FiraCode Nerd Font Mono	9	3.5	nerd-patch
+Latin Extended Additional	256	Courier New	245	95.7	unknown
+Latin Extended Additional	256	CaskaydiaCove Nerd Font Mono	119	46.5	nerd-patch
 Latin Extended Additional	256	Kohinoor Devanagari	8	3.1	unknown
-Latin Extended Additional	256	Monaco	246	96.1	unknown
 Latin Extended Additional	256	AppleGothic	130	50.8	unknown
-Latin Extended Additional	256	Snell Roundhand	244	95.3	unknown
-Latin Extended Additional	256	MesloLGLDZ Nerd Font Mono	178	69.5	nerd-patch
-Latin Extended Additional	256	Menlo	178	69.5	unknown
 Latin Extended Additional	256	Hiragino Sans GB	1	0.4	apple-cjk
-Latin Extended Additional	256	MesloLGM Nerd Font Mono	178	69.5	nerd-patch
 Latin Extended Additional	256	Grantha Sangam MN	111	43.4	unknown
 Latin Extended Additional	256	Kohinoor Telugu	8	3.1	unknown
 Latin Extended Additional	256	Mukta Mahee	40	15.6	unknown
 Latin Extended Additional	256	Athelas	225	87.9	unknown
 Latin Extended Additional	256	Superclarendon	90	35.2	unknown
-Latin Extended Additional	256	Helvetica Neue	246	96.1	unknown
-Latin Extended Additional	256	DIN Condensed	90	35.2	unknown
 Latin Extended Additional	256	Lucida Grande	246	96.1	unknown
 Latin Extended Additional	256	Kohinoor Bangla	8	3.1	unknown
 Latin Extended Additional	256	Galvji	1	0.4	unknown
-Latin Extended Additional	256	Lora	97	37.9	unknown
-Latin Extended Additional	256	Terminess Nerd Font	28	10.9	nerd-patch
-Latin Extended Additional	256	.New York	245	95.7	unknown
 Latin Extended Additional	256	Heiti SC	246	96.1	apple-cjk
 Greek Extended	233	JuliaMono	233	100.0	embedded-ghostty
 Greek Extended	233	Apple Symbols	14	6.0	apple-system
 Greek Extended	233	Arial Unicode MS	233	100.0	pan-unicode-dump
 Greek Extended	233	LastResort	233	100.0	last-resort
 Greek Extended	233	Songti SC	3	1.3	apple-cjk
-Greek Extended	233	Courier New	233	100.0	unknown
-Greek Extended	233	MesloLGL Nerd Font Mono	233	100.0	nerd-patch
-Greek Extended	233	Gentium Book Plus	233	100.0	unknown
 Greek Extended	233	Geneva	233	100.0	unknown
-Greek Extended	233	MesloLGS Nerd Font Mono	233	100.0	nerd-patch
-Greek Extended	233	MesloLGMDZ Nerd Font Mono	233	100.0	nerd-patch
-Greek Extended	233	MesloLGSDZ Nerd Font Mono	233	100.0	nerd-patch
-Greek Extended	233	FiraCode Nerd Font Mono	233	100.0	nerd-patch
+Greek Extended	233	Courier New	233	100.0	unknown
 Greek Extended	233	AppleGothic	9	3.9	unknown
-Greek Extended	233	Snell Roundhand	233	100.0	unknown
-Greek Extended	233	MesloLGLDZ Nerd Font Mono	233	100.0	nerd-patch
-Greek Extended	233	Menlo	233	100.0	unknown
-Greek Extended	233	MesloLGM Nerd Font Mono	233	100.0	nerd-patch
 Greek Extended	233	Athelas	233	100.0	unknown
 Greek Extended	233	Superclarendon	233	100.0	unknown
-Greek Extended	233	Helvetica Neue	233	100.0	unknown
-Greek Extended	233	DIN Condensed	233	100.0	unknown
 Greek Extended	233	Lucida Grande	233	100.0	unknown
 General Punctuation	111	JetBrains Mono	36	32.4	embedded-ghostty
 General Punctuation	111	JetBrains Mono NoNF	36	32.4	embedded-ghostty
@@ -912,50 +654,37 @@ General Punctuation	111	VictorMono NFM SemiBold	22	19.8	nerd-patch
 General Punctuation	111	Monaspace Xenon	47	42.3	native
 General Punctuation	111	VictorMono Nerd Font Mono	22	19.8	nerd-patch
 General Punctuation	111	PingFang HK	13	11.7	apple-cjk
-General Punctuation	111	Euphemia UCAS	19	17.1	unknown
-General Punctuation	111	Courier New	36	32.4	unknown
 General Punctuation	111	Kefa III	21	18.9	unknown
-General Punctuation	111	CaskaydiaCove Nerd Font Mono	29	26.1	nerd-patch
-General Punctuation	111	MesloLGL Nerd Font Mono	54	48.6	nerd-patch
-General Punctuation	111	Gentium Book Plus	76	68.5	unknown
 General Punctuation	111	Noto Sans Vai	2	1.8	noto
-General Punctuation	111	Geneva	107	96.4	unknown
 General Punctuation	111	PingFang MO	13	11.7	apple-cjk
-General Punctuation	111	MesloLGS Nerd Font Mono	54	48.6	nerd-patch
+General Punctuation	111	Geneva	107	96.4	unknown
+General Punctuation	111	Courier New	36	32.4	unknown
+General Punctuation	111	CaskaydiaCove Nerd Font Mono	29	26.1	nerd-patch
 General Punctuation	111	Noto Serif Myanmar	11	9.9	noto
 General Punctuation	111	Noto Sans Coptic	4	3.6	noto
 General Punctuation	111	Khmer MN	14	12.6	unknown
 General Punctuation	111	.SF Malayalam	4	3.6	unknown
-General Punctuation	111	MesloLGMDZ Nerd Font Mono	54	48.6	nerd-patch
 General Punctuation	111	Noto Sans Glagolitic	2	1.8	noto
-General Punctuation	111	Hack Nerd Font Mono	61	55.0	nerd-patch
 General Punctuation	111	Noto Serif Balinese	6	5.4	noto
 General Punctuation	111	Noto Sans Tai Tham	6	5.4	noto
 General Punctuation	111	Noto Sans Bamum	2	1.8	noto
 General Punctuation	111	Noto Sans New Tai Lue	4	3.6	noto
-General Punctuation	111	MesloLGSDZ Nerd Font Mono	54	48.6	nerd-patch
-General Punctuation	111	FiraCode Nerd Font Mono	29	26.1	nerd-patch
 General Punctuation	111	Noto Sans Javanese	6	5.4	noto
 General Punctuation	111	Kohinoor Devanagari	22	19.8	unknown
-General Punctuation	111	Monaco	106	95.5	unknown
 General Punctuation	111	Noto Sans Cham	6	5.4	noto
 General Punctuation	111	Noto Sans Tai Viet	6	5.4	noto
-General Punctuation	111	AppleGothic	39	35.1	unknown
 General Punctuation	111	Noto Sans Saurashtra	6	5.4	noto
 General Punctuation	111	Noto Sans Meetei Mayek	6	5.4	noto
 General Punctuation	111	Sinhala Sangam MN	15	13.5	unknown
-General Punctuation	111	Snell Roundhand	23	20.7	unknown
 General Punctuation	111	PingFang TC	13	11.7	apple-cjk
-General Punctuation	111	MesloLGLDZ Nerd Font Mono	54	48.6	nerd-patch
-General Punctuation	111	Noto Sans Tifinagh	5	4.5	noto
 General Punctuation	111	Noto Sans Sundanese	8	7.2	noto
 General Punctuation	111	Noto Sans PhagsPa	10	9.0	noto
 General Punctuation	111	Noto Sans Lepcha	6	5.4	noto
 General Punctuation	111	Noto Sans NKo	6	5.4	noto
-General Punctuation	111	Noto Sans Syriac	10	9.0	noto
+General Punctuation	111	AppleGothic	39	35.1	unknown
 General Punctuation	111	Noto Sans Ol Chiki	2	1.8	noto
+General Punctuation	111	Noto Sans Syriac	10	9.0	noto
 General Punctuation	111	Noto Sans Limbu	6	5.4	noto
-General Punctuation	111	Menlo	54	48.6	unknown
 General Punctuation	111	Noto Sans Batak	6	5.4	noto
 General Punctuation	111	Noto Sans Samaritan	2	1.8	noto
 General Punctuation	111	Noto Sans Kayah Li	6	5.4	noto
@@ -963,46 +692,38 @@ General Punctuation	111	Noto Sans Thaana	12	10.8	noto
 General Punctuation	111	Noto Sans Syloti Nagri	9	8.1	noto
 General Punctuation	111	Noto Sans Tai Le	6	5.4	noto
 General Punctuation	111	Hiragino Sans GB	22	19.8	apple-cjk
-General Punctuation	111	Symbol	7	6.3	unknown
 General Punctuation	111	Noto Sans Mandaic	4	3.6	noto
-General Punctuation	111	MesloLGM Nerd Font Mono	54	48.6	nerd-patch
+General Punctuation	111	Symbol	7	6.3	unknown
 General Punctuation	111	Noto Sans Buginese	6	5.4	noto
 General Punctuation	111	Noto Sans Rejang	6	5.4	noto
 General Punctuation	111	Noto Sans Tagalog	6	5.4	noto
 General Punctuation	111	Noto Sans Hanunoo	6	5.4	noto
 General Punctuation	111	Noto Sans Buhid	6	5.4	noto
 General Punctuation	111	Noto Sans Tagbanwa	6	5.4	noto
-General Punctuation	111	Noto Nastaliq Urdu	18	16.2	noto
 General Punctuation	111	Grantha Sangam MN	25	22.5	unknown
 General Punctuation	111	Kohinoor Telugu	22	19.8	unknown
-General Punctuation	111	.CJK Symbols Fallback HK	11	9.9	unknown
 General Punctuation	111	Mukta Mahee	22	19.8	unknown
 General Punctuation	111	Athelas	20	18.0	unknown
 General Punctuation	111	Superclarendon	20	18.0	unknown
 General Punctuation	111	Noto Sans Oriya	15	13.5	noto
-General Punctuation	111	Helvetica Neue	106	95.5	unknown
-General Punctuation	111	DIN Condensed	20	18.0	unknown
 General Punctuation	111	Lucida Grande	87	78.4	unknown
+General Punctuation	111	Noto Nastaliq Urdu	18	16.2	noto
 General Punctuation	111	.SF Arabic	12	10.8	unknown
 General Punctuation	111	Kohinoor Bangla	22	19.8	unknown
 General Punctuation	111	Gujarati Sangam MN	15	13.5	unknown
 General Punctuation	111	Kannada MN	15	13.5	unknown
-General Punctuation	111	Noto Sans Armenian	4	3.6	noto
-General Punctuation	111	Geeza Pro	5	4.5	unknown
+General Punctuation	111	.CJK Symbols Fallback HK	11	9.9	unknown
 General Punctuation	111	Kokonor	4	3.6	unknown
 General Punctuation	111	Sukhumvit Set	20	18.0	unknown
 General Punctuation	111	.SF Telugu	4	3.6	unknown
 General Punctuation	111	.SF Kannada	4	3.6	unknown
 General Punctuation	111	Galvji	41	36.9	unknown
-General Punctuation	111	Lora	23	20.7	unknown
-General Punctuation	111	Terminess Nerd Font	47	42.3	nerd-patch
 General Punctuation	111	.DecoType Nastaleeq Urdu UI	23	20.7	unknown
 General Punctuation	111	Kohinoor Gujarati	18	16.2	unknown
 General Punctuation	111	Noto Sans Kannada	15	13.5	noto
-General Punctuation	111	.New York	29	26.1	unknown
-General Punctuation	111	Noto Sans Adlam	23	20.7	noto
 General Punctuation	111	Heiti SC	33	29.7	apple-cjk
 General Punctuation	111	.SF Devanagari	4	3.6	unknown
+General Punctuation	111	Geeza Pro	5	4.5	unknown
 Superscripts and Subscripts	42	JetBrains Mono	19	45.2	embedded-ghostty
 Superscripts and Subscripts	42	JetBrains Mono NoNF	19	45.2	embedded-ghostty
 Superscripts and Subscripts	42	JuliaMono	42	100.0	embedded-ghostty
@@ -1016,31 +737,17 @@ Superscripts and Subscripts	42	Songti SC	18	42.9	apple-cjk
 Superscripts and Subscripts	42	VictorMono NFM SemiBold	42	100.0	nerd-patch
 Superscripts and Subscripts	42	Monaspace Xenon	42	100.0	native
 Superscripts and Subscripts	42	VictorMono Nerd Font Mono	42	100.0	nerd-patch
-Superscripts and Subscripts	42	Courier New	6	14.3	unknown
 Superscripts and Subscripts	42	Kefa III	17	40.5	unknown
-Superscripts and Subscripts	42	CaskaydiaCove Nerd Font Mono	18	42.9	nerd-patch
-Superscripts and Subscripts	42	MesloLGL Nerd Font Mono	34	81.0	nerd-patch
-Superscripts and Subscripts	42	Gentium Book Plus	42	100.0	unknown
 Superscripts and Subscripts	42	Geneva	34	81.0	unknown
-Superscripts and Subscripts	42	MesloLGS Nerd Font Mono	34	81.0	nerd-patch
-Superscripts and Subscripts	42	MesloLGMDZ Nerd Font Mono	34	81.0	nerd-patch
-Superscripts and Subscripts	42	Hack Nerd Font Mono	17	40.5	nerd-patch
-Superscripts and Subscripts	42	MesloLGSDZ Nerd Font Mono	34	81.0	nerd-patch
-Superscripts and Subscripts	42	FiraCode Nerd Font Mono	28	66.7	nerd-patch
+Superscripts and Subscripts	42	Courier New	6	14.3	unknown
+Superscripts and Subscripts	42	CaskaydiaCove Nerd Font Mono	18	42.9	nerd-patch
 Superscripts and Subscripts	42	Kohinoor Devanagari	1	2.4	unknown
-Superscripts and Subscripts	42	Monaco	29	69.0	unknown
 Superscripts and Subscripts	42	AppleGothic	11	26.2	unknown
-Superscripts and Subscripts	42	MesloLGLDZ Nerd Font Mono	34	81.0	nerd-patch
-Superscripts and Subscripts	42	Menlo	34	81.0	unknown
-Superscripts and Subscripts	42	MesloLGM Nerd Font Mono	34	81.0	nerd-patch
 Superscripts and Subscripts	42	Kohinoor Telugu	1	2.4	unknown
 Superscripts and Subscripts	42	Mukta Mahee	21	50.0	unknown
 Superscripts and Subscripts	42	Athelas	24	57.1	unknown
-Superscripts and Subscripts	42	Helvetica Neue	34	81.0	unknown
 Superscripts and Subscripts	42	Lucida Grande	29	69.0	unknown
 Superscripts and Subscripts	42	Kohinoor Bangla	1	2.4	unknown
-Superscripts and Subscripts	42	Lora	1	2.4	unknown
-Superscripts and Subscripts	42	Terminess Nerd Font	39	92.9	nerd-patch
 Superscripts and Subscripts	42	Heiti SC	5	11.9	apple-cjk
 Currency Symbols	33	JetBrains Mono	6	18.2	embedded-ghostty
 Currency Symbols	33	JetBrains Mono NoNF	6	18.2	embedded-ghostty
@@ -1056,59 +763,39 @@ Currency Symbols	33	Hiragino Sans	1	3.0	apple-cjk
 Currency Symbols	33	VictorMono NFM SemiBold	3	9.1	nerd-patch
 Currency Symbols	33	Monaspace Xenon	20	60.6	native
 Currency Symbols	33	VictorMono Nerd Font Mono	3	9.1	nerd-patch
-Currency Symbols	33	Euphemia UCAS	1	3.0	unknown
-Currency Symbols	33	Courier New	22	66.7	unknown
 Currency Symbols	33	Kefa III	15	45.5	unknown
-Currency Symbols	33	CaskaydiaCove Nerd Font Mono	24	72.7	nerd-patch
-Currency Symbols	33	MesloLGL Nerd Font Mono	22	66.7	nerd-patch
-Currency Symbols	33	Gentium Book Plus	32	97.0	unknown
 Currency Symbols	33	Geneva	23	69.7	unknown
-Currency Symbols	33	MesloLGS Nerd Font Mono	22	66.7	nerd-patch
-Currency Symbols	33	MesloLGMDZ Nerd Font Mono	22	66.7	nerd-patch
-Currency Symbols	33	Hack Nerd Font Mono	25	75.8	nerd-patch
-Currency Symbols	33	MesloLGSDZ Nerd Font Mono	22	66.7	nerd-patch
-Currency Symbols	33	FiraCode Nerd Font Mono	5	15.2	nerd-patch
+Currency Symbols	33	Courier New	22	66.7	unknown
+Currency Symbols	33	CaskaydiaCove Nerd Font Mono	24	72.7	nerd-patch
 Currency Symbols	33	Kohinoor Devanagari	3	9.1	unknown
-Currency Symbols	33	Monaco	19	57.6	unknown
-Currency Symbols	33	AppleGothic	1	3.0	unknown
 Currency Symbols	33	Sinhala Sangam MN	1	3.0	unknown
-Currency Symbols	33	Snell Roundhand	1	3.0	unknown
-Currency Symbols	33	MesloLGLDZ Nerd Font Mono	22	66.7	nerd-patch
-Currency Symbols	33	Menlo	22	66.7	unknown
+Currency Symbols	33	AppleGothic	1	3.0	unknown
 Currency Symbols	33	Hiragino Sans GB	1	3.0	apple-cjk
 Currency Symbols	33	Symbol	1	3.0	unknown
-Currency Symbols	33	MesloLGM Nerd Font Mono	22	66.7	nerd-patch
 Currency Symbols	33	Grantha Sangam MN	3	9.1	unknown
 Currency Symbols	33	Kohinoor Telugu	2	6.1	unknown
 Currency Symbols	33	Mukta Mahee	3	9.1	unknown
 Currency Symbols	33	Athelas	1	3.0	unknown
 Currency Symbols	33	Superclarendon	2	6.1	unknown
 Currency Symbols	33	Noto Sans Oriya	1	3.0	noto
-Currency Symbols	33	Helvetica Neue	25	75.8	unknown
-Currency Symbols	33	DIN Condensed	4	12.1	unknown
 Currency Symbols	33	Lucida Grande	18	54.5	unknown
 Currency Symbols	33	Kohinoor Bangla	2	6.1	unknown
 Currency Symbols	33	Gujarati Sangam MN	1	3.0	unknown
 Currency Symbols	33	Kannada MN	1	3.0	unknown
 Currency Symbols	33	Sukhumvit Set	1	3.0	unknown
 Currency Symbols	33	Galvji	1	3.0	unknown
-Currency Symbols	33	Lora	6	18.2	unknown
-Currency Symbols	33	Terminess Nerd Font	4	12.1	nerd-patch
 Currency Symbols	33	Kohinoor Gujarati	2	6.1	unknown
 Currency Symbols	33	Noto Sans Kannada	1	3.0	noto
-Currency Symbols	33	.New York	26	78.8	unknown
 Currency Symbols	33	Heiti SC	6	18.2	apple-cjk
 Combining Diacritical Marks for Symbols	33	JuliaMono	33	100.0	embedded-ghostty
 Combining Diacritical Marks for Symbols	33	STIX Two Math	30	90.9	math
 Combining Diacritical Marks for Symbols	33	Arial Unicode MS	18	54.5	pan-unicode-dump
 Combining Diacritical Marks for Symbols	33	LastResort	33	100.0	last-resort
 Combining Diacritical Marks for Symbols	33	Apple Color Emoji	1	3.0	apple-system
-Combining Diacritical Marks for Symbols	33	Gentium Book Plus	5	15.2	unknown
 Combining Diacritical Marks for Symbols	33	Geneva	1	3.0	unknown
 Combining Diacritical Marks for Symbols	33	AppleGothic	5	15.2	unknown
 Combining Diacritical Marks for Symbols	33	Grantha Sangam MN	1	3.0	unknown
 Combining Diacritical Marks for Symbols	33	Lucida Grande	2	6.1	unknown
-Combining Diacritical Marks for Symbols	33	.New York	1	3.0	unknown
 Letterlike Symbols	80	JetBrains Mono	12	15.0	embedded-ghostty
 Letterlike Symbols	80	JetBrains Mono NoNF	12	15.0	embedded-ghostty
 Letterlike Symbols	80	JuliaMono	80	100.0	embedded-ghostty
@@ -1124,43 +811,25 @@ Letterlike Symbols	80	Hiragino Sans	9	11.2	apple-cjk
 Letterlike Symbols	80	VictorMono NFM SemiBold	1	1.2	nerd-patch
 Letterlike Symbols	80	Monaspace Xenon	34	42.5	native
 Letterlike Symbols	80	VictorMono Nerd Font Mono	1	1.2	nerd-patch
-Letterlike Symbols	80	Euphemia UCAS	1	1.2	unknown
-Letterlike Symbols	80	Courier New	6	7.5	unknown
 Letterlike Symbols	80	Kefa III	5	6.2	unknown
-Letterlike Symbols	80	CaskaydiaCove Nerd Font Mono	8	10.0	nerd-patch
-Letterlike Symbols	80	MesloLGL Nerd Font Mono	15	18.8	nerd-patch
-Letterlike Symbols	80	Gentium Book Plus	11	13.8	unknown
 Letterlike Symbols	80	Geneva	38	47.5	unknown
-Letterlike Symbols	80	MesloLGS Nerd Font Mono	15	18.8	nerd-patch
-Letterlike Symbols	80	MesloLGMDZ Nerd Font Mono	15	18.8	nerd-patch
-Letterlike Symbols	80	Hack Nerd Font Mono	3	3.8	nerd-patch
-Letterlike Symbols	80	MesloLGSDZ Nerd Font Mono	15	18.8	nerd-patch
-Letterlike Symbols	80	FiraCode Nerd Font Mono	11	13.8	nerd-patch
+Letterlike Symbols	80	Courier New	6	7.5	unknown
+Letterlike Symbols	80	CaskaydiaCove Nerd Font Mono	8	10.0	nerd-patch
 Letterlike Symbols	80	Kohinoor Devanagari	3	3.8	unknown
-Letterlike Symbols	80	Monaco	26	32.5	unknown
 Letterlike Symbols	80	AppleGothic	9	11.2	unknown
-Letterlike Symbols	80	Snell Roundhand	6	7.5	unknown
-Letterlike Symbols	80	MesloLGLDZ Nerd Font Mono	15	18.8	nerd-patch
-Letterlike Symbols	80	Menlo	15	18.8	unknown
 Letterlike Symbols	80	Hiragino Sans GB	6	7.5	apple-cjk
 Letterlike Symbols	80	Symbol	6	7.5	unknown
-Letterlike Symbols	80	MesloLGM Nerd Font Mono	15	18.8	nerd-patch
 Letterlike Symbols	80	Grantha Sangam MN	3	3.8	unknown
 Letterlike Symbols	80	Kohinoor Telugu	3	3.8	unknown
-Letterlike Symbols	80	.CJK Symbols Fallback HK	3	3.8	unknown
 Letterlike Symbols	80	Mukta Mahee	5	6.2	unknown
 Letterlike Symbols	80	Athelas	6	7.5	unknown
 Letterlike Symbols	80	Superclarendon	3	3.8	unknown
-Letterlike Symbols	80	Helvetica Neue	33	41.2	unknown
-Letterlike Symbols	80	DIN Condensed	5	6.2	unknown
 Letterlike Symbols	80	Lucida Grande	31	38.8	unknown
 Letterlike Symbols	80	Kohinoor Bangla	3	3.8	unknown
+Letterlike Symbols	80	.CJK Symbols Fallback HK	3	3.8	unknown
 Letterlike Symbols	80	Sukhumvit Set	4	5.0	unknown
 Letterlike Symbols	80	Galvji	1	1.2	unknown
-Letterlike Symbols	80	Lora	7	8.8	unknown
-Letterlike Symbols	80	Terminess Nerd Font	11	13.8	nerd-patch
 Letterlike Symbols	80	Kohinoor Gujarati	1	1.2	unknown
-Letterlike Symbols	80	.New York	7	8.8	unknown
 Letterlike Symbols	80	Heiti SC	11	13.8	apple-cjk
 Number Forms	60	JetBrains Mono	2	3.3	embedded-ghostty
 Number Forms	60	JetBrains Mono NoNF	2	3.3	embedded-ghostty
@@ -1175,29 +844,15 @@ Number Forms	60	Hiragino Sans	25	41.7	apple-cjk
 Number Forms	60	VictorMono NFM SemiBold	17	28.3	nerd-patch
 Number Forms	60	Monaspace Xenon	17	28.3	native
 Number Forms	60	VictorMono Nerd Font Mono	17	28.3	nerd-patch
-Number Forms	60	Courier New	6	10.0	unknown
 Number Forms	60	Kefa III	12	20.0	unknown
-Number Forms	60	CaskaydiaCove Nerd Font Mono	4	6.7	nerd-patch
-Number Forms	60	MesloLGL Nerd Font Mono	13	21.7	nerd-patch
-Number Forms	60	Gentium Book Plus	58	96.7	unknown
 Number Forms	60	Geneva	52	86.7	unknown
-Number Forms	60	MesloLGS Nerd Font Mono	13	21.7	nerd-patch
-Number Forms	60	MesloLGMDZ Nerd Font Mono	13	21.7	nerd-patch
-Number Forms	60	Hack Nerd Font Mono	15	25.0	nerd-patch
-Number Forms	60	MesloLGSDZ Nerd Font Mono	13	21.7	nerd-patch
-Number Forms	60	FiraCode Nerd Font Mono	15	25.0	nerd-patch
-Number Forms	60	Monaco	15	25.0	unknown
+Number Forms	60	Courier New	6	10.0	unknown
+Number Forms	60	CaskaydiaCove Nerd Font Mono	4	6.7	nerd-patch
 Number Forms	60	AppleGothic	38	63.3	unknown
-Number Forms	60	Snell Roundhand	32	53.3	unknown
-Number Forms	60	MesloLGLDZ Nerd Font Mono	13	21.7	nerd-patch
-Number Forms	60	Menlo	13	21.7	unknown
 Number Forms	60	Hiragino Sans GB	22	36.7	apple-cjk
-Number Forms	60	MesloLGM Nerd Font Mono	13	21.7	nerd-patch
 Number Forms	60	Athelas	38	63.3	unknown
 Number Forms	60	Superclarendon	6	10.0	unknown
-Number Forms	60	Helvetica Neue	41	68.3	unknown
 Number Forms	60	Lucida Grande	49	81.7	unknown
-Number Forms	60	.New York	17	28.3	unknown
 Number Forms	60	Heiti SC	36	60.0	apple-cjk
 Arrows	112	JetBrains Mono	35	31.2	embedded-ghostty
 Arrows	112	JetBrains Mono NoNF	35	31.2	embedded-ghostty
@@ -1214,26 +869,14 @@ Arrows	112	Hiragino Sans	14	12.5	apple-cjk
 Arrows	112	VictorMono NFM SemiBold	101	90.2	nerd-patch
 Arrows	112	Monaspace Xenon	70	62.5	native
 Arrows	112	VictorMono Nerd Font Mono	101	90.2	nerd-patch
-Arrows	112	Courier New	7	6.2	unknown
 Arrows	112	Kefa III	10	8.9	unknown
+Arrows	112	Courier New	7	6.2	unknown
 Arrows	112	CaskaydiaCove Nerd Font Mono	10	8.9	nerd-patch
-Arrows	112	MesloLGL Nerd Font Mono	112	100.0	nerd-patch
-Arrows	112	Gentium Book Plus	19	17.0	unknown
-Arrows	112	MesloLGS Nerd Font Mono	112	100.0	nerd-patch
-Arrows	112	MesloLGMDZ Nerd Font Mono	112	100.0	nerd-patch
-Arrows	112	Hack Nerd Font Mono	109	97.3	nerd-patch
-Arrows	112	MesloLGSDZ Nerd Font Mono	112	100.0	nerd-patch
-Arrows	112	FiraCode Nerd Font Mono	25	22.3	nerd-patch
-Arrows	112	Monaco	2	1.8	unknown
 Arrows	112	AppleGothic	34	30.4	unknown
-Arrows	112	MesloLGLDZ Nerd Font Mono	112	100.0	nerd-patch
-Arrows	112	Menlo	112	100.0	unknown
 Arrows	112	Hiragino Sans GB	8	7.1	apple-cjk
 Arrows	112	Symbol	11	9.8	unknown
-Arrows	112	MesloLGM Nerd Font Mono	112	100.0	nerd-patch
-Arrows	112	.CJK Symbols Fallback HK	6	5.4	unknown
 Arrows	112	Lucida Grande	20	17.9	unknown
-Arrows	112	Terminess Nerd Font	21	18.8	nerd-patch
+Arrows	112	.CJK Symbols Fallback HK	6	5.4	unknown
 Arrows	112	Heiti SC	11	9.8	apple-cjk
 Mathematical Operators	256	JetBrains Mono	119	46.5	embedded-ghostty
 Mathematical Operators	256	JetBrains Mono NoNF	119	46.5	embedded-ghostty
@@ -1251,54 +894,36 @@ Mathematical Operators	256	VictorMono NFM SemiBold	28	10.9	nerd-patch
 Mathematical Operators	256	Monaspace Xenon	211	82.4	native
 Mathematical Operators	256	VictorMono Nerd Font Mono	28	10.9	nerd-patch
 Mathematical Operators	256	PingFang HK	1	0.4	apple-cjk
-Mathematical Operators	256	Euphemia UCAS	2	0.8	unknown
-Mathematical Operators	256	Courier New	17	6.6	unknown
 Mathematical Operators	256	Kefa III	14	5.5	unknown
-Mathematical Operators	256	CaskaydiaCove Nerd Font Mono	20	7.8	nerd-patch
-Mathematical Operators	256	MesloLGL Nerd Font Mono	151	59.0	nerd-patch
-Mathematical Operators	256	Gentium Book Plus	31	12.1	unknown
-Mathematical Operators	256	Geneva	37	14.5	unknown
 Mathematical Operators	256	PingFang MO	1	0.4	apple-cjk
-Mathematical Operators	256	MesloLGS Nerd Font Mono	151	59.0	nerd-patch
+Mathematical Operators	256	Geneva	37	14.5	unknown
+Mathematical Operators	256	Courier New	17	6.6	unknown
+Mathematical Operators	256	CaskaydiaCove Nerd Font Mono	20	7.8	nerd-patch
 Mathematical Operators	256	Khmer MN	1	0.4	unknown
-Mathematical Operators	256	MesloLGMDZ Nerd Font Mono	151	59.0	nerd-patch
-Mathematical Operators	256	Hack Nerd Font Mono	177	69.1	nerd-patch
 Mathematical Operators	256	Noto Sans Tai Tham	1	0.4	noto
-Mathematical Operators	256	MesloLGSDZ Nerd Font Mono	151	59.0	nerd-patch
-Mathematical Operators	256	FiraCode Nerd Font Mono	72	28.1	nerd-patch
 Mathematical Operators	256	Kohinoor Devanagari	14	5.5	unknown
-Mathematical Operators	256	Monaco	47	18.4	unknown
-Mathematical Operators	256	AppleGothic	87	34.0	unknown
 Mathematical Operators	256	Sinhala Sangam MN	1	0.4	unknown
-Mathematical Operators	256	Snell Roundhand	3	1.2	unknown
 Mathematical Operators	256	PingFang TC	1	0.4	apple-cjk
-Mathematical Operators	256	MesloLGLDZ Nerd Font Mono	151	59.0	nerd-patch
+Mathematical Operators	256	AppleGothic	87	34.0	unknown
 Mathematical Operators	256	Noto Sans Syriac	1	0.4	noto
-Mathematical Operators	256	Menlo	151	59.0	unknown
 Mathematical Operators	256	Hiragino Sans GB	38	14.8	apple-cjk
 Mathematical Operators	256	Symbol	38	14.8	unknown
-Mathematical Operators	256	MesloLGM Nerd Font Mono	151	59.0	nerd-patch
-Mathematical Operators	256	Noto Nastaliq Urdu	1	0.4	noto
 Mathematical Operators	256	Grantha Sangam MN	14	5.5	unknown
 Mathematical Operators	256	Kohinoor Telugu	14	5.5	unknown
-Mathematical Operators	256	.CJK Symbols Fallback HK	25	9.8	unknown
 Mathematical Operators	256	Mukta Mahee	14	5.5	unknown
 Mathematical Operators	256	Athelas	14	5.5	unknown
 Mathematical Operators	256	Superclarendon	13	5.1	unknown
 Mathematical Operators	256	Noto Sans Oriya	1	0.4	noto
-Mathematical Operators	256	Helvetica Neue	16	6.2	unknown
-Mathematical Operators	256	DIN Condensed	14	5.5	unknown
 Mathematical Operators	256	Lucida Grande	18	7.0	unknown
+Mathematical Operators	256	Noto Nastaliq Urdu	1	0.4	noto
 Mathematical Operators	256	Kohinoor Bangla	14	5.5	unknown
 Mathematical Operators	256	Gujarati Sangam MN	1	0.4	unknown
 Mathematical Operators	256	Kannada MN	1	0.4	unknown
+Mathematical Operators	256	.CJK Symbols Fallback HK	25	9.8	unknown
 Mathematical Operators	256	Sukhumvit Set	12	4.7	unknown
 Mathematical Operators	256	Galvji	11	4.3	unknown
-Mathematical Operators	256	Lora	14	5.5	unknown
-Mathematical Operators	256	Terminess Nerd Font	40	15.6	nerd-patch
 Mathematical Operators	256	.DecoType Nastaleeq Urdu UI	1	0.4	unknown
 Mathematical Operators	256	Noto Sans Kannada	1	0.4	noto
-Mathematical Operators	256	.New York	19	7.4	unknown
 Mathematical Operators	256	Heiti SC	44	17.2	apple-cjk
 Miscellaneous Technical	256	JetBrains Mono	115	44.9	embedded-ghostty
 Miscellaneous Technical	256	JetBrains Mono NoNF	115	44.9	embedded-ghostty
@@ -1315,24 +940,11 @@ Miscellaneous Technical	256	Monaspace Xenon	118	46.1	native
 Miscellaneous Technical	256	VictorMono Nerd Font Mono	8	3.1	nerd-patch
 Miscellaneous Technical	256	Courier New	4	1.6	unknown
 Miscellaneous Technical	256	CaskaydiaCove Nerd Font Mono	10	3.9	nerd-patch
-Miscellaneous Technical	256	MesloLGL Nerd Font Mono	121	47.3	nerd-patch
-Miscellaneous Technical	256	Gentium Book Plus	29	11.3	unknown
-Miscellaneous Technical	256	MesloLGS Nerd Font Mono	121	47.3	nerd-patch
-Miscellaneous Technical	256	MesloLGMDZ Nerd Font Mono	121	47.3	nerd-patch
-Miscellaneous Technical	256	Hack Nerd Font Mono	32	12.5	nerd-patch
-Miscellaneous Technical	256	MesloLGSDZ Nerd Font Mono	121	47.3	nerd-patch
-Miscellaneous Technical	256	FiraCode Nerd Font Mono	44	17.2	nerd-patch
-Miscellaneous Technical	256	Monaco	4	1.6	unknown
 Miscellaneous Technical	256	AppleGothic	8	3.1	unknown
-Miscellaneous Technical	256	MesloLGLDZ Nerd Font Mono	121	47.3	nerd-patch
-Miscellaneous Technical	256	Menlo	117	45.7	unknown
 Miscellaneous Technical	256	Hiragino Sans GB	3	1.2	apple-cjk
 Miscellaneous Technical	256	Symbol	24	9.4	unknown
-Miscellaneous Technical	256	MesloLGM Nerd Font Mono	121	47.3	nerd-patch
-Miscellaneous Technical	256	.CJK Symbols Fallback HK	3	1.2	unknown
-Miscellaneous Technical	256	Helvetica Neue	1	0.4	unknown
 Miscellaneous Technical	256	Lucida Grande	14	5.5	unknown
-Miscellaneous Technical	256	Terminess Nerd Font	39	15.2	nerd-patch
+Miscellaneous Technical	256	.CJK Symbols Fallback HK	3	1.2	unknown
 Miscellaneous Technical	256	Heiti SC	10	3.9	apple-cjk
 Control Pictures	39	JetBrains Mono	36	92.3	embedded-ghostty
 Control Pictures	39	JetBrains Mono NoNF	36	92.3	embedded-ghostty
@@ -1343,19 +955,7 @@ Control Pictures	39	Arial Unicode MS	37	94.9	pan-unicode-dump
 Control Pictures	39	LastResort	39	100.0	last-resort
 Control Pictures	39	Monaspace Xenon	1	2.6	native
 Control Pictures	39	CaskaydiaCove Nerd Font Mono	39	100.0	nerd-patch
-Control Pictures	39	MesloLGL Nerd Font Mono	1	2.6	nerd-patch
-Control Pictures	39	Gentium Book Plus	1	2.6	unknown
-Control Pictures	39	MesloLGS Nerd Font Mono	1	2.6	nerd-patch
-Control Pictures	39	MesloLGMDZ Nerd Font Mono	1	2.6	nerd-patch
-Control Pictures	39	MesloLGSDZ Nerd Font Mono	1	2.6	nerd-patch
-Control Pictures	39	FiraCode Nerd Font Mono	39	100.0	nerd-patch
-Control Pictures	39	Monaco	6	15.4	unknown
-Control Pictures	39	MesloLGLDZ Nerd Font Mono	1	2.6	nerd-patch
-Control Pictures	39	Menlo	1	2.6	unknown
-Control Pictures	39	MesloLGM Nerd Font Mono	1	2.6	nerd-patch
-Control Pictures	39	Helvetica Neue	1	2.6	unknown
 Control Pictures	39	Lucida Grande	1	2.6	unknown
-Control Pictures	39	Terminess Nerd Font	6	15.4	nerd-patch
 Optical Character Recognition	11	JuliaMono	11	100.0	embedded-ghostty
 Optical Character Recognition	11	Apple Symbols	11	100.0	apple-system
 Optical Character Recognition	11	Arial Unicode MS	11	100.0	pan-unicode-dump
@@ -1371,8 +971,8 @@ Enclosed Alphanumerics	160	Hiragino Sans	76	47.5	apple-cjk
 Enclosed Alphanumerics	160	Monaspace Xenon	41	25.6	native
 Enclosed Alphanumerics	160	AppleGothic	128	80.0	unknown
 Enclosed Alphanumerics	160	Hiragino Sans GB	50	31.2	apple-cjk
-Enclosed Alphanumerics	160	.CJK Symbols Fallback HK	139	86.9	unknown
 Enclosed Alphanumerics	160	Lucida Grande	1	0.6	unknown
+Enclosed Alphanumerics	160	.CJK Symbols Fallback HK	139	86.9	unknown
 Enclosed Alphanumerics	160	Heiti SC	50	31.2	apple-cjk
 Box Drawing	128	JetBrains Mono	128	100.0	embedded-ghostty
 Box Drawing	128	JetBrains Mono NoNF	128	100.0	embedded-ghostty
@@ -1389,21 +989,9 @@ Box Drawing	128	Monaspace Xenon	128	100.0	native
 Box Drawing	128	VictorMono Nerd Font Mono	128	100.0	nerd-patch
 Box Drawing	128	Courier New	40	31.2	unknown
 Box Drawing	128	CaskaydiaCove Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	MesloLGL Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	MesloLGS Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	MesloLGMDZ Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	Hack Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	MesloLGSDZ Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	FiraCode Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	Monaco	11	8.6	unknown
 Box Drawing	128	AppleGothic	68	53.1	unknown
-Box Drawing	128	MesloLGLDZ Nerd Font Mono	128	100.0	nerd-patch
-Box Drawing	128	Menlo	128	100.0	unknown
 Box Drawing	128	Hiragino Sans GB	112	87.5	apple-cjk
-Box Drawing	128	MesloLGM Nerd Font Mono	128	100.0	nerd-patch
 Box Drawing	128	.CJK Symbols Fallback HK	112	87.5	unknown
-Box Drawing	128	Helvetica Neue	12	9.4	unknown
-Box Drawing	128	Terminess Nerd Font	128	100.0	nerd-patch
 Box Drawing	128	Heiti SC	113	88.3	apple-cjk
 Block Elements	32	JetBrains Mono	32	100.0	embedded-ghostty
 Block Elements	32	JetBrains Mono NoNF	32	100.0	embedded-ghostty
@@ -1420,21 +1008,9 @@ Block Elements	32	Monaspace Xenon	32	100.0	native
 Block Elements	32	VictorMono Nerd Font Mono	32	100.0	nerd-patch
 Block Elements	32	Courier New	8	25.0	unknown
 Block Elements	32	CaskaydiaCove Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	MesloLGL Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	MesloLGS Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	MesloLGMDZ Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	Hack Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	MesloLGSDZ Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	FiraCode Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	Monaco	2	6.2	unknown
 Block Elements	32	AppleGothic	2	6.2	unknown
-Block Elements	32	MesloLGLDZ Nerd Font Mono	32	100.0	nerd-patch
-Block Elements	32	Menlo	32	100.0	unknown
 Block Elements	32	Hiragino Sans GB	18	56.2	apple-cjk
-Block Elements	32	MesloLGM Nerd Font Mono	32	100.0	nerd-patch
 Block Elements	32	.CJK Symbols Fallback HK	18	56.2	unknown
-Block Elements	32	Helvetica Neue	1	3.1	unknown
-Block Elements	32	Terminess Nerd Font	32	100.0	nerd-patch
 Block Elements	32	Heiti SC	22	68.8	apple-cjk
 Geometric Shapes	96	JetBrains Mono	43	44.8	embedded-ghostty
 Geometric Shapes	96	JetBrains Mono NoNF	43	44.8	embedded-ghostty
@@ -1451,84 +1027,66 @@ Geometric Shapes	96	Hiragino Sans	20	20.8	apple-cjk
 Geometric Shapes	96	VictorMono NFM SemiBold	96	100.0	nerd-patch
 Geometric Shapes	96	Monaspace Xenon	96	100.0	native
 Geometric Shapes	96	VictorMono Nerd Font Mono	96	100.0	nerd-patch
-Geometric Shapes	96	Courier New	16	16.7	unknown
 Geometric Shapes	96	Kefa III	1	1.0	unknown
-Geometric Shapes	96	CaskaydiaCove Nerd Font Mono	96	100.0	nerd-patch
-Geometric Shapes	96	MesloLGL Nerd Font Mono	96	100.0	nerd-patch
-Geometric Shapes	96	Gentium Book Plus	2	2.1	unknown
 Geometric Shapes	96	Geneva	1	1.0	unknown
-Geometric Shapes	96	MesloLGS Nerd Font Mono	96	100.0	nerd-patch
+Geometric Shapes	96	Courier New	16	16.7	unknown
+Geometric Shapes	96	CaskaydiaCove Nerd Font Mono	96	100.0	nerd-patch
 Geometric Shapes	96	Noto Serif Myanmar	1	1.0	noto
 Geometric Shapes	96	Noto Sans Coptic	1	1.0	noto
 Geometric Shapes	96	Khmer MN	1	1.0	unknown
 Geometric Shapes	96	.SF Malayalam	1	1.0	unknown
-Geometric Shapes	96	MesloLGMDZ Nerd Font Mono	96	100.0	nerd-patch
-Geometric Shapes	96	Hack Nerd Font Mono	96	100.0	nerd-patch
 Geometric Shapes	96	Noto Serif Balinese	1	1.0	noto
 Geometric Shapes	96	Noto Sans Tai Tham	1	1.0	noto
 Geometric Shapes	96	Noto Sans New Tai Lue	1	1.0	noto
-Geometric Shapes	96	MesloLGSDZ Nerd Font Mono	96	100.0	nerd-patch
-Geometric Shapes	96	FiraCode Nerd Font Mono	63	65.6	nerd-patch
 Geometric Shapes	96	Noto Sans Javanese	1	1.0	noto
 Geometric Shapes	96	Kohinoor Devanagari	2	2.1	unknown
-Geometric Shapes	96	Monaco	2	2.1	unknown
 Geometric Shapes	96	Noto Sans Cham	1	1.0	noto
 Geometric Shapes	96	Noto Sans Tai Viet	1	1.0	noto
-Geometric Shapes	96	AppleGothic	40	41.7	unknown
 Geometric Shapes	96	Noto Sans Saurashtra	1	1.0	noto
 Geometric Shapes	96	Noto Sans Meetei Mayek	1	1.0	noto
 Geometric Shapes	96	Sinhala Sangam MN	1	1.0	unknown
-Geometric Shapes	96	MesloLGLDZ Nerd Font Mono	96	100.0	nerd-patch
-Geometric Shapes	96	Noto Sans Tifinagh	1	1.0	noto
 Geometric Shapes	96	Noto Sans Sundanese	1	1.0	noto
 Geometric Shapes	96	Noto Sans PhagsPa	1	1.0	noto
 Geometric Shapes	96	Noto Sans Lepcha	1	1.0	noto
 Geometric Shapes	96	Noto Sans NKo	1	1.0	noto
+Geometric Shapes	96	AppleGothic	40	41.7	unknown
 Geometric Shapes	96	Noto Sans Syriac	1	1.0	noto
 Geometric Shapes	96	Noto Sans Limbu	1	1.0	noto
-Geometric Shapes	96	Menlo	96	100.0	unknown
 Geometric Shapes	96	Noto Sans Batak	1	1.0	noto
 Geometric Shapes	96	Noto Sans Kayah Li	1	1.0	noto
 Geometric Shapes	96	Noto Sans Thaana	1	1.0	noto
 Geometric Shapes	96	Noto Sans Syloti Nagri	1	1.0	noto
 Geometric Shapes	96	Noto Sans Tai Le	1	1.0	noto
 Geometric Shapes	96	Hiragino Sans GB	15	15.6	apple-cjk
-Geometric Shapes	96	Symbol	1	1.0	unknown
 Geometric Shapes	96	Noto Sans Mandaic	1	1.0	noto
-Geometric Shapes	96	MesloLGM Nerd Font Mono	96	100.0	nerd-patch
+Geometric Shapes	96	Symbol	1	1.0	unknown
 Geometric Shapes	96	Noto Sans Buginese	1	1.0	noto
 Geometric Shapes	96	Noto Sans Rejang	1	1.0	noto
 Geometric Shapes	96	Noto Sans Tagalog	1	1.0	noto
 Geometric Shapes	96	Noto Sans Hanunoo	1	1.0	noto
 Geometric Shapes	96	Noto Sans Buhid	1	1.0	noto
 Geometric Shapes	96	Noto Sans Tagbanwa	1	1.0	noto
-Geometric Shapes	96	Noto Nastaliq Urdu	1	1.0	noto
 Geometric Shapes	96	Grantha Sangam MN	2	2.1	unknown
 Geometric Shapes	96	Kohinoor Telugu	2	2.1	unknown
-Geometric Shapes	96	.CJK Symbols Fallback HK	7	7.3	unknown
 Geometric Shapes	96	Mukta Mahee	2	2.1	unknown
 Geometric Shapes	96	Athelas	3	3.1	unknown
 Geometric Shapes	96	Superclarendon	1	1.0	unknown
 Geometric Shapes	96	Noto Sans Oriya	1	1.0	noto
-Geometric Shapes	96	Helvetica Neue	2	2.1	unknown
-Geometric Shapes	96	DIN Condensed	1	1.0	unknown
 Geometric Shapes	96	Lucida Grande	19	19.8	unknown
+Geometric Shapes	96	Noto Nastaliq Urdu	1	1.0	noto
 Geometric Shapes	96	.SF Arabic	1	1.0	unknown
 Geometric Shapes	96	Kohinoor Bangla	2	2.1	unknown
 Geometric Shapes	96	Gujarati Sangam MN	1	1.0	unknown
 Geometric Shapes	96	Kannada MN	1	1.0	unknown
+Geometric Shapes	96	.CJK Symbols Fallback HK	7	7.3	unknown
 Geometric Shapes	96	Kokonor	1	1.0	unknown
 Geometric Shapes	96	Sukhumvit Set	1	1.0	unknown
 Geometric Shapes	96	.SF Telugu	1	1.0	unknown
 Geometric Shapes	96	.SF Kannada	1	1.0	unknown
 Geometric Shapes	96	Galvji	2	2.1	unknown
-Geometric Shapes	96	Lora	1	1.0	unknown
-Geometric Shapes	96	Terminess Nerd Font	15	15.6	nerd-patch
 Geometric Shapes	96	.DecoType Nastaleeq Urdu UI	1	1.0	unknown
 Geometric Shapes	96	Kohinoor Gujarati	1	1.0	unknown
 Geometric Shapes	96	Noto Sans Kannada	1	1.0	noto
-Geometric Shapes	96	.New York	2	2.1	unknown
-Geometric Shapes	96	Noto Sans Adlam	1	1.0	noto
 Geometric Shapes	96	Heiti SC	24	25.0	apple-cjk
 Geometric Shapes	96	.SF Devanagari	1	1.0	unknown
 Miscellaneous Symbols	256	JetBrains Mono	7	2.7	embedded-ghostty
@@ -1546,24 +1104,12 @@ Miscellaneous Symbols	256	Monaspace Xenon	80	31.2	native
 Miscellaneous Symbols	256	VictorMono Nerd Font Mono	5	2.0	nerd-patch
 Miscellaneous Symbols	256	Courier New	12	4.7	unknown
 Miscellaneous Symbols	256	CaskaydiaCove Nerd Font Mono	14	5.5	nerd-patch
-Miscellaneous Symbols	256	MesloLGL Nerd Font Mono	150	58.6	nerd-patch
-Miscellaneous Symbols	256	Gentium Book Plus	4	1.6	unknown
-Miscellaneous Symbols	256	MesloLGS Nerd Font Mono	150	58.6	nerd-patch
-Miscellaneous Symbols	256	MesloLGMDZ Nerd Font Mono	150	58.6	nerd-patch
-Miscellaneous Symbols	256	Hack Nerd Font Mono	4	1.6	nerd-patch
-Miscellaneous Symbols	256	MesloLGSDZ Nerd Font Mono	150	58.6	nerd-patch
-Miscellaneous Symbols	256	FiraCode Nerd Font Mono	25	9.8	nerd-patch
 Miscellaneous Symbols	256	AppleGothic	27	10.5	unknown
-Miscellaneous Symbols	256	MesloLGLDZ Nerd Font Mono	150	58.6	nerd-patch
 Miscellaneous Symbols	256	Noto Sans Syriac	2	0.8	noto
-Miscellaneous Symbols	256	Menlo	149	58.2	unknown
 Miscellaneous Symbols	256	Hiragino Sans GB	5	2.0	apple-cjk
 Miscellaneous Symbols	256	Symbol	4	1.6	unknown
-Miscellaneous Symbols	256	MesloLGM Nerd Font Mono	150	58.6	nerd-patch
-Miscellaneous Symbols	256	.CJK Symbols Fallback HK	3	1.2	unknown
 Miscellaneous Symbols	256	Mukta Mahee	1	0.4	unknown
-Miscellaneous Symbols	256	Helvetica Neue	5	2.0	unknown
-Miscellaneous Symbols	256	Terminess Nerd Font	13	5.1	nerd-patch
+Miscellaneous Symbols	256	.CJK Symbols Fallback HK	3	1.2	unknown
 Miscellaneous Symbols	256	Heiti SC	14	5.5	apple-cjk
 Dingbats	192	JetBrains Mono	14	7.3	embedded-ghostty
 Dingbats	192	JetBrains Mono NoNF	12	6.2	embedded-ghostty
@@ -1578,20 +1124,9 @@ Dingbats	192	VictorMono NFM SemiBold	8	4.2	nerd-patch
 Dingbats	192	Monaspace Xenon	54	28.1	native
 Dingbats	192	VictorMono Nerd Font Mono	8	4.2	nerd-patch
 Dingbats	192	CaskaydiaCove Nerd Font Mono	8	4.2	nerd-patch
-Dingbats	192	MesloLGL Nerd Font Mono	144	75.0	nerd-patch
-Dingbats	192	Gentium Book Plus	2	1.0	unknown
-Dingbats	192	MesloLGS Nerd Font Mono	144	75.0	nerd-patch
-Dingbats	192	MesloLGMDZ Nerd Font Mono	144	75.0	nerd-patch
-Dingbats	192	Hack Nerd Font Mono	54	28.1	nerd-patch
-Dingbats	192	MesloLGSDZ Nerd Font Mono	144	75.0	nerd-patch
-Dingbats	192	FiraCode Nerd Font Mono	8	4.2	nerd-patch
 Dingbats	192	AppleGothic	40	20.8	unknown
-Dingbats	192	MesloLGLDZ Nerd Font Mono	144	75.0	nerd-patch
-Dingbats	192	Menlo	144	75.0	unknown
-Dingbats	192	MesloLGM Nerd Font Mono	144	75.0	nerd-patch
-Dingbats	192	.CJK Symbols Fallback HK	30	15.6	unknown
 Dingbats	192	Lucida Grande	3	1.6	unknown
-Dingbats	192	Terminess Nerd Font	10	5.2	nerd-patch
+Dingbats	192	.CJK Symbols Fallback HK	30	15.6	unknown
 Miscellaneous Mathematical Symbols-A	48	JetBrains Mono	9	18.8	embedded-ghostty
 Miscellaneous Mathematical Symbols-A	48	JetBrains Mono NoNF	9	18.8	embedded-ghostty
 Miscellaneous Mathematical Symbols-A	48	JuliaMono	48	100.0	embedded-ghostty
@@ -1601,18 +1136,6 @@ Miscellaneous Mathematical Symbols-A	48	LastResort	48	100.0	last-resort
 Miscellaneous Mathematical Symbols-A	48	VictorMono NFM SemiBold	2	4.2	nerd-patch
 Miscellaneous Mathematical Symbols-A	48	Monaspace Xenon	28	58.3	native
 Miscellaneous Mathematical Symbols-A	48	VictorMono Nerd Font Mono	2	4.2	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	MesloLGL Nerd Font Mono	5	10.4	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	Gentium Book Plus	4	8.3	unknown
-Miscellaneous Mathematical Symbols-A	48	MesloLGS Nerd Font Mono	5	10.4	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	MesloLGMDZ Nerd Font Mono	5	10.4	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	Hack Nerd Font Mono	11	22.9	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	MesloLGSDZ Nerd Font Mono	5	10.4	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	FiraCode Nerd Font Mono	2	4.2	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	MesloLGLDZ Nerd Font Mono	5	10.4	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	Menlo	5	10.4	unknown
-Miscellaneous Mathematical Symbols-A	48	MesloLGM Nerd Font Mono	5	10.4	nerd-patch
-Miscellaneous Mathematical Symbols-A	48	Lora	2	4.2	unknown
-Miscellaneous Mathematical Symbols-A	48	Terminess Nerd Font	4	8.3	nerd-patch
 Supplemental Arrows-A	16	JetBrains Mono	3	18.8	embedded-ghostty
 Supplemental Arrows-A	16	JetBrains Mono NoNF	3	18.8	embedded-ghostty
 Supplemental Arrows-A	16	JuliaMono	16	100.0	embedded-ghostty
@@ -1620,13 +1143,10 @@ Supplemental Arrows-A	16	Apple Symbols	16	100.0	apple-system
 Supplemental Arrows-A	16	STIX Two Math	16	100.0	math
 Supplemental Arrows-A	16	LastResort	16	100.0	last-resort
 Supplemental Arrows-A	16	Monaspace Xenon	5	31.2	native
-Supplemental Arrows-A	16	Hack Nerd Font Mono	3	18.8	nerd-patch
-Supplemental Arrows-A	16	FiraCode Nerd Font Mono	16	100.0	nerd-patch
 Braille Patterns	256	JuliaMono	256	100.0	embedded-ghostty
 Braille Patterns	256	Apple Symbols	256	100.0	apple-system
 Braille Patterns	256	LastResort	256	100.0	last-resort
 Braille Patterns	256	CaskaydiaCove Nerd Font Mono	256	100.0	nerd-patch
-Braille Patterns	256	Terminess Nerd Font	256	100.0	nerd-patch
 Supplemental Arrows-B	128	JetBrains Mono	2	1.6	embedded-ghostty
 Supplemental Arrows-B	128	JetBrains Mono NoNF	2	1.6	embedded-ghostty
 Supplemental Arrows-B	128	JuliaMono	128	100.0	embedded-ghostty
@@ -1644,18 +1164,8 @@ Miscellaneous Mathematical Symbols-B	128	STIX Two Math	128	100.0	math
 Miscellaneous Mathematical Symbols-B	128	LastResort	128	100.0	last-resort
 Miscellaneous Mathematical Symbols-B	128	Songti SC	2	1.6	apple-cjk
 Miscellaneous Mathematical Symbols-B	128	Monaspace Xenon	70	54.7	native
-Miscellaneous Mathematical Symbols-B	128	MesloLGL Nerd Font Mono	3	2.3	nerd-patch
 Miscellaneous Mathematical Symbols-B	128	Geneva	1	0.8	unknown
-Miscellaneous Mathematical Symbols-B	128	MesloLGS Nerd Font Mono	3	2.3	nerd-patch
-Miscellaneous Mathematical Symbols-B	128	MesloLGMDZ Nerd Font Mono	3	2.3	nerd-patch
-Miscellaneous Mathematical Symbols-B	128	Hack Nerd Font Mono	7	5.5	nerd-patch
-Miscellaneous Mathematical Symbols-B	128	MesloLGSDZ Nerd Font Mono	3	2.3	nerd-patch
 Miscellaneous Mathematical Symbols-B	128	AppleGothic	9	7.0	unknown
-Miscellaneous Mathematical Symbols-B	128	Snell Roundhand	1	0.8	unknown
-Miscellaneous Mathematical Symbols-B	128	MesloLGLDZ Nerd Font Mono	3	2.3	nerd-patch
-Miscellaneous Mathematical Symbols-B	128	Menlo	3	2.3	unknown
-Miscellaneous Mathematical Symbols-B	128	MesloLGM Nerd Font Mono	3	2.3	nerd-patch
-Miscellaneous Mathematical Symbols-B	128	Helvetica Neue	1	0.8	unknown
 Miscellaneous Mathematical Symbols-B	128	Lucida Grande	1	0.8	unknown
 Supplemental Mathematical Operators	256	JetBrains Mono	3	1.2	embedded-ghostty
 Supplemental Mathematical Operators	256	JetBrains Mono NoNF	3	1.2	embedded-ghostty
@@ -1665,15 +1175,7 @@ Supplemental Mathematical Operators	256	STIX Two Math	256	100.0	math
 Supplemental Mathematical Operators	256	LastResort	256	100.0	last-resort
 Supplemental Mathematical Operators	256	Monaspace Xenon	146	57.0	native
 Supplemental Mathematical Operators	256	CaskaydiaCove Nerd Font Mono	1	0.4	nerd-patch
-Supplemental Mathematical Operators	256	MesloLGL Nerd Font Mono	1	0.4	nerd-patch
-Supplemental Mathematical Operators	256	MesloLGS Nerd Font Mono	1	0.4	nerd-patch
-Supplemental Mathematical Operators	256	MesloLGMDZ Nerd Font Mono	1	0.4	nerd-patch
-Supplemental Mathematical Operators	256	Hack Nerd Font Mono	4	1.6	nerd-patch
-Supplemental Mathematical Operators	256	MesloLGSDZ Nerd Font Mono	1	0.4	nerd-patch
 Supplemental Mathematical Operators	256	AppleGothic	13	5.1	unknown
-Supplemental Mathematical Operators	256	MesloLGLDZ Nerd Font Mono	1	0.4	nerd-patch
-Supplemental Mathematical Operators	256	Menlo	1	0.4	unknown
-Supplemental Mathematical Operators	256	MesloLGM Nerd Font Mono	1	0.4	nerd-patch
 Miscellaneous Symbols and Arrows	253	JetBrains Mono	1	0.4	embedded-ghostty
 Miscellaneous Symbols and Arrows	253	JetBrains Mono NoNF	1	0.4	embedded-ghostty
 Miscellaneous Symbols and Arrows	253	JuliaMono	253	100.0	embedded-ghostty
@@ -1688,73 +1190,34 @@ Miscellaneous Symbols and Arrows	253	VictorMono NFM SemiBold	6	2.4	nerd-patch
 Miscellaneous Symbols and Arrows	253	Monaspace Xenon	94	37.2	native
 Miscellaneous Symbols and Arrows	253	VictorMono Nerd Font Mono	6	2.4	nerd-patch
 Miscellaneous Symbols and Arrows	253	CaskaydiaCove Nerd Font Mono	37	14.6	nerd-patch
-Miscellaneous Symbols and Arrows	253	MesloLGL Nerd Font Mono	10	4.0	nerd-patch
-Miscellaneous Symbols and Arrows	253	MesloLGS Nerd Font Mono	10	4.0	nerd-patch
-Miscellaneous Symbols and Arrows	253	MesloLGMDZ Nerd Font Mono	10	4.0	nerd-patch
-Miscellaneous Symbols and Arrows	253	Hack Nerd Font Mono	15	5.9	nerd-patch
-Miscellaneous Symbols and Arrows	253	MesloLGSDZ Nerd Font Mono	10	4.0	nerd-patch
-Miscellaneous Symbols and Arrows	253	FiraCode Nerd Font Mono	4	1.6	nerd-patch
 Miscellaneous Symbols and Arrows	253	AppleGothic	3	1.2	unknown
-Miscellaneous Symbols and Arrows	253	MesloLGLDZ Nerd Font Mono	10	4.0	nerd-patch
-Miscellaneous Symbols and Arrows	253	Menlo	9	3.6	unknown
-Miscellaneous Symbols and Arrows	253	MesloLGM Nerd Font Mono	10	4.0	nerd-patch
-Miscellaneous Symbols and Arrows	253	Helvetica Neue	2	0.8	unknown
-Miscellaneous Symbols and Arrows	253	Terminess Nerd Font	1	0.4	nerd-patch
 Glagolitic	96	LastResort	96	100.0	last-resort
 Glagolitic	96	Noto Sans Glagolitic	94	97.9	noto
 Latin Extended-C	32	JuliaMono	32	100.0	embedded-ghostty
 Latin Extended-C	32	LastResort	32	100.0	last-resort
 Latin Extended-C	32	Monaspace Xenon	2	6.2	native
-Latin Extended-C	32	CaskaydiaCove Nerd Font Mono	2	6.2	nerd-patch
-Latin Extended-C	32	MesloLGL Nerd Font Mono	10	31.2	nerd-patch
-Latin Extended-C	32	Gentium Book Plus	32	100.0	unknown
 Latin Extended-C	32	Geneva	32	100.0	unknown
-Latin Extended-C	32	MesloLGS Nerd Font Mono	10	31.2	nerd-patch
-Latin Extended-C	32	MesloLGMDZ Nerd Font Mono	10	31.2	nerd-patch
-Latin Extended-C	32	MesloLGSDZ Nerd Font Mono	10	31.2	nerd-patch
-Latin Extended-C	32	MesloLGLDZ Nerd Font Mono	10	31.2	nerd-patch
-Latin Extended-C	32	Menlo	10	31.2	unknown
-Latin Extended-C	32	MesloLGM Nerd Font Mono	10	31.2	nerd-patch
-Latin Extended-C	32	Helvetica Neue	15	46.9	unknown
-Latin Extended-C	32	.New York	1	3.1	unknown
+Latin Extended-C	32	CaskaydiaCove Nerd Font Mono	2	6.2	nerd-patch
 Coptic	123	JuliaMono	4	3.3	embedded-ghostty
 Coptic	123	LastResort	123	100.0	last-resort
-Coptic	123	Gentium Book Plus	1	0.8	unknown
 Coptic	123	Noto Sans Coptic	123	100.0	noto
 Georgian Supplement	40	JuliaMono	40	100.0	embedded-ghostty
 Georgian Supplement	40	LastResort	40	100.0	last-resort
 Tifinagh	59	JuliaMono	59	100.0	embedded-ghostty
 Tifinagh	59	LastResort	59	100.0	last-resort
-Tifinagh	59	Noto Sans Tifinagh	59	100.0	noto
 Ethiopic Extended	79	LastResort	79	100.0	last-resort
 Ethiopic Extended	79	Kefa III	79	100.0	unknown
 Cyrillic Extended-A	32	JuliaMono	32	100.0	embedded-ghostty
 Cyrillic Extended-A	32	LastResort	32	100.0	last-resort
 Cyrillic Extended-A	32	Geneva	32	100.0	unknown
-Cyrillic Extended-A	32	Snell Roundhand	32	100.0	unknown
 Cyrillic Extended-A	32	Superclarendon	32	100.0	unknown
-Cyrillic Extended-A	32	DIN Condensed	32	100.0	unknown
 Supplemental Punctuation	94	JuliaMono	94	100.0	embedded-ghostty
 Supplemental Punctuation	94	LastResort	94	100.0	last-resort
 Supplemental Punctuation	94	Monaspace Xenon	1	1.1	native
-Supplemental Punctuation	94	Courier New	1	1.1	unknown
-Supplemental Punctuation	94	MesloLGL Nerd Font Mono	2	2.1	nerd-patch
-Supplemental Punctuation	94	Gentium Book Plus	23	24.5	unknown
 Supplemental Punctuation	94	Geneva	48	51.1	unknown
-Supplemental Punctuation	94	MesloLGS Nerd Font Mono	2	2.1	nerd-patch
-Supplemental Punctuation	94	MesloLGMDZ Nerd Font Mono	2	2.1	nerd-patch
-Supplemental Punctuation	94	Hack Nerd Font Mono	7	7.4	nerd-patch
-Supplemental Punctuation	94	MesloLGSDZ Nerd Font Mono	2	2.1	nerd-patch
-Supplemental Punctuation	94	FiraCode Nerd Font Mono	2	2.1	nerd-patch
-Supplemental Punctuation	94	MesloLGLDZ Nerd Font Mono	2	2.1	nerd-patch
+Supplemental Punctuation	94	Courier New	1	1.1	unknown
 Supplemental Punctuation	94	Noto Sans NKo	2	2.1	noto
-Supplemental Punctuation	94	Menlo	2	2.1	unknown
 Supplemental Punctuation	94	Noto Sans Samaritan	1	1.1	noto
-Supplemental Punctuation	94	MesloLGM Nerd Font Mono	2	2.1	nerd-patch
-Supplemental Punctuation	94	Helvetica Neue	26	27.7	unknown
-Supplemental Punctuation	94	Terminess Nerd Font	1	1.1	nerd-patch
-Supplemental Punctuation	94	.New York	1	1.1	unknown
-Supplemental Punctuation	94	Noto Sans Adlam	3	3.2	noto
 CJK Radicals Supplement	115	Apple Symbols	115	100.0	apple-system
 CJK Radicals Supplement	115	LastResort	115	100.0	last-resort
 CJK Radicals Supplement	115	PingFang SC	115	100.0	apple-cjk
@@ -1789,10 +1252,9 @@ CJK Symbols and Punctuation	64	Songti SC	38	59.4	apple-cjk
 CJK Symbols and Punctuation	64	Hiragino Sans	27	42.2	apple-cjk
 CJK Symbols and Punctuation	64	PingFang HK	29	45.3	apple-cjk
 CJK Symbols and Punctuation	64	PingFang MO	29	45.3	apple-cjk
-CJK Symbols and Punctuation	64	FiraCode Nerd Font Mono	2	3.1	nerd-patch
-CJK Symbols and Punctuation	64	AppleGothic	30	46.9	unknown
 CJK Symbols and Punctuation	64	PingFang TC	29	45.3	apple-cjk
 CJK Symbols and Punctuation	64	Noto Sans PhagsPa	21	32.8	noto
+CJK Symbols and Punctuation	64	AppleGothic	30	46.9	unknown
 CJK Symbols and Punctuation	64	Noto Sans Tai Le	6	9.4	noto
 CJK Symbols and Punctuation	64	Hiragino Sans GB	42	65.6	apple-cjk
 CJK Symbols and Punctuation	64	Symbol	2	3.1	unknown
@@ -1828,7 +1290,6 @@ Bopomofo	43	Heiti SC	37	86.0	apple-cjk
 Hangul Compatibility Jamo	94	Arial Unicode MS	94	100.0	pan-unicode-dump
 Hangul Compatibility Jamo	94	LastResort	94	100.0	last-resort
 Hangul Compatibility Jamo	94	AppleGothic	94	100.0	unknown
-Hangul Compatibility Jamo	94	Snell Roundhand	1	1.1	unknown
 Kanbun	16	Arial Unicode MS	16	100.0	pan-unicode-dump
 Kanbun	16	LastResort	16	100.0	last-resort
 Bopomofo Extended	32	LastResort	32	100.0	last-resort
@@ -1850,8 +1311,8 @@ Enclosed CJK Letters and Months	255	Songti SC	85	33.3	apple-cjk
 Enclosed CJK Letters and Months	255	Hiragino Sans	60	23.5	apple-cjk
 Enclosed CJK Letters and Months	255	PingFang HK	102	40.0	apple-cjk
 Enclosed CJK Letters and Months	255	PingFang MO	102	40.0	apple-cjk
-Enclosed CJK Letters and Months	255	AppleGothic	80	31.4	unknown
 Enclosed CJK Letters and Months	255	PingFang TC	102	40.0	apple-cjk
+Enclosed CJK Letters and Months	255	AppleGothic	80	31.4	unknown
 Enclosed CJK Letters and Months	255	Hiragino Sans GB	12	4.7	apple-cjk
 Enclosed CJK Letters and Months	255	.CJK Symbols Fallback HK	18	7.1	unknown
 Enclosed CJK Letters and Months	255	Heiti SC	12	4.7	apple-cjk
@@ -1863,8 +1324,8 @@ CJK Compatibility	256	Songti SC	16	6.2	apple-cjk
 CJK Compatibility	256	Hiragino Sans	65	25.4	apple-cjk
 CJK Compatibility	256	PingFang HK	56	21.9	apple-cjk
 CJK Compatibility	256	PingFang MO	56	21.9	apple-cjk
-CJK Compatibility	256	AppleGothic	81	31.6	unknown
 CJK Compatibility	256	PingFang TC	56	21.9	apple-cjk
+CJK Compatibility	256	AppleGothic	81	31.6	unknown
 CJK Compatibility	256	Hiragino Sans GB	11	4.3	apple-cjk
 CJK Compatibility	256	.CJK Symbols Fallback HK	20	7.8	unknown
 CJK Compatibility	256	Heiti SC	11	4.3	apple-cjk
@@ -1887,8 +1348,8 @@ CJK Unified Ideographs	20992	Songti SC	20902	99.6	apple-cjk
 CJK Unified Ideographs	20992	Hiragino Sans	6746	32.1	apple-cjk
 CJK Unified Ideographs	20992	PingFang HK	20517	97.7	apple-cjk
 CJK Unified Ideographs	20992	PingFang MO	20517	97.7	apple-cjk
-CJK Unified Ideographs	20992	AppleGothic	4620	22.0	unknown
 CJK Unified Ideographs	20992	PingFang TC	20517	97.7	apple-cjk
+CJK Unified Ideographs	20992	AppleGothic	4620	22.0	unknown
 CJK Unified Ideographs	20992	Hiragino Sans GB	20992	100.0	apple-cjk
 CJK Unified Ideographs	20992	Heiti SC	20923	99.7	apple-cjk
 Yi Syllables	1165	LastResort	1165	100.0	last-resort
@@ -1908,25 +1369,13 @@ Cyrillic Extended-B	96	VictorMono NFM SemiBold	2	2.1	nerd-patch
 Cyrillic Extended-B	96	VictorMono Nerd Font Mono	2	2.1	nerd-patch
 Cyrillic Extended-B	96	Geneva	28	29.2	unknown
 Cyrillic Extended-B	96	Noto Sans Glagolitic	1	1.0	noto
-Cyrillic Extended-B	96	Snell Roundhand	89	92.7	unknown
 Cyrillic Extended-B	96	Superclarendon	89	92.7	unknown
-Cyrillic Extended-B	96	DIN Condensed	96	100.0	unknown
 Bamum	88	LastResort	88	100.0	last-resort
 Bamum	88	Noto Sans Bamum	88	100.0	noto
 Modifier Tone Letters	32	JuliaMono	32	100.0	embedded-ghostty
 Modifier Tone Letters	32	Apple Symbols	27	84.4	apple-system
 Modifier Tone Letters	32	LastResort	32	100.0	last-resort
-Modifier Tone Letters	32	MesloLGL Nerd Font Mono	20	62.5	nerd-patch
-Modifier Tone Letters	32	Gentium Book Plus	32	100.0	unknown
 Modifier Tone Letters	32	Geneva	32	100.0	unknown
-Modifier Tone Letters	32	MesloLGS Nerd Font Mono	20	62.5	nerd-patch
-Modifier Tone Letters	32	MesloLGMDZ Nerd Font Mono	20	62.5	nerd-patch
-Modifier Tone Letters	32	MesloLGSDZ Nerd Font Mono	20	62.5	nerd-patch
-Modifier Tone Letters	32	Monaco	23	71.9	unknown
-Modifier Tone Letters	32	MesloLGLDZ Nerd Font Mono	20	62.5	nerd-patch
-Modifier Tone Letters	32	Menlo	20	62.5	unknown
-Modifier Tone Letters	32	MesloLGM Nerd Font Mono	20	62.5	nerd-patch
-Modifier Tone Letters	32	Helvetica Neue	27	84.4	unknown
 Latin Extended-D	193	JetBrains Mono	1	0.5	embedded-ghostty
 Latin Extended-D	193	JetBrains Mono NoNF	1	0.5	embedded-ghostty
 Latin Extended-D	193	JuliaMono	193	100.0	embedded-ghostty
@@ -1943,46 +1392,31 @@ Latin Extended-D	193	VictorMono NFM SemiBold	1	0.5	nerd-patch
 Latin Extended-D	193	Monaspace Xenon	4	2.1	native
 Latin Extended-D	193	VictorMono Nerd Font Mono	1	0.5	nerd-patch
 Latin Extended-D	193	PingFang HK	1	0.5	apple-cjk
-Latin Extended-D	193	Euphemia UCAS	1	0.5	unknown
-Latin Extended-D	193	Courier New	1	0.5	unknown
 Latin Extended-D	193	Kefa III	1	0.5	unknown
-Latin Extended-D	193	CaskaydiaCove Nerd Font Mono	1	0.5	nerd-patch
-Latin Extended-D	193	MesloLGL Nerd Font Mono	4	2.1	nerd-patch
-Latin Extended-D	193	Gentium Book Plus	160	82.9	unknown
-Latin Extended-D	193	Geneva	134	69.4	unknown
 Latin Extended-D	193	PingFang MO	1	0.5	apple-cjk
-Latin Extended-D	193	MesloLGS Nerd Font Mono	4	2.1	nerd-patch
+Latin Extended-D	193	Geneva	134	69.4	unknown
+Latin Extended-D	193	Courier New	1	0.5	unknown
+Latin Extended-D	193	CaskaydiaCove Nerd Font Mono	1	0.5	nerd-patch
 Latin Extended-D	193	Khmer MN	1	0.5	unknown
 Latin Extended-D	193	.SF Malayalam	1	0.5	unknown
-Latin Extended-D	193	MesloLGMDZ Nerd Font Mono	4	2.1	nerd-patch
-Latin Extended-D	193	Hack Nerd Font Mono	1	0.5	nerd-patch
-Latin Extended-D	193	MesloLGSDZ Nerd Font Mono	4	2.1	nerd-patch
-Latin Extended-D	193	FiraCode Nerd Font Mono	1	0.5	nerd-patch
 Latin Extended-D	193	Kohinoor Devanagari	1	0.5	unknown
-Latin Extended-D	193	Monaco	1	0.5	unknown
 Latin Extended-D	193	Noto Sans Cham	1	0.5	noto
 Latin Extended-D	193	Noto Sans Tai Viet	2	1.0	noto
-Latin Extended-D	193	AppleGothic	1	0.5	unknown
 Latin Extended-D	193	Sinhala Sangam MN	1	0.5	unknown
-Latin Extended-D	193	Snell Roundhand	1	0.5	unknown
 Latin Extended-D	193	PingFang TC	1	0.5	apple-cjk
-Latin Extended-D	193	MesloLGLDZ Nerd Font Mono	4	2.1	nerd-patch
+Latin Extended-D	193	AppleGothic	1	0.5	unknown
 Latin Extended-D	193	Noto Sans Syriac	1	0.5	noto
-Latin Extended-D	193	Menlo	4	2.1	unknown
 Latin Extended-D	193	Noto Sans Thaana	1	0.5	noto
 Latin Extended-D	193	Hiragino Sans GB	1	0.5	apple-cjk
 Latin Extended-D	193	Symbol	1	0.5	unknown
-Latin Extended-D	193	MesloLGM Nerd Font Mono	4	2.1	nerd-patch
-Latin Extended-D	193	Noto Nastaliq Urdu	1	0.5	noto
 Latin Extended-D	193	Grantha Sangam MN	1	0.5	unknown
 Latin Extended-D	193	Kohinoor Telugu	1	0.5	unknown
 Latin Extended-D	193	Mukta Mahee	1	0.5	unknown
 Latin Extended-D	193	Athelas	1	0.5	unknown
 Latin Extended-D	193	Superclarendon	1	0.5	unknown
 Latin Extended-D	193	Noto Sans Oriya	1	0.5	noto
-Latin Extended-D	193	Helvetica Neue	3	1.6	unknown
-Latin Extended-D	193	DIN Condensed	1	0.5	unknown
 Latin Extended-D	193	Lucida Grande	1	0.5	unknown
+Latin Extended-D	193	Noto Nastaliq Urdu	1	0.5	noto
 Latin Extended-D	193	.SF Arabic	1	0.5	unknown
 Latin Extended-D	193	Kohinoor Bangla	1	0.5	unknown
 Latin Extended-D	193	Gujarati Sangam MN	1	0.5	unknown
@@ -1991,13 +1425,9 @@ Latin Extended-D	193	Sukhumvit Set	1	0.5	unknown
 Latin Extended-D	193	.SF Telugu	1	0.5	unknown
 Latin Extended-D	193	.SF Kannada	1	0.5	unknown
 Latin Extended-D	193	Galvji	1	0.5	unknown
-Latin Extended-D	193	Lora	1	0.5	unknown
-Latin Extended-D	193	Terminess Nerd Font	1	0.5	nerd-patch
 Latin Extended-D	193	.DecoType Nastaleeq Urdu UI	1	0.5	unknown
 Latin Extended-D	193	Kohinoor Gujarati	1	0.5	unknown
 Latin Extended-D	193	Noto Sans Kannada	1	0.5	noto
-Latin Extended-D	193	.New York	2	1.0	unknown
-Latin Extended-D	193	Noto Sans Adlam	1	0.5	noto
 Latin Extended-D	193	Heiti SC	1	0.5	apple-cjk
 Latin Extended-D	193	.SF Devanagari	1	0.5	unknown
 Syloti Nagri	45	LastResort	45	100.0	last-resort
@@ -2012,7 +1442,6 @@ Saurashtra	82	Noto Sans Saurashtra	82	100.0	noto
 Devanagari Extended	32	LastResort	32	100.0	last-resort
 Devanagari Extended	32	.SF Devanagari	2	6.2	unknown
 Kayah Li	48	LastResort	48	100.0	last-resort
-Kayah Li	48	Gentium Book Plus	1	2.1	unknown
 Kayah Li	48	Noto Serif Myanmar	1	2.1	noto
 Kayah Li	48	Noto Sans Kayah Li	48	100.0	noto
 Rejang	37	JuliaMono	1	2.7	embedded-ghostty
@@ -2038,7 +1467,6 @@ Ethiopic Extended-A	32	Kefa III	32	100.0	unknown
 Latin Extended-E	60	JuliaMono	60	100.0	embedded-ghostty
 Latin Extended-E	60	LastResort	60	100.0	last-resort
 Latin Extended-E	60	Monaspace Xenon	1	1.7	native
-Latin Extended-E	60	Gentium Book Plus	6	10.0	unknown
 Cherokee Supplement	80	LastResort	80	100.0	last-resort
 Cherokee Supplement	80	Geneva	80	100.0	unknown
 Cherokee Supplement	80	Galvji	80	100.0	unknown
@@ -2060,32 +1488,16 @@ Private Use Area	6400	VictorMono NFM SemiBold	3500	54.7	nerd-patch
 Private Use Area	6400	Monaspace Xenon	55	0.9	native
 Private Use Area	6400	VictorMono Nerd Font Mono	3500	54.7	nerd-patch
 Private Use Area	6400	Kefa III	14	0.2	unknown
-Private Use Area	6400	CaskaydiaCove Nerd Font Mono	3500	54.7	nerd-patch
-Private Use Area	6400	MesloLGL Nerd Font Mono	3501	54.7	nerd-patch
-Private Use Area	6400	Gentium Book Plus	223	3.5	unknown
 Private Use Area	6400	Geneva	1	0.0	unknown
-Private Use Area	6400	MesloLGS Nerd Font Mono	3501	54.7	nerd-patch
-Private Use Area	6400	MesloLGMDZ Nerd Font Mono	3501	54.7	nerd-patch
-Private Use Area	6400	Hack Nerd Font Mono	3500	54.7	nerd-patch
-Private Use Area	6400	MesloLGSDZ Nerd Font Mono	3501	54.7	nerd-patch
-Private Use Area	6400	FiraCode Nerd Font Mono	3500	54.7	nerd-patch
-Private Use Area	6400	Monaco	2	0.0	unknown
+Private Use Area	6400	CaskaydiaCove Nerd Font Mono	3500	54.7	nerd-patch
 Private Use Area	6400	AppleGothic	56	0.9	unknown
-Private Use Area	6400	Snell Roundhand	1	0.0	unknown
-Private Use Area	6400	MesloLGLDZ Nerd Font Mono	3501	54.7	nerd-patch
-Private Use Area	6400	Menlo	1	0.0	unknown
 Private Use Area	6400	Hiragino Sans GB	106	1.7	apple-cjk
 Private Use Area	6400	Symbol	31	0.5	unknown
-Private Use Area	6400	MesloLGM Nerd Font Mono	3501	54.7	nerd-patch
 Private Use Area	6400	Grantha Sangam MN	1	0.0	unknown
 Private Use Area	6400	Athelas	197	3.1	unknown
 Private Use Area	6400	Superclarendon	13	0.2	unknown
-Private Use Area	6400	Helvetica Neue	6	0.1	unknown
-Private Use Area	6400	DIN Condensed	6	0.1	unknown
 Private Use Area	6400	Lucida Grande	7	0.1	unknown
 Private Use Area	6400	Sukhumvit Set	33	0.5	unknown
-Private Use Area	6400	Lora	1	0.0	unknown
-Private Use Area	6400	Terminess Nerd Font	3501	54.7	nerd-patch
 Private Use Area	6400	.DecoType Nastaleeq Urdu UI	14	0.2	unknown
 Private Use Area	6400	Heiti SC	26	0.4	apple-cjk
 CJK Compatibility Ideographs	472	Arial Unicode MS	302	64.0	pan-unicode-dump
@@ -2095,8 +1507,8 @@ CJK Compatibility Ideographs	472	Songti SC	21	4.4	apple-cjk
 CJK Compatibility Ideographs	472	Hiragino Sans	91	19.3	apple-cjk
 CJK Compatibility Ideographs	472	PingFang HK	342	72.5	apple-cjk
 CJK Compatibility Ideographs	472	PingFang MO	342	72.5	apple-cjk
-CJK Compatibility Ideographs	472	AppleGothic	268	56.8	unknown
 CJK Compatibility Ideographs	472	PingFang TC	342	72.5	apple-cjk
+CJK Compatibility Ideographs	472	AppleGothic	268	56.8	unknown
 CJK Compatibility Ideographs	472	Hiragino Sans GB	21	4.4	apple-cjk
 CJK Compatibility Ideographs	472	Heiti SC	361	76.5	apple-cjk
 Alphabetic Presentation Forms	58	JuliaMono	53	91.4	embedded-ghostty
@@ -2105,32 +1517,24 @@ Alphabetic Presentation Forms	58	Arial Unicode MS	57	98.3	pan-unicode-dump
 Alphabetic Presentation Forms	58	LastResort	58	100.0	last-resort
 Alphabetic Presentation Forms	58	Songti SC	3	5.2	apple-cjk
 Alphabetic Presentation Forms	58	Hiragino Sans	2	3.4	apple-cjk
-Alphabetic Presentation Forms	58	Courier New	48	82.8	unknown
 Alphabetic Presentation Forms	58	Kefa III	3	5.2	unknown
-Alphabetic Presentation Forms	58	CaskaydiaCove Nerd Font Mono	31	53.4	nerd-patch
-Alphabetic Presentation Forms	58	Gentium Book Plus	5	8.6	unknown
 Alphabetic Presentation Forms	58	Geneva	7	12.1	unknown
+Alphabetic Presentation Forms	58	Courier New	48	82.8	unknown
+Alphabetic Presentation Forms	58	CaskaydiaCove Nerd Font Mono	31	53.4	nerd-patch
 Alphabetic Presentation Forms	58	Kohinoor Devanagari	2	3.4	unknown
-Alphabetic Presentation Forms	58	Monaco	2	3.4	unknown
 Alphabetic Presentation Forms	58	Sinhala Sangam MN	1	1.7	unknown
-Alphabetic Presentation Forms	58	Snell Roundhand	2	3.4	unknown
-Alphabetic Presentation Forms	58	Menlo	2	3.4	unknown
 Alphabetic Presentation Forms	58	Grantha Sangam MN	2	3.4	unknown
 Alphabetic Presentation Forms	58	Kohinoor Telugu	2	3.4	unknown
-Alphabetic Presentation Forms	58	.CJK Symbols Fallback HK	3	5.2	unknown
 Alphabetic Presentation Forms	58	Mukta Mahee	6	10.3	unknown
 Alphabetic Presentation Forms	58	Athelas	6	10.3	unknown
 Alphabetic Presentation Forms	58	Superclarendon	2	3.4	unknown
-Alphabetic Presentation Forms	58	Helvetica Neue	5	8.6	unknown
-Alphabetic Presentation Forms	58	DIN Condensed	2	3.4	unknown
 Alphabetic Presentation Forms	58	Lucida Grande	32	55.2	unknown
 Alphabetic Presentation Forms	58	Kohinoor Bangla	2	3.4	unknown
 Alphabetic Presentation Forms	58	Gujarati Sangam MN	1	1.7	unknown
 Alphabetic Presentation Forms	58	Kannada MN	1	1.7	unknown
-Alphabetic Presentation Forms	58	Noto Sans Armenian	5	8.6	noto
+Alphabetic Presentation Forms	58	.CJK Symbols Fallback HK	3	5.2	unknown
 Alphabetic Presentation Forms	58	Sukhumvit Set	2	3.4	unknown
 Alphabetic Presentation Forms	58	Galvji	2	3.4	unknown
-Alphabetic Presentation Forms	58	Lora	2	3.4	unknown
 Alphabetic Presentation Forms	58	Heiti SC	2	3.4	apple-cjk
 Arabic Presentation Forms-A	631	JuliaMono	13	2.1	embedded-ghostty
 Arabic Presentation Forms-A	631	Arial Unicode MS	593	94.0	pan-unicode-dump
@@ -2141,8 +1545,8 @@ Arabic Presentation Forms-A	631	Noto Sans NKo	2	0.3	noto
 Arabic Presentation Forms-A	631	Noto Sans Thaana	2	0.3	noto
 Arabic Presentation Forms-A	631	Noto Nastaliq Urdu	24	3.8	noto
 Arabic Presentation Forms-A	631	.SF Arabic	191	30.3	unknown
-Arabic Presentation Forms-A	631	Geeza Pro	595	94.3	unknown
 Arabic Presentation Forms-A	631	.DecoType Nastaleeq Urdu UI	24	3.8	unknown
+Arabic Presentation Forms-A	631	Geeza Pro	595	94.3	unknown
 Variation Selectors	16	JuliaMono	2	12.5	embedded-ghostty
 Variation Selectors	16	Apple Symbols	1	6.2	apple-system
 Variation Selectors	16	STIX Two Math	1	6.2	math
@@ -2150,7 +1554,6 @@ Variation Selectors	16	LastResort	16	100.0	last-resort
 Variation Selectors	16	Apple Color Emoji	1	6.2	apple-system
 Variation Selectors	16	Hiragino Sans	2	12.5	apple-cjk
 Variation Selectors	16	PingFang HK	2	12.5	apple-cjk
-Variation Selectors	16	Gentium Book Plus	16	100.0	unknown
 Variation Selectors	16	PingFang MO	1	6.2	apple-cjk
 Variation Selectors	16	Noto Serif Myanmar	1	6.2	noto
 Variation Selectors	16	Noto Sans PhagsPa	1	6.2	noto
@@ -2162,19 +1565,17 @@ Vertical Forms	10	Songti SC	10	100.0	apple-cjk
 Vertical Forms	10	Hiragino Sans	4	40.0	apple-cjk
 Vertical Forms	10	PingFang HK	9	90.0	apple-cjk
 Vertical Forms	10	PingFang MO	9	90.0	apple-cjk
-Vertical Forms	10	AppleGothic	4	40.0	unknown
-Vertical Forms	10	Snell Roundhand	6	60.0	unknown
 Vertical Forms	10	PingFang TC	9	90.0	apple-cjk
+Vertical Forms	10	AppleGothic	4	40.0	unknown
 Vertical Forms	10	Hiragino Sans GB	10	100.0	apple-cjk
-Vertical Forms	10	.CJK Symbols Fallback HK	1	10.0	unknown
 Vertical Forms	10	Athelas	6	60.0	unknown
+Vertical Forms	10	.CJK Symbols Fallback HK	1	10.0	unknown
 Vertical Forms	10	Heiti SC	10	100.0	apple-cjk
 Combining Half Marks	16	JuliaMono	16	100.0	embedded-ghostty
 Combining Half Marks	16	Arial Unicode MS	4	25.0	pan-unicode-dump
 Combining Half Marks	16	LastResort	16	100.0	last-resort
 Combining Half Marks	16	Songti SC	4	25.0	apple-cjk
 Combining Half Marks	16	Courier New	4	25.0	unknown
-Combining Half Marks	16	Gentium Book Plus	4	25.0	unknown
 Combining Half Marks	16	Noto Sans Coptic	3	18.8	noto
 Combining Half Marks	16	Heiti SC	4	25.0	apple-cjk
 CJK Compatibility Forms	32	Arial Unicode MS	28	87.5	pan-unicode-dump
@@ -2184,12 +1585,11 @@ CJK Compatibility Forms	32	Songti SC	30	93.8	apple-cjk
 CJK Compatibility Forms	32	Hiragino Sans	22	68.8	apple-cjk
 CJK Compatibility Forms	32	PingFang HK	24	75.0	apple-cjk
 CJK Compatibility Forms	32	PingFang MO	24	75.0	apple-cjk
-CJK Compatibility Forms	32	AppleGothic	18	56.2	unknown
-CJK Compatibility Forms	32	Snell Roundhand	10	31.2	unknown
 CJK Compatibility Forms	32	PingFang TC	24	75.0	apple-cjk
+CJK Compatibility Forms	32	AppleGothic	18	56.2	unknown
 CJK Compatibility Forms	32	Hiragino Sans GB	27	84.4	apple-cjk
-CJK Compatibility Forms	32	.CJK Symbols Fallback HK	6	18.8	unknown
 CJK Compatibility Forms	32	Athelas	10	31.2	unknown
+CJK Compatibility Forms	32	.CJK Symbols Fallback HK	6	18.8	unknown
 CJK Compatibility Forms	32	Heiti SC	30	93.8	apple-cjk
 Small Form Variants	26	JetBrains Mono	1	3.8	embedded-ghostty
 Small Form Variants	26	JetBrains Mono NoNF	1	3.8	embedded-ghostty
@@ -2211,57 +1611,43 @@ Arabic Presentation Forms-B	141	STIX Two Math	1	0.7	math
 Arabic Presentation Forms-B	141	Arial Unicode MS	140	99.3	pan-unicode-dump
 Arabic Presentation Forms-B	141	LastResort	141	100.0	last-resort
 Arabic Presentation Forms-B	141	Songti SC	139	98.6	apple-cjk
-Arabic Presentation Forms-B	141	Courier New	126	89.4	unknown
-Arabic Presentation Forms-B	141	MesloLGL Nerd Font Mono	1	0.7	nerd-patch
-Arabic Presentation Forms-B	141	Gentium Book Plus	1	0.7	unknown
 Arabic Presentation Forms-B	141	Geneva	1	0.7	unknown
-Arabic Presentation Forms-B	141	MesloLGS Nerd Font Mono	1	0.7	nerd-patch
+Arabic Presentation Forms-B	141	Courier New	126	89.4	unknown
 Arabic Presentation Forms-B	141	Noto Serif Myanmar	1	0.7	noto
 Arabic Presentation Forms-B	141	Khmer MN	1	0.7	unknown
-Arabic Presentation Forms-B	141	MesloLGMDZ Nerd Font Mono	1	0.7	nerd-patch
-Arabic Presentation Forms-B	141	Hack Nerd Font Mono	1	0.7	nerd-patch
 Arabic Presentation Forms-B	141	Noto Serif Balinese	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Tai Tham	1	0.7	noto
-Arabic Presentation Forms-B	141	MesloLGSDZ Nerd Font Mono	1	0.7	nerd-patch
-Arabic Presentation Forms-B	141	FiraCode Nerd Font Mono	1	0.7	nerd-patch
 Arabic Presentation Forms-B	141	Noto Sans Javanese	1	0.7	noto
-Arabic Presentation Forms-B	141	Monaco	1	0.7	unknown
 Arabic Presentation Forms-B	141	Noto Sans Tai Viet	1	0.7	noto
-Arabic Presentation Forms-B	141	AppleGothic	1	0.7	unknown
 Arabic Presentation Forms-B	141	Noto Sans Saurashtra	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Meetei Mayek	1	0.7	noto
 Arabic Presentation Forms-B	141	Sinhala Sangam MN	1	0.7	unknown
-Arabic Presentation Forms-B	141	Snell Roundhand	1	0.7	unknown
-Arabic Presentation Forms-B	141	MesloLGLDZ Nerd Font Mono	1	0.7	nerd-patch
 Arabic Presentation Forms-B	141	Noto Sans Sundanese	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans PhagsPa	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Lepcha	1	0.7	noto
+Arabic Presentation Forms-B	141	AppleGothic	1	0.7	unknown
 Arabic Presentation Forms-B	141	Noto Sans Limbu	1	0.7	noto
-Arabic Presentation Forms-B	141	Menlo	1	0.7	unknown
 Arabic Presentation Forms-B	141	Noto Sans Batak	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Thaana	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Syloti Nagri	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Tai Le	1	0.7	noto
-Arabic Presentation Forms-B	141	MesloLGM Nerd Font Mono	1	0.7	nerd-patch
 Arabic Presentation Forms-B	141	Noto Sans Buginese	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Rejang	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Tagalog	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Hanunoo	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Buhid	1	0.7	noto
 Arabic Presentation Forms-B	141	Noto Sans Tagbanwa	1	0.7	noto
-Arabic Presentation Forms-B	141	Noto Nastaliq Urdu	1	0.7	noto
 Arabic Presentation Forms-B	141	Grantha Sangam MN	1	0.7	unknown
 Arabic Presentation Forms-B	141	Noto Sans Oriya	1	0.7	noto
-Arabic Presentation Forms-B	141	Helvetica Neue	1	0.7	unknown
 Arabic Presentation Forms-B	141	Lucida Grande	1	0.7	unknown
+Arabic Presentation Forms-B	141	Noto Nastaliq Urdu	1	0.7	noto
 Arabic Presentation Forms-B	141	.SF Arabic	138	97.9	unknown
 Arabic Presentation Forms-B	141	Gujarati Sangam MN	1	0.7	unknown
 Arabic Presentation Forms-B	141	Kannada MN	1	0.7	unknown
-Arabic Presentation Forms-B	141	Geeza Pro	140	99.3	unknown
 Arabic Presentation Forms-B	141	Galvji	1	0.7	unknown
-Arabic Presentation Forms-B	141	Terminess Nerd Font	1	0.7	nerd-patch
 Arabic Presentation Forms-B	141	.DecoType Nastaleeq Urdu UI	1	0.7	unknown
 Arabic Presentation Forms-B	141	Noto Sans Kannada	1	0.7	noto
+Arabic Presentation Forms-B	141	Geeza Pro	140	99.3	unknown
 Halfwidth and Fullwidth Forms	225	JetBrains Mono	2	0.9	embedded-ghostty
 Halfwidth and Fullwidth Forms	225	JetBrains Mono NoNF	2	0.9	embedded-ghostty
 Halfwidth and Fullwidth Forms	225	Apple Symbols	55	24.4	apple-system
@@ -2273,12 +1659,10 @@ Halfwidth and Fullwidth Forms	225	Hiragino Sans	164	72.9	apple-cjk
 Halfwidth and Fullwidth Forms	225	Monaspace Xenon	2	0.9	native
 Halfwidth and Fullwidth Forms	225	PingFang HK	98	43.6	apple-cjk
 Halfwidth and Fullwidth Forms	225	PingFang MO	98	43.6	apple-cjk
-Halfwidth and Fullwidth Forms	225	FiraCode Nerd Font Mono	2	0.9	nerd-patch
-Halfwidth and Fullwidth Forms	225	AppleGothic	94	41.8	unknown
 Halfwidth and Fullwidth Forms	225	PingFang TC	98	43.6	apple-cjk
+Halfwidth and Fullwidth Forms	225	AppleGothic	94	41.8	unknown
 Halfwidth and Fullwidth Forms	225	Hiragino Sans GB	100	44.4	apple-cjk
 Halfwidth and Fullwidth Forms	225	.CJK Symbols Fallback HK	133	59.1	unknown
-Halfwidth and Fullwidth Forms	225	Helvetica Neue	3	1.3	unknown
 Halfwidth and Fullwidth Forms	225	Heiti SC	106	47.1	apple-cjk
 Specials	5	JetBrains Mono	1	20.0	embedded-ghostty
 Specials	5	JetBrains Mono NoNF	1	20.0	embedded-ghostty
@@ -2289,14 +1673,4 @@ Specials	5	Arial Unicode MS	2	40.0	pan-unicode-dump
 Specials	5	LastResort	5	100.0	last-resort
 Specials	5	Courier New	1	20.0	unknown
 Specials	5	CaskaydiaCove Nerd Font Mono	1	20.0	nerd-patch
-Specials	5	MesloLGL Nerd Font Mono	5	100.0	nerd-patch
-Specials	5	Gentium Book Plus	5	100.0	unknown
-Specials	5	MesloLGS Nerd Font Mono	5	100.0	nerd-patch
-Specials	5	MesloLGMDZ Nerd Font Mono	5	100.0	nerd-patch
-Specials	5	MesloLGSDZ Nerd Font Mono	5	100.0	nerd-patch
-Specials	5	FiraCode Nerd Font Mono	1	20.0	nerd-patch
-Specials	5	MesloLGLDZ Nerd Font Mono	5	100.0	nerd-patch
-Specials	5	Menlo	5	100.0	unknown
-Specials	5	MesloLGM Nerd Font Mono	5	100.0	nerd-patch
 Specials	5	Lucida Grande	1	20.0	unknown
-Specials	5	Terminess Nerd Font	1	20.0	nerd-patch

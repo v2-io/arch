@@ -1,161 +1,161 @@
 hex	char	name	preferred	used_face	n_fonts	full_cover_fonts	alt_fonts
-U+2460	①	CIRCLED DIGIT ONE	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2461	②	CIRCLED DIGIT TWO	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2462	③	CIRCLED DIGIT THREE	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2463	④	CIRCLED DIGIT FOUR	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2464	⑤	CIRCLED DIGIT FIVE	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2465	⑥	CIRCLED DIGIT SIX	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2466	⑦	CIRCLED DIGIT SEVEN	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2467	⑧	CIRCLED DIGIT EIGHT	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2468	⑨	CIRCLED DIGIT NINE	STIX Two Math	STIX Two Math Regular	10	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2469	⑩	CIRCLED NUMBER TEN	STIX Two Math	STIX Two Math Regular	9	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|Heiti SC
-U+246A	⑪	CIRCLED NUMBER ELEVEN	STIX Two Math	STIX Two Math Regular	7	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
-U+246B	⑫	CIRCLED NUMBER TWELVE	STIX Two Math	STIX Two Math Regular	7	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
-U+246C	⑬	CIRCLED NUMBER THIRTEEN	STIX Two Math	STIX Two Math Regular	7	JuliaMono|STIX Two Math	JuliaMono|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
-U+246D	⑭	CIRCLED NUMBER FOURTEEN	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic
-U+246E	⑮	CIRCLED NUMBER FIFTEEN	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic
-U+246F	⑯	CIRCLED NUMBER SIXTEEN	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic
-U+2470	⑰	CIRCLED NUMBER SEVENTEEN	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic
-U+2471	⑱	CIRCLED NUMBER EIGHTEEN	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic
-U+2472	⑲	CIRCLED NUMBER NINETEEN	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic
-U+2473	⑳	CIRCLED NUMBER TWENTY	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic
-U+2474	⑴	PARENTHESIZED DIGIT ONE	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2475	⑵	PARENTHESIZED DIGIT TWO	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2476	⑶	PARENTHESIZED DIGIT THREE	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2477	⑷	PARENTHESIZED DIGIT FOUR	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2478	⑸	PARENTHESIZED DIGIT FIVE	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2479	⑹	PARENTHESIZED DIGIT SIX	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+247A	⑺	PARENTHESIZED DIGIT SEVEN	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+247B	⑻	PARENTHESIZED DIGIT EIGHT	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+247C	⑼	PARENTHESIZED DIGIT NINE	Monaspace Xenon	Monaspace Xenon Regular	10	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+247D	⑽	PARENTHESIZED NUMBER TEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+247E	⑾	PARENTHESIZED NUMBER ELEVEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+247F	⑿	PARENTHESIZED NUMBER TWELVE	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2480	⒀	PARENTHESIZED NUMBER THIRTEEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2481	⒁	PARENTHESIZED NUMBER FOURTEEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2482	⒂	PARENTHESIZED NUMBER FIFTEEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2483	⒃	PARENTHESIZED NUMBER SIXTEEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2484	⒄	PARENTHESIZED NUMBER SEVENTEEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2485	⒅	PARENTHESIZED NUMBER EIGHTEEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2486	⒆	PARENTHESIZED NUMBER NINETEEN	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2487	⒇	PARENTHESIZED NUMBER TWENTY	Arial Unicode MS	Arial Unicode MS	9	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2488	⒈	DIGIT ONE FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2489	⒉	DIGIT TWO FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+248A	⒊	DIGIT THREE FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+248B	⒋	DIGIT FOUR FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+248C	⒌	DIGIT FIVE FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+248D	⒍	DIGIT SIX FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+248E	⒎	DIGIT SEVEN FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+248F	⒏	DIGIT EIGHT FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2490	⒐	DIGIT NINE FULL STOP	Arial Unicode MS	Arial Unicode MS	8	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2491	⒑	NUMBER TEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2492	⒒	NUMBER ELEVEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2493	⒓	NUMBER TWELVE FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2494	⒔	NUMBER THIRTEEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2495	⒕	NUMBER FOURTEEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2496	⒖	NUMBER FIFTEEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2497	⒗	NUMBER SIXTEEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2498	⒘	NUMBER SEVENTEEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+2499	⒙	NUMBER EIGHTEEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+249A	⒚	NUMBER NINETEEN FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+249B	⒛	NUMBER TWENTY FULL STOP	Arial Unicode MS	Arial Unicode MS	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
-U+249C	⒜	PARENTHESIZED LATIN SMALL LETTER A	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+249D	⒝	PARENTHESIZED LATIN SMALL LETTER B	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+249E	⒞	PARENTHESIZED LATIN SMALL LETTER C	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+249F	⒟	PARENTHESIZED LATIN SMALL LETTER D	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A0	⒠	PARENTHESIZED LATIN SMALL LETTER E	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A1	⒡	PARENTHESIZED LATIN SMALL LETTER F	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A2	⒢	PARENTHESIZED LATIN SMALL LETTER G	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A3	⒣	PARENTHESIZED LATIN SMALL LETTER H	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A4	⒤	PARENTHESIZED LATIN SMALL LETTER I	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A5	⒥	PARENTHESIZED LATIN SMALL LETTER J	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A6	⒦	PARENTHESIZED LATIN SMALL LETTER K	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A7	⒧	PARENTHESIZED LATIN SMALL LETTER L	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A8	⒨	PARENTHESIZED LATIN SMALL LETTER M	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24A9	⒩	PARENTHESIZED LATIN SMALL LETTER N	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24AA	⒪	PARENTHESIZED LATIN SMALL LETTER O	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24AB	⒫	PARENTHESIZED LATIN SMALL LETTER P	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24AC	⒬	PARENTHESIZED LATIN SMALL LETTER Q	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24AD	⒭	PARENTHESIZED LATIN SMALL LETTER R	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24AE	⒮	PARENTHESIZED LATIN SMALL LETTER S	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24AF	⒯	PARENTHESIZED LATIN SMALL LETTER T	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24B0	⒰	PARENTHESIZED LATIN SMALL LETTER U	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24B1	⒱	PARENTHESIZED LATIN SMALL LETTER V	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24B2	⒲	PARENTHESIZED LATIN SMALL LETTER W	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24B3	⒳	PARENTHESIZED LATIN SMALL LETTER X	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24B4	⒴	PARENTHESIZED LATIN SMALL LETTER Y	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24B5	⒵	PARENTHESIZED LATIN SMALL LETTER Z	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
-U+24B6	Ⓐ	CIRCLED LATIN CAPITAL LETTER A	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24B7	Ⓑ	CIRCLED LATIN CAPITAL LETTER B	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24B8	Ⓒ	CIRCLED LATIN CAPITAL LETTER C	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24B9	Ⓓ	CIRCLED LATIN CAPITAL LETTER D	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24BA	Ⓔ	CIRCLED LATIN CAPITAL LETTER E	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24BB	Ⓕ	CIRCLED LATIN CAPITAL LETTER F	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24BC	Ⓖ	CIRCLED LATIN CAPITAL LETTER G	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24BD	Ⓗ	CIRCLED LATIN CAPITAL LETTER H	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24BE	Ⓘ	CIRCLED LATIN CAPITAL LETTER I	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24BF	Ⓙ	CIRCLED LATIN CAPITAL LETTER J	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C0	Ⓚ	CIRCLED LATIN CAPITAL LETTER K	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C1	Ⓛ	CIRCLED LATIN CAPITAL LETTER L	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C2	Ⓜ	CIRCLED LATIN CAPITAL LETTER M	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Apple Color Emoji|AppleGothic|.CJK Symbols Fallback HK
-U+24C3	Ⓝ	CIRCLED LATIN CAPITAL LETTER N	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C4	Ⓞ	CIRCLED LATIN CAPITAL LETTER O	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C5	Ⓟ	CIRCLED LATIN CAPITAL LETTER P	Arial Unicode MS	Arial Unicode MS	6	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK|Lucida Grande
-U+24C6	Ⓠ	CIRCLED LATIN CAPITAL LETTER Q	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C7	Ⓡ	CIRCLED LATIN CAPITAL LETTER R	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C8	Ⓢ	CIRCLED LATIN CAPITAL LETTER S	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24C9	Ⓣ	CIRCLED LATIN CAPITAL LETTER T	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24CA	Ⓤ	CIRCLED LATIN CAPITAL LETTER U	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24CB	Ⓥ	CIRCLED LATIN CAPITAL LETTER V	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24CC	Ⓦ	CIRCLED LATIN CAPITAL LETTER W	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24CD	Ⓧ	CIRCLED LATIN CAPITAL LETTER X	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24CE	Ⓨ	CIRCLED LATIN CAPITAL LETTER Y	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24CF	Ⓩ	CIRCLED LATIN CAPITAL LETTER Z	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D0	ⓐ	CIRCLED LATIN SMALL LETTER A	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D1	ⓑ	CIRCLED LATIN SMALL LETTER B	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D2	ⓒ	CIRCLED LATIN SMALL LETTER C	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D3	ⓓ	CIRCLED LATIN SMALL LETTER D	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D4	ⓔ	CIRCLED LATIN SMALL LETTER E	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D5	ⓕ	CIRCLED LATIN SMALL LETTER F	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D6	ⓖ	CIRCLED LATIN SMALL LETTER G	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D7	ⓗ	CIRCLED LATIN SMALL LETTER H	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D8	ⓘ	CIRCLED LATIN SMALL LETTER I	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24D9	ⓙ	CIRCLED LATIN SMALL LETTER J	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24DA	ⓚ	CIRCLED LATIN SMALL LETTER K	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24DB	ⓛ	CIRCLED LATIN SMALL LETTER L	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24DC	ⓜ	CIRCLED LATIN SMALL LETTER M	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24DD	ⓝ	CIRCLED LATIN SMALL LETTER N	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24DE	ⓞ	CIRCLED LATIN SMALL LETTER O	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24DF	ⓟ	CIRCLED LATIN SMALL LETTER P	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E0	ⓠ	CIRCLED LATIN SMALL LETTER Q	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E1	ⓡ	CIRCLED LATIN SMALL LETTER R	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E2	ⓢ	CIRCLED LATIN SMALL LETTER S	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E3	ⓣ	CIRCLED LATIN SMALL LETTER T	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E4	ⓤ	CIRCLED LATIN SMALL LETTER U	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E5	ⓥ	CIRCLED LATIN SMALL LETTER V	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E6	ⓦ	CIRCLED LATIN SMALL LETTER W	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E7	ⓧ	CIRCLED LATIN SMALL LETTER X	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E8	ⓨ	CIRCLED LATIN SMALL LETTER Y	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24E9	ⓩ	CIRCLED LATIN SMALL LETTER Z	Arial Unicode MS	Arial Unicode MS	5	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic|.CJK Symbols Fallback HK
-U+24EA	⓪	CIRCLED DIGIT ZERO	Monaspace Xenon	Monaspace Xenon Regular	7	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|.CJK Symbols Fallback HK
-U+24EB	⓫	NEGATIVE CIRCLED NUMBER ELEVEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24EC	⓬	NEGATIVE CIRCLED NUMBER TWELVE	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24ED	⓭	NEGATIVE CIRCLED NUMBER THIRTEEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24EE	⓮	NEGATIVE CIRCLED NUMBER FOURTEEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24EF	⓯	NEGATIVE CIRCLED NUMBER FIFTEEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24F0	⓰	NEGATIVE CIRCLED NUMBER SIXTEEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24F1	⓱	NEGATIVE CIRCLED NUMBER SEVENTEEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24F2	⓲	NEGATIVE CIRCLED NUMBER EIGHTEEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24F3	⓳	NEGATIVE CIRCLED NUMBER NINETEEN	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24F4	⓴	NEGATIVE CIRCLED NUMBER TWENTY	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|AppleGothic
-U+24F5	⓵	DOUBLE CIRCLED DIGIT ONE	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24F6	⓶	DOUBLE CIRCLED DIGIT TWO	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24F7	⓷	DOUBLE CIRCLED DIGIT THREE	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24F8	⓸	DOUBLE CIRCLED DIGIT FOUR	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24F9	⓹	DOUBLE CIRCLED DIGIT FIVE	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24FA	⓺	DOUBLE CIRCLED DIGIT SIX	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24FB	⓻	DOUBLE CIRCLED DIGIT SEVEN	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24FC	⓼	DOUBLE CIRCLED DIGIT EIGHT	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24FD	⓽	DOUBLE CIRCLED DIGIT NINE	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24FE	⓾	DOUBLE CIRCLED NUMBER TEN	STIX Two Math	STIX Two Math Regular	3	JuliaMono|STIX Two Math	JuliaMono|.CJK Symbols Fallback HK
-U+24FF	⓿	NEGATIVE CIRCLED DIGIT ZERO	Monaspace Xenon	Monaspace Xenon Regular	4	JuliaMono|STIX Two Math	JuliaMono|STIX Two Math|.CJK Symbols Fallback HK
+U+2460	①	CIRCLED DIGIT ONE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2461	②	CIRCLED DIGIT TWO	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2462	③	CIRCLED DIGIT THREE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2463	④	CIRCLED DIGIT FOUR	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2464	⑤	CIRCLED DIGIT FIVE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2465	⑥	CIRCLED DIGIT SIX	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2466	⑦	CIRCLED DIGIT SEVEN	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2467	⑧	CIRCLED DIGIT EIGHT	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2468	⑨	CIRCLED DIGIT NINE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2469	⑩	CIRCLED NUMBER TEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|Heiti SC
+U+246A	⑪	CIRCLED NUMBER ELEVEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+246B	⑫	CIRCLED NUMBER TWELVE	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+246C	⑬	CIRCLED NUMBER THIRTEEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+246D	⑭	CIRCLED NUMBER FOURTEEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+246E	⑮	CIRCLED NUMBER FIFTEEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+246F	⑯	CIRCLED NUMBER SIXTEEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+2470	⑰	CIRCLED NUMBER SEVENTEEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+2471	⑱	CIRCLED NUMBER EIGHTEEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+2472	⑲	CIRCLED NUMBER NINETEEN	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+2473	⑳	CIRCLED NUMBER TWENTY	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic
+U+2474	⑴	PARENTHESIZED DIGIT ONE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2475	⑵	PARENTHESIZED DIGIT TWO	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2476	⑶	PARENTHESIZED DIGIT THREE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2477	⑷	PARENTHESIZED DIGIT FOUR	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2478	⑸	PARENTHESIZED DIGIT FIVE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2479	⑹	PARENTHESIZED DIGIT SIX	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+247A	⑺	PARENTHESIZED DIGIT SEVEN	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+247B	⑻	PARENTHESIZED DIGIT EIGHT	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+247C	⑼	PARENTHESIZED DIGIT NINE	JuliaMono	JuliaMono Regular	10	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+247D	⑽	PARENTHESIZED NUMBER TEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+247E	⑾	PARENTHESIZED NUMBER ELEVEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+247F	⑿	PARENTHESIZED NUMBER TWELVE	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2480	⒀	PARENTHESIZED NUMBER THIRTEEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2481	⒁	PARENTHESIZED NUMBER FOURTEEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2482	⒂	PARENTHESIZED NUMBER FIFTEEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2483	⒃	PARENTHESIZED NUMBER SIXTEEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2484	⒄	PARENTHESIZED NUMBER SEVENTEEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2485	⒅	PARENTHESIZED NUMBER EIGHTEEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2486	⒆	PARENTHESIZED NUMBER NINETEEN	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2487	⒇	PARENTHESIZED NUMBER TWENTY	JuliaMono	JuliaMono Regular	9	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|AppleGothic|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2488	⒈	DIGIT ONE FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2489	⒉	DIGIT TWO FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+248A	⒊	DIGIT THREE FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+248B	⒋	DIGIT FOUR FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+248C	⒌	DIGIT FIVE FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+248D	⒍	DIGIT SIX FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+248E	⒎	DIGIT SEVEN FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+248F	⒏	DIGIT EIGHT FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2490	⒐	DIGIT NINE FULL STOP	JuliaMono	JuliaMono Regular	8	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2491	⒑	NUMBER TEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2492	⒒	NUMBER ELEVEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2493	⒓	NUMBER TWELVE FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2494	⒔	NUMBER THIRTEEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2495	⒕	NUMBER FOURTEEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2496	⒖	NUMBER FIFTEEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2497	⒗	NUMBER SIXTEEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2498	⒘	NUMBER SEVENTEEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+2499	⒙	NUMBER EIGHTEEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+249A	⒚	NUMBER NINETEEN FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+249B	⒛	NUMBER TWENTY FULL STOP	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans GB|.CJK Symbols Fallback HK|Heiti SC
+U+249C	⒜	PARENTHESIZED LATIN SMALL LETTER A	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+249D	⒝	PARENTHESIZED LATIN SMALL LETTER B	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+249E	⒞	PARENTHESIZED LATIN SMALL LETTER C	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+249F	⒟	PARENTHESIZED LATIN SMALL LETTER D	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A0	⒠	PARENTHESIZED LATIN SMALL LETTER E	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A1	⒡	PARENTHESIZED LATIN SMALL LETTER F	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A2	⒢	PARENTHESIZED LATIN SMALL LETTER G	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A3	⒣	PARENTHESIZED LATIN SMALL LETTER H	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A4	⒤	PARENTHESIZED LATIN SMALL LETTER I	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A5	⒥	PARENTHESIZED LATIN SMALL LETTER J	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A6	⒦	PARENTHESIZED LATIN SMALL LETTER K	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A7	⒧	PARENTHESIZED LATIN SMALL LETTER L	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A8	⒨	PARENTHESIZED LATIN SMALL LETTER M	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24A9	⒩	PARENTHESIZED LATIN SMALL LETTER N	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24AA	⒪	PARENTHESIZED LATIN SMALL LETTER O	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24AB	⒫	PARENTHESIZED LATIN SMALL LETTER P	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24AC	⒬	PARENTHESIZED LATIN SMALL LETTER Q	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24AD	⒭	PARENTHESIZED LATIN SMALL LETTER R	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24AE	⒮	PARENTHESIZED LATIN SMALL LETTER S	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24AF	⒯	PARENTHESIZED LATIN SMALL LETTER T	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24B0	⒰	PARENTHESIZED LATIN SMALL LETTER U	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24B1	⒱	PARENTHESIZED LATIN SMALL LETTER V	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24B2	⒲	PARENTHESIZED LATIN SMALL LETTER W	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24B3	⒳	PARENTHESIZED LATIN SMALL LETTER X	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24B4	⒴	PARENTHESIZED LATIN SMALL LETTER Y	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24B5	⒵	PARENTHESIZED LATIN SMALL LETTER Z	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Hiragino Sans|AppleGothic|.CJK Symbols Fallback HK
+U+24B6	Ⓐ	CIRCLED LATIN CAPITAL LETTER A	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24B7	Ⓑ	CIRCLED LATIN CAPITAL LETTER B	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24B8	Ⓒ	CIRCLED LATIN CAPITAL LETTER C	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24B9	Ⓓ	CIRCLED LATIN CAPITAL LETTER D	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24BA	Ⓔ	CIRCLED LATIN CAPITAL LETTER E	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24BB	Ⓕ	CIRCLED LATIN CAPITAL LETTER F	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24BC	Ⓖ	CIRCLED LATIN CAPITAL LETTER G	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24BD	Ⓗ	CIRCLED LATIN CAPITAL LETTER H	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24BE	Ⓘ	CIRCLED LATIN CAPITAL LETTER I	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24BF	Ⓙ	CIRCLED LATIN CAPITAL LETTER J	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C0	Ⓚ	CIRCLED LATIN CAPITAL LETTER K	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C1	Ⓛ	CIRCLED LATIN CAPITAL LETTER L	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C2	Ⓜ	CIRCLED LATIN CAPITAL LETTER M	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Apple Color Emoji|AppleGothic|.CJK Symbols Fallback HK
+U+24C3	Ⓝ	CIRCLED LATIN CAPITAL LETTER N	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C4	Ⓞ	CIRCLED LATIN CAPITAL LETTER O	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C5	Ⓟ	CIRCLED LATIN CAPITAL LETTER P	JuliaMono	JuliaMono Regular	6	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|Lucida Grande|.CJK Symbols Fallback HK
+U+24C6	Ⓠ	CIRCLED LATIN CAPITAL LETTER Q	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C7	Ⓡ	CIRCLED LATIN CAPITAL LETTER R	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C8	Ⓢ	CIRCLED LATIN CAPITAL LETTER S	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24C9	Ⓣ	CIRCLED LATIN CAPITAL LETTER T	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24CA	Ⓤ	CIRCLED LATIN CAPITAL LETTER U	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24CB	Ⓥ	CIRCLED LATIN CAPITAL LETTER V	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24CC	Ⓦ	CIRCLED LATIN CAPITAL LETTER W	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24CD	Ⓧ	CIRCLED LATIN CAPITAL LETTER X	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24CE	Ⓨ	CIRCLED LATIN CAPITAL LETTER Y	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24CF	Ⓩ	CIRCLED LATIN CAPITAL LETTER Z	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D0	ⓐ	CIRCLED LATIN SMALL LETTER A	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D1	ⓑ	CIRCLED LATIN SMALL LETTER B	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D2	ⓒ	CIRCLED LATIN SMALL LETTER C	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D3	ⓓ	CIRCLED LATIN SMALL LETTER D	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D4	ⓔ	CIRCLED LATIN SMALL LETTER E	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D5	ⓕ	CIRCLED LATIN SMALL LETTER F	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D6	ⓖ	CIRCLED LATIN SMALL LETTER G	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D7	ⓗ	CIRCLED LATIN SMALL LETTER H	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D8	ⓘ	CIRCLED LATIN SMALL LETTER I	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24D9	ⓙ	CIRCLED LATIN SMALL LETTER J	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24DA	ⓚ	CIRCLED LATIN SMALL LETTER K	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24DB	ⓛ	CIRCLED LATIN SMALL LETTER L	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24DC	ⓜ	CIRCLED LATIN SMALL LETTER M	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24DD	ⓝ	CIRCLED LATIN SMALL LETTER N	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24DE	ⓞ	CIRCLED LATIN SMALL LETTER O	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24DF	ⓟ	CIRCLED LATIN SMALL LETTER P	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E0	ⓠ	CIRCLED LATIN SMALL LETTER Q	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E1	ⓡ	CIRCLED LATIN SMALL LETTER R	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E2	ⓢ	CIRCLED LATIN SMALL LETTER S	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E3	ⓣ	CIRCLED LATIN SMALL LETTER T	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E4	ⓤ	CIRCLED LATIN SMALL LETTER U	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E5	ⓥ	CIRCLED LATIN SMALL LETTER V	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E6	ⓦ	CIRCLED LATIN SMALL LETTER W	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E7	ⓧ	CIRCLED LATIN SMALL LETTER X	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E8	ⓨ	CIRCLED LATIN SMALL LETTER Y	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24E9	ⓩ	CIRCLED LATIN SMALL LETTER Z	JuliaMono	JuliaMono Regular	5	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|AppleGothic|.CJK Symbols Fallback HK
+U+24EA	⓪	CIRCLED DIGIT ZERO	JuliaMono	JuliaMono Regular	7	JuliaMono|STIX Two Math	STIX Two Math|Arial Unicode MS|Songti SC|Hiragino Sans|Monaspace Xenon|.CJK Symbols Fallback HK
+U+24EB	⓫	NEGATIVE CIRCLED NUMBER ELEVEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24EC	⓬	NEGATIVE CIRCLED NUMBER TWELVE	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24ED	⓭	NEGATIVE CIRCLED NUMBER THIRTEEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24EE	⓮	NEGATIVE CIRCLED NUMBER FOURTEEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24EF	⓯	NEGATIVE CIRCLED NUMBER FIFTEEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24F0	⓰	NEGATIVE CIRCLED NUMBER SIXTEEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24F1	⓱	NEGATIVE CIRCLED NUMBER SEVENTEEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24F2	⓲	NEGATIVE CIRCLED NUMBER EIGHTEEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24F3	⓳	NEGATIVE CIRCLED NUMBER NINETEEN	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24F4	⓴	NEGATIVE CIRCLED NUMBER TWENTY	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|AppleGothic
+U+24F5	⓵	DOUBLE CIRCLED DIGIT ONE	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24F6	⓶	DOUBLE CIRCLED DIGIT TWO	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24F7	⓷	DOUBLE CIRCLED DIGIT THREE	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24F8	⓸	DOUBLE CIRCLED DIGIT FOUR	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24F9	⓹	DOUBLE CIRCLED DIGIT FIVE	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24FA	⓺	DOUBLE CIRCLED DIGIT SIX	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24FB	⓻	DOUBLE CIRCLED DIGIT SEVEN	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24FC	⓼	DOUBLE CIRCLED DIGIT EIGHT	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24FD	⓽	DOUBLE CIRCLED DIGIT NINE	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24FE	⓾	DOUBLE CIRCLED NUMBER TEN	JuliaMono	JuliaMono Regular	3	JuliaMono|STIX Two Math	STIX Two Math|.CJK Symbols Fallback HK
+U+24FF	⓿	NEGATIVE CIRCLED DIGIT ZERO	JuliaMono	JuliaMono Regular	4	JuliaMono|STIX Two Math	STIX Two Math|Monaspace Xenon|.CJK Symbols Fallback HK

@@ -8,9 +8,9 @@ Queue of live notes so they don’t vanish under a long pass. Ghostty clone `~/s
 
 Still not mimicked. `getConstraint(cp)` in `nerd_font_attributes.zig` can `.cover` / `.stretch` / `.fit_cover1` with `center1`. We only do symbol `.fit` or `.none`. PUA nerd icons may place/scale differently. Later.
 
-### After Joseph tightens the Ghostty font stack
+### Visual clustering — look at `gallery/index.html`
 
-Live `+show-face` is in `measure-ghostty` now. One rerun then `./render-corpus`. Not a code gap.
+Regenerate with `./cluster-visual` after a raster rerun. Families are from pixels (hull circularity, aspect, holes, components, bbox occupancy), not Unicode names. Scope: cp&lt;U+3000 minus Hangul Jamo and CJK radicals. Density-sorted within cluster. Sequences with |ρ(cp, packed_density)|≥0.75 are the bonus (monotonic code-point encoding). Does not write into `axes/`.
 
 ### Placement eyeball
 
@@ -23,4 +23,5 @@ Integer cell, bounding-rect constrain, `(cell_width − face_width)/2` dx, `cell
 - HTML: unlabeled = packed; `r *` only when different; `used-face` only when ≠ ghostty. Room density label is `r-dens`. Face names (`used-face`, `ghostty`) are stacked full-width under their labels.
 - Integer cell (`round(face_width)`), bounding-rect constrain, CoreText dx, `constraintWidth` for roomy (non-symbols never get 2). Phantom `0.0098` gone; U+070B packed/roomy overflow match (`0.4595`).
 - Live `+show-face` each `measure-ghostty` run. JetBrains Mono from Ghostty embedded TTF (Control Pictures `used=JetBrainsMono NF Regular`).
-- `.gitignore`: `.rasters/`, `corpus/`, `__pycache__/`, `*.pyc`.
+- `.gitignore`: `.rasters/`, `corpus/`, `gallery/`, `__pycache__/`, `*.pyc`.
+- `cluster-visual` → `gallery/index.html`: shape families + density sort + cp-monotonic sequences from the current packed rasters (post font-stack). Axes `png-features` / k-means (2026-08-24 22:38) are stale vs these rasters and were not the product.

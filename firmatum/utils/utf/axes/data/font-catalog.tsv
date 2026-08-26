@@ -21,50 +21,37 @@ DejaVu Sans	missing	unknown		0	0.00				NOT INSTALLED. Often complete for circled
 Symbola	missing	unknown		0	0.00				NOT INSTALLED. George Douros; very wide symbol cmap, outlines are a grab-bag.
 VictorMono Nerd Font Mono	ok	nerd-patch	VictorMono	4770	7.69	4762	file:///Users/josephwecker-v2/Library/Fonts/VictorMonoNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/VictorMonoNerdFontMono-Regular.ttf	
 PingFang HK	ok	apple-cjk		25390	40.93	28787	file:///System/Library/PrivateFrameworks/FontServices.framework/Resources/Reserved/PingFangUI.ttc	file:///System/Library/PrivateFrameworks/FontServices.framework/Resources/Reserved/PingFangUI.ttc	
-Euphemia UCAS	ok	unknown		948	1.53	941	file:///System/Library/Fonts/Supplemental/EuphemiaCAS.ttc	file:///System/Library/Fonts/Supplemental/EuphemiaCAS.ttc	
-Courier New	ok	unknown		2771	4.47	2762	file:///System/Library/Fonts/Supplemental/Courier%20New.ttf	file:///System/Library/Fonts/Supplemental/Courier%20New.ttf	
 Kefa III	ok	unknown		1070	1.72	1063	file:///System/Library/Fonts/Supplemental/KefaIII.ttf	file:///System/Library/Fonts/Supplemental/KefaIII.ttf	
-CaskaydiaCove Nerd Font Mono	ok	nerd-patch	Cascadia Code	5371	8.66	5370	file:///Users/josephwecker-v2/Library/Fonts/CaskaydiaCoveNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/CaskaydiaCoveNerdFontMono-Regular.ttf	
-MesloLGL Nerd Font Mono	ok	nerd-patch	Meslo / Menlo	6194	9.99	6188	file:///Users/josephwecker-v2/Library/Fonts/MesloLGLNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/MesloLGLNerdFontMono-Regular.ttf	
-Gentium Book Plus	ok	unknown		2734	4.41	2731	file:///Library/Fonts/GentiumBookPlus-Regular.ttf	file:///Library/Fonts/GentiumBookPlus-Regular.ttf	
 Noto Sans Vai	ok	noto		308	0.50	304	file:///System/Library/Fonts/Supplemental/NotoSansVai-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansVai-Regular.ttf	
-Geneva	ok	unknown		2864	4.62	2863	file:///System/Library/Fonts/Geneva.ttf	file:///System/Library/Fonts/Geneva.ttf	
 PingFang MO	ok	apple-cjk		25389	40.93	28787	file:///System/Library/PrivateFrameworks/FontServices.framework/Resources/Reserved/PingFangUI.ttc	file:///System/Library/PrivateFrameworks/FontServices.framework/Resources/Reserved/PingFangUI.ttc	
-MesloLGS Nerd Font Mono	ok	nerd-patch	Meslo / Menlo	6194	9.99	6188	file:///Users/josephwecker-v2/Library/Fonts/MesloLGSNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/MesloLGSNerdFontMono-Regular.ttf	
+Geneva	ok	unknown		2864	4.62	2863	file:///System/Library/Fonts/Geneva.ttf	file:///System/Library/Fonts/Geneva.ttf	
+Courier New	ok	unknown		2771	4.47	2762	file:///System/Library/Fonts/Supplemental/Courier%20New.ttf	file:///System/Library/Fonts/Supplemental/Courier%20New.ttf	
+CaskaydiaCove Nerd Font Mono	ok	nerd-patch	Cascadia Code	5371	8.66	5370	file:///Users/josephwecker-v2/Library/Fonts/CaskaydiaCoveNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/CaskaydiaCoveNerdFontMono-Regular.ttf	
 Noto Serif Myanmar	ok	noto		245	0.39	239	file:///System/Library/Fonts/NotoSerifMyanmar.ttc	file:///System/Library/Fonts/NotoSerifMyanmar.ttc	
 Noto Sans Coptic	ok	noto		165	0.27	160	file:///System/Library/Fonts/Supplemental/NotoSansCoptic-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansCoptic-Regular.ttf	
 Khmer MN	ok	unknown		268	0.43	259	file:///System/Library/Fonts/Supplemental/Khmer%20MN.ttc	file:///System/Library/Fonts/Supplemental/Khmer%20MN.ttc	
 .SF Malayalam	ok	unknown		130	0.21	101	file:///System/Library/Fonts/SFIndia.ttc	file:///System/Library/Fonts/SFIndia.ttc	
-MesloLGMDZ Nerd Font Mono	ok	nerd-patch	Meslo / MenloDZ	6194	9.99	6188	file:///Users/josephwecker-v2/Library/Fonts/MesloLGMDZNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/MesloLGMDZNerdFontMono-Regular.ttf	
 Noto Sans Glagolitic	ok	noto		107	0.17	103	file:///System/Library/Fonts/Supplemental/NotoSansGlagolitic-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansGlagolitic-Regular.ttf	
-Hack Nerd Font Mono	ok	nerd-patch	Hack	5055	8.15	5049	file:///Users/josephwecker-v2/Library/Fonts/HackNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/HackNerdFontMono-Regular.ttf	
 Noto Serif Balinese	ok	noto		135	0.22	129	file:///System/Library/Fonts/Supplemental/NotoSerifBalinese-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSerifBalinese-Regular.ttf	
 Noto Sans Tai Tham	ok	noto		142	0.23	137	file:///System/Library/Fonts/Supplemental/NotoSansTaiTham-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansTaiTham-Regular.ttf	
 Noto Sans Bamum	ok	noto		96	0.15	92	file:///System/Library/Fonts/Supplemental/NotoSansBamum-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansBamum-Regular.ttf	
 Noto Sans New Tai Lue	ok	noto		94	0.15	90	file:///System/Library/Fonts/Supplemental/NotoSansNewTaiLue-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansNewTaiLue-Regular.ttf	
-MesloLGSDZ Nerd Font Mono	ok	nerd-patch	Meslo / MenloDZ	6194	9.99	6188	file:///Users/josephwecker-v2/Library/Fonts/MesloLGSDZNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/MesloLGSDZNerdFontMono-Regular.ttf	
-FiraCode Nerd Font Mono	ok	nerd-patch	FiraCode	5072	8.18	5064	file:///Users/josephwecker-v2/Library/Fonts/FiraCodeNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/FiraCodeNerdFontMono-Regular.ttf	
 Noto Sans Javanese	ok	noto		105	0.17	99	file:///System/Library/Fonts/Supplemental/NotoSansJavanese-Regular.otf	file:///System/Library/Fonts/Supplemental/NotoSansJavanese-Regular.otf	
 Kohinoor Devanagari	ok	unknown		517	0.83	509	file:///System/Library/Fonts/Kohinoor.ttc	file:///System/Library/Fonts/Kohinoor.ttc	
-Monaco	ok	unknown		1626	2.62	1624	file:///System/Library/Fonts/Monaco.ttf	file:///System/Library/Fonts/Monaco.ttf	
 Noto Sans Cham	ok	noto		110	0.18	104	file:///System/Library/Fonts/Supplemental/NotoSansCham-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansCham-Regular.ttf	
 Noto Sans Tai Viet	ok	noto		88	0.14	82	file:///System/Library/Fonts/Supplemental/NotoSansTaiViet-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansTaiViet-Regular.ttf	
-AppleGothic	ok	unknown		17875	28.82	17867	file:///System/Library/Fonts/Supplemental/AppleGothic.ttf	file:///System/Library/Fonts/Supplemental/AppleGothic.ttf	
 Noto Sans Saurashtra	ok	noto		96	0.15	90	file:///System/Library/Fonts/Supplemental/NotoSansSaurashtra-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansSaurashtra-Regular.ttf	
 Noto Sans Meetei Mayek	ok	noto		93	0.15	87	file:///System/Library/Fonts/Supplemental/NotoSansMeeteiMayek-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansMeeteiMayek-Regular.ttf	
 Sinhala Sangam MN	ok	unknown		205	0.33	195	file:///System/Library/Fonts/Supplemental/Sinhala%20Sangam%20MN.ttc	file:///System/Library/Fonts/Supplemental/Sinhala%20Sangam%20MN.ttc	
-Snell Roundhand	ok	unknown		1879	3.03	1870	file:///System/Library/Fonts/Supplemental/SnellRoundhand.ttc	file:///System/Library/Fonts/Supplemental/SnellRoundhand.ttc	
 PingFang TC	ok	apple-cjk		25425	40.99	28787	file:///System/Library/PrivateFrameworks/FontServices.framework/Resources/Reserved/PingFangUI.ttc	file:///System/Library/PrivateFrameworks/FontServices.framework/Resources/Reserved/PingFangUI.ttc	
-MesloLGLDZ Nerd Font Mono	ok	nerd-patch	Meslo / MenloDZ	6194	9.99	6188	file:///Users/josephwecker-v2/Library/Fonts/MesloLGLDZNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/MesloLGLDZNerdFontMono-Regular.ttf	
-Noto Sans Tifinagh	ok	noto		80	0.13	76	file:///System/Library/Fonts/Supplemental/NotoSansTifinagh-Regular.otf	file:///System/Library/Fonts/Supplemental/NotoSansTifinagh-Regular.otf	
 Noto Sans Sundanese	ok	noto		89	0.14	82	file:///System/Library/Fonts/Supplemental/NotoSansSundanese-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansSundanese-Regular.ttf	
 Noto Sans PhagsPa	ok	noto		100	0.16	94	file:///System/Library/Fonts/Supplemental/NotoSansPhagsPa-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansPhagsPa-Regular.ttf	
 Noto Sans Lepcha	ok	noto		88	0.14	82	file:///System/Library/Fonts/Supplemental/NotoSansLepcha-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansLepcha-Regular.ttf	
 Noto Sans NKo	ok	noto		83	0.13	79	file:///System/Library/Fonts/Supplemental/NotoSansNKo-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansNKo-Regular.ttf	
-Noto Sans Syriac	ok	noto		157	0.25	150	file:///System/Library/Fonts/Supplemental/NotoSansSyriac-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansSyriac-Regular.ttf	
+AppleGothic	ok	unknown		17875	28.82	17867	file:///System/Library/Fonts/Supplemental/AppleGothic.ttf	file:///System/Library/Fonts/Supplemental/AppleGothic.ttf	
 Noto Sans Ol Chiki	ok	noto		56	0.09	52	file:///System/Library/Fonts/Supplemental/NotoSansOlChiki-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansOlChiki-Regular.ttf	
+Noto Sans Syriac	ok	noto		157	0.25	150	file:///System/Library/Fonts/Supplemental/NotoSansSyriac-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansSyriac-Regular.ttf	
 Noto Sans Limbu	ok	noto		83	0.13	77	file:///System/Library/Fonts/Supplemental/NotoSansLimbu-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansLimbu-Regular.ttf	
-Menlo	ok	unknown		2733	4.41	2727	file:///System/Library/Fonts/Menlo.ttc	file:///System/Library/Fonts/Menlo.ttc	
 Noto Sans Batak	ok	noto		70	0.11	64	file:///System/Library/Fonts/Supplemental/NotoSansBatak-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansBatak-Regular.ttf	
 Noto Sans Samaritan	ok	noto		70	0.11	66	file:///System/Library/Fonts/Supplemental/NotoSansSamaritan-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansSamaritan-Regular.ttf	
 Noto Sans Kayah Li	ok	noto		62	0.10	57	file:///System/Library/Fonts/Supplemental/NotoSansKayahLi-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansKayahLi-Regular.ttf	
@@ -72,43 +59,35 @@ Noto Sans Thaana	ok	noto		96	0.15	89	file:///System/Library/Fonts/Supplemental/N
 Noto Sans Syloti Nagri	ok	noto		74	0.12	68	file:///System/Library/Fonts/Supplemental/NotoSansSylotiNagri-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansSylotiNagri-Regular.ttf	
 Noto Sans Tai Le	ok	noto		70	0.11	64	file:///System/Library/Fonts/Supplemental/NotoSansTaiLe-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansTaiLe-Regular.ttf	
 Hiragino Sans GB	ok	apple-cjk		29119	46.94	29114	file:///System/Library/Fonts/Hiragino%20Sans%20GB.ttc	file:///System/Library/Fonts/Hiragino%20Sans%20GB.ttc	
-Symbol	ok	unknown		230	0.37	226	file:///System/Library/Fonts/Symbol.ttf	file:///System/Library/Fonts/Symbol.ttf	
 Noto Sans Mandaic	ok	noto		41	0.07	37	file:///System/Library/Fonts/Supplemental/NotoSansMandaic-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansMandaic-Regular.ttf	
-MesloLGM Nerd Font Mono	ok	nerd-patch	Meslo / Menlo	6194	9.99	6188	file:///Users/josephwecker-v2/Library/Fonts/MesloLGMNerdFontMono-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/MesloLGMNerdFontMono-Regular.ttf	
+Symbol	ok	unknown		230	0.37	226	file:///System/Library/Fonts/Symbol.ttf	file:///System/Library/Fonts/Symbol.ttf	
 Noto Sans Buginese	ok	noto		45	0.07	39	file:///System/Library/Fonts/Supplemental/NotoSansBuginese-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansBuginese-Regular.ttf	
 Noto Sans Rejang	ok	noto		51	0.08	45	file:///System/Library/Fonts/Supplemental/NotoSansRejang-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansRejang-Regular.ttf	
 Noto Sans Tagalog	ok	noto		39	0.06	33	file:///System/Library/Fonts/Supplemental/NotoSansTagalog-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansTagalog-Regular.ttf	
 Noto Sans Hanunoo	ok	noto		37	0.06	31	file:///System/Library/Fonts/Supplemental/NotoSansHanunoo-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansHanunoo-Regular.ttf	
 Noto Sans Buhid	ok	noto		36	0.06	30	file:///System/Library/Fonts/Supplemental/NotoSansBuhid-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansBuhid-Regular.ttf	
 Noto Sans Tagbanwa	ok	noto		34	0.05	28	file:///System/Library/Fonts/Supplemental/NotoSansTagbanwa-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansTagbanwa-Regular.ttf	
-Noto Nastaliq Urdu	ok	noto		288	0.46	281	file:///System/Library/Fonts/NotoNastaliq.ttc	file:///System/Library/Fonts/NotoNastaliq.ttc	
 Grantha Sangam MN	ok	unknown		599	0.97	591	file:///System/Library/Fonts/Supplemental/Tamil%20Sangam%20MN.ttc	file:///System/Library/Fonts/Supplemental/Tamil%20Sangam%20MN.ttc	
 Kohinoor Telugu	ok	unknown		485	0.78	477	file:///System/Library/Fonts/KohinoorTelugu.ttc	file:///System/Library/Fonts/KohinoorTelugu.ttc	
-.CJK Symbols Fallback HK	ok	unknown		802	1.29	801	file:///System/Library/Fonts/CJKSymbolsFallback.ttc	file:///System/Library/Fonts/CJKSymbolsFallback.ttc	
 Mukta Mahee	ok	unknown		546	0.88	539	file:///System/Library/Fonts/MuktaMahee.ttc	file:///System/Library/Fonts/MuktaMahee.ttc	
 Athelas	ok	unknown		1483	2.39	1474	file:///System/Library/Fonts/Supplemental/Athelas.ttc	file:///System/Library/Fonts/Supplemental/Athelas.ttc	
 Superclarendon	ok	unknown		1568	2.53	1560	file:///System/Library/Fonts/Supplemental/SuperClarendon.ttc	file:///System/Library/Fonts/Supplemental/SuperClarendon.ttc	
 Noto Sans Oriya	ok	noto		159	0.26	151	file:///System/Library/Fonts/NotoSansOriya.ttc	file:///System/Library/Fonts/NotoSansOriya.ttc	
-Helvetica Neue	ok	unknown		2087	3.36	2085	file:///System/Library/Fonts/HelveticaNeue.ttc	file:///System/Library/Fonts/HelveticaNeue.ttc	
-DIN Condensed	ok	unknown		1579	2.55	1572	file:///System/Library/Fonts/Supplemental/DIN%20Condensed%20Bold.ttf	file:///System/Library/Fonts/Supplemental/DIN%20Condensed%20Bold.ttf	
 Lucida Grande	ok	unknown		2160	3.48	2159	file:///System/Library/Fonts/LucidaGrande.ttc	file:///System/Library/Fonts/LucidaGrande.ttc	
+Noto Nastaliq Urdu	ok	noto		288	0.46	281	file:///System/Library/Fonts/NotoNastaliq.ttc	file:///System/Library/Fonts/NotoNastaliq.ttc	
 .SF Arabic	ok	unknown		728	1.17	721	file:///System/Library/Fonts/SFArabic.ttf	file:///System/Library/Fonts/SFArabic.ttf	
 Kohinoor Bangla	ok	unknown		484	0.78	476	file:///System/Library/Fonts/KohinoorBangla.ttc	file:///System/Library/Fonts/KohinoorBangla.ttc	
 Gujarati Sangam MN	ok	unknown		209	0.34	199	file:///System/Library/Fonts/Supplemental/Gujarati%20Sangam%20MN.ttc	file:///System/Library/Fonts/Supplemental/Gujarati%20Sangam%20MN.ttc	
 Kannada MN	ok	unknown		213	0.34	204	file:///System/Library/Fonts/Supplemental/Kannada%20MN.ttc	file:///System/Library/Fonts/Supplemental/Kannada%20MN.ttc	
-Noto Sans Armenian	ok	noto		105	0.17	100	file:///System/Library/Fonts/NotoSansArmenian.ttc	file:///System/Library/Fonts/NotoSansArmenian.ttc	
-Geeza Pro	ok	unknown		1044	1.68	1039	file:///System/Library/Fonts/GeezaPro.ttc	file:///System/Library/Fonts/GeezaPro.ttc	
+.CJK Symbols Fallback HK	ok	unknown		802	1.29	801	file:///System/Library/Fonts/CJKSymbolsFallback.ttc	file:///System/Library/Fonts/CJKSymbolsFallback.ttc	
 Kokonor	ok	unknown		222	0.36	217	file:///System/Library/Fonts/Supplemental/Kokonor.ttf	file:///System/Library/Fonts/Supplemental/Kokonor.ttf	
 Sukhumvit Set	ok	unknown		378	0.61	372	file:///System/Library/Fonts/Supplemental/SukhumvitSet.ttc	file:///System/Library/Fonts/Supplemental/SukhumvitSet.ttc	
 .SF Telugu	ok	unknown		112	0.18	101	file:///System/Library/Fonts/SFIndia.ttc	file:///System/Library/Fonts/SFIndia.ttc	
 .SF Kannada	ok	unknown		104	0.17	101	file:///System/Library/Fonts/SFIndia.ttc	file:///System/Library/Fonts/SFIndia.ttc	
 Galvji	ok	unknown		472	0.76	466	file:///System/Library/Fonts/Supplemental/Galvji.ttc	file:///System/Library/Fonts/Supplemental/Galvji.ttc	
-Lora	ok	unknown		784	1.26	778	file:///Library/Fonts/Lora-VariableFont_wght.ttf	file:///Library/Fonts/Lora-VariableFont_wght.ttf	
-Terminess Nerd Font	ok	nerd-patch	Terminess	4881	7.87	4872	file:///Users/josephwecker-v2/Library/Fonts/TerminessNerdFont-Regular.ttf	file:///Users/josephwecker-v2/Library/Fonts/TerminessNerdFont-Regular.ttf	
 .DecoType Nastaleeq Urdu UI	ok	unknown		383	0.62	377	file:///System/Library/Fonts/DecoTypeNastaleeqUrdu.ttc	file:///System/Library/Fonts/DecoTypeNastaleeqUrdu.ttc	
 Kohinoor Gujarati	ok	unknown		167	0.27	159	file:///System/Library/Fonts/KohinoorGujarati.ttc	file:///System/Library/Fonts/KohinoorGujarati.ttc	
 Noto Sans Kannada	ok	noto		167	0.27	159	file:///System/Library/Fonts/NotoSansKannada.ttc	file:///System/Library/Fonts/NotoSansKannada.ttc	
-.New York	ok	unknown		1255	2.02	1248	file:///System/Library/Fonts/NewYork.ttf	file:///System/Library/Fonts/NewYork.ttf	
-Noto Sans Adlam	ok	noto		68	0.11	61	file:///System/Library/Fonts/Supplemental/NotoSansAdlam-Regular.ttf	file:///System/Library/Fonts/Supplemental/NotoSansAdlam-Regular.ttf	
 Heiti SC	ok	apple-cjk		31393	50.61	31386	file:///System/Library/Fonts/STHeiti%20Light.ttc	file:///System/Library/Fonts/STHeiti%20Light.ttc	
 .SF Devanagari	ok	unknown		142	0.23	101	file:///System/Library/Fonts/SFIndia.ttc	file:///System/Library/Fonts/SFIndia.ttc	
+Geeza Pro	ok	unknown		1044	1.68	1039	file:///System/Library/Fonts/GeezaPro.ttc	file:///System/Library/Fonts/GeezaPro.ttc	

@@ -178,51 +178,11 @@
       "notes": ""
     },
     {
-      "name": "Euphemia UCAS",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 948,
-      "notes": ""
-    },
-    {
-      "name": "Courier New",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 2771,
-      "notes": ""
-    },
-    {
       "name": "Kefa III",
       "lineage": "unknown",
       "predecessor": "",
       "status": "ok",
       "n_covered": 1070,
-      "notes": ""
-    },
-    {
-      "name": "CaskaydiaCove Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Cascadia Code",
-      "status": "ok",
-      "n_covered": 5371,
-      "notes": ""
-    },
-    {
-      "name": "MesloLGL Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Meslo / Menlo",
-      "status": "ok",
-      "n_covered": 6194,
-      "notes": ""
-    },
-    {
-      "name": "Gentium Book Plus",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 2734,
       "notes": ""
     },
     {
@@ -234,14 +194,6 @@
       "notes": ""
     },
     {
-      "name": "Geneva",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 2864,
-      "notes": ""
-    },
-    {
       "name": "PingFang MO",
       "lineage": "apple-cjk",
       "predecessor": "",
@@ -250,11 +202,27 @@
       "notes": ""
     },
     {
-      "name": "MesloLGS Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Meslo / Menlo",
+      "name": "Geneva",
+      "lineage": "unknown",
+      "predecessor": "",
       "status": "ok",
-      "n_covered": 6194,
+      "n_covered": 2864,
+      "notes": ""
+    },
+    {
+      "name": "Courier New",
+      "lineage": "unknown",
+      "predecessor": "",
+      "status": "ok",
+      "n_covered": 2771,
+      "notes": ""
+    },
+    {
+      "name": "CaskaydiaCove Nerd Font Mono",
+      "lineage": "nerd-patch",
+      "predecessor": "Cascadia Code",
+      "status": "ok",
+      "n_covered": 5371,
       "notes": ""
     },
     {
@@ -290,27 +258,11 @@
       "notes": ""
     },
     {
-      "name": "MesloLGMDZ Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Meslo / MenloDZ",
-      "status": "ok",
-      "n_covered": 6194,
-      "notes": ""
-    },
-    {
       "name": "Noto Sans Glagolitic",
       "lineage": "noto",
       "predecessor": "",
       "status": "ok",
       "n_covered": 107,
-      "notes": ""
-    },
-    {
-      "name": "Hack Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Hack",
-      "status": "ok",
-      "n_covered": 5055,
       "notes": ""
     },
     {
@@ -346,22 +298,6 @@
       "notes": ""
     },
     {
-      "name": "MesloLGSDZ Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Meslo / MenloDZ",
-      "status": "ok",
-      "n_covered": 6194,
-      "notes": ""
-    },
-    {
-      "name": "FiraCode Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "FiraCode",
-      "status": "ok",
-      "n_covered": 5072,
-      "notes": ""
-    },
-    {
       "name": "Noto Sans Javanese",
       "lineage": "noto",
       "predecessor": "",
@@ -378,14 +314,6 @@
       "notes": ""
     },
     {
-      "name": "Monaco",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 1626,
-      "notes": ""
-    },
-    {
       "name": "Noto Sans Cham",
       "lineage": "noto",
       "predecessor": "",
@@ -399,14 +327,6 @@
       "predecessor": "",
       "status": "ok",
       "n_covered": 88,
-      "notes": ""
-    },
-    {
-      "name": "AppleGothic",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 17875,
       "notes": ""
     },
     {
@@ -434,35 +354,11 @@
       "notes": ""
     },
     {
-      "name": "Snell Roundhand",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 1879,
-      "notes": ""
-    },
-    {
       "name": "PingFang TC",
       "lineage": "apple-cjk",
       "predecessor": "",
       "status": "ok",
       "n_covered": 25425,
-      "notes": ""
-    },
-    {
-      "name": "MesloLGLDZ Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Meslo / MenloDZ",
-      "status": "ok",
-      "n_covered": 6194,
-      "notes": ""
-    },
-    {
-      "name": "Noto Sans Tifinagh",
-      "lineage": "noto",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 80,
       "notes": ""
     },
     {
@@ -498,11 +394,11 @@
       "notes": ""
     },
     {
-      "name": "Noto Sans Syriac",
-      "lineage": "noto",
+      "name": "AppleGothic",
+      "lineage": "unknown",
       "predecessor": "",
       "status": "ok",
-      "n_covered": 157,
+      "n_covered": 17875,
       "notes": ""
     },
     {
@@ -514,19 +410,19 @@
       "notes": ""
     },
     {
+      "name": "Noto Sans Syriac",
+      "lineage": "noto",
+      "predecessor": "",
+      "status": "ok",
+      "n_covered": 157,
+      "notes": ""
+    },
+    {
       "name": "Noto Sans Limbu",
       "lineage": "noto",
       "predecessor": "",
       "status": "ok",
       "n_covered": 83,
-      "notes": ""
-    },
-    {
-      "name": "Menlo",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 2733,
       "notes": ""
     },
     {
@@ -586,14 +482,6 @@
       "notes": ""
     },
     {
-      "name": "Symbol",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 230,
-      "notes": ""
-    },
-    {
       "name": "Noto Sans Mandaic",
       "lineage": "noto",
       "predecessor": "",
@@ -602,11 +490,11 @@
       "notes": ""
     },
     {
-      "name": "MesloLGM Nerd Font Mono",
-      "lineage": "nerd-patch",
-      "predecessor": "Meslo / Menlo",
+      "name": "Symbol",
+      "lineage": "unknown",
+      "predecessor": "",
       "status": "ok",
-      "n_covered": 6194,
+      "n_covered": 230,
       "notes": ""
     },
     {
@@ -658,14 +546,6 @@
       "notes": ""
     },
     {
-      "name": "Noto Nastaliq Urdu",
-      "lineage": "noto",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 288,
-      "notes": ""
-    },
-    {
       "name": "Grantha Sangam MN",
       "lineage": "unknown",
       "predecessor": "",
@@ -679,14 +559,6 @@
       "predecessor": "",
       "status": "ok",
       "n_covered": 485,
-      "notes": ""
-    },
-    {
-      "name": ".CJK Symbols Fallback HK",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 802,
       "notes": ""
     },
     {
@@ -722,27 +594,19 @@
       "notes": ""
     },
     {
-      "name": "Helvetica Neue",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 2087,
-      "notes": ""
-    },
-    {
-      "name": "DIN Condensed",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 1579,
-      "notes": ""
-    },
-    {
       "name": "Lucida Grande",
       "lineage": "unknown",
       "predecessor": "",
       "status": "ok",
       "n_covered": 2160,
+      "notes": ""
+    },
+    {
+      "name": "Noto Nastaliq Urdu",
+      "lineage": "noto",
+      "predecessor": "",
+      "status": "ok",
+      "n_covered": 288,
       "notes": ""
     },
     {
@@ -778,19 +642,11 @@
       "notes": ""
     },
     {
-      "name": "Noto Sans Armenian",
-      "lineage": "noto",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 105,
-      "notes": ""
-    },
-    {
-      "name": "Geeza Pro",
+      "name": ".CJK Symbols Fallback HK",
       "lineage": "unknown",
       "predecessor": "",
       "status": "ok",
-      "n_covered": 1044,
+      "n_covered": 802,
       "notes": ""
     },
     {
@@ -834,22 +690,6 @@
       "notes": ""
     },
     {
-      "name": "Lora",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 784,
-      "notes": ""
-    },
-    {
-      "name": "Terminess Nerd Font",
-      "lineage": "nerd-patch",
-      "predecessor": "Terminess",
-      "status": "ok",
-      "n_covered": 4881,
-      "notes": ""
-    },
-    {
       "name": ".DecoType Nastaleeq Urdu UI",
       "lineage": "unknown",
       "predecessor": "",
@@ -874,22 +714,6 @@
       "notes": ""
     },
     {
-      "name": ".New York",
-      "lineage": "unknown",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 1255,
-      "notes": ""
-    },
-    {
-      "name": "Noto Sans Adlam",
-      "lineage": "noto",
-      "predecessor": "",
-      "status": "ok",
-      "n_covered": 68,
-      "notes": ""
-    },
-    {
       "name": "Heiti SC",
       "lineage": "apple-cjk",
       "predecessor": "",
@@ -904,6 +728,14 @@
       "status": "ok",
       "n_covered": 142,
       "notes": ""
+    },
+    {
+      "name": "Geeza Pro",
+      "lineage": "unknown",
+      "predecessor": "",
+      "status": "ok",
+      "n_covered": 1044,
+      "notes": ""
     }
   ],
   "enclosed_alphanumerics": {
@@ -914,9 +746,7 @@
       "STIX Two Math"
     ],
     "ghostty_preferred_mix": [
-      "Arial Unicode MS",
-      "Monaspace Xenon",
-      "STIX Two Math"
+      "JuliaMono"
     ]
   }
 }

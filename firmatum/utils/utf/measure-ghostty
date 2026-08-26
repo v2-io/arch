@@ -127,11 +127,16 @@ def ghostty_config() -> tuple[str, float]:
         )
     except (FileNotFoundError, subprocess.CalledProcessError):
         return family, size
+    got_family = False
     for line in out.splitlines():
+        # Repeated font-family keys are fallbacks. Cell metrics come from the
+        # *primary* (first) family — taking the last line used JuliaMono's
+        # advance for the whole grid after the stack change.
         if line.startswith("font-family = ") and "font-family-" not in line:
             val = line.split("=", 1)[1].strip()
-            if val:
+            if val and not got_family:
                 family = val
+                got_family = True
         elif line.startswith("font-size = "):
             try:
                 size = float(line.split("=", 1)[1].strip())
