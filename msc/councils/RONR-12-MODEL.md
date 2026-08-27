@@ -1,6 +1,6 @@
 # RONR-12 — Proposed Model Decomposition
 
-*Drafted 2026-08-27 from a whole read of `ronr-12c-main.md` (RONR 12th ed. body text; index split to `ronr-12c-index.md`). Status: proposed architecture, pre-implementation. The core claim: no single formalism covers parliamentary procedure without distortion — the decomposition itself is the model, and it should follow RONR's own seams.*
+*Drafted 2026-08-27 from a whole read of `RONR-12/body.md` (RONR 12th ed. body text; front matter and index split to `RONR-12/front.md` and `RONR-12/index.md`). Status: proposed architecture, pre-implementation. The core claim: no single formalism covers parliamentary procedure without distortion — the decomposition itself is the model, and it should follow RONR's own seams.*
 
 ## The seven components
 
