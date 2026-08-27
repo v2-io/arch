@@ -53,6 +53,22 @@
       {"id": "consent-granted", "cite": "4:58"},
       {"id": "consent-denied", "cite": "4:59"}
     ],
+    "protocol_additional": [
+      {"id": "chair-ruling", "desc": "the chair announces a ruling; opens the appeal window", "cite": "23:2(7), 24:2"},
+      {"id": "breach-just-occurred", "desc": "a breach of order observed at its moment; the point-of-order timeliness anchor", "cite": "23:5"},
+      {"id": "business-intervened", "desc": "debate or business has intervened since the last announcement; closes challenge windows", "cite": "45:9"},
+      {"id": "series-declared-open", "desc": "an adopted motion's declared purpose creates a connected series of motions toward one object", "cite": "34:5, 42:13(2)"},
+      {"id": "reading-directed", "desc": "the chair directs the secretary to read a paper", "cite": "47:32-33, 42:21"},
+      {"id": "nominations-closed", "desc": "nominations closed (by motion, two-thirds, or by the chair when no further nominations are offered)", "cite": "31:2, 46:20"}
+    ],
+    "scheduler_additional": [
+      {"id": "heading-reached", "desc": "an order-of-business heading reached", "cite": "41:5-6, 41:18-27"},
+      {"id": "orders-call-refused", "desc": "the assembly voted against proceeding to the orders of the day", "cite": "18:8(a)"},
+      {"id": "order-of-business-varied", "desc": "the announced or moved item departs from the dispatch order (agenda, program, or order of business being varied from; or a postponed motion's time arrived or passed unannounced)", "cite": "18:5, 41:39"}
+    ],
+    "engine_additional": [
+      {"id": "reconsider-being-made", "desc": "the making of a reconsider is in progress (outranks everything at making time)", "cite": "37:9(1a)"}
+    ],
     "lifecycle": [
       {"id": "no-second", "cite": "4:10"},
       {"id": "postponed-indefinitely", "cite": "11:3"},

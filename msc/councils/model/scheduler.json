@@ -55,7 +55,7 @@
                  ["not", ["exists", "q", ["ctx", "questions"], ["and", ["!=", ["attr", "q", "reconsider_hold"], null], ["event-occurred", "called-up", "q"]]]],
                  ["event-occurred", "heading-reached", "unfinished-business-and-general-orders"],
                  ["forall", "e", ["ctx", "queues", "general-orders-current"],
-                   ["or", ["=", "e", "g"], [">", ["attr", "e", "made_at"], ["attr", "g", "made_at"]], ["and", ["!=", ["attr", "e", "hour"], null], ["before", ["now"], ["attr", "e", "hour"]]]]]]],
+                   ["or", ["=", ["var", "e"], ["var", "g"]], [">", ["attr", ["var", "e"], "made_at"], ["attr", ["var", "g"], "made_at"]], ["and", ["!=", ["attr", ["var", "e"], "hour"], null], ["before", ["now"], ["attr", ["var", "e"], "hour"]]]]]]],
        "select": "earlier-made outranks earlier-hour [41:50-51]", "cite": "41:49"},
       {"step": 4, "take_up": "next item by heading order through the queues", "when": true, "cite": "41:18-27"},
       {"step": 5, "take_up": "new business: members introduce in floor-obtained order (event/recognized)", "when": ["event-occurred", "heading-reached", "new-business"], "cite": "41:27"}

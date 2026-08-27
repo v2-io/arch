@@ -32,7 +32,12 @@
       "effect": "?Effect (adopted questions)",
       "reconsider_hold": "?{made_by, seconded_by, made_at, called_up: boolean, enter_minutes: boolean}",
       "timers": "[TimerInstance]",
-      "suppression_origin": "?enum postponed-indefinitely|objection-sustained (retained on merge into suppressed-for-session)"
+      "suppression_origin": "?enum postponed-indefinitely|objection-sustained (retained on merge into suppressed-for-session)",
+      "election_pending": "boolean — the question is a pending election [46:1]",
+      "scheduled_item": "?ScheduledItem — the order-of-the-day record through which this question came (or is due to come) before the assembly [41:40-57]",
+      "independent_subject_series": {"type": "boolean", "input": true, "desc": "a series of independent resolutions on different subjects offered by one motion; single-member demand splits [27:10]"},
+      "nonconforming_amendment_series": {"type": "boolean", "input": true, "desc": "an amendment series not conforming to a pattern; single-member demand splits [27:11]"},
+      "reconsider_excluded": {"type": "boolean", "input": true, "desc": "the vote falls under a 37:9(2) exclusion (partly executed, notified contract, etc.)"}
     },
     "Effect": {
       "in_force": "boolean",
@@ -47,6 +52,8 @@
       "method": "enum voice|rising|counted-rising|ballot|roll-call|unanimous-consent",
       "threshold": "threshold id (vocabulary.json)",
       "tally": "?{yes, no, abstain-known}",
+      "negative_called": "boolean — the negative votes have been cast/called; opens the division window [29:4(1)]",
+      "polls_closed": "boolean — all have presumably voted [45:6]; enables announce-result",
       "result": "enum adopted|rejected",
       "announced_at": "time",
       "prevailing_members": {"type": "?[member-id]", "input": true, "desc": "recorded only for roll-call; otherwise established by member assertion via adjudication (prevailing-side-claim)"}
@@ -106,12 +113,14 @@
   },
 
   "context": {
+    "config": "the council configuration (council.json): {configuration: id, <parameter assignments>} — the axes instantiating this body; consulted by expressions as [\"ctx\", \"config\", <param>]. The generic files state ordinary-society values; overlays patch at load.",
     "assembly": {
       "body_kind": "enum assembly|committee|committee-of-the-whole|quasi-committee|convention|mass-meeting",
+      "chair": "member-id of the presiding officer",
       "members": "[Member]",
       "present_count": "number",
       "membership_total": "number",
-      "quorum": "number [40:1-3]"
+      "quorum": "number — computed from config.quorum_basis [40:2: present / attendees / registered-delegates-majority / enrolled-majority / bylaws-specified]"
     },
     "clock": {
       "now": "time",

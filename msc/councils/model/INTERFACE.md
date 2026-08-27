@@ -19,6 +19,7 @@
 | `scheduler.json` | scheduler | temporal frame, queues, dispatch, preemption, carryover, agenda overlay |
 | `voting.json` | vote arithmetic | ballot-counting decision table, election rules |
 | `actions.json` | action space | the root table: every action kind, its role, its admissibility expression — what `available_actions` enumerates |
+| `council.json` | configuration layer | the axes instantiating the one machine into a particular context (small board, committee, convention, …); ordinary-society is the named default configuration |
 | `acceptance.json` | acceptance suite | script-replay tests, the three sweeps, verified fixed points |
 | `gaps.json` | honesty layer | every condition not compiled: schema gaps vs. genuine judgment-inputs |
 
@@ -58,6 +59,7 @@ Expressions are JSON arrays in operator-first form; atoms are JSON strings (ids/
 | `["exists", "v", L, p]` / `["forall", "v", L, p]` | quantify variable `v` over list expression `L` with predicate `p` |
 | `["count", "v", L, p]` | number of elements satisfying `p` |
 | `["param", name]` | a binding supplied at the decision point |
+| `["var", name]` | explicit reference to a quantifier-bound variable — the normative form. A bare string matching an in-scope binder is still read as a variable (legacy tolerance), but new expressions use `["var", …]`; the collision hazard is why. |
 
 ### Accessors (over `schema.json`)
 
@@ -90,7 +92,23 @@ Expressions are JSON arrays in operator-first form; atoms are JSON strings (ids/
 | `["anchor", name, session?]` | resolve a temporal anchor to a time in context |
 | `["now"]` | current time |
 
+`["attr", obj, k…]` keys may themselves be expressions (e.g. `["ctx","clock","current_day"]` as a counter key).
+
 The operator set is **closed**: an engine implements exactly these forms. Needing a new form is a schema/interface change, recorded here and in `CHANGELOG.md`.
+
+### Evaluator strictness (semantics for partial data)
+
+- `["attr", x, …]` on a non-record (including `null`, `true`, `false`) yields `null` — never an error. This is load-bearing: e.g. the interrupt attribute is `false | true | {conditional…}`, and `["attr", …, "conditional"]` on `false` must yield `null`.
+- Comparisons where either operand is `null` are `false`, **except** `["=", x, null]` / `["!=", x, null]`, which test null-ness itself.
+- An unresolved `["param", name]` (binding not supplied at the decision point) is an **error**, not `null` — decision points declare their bindings; a missing one is a model bug, not missing data.
+- Unknown guard/predicate/timer/event ids are errors.
+
+### Lint rules (enforced by `tools/sweep.py`, part of acceptance)
+
+- No comparison whose operands are both literals (an always-true/false conjunct is prose wearing an expression costume).
+- Every `guard`/`adjudged`/`timer-open` id and every `event-occurred` event name resolves to its registry.
+- Operator closure over every expression position.
+- No negated-twin guard names.
 
 ## The adjudication sub-machine
 

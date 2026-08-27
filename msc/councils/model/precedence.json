@@ -46,7 +46,7 @@
   },
 
   "table/applicability": {
-    "desc": "Per-motion admissibility beyond the bare rank test (which is engine.json push_legality). applies_to: predicate over the target frame t (null target = the motion relates to no pending question). out_of_order_when: disjuncts — the motion is out of order if ANY expr is true; each carries its citation, so a blocked action's justification is the true disjunct and an allowed action's justification is the falsity of all. Chart I's right-hand column [t4-t5] is the source checklist for the ranked rows.",
+    "desc": "Per-motion admissibility beyond the bare rank test (which is engine.json push_legality). applies_to: predicate over the target frame t (null target = the motion relates to no pending question). Bring-back rows (reconsider, rescind-amend-adopted) bind q — the target QUESTION, not a frame — declared per-row as bindings. out_of_order_when: disjuncts — the motion is out of order if ANY expr is true; each carries its citation, so a blocked action's justification is the true disjunct and an allowed action's justification is the falsity of all. Chart I's right-hand column [t4-t5] is the source checklist for the ranked rows.",
     "rows": [
       {"motion": "main-motion",
        "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "introduces business; applies to nothing pending", "cite": "10:1"},
@@ -107,11 +107,23 @@
        "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "a demand that the schedule be followed; relates to no pending question", "cite": "18:2"},
        "out_of_order_when": [
         {"expr": ["guard", "suspend-rules-priority-pending"], "cite": "t4; 18:4(1)"},
-        {"expr": ["and", ["not", ["exists", "i", ["ctx", "queues", "special-orders-current"], ["not", ["before", ["now"], ["attr", "i", "hour"]]]]],
+        {"expr": ["and", ["not", ["exists", "i", ["ctx", "queues", "special-orders-current"], ["and", ["!=", ["attr", ["var", "i"], "hour"], null], ["not", ["before", ["now"], ["attr", ["var", "i"], "hour"]]]]]],
                           ["or", ["event-occurred", "reconsider-being-made", "session"], ["event-occurred", "called-up", "session"]]],
          "desc": "a reconsider is being made or called up (except when a special order must be taken up)", "cite": "18:4(1)"},
-        {"expr": ["not", ["exists", "i", ["ctx", "queues", "special-orders-current"], ["and", ["!=", ["attr", "i", "hour"], null], ["not", ["before", ["now"], ["attr", "i", "hour"]]]]]],
-         "desc": "no order of the day is being neglected (needed to interrupt a pending question; between questions the call is unnecessary rather than out of order)", "cite": "18:4(1), 18:5"},
+        {"expr": ["and", ["not", ["guard", "no-question-pending"]],
+                          ["not", ["exists", "s", ["ctx", "queues", "special-orders-current"],
+                            ["and", ["!=", ["attr", ["var", "s"], "hour"], null],
+                                    ["not", ["before", ["now"], ["attr", ["var", "s"], "hour"]]],
+                                    ["not", ["and", ["!=", ["attr", ["question", ["bottom"]], "scheduled_item"], null],
+                                                     ["<", ["attr", ["question", ["bottom"]], "scheduled_item", "made_at"], ["attr", ["var", "s"], "made_at"]]]]]]]],
+         "desc": "interrupting a pending question: in order only when a special order's set time has arrived and it is unannounced — and not even then if the pending question is itself a special order made earlier than the due one", "cite": "18:5 (case c), 18:4(1)"},
+        {"expr": ["and", ["guard", "no-question-pending"],
+                          ["not", ["or", ["event-occurred", "order-of-business-varied", "meeting"],
+                                          ["exists", "g", ["ctx", "queues", "general-orders-current"], ["and", ["!=", ["attr", ["var", "g"], "hour"], null], ["not", ["before", ["now"], ["attr", ["var", "g"], "hour"]]]]],
+                                          ["exists", "s", ["ctx", "queues", "special-orders-current"], ["and", ["!=", ["attr", ["var", "s"], "hour"], null], ["not", ["before", ["now"], ["attr", ["var", "s"], "hour"]]]]]]]],
+         "desc": "between questions: in order as soon as the agenda/program/order of business is being varied from or a postponed motion's time has arrived or passed; otherwise nothing to enforce", "cite": "18:5 (cases a-b)"},
+        {"expr": ["and", ["guard", "no-question-pending"], ["event-occurred", "stated", "departing-motion-undisposed"]],
+         "desc": "timeliness in the between-questions case: once a departing motion has been stated by the chair, the call waits until that motion is disposed of", "cite": "18:5"},
         {"expr": ["and", ["event-occurred", "orders-call-refused", "session"], ["not", ["guard", "no-question-pending"]]], "desc": "previously refused and the then-pending business not yet disposed of", "cite": "18:8(a), 38:7(3)"},
         {"expr": ["=", ["ctx", "assembly", "body_kind"], "committee-of-the-whole"], "cite": "18:6"}]},
 
@@ -145,7 +157,7 @@
       {"motion": "division-of-assembly",
        "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "addresses a vote just taken, not a pending question", "cite": "29:1"},
        "out_of_order_when": [
-        {"expr": ["not", ["or", ["guard", "voting-in-progress"], ["guard", "result-window-open"]]], "desc": "outside the window: from casting of negative votes until immediately after result announced", "cite": "29:4(1), 45:9"},
+        {"expr": ["not", ["or", ["and", ["guard", "voting-in-progress"], ["attr", ["ctx", "vote_in_progress"], "negative_called"]], ["guard", "result-window-open"]]], "desc": "outside the window: from casting of negative votes until immediately after result announced", "cite": "29:4(1), 45:9"},
         {"expr": ["adjudged", "dilatory", ["param", "m"]], "desc": "dilatory use (result already clear beyond doubt)", "cite": "29:7"}]},
 
       {"motion": "take-from-table",
@@ -155,13 +167,13 @@
         {"expr": ["guard", "series-in-progress"], "desc": "cannot interrupt a connected series", "cite": "34:5"},
         {"expr": ["not", ["guard", "no-question-pending"]], "cite": "34:2(1)"}]},
 
-      {"motion": "reconsider",
+      {"motion": "reconsider", "bindings": ["m", "q"],
        "applies_to": {"expr": ["and", ["!=", ["param", "q"], null], ["in", ["state", ["param", "q"]], ["list", "adopted", "rejected", "suppressed-for-session"]], ["not", ["attr", ["param", "q"], "reconsider_excluded"]]], "desc": "a vote not excluded by the registry not_applicable list [37:9(2)]; reconsider_excluded is the per-question record of those exclusions", "cite": "37:9(2)"},
        "out_of_order_when": [
         {"expr": ["not", ["guard", "within-reconsider-window"]], "desc": "(making)", "cite": "37:10(b)"},
         {"expr": ["not", ["guard", "mover-was-prevailing-side"]], "cite": "37:10(a)"}]},
 
-      {"motion": "rescind-amend-adopted",
+      {"motion": "rescind-amend-adopted", "bindings": ["m", "q"],
        "applies_to": {"expr": ["exists", "q", ["ctx", "questions"], ["and", ["=", ["state", "q"], "adopted"], ["attr", "q", "effect", "in_force"], ["not", ["guard", "unrescindable"]]]], "desc": "something previously adopted and still in force", "cite": "35:1, 35:6"},
        "out_of_order_when": [
         {"expr": ["and", ["!=", ["attr", ["param", "q"], "reconsider_hold"], null], ["timer-open", "reconsider-callup-window", ["param", "q"]]], "desc": "the target is reachable via a pending reconsider", "cite": "35:6"},

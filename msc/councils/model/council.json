@@ -1,0 +1,182 @@
+{
+  "model": "ronr-12-unified",
+  "file": "council",
+  "desc": "The council configuration layer: contexts (a small council, a Senate, a grand jury, a city board) are not different models but points in a configuration space of the one machine. RONR enumerates the axes itself. A configuration = parameter assignments along the axes + an overlay of patches against named model surfaces. The generic files state the ordinary-society defaults; the first named configuration below IS those defaults, extracted and named, so no context is implicit. Many councils, one engine.",
+
+  "axes": [
+    {"id": "assembly-type",
+     "values": ["mass-meeting", "organized-society", "convention", "legislative-body", "board", "committee (as instrument, not assembly)"],
+     "desc": "RONR's own principal types [1:9]; committees are subordinate instruments of an assembly, not assemblies [1:24]. Drives defaults on most other axes.",
+     "cite": ["1:9", "1:24"]},
+    {"id": "size-regime",
+     "values": ["large (full formality)", "small (about a dozen or fewer present: the 49:21 relaxations)"],
+     "desc": "small-board relaxations apply to small boards [49:21], to all standing/special committees unless instructed otherwise [50:25], and are adoptable by small societies as special rules [2:16 exceptions list, 49:21n]",
+     "cite": ["49:21", "50:25", "2:16"]},
+    {"id": "rule-stack",
+     "values": ["full stack (charter/bylaws/special rules/authority/standing rules)", "call-as-bylaws (mass meeting: the call's purpose and invitees have bylaws force [53:9])", "convention stack (+ convention standing rules [59:27])", "legislative stack (constitutions/statutes/chamber rules above any manual)"],
+     "desc": "which documents exist above the parliamentary authority; parameterizes rules.json authority_order and which classes are populated",
+     "cite": ["2:2-25", "53:9", "59:27", "1:9"]},
+    {"id": "membership-determinacy",
+     "values": ["enrolled", "whoever-attends", "credentialed-delegates"],
+     "desc": "cascades into the quorum basis [40:2: (1) mass meeting = those present; (2) unreliable rolls = those who attend; (3) delegates = majority of registered; (4) enrolled = majority of members, absent a bylaw] and into vote bases (majority-entire-membership, majority-registered)",
+     "cite": ["40:2", "59:22"]},
+    {"id": "temporal-structure",
+     "values": ["periodic sessions within quarterly corridor", "one-session body (mass meeting, convention)", "continuous-session (many legislatures)"],
+     "desc": "session shapes; term expiry — periodic partial replacement makes the board effectively a new board, dropping everything temporarily-but-not-finally disposed except committee referrals [49:22, 21:7(c)]; quarterly-interval relation gates carryover [9:7-10]",
+     "cite": ["8:1-14", "9:7-10", "21:7", "49:22"]},
+    {"id": "authority-relation",
+     "values": ["autonomous", "subordinate (board/committee of a society: instructable, ratifiable, overridable by the parent)"],
+     "desc": "who instructs, who ratifies, who can discharge or override; a committee is accountable to a higher authority in a way no assembly is [1:24]; parent instruction displaces the 50:25 defaults ('unless the committee is otherwise instructed')",
+     "cite": ["1:24", "50:25"]},
+    {"id": "public-law-overlay",
+     "values": ["private (none)", "public body (sunshine laws open the meetings [9:28]; procedural statutes supersede and are unsuspendable [25:8]; compelled attendance / Call of the House where the body has the legal power [40:13])"],
+     "desc": "populates rules.json class procedural-law and flips openness/attendance parameters",
+     "cite": ["9:28", "25:8", "40:13", "1:5"]}
+  ],
+
+  "parameters": {
+    "desc": "Configuration parameters live at ctx.config (schema.json) and are consulted by expressions and by stage-5 orchestration. Types/defaults here; each named configuration assigns them.",
+    "list": [
+      {"id": "body_kind", "type": "schema assembly.body_kind enum", "default": "assembly"},
+      {"id": "size_regime", "type": "enum large|small", "default": "large", "cite": "49:21"},
+      {"id": "seconds_required", "type": "boolean", "default": true, "cite": "4:9, 49:21(2)"},
+      {"id": "speech_limit", "type": "?{max_speeches, max_minutes} (null = unlimited)", "default": {"max_speeches": 2, "max_minutes": 10}, "cite": "43:8, 49:21(3)"},
+      {"id": "chair_participates", "type": "boolean — chair debates and votes without leaving the chair", "default": false, "cite": "43:29, 49:21(7)"},
+      {"id": "quorum_basis", "type": "enum bylaws-specified|enrolled-majority|attendees|registered-delegates-majority|present", "default": "enrolled-majority (absent a bylaw)", "cite": "40:2"},
+      {"id": "floor_formality", "type": "enum rise-and-address|informal (hand or seated)", "default": "rise-and-address", "cite": "3:31, 49:21(1)(6)"},
+      {"id": "debate_closable", "type": "boolean — limit-extend-debate / previous-question available", "default": true, "cite": "50:25"},
+      {"id": "informal_discussion_without_motion", "type": "boolean", "default": false, "cite": "49:21(4)"},
+      {"id": "reconsider_committee_rules", "type": "boolean — no make-window limit, two-thirds-with-drop threshold, mover = anyone not on losing side", "default": false, "cite": "37:35"},
+      {"id": "session_scope", "type": "enum periodic|single-session|continuous", "default": "periodic", "cite": "8:1-14"},
+      {"id": "subordinate_to", "type": "?body reference (parent assembly/society)", "default": null, "cite": "1:24"},
+      {"id": "open_meetings_required", "type": "boolean (sunshine)", "default": false, "cite": "9:28"},
+      {"id": "attendance_compellable", "type": "boolean (Call of the House available)", "default": false, "cite": "40:13"}
+    ]
+  },
+
+  "overlay_mechanism": {
+    "desc": "A configuration applies, in order: (1) param assignments (into ctx.config); (2) patches — each {surface, op, ...} against a named model surface, applied at load, before any evaluation. The patched model is then evaluated exactly as the generic one. Note-grade entries (op: note) carry rule content the overlay has not compiled into expressions — they are flagged in gaps.json like any annotation-grade content.",
+    "ops": {
+      "param": "{param, value} — set a ctx.config parameter",
+      "patch": "{surface: dotted path into a model file, replace: new value/expression, cite}",
+      "disable_motion": "{motion, cite} — the registry record stays; the move action never offers it",
+      "disable_action": "{action, cite}",
+      "add_action": "{action record per actions.json schema}",
+      "note": "{desc, cite} — annotation-grade overlay content"
+    }
+  },
+
+  "configurations": [
+    {"id": "ordinary-society",
+     "desc": "The extracted defaults: a local organized society, enrolled membership, periodic sessions within the quarterly corridor, full rule stack, private, autonomous, large-meeting formality. The generic model files ARE this configuration; it assigns every parameter its default and carries an empty overlay.",
+     "axes": {"assembly-type": "organized-society", "size-regime": "large", "rule-stack": "full stack", "membership-determinacy": "enrolled", "temporal-structure": "periodic sessions within quarterly corridor", "authority-relation": "autonomous", "public-law-overlay": "private"},
+     "params": "all defaults",
+     "overlay": [],
+     "cite": ["1:9(2)"]},
+
+    {"id": "small-board",
+     "desc": "A board with not more than about a dozen members present [49:21]. The seven relaxations, compiled.",
+     "axes": {"assembly-type": "board", "size-regime": "small"},
+     "params": [
+       {"param": "body_kind", "value": "assembly"},
+       {"param": "size_regime", "value": "small"},
+       {"param": "seconds_required", "value": false},
+       {"param": "speech_limit", "value": null},
+       {"param": "chair_participates", "value": true},
+       {"param": "floor_formality", "value": "informal"},
+       {"param": "informal_discussion_without_motion", "value": true}
+     ],
+     "overlay": [
+       {"op": "disable_action", "action": "second", "cite": "49:21(2)"},
+       {"op": "patch", "surface": "lifecycle.transitions: moved -> pending", "replace": "on stated directly; the seconded state is skipped (no-second death transition also removed)", "cite": "49:21(2)"},
+       {"op": "patch", "surface": "actions.speak-in-debate.expr",
+        "replace": ["and",
+          ["=", ["ctx", "floor", "holder"], ["param", "member"]],
+          ["!=", ["top"], null],
+          ["debatable", ["top"]],
+          ["event-occurred", "stated", ["question", ["top"]]],
+          ["or", ["!=", ["motion", ["top"]], "appeal"],
+                 ["<", ["attr", ["param", "member"], "speech_counters", ["question", ["top"]], ["ctx", "clock", "current_day"], "speeches"], 1],
+                 ["and", ["=", ["param", "member"], ["ctx", "assembly", "chair"]],
+                          ["<", ["attr", ["param", "member"], "speech_counters", ["question", ["top"]], ["ctx", "clock", "current_day"], "speeches"], 2]]],
+          ["not", ["adjudged", "decorum-breach", ["param", "member"]]]],
+        "note": "no limit on number or length of speeches — EXCEPT appeals, which keep the regular one-speech rule (chair twice)", "cite": "49:21(3)"},
+       {"op": "add_action", "action": {"id": "discuss-informally", "roles": ["member"], "expr": ["guard", "no-question-pending"], "cite": "49:21(4)"}},
+       {"op": "add_action", "action": {"id": "put-proposal-without-motion", "roles": ["chair"], "expr": ["and", ["guard", "no-question-pending"], ["adjudged", "legitimately-incidental-residual", "proposal-clear-to-all"]], "note": "when a proposal is perfectly clear to all present a vote may be taken without a motion; approval thresholds unchanged; initial show-of-hands allowed", "cite": "49:21(5)"}},
+       {"op": "patch", "surface": "protocol.decorum: chair does not debate while presiding", "replace": "removed — the chair-member speaks in discussion and debate and votes on all questions without leaving the chair", "cite": "49:21(7)"},
+       {"op": "note", "desc": "members raise a hand or remain seated to seek the floor, make motions, speak; chair need not rise to put the question — floor_formality=informal, consumed by protocol rendering", "cite": "49:21(1), 49:21(6)"},
+       {"op": "note", "desc": "periodic partial replacement of board membership makes it a new board: everything temporarily-but-not-finally disposed falls to ground except committee referrals — already compiled as clock.term_boundary_before_next_session in guard/carryover-eligible", "cite": "49:22, 21:7(c)"}
+     ]},
+
+    {"id": "committee",
+     "desc": "A standing or special committee: a subordinate instrument, not an assembly [1:24]. The 49:21 relaxations apply unless the parent instructs otherwise [50:25], plus the committee-specific rule changes.",
+     "extends": "small-board",
+     "axes": {"assembly-type": "committee (as instrument, not assembly)", "authority-relation": "subordinate"},
+     "params": [
+       {"param": "body_kind", "value": "committee"},
+       {"param": "debate_closable", "value": false},
+       {"param": "reconsider_committee_rules", "value": true},
+       {"param": "subordinate_to", "value": "(the appointing assembly)"}
+     ],
+     "overlay": [
+       {"op": "disable_motion", "motion": "limit-extend-debate", "cite": "50:25"},
+       {"op": "disable_motion", "motion": "previous-question", "cite": "50:25"},
+       {"op": "note", "desc": "reconsider under committee rules is already hooked in the generic model: no make-window limit (guard/within-reconsider-window's body_kind disjunct [37:35(1)]), mover = anyone not on the losing side, two-thirds threshold dropping to majority when all prevailing-side voters are present or notified [37:35(3)] (registry vote_notes); rescind/amend-adopted's committee thresholds likewise [35:2(7)]", "cite": "50:25, 37:35, 35:2(7)"},
+       {"op": "note", "desc": "the parent's instruction displaces any of this configuration ('unless the committee is otherwise instructed') — an authority-relation override, not a rules.json suspension", "cite": "50:25"}
+     ]},
+
+    {"id": "committee-of-the-whole",
+     "desc": "The assembly itself acting as a committee [52]. Partial configuration — compiled only where the generic model already carries the hook; the §52 motion restrictions are note-grade pending a §52 pass.",
+     "extends": "committee",
+     "params": [{"param": "body_kind", "value": "committee-of-the-whole"}],
+     "overlay": [
+       {"op": "disable_motion", "motion": "call-for-orders-of-the-day", "cite": "18:6", "note": "already compiled generically via the body_kind disjunct in the CFOTD applicability row"},
+       {"op": "note", "desc": "quorum is the assembly's unless otherwise provided; on losing it, rise and report [52:18]; speeches do not count against same-day assembly rights [13:21] (compiled in protocol counter rules); the restricted motion set within the committee ([52]) is not yet compiled", "cite": "52:18, 13:21"}
+     ]},
+
+    {"id": "mass-meeting",
+     "desc": "Unorganized assembly: whoever attends within the call's terms is a member; the call has bylaws force. Partial configuration.",
+     "axes": {"assembly-type": "mass-meeting", "rule-stack": "call-as-bylaws", "membership-determinacy": "whoever-attends", "temporal-structure": "one-session body"},
+     "params": [
+       {"param": "quorum_basis", "value": "present"},
+       {"param": "session_scope", "value": "single-session"}
+     ],
+     "overlay": [
+       {"op": "patch", "surface": "rules.classes: bylaws", "replace": "populated by the call: its statement of purpose and of who is invited has bylaws force — it bounds germaneness of main motions and defines membership", "cite": "53:9"},
+       {"op": "note", "desc": "quorum is the number present at the time [40:2(1)]; appeal of recognition rulings unavailable [42:15]; sponsors' rights shape presiding arrangements [53]", "cite": "40:2(1), 42:15, 53:9"}
+     ]},
+
+    {"id": "convention",
+     "desc": "A body of credentialed delegates, one session, with convention standing rules. Partial configuration.",
+     "axes": {"assembly-type": "convention", "rule-stack": "convention stack", "membership-determinacy": "credentialed-delegates", "temporal-structure": "one-session body"},
+     "params": [
+       {"param": "quorum_basis", "value": "registered-delegates-majority"},
+       {"param": "session_scope", "value": "single-session"}
+     ],
+     "overlay": [
+       {"op": "note", "desc": "membership is established by adoption of the credentials report; until then only its consideration, conduct-of-meeting motions, and the inquorate set are in order [59:22]; convention-standing-rules class active with its suspension/threshold rows (rules.json); agenda/program overlay typically governs (scheduler.json)", "cite": "59:22, 59:27, 59:34-37, 41:58-70"}
+     ]},
+
+    {"id": "legislative-body",
+     "desc": "Constitutionally constituted, continuous or long sessions, inverted rule stack (constitutions and statutes above any manual), compelled attendance available. Sketch — RONR describes this type but is not its authority [1:9(4)].",
+     "axes": {"assembly-type": "legislative-body", "rule-stack": "legislative stack", "public-law-overlay": "public body", "temporal-structure": "continuous-session"},
+     "params": [
+       {"param": "attendance_compellable", "value": true},
+       {"param": "open_meetings_required", "value": true}
+     ],
+     "overlay": [
+       {"op": "add_action", "action": {"id": "move-call-of-the-house", "roles": ["member"], "expr": ["and", ["not", ["guard", "quorum-present"]], ["ctx", "config", "attendance_compellable"]], "note": "unexcused absentees brought under arrest; not applicable in voluntary societies", "cite": "40:13"}},
+       {"op": "note", "desc": "procedural statutes populate class procedural-law: supreme and unsuspendable unless self-suspending [25:8]; the body's own adopted rules displace most of the generic model — this configuration marks the axes, it does not model any particular chamber", "cite": "25:8, 1:9(4)"}
+     ]},
+
+    {"id": "public-body",
+     "desc": "Overlay-only configuration (composable with board/committee/ordinary-society): a governmental or semi-public body under public law.",
+     "composable": true,
+     "params": [{"param": "open_meetings_required", "value": true}],
+     "overlay": [
+       {"op": "note", "desc": "sunshine laws override the assembly's power to exclude nonmembers or enter executive session [9:28]; applicable procedural statutes are unsuspendable [25:8] — both land in rules.json class procedural-law with continuing-breach ground violates-procedural-law [23:6(c)]", "cite": "9:28", "additional_cite": "25:8, 23:6(c)"}
+     ]}
+  ],
+
+  "proof_note": "small-board and committee are the proof configurations: every 49:21 item and every 50:25 delta is either compiled (param/patch/disable/add) or explicitly note-grade with its citation — nothing silently absorbed. The generic model needed zero changes to host them beyond ctx.config, which is the axes working as claimed: the hooks (body_kind disjuncts, term-boundary clock field, committee threshold notes) were already load-bearing in the ordinary-society model."
+}

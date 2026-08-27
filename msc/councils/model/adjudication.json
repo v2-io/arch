@@ -16,8 +16,8 @@
       {"from": "appealed", "on": "put + result", "to": "final", "threshold": "tie-or-majority-sustains-chair", "debatability": "per appeal SDC: debatable except indecorum / priority of business / undebatable question immediately pending or involved; one speech per member, chair twice", "yields": "table/appeal-yield-matrix governs what may be moved while appealed", "cite": "24:3(5), 24:3(7)"}
     ],
     "finality": "final is binding for the session [24:1]; the recorded ruling with reasons is persuasive precedent thereafter — weight grows with repetition and consistency; overridable by later ruling, appeal, or rule change [23:10-11]",
-    "timeliness_default": ["and", ["guard", "result-window-open-or-breach-live"], true],
-    "timeliness_note": "default timeliness is the point-of-order rule: at the time of the breach [23:5], with continuing-breach exceptions [23:6] (guard/continuing-breach); predicates may override below."
+    "timeliness_default": ["or", ["event-occurred", "breach-just-occurred", "now"], ["guard", "result-window-open"], ["guard", "continuing-breach"]],
+    "timeliness_note": "the point-of-order rule: at the time of the breach [23:5], with the vote-challenge window [45:9] and continuing-breach exceptions [23:6]; predicates may override below."
   },
 
   "predicates": [
@@ -57,6 +57,9 @@
     {"id": "interruption-urgency", "subject_type": "act interrupting a speaker", "default": false,
      "desc": "the urgency of the purpose justifies interrupting an assigned speaker now", "appealable": true,
      "cite": "42:18-19, 19:6(3)"},
+    {"id": "quorum-conduct-related", "subject_type": "motion moved while inquorate", "default": false,
+     "desc": "the motion is related to the always-allowed inquorate motions, to measures to obtain a quorum, or to the conduct of the meeting while it remains without a quorum", "appealable": true,
+     "cite": "40:7"},
     {"id": "ballot-meaning", "subject_type": "a questionable ballot", "default": null,
      "desc": "whether an unclear ballot's meaning can be determined; if it may affect the result, the assembly decides by vote (voting.json)", "appealable": false, "decided_by": "tellers, then assembly",
      "cite": "45:33"}
