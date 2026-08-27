@@ -30,9 +30,31 @@
       {"threshold": "two-thirds", "adopted_expr": [">=", ["attr", ["param", "vote"], "tally", "yes"], ["*", 2, ["attr", ["param", "vote"], "tally", "no"]]], "cite": "44:3", "note": "the multiplication form (yes >= 2*no) is exact for votes-cast two-thirds"},
       {"threshold": "majority-entire-membership", "adopted_expr": [">", ["*", 2, ["attr", ["param", "vote"], "tally", "yes"]], ["ctx", "assembly", "membership_total"]], "cite": "44:9"},
       {"threshold": "two-thirds-neg", "adopted_expr": [">=", ["attr", ["param", "vote"], "tally", "no"], ["*", 2, ["attr", ["param", "vote"], "tally", "yes"]]], "desc": "the objection is SUSTAINED (question not considered) when two thirds vote against consideration", "cite": "26:7-8"},
-      {"threshold": "tie-or-majority-sustains-chair", "adopted_expr": [">", ["attr", ["param", "vote"], "tally", "no"], ["attr", ["param", "vote"], "tally", "yes"]], "desc": "the chair's ruling is REVERSED only on this expression (majority in the negative); tie sustains", "cite": "24:3(7)"}
+      {"threshold": "tie-or-majority-sustains-chair", "adopted_expr": [">", ["attr", ["param", "vote"], "tally", "no"], ["attr", ["param", "vote"], "tally", "yes"]], "desc": "the chair's ruling is REVERSED only on this expression (majority in the negative); tie sustains", "cite": "24:3(7)"},
+      {"threshold": "majority-present", "adopted_expr": [">", ["*", 2, ["attr", ["param", "vote"], "tally", "yes"]], ["attr", ["param", "vote"], "present_count_at_affirmative"]], "desc": "the negative is not taken (intrinsically irrelevant); present_count_at_affirmative is the chair's count immediately after the affirmative", "cite": "44:9(a)"},
+      {"threshold": "two-thirds-present", "adopted_expr": [">=", ["*", 3, ["attr", ["param", "vote"], "tally", "yes"]], ["*", 2, ["attr", ["param", "vote"], "present_count_at_affirmative"]]], "cite": "44:9(a)"}
     ],
     "note": "membership_total is an assembly input field; notice+X compounds evaluate X after verifying the notice event (event-occurred previous-notice within its window)"
+  },
+
+  "vote_validity_remedies": {
+    "desc": "Remedies for votes tainted by exclusion of members or inclusion of improper votes — compiled margin arithmetic, not judgment. could-have-affected = the tainted count reaches the margin between the announced positions. On a sustained point of order within the applicable window, the vote is declared invalid and retaken.",
+    "rules": [
+      {"case": "members denied the right to vote or attend [23:7]",
+       "invalid_when": {"expr": ["or",
+         ["and", ["guard", "could-have-affected-result", ["ctx", "last_announced_vote"], ["attr", ["ctx", "last_announced_vote"], "excluded_member_votes"]],
+                  ["guard", "continuing-breach", ["ctx", "last_announced_vote"]]],
+         ["and", ["not", ["guard", "could-have-affected-result", ["ctx", "last_announced_vote"], ["attr", ["ctx", "last_announced_vote"], "excluded_member_votes"]]],
+                  ["guard", "result-window-open"]]],
+        "desc": "if the excluded votes could have changed the outcome: attackable as long as the decision has continuing force; if they could not: only by a point of order raised immediately after the announcement", "cite": "23:7"},
+       "residual": "where invalidation is unavailable, the debate-influence argument routes through rescind / reconsider / renewal as ordinary motions [23:7]"},
+      {"case": "improper votes included — nonmembers, absentees, multiple votes [23:8]",
+       "invalid_when": {"expr": ["and",
+         ["guard", "could-have-affected-result", ["ctx", "last_announced_vote"], ["attr", ["ctx", "last_announced_vote"], "improper_votes"]],
+         ["guard", "continuing-breach", ["ctx", "last_announced_vote"]]],
+        "cite": "23:8"},
+       "note": "unidentifiable nonmember ballots possibly affecting the result void the entire ballot vote (ballot_counting row) [45:35]"}
+    ]
   },
 
   "schema_addition": "Ballot and tally structures are runtime inputs; schema.json Vote.tally carries the aggregate. Per-ballot adjudications appear as AdjudicationInstance records with predicate ballot-meaning."

@@ -7,8 +7,18 @@ Checks (each failure prints a line; exit 1 on any):
   3. Every ["timer-open", id, ...] timer is defined in lifecycle.json.
   4. Every ["event-occurred", event, ...] event name is declared in vocabulary.json events.
   5. Operator closure: every list-expression head is in the closed operator set (INTERFACE.md).
-  6. Lint: no comparison whose operands are both literals (the F2 class — always-true/false expressions).
-  7. Guard polarity: no guard id starting with "not-" or "no-" that twins a declared positive guard.
+  6. Lint: no comparison whose operands are both literals (always-true/false expressions).
+  7. Guard polarity: no guard id starting with "not-" that twins a declared positive guard.
+     ("no-..." names are legitimate positives — no-question-pending — and are not checked.)
+  8. Guard binding resolvability: a guard call with explicit args must supply exactly its
+     declared bindings; a no-arg call's declared bindings must each match an identically-named
+     in-scope binding (quantifier variables, or names introduced by an enclosing "params"/
+     "bindings" declaration, plus the ambient decision-point names).
+  9. Bare-binder lint: inside a quantifier body, a bare string equal to an in-scope binder
+     must be written ["var", ...].
+
+Known limits (deliberate): no type checking, no evaluation, no arity checking beyond guard
+args; a clean exit means identifier/binding hygiene, not correctness.
 
 Run from model/: python3 tools/sweep.py
 """
@@ -28,8 +38,11 @@ OPERATORS = {
     "rank-admissible", "applicable",
 }
 COMPARISONS = {"=", "!=", "<", "<=", ">", ">="}
+QUANTIFIERS = {"exists", "forall", "count"}
+# names any decision point supplies (available_actions evaluation context)
+AMBIENT = {"member"}
 
-guards = {g["id"] for g in DATA["guards.json"]["guards"]}
+guards = {g["id"]: g for g in DATA["guards.json"]["guards"]}
 preds = {p["id"] for p in DATA["adjudication.json"]["predicates"]}
 timers = {t["id"] for t in DATA["lifecycle.json"]["timers"]["list"]}
 events = set()
@@ -39,59 +52,73 @@ for grp in DATA["vocabulary.json"]["events"].values():
 
 problems = []
 
-def is_expr(x):
-    return isinstance(x, list) and x and isinstance(x[0], str) and x[0] in OPERATORS
+def declared_names(d):
+    """Names a dict introduces for its subtree via params/bindings declarations."""
+    out = set()
+    for key in ("params", "bindings"):
+        v = d.get(key)
+        if isinstance(v, list):
+            out |= {s.split()[0].split("(")[0] for s in v if isinstance(s, str)}
+    return out
 
-def literal(x):
-    return isinstance(x, (int, float, bool)) or x is None or (
-        isinstance(x, str))  # bare strings: literal unless a bound var — flagged only when BOTH sides literal and neither could be a var
-
-def walk(x, path, bound):
+def walk(x, path, scope, quant):
     if isinstance(x, dict):
+        ns = scope | declared_names(x)
         for k, v in x.items():
-            walk(v, f"{path}.{k}", bound)
+            walk(v, f"{path}.{k}", ns, quant)
         return
     if not isinstance(x, list) or not x:
         return
     head = x[0]
-    if isinstance(head, str) and (head in OPERATORS or head.islower() and "-" not in head and len(x) > 1 and False):
-        pass
     if isinstance(head, str) and head in OPERATORS:
-        if head == "guard" and (len(x) < 2 or x[1] not in guards):
-            problems.append(f"{path}: unresolved guard {x[1] if len(x)>1 else '?'}")
+        if head == "guard":
+            gid = x[1] if len(x) > 1 else None
+            g = guards.get(gid)
+            if g is None:
+                problems.append(f"{path}: unresolved guard {gid}")
+            else:
+                need = [b.split()[0].split("(")[0] for b in g.get("bindings", [])]
+                args = x[2:]
+                if args and len(args) != len(need):
+                    problems.append(f"{path}: guard/{gid} takes {len(need)} binding(s) {need}, called with {len(args)} arg(s)")
+                if not args and "defined_in" not in g:
+                    missing = [b for b in need if b not in scope]
+                    if missing:
+                        problems.append(f"{path}: guard/{gid} bindings {missing} unresolvable in scope {sorted(scope)}")
         if head == "adjudged" and (len(x) < 2 or x[1] not in preds):
             problems.append(f"{path}: unresolved adjudged predicate {x[1] if len(x)>1 else '?'}")
         if head == "timer-open" and (len(x) < 2 or x[1] not in timers):
             problems.append(f"{path}: unresolved timer {x[1] if len(x)>1 else '?'}")
         if head == "event-occurred" and (len(x) < 2 or x[1] not in events):
             problems.append(f"{path}: undeclared event {x[1] if len(x)>1 else '?'}")
-        nb = set(bound)
-        if head in {"exists", "forall", "count"} and len(x) >= 2 and isinstance(x[1], str):
-            nb.add(x[1])
+        nscope, nquant = set(scope), set(quant)
+        if head in QUANTIFIERS and len(x) >= 2 and isinstance(x[1], str):
+            nscope.add(x[1]); nquant.add(x[1])
         if head in COMPARISONS and len(x) == 3:
             def lit(o):
                 if isinstance(o, list):
                     return False
                 if isinstance(o, str):
-                    return o not in bound
+                    return o not in scope
                 return True
             if lit(x[1]) and lit(x[2]):
                 problems.append(f"{path}: literal-literal comparison {x}")
         for i, sub in enumerate(x[1:], 1):
-            if head in {"exists", "forall", "count"} and i == 1:
+            if head in QUANTIFIERS and i == 1:
                 continue
-            walk(sub, f"{path}[{i}]", nb)
+            if isinstance(sub, str) and sub in nquant and head not in ("var", "param"):
+                problems.append(f"{path}[{i}]: bare binder '{sub}' — write [\"var\", \"{sub}\"]")
+            walk(sub, f"{path}[{i}]", nscope, nquant)
     else:
         for i, sub in enumerate(x):
-            walk(sub, f"{path}[{i}]", bound)
+            walk(sub, f"{path}[{i}]", scope, quant)
 
 for f, d in DATA.items():
-    walk(d, f, set())
+    walk(d, f, set(AMBIENT), set())
 
-for g in sorted(guards):
-    for pref in ("not-",):
-        if g.startswith(pref) and g[len(pref):] in guards:
-            problems.append(f"guards.json: negated twin {g}")
+for g in guards:
+    if g.startswith("not-") and g[len("not-"):] in guards:
+        problems.append(f"guards.json: negated twin {g}")
 
 for p in problems:
     print("FAIL", p)

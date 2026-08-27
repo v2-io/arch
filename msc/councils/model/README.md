@@ -46,4 +46,4 @@ Every condition an engine must evaluate is a machine-evaluable expression over a
 
 ## Status
 
-Stage 4 of 5 (full text → outline+interface → component models → **unified model** → execution engine). The engine is pending; an independent audit is in progress (`AUDIT.md` when landed). Acceptance is script replay: each Form-and-Example passage in `acceptance.json` is an event stream the engine must reproduce — the scripted action present with the right justification, the book's out-of-order actions absent.
+Stage 4 of 5 (full text → outline+interface → component models → **unified model** → execution engine). The engine is pending. Three independent audits have been integrated (see `CHANGELOG.md`); further de novo audits are a standing expectation — their reports land beside the model and are absorbed on integration. Acceptance is script replay: each Form-and-Example passage in `acceptance.json` is an event stream the engine must reproduce — the scripted action present with the right justification, the book's out-of-order actions absent.

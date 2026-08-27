@@ -10,9 +10,11 @@
     {"id": "maker", "desc": "contextual: member who made the pending motion", "cite": "4:6"},
     {"id": "seconder", "desc": "contextual: member who seconded", "cite": "4:9"},
     {"id": "reporting-member", "desc": "contextual: presents a board/committee report; motions on behalf of committee need no second", "cite": "51:8-11"},
+    {"id": "teller", "desc": "appointed vote-counter: distributes/collects/tallies ballots; first-line decider on ballot meaning (adjudication ballot-meaning, escalating to the assembly)", "cite": "45:26-30, 45:33"},
+    {"id": "chair-pro-tem", "desc": "temporary occupant of the chair: elected at a mass meeting's organization [53:32], during the chair's relinquishment to debate [43:29], or under the 62:10 temporary-removal remedies; holds chair powers while occupying, not the office", "cite": "53:32, 43:29, 62:10-11, 47:11"},
     {"id": "nonmember", "desc": "no participation rights; presence at assembly's sufferance", "cite": "61:7, 61:19"}
   ],
-  "roles_NOTE(judgment)": "maker/seconder/reporting-member are modeled as roles bound per-question, not global states.",
+  "roles_NOTE(judgment)": "maker/seconder/reporting-member are modeled as roles bound per-question, not global states; chair-pro-tem is an occupancy (who currently holds chair powers), distinct from the office — assembly.chair points at the occupant.",
 
   "dialogue_cycle": {
     "desc": "Six steps — three to bring before the assembly, three to consider [4:2, 4:25]. Emitted events named per step.",

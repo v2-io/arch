@@ -3,24 +3,16 @@
   "file": "engine",
   "desc": "The pending-question stack machine: what may become pending while other questions are pending, in what order pending questions are decided, and how pending bundles are serialized out of (and restored into) the live stack. Consumes registry/precedence data, rules state (order objects), lifecycle question objects, and protocol events; exposes operations those parts invoke. Does not model debate turn-taking (protocol), vote arithmetic (voting), or when scheduled business preempts (scheduler).",
   "foundational_principle": "only one question is considered at a time; once a motion is before the assembly it must be adopted, rejected, or otherwise disposed of before other business (with privileged exceptions) is introduced [5:4]. The pending series exists because secondary motions may be made and must be decided while a main motion remains pending [5:5-7].",
-
   "frame_schema": "schema.json types.Frame. applied_to: the frame this motion operates on [6:6(1)]; null for privileged motions, which relate to no pending question [6:11]. adheres_to: adherence per [10:35] — the motion must be decided before its target can be decided, and travels with the target when serialized; the two usually coincide, diverging for non-adhering incidentals [23:2(1)] and privileged frames, which never adhere [10:35].",
-
   "pending_stack": "an ordered sequence of frames; bottom is normally a main-class frame (M, M/B, or B behaving as main rank [6:26]); the top frame is the immediately pending question [5:7]. Push order equals the order motions were stated by the chair; a motion is pending only once stated [4:3].",
-
   "context_stack": {
     "desc": "Certain events interrupt pending business without disposing of it: an order of the day taken up at its hour [18:7], an admitted question of privilege [19:10], a special order interrupting at its hour [41:53]. The interrupting matter is itself a main motion and may accumulate its own secondary motions, independent of the interrupted series (its disposal by commit/postpone/table 'is independent of, and does not affect, any other matter that they may have interrupted' [13:7(2), 14:4(2), 17:3(2)]). Model: a context stack of pending stacks. Interruption pushes a fresh context; completing the interrupting business pops it and consideration resumes at the exact point of interruption [18:7, 19:10] — the resume point (who had the floor, etc.) is lifecycle history plus protocol state, not engine state. Recess and adjournment freeze the whole context stack rather than pushing a context [8:7, 21:7(a)].",
     "NOTE(judgment)": "RONR does not use a nested-context vocabulary; it says interrupted business 'is resumed where it left off.' The context stack is the minimal structure that makes 13:7(2)/17:3(2) independence and 18:7/19:10 resumption both literal."
   },
-
   "push_legality": {
-    "desc": "may-push(m, t): the motion may be moved and (if stated) pushed. This is the engine core of actions.json action move — that action adds the floor/quorum/standing conjuncts; both share the expressions below so the two never diverge. Bindings: m, t.",
-    "expr": ["and",
-      ["rank-admissible", ["param", "m"], ["param", "t"]],
-      ["applicable", ["param", "m"], ["param", "t"]],
-      ["guard", "no-order-precluding"],
-      ["guard", "act-in-order-under-governing-rules"],
-      ["not", ["guard", "dilatory"]]],
+    "desc": "may-push(m, t): the motion may be moved and (if stated) pushed. This is the engine core of actions.json action move — that action adds the floor/quorum/standing conjuncts; both share the expressions below so the two never diverge.",
+    "bindings": ["m", "t", "time", "series"],
+    "expr": ["and", ["rank-admissible", ["param", "m"], ["param", "t"]], ["applicable", ["param", "m"], ["param", "t"]], ["guard", "no-order-precluding"], ["guard", "act-in-order-under-governing-rules", ["param", "m"]], ["not", ["guard", "dilatory"]]],
     "conjunct_cites": {
       "rank-admissible": "5:8-9 (ranked chain); incidental/reconsider special rules per effective_rank below",
       "applicable": "7:2; precedence.json table/applicability + table/appeal-yield-matrix (same-question and control bars are disjuncts of the main-motion row)",
@@ -29,7 +21,6 @@
       "dilatory": "39:1-4"
     }
   },
-
   "effective_rank": {
     "rank_tokens": "precedence.json rank_order, low to high [5:11, t3-t5]",
     "class_admissibility": "a ranked motion is pushable iff its effective rank exceeds the effective rank of every frame currently pending in the active context (equivalently, of the top frame) [5:8-9], subject to per-motion conditions in the registry (e.g., privileged adjourn/recess/fix-time lose privileged status under the conditions of [20:3, 21:3, 22:3] and are then main-class)",
@@ -43,24 +34,46 @@
     },
     "objection_window": "objection-to-consideration is pushable only against an original main motion while guard/consideration-not-begun holds [26:2(1)]; window state comes from event/debate-opened and stated-subsidiary history"
   },
-
   "unwind": {
     "rule": "the top frame is decided first; frames are voted in reverse order of stating [10:33]. After the top frame is disposed of, the question recurs on the new top frame, which reopens to debate/amendment if debatable [10:33].",
     "series_halting_adoptions": {
       "desc": "adoption of any of the following disposes of (or suspends) the rest of the series, which is not further voted on now [10:34]",
       "table": [
-        {"adopted": "postpone-indefinitely", "effect": "main question killed for the session; series ends", "cite": "11:3"},
-        {"adopted": "commit", "effect": "bundle -> committee (serialization commit); series suspended", "cite": "13:1"},
-        {"adopted": "postpone-to-certain-time", "effect": "bundle -> scheduler as order of the day (serialization postpone)", "cite": "14:13"},
-        {"adopted": "lay-on-table", "effect": "bundle -> table (serialization table)", "cite": "17:5"},
-        {"adopted": "recess | adjourn", "effect": "context stack frozen; disposition of pending business per [21:7] via lifecycle/scheduler", "cite": "21:7"},
-        {"adopted": "objection-to-consideration (sustained)", "effect": "main question dismissed for the session", "cite": "26:5"}
+        {
+          "adopted": "postpone-indefinitely",
+          "effect": "main question killed for the session; series ends",
+          "cite": "11:3"
+        },
+        {
+          "adopted": "commit",
+          "effect": "bundle -> committee (serialization commit); series suspended",
+          "cite": "13:1"
+        },
+        {
+          "adopted": "postpone-to-certain-time",
+          "effect": "bundle -> scheduler as order of the day (serialization postpone)",
+          "cite": "14:13"
+        },
+        {
+          "adopted": "lay-on-table",
+          "effect": "bundle -> table (serialization table)",
+          "cite": "17:5"
+        },
+        {
+          "adopted": "recess | adjourn",
+          "effect": "context stack frozen; disposition of pending business per [21:7] via lifecycle/scheduler",
+          "cite": "21:7"
+        },
+        {
+          "adopted": "objection-to-consideration (sustained)",
+          "effect": "main question dismissed for the session",
+          "cite": "26:5"
+        }
       ],
       "under_pq_order": "under an order for the previous question covering several frames, voting proceeds top-down without debate; adoption of a postpone/commit/postpone-indefinitely within the series still halts further voting [16:9]"
     },
     "other_pops": "rejection of the top frame simply recurs to the next frame. Withdrawal of a motion removes its frame; anything adhering to it ceases to be before the assembly with no further disposition [33:16, 33:18]. Withdrawal of the main frame clears the series."
   },
-
   "bundle_schema": {
     "desc": "A bundle is a frame together with everything adhering to it [10:35], serialized out of the live stack as a unit and restorable as a unit ('everything is in the same condition, so far as possible, as it was' [17:7, 34:6]).",
     "kind": "tabled | postponed | committed | reconsider-held",
@@ -69,7 +82,6 @@
     "created": "event/<tabled|postponed|referred>",
     "expiry_ref": "timer/<id> (lifecycle.json)"
   },
-
   "serialization": {
     "table": {
       "desc": "lay-on-table -> take-from-table: the entire adhering series goes to the table together; nothing adhering can be left behind, and non-adhering frames (e.g., a pending recess) do not go [17:3(2), 17:5, 10:35]. Restoration by take-from-table reinstates the series with the same immediately pending question [34:6]. Expiry is timer/table-expiry against end-of-session / next-regular-session within quarterly-interval [17:8, 34:3]. Debate-right renewal and order-exhaustion on restoration are protocol/lifecycle effects [34:6-7]; note take-from-table at the SAME session does not exhaust previous-question / limit-debate orders even on another day [34:6].",
@@ -92,13 +104,36 @@
       "lossless": true
     }
   },
-
   "operations": [
-    {"op": "try-push(motion, target)", "caller": "protocol (on stated)", "effect": "push_legality; push frame"},
-    {"op": "dispose(frame, outcome)", "caller": "protocol (on adopted/rejected/withdrawn/ruled-out-of-order)", "effect": "unwind"},
-    {"op": "serialize(kind)", "caller": "unwind series-halting adoptions", "effect": "bundle out"},
-    {"op": "restore(bundle)", "caller": "protocol (taken-from-table, called-up), scheduler (postponed time reached)", "effect": "reinstate series"},
-    {"op": "interrupt(context) / resume()", "caller": "scheduler (special order), protocol (question of privilege, orders of the day)", "effect": "context_stack push/pop"},
-    {"op": "record-reconsider(target-vote)", "caller": "protocol", "effect": "reconsider_held"}
+    {
+      "op": "try-push(motion, target)",
+      "caller": "protocol (on stated)",
+      "effect": "push_legality; push frame"
+    },
+    {
+      "op": "dispose(frame, outcome)",
+      "caller": "protocol (on adopted/rejected/withdrawn/ruled-out-of-order)",
+      "effect": "unwind"
+    },
+    {
+      "op": "serialize(kind)",
+      "caller": "unwind series-halting adoptions",
+      "effect": "bundle out"
+    },
+    {
+      "op": "restore(bundle)",
+      "caller": "protocol (taken-from-table, called-up), scheduler (postponed time reached)",
+      "effect": "reinstate series"
+    },
+    {
+      "op": "interrupt(context) / resume()",
+      "caller": "scheduler (special order), protocol (question of privilege, orders of the day)",
+      "effect": "context_stack push/pop"
+    },
+    {
+      "op": "record-reconsider(target-vote)",
+      "caller": "protocol",
+      "effect": "reconsider_held"
+    }
   ]
 }

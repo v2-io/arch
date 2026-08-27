@@ -1,7 +1,7 @@
 {
   "model": "ronr-12-unified",
   "file": "council",
-  "desc": "The council configuration layer: contexts (a small council, a Senate, a grand jury, a city board) are not different models but points in a configuration space of the one machine. RONR enumerates the axes itself. A configuration = parameter assignments along the axes + an overlay of patches against named model surfaces. The generic files state the ordinary-society defaults; the first named configuration below IS those defaults, extracted and named, so no context is implicit. Many councils, one engine.",
+  "desc": "The council configuration layer: contexts (a small council, a Senate, a grand jury, a city board) are not different models but points in a configuration space of the one machine. RONR enumerates the axes itself. A configuration = parameter assignments along the axes + an overlay of patches against named model surfaces. The generic files state the ordinary-society defaults; the first named configuration below IS those defaults, extracted and named, so no context is implicit. Many councils, one engine. Axes are DOCUMENTATION (the book's own typology, with cites); params are the single OPERATIVE surface — a configuration's axes never bind anything an expression reads, so axis/param divergence is a description bug, not a behavior bug.",
 
   "axes": [
     {"id": "assembly-type",
@@ -62,6 +62,7 @@
       "disable_motion": "{motion, cite} — the registry record stays; the move action never offers it",
       "disable_action": "{action, cite}",
       "add_action": "{action record per actions.json schema}",
+      "restrict_actions": "{allowed: [action/motion ids], plus: [ids always retained], cite} — whitelist form: every motion/action not listed is disabled; the overlay shape for bodies the book defines by an enumerated permitted set rather than by deltas (committee of the whole [52:9])",
       "note": "{desc, cite} — annotation-grade overlay content"
     }
   },
@@ -102,7 +103,7 @@
           ["not", ["adjudged", "decorum-breach", ["param", "member"]]]],
         "note": "no limit on number or length of speeches — EXCEPT appeals, which keep the regular one-speech rule (chair twice)", "cite": "49:21(3)"},
        {"op": "add_action", "action": {"id": "discuss-informally", "roles": ["member"], "expr": ["guard", "no-question-pending"], "cite": "49:21(4)"}},
-       {"op": "add_action", "action": {"id": "put-proposal-without-motion", "roles": ["chair"], "expr": ["and", ["guard", "no-question-pending"], ["adjudged", "legitimately-incidental-residual", "proposal-clear-to-all"]], "note": "when a proposal is perfectly clear to all present a vote may be taken without a motion; approval thresholds unchanged; initial show-of-hands allowed", "cite": "49:21(5)"}},
+       {"op": "add_action", "action": {"id": "put-proposal-without-motion", "roles": ["chair"], "params": ["proposal"], "expr": ["and", ["guard", "no-question-pending"], ["adjudged", "proposal-clear-to-all", ["param", "proposal"]]], "note": "when a proposal is perfectly clear to all present a vote may be taken without a motion; approval thresholds unchanged; initial show-of-hands allowed", "cite": "49:21(5)"}},
        {"op": "patch", "surface": "protocol.decorum: chair does not debate while presiding", "replace": "removed — the chair-member speaks in discussion and debate and votes on all questions without leaving the chair", "cite": "49:21(7)"},
        {"op": "note", "desc": "members raise a hand or remain seated to seek the floor, make motions, speak; chair need not rise to put the question — floor_formality=informal, consumed by protocol rendering", "cite": "49:21(1), 49:21(6)"},
        {"op": "note", "desc": "periodic partial replacement of board membership makes it a new board: everything temporarily-but-not-finally disposed falls to ground except committee referrals — already compiled as clock.term_boundary_before_next_session in guard/carryover-eligible", "cite": "49:22, 21:7(c)"}
@@ -126,12 +127,20 @@
      ]},
 
     {"id": "committee-of-the-whole",
-     "desc": "The assembly itself acting as a committee [52]. Partial configuration — compiled only where the generic model already carries the hook; the §52 motion restrictions are note-grade pending a §52 pass.",
+     "desc": "The assembly itself acting as a committee [52]. Third proof configuration: §52 defines it by an enumerated permitted set, compiled as a whitelist.",
      "extends": "committee",
      "params": [{"param": "body_kind", "value": "committee-of-the-whole"}],
      "overlay": [
-       {"op": "disable_motion", "motion": "call-for-orders-of-the-day", "cite": "18:6", "note": "already compiled generically via the body_kind disjunct in the CFOTD applicability row"},
-       {"op": "note", "desc": "quorum is the assembly's unless otherwise provided; on losing it, rise and report [52:18]; speeches do not count against same-day assembly rights [13:21] (compiled in protocol counter rules); the restricted motion set within the committee ([52]) is not yet compiled", "cite": "52:18, 13:21"}
+       {"op": "restrict_actions",
+        "allowed": ["motion/amend", "motion/point-of-order", "motion/appeal", "motion/division-of-assembly", "motion/requests-and-inquiries", "motion/request-to-be-excused-from-duty"],
+        "plus": ["action/second", "action/claim-floor", "action/speak-in-debate", "action/vote", "action/change-vote", "action/demand-division", "action/raise-point-of-order", "action/appeal", "action/request", "action/put-ignored-question"],
+        "cite": "52:9(1)",
+        "note": "the only motions in order are adopt (within the committee, for its report — the in-committee adopt is the rise-and-report content path), amend, and rise — plus, among incidentals, point of order, appeal, division of the assembly, and applicable requests and inquiries. Anything else requires rising to report a recommendation"},
+       {"op": "add_action", "action": {"id": "move-rise", "roles": ["member"],
+        "expr": ["and", ["not", ["guard", "voting-in-progress"]], ["not", ["guard", "another-has-floor"]]],
+        "note": "rise (or rise-and-report): seconded, undebatable, unamendable, majority; always in order except during voting/verification or when another has the floor — the committee's only exit", "cite": "52:9"}},
+       {"op": "patch", "surface": "actions.speak-in-debate", "replace": "no limit on the number of speeches per member (the 49:21(3) relaxation as inherited), unless the assembly prescribed limits before going into committee of the whole", "cite": "52:9(2)"},
+       {"op": "note", "desc": "quorum is the assembly's unless otherwise provided; on losing it, rise and report [52:18]; speeches in committee of the whole do not count against same-day assembly rights [13:21] (compiled in protocol counter rules); call-for-orders-of-the-day additionally barred generically via the body_kind disjunct in its applicability row [18:6]", "cite": "52:18, 13:21, 18:6"}
      ]},
 
     {"id": "mass-meeting",

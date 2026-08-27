@@ -63,7 +63,9 @@
       {"from": "postponed-definitely", "on": "session-ended", "to": "unfinished-business | died", "cite": "21:7(b-c), 41:23(c)", "guard": "guard/carryover-eligible"},
       {"from": "unfinished-business", "on": "reached-in-order", "to": "pending", "cite": "41:23-24"},
 
-      {"from": "adopted | rejected", "on": "reconsidered", "to": "pending", "cite": "37:7, 37:19", "guard": "R2 window open", "note": "restored to exact position the moment before the original vote; original vote canceled [37:12, 37:19]"},
+      {"from": "adopted | rejected", "on": "reconsider-recorded", "to": "reconsider-pending", "cite": "37:10(c), 37:11", "guard": "R2 window open", "note": "the making of a reconsider (not yet taken up) suspends all action under the vote"},
+      {"from": "reconsider-pending", "on": "reconsider-hold-lapsed", "to": "adopted | rejected", "cite": "37:11-12", "note": "revival, RETROACTIVE: the vote and everything held up by the proposed reconsideration come into full force as if in effect from the time the vote was originally taken [37:12] — downstream timers and effect-dating run from the original vote, not the lapse"},
+      {"from": "reconsider-pending | adopted | rejected", "on": "reconsidered", "to": "pending", "cite": "37:7, 37:19", "guard": "R2 window open (direct path: a reconsider taken up immediately on making)", "note": "restored to exact position the moment before the original vote; original vote canceled altogether [37:12, 37:19]. EXCEPTION — reconsider of an adopted previous-question order [16:16]: the PQ is presumed rejected and is NOT voted on again (only opponents would have voted to reconsider; a majority for reconsideration makes two thirds for the PQ unattainable) — the PQ question goes directly to rejected and its order dissolves"},
       {"from": "adopted", "on": "rescinded", "to": "rescinded", "cite": "35:1", "guard": "NOT guard/unrescindable"},
       {"from": "adopted", "on": "amended-as-adopted", "to": "adopted", "cite": "35:1", "note": "self-loop; text modified, force continues"}
     ]

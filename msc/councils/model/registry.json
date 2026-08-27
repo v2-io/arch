@@ -69,7 +69,7 @@
       {"id": "previous-question", "name": "Previous Question", "class": "S", "rank": 7,
        "interrupt": false, "second": true, "debatable": "no", "amendable": "no",
        "vote": ["two-thirds"],
-       "reconsider": {"aff": "only before any vote taken under the order [16:5(8)]", "neg": "until progress"},
+       "reconsider": {"aff": "only before any vote taken under the order [16:5(8)]; structurally never after the covered bundle returns from a postponement — the postponing vote itself partly executed the order [16:15]; if reconsideration of the adopted order prevails, the PQ is presumed rejected without a revote [16:16] (lifecycle transition exception)", "neg": "until progress"},
        "notes": "qualified form covers a consecutive series from the immediately pending question [16:5(2)]; competing wider/narrower PQ motions voted widest-first (quasi-filling-blanks) [16:5(6)]; nonstandard wordings ('call the question') are this motion [16:6]",
        "cites": ["16:5"]},
 
@@ -253,7 +253,7 @@
        "interrupt": {"conditional": true, "when": "making: after floor assigned, before the speaker begins; calling up: no", "cite": "37:9(3)"},
        "second": true, "second_notes": "any member may second; call-up needs none [37:9(4)]",
        "mover": "prevailing side only (assembly); committee: anyone not on the losing side [37:10(a), 37:35]",
-       "window": "same day, or next business day within the session [37:10(b)]; committees: no limit [37:35]",
+       "window": "same day, or next business day within the session [37:10(b)]; committees: no limit [37:35]. A made reconsider is withdrawable only within these same limits — after it is too late to renew, withdrawal needs unanimous consent [37:10(b)]",
        "debatable": "if-target-debatable; opens the target's merits [37:9(5)]",
        "amendable": "no",
        "vote": ["majority"],
@@ -264,7 +264,7 @@
 
       {"id": "reconsider-enter-minutes", "name": "Reconsider and Enter on the Minutes", "class": "B", "rank": null,
        "delta_from_reconsider": "made same day as the vote only; outranks plain reconsider even mid-announcement; not where a day's delay defeats the object; not at last business meeting before a >quarterly gap; not callable-up same day (last-day-of-session exception) [37:47]",
-       "applies_to": "exactly: (a) aff or neg vote on a main motion; (b) aff vote on postpone-indefinitely; (c) neg vote on objection-to-consideration when the session extends beyond the day [37:47(3)] — narrower than 'votes finally disposing of a main motion' (e.g., a sustained objection's aff vote is excluded)",
+       "applies_to": "exactly: (a) aff or neg vote on a main motion; (b) aff vote on postpone-indefinitely; (c) neg vote on objection-to-consideration when the session extends beyond the day [37:47(3)] — narrower than 'votes finally disposing of a main motion': e.g. an affirmative vote on commit disposes of nothing finally and is excluded, and the objection case reaches only the vote's negative form (the sustaining vote IS the negative [26:7])",
        "cites": ["37:46-52"]}
     ]
   },
@@ -289,12 +289,12 @@
 
   "incidental_main_variants": {
     "desc": "Same name, moved when nothing is pending; class M, debatable and amendable per main-motion rules unless noted. Selected by guard/no-question-pending.",
-    "NOTE(judgment)": "these are modeled as contextual variants selected by the guard no-question-pending, not as separate registry rows, except where thresholds differ (noted per entry).",
+    "NOTE(judgment)": "these are modeled as contextual variants selected by the guard no-question-pending, not as separate registry rows, except where thresholds or reconsiderability differ (noted per entry — variants do NOT inherit main-motion attributes wholesale; Table II is the per-row authority the re-expansion sweep checks against).",
     "entries": [
       {"variant": "adopt/accept/agree-to", "cite": "10:52"},
       {"variant": "ratify", "cite": "10:54-57"},
-      {"variant": "recess-main", "cite": "20:3"},
-      {"variant": "adjourn-main", "cite": "21:3"},
+      {"variant": "recess-main", "note": "reconsider: no (Table II #80)", "cite": "20:3"},
+      {"variant": "adjourn-main", "note": "reconsider: no (Table II #3)", "cite": "21:3"},
       {"variant": "fix-time-main", "cite": "22:4"},
       {"variant": "limit-extend-for-meeting", "note": "M but still two-thirds", "cite": "15:4"},
       {"variant": "suspend-standing-rule-for-session", "note": "majority", "cite": "25:15"},

@@ -52,8 +52,12 @@
       "method": "enum voice|rising|counted-rising|ballot|roll-call|unanimous-consent",
       "threshold": "threshold id (vocabulary.json)",
       "tally": "?{yes, no, abstain-known}",
+      "present_count_at_affirmative": "?number — counted by the chair immediately after the affirmative when the threshold basis is members-present, before attendance can change [44:9(a)]",
       "negative_called": "boolean — the negative votes have been cast/called; opens the division window [29:4(1)]",
+      "ballots_collected": "boolean — ballot method only: the tellers have collected the ballots; opens the adjourn-during-ballot window [21:6(1)]",
       "polls_closed": "boolean — all have presumably voted [45:6]; enables announce-result",
+      "excluded_member_votes": {"type": "?number", "input": true, "desc": "members denied the right to vote or to attend while this vote was taken [23:7]"},
+      "improper_votes": {"type": "?number", "input": true, "desc": "votes cast in violation of fundamental principle — nonmembers, absentees, multiple votes by one member [23:8]"},
       "result": "enum adopted|rejected",
       "announced_at": "time",
       "prevailing_members": {"type": "?[member-id]", "input": true, "desc": "recorded only for roll-call; otherwise established by member assertion via adjudication (prevailing-side-claim)"}
@@ -62,6 +66,8 @@
       "id": "order/<id>",
       "kind": "enum previous-question|close-debate-at-hour|limit-total-time|per-speech-limit|extend-limits",
       "covers": "[frame-id] — the consecutive series covered [16:5(2), 15:5(2)]",
+      "coverage": "enum static|extends-to-subsequent-debatables — limiting orders (previous-question excepted) also cover debatable subsidiaries, reconsiders, and debatable appeals that become pending later while in force; extending orders cover only the frames ordered [15:8]. Both cover reconsiderations of affected questions before, not after, exhaustion [15:18]",
+      "closure": "enum deadline|budget — close-at-hour orders eat time lost to interruptions (tabled time counts against the clock); duration/budget orders do not (interruption time does not diminish the allowance) [15:16]",
       "created_by": "question id (the adopted limit/PQ motion)",
       "exhausted": "boolean — maintained per timer/order-exhaustion [15:18, 16:11]"
     },
@@ -158,7 +164,7 @@
     "adjudications": "[AdjudicationInstance]",
     "history": {
       "events": "[EventRecord] — supports [\"event-occurred\", ...] scoped by question/series/session/day",
-      "business_transacted_since": "{marker -> boolean} — e.g. since a tabling, for take-from-table's precondition [34:2(2)]"
+      "business_transacted_since": "{marker -> boolean} — e.g. since a tabling, for take-from-table's precondition [34:2(2)]. DERIVED: computable as any-qualifying-event-after-the-marker over history.events; an engine should derive rather than maintain it (a maintained duplicate of the log can silently diverge)"
     }
   }
 }

@@ -31,7 +31,9 @@ The whole model reduces to one function, recomputed on every event:
 available_actions(member, role, state) → [(action, justification)]
 ```
 
-`actions.json` is its table: each action kind carries a role and an admissibility expression over `schema.json`. The parts are inputs to this function, not ends in themselves: registry/precedence/guards decide what is movable; protocol decides who may speak or interrupt now; lifecycle + scheduler decide what is timely; rules decides thresholds; the adjudication machine supplies the judgment-shaped entries. **Justification is by construction**: the admissibility expression's satisfied conjuncts, each carrying its §:¶ citation — no separate justification text exists or is needed. As events fire, the state changes and every member's list is recomputed. The end.
+`actions.json` is its table: each action kind carries a role and an admissibility expression over `schema.json`. The parts are inputs to this function, not ends in themselves: registry/precedence/guards decide what is movable; protocol decides who may speak or interrupt now; lifecycle + scheduler decide what is timely; rules decides thresholds; the adjudication machine supplies the judgment-shaped entries. **Justification is by construction**: the admissibility expression's satisfied conjuncts, each carrying its §:¶ citation — no separate justification text exists or is needed. As events fire, the state changes and every member's list is recomputed. **Time is an event source too**: each timer definition knows its `expires_at`; a timer crossing its boundary emits `timer-expired` (vocabulary events), so windows that open and close by clock alone still trigger recomputation. The end.
+
+**The justification algebra** (what "the satisfied conjuncts" means, precisely): the justification of an allowed action is its admissibility expression tree annotated with per-node truth values, pruned to the nodes that determined the outcome — for `and`, all conjuncts (each must hold); for `or`, the satisfied disjunct(s); for `not`, the node itself with the falsity of its operand as the ground; a `guard` contributes its inlined expression's pruned tree under the guard's own cite. A blocked action's why-not is the true `out_of_order_when` disjunct(s), same pruning. Cites attach where they are declared; a node with no cite of its own inherits the nearest enclosing one.
 
 ## Conventions (binding)
 
@@ -45,7 +47,9 @@ available_actions(member, role, state) → [(action, justification)]
 
 ## The expression language
 
-Expressions are JSON arrays in operator-first form; atoms are JSON strings (ids/enum values), numbers, `true`/`false`/`null`. Strings in operand position that match a quantifier-bound variable are variable references; otherwise they are literals (ids/enums). Evaluation is against the context object (`schema.json`) plus bindings supplied by the decision point (conventionally `m` = the motion id being moved, `t` = its target frame or null, `q` = the question object, `member` = the acting member).
+Expressions are JSON arrays in operator-first form; atoms are JSON strings (ids/enum values), numbers, `true`/`false`/`null`. Strings in operand position that match a quantifier-bound variable are variable references; otherwise they are literals (ids/enums). Evaluation is against the context object (`schema.json`) plus bindings supplied by the decision point (conventionally `m` = the motion id being moved, `t` = its target frame or null, `q` = the question object, `member` = the acting member, `time` = a target time carried by the motion's content where the action declares it).
+
+**Guard binding resolution.** A guard invoked with explicit args — `["guard", id, arg…]` — binds its declared `bindings` positionally from the args. A guard invoked with no args binds each declared binding from the identically-named binding in scope at the call site (decision-point params and quantifier variables alike). A no-arg call where any declared binding has no identically-named in-scope binding is an error at load time, not evaluation time — `tools/sweep.py` enforces this resolvability.
 
 ### Core forms
 
@@ -88,7 +92,7 @@ Expressions are JSON arrays in operator-first form; atoms are JSON strings (ids/
 | `["rank-admissible", m, t]` | the ranked-motion class test: m's effective rank (positionally computed per `engine.json effective_rank`, with t as its application target) exceeds the effective rank of every frame in the active stack `[5:8-9]`; vacuously true on an empty stack for main-class motions |
 | `["applicable", m, t]` | `precedence.json table/applicability` row lookup for m: the row's `applies_to` expression holds and no `out_of_order_when` disjunct does; motions without a row route through `guard/legitimately-incidental` plus their registry conditions |
 | `["same-day", a, b]` / `["before", a, b]` | calendar predicates over times/anchors |
-| `["within-quarterly", s1, s2]` | the two sessions are within a quarterly interval `[9:7]` |
+| `["within-quarterly", s1, s2]` | the two sessions are within a quarterly interval `[9:7]` — defined as month-boundary arithmetic, not day-count: true iff s2 begins during or before the third calendar month after the calendar month in which s1 ends (e.g. a session ending any day of January reaches one beginning on or before April 30) |
 | `["anchor", name, session?]` | resolve a temporal anchor to a time in context |
 | `["now"]` | current time |
 
@@ -109,6 +113,8 @@ The operator set is **closed**: an engine implements exactly these forms. Needin
 - Every `guard`/`adjudged`/`timer-open` id and every `event-occurred` event name resolves to its registry.
 - Operator closure over every expression position.
 - No negated-twin guard names.
+- Guard binding resolvability: every no-arg guard call's declared bindings resolve to identically-named in-scope bindings (decision-point params or quantifier variables).
+- Inside a quantifier body, a bare string equal to an in-scope binder is a lint hit — write `["var", …]`.
 
 ## The adjudication sub-machine
 

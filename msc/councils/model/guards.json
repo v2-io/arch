@@ -2,203 +2,253 @@
   "model": "ronr-12-unified",
   "file": "guards",
   "desc": "The single guard registry. Positive polarity: each guard states the positive condition, named for what is true when it holds; no negated twins — consumers negate at the use site. Each guard carries expr (the machine-evaluable expression per INTERFACE.md, over schema.json, with bindings noted) — or, where the condition is judgment-shaped, an expr routing through [\"adjudged\", ...]. The prose desc and cite are annotation on the expr, never the content. Conditions that could not be fully compiled are cross-flagged in gaps.json.",
-
   "guards": [
-    {"id": "no-question-pending",
-     "desc": "no motion currently pending before the assembly", "cite": ["4:4", "5:4"],
-     "expr": ["=", ["count", "f", ["frames"], true], 0]},
-
-    {"id": "another-has-floor",
-     "desc": "floor currently assigned to a member", "cite": ["3:30-32"],
-     "expr": ["!=", ["ctx", "floor", "holder"], null]},
-
-    {"id": "floor-open",
-     "desc": "no member currently has the floor", "cite": ["3:30"],
-     "expr": ["=", ["ctx", "floor", "holder"], null]},
-
-    {"id": "in-order-when-other-has-floor",
-     "desc": "the act/motion m may be made while another member has the floor — from the registry interrupt attribute (Table t44-t45); conditional interrupts route through their per-record condition", "cite": ["t44-t45", "42:18-19"], "bindings": ["m"],
-     "expr": ["or",
-       ["=", ["reg", ["param", "m"], "interrupt"], true],
-       ["and", ["=", ["attr", ["reg", ["param", "m"], "interrupt"], "conditional"], true],
-               ["adjudged", "interruption-urgency", ["param", "m"]]]]},
-
-    {"id": "preference-claim-timely",
-     "desc": "recognition-preference claim asserted before the chair has recognized another", "cite": ["42:7", "3:34"], "bindings": ["member"],
-     "expr": ["and", ["=", ["ctx", "floor", "holder"], null],
-                     ["exists", "c", ["ctx", "floor", "claims"], ["=", ["attr", "c", "member"], ["param", "member"]]]]},
-
-    {"id": "series-in-progress",
-     "desc": "a multi-motion sequence toward one object is mid-flight; blocks unrelated intervening motions (e.g. take-from-table cannot interrupt it)", "cite": ["34:5"],
-     "expr": ["event-occurred", "series-declared-open", "session"],
-     "note": "the series' existence is announced/known state (e.g. table adopted 'until X', suspend-rules for a purpose); recorded as a history marker when the enabling motion's declared purpose creates it — see gaps.json (series-identity is declared at adoption, not inferred)"},
-
-    {"id": "immediately-pending-undebatable",
-     "desc": "the immediately pending question is not debatable", "cite": ["t4", "15:5(2)"],
-     "expr": ["and", ["!=", ["top"], null], ["not", ["debatable", ["top"]]]]},
-
-    {"id": "immediately-pending-unamendable-and-undebatable",
-     "desc": "the immediately pending question is neither debatable nor amendable; blocks previous-question", "cite": ["t4", "16:5(2)"],
-     "expr": ["and", ["!=", ["top"], null], ["not", ["debatable", ["top"]]], ["not", ["amendable", ["top"]]]]},
-
-    {"id": "pq-order-unexhausted",
-     "desc": "an order for the previous question covers motions not yet voted", "cite": ["16:2", "t4"],
-     "expr": ["exists", "o", ["ctx", "orders"],
-       ["and", ["=", ["attr", "o", "kind"], "previous-question"], ["not", ["attr", "o", "exhausted"]]]]},
-
-    {"id": "debate-closing-order-active",
-     "desc": "an order closing debate on the main question at a set time/duration is in force (not a mere per-speech limit [15:10])", "cite": ["15:11-13", "13:7(2)", "14:4(2)"],
-     "expr": ["exists", "o", ["ctx", "orders"],
-       ["and", ["in", ["attr", "o", "kind"], ["list", "close-debate-at-hour", "limit-total-time"]], ["not", ["attr", "o", "exhausted"]]]]},
-
-    {"id": "no-order-precluding",
-     "desc": "no unexhausted debate-limiting order blocks motion m: the previous question, once ordered, precludes all subsidiaries except lay-on-table [16:2]; an order closing debate at a set time precludes commit and postpone-to-certain-time [15:11]; a bare speech-length limitation precludes nothing [15:10]", "cite": ["16:2", "15:10-11"], "bindings": ["m"], "derived": true,
-     "expr": ["and",
-       ["not", ["and", ["guard", "pq-order-unexhausted"],
-                        ["=", ["reg", ["param", "m"], "class"], "S"],
-                        ["!=", ["param", "m"], "lay-on-table"]]],
-       ["not", ["and", ["guard", "debate-closing-order-active"],
-                        ["in", ["param", "m"], ["list", "commit", "postpone-to-certain-time"]]]]]},
-
-    {"id": "nonadhering-incident-pending",
-     "desc": "a point of order, undebatable appeal, or a request/inquiry not adhering to the main question is pending; blocks lay-on-table", "cite": ["t4", "23:2(1)", "24:3(1)"],
-     "expr": ["exists", "f", ["frames"],
-       ["and", ["=", ["adheres-to", "f"], null],
-               ["or", ["=", ["motion", "f"], "point-of-order"],
-                      ["and", ["=", ["motion", "f"], "appeal"], ["not", ["debatable", "f"]]],
-                      ["=", ["motion", "f"], "requests-and-inquiries"]]]]},
-
-    {"id": "suspend-rules-priority-pending",
-     "desc": "a suspend-the-rules touching priority of business is pending; blocks call-for-orders-of-the-day", "cite": ["18:4(1)", "t4"],
-     "expr": ["exists", "f", ["frames"],
-       ["and", ["=", ["motion", "f"], "suspend-rules"],
-               ["=", ["attr", ["question", "f"], "purpose_class"], "priority-of-business"]]]},
-
-    {"id": "legitimately-incidental",
-     "desc": "motion m is legitimately incidental to a pending motion, a question just pending, or business at hand; structural windows in precedence.json table/applicability decide the listed incidentals; the residual arises-out-of test is adjudicated", "cite": ["6:15-18"], "bindings": ["m", "t"],
-     "expr": ["adjudged", "legitimately-incidental-residual", ["param", "m"]],
-     "note": "consult precedence.json table/applicability first: rows for objection-to-consideration, division-of-assembly (window), etc. compile the structural part; this guard is the residual"},
-
-    {"id": "consideration-not-begun",
-     "desc": "no debate yet on the main question and no subsidiary except lay-on-table stated; window for objection-to-consideration", "cite": ["26:2(1)"], "bindings": ["q"],
-     "expr": ["and",
-       ["not", ["event-occurred", "debate-opened", ["param", "q"]]],
-       ["not", ["exists", "e", ["ctx", "history", "events"],
-         ["and", ["=", ["attr", "e", "event"], "stated"],
-                 ["=", ["attr", "e", "series-of"], ["param", "q"]],
-                 ["=", ["reg", ["attr", "e", "motion"], "class"], "S"],
-                 ["!=", ["attr", "e", "motion"], "lay-on-table"]]]]]},
-
-    {"id": "voting-in-progress",
-     "desc": "from first vote cast until all have presumably voted; blocks interruption incl. adjourn", "cite": ["45:6", "21:6(1)"],
-     "expr": ["!=", ["ctx", "vote_in_progress"], null]},
-
-    {"id": "result-window-open",
-     "desc": "from result announcement until debate/business intervenes; window for division, retake motions, vote changes, points re the vote", "cite": ["45:9"],
-     "expr": ["and", ["!=", ["ctx", "last_announced_vote"], null],
-                     ["timer-open", "vote-challenge-window", ["attr", ["ctx", "last_announced_vote"], "question_ref"]]]},
-
-    {"id": "within-reconsider-window",
-     "desc": "the reconsider of question q's vote may still be made: same day or next business day of the session (no limit in committees)", "cite": ["37:10(b)", "37:35(1)"], "bindings": ["q"],
-     "expr": ["or", ["in", ["ctx", "assembly", "body_kind"], ["list", "committee", "committee-of-the-whole"]],
-                    ["timer-open", "reconsider-make-window", ["param", "q"]]]},
-
-    {"id": "mover-was-prevailing-side",
-     "desc": "eligibility to move reconsider: member voted with the prevailing side (committee: anyone not on the losing side [37:35]); recorded for roll-call, else established by member assertion", "cite": ["37:10(a)", "37:35"], "bindings": ["member", "q"],
-     "expr": ["or",
-       ["in", ["param", "member"], ["attr", ["attr", ["param", "q"], "disposition_vote"], "prevailing_members"]],
-       ["adjudged", "prevailing-side-claim", ["param", "member"]]]},
-
-    {"id": "question-within-assembly-control",
-     "desc": "temporarily but not finally disposed of; blocks conflicting/duplicate main motions and later-session renewal", "cite": ["9:11", "10:26(5)", "38:8"], "bindings": ["q"],
-     "expr": ["in", ["state", ["param", "q"]],
-       ["list", "pending", "committed", "postponed-definitely", "tabled", "unfinished-business", "reconsider-pending"]]},
-
-    {"id": "same-question-decided-this-session",
-     "desc": "a substantially-same question was finally disposed of this session; blocks renewal except via bring-back motions", "cite": ["10:26(3)", "38:3(1)", "12:25"], "bindings": ["m"],
-     "expr": ["exists", "q", ["ctx", "questions"],
-       ["and", ["in", ["state", "q"], ["list", "adopted", "rejected", "suppressed-for-session"]],
-               ["event-occurred", "put", "q", "session"],
-               ["adjudged", "substantially-same", ["param", "m"], "q"]]]},
-
-    {"id": "renewable-after-progress",
-     "desc": "progress in business/debate has made the motion a new question", "cite": ["38:7"], "bindings": ["m"],
-     "expr": ["adjudged", "new-question-after-progress", ["param", "m"]]},
-
-    {"id": "postpone-horizon",
-     "desc": "target time within the horizon: end of next regular session when within quarterly-interval, else end of present session; and not tantamount to killing the question", "cite": ["14:6", "14:9"], "bindings": ["time"],
-     "expr": ["and",
-       ["if", ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]],
-              ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "next_regular_session"]], ["param", "time"]]],
-              ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "current_session"]], ["param", "time"]]]],
-       ["not", ["adjudged", "postpone-tantamount-to-kill", ["param", "time"]]]]},
-
-    {"id": "carryover-eligible",
-     "desc": "next regular business session begins within quarterly-interval AND no specified portion of the membership ends its term before then (referral to committee is the sole carryover channel when this fails [9:8, 9:10])", "cite": ["9:8-9", "21:7(b-c)"],
-     "expr": ["and",
-       ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]],
-       ["not", ["ctx", "clock", "term_boundary_before_next_session"]]]},
-
-    {"id": "unrescindable",
-     "desc": "effect fully executed or impossible to undo; contract with notified party; resignation acted on / election-or-expulsion result with person present or notified; or reachable instead by a live reconsider", "cite": ["35:6"], "bindings": ["q"],
-     "expr": ["or",
-       ["attr", ["param", "q"], "effect", "fully_executed"],
-       ["not", ["attr", ["param", "q"], "effect", "undoable"]],
-       ["attr", ["param", "q"], "effect", "contract_with_notified_party"],
-       ["attr", ["param", "q"], "effect", "person_notified"],
-       ["and", ["!=", ["attr", ["param", "q"], "reconsider_hold"], null],
-               ["timer-open", "reconsider-callup-window", ["param", "q"]]]]},
-
-    {"id": "quorum-present",
-     "desc": "required for validity of all substantive action; limited motion set allowed absent it (fix-time, adjourn, recess, measures to obtain a quorum)", "cite": ["40:6-7"],
-     "expr": [">=", ["ctx", "assembly", "present_count"], ["ctx", "assembly", "quorum"]]},
-
-    {"id": "dilatory",
-     "desc": "the motion is an abuse of form; chair's duty-veto, an absolute filter above all admission rules", "cite": ["39:1-4"], "bindings": ["m"],
-     "expr": ["adjudged", "dilatory", ["param", "m"]]},
-
-    {"id": "rule-suspendible",
-     "desc": "the named rule may be suspended: its class is suspendible (rules.json suspendibility) and no unsuspendable category covers it (rules.json unsuspendable)", "cite": ["25:7-16"], "bindings": ["rule"],
-     "expr": ["and",
-       ["attr", ["attr", ["param", "rule"], "class_record"], "suspendible"],
-       ["not", ["exists", "u", ["ctx", "rules_state", "unsuspendable_matches"], ["=", ["attr", "u", "rule"], ["param", "rule"]]]]],
-     "note": "unsuspendable_matches: category membership is content classification — an input recorded per rule (rules.json unsuspendable categories); see gaps.json"},
-
-    {"id": "act-in-order-under-governing-rules",
-     "desc": "the act is in order under the rule resolved via the authority order, applying interpretation principles on ambiguity; the resolution procedure is rules.json resolution, with adjudicated interpretive steps", "cite": ["2:2", "56:68"], "bindings": ["act"],
-     "expr": ["not", ["exists", "r", ["ctx", "rules_state", "governing_rules_forbidding", ["param", "act"]], true]],
-     "note": "governing_rules_forbidding is the rules.json resolution procedure applied to the act — a derived query over rules_state; ambiguity routes through adjudication (society-decides [56:68(1)])"},
-
-    {"id": "continuing-breach",
-     "desc": "the adopted act falls under a null-and-void ground (rules.json continuing_breach_grounds); point of order remains timely while the breach continues", "cite": ["23:6", "23:9"], "bindings": ["act"],
-     "expr": ["exists", "g", ["ctx", "rules_state", "breach_grounds_matching", ["param", "act"]], true],
-     "note": "ground-matching is content classification per rules.json continuing_breach_grounds — the classification is an adjudicated/recorded input; see gaps.json"},
-
-    {"id": "order-of-day-due",
-     "desc": "a scheduled item is eligible for take-up under the dispatch algorithm", "cite": ["41:18-27", "41:40-57"], "bindings": ["item"],
-     "defined_in": "scheduler.json dispatch (per-step eligibility expressions)",
-     "note": "compiled in scheduler.json; this registry entry names and routes it"},
-
-    {"id": "may-preempt",
-     "desc": "the scheduled item may interrupt the pending question, per the preemption exceptions", "cite": ["41:41", "41:53"], "bindings": ["item"],
-     "defined_in": "scheduler.json preemption",
-     "note": "compiled in scheduler.json; this registry entry names and routes it"},
-
-    {"id": "schedulable-to",
-     "desc": "the target time is within the scheduling horizon", "cite": ["14:6", "41:40"], "bindings": ["time"],
-     "expr": ["if", ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]],
-                    ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "next_regular_session"]], ["param", "time"]]],
-                    ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "current_session"]], ["param", "time"]]]]},
-
-    {"id": "in-carryover-corridor",
-     "desc": "the two sessions are within a quarterly interval and no membership-term boundary intervenes", "cite": ["9:7-8", "21:7"], "bindings": ["s1", "s2"],
-     "expr": ["and", ["within-quarterly", ["param", "s1"], ["param", "s2"]],
-                     ["not", ["ctx", "clock", "term_boundary_before_next_session"]]]}
+    {
+      "id": "no-question-pending",
+      "desc": "no motion currently pending before the assembly",
+      "cite": ["4:4", "5:4"],
+      "expr": ["=", ["count", "f", ["frames"], true], 0]
+    },
+    {
+      "id": "another-has-floor",
+      "desc": "floor currently assigned to a member",
+      "cite": ["3:30-32"],
+      "expr": ["!=", ["ctx", "floor", "holder"], null]
+    },
+    {
+      "id": "floor-open",
+      "desc": "no member currently has the floor",
+      "cite": ["3:30"],
+      "expr": ["=", ["ctx", "floor", "holder"], null]
+    },
+    {
+      "id": "in-order-when-other-has-floor",
+      "desc": "the act/motion m may be made while another member has the floor — from the registry interrupt attribute (Table t44-t45); conditional interrupts route through their per-record condition",
+      "cite": ["t44-t45", "42:18-19"],
+      "bindings": ["m"],
+      "expr": ["or", ["=", ["reg", ["param", "m"], "interrupt"], true], ["and", ["=", ["attr", ["reg", ["param", "m"], "interrupt"], "conditional"], true], ["adjudged", "interruption-urgency", ["param", "m"]]]]
+    },
+    {
+      "id": "preference-claim-timely",
+      "desc": "recognition-preference claim asserted before the chair has recognized another",
+      "cite": ["42:7", "3:34"],
+      "bindings": ["member"],
+      "expr": ["and", ["=", ["ctx", "floor", "holder"], null], ["exists", "c", ["ctx", "floor", "claims"], ["=", ["attr", ["var", "c"], "member"], ["param", "member"]]]]
+    },
+    {
+      "id": "series-in-progress",
+      "desc": "a multi-motion sequence toward one object is mid-flight; blocks unrelated intervening motions (e.g. take-from-table cannot interrupt it)",
+      "cite": ["34:5"],
+      "expr": ["event-occurred", "series-declared-open", "session"],
+      "note": "the series' existence is announced/known state (e.g. table adopted 'until X', suspend-rules for a purpose); recorded as a history marker when the enabling motion's declared purpose creates it — see gaps.json (series-identity is declared at adoption, not inferred)"
+    },
+    {
+      "id": "immediately-pending-undebatable",
+      "desc": "the immediately pending question is not debatable",
+      "cite": ["t4", "15:5(2)"],
+      "expr": ["and", ["!=", ["top"], null], ["not", ["debatable", ["top"]]]]
+    },
+    {
+      "id": "immediately-pending-unamendable-and-undebatable",
+      "desc": "the immediately pending question is neither debatable nor amendable; blocks previous-question",
+      "cite": ["t4", "16:5(2)"],
+      "expr": ["and", ["!=", ["top"], null], ["not", ["debatable", ["top"]]], ["not", ["amendable", ["top"]]]]
+    },
+    {
+      "id": "pq-order-unexhausted",
+      "desc": "an order for the previous question covers motions not yet voted",
+      "cite": ["16:2", "t4"],
+      "expr": ["exists", "o", ["ctx", "orders"], ["and", ["=", ["attr", ["var", "o"], "kind"], "previous-question"], ["not", ["attr", ["var", "o"], "exhausted"]]]]
+    },
+    {
+      "id": "debate-closing-order-active",
+      "desc": "an order closing debate on the main question at a set time/duration is in force (not a mere per-speech limit [15:10])",
+      "cite": ["15:11-13", "13:7(2)", "14:4(2)"],
+      "expr": ["exists", "o", ["ctx", "orders"], ["and", ["in", ["attr", ["var", "o"], "kind"], ["list", "close-debate-at-hour", "limit-total-time"]], ["not", ["attr", ["var", "o"], "exhausted"]]]]
+    },
+    {
+      "id": "no-order-precluding",
+      "desc": "no unexhausted debate-limiting order blocks motion m: the previous question, once ordered, precludes all subsidiaries except lay-on-table [16:2]; an order closing debate at a set time precludes commit and postpone-to-certain-time [15:11]; a bare speech-length limitation precludes nothing [15:10]",
+      "cite": ["16:2", "15:10-11"],
+      "bindings": ["m"],
+      "derived": true,
+      "expr": ["and", ["not", ["and", ["guard", "pq-order-unexhausted"], ["=", ["reg", ["param", "m"], "class"], "S"], ["!=", ["param", "m"], "lay-on-table"]]], ["not", ["and", ["guard", "debate-closing-order-active"], ["in", ["param", "m"], ["list", "commit", "postpone-to-certain-time"]]]]]
+    },
+    {
+      "id": "nonadhering-incident-pending",
+      "desc": "a point of order, undebatable appeal, or a request/inquiry not adhering to the main question is pending; blocks lay-on-table",
+      "cite": ["t4", "23:2(1)", "24:3(1)"],
+      "expr": ["exists", "f", ["frames"], ["and", ["=", ["adheres-to", ["var", "f"]], null], ["or", ["=", ["motion", ["var", "f"]], "point-of-order"], ["and", ["=", ["motion", ["var", "f"]], "appeal"], ["not", ["debatable", ["var", "f"]]]], ["=", ["motion", ["var", "f"]], "requests-and-inquiries"]]]]
+    },
+    {
+      "id": "suspend-rules-priority-pending",
+      "desc": "a suspend-the-rules touching priority of business is pending; blocks call-for-orders-of-the-day",
+      "cite": ["18:4(1)", "t4"],
+      "expr": ["exists", "f", ["frames"], ["and", ["=", ["motion", ["var", "f"]], "suspend-rules"], ["=", ["attr", ["question", ["var", "f"]], "purpose_class"], "priority-of-business"]]]
+    },
+    {
+      "id": "legitimately-incidental",
+      "desc": "motion m is legitimately incidental to a pending motion, a question just pending, or business at hand; structural windows in precedence.json table/applicability decide the listed incidentals; the residual arises-out-of test is adjudicated",
+      "cite": ["6:15-18"],
+      "bindings": ["m", "t"],
+      "expr": ["adjudged", "legitimately-incidental-residual", ["param", "m"]],
+      "note": "consult precedence.json table/applicability first: rows for objection-to-consideration, division-of-assembly (window), etc. compile the structural part; this guard is the residual"
+    },
+    {
+      "id": "consideration-not-begun",
+      "desc": "no debate yet on the main question and no subsidiary except lay-on-table stated; window for objection-to-consideration",
+      "cite": ["26:2(1)"],
+      "bindings": ["q"],
+      "expr": ["and", ["not", ["event-occurred", "debate-opened", ["param", "q"]]], ["not", ["exists", "e", ["ctx", "history", "events"], ["and", ["=", ["attr", ["var", "e"], "event"], "stated"], ["=", ["attr", ["var", "e"], "series-of"], ["param", "q"]], ["=", ["reg", ["attr", ["var", "e"], "motion"], "class"], "S"], ["!=", ["attr", ["var", "e"], "motion"], "lay-on-table"]]]]]
+    },
+    {
+      "id": "voting-in-progress",
+      "desc": "from first vote cast until all have presumably voted; blocks interruption incl. adjourn",
+      "cite": ["45:6", "21:6(1)"],
+      "expr": ["!=", ["ctx", "vote_in_progress"], null]
+    },
+    {
+      "id": "result-window-open",
+      "desc": "from result announcement until debate/business intervenes; window for division, retake motions, vote changes, points re the vote",
+      "cite": ["45:9"],
+      "expr": ["and", ["!=", ["ctx", "last_announced_vote"], null], ["timer-open", "vote-challenge-window", ["attr", ["ctx", "last_announced_vote"], "question_ref"]]]
+    },
+    {
+      "id": "within-reconsider-window",
+      "desc": "the reconsider of question q's vote may still be made: same day or next business day of the session (no limit in committees)",
+      "cite": ["37:10(b)", "37:35(1)"],
+      "bindings": ["q"],
+      "expr": ["or", ["in", ["ctx", "assembly", "body_kind"], ["list", "committee", "committee-of-the-whole"]], ["timer-open", "reconsider-make-window", ["param", "q"]]]
+    },
+    {
+      "id": "mover-was-prevailing-side",
+      "desc": "eligibility to move reconsider: member voted with the prevailing side (committee: anyone not on the losing side [37:35]); recorded for roll-call, else established by member assertion",
+      "cite": ["37:10(a)", "37:35"],
+      "bindings": ["member", "q"],
+      "expr": ["or", ["in", ["param", "member"], ["attr", ["attr", ["param", "q"], "disposition_vote"], "prevailing_members"]], ["=", ["attr", ["attr", ["param", "q"], "disposition_vote"], "method"], "unanimous-consent"], ["adjudged", "prevailing-side-claim", ["param", "member"]]],
+      "note": "computable subcases of 37:10(a) beyond roll-call: adoption by unanimous consent qualifies every member present at the adoption (compiled here as the method disjunct; presence-at-adoption refinement needs per-event presence history — gaps.json); an irrelevant-negative adoption [44:9(a)] qualifies all present who did not vote in favor (same presence-history dependency); a ballot voter qualifies only by waiving ballot secrecy — that waiver is the prevailing-side-claim assertion route"
+    },
+    {
+      "id": "question-within-assembly-control",
+      "desc": "temporarily but not finally disposed of; blocks conflicting/duplicate main motions and later-session renewal",
+      "cite": ["9:11", "10:26(5)", "38:8"],
+      "bindings": ["q"],
+      "expr": ["in", ["state", ["param", "q"]], ["list", "pending", "committed", "postponed-definitely", "tabled", "unfinished-business", "reconsider-pending"]]
+    },
+    {
+      "id": "same-question-decided-this-session",
+      "desc": "a substantially-same question was finally disposed of this session; blocks renewal except via bring-back motions",
+      "cite": ["10:26(3)", "38:3(1)", "12:25"],
+      "bindings": ["m"],
+      "expr": ["exists", "q", ["ctx", "questions"], ["and", ["in", ["state", ["var", "q"]], ["list", "adopted", "rejected", "suppressed-for-session"]], ["event-occurred", "put", ["var", "q"], "session"], ["adjudged", "substantially-same", ["param", "m"], ["var", "q"]]]]
+    },
+    {
+      "id": "renewable-after-progress",
+      "desc": "progress in business/debate has made the motion a new question",
+      "cite": ["38:7"],
+      "bindings": ["m"],
+      "expr": ["adjudged", "new-question-after-progress", ["param", "m"]]
+    },
+    {
+      "id": "postpone-horizon",
+      "desc": "target time within the horizon: end of next regular session when within quarterly-interval, else end of present session; and not tantamount to killing the question",
+      "cite": ["14:6", "14:9"],
+      "bindings": ["time"],
+      "expr": ["and", ["if", ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]], ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "next_regular_session"]], ["param", "time"]]], ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "current_session"]], ["param", "time"]]]], ["not", ["adjudged", "postpone-tantamount-to-kill", ["param", "time"]]]]
+    },
+    {
+      "id": "carryover-eligible",
+      "desc": "next regular business session begins within quarterly-interval AND no specified portion of the membership ends its term before then (referral to committee is the sole carryover channel when this fails [9:8, 9:10])",
+      "cite": ["9:8-9", "21:7(b-c)"],
+      "expr": ["and", ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]], ["not", ["ctx", "clock", "term_boundary_before_next_session"]]]
+    },
+    {
+      "id": "unrescindable",
+      "desc": "effect fully executed or impossible to undo; contract with notified party; resignation acted on / election-or-expulsion result with person present or notified; or reachable instead by a live reconsider",
+      "cite": ["35:6"],
+      "bindings": ["q"],
+      "expr": ["or", ["attr", ["param", "q"], "effect", "fully_executed"], ["not", ["attr", ["param", "q"], "effect", "undoable"]], ["attr", ["param", "q"], "effect", "contract_with_notified_party"], ["attr", ["param", "q"], "effect", "person_notified"], ["and", ["!=", ["attr", ["param", "q"], "reconsider_hold"], null], ["timer-open", "reconsider-callup-window", ["param", "q"]]]]
+    },
+    {
+      "id": "could-have-affected-result",
+      "desc": "t tainted votes (excluded members or improper inclusions), assigned adversarially, reach the margin of the announced result — exact for majority thresholds; other thresholds analogous per voting.json threshold_evaluation (the comparison retargets to that threshold's expression)",
+      "cite": ["23:7-8", "45:33"],
+      "bindings": ["v", "t"],
+      "expr": ["if", ["=", ["attr", ["param", "v"], "result"], "adopted"], [">=", ["+", ["attr", ["param", "v"], "tally", "no"], ["param", "t"]], ["attr", ["param", "v"], "tally", "yes"]], [">", ["+", ["attr", ["param", "v"], "tally", "yes"], ["param", "t"]], ["attr", ["param", "v"], "tally", "no"]]]
+    },
+    {
+      "id": "quorum-present",
+      "desc": "required for validity of all substantive action; limited motion set allowed absent it (fix-time, adjourn, recess, measures to obtain a quorum)",
+      "cite": ["40:6-7"],
+      "expr": [">=", ["ctx", "assembly", "present_count"], ["ctx", "assembly", "quorum"]]
+    },
+    {
+      "id": "dilatory",
+      "desc": "the motion is an abuse of form; chair's duty-veto, an absolute filter above all admission rules",
+      "cite": ["39:1-4"],
+      "bindings": ["m"],
+      "expr": ["adjudged", "dilatory", ["param", "m"]]
+    },
+    {
+      "id": "rule-suspendible",
+      "desc": "the named rule may be suspended: its class is suspendible (rules.json suspendibility) and no unsuspendable category covers it (rules.json unsuspendable)",
+      "cite": ["25:7-16"],
+      "bindings": ["rule"],
+      "expr": ["and", ["attr", ["attr", ["param", "rule"], "class_record"], "suspendible"], ["not", ["exists", "u", ["ctx", "rules_state", "unsuspendable_matches"], ["=", ["attr", ["var", "u"], "rule"], ["param", "rule"]]]]],
+      "note": "unsuspendable_matches: category membership is content classification — an input recorded per rule (rules.json unsuspendable categories); see gaps.json"
+    },
+    {
+      "id": "act-in-order-under-governing-rules",
+      "desc": "the act is in order under the rule resolved via the authority order, applying interpretation principles on ambiguity; the resolution procedure is rules.json resolution, with adjudicated interpretive steps",
+      "cite": ["2:2", "56:68"],
+      "bindings": ["act"],
+      "expr": ["not", ["exists", "r", ["ctx", "rules_state", "governing_rules_forbidding", ["param", "act"]], true]],
+      "note": "governing_rules_forbidding is the rules.json resolution procedure applied to the act — a derived query over rules_state; ambiguity routes through adjudication (society-decides [56:68(1)])"
+    },
+    {
+      "id": "continuing-breach",
+      "desc": "the adopted act falls under a null-and-void ground (rules.json continuing_breach_grounds); point of order remains timely while the breach continues",
+      "cite": ["23:6", "23:9"],
+      "bindings": ["act"],
+      "expr": ["exists", "g", ["ctx", "rules_state", "breach_grounds_matching", ["param", "act"]], true],
+      "note": "ground-matching is content classification per rules.json continuing_breach_grounds — the classification is an adjudicated/recorded input; see gaps.json"
+    },
+    {
+      "id": "order-of-day-due",
+      "desc": "a scheduled item is eligible for take-up under the dispatch algorithm",
+      "cite": ["41:18-27", "41:40-57"],
+      "bindings": ["item"],
+      "defined_in": "scheduler.json dispatch (per-step eligibility expressions)",
+      "note": "compiled in scheduler.json; this registry entry names and routes it"
+    },
+    {
+      "id": "may-preempt",
+      "desc": "the scheduled item may interrupt the pending question, per the preemption exceptions",
+      "cite": ["41:41", "41:53"],
+      "bindings": ["item"],
+      "defined_in": "scheduler.json preemption",
+      "note": "compiled in scheduler.json; this registry entry names and routes it"
+    },
+    {
+      "id": "schedulable-to",
+      "desc": "the target time is within the scheduling horizon",
+      "cite": ["14:6", "41:40"],
+      "bindings": ["time"],
+      "expr": ["if", ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]], ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "next_regular_session"]], ["param", "time"]]], ["not", ["before", ["anchor", "end-of-session", ["ctx", "clock", "current_session"]], ["param", "time"]]]]
+    },
+    {
+      "id": "suspension-rejected-this-meeting-for-purpose",
+      "desc": "a motion to suspend the rules for a substantially-same purpose was voted down at this meeting; renewal is barred until after an adjournment (even to a same-day meeting), except by unanimous consent — any number of suspensions for different purposes remain fine",
+      "cite": ["25:6"],
+      "bindings": ["purpose"],
+      "expr": ["exists", "q", ["ctx", "questions"], ["and", ["=", ["attr", ["var", "q"], "motion_id"], "suspend-rules"], ["=", ["state", ["var", "q"]], "rejected"], ["event-occurred", "rejected", ["var", "q"], "meeting"], ["adjudged", "substantially-same", ["var", "q"], ["param", "purpose"]]]]
+    }
   ],
-
   "functions": [
-    {"id": "threshold-for-change",
-     "desc": "returns the adoption/amendment/rescission threshold alternatives for a rule, per class (rules.json change_thresholds); a function, not a predicate",
-     "cite": ["2:22-23", "35:2(7)", "56:50", "59:34-36"]}
+    {
+      "id": "threshold-for-change",
+      "desc": "returns the adoption/amendment/rescission threshold alternatives for a rule, per class (rules.json change_thresholds); a function, not a predicate",
+      "cite": ["2:22-23", "35:2(7)", "56:50", "59:34-36"]
+    }
   ]
 }
