@@ -1,6 +1,6 @@
 # Components 6 + 7 — Rule Hierarchy (defeasibility) & Scheduler (orders of the day / agenda)
 
-*Stage 3 of the RONR-12 model. Conventions per `INTERFACE.md`. Data format: fenced JSON blocks inline. Internal IDs are kebab-case; everything prefixed `rules:` or `sched:` is exported; other components' items are referenced qualified (`catalog:…`, `lifecycle:…`, `protocol:…`).*
+*Stage 3 of the RONR-12 model. Conventions per `INTERFACE.md`. Data format: fenced JSON blocks inline. Internal IDs are kebab-case; everything prefixed `rules:` or `scheduler:` is exported; other components' items are referenced qualified (`catalog:…`, `lifecycle:…`, `protocol:…`).*
 
 ---
 
@@ -165,7 +165,7 @@ The scheduler decides **what business the chair announces next** and **when a sc
 
 ```json
 {
-  "sched:item-kinds": [
+  "scheduler:item-kinds": [
     {"id": "general-order", "made-by": ["catalog:motion/postpone-to-certain-time (majority)", "main motion (majority)", "agenda position without stated hour or with guidance-only hour"], "preempts": false, "cite": ["14:14", "41:41-42", "41:58"]},
     {"id": "special-order", "made-by": ["postpone + make special order (two-thirds)", "main motion (two-thirds)", "agenda hour assignment (adopted with the agenda)"], "preempts": true, "cite": ["14:14", "41:41-42", "41:58", "59:55(4)"]},
     {"id": "the-special-order-for-meeting", "desc": "reserves a meeting; taken up right after minutes approval; outranks all other special orders regardless of when made", "preempts": true, "cite": ["41:57"]},
@@ -182,7 +182,7 @@ Default heading sequence (a rule of order; alterable per component 6):
 
 ```json
 {
-  "sched:standard-order-of-business": [
+  "scheduler:standard-order-of-business": [
     "minutes-approval", "officer-board-standing-committee-reports",
     "special-committee-reports", "special-orders",
     "unfinished-business-and-general-orders", "new-business"
@@ -195,8 +195,8 @@ Default heading sequence (a rule of order; alterable per component 6):
 
 Queue discipline within headings:
 
-- `sched:queue/special-orders-unfinished` then `sched:queue/special-orders-current`, each FIFO by *time made* `[41:18]`.
-- `sched:queue/unfinished-business`: (a) question pending at last adjournment, (b) unreached unfinished business from last meeting in its prior order, (c) unreached general orders from last meeting in made-order — then `sched:queue/general-orders-current` in made-order; same-motion batches in listed order `[41:21-23, 41:52]`.
+- `scheduler:queue/special-orders-unfinished` then `scheduler:queue/special-orders-current`, each FIFO by *time made* `[41:18]`.
+- `scheduler:queue/unfinished-business`: (a) question pending at last adjournment, (b) unreached unfinished business from last meeting in its prior order, (c) unreached general orders from last meeting in made-order — then `scheduler:queue/general-orders-current` in made-order; same-motion batches in listed order `[41:21-23, 41:52]`.
 - Reports: standing committees in bylaws-listing order; special committees in appointment order `[41:13, 41:17]`.
 - The chair announces items; he must not ask "is there unfinished business?" but state the known next item `[41:24]`; he cannot unilaterally depart from the order `[41:39]`.
 
@@ -214,14 +214,14 @@ Queue discipline within headings:
 
 - **Special order at its hour** interrupts a pending question, except it yields to: (a) motions relating to adjournment/recess, (b) questions of privilege, (c) a special order made *earlier* than it, (d) *the* special order for the meeting `[41:41, 41:53]`. Interrupted business resumes afterward at the point of interruption (`lifecycle:` history restore) — resumption order: earliest-made special orders first, then the originally interrupted business `[41:55, 18:11]`.
 - **Scheduled recess/adjournment hour**: chair announces and declares it, even mid-special-order; pending business is interrupted (recess) or carried per 7.6 (adjournment). Preemptible only by a two-thirds motion to postpone the hour or extend consideration time; announced Previous-Question-ordered votes may customarily be completed first `[20:6-7, 21:14, 41:56, 41:66-68]`.
-- **Enforcement/waiver**: any single member may demand conformance via `catalog:motion/call-for-orders-of-the-day`; the demand compels the schedule unless set aside — two-thirds *negative* on "proceed to the orders of the day," or two-thirds affirmative to extend time / suspend and take up something else `[18:4(7), 18:8]`. Once refused, not renewable until the pending business is disposed of `[18:8(a), 38:7(3)]`.
+- **Enforcement/waiver**: any single member may demand conformance via `catalog:motion/call-for-orders-of-the-day`; the demand compels the schedule unless set aside — two-thirds *negative* on "proceed to the orders of the day," or two-thirds affirmative to extend time / suspend and take up something else `[18:4(7), 18:8]`. Once refused, not renewable until the pending business is disposed of `[18:8(a), 38:7(3)]`. Except when a special order must be taken up, the call itself yields to the making or calling up of a reconsider `[18:4(1)]` — so a due order of the day does not outrun the reconsider window.
 - **Early take-up** of any order of the day: only by reconsidering the making vote (while possible) or suspend-the-rules (two-thirds) `[14:13, 41:40]`; equivalently, laying intervening items on the table one at a time is a legitimate majority path `[17:14, 41:38]`.
 
 ## 7.6 Carry-over at boundaries
 
 ```json
 {
-  "sched:carryover": [
+  "scheduler:carryover": [
     {"case": "adjournment not ending session (adjourned meeting set)", "effect": "resume at point of interruption next meeting", "cite": ["21:7(a)", "9:19"]},
     {"case": "session ends; next regular session within quarterly-interval and no term-expiry", "effect": "pending question -> unfinished-business(a); unreached orders -> unfinished categories (b)/(c); unreached special orders -> special-orders-unfinished", "cite": ["21:7(b)", "41:18(a)", "41:21-23"]},
     {"case": "session ends; beyond quarterly-interval or member terms expire", "effect": "everything temporarily-disposed falls to ground except matters in committee hands", "cite": ["21:7(c)", "9:8"]},
@@ -237,10 +237,10 @@ When an agenda or program is adopted it *becomes* the order of business for the 
 
 Exported guards:
 
-- `sched:guard/order-of-day-due(item)` — 7.4 eligibility
-- `sched:guard/may-preempt(item, pending)` — 7.5 exceptions (a)–(d)
-- `sched:guard/schedulable-to(time)` — 7.1 horizon `[14:6, 41:40]`
-- `sched:guard/in-carryover-corridor(session-a, session-b)` — quarterly-interval + term-expiry test `[9:7-8, 21:7]`
+- `scheduler:guard/order-of-day-due(item)` — 7.4 eligibility
+- `scheduler:guard/may-preempt(item, pending)` — 7.5 exceptions (a)–(d)
+- `scheduler:guard/schedulable-to(time)` — 7.1 horizon `[14:6, 41:40]`
+- `scheduler:guard/in-carryover-corridor(session-a, session-b)` — quarterly-interval + term-expiry test `[9:7-8, 21:7]`
 
 ---
 

@@ -53,14 +53,14 @@ The thirteen ranked motions form a total order: each takes precedence over all l
   "interrupt":false,"second":true,"debatable":"yes-restricted","amendable":"yes",
   "vote":["majority"],
   "reconsider":{"aff":"only until committee takes up the question [13:7(8)]","neg":"until progress makes it a new question, then renewable [13:7(8), 38:7(1)]"},
-  "notes":"variants: committee-of-the-whole, quasi-committee, informal consideration [13:2]; blocked while an order closing debate at a set time is in force [13:7(2), 15:11]",
+  "notes":"variants: committee-of-the-whole, quasi-committee, informal consideration [13:2]; blocked while an order closing debate at a set time is in force [13:7(2), 15:11]; not applicable to a reconsider alone, so out of order while a reconsider is pending in-series [13:7(2); Chart I]",
   "cites":["13:7"]},
 
  {"id":"postpone-to-certain-time","name":"Postpone to a Certain Time","class":"S","rank":5,
   "interrupt":false,"second":true,"debatable":"yes-restricted","amendable":"yes",
   "vote":["majority"],"vote_exceptions":"two-thirds if it makes the question a special order; an amendment adding that provision still needs only majority [14:4(7)]",
   "reconsider":{"aff":"yes","neg":"until progress [14:4(8)]"},
-  "notes":"limit: not beyond next regular session within a quarterly interval; never such that it kills the question (that reading converts to postpone-indefinitely) [14:6, 14:9]; blocked under a debate-closing order [14:4(2)]",
+  "notes":"limit: not beyond next regular session within a quarterly interval; never such that it kills the question (that reading converts to postpone-indefinitely) [14:6, 14:9]; blocked under a debate-closing order [14:4(2)]; out of order while any undebatable question is immediately pending except division-of-question or consideration-by-paragraph [14:4(1)–(2); Chart I] (same condition, with the same two exceptions, applies to commit — plus commit's reconsider bar)",
   "cites":["14:4"]},
 
  {"id":"limit-extend-debate","name":"Limit or Extend Limits of Debate","class":"S","rank":6,
@@ -88,7 +88,7 @@ The thirteen ranked motions form a total order: each takes precedence over all l
   "interrupt":true,"second":false,"debatable":"no","amendable":"no",
   "vote":["single-member-demand"],"vote_notes":"orders enforced on one member's demand; set aside only by two-thirds (as neg vote on proceeding, or aff vote to suspend/extend) [18:4(7), 18:8]",
   "reconsider":"no",
-  "notes":"interrupts a pending question only when a special order is being neglected [18:4(1), 18:5]; not in committee of the whole [18:6]",
+  "notes":"interrupts a pending question only when a special order is being neglected [18:4(1), 18:5]; except when a special order must be taken up, also yields to a reconsider being made or called up [18:4(1)]; not in committee of the whole [18:6]",
   "cites":["18:4"]},
 
  {"id":"raise-question-of-privilege","name":"Raise a Question of Privilege","class":"P","rank":10,
@@ -230,12 +230,13 @@ The thirteen ranked motions form a total order: each takes precedence over all l
   "second":true,"debatable":"no","amendable":"no",
   "vote":["majority"],"reconsider":"no (renewable after any business transacted [34:2(8), 38:7(2)])",
   "window":"same session, or through next regular session if within quarterly interval [34:3]; cannot interrupt a connected series [34:5]",
+  "precondition":"not in order until some business or interrupting matter has been dealt with since the tabling (renewal after rejection likewise waits for further business) [34:2(2)]",
   "cites":["34:2"]},
 
  {"id":"rescind-amend-adopted","name":"Rescind / Amend Something Previously Adopted","class":"M/B","rank":null,
   "interrupt":false,"second":true,"debatable":"yes-opens-question","amendable":"yes",
   "vote":["notice+majority","two-thirds","majority-entire-membership"],
-  "vote_notes":"alternatives — any one suffices [35:2(7)]; bylaws/special rules follow their own amendment requirements",
+  "vote_notes":"alternatives — any one suffices [35:2(7)]; the notice alternative requires notice stating the complete substance of the change, given at the previous meeting within a quarterly interval or in the call [35:2(7)]; in a committee: two-thirds, dropping to majority only when every member who voted for the target motion is present or received reasonable notice [35:2(7)]; bylaws/special rules follow their own amendment requirements",
   "reconsider":"neg-only",
   "not_applicable":"when reachable via a pending reconsider; executed acts impossible to undo; accepted resignations / elections-expulsions once notified [35:6]",
   "scope_rule":"amendments beyond the scope of given notice destroy the notice's effect (or are out of order where notice is required) [35:2(6), 35:4]",
@@ -257,13 +258,14 @@ The thirteen ranked motions form a total order: each takes precedence over all l
   "window":"same day, or next business day within the session [37:10(b)]; committees: no limit [37:35]",
   "debatable":"if-target-debatable; opens the target's merits [37:9(5)]",
   "amendable":"no",
-  "vote":["majority"],"vote_notes":"majority regardless of the target's threshold [37:9(7)]",
+  "vote":["majority"],"vote_notes":"majority regardless of the target's threshold [37:9(7)]; in a standing/special committee: two-thirds, dropping to majority only when every member who voted with the prevailing side is present or received reasonable notice [37:35(3)]",
   "reconsider":"no",
   "not_applicable":"renewable motions; certain negative votes now conflicting; partly executed affirmatives; notified contracts; undoable acts; votes on reconsider itself; finalized elections; results reachable by another majority-without-notice motion [37:9(2)]",
   "cites":["37:9"]},
 
  {"id":"reconsider-enter-minutes","name":"Reconsider and Enter on the Minutes","class":"B","rank":null,
-  "delta_from_reconsider":"made same day as the vote only; outranks plain reconsider even mid-announcement; applies only to votes finally disposing of a main motion; not where a day's delay defeats the object; not at last business meeting before a >quarterly gap; not callable-up same day (last-day-of-session exception) [37:47]",
+  "delta_from_reconsider":"made same day as the vote only; outranks plain reconsider even mid-announcement; not where a day's delay defeats the object; not at last business meeting before a >quarterly gap; not callable-up same day (last-day-of-session exception) [37:47]",
+  "applies_to":"exactly: (a) aff or neg vote on a main motion; (b) aff vote on postpone-indefinitely; (c) neg vote on objection-to-consideration when the session extends beyond the day [37:47(3)] — narrower than 'votes finally disposing of a main motion' (e.g., a sustained objection's aff vote is excluded)",
   "cites":["37:46–52"]},
 
  {"id":"renewal","name":"(rule cluster) Renewal of motions","class":null,
@@ -278,7 +280,7 @@ The thirteen ranked motions form a total order: each takes precedence over all l
 
 ### 5.1 Semantics
 
-`takes-precedence-over(B, A)` ⇔ B may be moved and stated while A is pending, whereupon B becomes the immediately pending question `[5:8]`. Pending motions are voted in reverse order of stating (LIFO), stopping if a disposal motion (commit / postpone / postpone-indefinitely / table / adjourn-adopted) carries `[10:33–34]`. The ranked chain (§2, `rank` 1–13) is a total order `[5:11]`; incidental motions have no rank among themselves `[5:12, 6:19]`.
+`takes-precedence-over(B, A)` ⇔ B may be moved and stated while A is pending, whereupon B becomes the immediately pending question `[5:8]`. Pending motions are voted in reverse order of stating (LIFO), stopping if any of the halting motions named in `[10:34]` carries: recess, lay-on-table, postpone-to-certain-time, commit, or postpone-indefinitely (adjourn, when adopted, likewise ends consideration, but via session/meeting end `[21:7]` rather than the 10:34 list — see `03-engine` §3.3, which is authoritative for the unwind table). The ranked chain (§2, `rank` 1–13) is a total order `[5:11]`; incidental motions have no rank among themselves `[5:12, 6:19]`.
 
 ### 5.2 Rank modifications within the chain
 
@@ -288,7 +290,20 @@ The thirteen ranked motions form a total order: each takes precedence over all l
 
 ### 5.3 Incidental admission rule
 
-An incidental motion is in order only while `legitimately-incidental` to a pending motion or to business at hand; it then takes precedence over everything pending `[6:18]`. It yields to privileged motions and generally to `lay-on-table`, **except** it does not yield to any motion ranking below the motion out of which it arose `[6:19, 6:21]`. Every motion yields to motions legitimately incidental to itself `[6:19]`.
+An incidental motion is in order only while `legitimately-incidental` to a pending motion or to business at hand; it then takes precedence over everything pending `[6:18]`. **With the exception of division-of-assembly — which yields to nothing in this rule** `[6:19]` — an incidental motion yields to privileged motions and generally to `lay-on-table`, **except** it does not yield to any motion ranking below the motion out of which it arose `[6:19, 6:21]`. Every motion yields to motions legitimately incidental to itself `[6:19]`. Per-motion yield exceptions override this general rule — see §5.6 for the appeal / submitted-point-of-order matrix.
+
+### 5.6 Appeal / submitted point-of-order yield matrix (`catalog:table/appeal-yield-matrix`)
+
+The general incidental rule (§5.3) is wrong for appeals unless refined by this four-case table `[24:3(1)–(2)]`, mirrored for points of order the chair submits to the assembly `[23:2(1)–(2)]`:
+
+```json
+[
+ {"case":"debatable, non-adhering","yields_to":["privileged (when in order by rank)","limit-extend-debate","previous-question","commit","postpone-to-certain-time","lay-on-table"],"cite":"24:3(1)–(2)"},
+ {"case":"debatable, adhering","yields_to":["privileged (when in order by rank)","limit-extend-debate","previous-question"],"note":"commit/postpone/table reach it only applied to the main question, carrying the appeal along","cite":"24:3(1)–(2), 13:7(2), 14:4(2), 17:3(2)"},
+ {"case":"undebatable, adhering","yields_to":["privileged (when in order by rank)","lay-on-table (via the main question)"],"note":"yields to NO other subsidiary — even one out-ranking the motion it arose from","cite":"24:3(1)"},
+ {"case":"undebatable, non-adhering","yields_to":["privileged (when in order by rank)"],"note":"yields to no subsidiary at all","cite":"24:3(1)"}
+]
+```
 
 ### 5.4 Reconsider's split rank
 
@@ -346,7 +361,7 @@ Election-specific: no for/against boxes in elections `[45:25]`; write-ins always
 
 ## 7. Interface exports
 
-Other components may rely on: `catalog:motion/<id>` (registry rows above), `catalog:guard/<id>` (§5.5), `catalog:relation/takes-precedence-over` (§5.1–5.4 semantics), `catalog:table/ballot-counting` (§6). Threshold vocabulary per INTERFACE.md §6 plus the additions used here: `tie-or-majority-sustains-chair`, `two-thirds-neg`, `single-member-demand`, `chair-rules`, `not-voted`.
+Other components may rely on: `catalog:motion/<id>` (registry rows above), `catalog:guard/<id>` (§5.5), `catalog:relation/takes-precedence-over` (§5.1–5.4 semantics), `catalog:table/appeal-yield-matrix` (§5.6), `catalog:table/ballot-counting` (§6). Threshold vocabulary per INTERFACE.md §6 plus the additions used here: `tie-or-majority-sustains-chair`, `two-thirds-neg`, `single-member-demand`, `chair-rules`, `not-voted`.
 
 ## 8. Test vectors bearing on this component
 

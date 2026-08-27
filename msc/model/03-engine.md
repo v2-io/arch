@@ -51,7 +51,7 @@ Model: a **context stack** of pending stacks. Interruption pushes a fresh contex
 ```
 may-push(motion, target_frame, context) =
       class-admissible(motion, stack)            // 3.2.2 rank test, or incidental/reconsider special rule
-  AND applicable(motion, target_frame)           // catalog SDC 2 [7:2]
+  AND applicable(motion, target_frame)           // catalog SDC 2 [7:2] — see data-backing note below
   AND floor-admissible(motion, protocol-state)   // catalog SDC 3 via protocol:* [7:2]
   AND guard-no-order-precluding(motion, top-frames)   // 3.2.4
   AND rules-permit(motion, rules-state)          // rules:* (suspensions, special rules, bylaws conflicts [10:26])
@@ -59,12 +59,12 @@ may-push(motion, target_frame, context) =
   AND guard-not-same-question(motion)            // [10:26(3–5)], [12:25], [38:3(1)]
 ```
 
-Guards declared here:
+Guards (polarity per INTERFACE §5; this component declares one guard and consumes the rest from the catalog registry):
 
-- `no-question-pending`: the pending stack of the active context is empty — precondition for main-class motions `[4:4]`, `[10:8(1)]`.
-- `no-order-precluding`: no unexhausted order for `catalog:motion/previous-question` or a debate-closing form of `catalog:motion/limit-extend-debate` blocks this motion — the previous question, once ordered, precludes all subsidiaries except `lay-on-table` `[16:2]`; an order closing debate at a set time precludes `commit` and `postpone-to-certain-time` `[15:11]`; a bare speech-length limitation precludes nothing `[15:10]`.
-- `not-dilatory`: motion is not absurd, frivolous, or obstructive; chair-adjudicated `[39:1–4]`.
-- `not-same-question`: motion does not present substantially the question already decided this session or held within the assembly's control `[10:26(3–5)]`, `[38:3]`; for amendments, the same-content-and-effect test `[12:25]`.
+- `no-order-precluding` (declared here): no unexhausted order for `catalog:motion/previous-question` or a debate-closing form of `catalog:motion/limit-extend-debate` blocks this motion — the previous question, once ordered, precludes all subsidiaries except `lay-on-table` `[16:2]`; an order closing debate at a set time precludes `commit` and `postpone-to-certain-time` `[15:11]`; a bare speech-length limitation precludes nothing `[15:10]`. The order *objects* it inspects are `rules:` state (seam 1); this guard reads them.
+- Consumed: `catalog:guard/no-question-pending` `[4:4]`, `[10:8(1)]`; NOT `catalog:guard/dilatory` `[39:1–4]`; NOT `catalog:guard/same-question-decided-this-session` (extended for amendments by the same-content-and-effect test `[12:25]`) and NOT `catalog:guard/question-within-assembly-control` `[10:26(3–5)]`, `[38:3]`. (The pseudocode's `guard-not-dilatory` / `guard-not-same-question` conjuncts are these negations.)
+
+**Data-backing note:** `applicable()` is a signature over SDC-2 knowledge that lives partly in `catalog:*` record notes and the appeal-yield matrix (01 §5.6), partly only in the book's SDC-2 prose. Conditions the rank test alone does not capture include: commit barred while a reconsider is pending in-series `[13:7(2)]`; postpone/commit barred while an undebatable question other than division-of-question / consideration-by-paragraph is immediately pending `[14:4(1)–(2)]`; the appeal matrix cases. Stage 4 owes a full `applies-to` / `does-not-yield-to` table (Chart I's admissibility column is the acceptance checklist).
 
 ### 3.2.2 Ranks
 
@@ -80,7 +80,7 @@ Class-admissibility for ranked motions: pushable iff its effective rank exceeds 
 
 ### 3.2.3 Incidental motions
 
-Incidentals have no rank among themselves `[5:12]`, `[6:19]`. Class-admissibility is the guard `legitimately-incidental`: the motion arises out of a pending question, a question just pending, or business at hand, per its own SDC conditions `[6:15–18]`. When legitimately incidental, it takes precedence over the question(s) it arises from and must be decided first `[6:18]`; it yields to motions of higher rank than the question it arose from, not to lower ones `[6:21]`, and generally yields to privileged motions and (if adhering) to `lay-on-table` `[6:19]`, `[23:2(1)]`.
+Incidentals have no rank among themselves `[5:12]`, `[6:19]`. Class-admissibility is the guard `legitimately-incidental`: the motion arises out of a pending question, a question just pending, or business at hand, per its own SDC conditions `[6:15–18]`. When legitimately incidental, it takes precedence over the question(s) it arises from and must be decided first `[6:18]`; it yields to motions of higher rank than the question it arose from, not to lower ones `[6:21]`, and generally yields to privileged motions and (if adhering) to `lay-on-table` `[6:19]`, `[23:2(1)]` — with two overrides: `division-of-assembly` is excepted from the general yield rule entirely `[6:19]`, and pending appeals / submitted points of order follow the four-case matrix at `catalog:table/appeal-yield-matrix` (01 §5.6) rather than this generic rule — in particular, an undebatable *adhering* appeal admits no subsidiary except `lay-on-table` via the main question, even one out-ranking its origin `[24:3(1)]`. Where a per-motion SDC-2 condition conflicts with this paragraph's generic rule, the per-motion condition wins.
 
 ### 3.2.4 Reconsider — split rank
 
@@ -146,7 +146,7 @@ Referral serializes a *reduced* bundle `[10:8(2)]`, `[13:19]`:
 - dropped: a pending `postpone-indefinitely` (ignored; adoption of commit implies the assembly declines it `[11:4]`);
 - ignored thereafter: any reconsider of an adhering subsidiary/incidental made but not taken up `[13:19]`, `[37:34]`.
 
-On report, the amendments that were pending are re-presented first, in their original order, before new amendments of the same degree `[13:20]`, `[51:36–43]`; referral exhausts debate-limit and previous-question orders even within the same session `[13:21]`, `[16:12]`.
+On report, the amendments that were pending are re-presented first, in their original order, before new amendments of the same degree `[13:20]`, `[51:36–43]`; referral exhausts debate-limit and previous-question orders even within the same session `[13:21]`, `[15:18(2)]`, `[16:11(2)]`.
 
 ### 3.4.4 Reconsider-held votes
 
