@@ -1,0 +1,39 @@
+{
+  "model": "ronr-12-unified",
+  "file": "voting",
+  "desc": "Vote arithmetic: the ballot-counting decision table (Table VIII; 45:31-36) and election-specific rules. Case selection over a Ballot record {marks, sections, folded_with, voter_membership}; 'credited' = to a candidate/choice, 'counted' = toward votes cast for majority computation. The unclear-meaning branch routes through adjudication (ballot-meaning); whether an unclear ballot MAY AFFECT the result is arithmetic: questionable_count >= margin between deciding positions.",
+
+  "ballot_counting": [
+    {"case": "clear meaning, eligible choice", "credited": true, "counted": true, "cite": "45:32"},
+    {"case": "ineligible or unidentifiable candidate", "credited": false, "counted": true, "note": "illegal vote", "cite": "45:32"},
+    {"case": "unclear meaning, cannot affect result", "credited": false, "counted": true, "cite": "45:33"},
+    {"case": "unclear meaning, may affect result", "credited": "assembly-decides (adjudication: ballot-meaning)", "counted": true, "cite": "45:33"},
+    {"case": "overvote (too many candidates for the office)", "credited": false, "counted": true, "note": "one illegal vote", "cite": "45:32"},
+    {"case": "two+ filled ballots folded together", "credited": false, "counted": "as one vote", "cite": "45:34"},
+    {"case": "blank folded with one filled ballot", "credited": "filled ballot normally", "counted": "blank ignored", "cite": "45:34"},
+    {"case": "blank / no-preference ballot", "credited": false, "counted": false, "note": "abstention", "cite": "45:31"},
+    {"case": "identified nonmember ballot", "credited": false, "counted": false, "cite": "45:35"},
+    {"case": "unidentifiable nonmember ballots possibly affecting result", "effect": "entire vote null and void; retake", "cite": "45:35"},
+    {"case": "multi-section ballot", "rule": "each section tallied as an independent ballot; folding creates illegal votes only per duplicated section", "cite": "45:36"}
+  ],
+
+  "elections": {
+    "no_for_against": "no for/against boxes in elections [45:25]",
+    "write_ins": "always legal for eligible persons [45:18, 46:2]",
+    "multi_seat": "every ballot voting in the section = one vote cast; seats fill by majority then vote-total order; ties and shortfalls go to repeated balloting with no forced dropouts [46:32-33]"
+  },
+
+  "threshold_evaluation": {
+    "desc": "How a Vote record's result is computed against its threshold (vocabulary.json thresholds).",
+    "rules": [
+      {"threshold": "majority", "adopted_expr": [">", ["attr", ["param", "vote"], "tally", "yes"], ["attr", ["param", "vote"], "tally", "no"]], "cite": "44:1"},
+      {"threshold": "two-thirds", "adopted_expr": [">=", ["attr", ["param", "vote"], "tally", "yes"], ["*", 2, ["attr", ["param", "vote"], "tally", "no"]]], "cite": "44:3", "note": "the multiplication form (yes >= 2*no) is exact for votes-cast two-thirds"},
+      {"threshold": "majority-entire-membership", "adopted_expr": [">", ["*", 2, ["attr", ["param", "vote"], "tally", "yes"]], ["ctx", "assembly", "membership_total"]], "cite": "44:9"},
+      {"threshold": "two-thirds-neg", "adopted_expr": [">=", ["attr", ["param", "vote"], "tally", "no"], ["*", 2, ["attr", ["param", "vote"], "tally", "yes"]]], "desc": "the objection is SUSTAINED (question not considered) when two thirds vote against consideration", "cite": "26:7-8"},
+      {"threshold": "tie-or-majority-sustains-chair", "adopted_expr": [">", ["attr", ["param", "vote"], "tally", "no"], ["attr", ["param", "vote"], "tally", "yes"]], "desc": "the chair's ruling is REVERSED only on this expression (majority in the negative); tie sustains", "cite": "24:3(7)"}
+    ],
+    "note": "membership_total is an assembly input field; notice+X compounds evaluate X after verifying the notice event (event-occurred previous-notice within its window)"
+  },
+
+  "schema_addition": "Ballot and tally structures are runtime inputs; schema.json Vote.tally carries the aggregate. Per-ballot adjudications appear as AdjudicationInstance records with predicate ballot-meaning."
+}

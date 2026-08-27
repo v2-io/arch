@@ -1,0 +1,91 @@
+{
+  "model": "ronr-12-unified",
+  "file": "scheduler",
+  "desc": "What business the chair announces next, and when a scheduled item may seize the floor: priority queues with preemption plus calendar gates. Acts between questions (feeding the engine) except special orders at their hour and scheduled recess/adjournment, which interrupt a pending question.",
+
+  "temporal_frame": {
+    "hierarchy": "meeting is a subset of session; session = unit of scheduling freedom [8:1-2, 8:11-12]",
+    "quarterly_interval": "sessions <= a quarterly interval apart form a corridor through which business travels by postponement, tabling, unfinished business, or pending reconsider; beyond it (or across a membership-term boundary) only committee referral carries business over [9:7-10, 21:7(c)]",
+    "horizon": "no order of the day may be set beyond the next regular session (within the corridor), or beyond the present session (outside it) — guard/schedulable-to [14:6, 41:40]",
+    "no_binding_future_majorities": "one session may not bind a later session's majority except via special rules/bylaws [8:12-14]"
+  },
+
+  "item_kinds": [
+    {"id": "general-order", "made_by": ["postpone-to-certain-time (majority)", "main motion (majority)", "agenda position without stated hour or with guidance-only hour"], "preempts": false, "cite": ["14:14", "41:41-42", "41:58"]},
+    {"id": "special-order", "made_by": ["postpone + make special order (two-thirds)", "main motion (two-thirds)", "agenda hour assignment (adopted with the agenda)"], "preempts": true, "cite": ["14:14", "41:41-42", "41:58", "59:55(4)"]},
+    {"id": "the-special-order-for-meeting", "desc": "reserves a meeting; taken up right after minutes approval; outranks all other special orders regardless of when made", "preempts": true, "cite": ["41:57"]},
+    {"id": "scheduled-recess", "cite": ["20:6", "41:66"]},
+    {"id": "scheduled-adjournment", "cite": ["21:14", "41:66"]},
+    {"id": "unfinished-business", "desc": "not schedulable directly; arises from prior meeting per carryover", "cite": ["41:21-26"]}
+  ],
+
+  "standard_order_of_business": {
+    "headings": ["minutes-approval", "officer-board-standing-committee-reports", "special-committee-reports", "special-orders", "unfinished-business-and-general-orders", "new-business"],
+    "cite": ["3:16", "41:5-6"],
+    "optional_headings": ["opening-ceremonies", "roll-call", "consent-calendar", "good-of-the-order", "announcements", "program"],
+    "optional_cite": ["41:28-36"],
+    "status": "a rule of order; alterable per rules.json"
+  },
+
+  "queues": {
+    "special-orders-unfinished": "FIFO by time made [41:18]",
+    "special-orders-current": "FIFO by time made [41:18]",
+    "unfinished-business": "(a) question pending at last adjournment, (b) unreached unfinished business from last meeting in its prior order, (c) unreached general orders from last meeting in made-order [41:21-23]",
+    "general-orders-current": "made-order; same-motion batches in listed order [41:23, 41:52]",
+    "reports": "standing committees in bylaws-listing order; special committees in appointment order [41:13, 41:17]",
+    "chair_discipline": "the chair announces items; he must not ask 'is there unfinished business?' but state the known next item [41:24]; he cannot unilaterally depart from the order [41:39]"
+  },
+
+  "dispatch": {
+    "NOTE(judgment)": "this is a synthesis of [41:18-27, 41:40-57] into one procedure; RONR states it distributively — each step cites its source. Holds against the worked examples [41:51, 41:55].",
+    "desc": "Between questions, at heading special-orders onward: first step whose when expression is true governs. These expressions are the compiled body of guard/order-of-day-due.",
+    "steps": [
+      {"step": 1, "take_up": "the-special-order-for-meeting",
+       "when": ["exists", "i", ["ctx", "queues", "special-orders-current"], ["=", ["attr", "i", "kind"], "the-special-order-for-meeting"]],
+       "note": "taken up right after minutes approval", "cite": "41:57"},
+      {"step": 2, "take_up": "eligible special order made earliest",
+       "when": ["exists", "i", ["ctx", "queues", "special-orders-current"], ["and", ["!=", ["attr", "i", "hour"], null], ["not", ["before", ["now"], ["attr", "i", "hour"]]]]],
+       "select": "among those whose hour has arrived or passed, minimum made_at", "cite": "41:53-54"},
+      {"step": 3, "take_up": "a general order whose hour has arrived",
+       "when": ["exists", "g", ["ctx", "queues", "general-orders-current"],
+         ["and", ["!=", ["attr", "g", "hour"], null],
+                 ["not", ["before", ["now"], ["attr", "g", "hour"]]],
+                 ["guard", "no-question-pending"],
+                 ["not", ["exists", "s", ["ctx", "queues", "special-orders-current"], ["and", ["!=", ["attr", "s", "hour"], null], ["not", ["before", ["now"], ["attr", "s", "hour"]]]]]],
+                 ["not", ["exists", "q", ["ctx", "questions"], ["and", ["!=", ["attr", "q", "reconsider_hold"], null], ["event-occurred", "called-up", "q"]]]],
+                 ["event-occurred", "heading-reached", "unfinished-business-and-general-orders"],
+                 ["forall", "e", ["ctx", "queues", "general-orders-current"],
+                   ["or", ["=", "e", "g"], [">", ["attr", "e", "made_at"], ["attr", "g", "made_at"]], ["and", ["!=", ["attr", "e", "hour"], null], ["before", ["now"], ["attr", "e", "hour"]]]]]]],
+       "select": "earlier-made outranks earlier-hour [41:50-51]", "cite": "41:49"},
+      {"step": 4, "take_up": "next item by heading order through the queues", "when": true, "cite": "41:18-27"},
+      {"step": 5, "take_up": "new business: members introduce in floor-obtained order (event/recognized)", "when": ["event-occurred", "heading-reached", "new-business"], "cite": "41:27"}
+    ]
+  },
+
+  "preemption": {
+    "desc": "The compiled body of guard/may-preempt(item): a special order at its hour interrupts a pending question EXCEPT for the listed yields; scheduled recess/adjournment hours are declared by the chair even mid-special-order.",
+    "special_order_at_hour": {
+      "may_preempt_expr": ["and",
+        ["=", ["attr", ["param", "item"], "kind"], "special-order"],
+        ["not", ["before", ["now"], ["attr", ["param", "item"], "hour"]]],
+        ["not", ["exists", "f", ["frames"], ["in", ["motion", "f"], ["list", "adjourn", "recess", "fix-time-to-which-to-adjourn", "raise-question-of-privilege"]]]],
+        ["not", ["exists", "s", ["ctx", "queues", "special-orders-current"], ["and", ["!=", "s", ["param", "item"]], ["not", ["before", ["now"], ["attr", "s", "hour"]]], ["<", ["attr", "s", "made_at"], ["attr", ["param", "item"], "made_at"]]]]],
+        ["not", ["exists", "s", ["ctx", "queues", "special-orders-current"], ["=", ["attr", "s", "kind"], "the-special-order-for-meeting"]]]],
+      "yields": "(a) motions relating to adjournment/recess, (b) questions of privilege, (c) a special order made earlier, (d) the special order for the meeting",
+      "resumption": "interrupted business resumes afterward at the point of interruption (lifecycle history restore) — earliest-made special orders first, then the originally interrupted business [41:55, 18:11]",
+      "cite": ["41:41", "41:53"]},
+    "scheduled_recess_adjournment": "chair announces and declares it, even mid-special-order; pending business is interrupted (recess) or carried per carryover (adjournment). Preemptible only by a two-thirds motion to postpone the hour or extend consideration time; announced previous-question-ordered votes may customarily be completed first [20:6-7, 21:14, 41:56, 41:66-68]",
+    "enforcement": "any single member may demand conformance via motion/call-for-orders-of-the-day; the demand compels the schedule unless set aside — two-thirds NEGATIVE on 'proceed to the orders of the day', or two-thirds affirmative to extend time / suspend and take up something else [18:4(7), 18:8]. Once refused, not renewable until the pending business is disposed of [18:8(a), 38:7(3)]. Except when a special order must be taken up, the call itself yields to the making or calling up of a reconsider [18:4(1)] — a due order of the day does not outrun the reconsider window.",
+    "early_take_up": "only by reconsidering the making vote (while possible) or suspend-the-rules (two-thirds) [14:13, 41:40]; equivalently, laying intervening items on the table one at a time is a legitimate majority path [17:14, 41:38]"
+  },
+
+  "carryover": [
+    {"case": "adjournment not ending session (adjourned meeting set)", "when": ["ctx", "clock", "adjourned_meeting_set"], "effect": "resume at point of interruption next meeting", "cite": ["21:7(a)", "9:19"]},
+    {"case": "session ends; corridor open", "when": ["guard", "carryover-eligible"], "effect": "pending question -> unfinished-business(a); unreached orders -> unfinished categories (b)/(c); unreached special orders -> special-orders-unfinished", "cite": ["21:7(b)", "41:18(a)", "41:21-23"]},
+    {"case": "session ends; corridor closed", "when": ["not", ["guard", "carryover-eligible"]], "effect": "everything temporarily-disposed falls to ground except matters in committee hands", "cite": ["21:7(c)", "9:8"]},
+    {"case": "agenda session (convention): meeting-end mid-agenda", "effect": "unreached items carry to next meeting ahead of that meeting's items, absent special provision and special-order conflict", "cite": ["41:70"]},
+    {"case": "bylaws-mandated item not reached in its required session", "effect": "carries as unfinished business/special order if next regular meeting within quarterly-interval", "cite": ["9:23", "41:20"]}
+  ],
+
+  "agenda_overlay": "When an agenda or program is adopted it BECOMES the order of business for the session [41:61, 59:48]: hour-assigned items are special orders unless marked guidance-only; unassigned items are general orders [41:58]. Adoption/change thresholds: rules.json change_thresholds agenda-program row. At an item's assigned hour the chair announces it, puts pending questions to vote without further debate (subject to immediate table/postpone/refer motions, undebatable in that posture, and a two-thirds extension motion) [41:65]. Precirculated but unadopted agendas bind nothing [41:62]."
+}

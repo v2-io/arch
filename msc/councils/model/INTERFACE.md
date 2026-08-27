@@ -1,32 +1,117 @@
-# RONR-12 Model — Stage 2: Outline + Interface
+# RONR-12 Unified Model — Interface
 
-*Stages: (1) full text → (2) this outline + interface → (3) independent-but-coherent models → (4) unified models (structured data) → (5) execution engine(s). See `../RONR-12-MODEL.md` for the decomposition rationale.*
+*The binding interface for the unified model (stage 4) and the contract stage 5 builds against. The model is structured data an engine loads: multiple parts, one namespace, one guard registry, one vocabulary, one expression language. Decomposition rationale: `.priors/RONR-12-MODEL.md` (stage-2, kept for provenance). Source: `../RONR-12/body.md` (§:¶ citations); the source wins over the model wherever they disagree.*
 
-Stage-3 rule: each component is internally rigorous in whatever internal scheme suits it, but everything it expresses *outward* (IDs, events, guards, citations, cross-component references) follows the conventions below, consistently, so stage-4 normalization by a fresh agent is a mechanical join.
+## Files
 
-## Files (stage 3)
-
-| File | Components | Owns |
+| File | Part | Owns |
 |---|---|---|
-| `01-catalog.md` (+ data) | 1 Catalog, 2 Precedence | canonical motion registry; SDC table; precedence order + guards; ballot-counting decision table |
-| `03-engine.md` | 3 Stack machine | frame types; push-legality rule; serialization/restore semantics |
-| `04-lifecycle.md` | 4 Question lifecycle | statechart states, transitions, timers, history |
-| `05-protocol.md` | 5 Floor & dialogue | roles, turn-taking, recognition preference, speech counters |
-| `06-07-rules-scheduler.md` | 6 Rule hierarchy, 7 Scheduler | rule-class priority/defeasibility; suspension; orders-of-the-day queues |
+| `schema.json` | state schema | the typed context object every expression is evaluated against |
+| `vocabulary.json` | shared vocabularies | reference kinds, events, thresholds, classes, temporal anchors, closed enums |
+| `guards.json` | guard registry | every named predicate, each with a compiled expression or judgment routing |
+| `adjudication.json` | adjudication machine | the reusable judgment sub-machine + per-predicate parameterization |
+| `registry.json` | catalog | motion records with Standard Descriptive Characteristics |
+| `precedence.json` | precedence | rank order, rank modifications, incidental admission, appeal-yield matrix, applicability table |
+| `engine.json` | stack machine | push legality, unwind, serialization/restore, context stack, operations |
+| `lifecycle.json` | question lifecycle | states, transitions, timers, history erasures, effect/control |
+| `protocol.json` | floor & dialogue | roles, dialogue cycle, recognition preference, interrupts, counters, decorum, voting exchange |
+| `rules.json` | rule hierarchy | classes, authority order, interpretation, suspension, change thresholds, breach grounds, order objects |
+| `scheduler.json` | scheduler | temporal frame, queues, dispatch, preemption, carryover, agenda overlay |
+| `voting.json` | vote arithmetic | ballot-counting decision table, election rules |
+| `actions.json` | action space | the root table: every action kind, its role, its admissibility expression — what `available_actions` enumerates |
+| `acceptance.json` | acceptance suite | script-replay tests, the three sweeps, verified fixed points |
+| `gaps.json` | honesty layer | every condition not compiled: schema gaps vs. genuine judgment-inputs |
 
-Prose spec in markdown; structured data as fenced JSON (or TSV for wide tables) inside the same file or as sibling `NN-*.json` files — component's choice, declared at top of its file.
+## Execution model — the success criterion
 
-## Conventions (binding on all external expressions)
+The whole model reduces to one function, recomputed on every event:
 
-1. **Citations.** Every normative claim cites RONR §:¶ in the form `[12:7(2)]`, `[41:53–55]`, footnotes as `[56:49n1]`. Express the rules in your own words — cite, don't transcribe passages.
-2. **Motion IDs.** Kebab-case of RONR's canonical motion name: `main-motion`, `postpone-indefinitely`, `amend`, `commit`, `postpone-to-certain-time`, `limit-extend-debate`, `previous-question`, `lay-on-table`, `call-for-orders-of-the-day`, `raise-question-of-privilege`, `recess`, `adjourn`, `fix-time-to-which-to-adjourn`, `point-of-order`, `appeal`, `suspend-rules`, `objection-to-consideration`, `division-of-question`, `consideration-by-paragraph`, `division-of-assembly`, `take-from-table`, `rescind-amend-adopted`, `discharge-committee`, `reconsider`, `reconsider-enter-minutes`, … The catalog's registry (in `01-catalog`) is the authoritative superset; other components derive IDs by the same kebab-case rule and stage 4 reconciles against the registry.
-3. **Qualified external references.** Cross-component references use `component:kind/id` — e.g. `catalog:motion/previous-question`, `catalog:guard/no-question-pending`, `lifecycle:state/tabled`, `protocol:event/stated`, `scheduler:queue/special-orders`, `rules:class/bylaws`. Internal references within a component are unconstrained. The component prefix is exactly one of `catalog`, `engine`, `lifecycle`, `protocol`, `rules`, `scheduler` — prefixes are closed naming law, not suggestions.
-4. **Event vocabulary (core, global).** `made`, `seconded`, `stated`, `debate-opened`, `put`, `adopted`, `rejected`, `withdrawn`, `ruled-out-of-order`, `referred`, `tabled`, `taken-from-table`, `postponed`, `called-up`, `reconsidered`, `session-ended`, `meeting-ended`, `recessed`, `resumed`. Components may add events, namespaced as in (3); prefer reusing core events.
-5. **Guards.** Named predicates, kebab-case, declared wherever first used with signature `guard-id: description [citation]`; evaluated against a context (pending stack, session clock, member state, rule state). Components consuming another component's guard reference it qualified per (3). **Polarity convention**: guards state the positive condition, named for what is true when they hold (`no-question-pending`, `quorum-present`); never declare a negated twin of an existing guard — consume the guard and negate at the use site. Stage 4 folds all declarations into a single guard registry under this convention.
-6. **Classes and thresholds.** Motion classes: `M`, `S`, `P`, `I`, `B`, `M/B` (RONR Table II key). Vote thresholds: `majority`, `two-thirds`, `majority-entire-membership`, `two-thirds-neg` (e.g. objection-to-consideration), `chair-rules`, `single-member-demand`, plus compound forms `notice+majority`, `notice+two-thirds` expressed as alternatives lists.
-7. **Time.** Named temporal anchors: `same-day`, `next-business-day`, `end-of-session`, `next-regular-session`, `quarterly-interval` `[9:7]`. Timers reference these anchors, never raw durations.
-8. **Honesty markers.** Where RONR is ambiguous or the mapping is a modeling judgment call, mark it `NOTE(judgment):` inline rather than silently resolving.
+```
+available_actions(member, role, state) → [(action, justification)]
+```
 
-## Stage-3 acceptance
+`actions.json` is its table: each action kind carries a role and an admissibility expression over `schema.json`. The parts are inputs to this function, not ends in themselves: registry/precedence/guards decide what is movable; protocol decides who may speak or interrupt now; lifecycle + scheduler decide what is timely; rules decides thresholds; the adjudication machine supplies the judgment-shaped entries. **Justification is by construction**: the admissibility expression's satisfied conjuncts, each carrying its §:¶ citation — no separate justification text exists or is needed. As events fire, the state changes and every member's list is recomputed. The end.
 
-A component is done when: internally consistent; every normative statement cited; all external expressions follow the conventions above; and it names (in a closing section) the Form-and-Example passages usable as test vectors against it (e.g. `[10:34]` eight-motion stack; `[12:83–89]` substitute walk; `[16:26–27]` competing previous-question forms; `[37:27]` reconsider mid-series) — these become the stage-4/5 acceptance traces.
+## Conventions (binding)
+
+1. **Citations.** Every normative datum cites RONR 12th ed. §:¶ as strings: `"12:7(2)"`, `"41:53-55"`, footnotes `"56:49n1"`, plates `"t4"`. Rules are expressed in the model's own words — cite, don't transcribe.
+2. **One namespace.** References are `kind/id` (kinds closed, listed in `vocabulary.json reference_kinds`): `motion/amend`, `guard/no-question-pending`, `state/tabled`, `event/stated`, `queue/general-orders-current`, `class/bylaws`, `order/<id>`, `timer/table-expiry`, `table/appeal-yield-matrix`, `role/chair`, `question/<uuid>`.
+3. **Executable without interpretation.** Every condition an engine must evaluate — guards, applicability, transition guards, dispatch eligibility, preemption, threshold selection — is an expression in the language below, over `schema.json`. Prose plus citation survives only as annotation *on* an expression (`desc`/`note`/`cite` fields), never as the condition itself. A condition that cannot be compiled is flagged in `gaps.json`, not left as prose.
+4. **Judgment is routed, not computed.** Predicates RONR leaves to human judgment (germaneness, dilatoriness, decorum, …) enter through the single primitive `["adjudged", pred, subject…]`, whose value is produced by the adjudication sub-machine (`adjudication.json`) from input events — like a vote. Everything *around* the judgment (who declares, contest window, appeal, threshold, finality) is decidable structure.
+5. **Guards.** Named predicates, kebab-case, positive polarity: named for what is true when they hold; never a negated twin — negate at the use site. All declarations live in `guards.json` only.
+6. **Honesty markers.** Modeling judgment calls are marked `NOTE(judgment)` where they occur; they are the honest-uncertainty layer and survive all refactors. Distinct from `["adjudged", …]`, which marks *RONR's own* judgment points.
+7. **Time.** Timers reference named temporal anchors (`vocabulary.json temporal_anchors`), never raw durations. Timer definitions are data (`start_event`, `expires` expression); `["timer-open", id, q]` is how conditions consult them.
+
+## The expression language
+
+Expressions are JSON arrays in operator-first form; atoms are JSON strings (ids/enum values), numbers, `true`/`false`/`null`. Strings in operand position that match a quantifier-bound variable are variable references; otherwise they are literals (ids/enums). Evaluation is against the context object (`schema.json`) plus bindings supplied by the decision point (conventionally `m` = the motion id being moved, `t` = its target frame or null, `q` = the question object, `member` = the acting member).
+
+### Core forms
+
+| Form | Meaning |
+|---|---|
+| `["and", e…]` / `["or", e…]` / `["not", e]` | boolean connectives |
+| `["if", c, a, b]` | conditional |
+| `["=", a, b]` `["!=", a, b]` `["<", …]` `["<=", …]` `[">", …]` `[">=", …]` | comparison |
+| `["in", x, ["list", …]]` | membership; `["list", …]` is the literal-list constructor |
+| `["+", a, b]` / `["*", a, b]` | integer arithmetic (threshold evaluation) |
+| `["exists", "v", L, p]` / `["forall", "v", L, p]` | quantify variable `v` over list expression `L` with predicate `p` |
+| `["count", "v", L, p]` | number of elements satisfying `p` |
+| `["param", name]` | a binding supplied at the decision point |
+
+### Accessors (over `schema.json`)
+
+| Form | Meaning |
+|---|---|
+| `["ctx", path…]` | walk the context object by field names |
+| `["attr", obj, field…]` | field access on any typed object |
+| `["reg", m, field…]` | registry record lookup for motion id `m` |
+| `["frames"]` | frames of the active pending stack, bottom→top |
+| `["top"]` / `["bottom"]` | immediately pending frame / base frame (null if empty) |
+| `["motion", f]` / `["class", f]` / `["erank", f]` | a frame's motion id / class / effective rank (number: position in `precedence.json rank_order`, positionally modified per `engine.json effective_rank`) |
+| `["applied-to", f]` / `["adheres-to", f]` | frame links (frame or null) |
+| `["question", f]` | the frame's lifecycle question object |
+| `["state", q]` | question's R1 disposition state |
+
+### Derived builtins (evaluator-provided; defining rule fixed here)
+
+| Form | Meaning |
+|---|---|
+| `["debatable", f]` | boolean: resolves the registry `debatable` value for the frame's motion, following `if-target-debatable` through `applied-to`, and treating `yes`, `yes-restricted`, `yes-opens-question` as true, per-record exception conditions applied `[12:7(5), 37:9(5)]` |
+| `["amendable", f]` | boolean, analogous, from the registry `amendable` value |
+| `["guard", id, args…]` | the named guard's expression, inlined with bindings |
+| `["adjudged", pred, subject…]` | current adjudicated value of a judgment predicate for a subject: the predicate's default until an adjudication instance finalizes otherwise (`adjudication.json`) |
+| `["timer-open", id, q]` | the named timer (`lifecycle.json timers`), instantiated for question `q`, has started and not expired |
+| `["event-occurred", event, scope…]` | the event has occurred within the scope (a question, a question's series, the session, the day) — evaluated over `ctx.history` |
+| `["rank-admissible", m, t]` | the ranked-motion class test: m's effective rank (positionally computed per `engine.json effective_rank`, with t as its application target) exceeds the effective rank of every frame in the active stack `[5:8-9]`; vacuously true on an empty stack for main-class motions |
+| `["applicable", m, t]` | `precedence.json table/applicability` row lookup for m: the row's `applies_to` expression holds and no `out_of_order_when` disjunct does; motions without a row route through `guard/legitimately-incidental` plus their registry conditions |
+| `["same-day", a, b]` / `["before", a, b]` | calendar predicates over times/anchors |
+| `["within-quarterly", s1, s2]` | the two sessions are within a quarterly interval `[9:7]` |
+| `["anchor", name, session?]` | resolve a temporal anchor to a time in context |
+| `["now"]` | current time |
+
+The operator set is **closed**: an engine implements exactly these forms. Needing a new form is a schema/interface change, recorded here and in `CHANGELOG.md`.
+
+## The adjudication sub-machine
+
+One reusable machine, parameterized per judgment predicate (`adjudication.json`). Shape, with the recurring citations:
+
+```
+raised(pred, subject)                        — by the chair sua sponte, or via point-of-order [23:1-5]
+  → declared(value)                          — chair rules [23:2(7)]; judgment content arrives as an
+                                               input event, like a vote
+  | submitted                                — chair in doubt submits to assembly [23:18-21];
+                                               vote decides directly (debatability per appeal rules)
+declared → appeal-window                     — any two members (mover + seconder) [24:2]
+  → appealed → assembly decides              — debatability per appeal SDC [24:3(5)];
+                                               threshold/tie-or-majority-sustains-chair [24:3(7)]
+  | window lapses → final
+final: binding for the session [24:1];       — recorded ruling + reasons = persuasive precedent
+                                               thereafter [23:10-11]
+```
+
+Per-predicate parameters: `default` (the presumed value absent challenge), `subject_type`, `raisable_by`, `timeliness` (guard expression; continuing-breach exceptions `[23:6]`), `appealable` (false only where no two reasonable opinions are possible `[24:2]`), and notes. `["adjudged", pred, subject]` reads the current value: default, unless an instance has finalized a ruling for this subject (session-scoped).
+
+## Acceptance (stage 4→5)
+
+The definitive test is **script replay**: each Form-and-Example passage named in `acceptance.json` is an event stream; at every step, the scripted actor's action must appear in `available_actions(actor, role, state)` with the right justification, and every action the book declares out of order at that moment must be absent from everyone's list. Three sweeps supplement the replays — (a) Chart I right-column diff generated from `precedence.json table/applicability`; (b) Table II re-expansion diff from `registry.json` (the collapse-is-mechanical claim, tested); (c) `[24:9-13]` and `[23:12-16]` replayed as *engine* streams exercising `table/appeal-yield-matrix`. A verification pass, ideally by an agent outside this authoring line, executes them.

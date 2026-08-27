@@ -1,0 +1,99 @@
+{
+  "model": "ronr-12-unified",
+  "file": "vocabulary",
+  "desc": "The shared vocabularies: reference kinds, events, vote thresholds, motion classes, temporal anchors. One namespace: references are kind/id (e.g. motion/amend, guard/no-question-pending, state/tabled, event/stated, queue/general-orders-current, class/bylaws, order/<id>, timer/table-expiry, table/appeal-yield-matrix). Kinds are closed naming law.",
+
+  "reference_kinds": {
+    "motion": "registry.json records",
+    "guard": "guards.json registry",
+    "event": "this file, events",
+    "threshold": "this file, thresholds",
+    "state": "lifecycle.json states",
+    "timer": "lifecycle.json timers",
+    "table": "named decision tables (precedence.json, voting.json, rules.json, scheduler.json)",
+    "class": "rules.json rule classes",
+    "order": "rules.json order objects (adopted debate-limiting orders etc.)",
+    "queue": "scheduler.json queues",
+    "role": "protocol.json roles",
+    "question": "lifecycle question object instances (runtime)"
+  },
+
+  "events": {
+    "desc": "One event vocabulary. 'origin' names the part that emits it. Core events are usable everywhere; prefer reuse over coining.",
+    "core": [
+      {"id": "made", "origin": "protocol", "cite": "4:4"},
+      {"id": "seconded", "origin": "protocol", "cite": "4:9"},
+      {"id": "stated", "origin": "protocol", "cite": "4:15-16"},
+      {"id": "debate-opened", "origin": "protocol", "cite": "4:25"},
+      {"id": "put", "origin": "protocol", "cite": "4:34"},
+      {"id": "adopted", "origin": "protocol", "cite": "4:43"},
+      {"id": "rejected", "origin": "protocol", "cite": "4:43"},
+      {"id": "withdrawn", "origin": "protocol", "cite": "33:11-18"},
+      {"id": "ruled-out-of-order", "origin": "protocol", "cite": "4:16-17"},
+      {"id": "referred", "origin": "engine", "cite": "13:1"},
+      {"id": "tabled", "origin": "engine", "cite": "17:5"},
+      {"id": "taken-from-table", "origin": "engine", "cite": "34:6"},
+      {"id": "postponed", "origin": "engine", "cite": "14:13"},
+      {"id": "called-up", "origin": "engine", "cite": "37:15"},
+      {"id": "reconsidered", "origin": "engine", "cite": "37:12"},
+      {"id": "session-ended", "origin": "scheduler", "cite": "8:2, 21:7"},
+      {"id": "meeting-ended", "origin": "scheduler", "cite": "8:1, 21:7(a)"},
+      {"id": "recessed", "origin": "scheduler", "cite": "8:7, 20:1"},
+      {"id": "resumed", "origin": "scheduler", "cite": "8:7, 18:7, 19:10"},
+      {"id": "division-demanded", "origin": "protocol", "cite": "29:4"},
+      {"id": "vote-retaken", "origin": "protocol", "desc": "a vote is being retaken by another (or a counted) method — division, retake-by-other-method motion, or chair's own retake", "cite": "29:5, 30:6, 45:9"}
+    ],
+    "protocol": [
+      {"id": "recognized", "cite": "42:2"},
+      {"id": "floor-yielded", "cite": "3:31"},
+      {"id": "interrupted", "cite": "42:20"},
+      {"id": "objected", "desc": "aborts a unanimous-consent shortcut", "cite": "4:58-59"},
+      {"id": "challenge-window-closed", "cite": "45:9"},
+      {"id": "consent-requested", "cite": "4:58"},
+      {"id": "consent-granted", "cite": "4:58"},
+      {"id": "consent-denied", "cite": "4:59"}
+    ],
+    "lifecycle": [
+      {"id": "no-second", "cite": "4:10"},
+      {"id": "postponed-indefinitely", "cite": "11:3"},
+      {"id": "objection-sustained", "cite": "26:5"},
+      {"id": "reported", "desc": "committee reports the referred question back", "cite": "51:36-44"},
+      {"id": "discharged", "cite": "36:10-11"},
+      {"id": "time-arrived", "desc": "a postponed question's set time reached (via scheduler)", "cite": "14:13-17, 41:19"},
+      {"id": "reached-in-order", "desc": "unfinished business reached in the order of business", "cite": "41:23-24"},
+      {"id": "rescinded", "cite": "35:1"},
+      {"id": "amended-as-adopted", "cite": "35:1"}
+    ]
+  },
+
+  "thresholds": {
+    "desc": "Canonical vote-threshold vocabulary. A motion's vote field lists sufficient alternatives — any one suffices. Compound forms combine previous notice with a threshold.",
+    "values": [
+      {"id": "majority", "desc": "more than half of votes cast", "cite": "44:1"},
+      {"id": "two-thirds", "desc": "at least two thirds of votes cast", "cite": "44:3"},
+      {"id": "majority-entire-membership", "desc": "majority of the entire membership", "cite": "44:9"},
+      {"id": "two-thirds-neg", "desc": "sustained by two thirds voting in the negative (e.g. objection-to-consideration: 'shall the question be considered')", "cite": "26:7-8"},
+      {"id": "tie-or-majority-sustains-chair", "desc": "chair's ruling stands unless a majority votes in the negative (appeal)", "cite": "24:3(7)"},
+      {"id": "notice+majority", "desc": "previous notice plus majority", "cite": "35:2(7)"},
+      {"id": "notice+two-thirds", "desc": "previous notice plus two thirds", "cite": "56:50"},
+      {"id": "majority-registered", "desc": "majority of all registered voting members (convention contexts)", "cite": "59:36"},
+      {"id": "single-member-demand", "desc": "effective on the demand of one member; no vote taken", "cite": "18:4(7), 29:4"},
+      {"id": "chair-rules", "desc": "decided by the chair's ruling, not a vote (appealable where applicable)", "cite": "23:2(7), 19:6(7)"},
+      {"id": "not-voted", "desc": "no question is put at all; the chair responds or acts (inquiries, requests answered directly)", "cite": "33:3-10"},
+      {"id": "unanimous-consent", "desc": "adopted absent any objection", "cite": "4:58-59"}
+    ]
+  },
+
+  "motion_classes": {
+    "M": "main", "S": "subsidiary", "P": "privileged", "I": "incidental",
+    "B": "bring-back (motions that bring a question again before the assembly)",
+    "M/B": "main motion of the bring-back kind",
+    "cite": "Table II key; 6:26"
+  },
+
+  "temporal_anchors": {
+    "desc": "Timers reference these named anchors, never raw durations.",
+    "values": ["same-day", "next-business-day", "end-of-session", "next-regular-session", "quarterly-interval"],
+    "cite": "9:7"
+  }
+}

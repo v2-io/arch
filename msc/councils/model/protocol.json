@@ -1,0 +1,131 @@
+{
+  "model": "ronr-12-unified",
+  "file": "protocol",
+  "desc": "Floor and dialogue: roles, the motion-handling dialogue cycle, obtaining/assigning the floor, preference in recognition, interruption rights, debate rights and per-member speech counters, decorum constraints on speech acts, and the voting/announcement exchange. The turn-taking wrapper around the engine: it decides who may speak and what speech act is admissible now; whether the CONTENT of a motion is in order is registry/engine/rules business. Per-motion interrupt/second attributes are registry ownership (Table t44-t45); this part consumes them via guard/in-order-when-other-has-floor.",
+
+  "roles": [
+    {"id": "chair", "desc": "presiding officer; grants recognition, states and puts questions, announces results, rules on order", "cite": "3:6, 47:7"},
+    {"id": "member", "desc": "full participant: attend, make motions, debate, vote", "cite": "1:4"},
+    {"id": "secretary", "desc": "recording officer; reads papers on direction; records", "cite": "3:6, 47:32-33"},
+    {"id": "maker", "desc": "contextual: member who made the pending motion", "cite": "4:6"},
+    {"id": "seconder", "desc": "contextual: member who seconded", "cite": "4:9"},
+    {"id": "reporting-member", "desc": "contextual: presents a board/committee report; motions on behalf of committee need no second", "cite": "51:8-11"},
+    {"id": "nonmember", "desc": "no participation rights; presence at assembly's sufferance", "cite": "61:7, 61:19"}
+  ],
+  "roles_NOTE(judgment)": "maker/seconder/reporting-member are modeled as roles bound per-question, not global states.",
+
+  "dialogue_cycle": {
+    "desc": "Six steps — three to bring before the assembly, three to consider [4:2, 4:25]. Emitted events named per step.",
+    "steps": [
+      {"step": "make", "emits": "made", "rule": "member with the floor states the motion [4:4]. Before stated, the motion is the maker's property: may modify or withdraw freely (withdrawn) [4:19, 33:12]; informal suggestions to modify/withdraw admissible without floor [4:20-23]"},
+      {"step": "second", "emits": "seconded", "rule": "any member, no floor needed, without rising in small assemblies [4:9]. Not required when made by direction of a board/committee [4:11]. Absence of second becomes immaterial once debate begins or any member votes [4:13]"},
+      {"step": "state", "emits": "stated", "rule": "only the chair places the question before the assembly [4:3]; must state it promptly unless ruling it out of order or requiring clearer/written form (ruled-out-of-order alternative) [4:16-18]. After stated, ownership passes to the assembly [4:19]; withdrawal/modification now needs consent — see requests"},
+      {"step": "debate", "emits": "debate-opened", "rule": "if debatable (registry attribute). Maker has first-speech preference [4:27, 42:9(1)]"},
+      {"step": "put", "emits": "put", "rule": "chair puts the question, exact wording definitive [4:34]; affirmative called first, negative always called (courtesy-motion relaxation noted; irrelevant-negative exception) [4:35]. Abstentions never called for [4:35]"},
+      {"step": "announce", "emits": "adopted | rejected", "rule": "report of voting, declaration, effect/execution statement, then next business [4:43-47]"}
+    ],
+    "unanimous_consent": {
+      "rule": "chair may take action or adopt absent objection — 'if there is no objection...'; a single member's objection forces the regular cycle; a timely objection overrides an already-made announcement [4:58-59]",
+      "NOTE(judgment)": "modeled as a compressed cycle emitting stated+put+adopted atomically, abortable by event/objected."
+    }
+  },
+
+  "floor": {
+    "obtaining": [
+      {"rule": "a member must be recognized before making a motion or debating; exceptions are the interruption-capable acts (interrupts below and Table t44-t45, registry-owned)", "cite": "3:30, 42:2"},
+      {"rule": "claim: rise after the floor is yielded, address the chair by title; identification in large assemblies; rising before the floor is yielded establishes no claim", "cite": "3:31-32, 42:2, 42:6"},
+      {"rule": "chair must recognize a member entitled to the floor; assignment (event/recognized) by announcing name/identification, or a nod in small meetings", "cite": "3:30, 42:2"},
+      {"rule": "yield: resuming seat (event/floor-yielded); debate rights not transferable; unexpired time not reservable", "cite": "3:31, 43:10"},
+      {"rule": "recognition of the wrong claimant: remediable by motion/point-of-order; appealable except in mass meetings; assignment may be put to a vote when chair is in doubt (plurality wins the floor)", "cite": "42:14-15"},
+      {"rule": "large-assembly adaptations (microphone queues etc.) are permitted variations, chair-directed pending rules", "cite": "42:16-17"}
+    ]
+  },
+
+  "preference_in_recognition": {
+    "desc": "Applies only among members who rose before anyone was recognized [42:7]. Case selection by when_expr (first matching case governs); ladder entries within a case are strict priority order.",
+    "rules": [
+      {"when": "debatable question immediately pending", "when_expr": ["and", ["!=", ["top"], null], ["debatable", ["top"]]], "order": [
+        {"rule": "maker of the immediately pending motion, if not yet spoken on it", "variants": "reporting-member for committee report; mover of take-from-table; mover (not caller-up) of reconsider", "cite": "42:9(1)"},
+        {"rule": "member who has not spoken on this question today outranks one who has", "cite": "42:9(2)"},
+        {"rule": "alternate between opposing sides when known", "cite": "42:9(3)"}]},
+      {"when": "appeal or point-of-order submitted to assembly, debatable", "when_expr": ["and", ["!=", ["top"], null], ["in", ["motion", ["top"]], ["list", "appeal", "point-of-order"]], ["debatable", ["top"]]], "order": [
+        {"rule": "chair may speak first in preference to all, and again to close", "cite": "24:3(5), 23:19, 42:10"}]},
+      {"when": "undebatable question immediately pending", "when_expr": ["and", ["!=", ["top"], null], ["not", ["debatable", ["top"]]]], "order": [
+        {"rule": "no maker preference", "exception": "maker of reconsider moved for announced purpose of amending, upon reconsideration", "cite": "42:12, 42:11"}]},
+      {"when": "vote result just reported", "when_expr": ["guard", "result-window-open"], "order": [
+        {"rule": "member rising to move retake of the vote by another method", "cite": "42:8"}]},
+      {"when": "no question pending", "when_expr": ["guard", "no-question-pending"], "order": [
+        {"rule": "member assigned to offer the called/prearranged main motion", "cite": "42:13(1)"},
+        {"rule": "member continuing a series of motions toward one object (e.g. after table/suspend-rules adopted for that purpose)", "cite": "42:13(2)"},
+        {"rule": "member whose announced alternative motion follows defeat of the prior motion", "cite": "42:13(3), 10:30(5)"},
+        {"rule": "purpose-priority ladder, in order: (a) reconsider-enter-minutes, (b) reconsider, (c) call up reconsider, (d) give previous notice, (e) take-from-table, (f) motion with previous notice given", "cite": "42:13(4)"}]}
+    ]
+  },
+
+  "interrupts": {
+    "desc": "Only for listed purposes, urgency justifying [42:18-19]; interrupted speaker retains the floor and resumes after disposal (interrupted -> resumed, chair re-assigns) [42:20]. Handing a report to the secretary to read does not yield the floor [42:21]. Full per-motion interrupt/second data is registry ownership (t44-t45), consumed as guard/in-order-when-other-has-floor.",
+    "may_interrupt_speaker": [
+      {"act": "motion/call-for-orders-of-the-day", "cite": "42:18(a)"},
+      {"act": "motion/raise-question-of-privilege", "cite": "42:18(b)"},
+      {"act": "motion/point-of-order (incl. calling member to order)", "cite": "42:18(c)"},
+      {"act": "demand separate vote on independent series / divisible amendments", "cite": "42:18(d)"},
+      {"act": "request/inquiry requiring immediate response", "cite": "42:18(e)"},
+      {"act": "motion/appeal; objection-to-consideration; division-of-assembly — special circumstances", "cite": "42:18(f-h)"}
+    ],
+    "after_assignment_before_speech_also": [
+      {"act": "give previous notice", "cite": "42:19(a)"},
+      {"act": "make (not take up) reconsider / reconsider-enter-minutes", "cite": "42:19(b)"}
+    ]
+  },
+
+  "speech_counters": {
+    "scope": "member x debatable-question x calendar-day",
+    "max_speeches": 2,
+    "max_minutes_per_speech": 10,
+    "modifiable_by": "class/special-rules-of-order, or session/question orders via motion/limit-extend-debate",
+    "cite": "43:8, 43:12, 43:15-17",
+    "rules": [
+      {"rule": "second speech barred while any member seeking floor has not spoken once on that question", "cite": "4:28, 43:13"},
+      {"rule": "each debatable motion in a series is a distinct question for counters", "cite": "43:13"},
+      {"rule": "exhausted = 2 speeches that day on that question", "cite": "4:28"},
+      {"rule": "rights renew entirely on a later day", "cite": "43:12"},
+      {"rule": "asking a question, brief suggestion, or making a secondary motion without comment: not counted", "cite": "43:12"},
+      {"rule": "questions answered by a speaker charge the speaker's time", "cite": "43:10, 33:9"},
+      {"rule": "no transfer or reservation of time", "cite": "43:10"},
+      {"rule": "appeal: one speech per member, chair twice (close)", "cite": "24:3(5), 43:12"},
+      {"rule": "committee-of-whole/quasi/informal speeches don't count against same-day assembly rights", "cite": "13:21, 43:18, 52:1"},
+      {"rule": "reconsider debate rights separate from original consideration; same-day reconsideration re-imports exhaustion for the reconsidered question", "cite": "37:18, 37:21-22"}
+    ],
+    "lifecycle_interaction": "postponement or table+resume to a DIFFERENT day renews rights; same-day resume preserves exhaustion [14:19, 34:6] (state carried by lifecycle; counters owned here)"
+  },
+
+  "requests": {
+    "withdraw_modify": "after stated: request by maker; unanimous-consent attempt first, else vote on granting [33:11-19]. Withdrawal admissible until voting begins; adhering motions fall with it [33:16]. Withdrawn motion = never made (renewal unrestricted) [33:18, 38:2]",
+    "inquiries": "parliamentary inquiry / request for information: no vote; chair responds or channels to a member; third-person exchange through the chair [33:3-10]",
+    "other": "read papers / other privileges: consent or majority [33:20-22]"
+  },
+
+  "decorum": {
+    "desc": "Admissibility filters on debate content. Content compliance is judgment-shaped: breaches enter via [\"adjudged\", \"decorum-breach\", speech-act] (adjudication.json); these rules are the declared standards the adjudication applies.",
+    "rules": [
+      {"rule": "germaneness to the immediately pending question", "cite": "43:20"},
+      {"rule": "no personalities; no questioning motives; measure-not-member", "cite": "43:21, 4:30"},
+      {"rule": "all remarks through the chair; no direct member-to-member exchange", "cite": "43:22"},
+      {"rule": "avoid names; officers by title; chair never addressed as 'you', speaks of self in third person", "cite": "3:10-13, 43:23"},
+      {"rule": "no adverse comment on a prior act not pending unless concluding with a motion to reconsider/rescind/amend it or notice thereof", "cite": "43:24"},
+      {"rule": "maker may not speak against own motion (may vote against)", "cite": "43:25"},
+      {"rule": "chair does not debate while presiding; must relinquish chair to do so, not returning until the main question is disposed of; exception: appeals and submitted points of order", "cite": "43:29-30"},
+      {"rule": "enforcement path on breach: call to order -> permission-to-continue vote -> naming, escalating to rules/disciplinary territory", "cite": "61:10-18"}
+    ]
+  },
+
+  "voting_exchange": {
+    "rules": [
+      {"rule": "interruption of voting barred from first vote cast until polls presumed complete (guard/voting-in-progress); no explanation of votes during voting", "cite": "45:6-7"},
+      {"rule": "vote changeable until result announced; afterward only by unanimous consent, requested immediately", "cite": "45:8"},
+      {"rule": "challenge window: point-of-order on the conduct of a vote, division demand, retake motion, recapitulation, vote change — all only until debate or business intervenes (event/challenge-window-closed), except continuing breaches", "cite": "45:9, 23:6"},
+      {"rule": "division of the assembly: single member's demand (event/division-demanded), from the moment the negative is cast until immediately after announcement, compels a rising retake (event/vote-retaken); dilatory-use filter", "cite": "29:4, 4:52, 29:7"},
+      {"rule": "inconclusive-vote ladder (chair-driven): voice -> 'seem to have it' pause -> rising -> counted rising", "cite": "4:50-51"}
+    ]
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "model": "ronr-12-unified",
+  "file": "precedence",
+  "desc": "The precedence partial order: takes-precedence semantics, rank modifications, incidental admission, reconsider's split rank, the appeal-yield matrix, and the per-motion applicability table. Conditions are expressions per INTERFACE.md; bindings: m = motion id being moved, t = target frame or null.",
+
+  "semantics": {
+    "takes_precedence_over": "takes-precedence-over(B, A) iff B may be moved and stated while A is pending, whereupon B becomes the immediately pending question [5:8]",
+    "unwind": "pending motions are voted in reverse order of stating (LIFO), stopping if any of the halting motions named in [10:34] carries: recess, lay-on-table, postpone-to-certain-time, commit, or postpone-indefinitely (adjourn, when adopted, likewise ends consideration, but via session/meeting end [21:7] rather than the 10:34 list — engine.json unwind is authoritative)",
+    "ranked_chain": "the ranked chain (registry.json, rank 1-13) is a total order [5:11]; incidental motions have no rank among themselves [5:12, 6:19]"
+  },
+
+  "rank_order": ["main-motion", "postpone-indefinitely", "amend", "commit", "postpone-to-certain-time", "limit-extend-debate", "previous-question", "lay-on-table", "call-for-orders-of-the-day", "raise-question-of-privilege", "recess", "adjourn", "fix-time-to-which-to-adjourn"],
+  "rank_order_cite": ["5:11", "t3-t5"],
+
+  "rank_modifications": [
+    {"rule": "amend applied to any amendable motion takes precedence over its target, even a target above rank 3; effective_rank is positional: rank(amend applied to F) = just-above(rank(F)); secondary amendment sits just above the primary it amends; no third degree", "cite": ["6:7", "12:7(1b)", "12:11-12"]},
+    {"rule": "degrees-of-amendment cap: at most one primary and one secondary amendment pending per amended target at a time (relaxed by the filling-blanks device, registry data outside the stack cap)", "cite": ["12:13", "12:92-95"]},
+    {"rule": "limit-extend-debate applies to any immediately pending debatable motion or a consecutive series from it; previous-question likewise to any immediately pending debatable-or-amendable motion or series; both thereby out-rank their targets in the moment of application", "cite": ["6:8", "15:5(2)", "16:5(2)"]},
+    {"rule": "subsidiary motions cannot be applied to one another except per each SDC-2 (e.g., nothing tables an amendment alone — the main question goes with it)", "cite": ["12:7(2)"]}
+  ],
+
+  "incidental_admission": {
+    "rule": "an incidental motion is in order only while legitimately-incidental (guard) to a pending motion or to business at hand; it then takes precedence over the question(s) it arises from and must be decided first [6:18]. It yields to motions of higher rank than the question it arose from, not to lower ones [6:21], and generally yields to privileged motions and (if adhering) to lay-on-table [6:19, 23:2(1)].",
+    "yield_expr_note": "compiled into the push test: an incidental frame I with origin frame O admits a new motion N iff [\">\", [\"erank-of-motion\", N], [\"erank\", O]] or N is privileged or (N = lay-on-table and I adheres) — overridden by table/appeal-yield-matrix for appeals/submitted points, and void for division-of-assembly",
+    "overrides": [
+      {"rule": "division-of-assembly is excepted from the general yield rule entirely — it yields to nothing under this rule", "cite": ["6:19"]},
+      {"rule": "pending appeals / submitted points of order follow table/appeal-yield-matrix, not the generic rule — in particular, an undebatable adhering appeal admits no subsidiary except lay-on-table via the main question, even one out-ranking its origin", "cite": ["24:3(1)"]},
+      {"rule": "every motion yields to motions legitimately incidental to itself; where a per-motion SDC-2 condition conflicts with the generic rule, the per-motion condition wins", "cite": ["6:19"]}
+    ]
+  },
+
+  "reconsider_split_rank": {
+    "making": "outranks everything, including rank 13 and a pending vote-to-adjourn before declaration [37:9(1a), 21:10]; recorded and held (engine.json reconsider_held — suspends execution of the reconsidered vote [37:11]) without pushing a frame",
+    "consideration": "carries only the target's rank [37:9(1b)]: taken up immediately if the target would then be in order, else queued into the pending series at the target's rank position and taken up when all higher frames are disposed of [37:25-27]",
+    "enter_minutes": "reconsider-enter-minutes outranks plain reconsider at making time and cannot be called up the day made (exceptions per registry record) [37:47(2), 37:46-47]"
+  },
+
+  "table/appeal-yield-matrix": {
+    "desc": "The general incidental rule is wrong for appeals unless refined by this four-case table [24:3(1)-(2)], mirrored for points of order the chair submits to the assembly [23:2(1)-(2)]. Case selection: debatable = [\"debatable\", appeal-frame]; adhering = [\"!=\", [\"adheres-to\", appeal-frame], null].",
+    "cases": [
+      {"case": "debatable, non-adhering", "yields_to": ["privileged (when in order by rank)", "limit-extend-debate", "previous-question", "commit", "postpone-to-certain-time", "lay-on-table"], "cite": "24:3(1)-(2)"},
+      {"case": "debatable, adhering", "yields_to": ["privileged (when in order by rank)", "limit-extend-debate", "previous-question"], "note": "commit/postpone/table reach it only applied to the main question, carrying the appeal along", "cite": "24:3(1)-(2), 13:7(2), 14:4(2), 17:3(2)"},
+      {"case": "undebatable, adhering", "yields_to": ["privileged (when in order by rank)", "lay-on-table (via the main question)"], "note": "yields to NO other subsidiary — even one out-ranking the motion it arose from", "cite": "24:3(1)"},
+      {"case": "undebatable, non-adhering", "yields_to": ["privileged (when in order by rank)"], "note": "yields to no subsidiary at all", "cite": "24:3(1)"}
+    ]
+  },
+
+  "table/applicability": {
+    "desc": "Per-motion admissibility beyond the bare rank test (which is engine.json push_legality). applies_to: predicate over the target frame t (null target = the motion relates to no pending question). out_of_order_when: disjuncts — the motion is out of order if ANY expr is true; each carries its citation, so a blocked action's justification is the true disjunct and an allowed action's justification is the falsity of all. Chart I's right-hand column [t4-t5] is the source checklist for the ranked rows.",
+    "rows": [
+      {"motion": "main-motion",
+       "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "introduces business; applies to nothing pending", "cite": "10:1"},
+       "out_of_order_when": [
+        {"expr": ["not", ["guard", "no-question-pending"]], "desc": "any motion is pending", "cite": "t4; 10:8(1)"},
+        {"expr": ["exists", "q", ["ctx", "questions"], ["and", ["guard", "question-within-assembly-control"], ["adjudged", "substantially-same", ["param", "m"], "q"]]], "desc": "conflicts with / duplicates a question within the assembly's control", "cite": "10:26(5)"},
+        {"expr": ["guard", "same-question-decided-this-session"], "cite": "10:26(3), 38:3(1)"}]},
+
+      {"motion": "postpone-indefinitely",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["=", ["motion", ["param", "t"]], "main-motion"]], "desc": "main questions only", "cite": "11:2(2)"},
+       "out_of_order_when": [
+        {"expr": ["exists", "f", ["frames"], ["!=", ["motion", "f"], "main-motion"]], "desc": "any motion except the main question is pending", "cite": "t4; 11:2(1)"},
+        {"expr": ["guard", "pq-order-unexhausted"], "desc": "the previous question has been ordered", "cite": "t4; 16:2"}]},
+
+      {"motion": "amend",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["amendable", ["param", "t"]], ["adjudged", "germane", ["param", "m"], ["param", "t"]]], "desc": "any amendable motion; must be germane", "cite": "12:6, 12:16-21"},
+       "out_of_order_when": [
+        {"expr": ["and", ["=", ["motion", ["param", "t"]], "main-motion"],
+                          ["exists", "f", ["frames"], ["not", ["in", ["motion", "f"], ["list", "main-motion", "postpone-indefinitely"]]]]],
+         "desc": "the application would be to the main question, and any motion except postpone-indefinitely is pending", "cite": "t4; 12:7(1)"},
+        {"expr": ["guard", "pq-order-unexhausted"], "desc": "in any application", "cite": "t4; 16:2"},
+        {"expr": ["and", ["=", ["motion", ["param", "t"]], "amend"], ["exists", "f", ["frames"], ["and", ["=", ["motion", "f"], "amend"], ["=", ["applied-to", "f"], ["param", "t"]]]]], "desc": "degrees cap: the primary amendment already has a secondary pending; no third degree", "cite": "12:11-13"}]},
+
+      {"motion": "commit",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["=", ["motion", ["param", "t"]], "main-motion"]], "desc": "main questions, carrying pending amendments; not applicable to a reconsider alone", "cite": "13:7(2)"},
+       "out_of_order_when": [
+        {"expr": ["exists", "f", ["frames"], ["=", ["motion", "f"], "reconsider"]], "desc": "a reconsider is pending in-series", "cite": "t4; 13:7(2)"},
+        {"expr": ["and", ["guard", "immediately-pending-undebatable"], ["not", ["in", ["motion", ["top"]], ["list", "division-of-question", "consideration-by-paragraph"]]]], "desc": "any undebatable question except division-of-question / consideration-by-paragraph is immediately pending", "cite": "t4; 14:4(1)-(2)"},
+        {"expr": ["guard", "pq-order-unexhausted"], "cite": "t4; 16:2"},
+        {"expr": ["guard", "debate-closing-order-active"], "cite": "13:7(2), 15:11"}]},
+
+      {"motion": "postpone-to-certain-time",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["=", ["motion", ["param", "t"]], "main-motion"]], "desc": "main questions, carrying the whole adhering bundle", "cite": "14:4(2), 14:18"},
+       "out_of_order_when": [
+        {"expr": ["and", ["guard", "immediately-pending-undebatable"], ["not", ["in", ["motion", ["top"]], ["list", "division-of-question", "consideration-by-paragraph"]]]], "desc": "any undebatable question except division-of-question / consideration-by-paragraph is immediately pending", "cite": "t4; 14:4(1)-(2)"},
+        {"expr": ["guard", "pq-order-unexhausted"], "cite": "t4; 16:2"},
+        {"expr": ["guard", "debate-closing-order-active"], "cite": "14:4(2), 15:11"},
+        {"expr": ["not", ["guard", "postpone-horizon"]], "desc": "target time beyond the horizon, or postponement tantamount to killing the question", "cite": "14:6, 14:9"}]},
+
+      {"motion": "limit-extend-debate",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["=", ["param", "t"], ["top"]], ["debatable", ["param", "t"]]], "desc": "the immediately pending debatable motion, or a consecutive series from it", "cite": "15:5(2)"},
+       "out_of_order_when": [
+        {"expr": ["guard", "immediately-pending-undebatable"], "cite": "t4; 15:5(1)"},
+        {"expr": ["guard", "pq-order-unexhausted"], "cite": "t4; 16:2"}]},
+
+      {"motion": "previous-question",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["=", ["param", "t"], ["top"]], ["or", ["debatable", ["param", "t"]], ["amendable", ["param", "t"]]]], "desc": "the immediately pending debatable-or-amendable motion, or a consecutive series from it", "cite": "16:5(2)"},
+       "out_of_order_when": [
+        {"expr": ["guard", "immediately-pending-unamendable-and-undebatable"], "desc": "a motion which cannot be debated or amended is immediately pending", "cite": "t4; 16:5(1)"}]},
+
+      {"motion": "lay-on-table",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["or", ["=", ["motion", ["param", "t"]], "main-motion"], ["=", ["motion", ["param", "t"]], "rescind-amend-adopted"]]], "desc": "the pending main question together with everything adhering to it (nothing tables an amendment alone [12:7(2)]); an amendment to something previously adopted goes to the table alone [17:5]", "cite": "17:3(2), 17:5"},
+       "out_of_order_when": [
+        {"expr": ["guard", "nonadhering-incident-pending"], "desc": "a point of order, undebatable appeal, or a request/inquiry not adhering to the main question is pending", "cite": "t4; 23:2(1), 24:3(1)"},
+        {"expr": ["adjudged", "table-misuse-to-kill", ["param", "m"]], "desc": "the evident purpose is to kill or suppress the question", "cite": "17:2, 17:13-16"}]},
+
+      {"motion": "call-for-orders-of-the-day",
+       "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "a demand that the schedule be followed; relates to no pending question", "cite": "18:2"},
+       "out_of_order_when": [
+        {"expr": ["guard", "suspend-rules-priority-pending"], "cite": "t4; 18:4(1)"},
+        {"expr": ["and", ["not", ["exists", "i", ["ctx", "queues", "special-orders-current"], ["not", ["before", ["now"], ["attr", "i", "hour"]]]]],
+                          ["or", ["event-occurred", "reconsider-being-made", "session"], ["event-occurred", "called-up", "session"]]],
+         "desc": "a reconsider is being made or called up (except when a special order must be taken up)", "cite": "18:4(1)"},
+        {"expr": ["not", ["exists", "i", ["ctx", "queues", "special-orders-current"], ["and", ["!=", ["attr", "i", "hour"], null], ["not", ["before", ["now"], ["attr", "i", "hour"]]]]]],
+         "desc": "no order of the day is being neglected (needed to interrupt a pending question; between questions the call is unnecessary rather than out of order)", "cite": "18:4(1), 18:5"},
+        {"expr": ["and", ["event-occurred", "orders-call-refused", "session"], ["not", ["guard", "no-question-pending"]]], "desc": "previously refused and the then-pending business not yet disposed of", "cite": "18:8(a), 38:7(3)"},
+        {"expr": ["=", ["ctx", "assembly", "body_kind"], "committee-of-the-whole"], "cite": "18:6"}]},
+
+      {"motion": "raise-question-of-privilege",
+       "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "raises a new matter; relates to no pending question", "cite": "19:1, 6:11"},
+       "out_of_order_when": [
+        {"expr": ["guard", "voting-in-progress"], "cite": "19:6(3)"},
+        {"expr": ["not", ["adjudged", "privilege-admissible", ["param", "m"]]], "desc": "chair rules the matter not one of privilege", "cite": "19:3, 19:6(7)"}]},
+
+      {"motion": "recess",
+       "applies_to": {"expr": ["=", ["param", "t"], null], "cite": "6:11"},
+       "out_of_order_when": [
+        {"expr": ["or", ["guard", "no-question-pending"], ["attr", ["param", "m"], "for_future_time"]], "desc": "not privileged (no question pending, or moved for a future time) — the motion is then recess-main, class M, and admits by main-motion rules instead", "cite": "20:3", "note": "variant selector, not a bar: reroutes to the incidental-main variant"}]},
+
+      {"motion": "adjourn",
+       "applies_to": {"expr": ["=", ["param", "t"], null], "cite": "6:11"},
+       "out_of_order_when": [
+        {"expr": ["and", ["guard", "voting-in-progress"], ["!=", ["attr", ["ctx", "vote_in_progress"], "method"], "ballot"]], "desc": "during voting or verification, before result announced (ballot-collection exception)", "cite": "21:6(1)"},
+        {"expr": ["or", ["attr", ["param", "m"], "qualified"], ["exists", "i", ["ctx", "queues", "special-orders-current"], ["=", ["attr", "i", "kind"], "scheduled-adjournment"]], ["attr", ["param", "m"], "would_dissolve_assembly"]], "desc": "qualified, an adjournment hour already set, or adoption would dissolve the assembly — the motion is then adjourn-main, class M", "cite": "21:3", "note": "variant selector: reroutes to adjourn-main"}]},
+
+      {"motion": "fix-time-to-which-to-adjourn",
+       "applies_to": {"expr": ["=", ["param", "t"], null], "cite": "6:11"},
+       "out_of_order_when": [
+        {"expr": ["ctx", "clock", "adjourned_meeting_set"], "desc": "a later meeting of the same session is already scheduled", "cite": "22:2"}]},
+
+      {"motion": "objection-to-consideration",
+       "applies_to": {"expr": ["and", ["!=", ["param", "t"], null], ["=", ["motion", ["param", "t"]], "main-motion"], ["attr", ["question", ["param", "t"]], "original_main"]], "desc": "original main motions only", "cite": "26:2(2), 10:6"},
+       "out_of_order_when": [
+        {"expr": ["not", ["guard", "consideration-not-begun"]], "cite": "26:2(1)"}]},
+
+      {"motion": "division-of-assembly",
+       "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "addresses a vote just taken, not a pending question", "cite": "29:1"},
+       "out_of_order_when": [
+        {"expr": ["not", ["or", ["guard", "voting-in-progress"], ["guard", "result-window-open"]]], "desc": "outside the window: from casting of negative votes until immediately after result announced", "cite": "29:4(1), 45:9"},
+        {"expr": ["adjudged", "dilatory", ["param", "m"]], "desc": "dilatory use (result already clear beyond doubt)", "cite": "29:7"}]},
+
+      {"motion": "take-from-table",
+       "applies_to": {"expr": ["exists", "b", ["ctx", "bundles"], ["and", ["=", ["attr", "b", "kind"], "tabled"], ["timer-open", "table-expiry", ["attr", "b", "frames", 0, "question_ref"]]]], "desc": "a bundle laid on the table this session (or last, within quarterly interval), unexpired", "cite": "34:3"},
+       "out_of_order_when": [
+        {"expr": ["not", ["ctx", "history", "business_transacted_since", "tabling"]], "desc": "no business or interrupting matter dealt with since the tabling (renewal after rejection likewise waits for further business)", "cite": "34:2(2)"},
+        {"expr": ["guard", "series-in-progress"], "desc": "cannot interrupt a connected series", "cite": "34:5"},
+        {"expr": ["not", ["guard", "no-question-pending"]], "cite": "34:2(1)"}]},
+
+      {"motion": "reconsider",
+       "applies_to": {"expr": ["and", ["!=", ["param", "q"], null], ["in", ["state", ["param", "q"]], ["list", "adopted", "rejected", "suppressed-for-session"]], ["not", ["attr", ["param", "q"], "reconsider_excluded"]]], "desc": "a vote not excluded by the registry not_applicable list [37:9(2)]; reconsider_excluded is the per-question record of those exclusions", "cite": "37:9(2)"},
+       "out_of_order_when": [
+        {"expr": ["not", ["guard", "within-reconsider-window"]], "desc": "(making)", "cite": "37:10(b)"},
+        {"expr": ["not", ["guard", "mover-was-prevailing-side"]], "cite": "37:10(a)"}]},
+
+      {"motion": "rescind-amend-adopted",
+       "applies_to": {"expr": ["exists", "q", ["ctx", "questions"], ["and", ["=", ["state", "q"], "adopted"], ["attr", "q", "effect", "in_force"], ["not", ["guard", "unrescindable"]]]], "desc": "something previously adopted and still in force", "cite": "35:1, 35:6"},
+       "out_of_order_when": [
+        {"expr": ["and", ["!=", ["attr", ["param", "q"], "reconsider_hold"], null], ["timer-open", "reconsider-callup-window", ["param", "q"]]], "desc": "the target is reachable via a pending reconsider", "cite": "35:6"},
+        {"expr": ["not", ["guard", "no-question-pending"]], "desc": "as a main motion (incidental orders excepted per 35:2)", "cite": "35:2(1)"}]},
+
+      {"motion": "discharge-committee",
+       "applies_to": {"expr": ["exists", "q", ["ctx", "questions"], ["=", ["state", "q"], "committed"]], "desc": "a question in a committee's hands", "cite": "36:1"},
+       "out_of_order_when": [
+        {"expr": ["not", ["guard", "no-question-pending"]], "cite": "36:4(1)"}]}
+    ],
+    "generic_incidental_note": "Incidental motions without a row here (suspend-rules, division-of-question, consideration-by-paragraph, voting/nomination motions, requests) admit via guard/legitimately-incidental plus their registry-record conditions (windows, timeliness); their yield behavior is incidental_admission plus table/appeal-yield-matrix where applicable."
+  }
+}

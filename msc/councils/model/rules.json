@@ -1,0 +1,100 @@
+{
+  "model": "ronr-12-unified",
+  "file": "rules",
+  "desc": "The rule hierarchy: which rule governs right now, and can it be set aside. A defeasible-priority model: classes totally ordered by authority; specificity defeats generality within the order; suspension can temporarily disable some rules but not others. Also owns the order objects (adopted debate-limiting orders) that guard/no-order-precluding reads and timer/order-exhaustion expires.",
+
+  "classes": [
+    {"id": "procedural-law", "desc": "procedural rules prescribed by federal/state/local law applicable to the body", "cite": ["1:5", "25:8"]},
+    {"id": "charter", "desc": "corporate charter (certificate/articles of incorporation); also charters issued by a superior society to a subordinate unit", "cite": ["2:5-7", "2:7n4"]},
+    {"id": "constitution", "desc": "constitution when a separate document from bylaws; otherwise merged into bylaws", "cite": ["2:10-12"]},
+    {"id": "bylaws", "desc": "the combined basic instrument of the society", "cite": ["2:8-13", "56:1"]},
+    {"id": "special-rules-of-order", "desc": "adopted rules of parliamentary procedure superseding the parliamentary authority", "cite": ["2:15-16", "2:20-22"]},
+    {"id": "parliamentary-authority", "desc": "the adopted manual (RONR); binding where not inconsistent with anything above", "cite": ["2:18"]},
+    {"id": "standing-rules", "desc": "administrative rules not about parliamentary procedure", "cite": ["2:23-24"]},
+    {"id": "convention-standing-rules", "desc": "hybrid class adopted per convention session; may modify parliamentary-authority rules; expires at end of session", "cite": ["59:27", "59:34-37"]},
+    {"id": "custom", "desc": "established practice treated as if a rule until it conflicts with any written rule and a point of order is raised, whereupon it falls", "cite": ["2:25"]},
+    {"id": "general-parliamentary-law", "desc": "default substrate for a body with no adopted rules", "cite": ["1:5"]}
+  ],
+
+  "authority_order": {
+    "order": ["procedural-law", "charter", "constitution", "bylaws", "special-rules-of-order", "convention-standing-rules", "parliamentary-authority", "standing-rules", "custom", "general-parliamentary-law"],
+    "desc": "higher defeats lower on conflict",
+    "cite": ["2:2", "2:7", "2:12", "2:16", "2:18", "2:25", "59:27"],
+    "NOTE(judgment)": "convention-standing-rules are placed as shown because they supersede the parliamentary authority for the session [59:27] but may not conflict with the society's bylaws [59:27]"
+  },
+
+  "override_rules": [
+    {"id": "specificity", "desc": "specificity defeats generality within and across documents at the same level: a particular statement governs over a general one to which it is an exception", "cite": ["3:2", "56:68(3)"]},
+    {"id": "anti-delegation-lock", "desc": "a special rule of order cannot supersede a parliamentary-authority rule that the authority says is alterable only in the bylaws", "cite": ["2:16n5", "56:49"]},
+    {"id": "content-not-name", "desc": "a rule's adoption/amendment/suspension treatment follows its content, not what the society calls it", "cite": ["2:24", "25:14"]},
+    {"id": "other-manuals-persuasive", "desc": "other manuals are merely persuasive where the adopted authority is silent; never binding", "cite": ["2:18-19"]},
+    {"id": "precedent-persuasive", "desc": "precedent (chair rulings + appeal outcomes, with recorded reasons): persuasive only; weight grows with repetition and consistency; overridable by later ruling, appeal, or rule change", "cite": ["23:10-11"]}
+  ],
+
+  "resolution": {
+    "desc": "The procedure behind guard/act-in-order-under-governing-rules: (1) collect rules whose subject covers the act (subject-coverage is a recorded classification per rule — see gaps.json); (2) resolve conflicts by authority_order, then override_rules (specificity, anti-delegation, content-not-name); (3) on residual ambiguity of a rule's meaning, apply interpretation principles as tie-breaker predicates; unresolved ambiguity routes to adjudication (society-decides, majority [56:68(1)])."
+  },
+
+  "interpretation": [
+    {"id": "society-decides", "desc": "the society itself resolves ambiguity, by majority; no interpretation may contradict a clear meaning", "cite": ["56:68(1)"]},
+    {"id": "harmonize", "desc": "prefer the reading that does not conflict with or nullify another provision", "cite": ["56:68(2)"]},
+    {"id": "specific-over-general", "desc": "specific statement defeats general", "cite": ["56:68(3)", "3:2"]},
+    {"id": "expressio-unius", "desc": "authorizing some things of a class prohibits the unmentioned things of that class", "cite": ["56:68(4)"]},
+    {"id": "lesser-included-privilege", "desc": "a granted privilege includes lesser privileges but prohibits greater ones", "cite": ["56:68(5)"]},
+    {"id": "limitation-bounds", "desc": "a prohibition/limitation blocks everything beyond it, permits what is less and unmentioned same-class things not evidently improper", "cite": ["56:68(6)"]},
+    {"id": "definite-penalty-fixed", "desc": "a definite penalty may be neither increased nor diminished", "cite": ["56:68(7)"]},
+    {"id": "general-term-covers-specifics", "desc": "a rule using only the general term applies to all specific terms wholly included under it", "cite": ["56:68(8)"]}
+  ],
+
+  "suspendibility": [
+    {"class": "procedural-law", "suspendible": false, "unless": "the law provides for its own suspension", "cite": ["25:8"]},
+    {"class": "charter", "suspendible": false, "unless": "charter or law so provides", "cite": ["2:7", "25:7"]},
+    {"class": "bylaws", "suspendible": false, "unless": "provision provides for own suspension, OR provision is in the nature of a rule of order (then two-thirds)", "cite": ["2:8(4)", "2:21", "25:7", "62:12n5"]},
+    {"class": "special-rules-of-order", "suspendible": true, "threshold": "two-thirds", "cite": ["2:21", "25:14"]},
+    {"class": "parliamentary-authority", "suspendible": true, "threshold": "two-thirds", "cite": ["25:14"]},
+    {"class": "standing-rules", "suspendible": true, "threshold": "majority", "scope_limit": "only rules applying within a meeting context; at most for the session", "cite": ["2:23", "25:15"]},
+    {"class": "convention-standing-rules", "suspendible": true, "threshold": "majority", "note": "suspending BOTH the convention rule and the underlying general rule requires two-thirds; no suspension for remainder of session; single-application rules cannot be suspended (that would be rescission); the rule naming the parliamentary authority cannot be suspended as such", "cite": ["59:37", "59:47n7"]}
+  ],
+
+  "unsuspendable": {
+    "desc": "Absolutely unsuspendable, regardless of vote. Category membership per rule is content classification (content-not-name), recorded on the rule record; the categories are the closed list below.",
+    "categories": [
+      {"id": "fundamental-principles", "examples": ["one question at a time", "one person one vote", "vote limited to members present", "no cumulative voting absent bylaw"], "cite": ["25:9", "45:2", "45:56", "46:43"]},
+      {"id": "absentee-protections", "examples": ["quorum requirement", "special-meeting scope limited to call", "previous-notice requirements"], "cite": ["25:10", "40:9"]},
+      {"id": "basic-individual-rights", "examples": ["a particular member's right to attend, make motions, nominate, speak, give notice, vote — removable only by discipline"], "cite": ["25:11"]},
+      {"id": "minority-protection-floor", "desc": "no rule protecting a minority of a given size may be suspended over the negative vote of that minority", "cite": ["25:2(7)"]},
+      {"id": "ballot-secrecy", "desc": "a bylaw ballot requirement cannot be suspended so as to expose votes", "cite": ["25:7", "45:20"]},
+      {"id": "outside-meeting-rules", "desc": "rules with application outside the current session cannot be suspended (rescind/amend instead)", "cite": ["25:13", "2:23"]},
+      {"id": "order-of-business-wholesale", "desc": "the order of business cannot be dispensed with entirely in advance; only passed over item-by-item or by proceeding to a subject (two-thirds)", "cite": ["25:12"]}
+    ]
+  },
+
+  "suspension_mechanics": "the motion names its PURPOSE, never the rules [25:4]; nothing beyond that purpose is authorized [25:4]; renewal for the same purpose barred within the same meeting but allowed after adjournment [25:6]; a defeated suspension's purpose may be reached instead at the class thresholds for rescind/amend if the rule is really a standing rule, etc. (route via change_thresholds)",
+
+  "change_thresholds": [
+    {"class": "charter", "adopt": "per law", "amend": "per law + charter limits", "cite": ["2:6"]},
+    {"class": "bylaws", "adopt": "majority (only at founding)", "amend": ["per its own amendment article", "else: notice+two-thirds", "else: majority-entire-membership"], "cite": ["54:20", "56:50", "57:1"]},
+    {"class": "special-rules-of-order", "adopt": ["notice+two-thirds", "majority-entire-membership"], "amend": "same as adopt", "cite": ["2:22"]},
+    {"class": "parliamentary-authority", "adopt": "in bylaws (preferred); else as a special rule of order", "cite": ["2:15"]},
+    {"class": "standing-rules", "adopt": "majority (no notice)", "rescind_amend": ["notice+majority", "two-thirds", "majority-entire-membership"], "cite": ["2:23", "35:2(7)"]},
+    {"class": "convention-standing-rules", "adopt": "two-thirds as a package if any rule individually needs two-thirds; parliamentary rules individually two-thirds, non-parliamentary individually majority", "amend_rescind": ["two-thirds", "majority-registered", "non-parliamentary: notice(prior day)+majority"], "cite": ["59:34-36"]},
+    {"class": "agenda-program", "adopt": "majority (two-thirds if session already has an order of business it conflicts with or if creating special orders there)", "amend_after_adoption": ["two-thirds", "majority-registered", "unanimous-consent"], "cite": ["41:61", "41:63", "59:58-59"]},
+    {"class": "custom", "fall": "automatic upon point of order citing conflict with any written rule", "cite": ["2:25"]}
+  ],
+
+  "continuing_breach_grounds": {
+    "desc": "Adopted acts that are null and void and remain attackable without timeliness limits (consumed by lifecycle for the continuing-breach window and by protocol for point-of-order admissibility). Ground-matching per act is content classification recorded via adjudication or rule data.",
+    "grounds": [
+      {"id": "conflicts-bylaws", "cite": ["23:6(a)"], "exception": "session-scoped incidental main motion conflicting with a suspendible rule-of-order in bylaws, adopted at suspension threshold", "exception_cite": ["10:26(1)n1"]},
+      {"id": "conflicts-adopted-motion-still-in-force", "cite": ["23:6(b)"], "exception": "adopted by the rescind/amend threshold"},
+      {"id": "violates-procedural-law", "cite": ["23:6(c)"]},
+      {"id": "violates-fundamental-principle", "cite": ["23:6(d)"]},
+      {"id": "violates-absentee/ballot-secrecy/basic-right protections", "cite": ["23:6(e)", "23:7-8"]}
+    ]
+  },
+
+  "order_objects": {
+    "desc": "Adopted debate-limiting orders are rules-state: schema.json types.Order, created on adoption of previous-question or limit-extend-debate forms, covering a consecutive series [15:5(2), 16:5(2)]. Ownership wiring (the three-part seam): rules holds the objects; guard/no-order-precluding and guard/pq-order-unexhausted / guard/debate-closing-order-active read them; timer/order-exhaustion (lifecycle.json) expires them. 15:18 / 16:11 is the shared spec all three cite.",
+    "cite": ["15:18", "16:11", "15:10-13", "16:2"]
+  }
+}

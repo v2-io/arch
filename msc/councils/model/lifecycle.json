@@ -1,0 +1,118 @@
+{
+  "model": "ronr-12-unified",
+  "file": "lifecycle",
+  "desc": "The lifecycle of a question object — chiefly a main motion and its adhering bundle — from introduction to final disposition and beyond (force-and-effect, reconsideration, renewal). Four parallel statechart regions per object. The pending stack itself is engine territory; the floor cycle that fires most events is protocol territory; what may be scheduled when is scheduler territory.",
+  "overview": "Every question is an object instantiated when a member makes a motion [4:4] and destroyed only by falling out of all constitutive registers (e.g., withdrawn: treated as never made [33:18]).",
+  "regions": {
+    "R1": "Disposition — introduction -> pending -> temporarily disposed <-> pending -> finally disposed",
+    "R2": "Reconsiderability — a window opened by the disposition vote and closed by clock or by events that make reconsideration impossible [37:9(2)]",
+    "R3": "Effect — for adopted questions: in force until rescinded/amended, or executed; suspended while a reconsideration is pending on it [37:11, 10:26(4)n3]",
+    "R4": "Control — derived property guard/question-within-assembly-control, true exactly when the question is temporarily but not finally disposed of [9:11, 38:8]; gates conflicting/substantially-same main motions [10:26(5)] and renewal [38:8]"
+  },
+
+  "states": [
+    {"id": "moved", "phase": "introduction", "cite": "4:4", "note": "made but not yet seconded/stated; property of the maker [4:19, 33:12]"},
+    {"id": "seconded", "phase": "introduction", "cite": "4:9-14"},
+    {"id": "pending", "phase": "active", "cite": "4:3", "note": "stated by chair; on the engine stack. Sub-flag: immediately-pending vs stacked [5:7]"},
+    {"id": "committed", "phase": "temporary", "cite": "13:1", "note": "in committee's hands; carries pending amendments only [10:8(2), 13:19]"},
+    {"id": "postponed-definitely", "phase": "temporary", "cite": "14:1", "note": "becomes a scheduled item: queue/general-orders-current or queue/special-orders-current [14:13-14]"},
+    {"id": "tabled", "phase": "temporary", "cite": "17:5", "note": "serialized bundle in secretary's care; restorable at will of majority [17:1]"},
+    {"id": "unfinished-business", "phase": "temporary", "cite": "21:7(b), 41:21-23", "note": "carried over by adjournment ending session, next regular session within quarterly-interval"},
+    {"id": "reconsider-pending", "phase": "temporary", "cite": "37:11", "note": "a made-but-undecided reconsider holds the underlying vote's effect suspended"},
+    {"id": "adopted", "phase": "final", "cite": "4:43"},
+    {"id": "rejected", "phase": "final", "cite": "4:43"},
+    {"id": "suppressed-for-session", "phase": "final", "cite": "11:3, 26:5", "note": "killed by postpone-indefinitely or sustained objection-to-consideration; final for the session only"},
+    {"id": "withdrawn", "phase": "final", "cite": "33:18", "note": "as if never made; freely renewable [38:2]"},
+    {"id": "died", "phase": "final", "cite": "17:8, 21:7(c)", "note": "table expiry, or fell to ground at session end beyond quarterly-interval / term turnover; renewable as new"},
+    {"id": "ruled-out-of-order", "phase": "final", "cite": "4:16-17", "note": "subject to appeal via motion/appeal [24]"},
+    {"id": "rescinded", "phase": "final", "cite": "35:1", "note": "terminal for a previously adopted question's effect"}
+  ],
+  "states_NOTE(judgment)": "RONR does not name 'suppressed-for-session' as one state; it treats indefinite postponement [11:3] and a sustained objection [26:5] separately but with identical lifecycle consequences (dead this session, renewable next [38:3(2)], negative/affirmative-vote reconsideration asymmetries handled in R2). Merging them is a modeling choice; the originating event is retained on the object.",
+
+  "transitions": {
+    "desc": "Events are vocabulary.json events. Guards reference guards.json. The legality of MAKING the disposing motion at all (precedence, applicability) is computed by engine + precedence data and is not re-checked here — this region assumes a legally adopted disposing motion and records its lifecycle effect.",
+    "list": [
+      {"from": "(start)", "on": "made", "to": "moved", "cite": "4:4"},
+      {"from": "moved", "on": "withdrawn", "to": "withdrawn", "cite": "4:19, 33:12", "note": "maker's unilateral right before stating"},
+      {"from": "moved", "on": "no-second", "to": "died", "cite": "4:10", "note": "freely renewable [38:2]"},
+      {"from": "moved", "on": "seconded", "to": "seconded", "cite": "4:9"},
+      {"from": "seconded", "on": "stated", "to": "pending", "cite": "4:15-16", "note": "ownership passes from maker to assembly [4:19]"},
+      {"from": "seconded", "on": "ruled-out-of-order", "to": "ruled-out-of-order", "cite": "4:16-17"},
+
+      {"from": "pending", "on": "put", "to": "adopted | rejected", "cite": "4:41-49", "guard": "threshold satisfied per motion's SDC-7 (registry vote field)"},
+      {"from": "pending", "on": "referred", "to": "committed", "cite": "13", "note": "drops adhering postpone-indefinitely [11:4, 13:19]; pending reconsiders of adhering motions thereafter ignored [13:7(2), 37:34]; exhausts debate-limit and previous-question orders [13:21, 15:18, 16:11]"},
+      {"from": "pending", "on": "postponed", "to": "postponed-definitely", "cite": "14", "guard": "guard/postpone-horizon", "note": "carries whole adhering bundle [14:18]"},
+      {"from": "pending", "on": "tabled", "to": "tabled", "cite": "17:5", "note": "carries whole adhering bundle; a pending amendment-to-something-previously-adopted goes alone [17:5]"},
+      {"from": "pending", "on": "postponed-indefinitely", "to": "suppressed-for-session", "cite": "11:3"},
+      {"from": "pending", "on": "objection-sustained", "to": "suppressed-for-session", "cite": "26:5", "note": "original main motions only, before consideration begun [26:2(1-2)]"},
+      {"from": "pending", "on": "withdrawn", "to": "withdrawn", "cite": "33:13-18", "note": "requires leave of assembly; adhering motions evaporate with it [33:16]"},
+
+      {"from": "pending", "on": "recessed | interrupted", "to": "pending", "cite": "8:7, 18:7, 19:10, 41:53", "note": "history: not a state change; see history"},
+      {"from": "pending", "on": "meeting-ended", "to": "pending", "cite": "21:7(a)", "guard_expr": ["ctx", "clock", "adjourned_meeting_set"], "note": "session continues; resumes at exact point, after minutes [9:19]"},
+      {"from": "pending", "on": "session-ended", "to": "unfinished-business", "cite": "21:7(b)", "guard": "guard/carryover-eligible"},
+      {"from": "pending", "on": "session-ended", "to": "died", "cite": "21:7(c)", "guard": "NOT guard/carryover-eligible", "note": "falls to ground; introducible as new"},
+
+      {"from": "committed", "on": "reported", "to": "pending", "cite": "51:36-44", "note": "restored with referred amendments first in order [51:42-43]; debate/PQ orders exhausted even same session [13:21, 16:12]; same-question amendment prohibitions lifted [13:20]"},
+      {"from": "committed", "on": "discharged", "to": "pending | died", "cite": "36:10-11", "note": "pending automatically if referred while pending via subsidiary commit and no later time set; if task was assigned by main motion, a new main motion is needed or it dies [36:11]"},
+      {"from": "committed", "on": "session-ended", "to": "committed", "cite": "9:8, 21:7(c)", "note": "referral survives session boundaries and term turnover"},
+
+      {"from": "tabled", "on": "taken-from-table", "to": "pending", "cite": "34:6", "note": "restored in same condition so far as possible; an adhering postpone whose time has passed is ignored [34:6]; same-session take-up does NOT exhaust previous-question / limit-debate orders even on another day [34:6]"},
+      {"from": "tabled", "on": "timer/table-expiry", "to": "died", "cite": "17:8, 34:3"},
+
+      {"from": "postponed-definitely", "on": "time-arrived", "to": "pending", "cite": "14:13-17, 41:19", "note": "via scheduler; announced by chair, no motion needed [14:17]"},
+      {"from": "postponed-definitely", "on": "session-ended", "to": "unfinished-business | died", "cite": "21:7(b-c), 41:23(c)", "guard": "guard/carryover-eligible"},
+      {"from": "unfinished-business", "on": "reached-in-order", "to": "pending", "cite": "41:23-24"},
+
+      {"from": "adopted | rejected", "on": "reconsidered", "to": "pending", "cite": "37:7, 37:19", "guard": "R2 window open", "note": "restored to exact position the moment before the original vote; original vote canceled [37:12, 37:19]"},
+      {"from": "adopted", "on": "rescinded", "to": "rescinded", "cite": "35:1", "guard": "NOT guard/unrescindable"},
+      {"from": "adopted", "on": "amended-as-adopted", "to": "adopted", "cite": "35:1", "note": "self-loop; text modified, force continues"}
+    ]
+  },
+
+  "timers": {
+    "desc": "Consulted via [\"timer-open\", id, q]. Each timer starts on start_event and closes at expires_at (a time expression over anchors) and/or on expires_on_event; open iff started, not past expires_at, and no closing event has fired.",
+    "list": [
+      {"id": "reconsider-make-window", "start_event": "put (disposition vote)",
+       "expires_at": ["if", ["before", ["anchor", "next-business-day"], ["anchor", "end-of-session"]], ["anchor", "next-business-day"], ["anchor", "end-of-session"]],
+       "cite": "37:8(b), 37:10(b)", "note": "no time limit in standing/special committees [37:35(1)] — guard/within-reconsider-window carries that disjunct"},
+      {"id": "reconsider-callup-window", "start_event": "reconsider made but not taken up",
+       "expires_at": ["if", ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]], ["anchor", "end-of-session", ["ctx", "clock", "next_regular_session"]], ["anchor", "end-of-session", ["ctx", "clock", "current_session"]]],
+       "cite": "37:15", "note": "an intervening special meeting called for the purpose also serves [37:15]"},
+      {"id": "reconsider-enter-minutes-callup", "start_event": "reconsider-enter-minutes made (same day as vote only)",
+       "expires_at": "as reconsider-callup-window",
+       "opens_at": ["if", ["ctx", "clock", "last_business_day_of_session"], ["now"], ["anchor", "next-business-day"]],
+       "cite": "37:46-47", "note": "not callable the day made, except last-day-but-not-last-meeting of a final session"},
+      {"id": "table-expiry", "start_event": "tabled",
+       "expires_at": ["if", ["and", ["within-quarterly", ["ctx", "clock", "current_session"], ["ctx", "clock", "next_regular_session"]], ["not", ["ctx", "clock", "term_boundary_before_next_session"]]], ["anchor", "end-of-session", ["ctx", "clock", "next_regular_session"]], ["anchor", "end-of-session", ["ctx", "clock", "current_session"]]],
+       "cite": "17:8, 34:3, 34:3n1"},
+      {"id": "vote-challenge-window", "start_event": "result announced",
+       "expires_on_event": "debate-opened | any business event on another question (continuing-breach exceptions aside [23:6])",
+       "cite": "45:9, 23:5-6"},
+      {"id": "renewal-unblock", "start_event": "final disposition without adoption",
+       "opens_on_event": "session-ended", "expires_on_event": "never (guard/question-within-assembly-control blocks instead when the question went over unfinished [38:8])",
+       "cite": "38:3(2), 38:8"},
+      {"id": "order-exhaustion", "start_event": "a debate-limiting order adopted (order/<id> in rules state)",
+       "expires_on_event": "previous-question order: all covered questions voted, or session-ended [16:11]; limit/close-debate order: session-ended [15:18]; both exhausted early by referred even within the session [13:21, 15:18(2), 16:11(2)]",
+       "cite": "15:18, 16:11", "note": "the order objects live in rules state; guard/no-order-precluding reads them; this timer owns their expiry and sets Order.exhausted"}
+    ]
+  },
+
+  "reconsider_hold": "While a made reconsider is undisposed, the underlying question sits in reconsider-pending: all action under the vote is suspended [37:11]; termination of the hold (reconsider decided, withdrawn, expired, or fallen to ground) either cancels the original vote (adopted reconsider [37:12]) or retroactively revives it in full force [37:11-12, 21:7(c)n6]. The window closes early — regardless of clock — when the vote becomes unreachable: provisions partly executed, contract-with-notice, election final per [46:46], or a same-result path available by majority without notice [37:9(2)].",
+
+  "history": {
+    "desc": "The statechart's H* mechanism. Interruption never destroys position. On resumed, consideration continues at the exact point where it was interrupted, with the interrupted speaker re-assigned the floor where applicable: recess [8:7, 20:10], orders of the day completed [18:7, 18:11], question of privilege disposed of [19:10, 19:17], special-order preemption [41:53], adjourned meeting continuing a session [9:19, 21:7(a)].",
+    "erasures": [
+      {"boundary": "day", "erases": "per-member debate rights renew each day per question (protocol counters reset)", "cite": "43:12, 14:19, 34:6"},
+      {"boundary": "session", "erases": "debate-limit and previous-question orders are exhausted [15:18, 16:11]; same-session 'same question' amendment prohibitions lapse (amendments may be re-offered on reconsideration or take-from-table at a later session) [34:6n2, 37:19n6]; renewal unblocks [38:3(2)]", "cite": "15:18, 16:11, 34:6n2, 37:19n6, 38:3(2)"},
+      {"boundary": "referral", "erases": "exhausts debate orders even within the session [13:21, 16:12] and lifts intra-session same-question amendment bars [13:20]", "cite": "13:21, 16:12, 13:20"}
+    ],
+    "caution": "take-from-table at the SAME session does not exhaust previous-question / limit-debate orders even on another day [34:6] — the order-exhaustion erasure is a session-boundary (and referral) effect, not a day-boundary one.",
+    "NOTE(judgment)": "'restored in the same condition so far as possible' [17:7, 34:6] is modeled as: the engine restores the serialized frame verbatim, then the lifecycle applies the boundary-crossing erasures above as a post-restore normalization step. RONR states the erasures rule-by-rule; the two-phase reading is a modeling convenience."
+  },
+
+  "effect_and_control": {
+    "R3": "Adopted main motions have continuing force until a termination written into them arrives or they are rescinded/amended [10:26(4)n3]; conflicting later motions are null and void unless adopted by the rescind-grade threshold [23:6(b), 39:5].",
+    "R4": "guard/question-within-assembly-control iff R1 state in {pending, committed, postponed-definitely, tabled, unfinished-business, reconsider-pending} [9:11, 38:8]. While true: no main motion may conflict with or substantially duplicate the question [10:26(5)]; the listed extraction routes (discharge, take-from-table, suspend-the-rules, reconsider call-up) are the only ways back in [10:26(5)(a-d)].",
+    "null_and_void": "Actions null and void ab initio (conflict with bylaws/law, absentee-protection or basic-rights violations) never validly enter adopted at all; a continuing-breach point of order can declare this at any time while effect continues [23:6, 23:9] (rules.json continuing_breach_grounds)."
+  }
+}

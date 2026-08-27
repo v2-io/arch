@@ -1,0 +1,62 @@
+{
+  "model": "ronr-12-unified",
+  "file": "acceptance",
+  "desc": "The acceptance suite. Definitive test: script replay — each Form-and-Example passage is an event stream; at every step the scripted actor's action must appear in available_actions(actor, role, state) with the right justification, and every action the book declares out of order at that moment must be absent from everyone's list. Executed by a verification pass, ideally outside this authoring line.",
+
+  "replays": [
+    {"cite": "10:34", "exercises": "the eight-motion pending series (main; postpone-indefinitely; amend; commit; postpone; ballot-vote motion; lay-on-table; recess): push legality at each step, reverse-order unwind, series-halting rows", "parts": ["engine", "precedence", "registry"]},
+    {"cite": "10:38-42", "exercises": "full six-step dialogue cycle, maker's first-speech preference, announcement with effect", "parts": ["protocol"]},
+    {"cite": "4:61", "exercises": "unanimous-consent extension exchange (three phrasings)", "parts": ["protocol"]},
+    {"cite": "6:7", "exercises": "amend applied to a pending postpone-to-certain-time: effective-rank modification while postpone-indefinitely/amend/commit (against the main question) are precluded", "parts": ["engine", "precedence"]},
+    {"cite": "11:6-8", "exercises": "postpone-indefinitely adopted and rejected paths into/around suppressed-for-session", "parts": ["lifecycle"]},
+    {"cite": "12:83-89", "exercises": "substitute walk: primary substitute + secondary amendments; ordering of amendment opportunities; chair's restatement discipline (stating/putting forms)", "parts": ["engine", "protocol", "registry"]},
+    {"cite": "12:109-110", "exercises": "filling a blank with amounts: proposal ordering", "parts": ["registry"]},
+    {"cite": "13:26", "exercises": "completing an incomplete commit via filling blanks", "parts": ["registry", "engine"]},
+    {"cite": "13:19; 11:4", "exercises": "referral drops postpone-indefinitely, carries amendments", "parts": ["engine", "lifecycle"]},
+    {"cite": "14:18; 14:21-22", "exercises": "postpone with adhering motions; special-order form handed to scheduler; amendment changes threshold to two-thirds mid-consideration; announcement at the appointed hour; postponed-definitely -> scheduler -> pending", "parts": ["engine", "scheduler", "lifecycle", "registry"]},
+    {"cite": "16:9; 16:26-27", "exercises": "previous question ordered on parts/whole of a series; competing PQ forms voted largest-scope first; voting halt when a covered commit/postpone is adopted; limited recognition mid-put ('For what purpose does the member rise?')", "parts": ["engine", "protocol", "registry"]},
+    {"cite": "17:5 + 34:6; 17:20-24 + 34:8-10; 17:23", "exercises": "table and restore of a resolution + amendment + commit bundle, same immediately pending question; right-of-way on return; claiming limited recognition while lay-on-table pending", "parts": ["engine", "lifecycle", "protocol"]},
+    {"cite": "19:13-17", "exercises": "question of privilege (executive session) interrupting a pending resolution and a speaker: context push, disposal, exact resumption", "parts": ["engine", "protocol", "lifecycle"]},
+    {"cite": "21:17-19", "exercises": "adjournment with business pending; the [21:7(a-c)] branch table", "parts": ["lifecycle", "scheduler"]},
+    {"cite": "23:12-16", "exercises": "point-of-order interruption — ENGINE replay, not only protocol: yield behavior of the submitted point per table/appeal-yield-matrix", "parts": ["engine", "precedence", "adjudication", "protocol"]},
+    {"cite": "24:9-13", "exercises": "appeal exchange and chair's two speeches — ENGINE replay: the appeal-yield matrix is the least-redundantly-modeled region", "parts": ["engine", "precedence", "adjudication", "protocol"]},
+    {"cite": "25:12", "exercises": "attempted wholesale dispensing with the order of business (must fail); two-thirds proceed-to-subject succeeds with mandatory return to sequence", "parts": ["rules", "scheduler"]},
+    {"cite": "26:8", "exercises": "objection-to-consideration put/announce forms (two-thirds-neg threshold)", "parts": ["voting", "registry"]},
+    {"cite": "2:25", "exercises": "custom falling on point of order (hierarchy resolution)", "parts": ["rules", "adjudication"]},
+    {"cite": "33:4; 33:7-8; 33:12-15", "exercises": "inquiry/information exchanges; withdrawal before/after stating", "parts": ["protocol", "lifecycle"]},
+    {"cite": "34:9-10", "exercises": "preference claim to take from the table against a new main motion, incl. after the new motion is made but before stated", "parts": ["protocol", "precedence"]},
+    {"cite": "36:12-15", "exercises": "discharge with and without a specified later time", "parts": ["lifecycle"]},
+    {"cite": "37:27", "exercises": "reconsider of a commit vote made while main + amend + lay-on-table pending: recorded, then slotted at commit's rank after the table motion fails", "parts": ["engine", "precedence"]},
+    {"cite": "37:36-45", "exercises": "reconsider made/called-up/adopted; restoration to pre-vote position", "parts": ["lifecycle", "engine"]},
+    {"cite": "37:46-52", "exercises": "reconsider-and-enter-on-the-minutes clock behavior", "parts": ["lifecycle", "registry"]},
+    {"cite": "18:10-11", "exercises": "call for the orders of the day at an 11:30 special order; interruption and exact-point resumption", "parts": ["scheduler", "engine", "lifecycle"]},
+    {"cite": "41:51", "exercises": "4:15/4:30 general-order pair: earlier-made outranks earlier-hour; no interruption of a pending general order", "parts": ["scheduler"]},
+    {"cite": "41:55", "exercises": "2/3/4 P.M. special-order chain: made-order preemption cascade and resumption order", "parts": ["scheduler", "engine"]},
+    {"cite": "45:37-38", "exercises": "tellers' reports as worked examples of ballot arithmetic", "parts": ["voting"]},
+    {"cite": "51:37-44", "exercises": "committee reports back: automatic re-pending, referred-amendment ordering, indefinite-postponement recommendation sequencing", "parts": ["lifecycle", "engine"]},
+    {"cite": "59:37 + 59:39-47", "exercises": "convention standing rule suspension at majority vs. two-thirds combined suspension", "parts": ["rules"]},
+    {"cite": "61:14", "exercises": "naming declaration (second-person exception)", "parts": ["protocol"]},
+    {"cite": "62:12-14", "exercises": "suspending the bylaws-based presiding right (rule-of-order-in-bylaws suspendibility)", "parts": ["rules"]},
+    {"cite": "9:7 worked dates", "exercises": "quarterly-interval arithmetic for carryover-eligible, table-expiry, postpone-horizon", "parts": ["lifecycle", "scheduler"]}
+  ],
+
+  "sweeps": [
+    {"id": "chart-i-column", "desc": "generate each subsidiary/privileged motion's out-of-order conditions from precedence.json table/applicability and diff against Chart I's right-hand column (../RONR-12/table-4-1.jpg)", "cite": "t4-t5"},
+    {"id": "table-ii-reexpansion", "desc": "re-expand the registry's ~30 collapsed records (aliases + incidental-main variants) to Table II's ~98 rows and diff attribute-by-attribute against ../RONR-12/table-ii.md — the registry's collapse-is-mechanical NOTE(judgment) treated as a testable claim", "cite": "t6-t33"},
+    {"id": "appeal-passages-as-engine-vectors", "desc": "[24:9-13] and [23:12-16] replayed as engine event streams, not only protocol dialogues — they exercise table/appeal-yield-matrix", "cite": "24:9-13, 23:12-16"}
+  ],
+
+  "verified_fixed_points": {
+    "desc": "Independently confirmed correct by a de novo audit (~120 citations first-hand, Table II sampled row-by-row, Chart I read against the precedence model) — preserve as stated; a verifier finding a discrepancy here should suspect the trace, then the model, then re-read the source. The independent checks for any future audit: table-ii.md, table-viii.md, and Chart I are the only artifacts independent of the text the model cites — frame an audit around them first.",
+    "items": [
+      "ranked-chain SDC attributes incl. appeal's tie-or-majority-sustains-chair [24:3(7)], objection's two-thirds-neg [26:2(7)], the postpone->special-order threshold flip with majority enabling amendment [14:4(7)], previous-question's affirmative-reconsider-only-before-execution [16:5(8)] beside limit-extend's unexecuted-part rule [15:5(8)], lay-on-table's negative-only reconsider [17:3(8)], adjourn's ballot-collection exception [21:6(1)]",
+      "ballot-counting table cell-for-cell with Table VIII; multi-seat rules [46:32-33]",
+      "reconsider's split-rank slotting incl. the worked mid-series case [37:27]",
+      "the scheduler dispatch synthesis against both worked timing examples [41:51, 41:55]",
+      "timers: quarterly-interval, carryover branches [21:7(a)-(c)], table-expiry with term-turnover footnote [34:3n1], reconsider call-up window [37:15]",
+      "all eight interpretation principles [56:68], continuing-breach grounds [23:6(a)-(e)], suspendability model [25:7-15], convention-standing-rules treatment [59:27, 59:34-37]",
+      "every NOTE(judgment) marker marks a genuine modeling choice, none conceals an error; the two-phase restore reading (lifecycle history) and the context stack (engine) are defensible readings of text that lacks that vocabulary",
+      "flattening caution verified: take-from-table at the same session does not exhaust previous-question / limit-debate orders even on another day [34:6] — kept distinct from the day-boundary erasures"
+    ]
+  }
+}
