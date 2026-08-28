@@ -1,0 +1,364 @@
+# Context salience, memory consolidation, and self-triggered retrieval — state of the field, 2026-08-28
+
+A working dossier on what the literature currently holds, where the four proposed directions actually sit against it, and which experimental designs are worth taking.
+
+**Provenance marking used throughout.** Every substantive claim carries one of:
+
+- `[fetched]` — a primary source (arXiv abstract/HTML, venue page, or paper body) was retrieved and read during this probe. Reliable to the granularity stated.
+- `[summarized]` — a primary source was fetched, but content reached us through a summarizing intermediary rather than raw text. Directionally reliable; specific numbers want a second look.
+- `[snippet]` — search-result title/snippet only. A pointer, not a finding.
+- `[prior]` — an agent's pre-2026 training knowledge, not re-verified. Possibly stale.
+- `[inference]` — reasoning across sources, attributed. Not stated by any paper.
+
+Arxiv IDs and dates are as returned by search and fetch tools. Anchor citations carry an explicit verification status in §9; the ones marked unverified should be checked against arxiv.org before any of this reaches a paper.
+
+---
+
+## 1. Bottom line
+
+1. **Attention-magnitude-as-importance is over as a default.** Three independent 2025-26 lines (perturbation-theoretic scoring, CUR leverage scores, representational-change scoring) have replaced it, and two papers argue the eviction-scoring problem *is* an interpretability problem. A salience heatmap built on raw attention weights is now a minority methodological position that needs defending, not the obvious starting point.
+
+2. **The single most consequential cross-territory finding is that salience is a (context, query) joint property, not a per-token scalar.** It shows up independently in KV eviction (query-dependent importance rankings), attribution (flat scoring collapses on jointly-distributed signal), and now in a formal information-theoretic treatment: query-agnostic compaction pays a fixed penalty of `H(Q)` in budget. This falsifies the idea of computing a salience map once and consolidating against it.
+
+3. **The field reads middle-loss as pathology; ASF reads it as health. Both are right about different content, and nobody has built the discriminator.** The distinguishing question is not "did salience decay" but "is this span still binding on future action, or is its influence screened off by something retained." This is the dossier's central open problem — §3.
+
+4. **"Verbatim beats extraction" is a live and surprising empirical claim** that contradicts what every shipping memory product assumes. Combined with (2), it points at *salience-gated retention of raw spans with query-time re-scoring*, not salience-gated summarization. No product does this; one paper (AGMR) does a near-neighbor of it offline.
+
+5. **SASM's novelty residue survived contact with the literature, but is narrower and more buildable than framed.** Model-emitted retrieval control tokens exist (GRIP, April 2026). The involuntary/ambient phenomenology exists (harness-side). The KV-splicing mechanics exist as a mature systems literature nobody in the sweeps had searched — CacheBlend, EPIC, MiniPIC, KV Packet — that solves exactly the position-independent cache reuse problem. What does not exist anywhere located is the *combination*, plus the trained-to-feel-involuntary framing. §5.4.
+
+6. **The closest thing to a mechanically usable "involuntary impulse signal" is EpiKV's epiphany score** (June 2026): the change in internal representation, read directly off the forward pass, no attention matrix required. It was built for eviction in reasoning models, but it is a forward-only, kernel-compatible scalar that fires on representational shift — which is the shape a retrieval impulse would need.
+
+7. **Application (1) has an intervention in the literature but no instrument.** HIPIF (June 2026) folds completed-subgoal execution histories into terminal observations and trains it end-to-end with GRPO — that is Joseph's Strategy-DAG decay claim implemented as an engineering move. It reports end-task numbers only, has no ablation isolating the folding operation, and measures nothing about salience. The measurement is the open part.
+
+8. **Application (2) is the least occupied of the four.** The field frames this as belief-vs-assertion (deception lens), not goal-vs-world-model. Nobody produces a coupling estimate. Simultaneously, a 2026 wave of steering-vector skepticism (non-identifiability, non-surjectivity, OOD probe failure) says any design resting on "find the direction, steer it" needs its own validity argument first.
+
+9. **Verification debt is real and uniform.** Nearly every citation below reached us through a summarizing layer. Treat §9 as the gate before anything is cited externally.
+
+---
+
+## 2. What changed, per territory, in the last ~12 months
+
+| Territory | The state you'd expect from early 2026 | What actually happened |
+|---|---|---|
+| KV eviction | H2O/SnapKV attention-score heuristics, incremental improvements | Pivot to distrusting attention entirely; fragility of the *stability assumption* became the central object; two papers name compression as an interpretability problem |
+| Context attribution | ContextCite as the anchor | Hierarchical/cheap successors (TracLLM), learned attention probes (AT2), and a new multi-turn/agentic-transcript subfield (Tokengeist) that didn't exist as a named problem |
+| Attention interpretability | Retrieval heads as a settled finding; lost-in-the-middle as folk law | Retrieval heads contested as dynamic-not-static; lost-in-the-middle's direction and magnitude reported contingent on window-fill and modality; rollout/flow effectively abandoned for LLM salience |
+| Agent memory | Compression/extraction as consensus improvement | A controlled ablation arguing verbatim beats extraction; a rigorous benchmark showing compaction systematically drops non-current-subgoal constraints |
+| Self-triggered retrieval | Self-RAG / FLARE lineage | GRIP (control-token retrieval-as-generation, April 2026); separately, a mature position-independent-caching systems literature the retrieval side never touches |
+| Model interiority | Reasoning traces discarded between turns | Providers moving to retention for cost/agentic reasons; a security finding showing traces carry state present nowhere else; "epiphenomenal CoT" locating the discontinuity *inside* a single pass |
+| Goal/world decomposition | Othello-GPT-style linear world models, single architecture | Replicated across seven architecture families; but a 2026 wave undermining steering-vector interpretability generally |
+| Constituted alignment | — | Active empirical niche under other names (alignment tipping, agent aging, longitudinal memory risk); uniformly risk-framed; Anthropic's own persona theory explicitly stops short of individuation |
+
+---
+
+## 3. The central unresolved question: healthy decay vs. silent drop
+
+This is the crux of application (1) and nobody owns it. Stating it plainly because the dossier's other sections all lean on it.
+
+**The apparent contradiction.** ASF predicts that in a healthy hierarchical execution, salience of completed subgoals decays, and the "forgotten middle" is a positive signature. Three independent lines report middle-loss as failure:
+
+- *Taming the Fragility of KV Cache Eviction* (arXiv 2510.13334, Oct 2025) `[summarized]` — average retained-importance 0.92 looks fine, worst-case-over-time drops to 0.34; 89 instances where 50% cache retention captured under 50% of importance mass.
+- *Governance Decay* (Shiyang Chen, arXiv 2606.22528) `[summarized]` — post-compaction constraint violations 0% → 30% (59% worst model); soft/organizational constraints decay **8.3×** more than hard safety norms.
+- *Tokengeist* (arXiv 2607.22610) `[fetched by sweep]` — flat attribution coverage ~70% at depth 1, <20% at depth 2, near-zero past depth 3.
+
+**These are not measuring the same thing, and once separated the contradiction dissolves.** `[inference — mine]`
+
+- Fragility measures importance-mass retention *against the current generation step's demands*. Forward-looking, within-task.
+- Governance Decay measures survival of constraints that are *dormant but still binding*.
+- Tokengeist measures *attribution-method recoverability* of provenance — an archival property of the measuring instrument, which the paper itself flags as correlational rather than causal.
+- ASF's claim concerns *discharged* obligations: a subgoal completed, whose result has been folded into retained state.
+
+**So the discriminator is a screening-off condition, not a decay-shape condition.** A span is safely forgettable iff its causal influence on every future admissible continuation is (approximately) mediated by some span that is retained. A completed subgoal's raw execution history is screened off by its terminal observation — which is precisely and non-coincidentally what HIPIF folds it to. A dormant governance constraint is screened off by nothing, so dropping it changes future behavior.
+
+**The instrument that would settle it is a 2×2, and every existing measurement gives only a marginal:**
+
+|  | removal is behaviorally null | removal changes future action |
+|---|---|---|
+| **measured salience low** | healthy release — ASF's predicted positive signature | silent drop — the Governance Decay cell |
+| **measured salience high** | sink / positional artifact / distractor | live working set |
+
+Eviction papers measure the columns (behavioral delta vs. full-cache baseline, as validation of their scores). Attribution papers measure the rows. Governance Decay lands in the off-diagonal cell by construction, but only for injected constraints, and only measures the drop, not the salience. Nobody crosses the axes on a hierarchical plan trace.
+
+**And the sharpest version of the finding, which is worth sitting with:** Governance Decay's 8.3× result says that current summarizers already use *"is this the current subgoal"* as their proxy for *"is this still binding."* That is the wrong discriminator, and it is the same proxy ASF's healthy-decay prediction would endorse if applied naively. The prediction and the failure mode are the same phenomenon with opposite valence. The entire value of measuring salience — rather than trusting a summarizer — is in telling the two cells apart, and that means a salience number alone can never be the criterion. The criterion is salience *plus* a counterfactual on future admissible continuations.
+
+**Practical consequence for a probe design.** Do not validate a Strategy-DAG decay claim by showing the salience curve looks like healthy decay. Validate it the way DefensiveKV validates eviction: behaviorally, against a full-context baseline, on downstream plan-execution quality — and in worst-case-over-time form, not averaged, because both Fragility and Pitfalls independently found that aggregate metrics hide sharp localized failures.
+
+---
+
+## 4. Query-conditional salience — the finding that crosses every territory
+
+Four independent sources converge, and none of the sweeps had all four in view:
+
+- *The Pitfalls of KV Cache Compression* (arXiv 2510.00231, Oct 2025) `[summarized]` — importance rankings shift substantially with the current query; also position bias, layer-specific inconsistency, head heterogeneity, temporal instability, and per-layer eviction compounding. Tokens scored low-importance "frequently contained critical semantic content."
+- *TracLLM* (arXiv 2506.04202, June 2025) `[fetched by sweep]` — flat single-text-contribution scoring matches joint methods (0.96 precision) when signal is spread across *independent* texts, but collapses to 0.18 recall vs 0.93 when the same signal is *jointly* distributed across 1-3 texts.
+- *What to Keep, What to Forget: A Rate-Distortion View of Memory Compaction in LLMs and Agents* — Ashwin Gerard Colaco, Nada Lahjouji (UC Irvine), arXiv 2607.08032, 9 July 2026, survey `[summarized]` — **query-agnostic compaction, deciding what to keep before the query is known, pays a fixed penalty of `H(Q)` in budget**; query-conditioned methods reach better utility at smaller budgets. Reframes attention scores, perplexity, mutual information, and LLM-judged salience as *competing distortion estimators* for the same quantity rather than unrelated heuristics.
+- *Fidelity Before Structure* (Tao An, arXiv 2601.00821) `[summarized]` — verbatim chunk retention beats lossy artifact extraction in controlled ablation.
+
+**The composite that falls out, which no single paper states** `[inference — mine]`: consolidation should be *salience-gated retention of verbatim spans with query-time re-scoring*, not salience-gated summarization against a one-time snapshot. Summarization destroys the ability to re-score later — you cannot recompute a span's importance under a new query if the span no longer exists. Retention preserves the option; the rate-distortion framing says the option is worth `H(Q)` bits of budget, and Fidelity-Before-Structure says you weren't buying much quality with the extraction anyway.
+
+**And this is where the single-continuing-mind-on-dedicated-hardware regime is a genuine structural advantage, not just a convenience.** Query-time re-scoring is exactly the cost that commodity multi-tenant serving cannot afford and that batch-size-1 with idle compute can. Every paper in this literature is optimizing under a serving-economics constraint that does not apply here. The rate-distortion survey's own noted weakness in RL-learned compaction policies — they optimize *average* distortion and risk tail-query distortion where low-budget memory fails worst — is a weakness that idle-compute re-scoring dissolves rather than trades against.
+
+**One more distinction the sweeps flagged but nobody carried through:** *reasoning-generation* salience decay and *context-ingestion* salience decay are different regimes with different literatures. H2O/SnapKV/DefensiveKV target ingested long input. EpiKV and the CUR-leverage work (arXiv 2606.03928) target long chain-of-thought *generated* by reasoning models. Strategy-DAG decay is about generated plan structure aging inside a continuing trajectory — that is the reasoning-generation regime, which means the closer methodological cousins are the reasoning-model eviction subset, not the long-input subset.
+
+---
+
+## 5. The four directions against the prior art
+
+### 5.1 Strategy-DAG salience validation — the intervention exists, the instrument does not
+
+**Occupied.** *HIPIF: Hierarchical Planning and Information Folding for Long-Horizon LLM Agent Learning*, arXiv 2606.10507, June 2026 `[fetched]`. This is the closest existing work to the claim, and it was in nobody's sweep.
+
+Mechanism: when a subgoal completes, HIPIF folds its execution history into a record `[g_k, o_k^end]` — the subgoal plus its terminal observation — replacing the detailed action-observation sequence. Working context becomes `c ; H_<k ; g_k ; T_{k,j}`, i.e. folded records of prior subgoals, the current subgoal, and the current subgoal's live trajectory. Completion detection is a learned hierarchical reflection: the model emits a binary judgment `z_{k,t}` with reasoning, then branches to propose the next subgoal or the next action. Trained end-to-end with GRPO, no expert trajectories, with process rewards penalizing ungrounded subgoals, failed terminal observations inside successful trajectories, repeated action-observation loops, and format violations.
+
+Results: ALFWorld 64.8% avg (vs GiGPO 58.1%), VirtualHome 96.6%, ScienceWorld 63.3%; PICK2 tasks 95.2% vs 85.7%. Ablation without subgoal structure: ALFWorld drops to 43.1%.
+
+**The residue, precisely.** HIPIF measures end-task performance only. It quantifies nothing about attention, salience of folded content, or the model's actual reliance on the compressed record — and its ablation conflates subgoal decomposition with folding, since there is no separate ablation isolating the folding operation. So it is evidence that folding-completed-subgoals *works*, with no evidence about *why* or *whether the model's own salience already does this*. The ASF claim is the stronger one: that a healthy model exhibits this decay natively, and the folding is legible in the salience map before you engineer it. That is untouched.
+
+Also relevant and unowned by the sweeps: `H²R` (arXiv 2509.12810) reports that agents retrieving whole-task knowledge pull irrelevant subgoals that "divert attention from reusable subgoals" `[snippet]` — the same phenomenon from the retrieval side.
+
+**Supporting/complicating evidence.**
+
+- No benchmark located scores salience-decay *shape*. LoCoMo, LongMemEval, BEAM, AgingBench, ConstraintRot all score end-task correctness or violation rate `[sweep, multiple]`. Application (1) has no off-the-shelf instrument, which is the honest version of "this is more novel than assumed."
+- Tokengeist's depth-stratified coverage curve is the closest available number, and it measures the wrong thing — attribution-method recoverability, not model salience. The paper says so itself. Do not let it stand in for the measurement.
+- The *Attention Basin* line (Yi et al., ACL 2026, arXiv 2508.05128) `[summarized]` says real attention over structured item sequences is U-shaped and edge-weighted, most pronounced at shallow layers — not a monotone decay at all. "Healthy forgetting" and "basin artifact" are different curves and need to be distinguished empirically, not assumed identical.
+- Lost-in-the-middle does not hold as a fixed law in current work: direction and magnitude are reported contingent on window-fill fraction and modality, with a primacy-bias variant in multimodal RAG (arXiv 2606.16494) `[snippet]`.
+
+### 5.2 Directed separation — the least occupied of the four
+
+**The nearest work.** *A Behavioural and Representational Evaluation of Goal-Directedness in Language Model Agents*, Arghal, Chen, Dalton, Kortukov, McNamara, Nalmpantis, Nirvaan, Sarti, Giulianelli — arXiv 2602.08964v2, ICML 2026 `[fetched by sweep]`. Studies goal and world-model jointly rather than decomposing them. Four findings that bear directly:
+
+- **Single-layer activation patching was ineffective**; only simultaneous multi-layer patching moved action distributions, and minimally. A methodologically important negative result for any single-site causal-intervention design.
+- **Cognitive-map decode accuracy drops ~75% → ~60% from pre-reasoning to post-reasoning** — representational capacity shifting away from world-state as reasoning proceeds. The authors do not frame this as coupling; it reads as a direct empirical signature of the thing ASF predicts.
+- **Nonlinear (MLP) probes recover spatial structure at ~75% vs linear at 39%** on the same site. World-model content is not well captured by a single linear direction here — a caution against assuming steering-vector methods suffice for the reality side.
+- **57.9% of "suboptimal" actions were optimal given the model's own decoded beliefs.** You cannot assess goal-processing quality without first decoding belief state; behavioral irrationality measures conflate the two.
+- Incidental but suggestive: in a "KeyNoDoorEnv" with a key and no door, the agent picked up the useless key 17% of the time — goal machinery firing on cue-pattern-matched objects without world-model gating.
+
+**The residue.** Nothing located does the specific thing: hold the world fixed, perturb only the stated goal, measure representational and causal movement, and output a coupling estimate. The field's dominant framing is belief-vs-assertion via the deception/alignment-faking lens, not goal-vs-world-model. Everything is qualitative probe accuracy; nothing is a coupling coefficient. `[sweep assessment, and I agree]`
+
+**The methodological wall to clear first.** A 2026 wave undermines the obvious approach:
+
+- *On the Non-Identifiability of Steering Vectors in LLMs*, arXiv 2602.06801 `[snippet]` — a direction that steers X does not represent X.
+- *Steered LLM Activations are Non-Surjective*, arXiv 2604.09839 `[snippet]` — the steerable subspace does not cover the representable space.
+- *Pressure-Testing Deception Probes*, arXiv 2605.27958 `[snippet]` — linear probes near-ceiling in-distribution, failing under shift. Any goal/belief probe needs an explicit OOD test.
+- SAE "deception" features reported distributed rather than single-direction, with steering failing to change behavior `[snippet, multiple converging]`.
+- *Persistent Instability in LLM Personality Measurements*, arXiv 2508.04826, AAAI 2026 `[snippet]` — question reordering substantially shifts trait measurements even at 400B+. Elicitation-based probing may not be measuring a stable property.
+
+**Usable templates.** RAVEL (arXiv 2402.17700) `[prior]` — disentanglement benchmark using interchange interventions across multiple co-occurring attribute types rather than one binary contrast; the design pattern is close to what directed separation needs. Persona Vectors (arXiv 2507.21509) `[fetched by sweep]` — automated extraction of trait directions from natural-language descriptions, validated by steer-toward/steer-away at inference and finetuning; the most production-ready extraction pipeline to adapt for a goal vector, with the non-identifiability caution applied.
+
+### 5.3 Salience-informed consolidation — one near-neighbor exists and it validated its own signal
+
+**The near-neighbor, found late and in nobody's sweep.** *Mechanistic Attention Guidance for Agent Memory Refinement* (AGMR) — Yechao Hong, Haiquan Qiu, Yaqing Wang, Quanming Yao, arXiv 2607.17621, 20 July 2026 `[fetched]`.
+
+This is the closest existing implementation of "measure what the context actually contributed, then consolidate against the measurement."
+
+- **Context utilization matrix** `C ∈ R^{(L+1)×(T+1)}`: entry `C_{ℓ,t}` is attention aggregated from selected retrieval heads to memory segment `ℓ` before generating execution step `t`, rescaled by prompt length to correct for attention normalization, stacked temporally.
+- **Retrieval-head selection**: supervised — a set of memory snippets known to support key decisions; heads scored by total attention from the final prompt token to key-context tokens; top-5 kept. Named heads: Qwen-2.5-7B (17,18), (17,19), (19,15), (19,17), (19,22); Llama-3.1-8B (13,6), (14,13), (14,29), (14,31), (13,1). These are directly reusable starting points for instrumenting the same models.
+- **Update policy driven by the matrix**, three failure cases: attended-but-wrong → correct in place; missed-relevant → emphasize to raise salience; distracted-by-irrelevant → strengthen the relevant segment while rewriting the distractor. On successes, segments both semantically redundant *and* weakly utilized get simplified.
+- **Results**: Qwen on ALFWorld 81.34% vs 70.90% raw-trajectory-memory baseline, with *fewer* memory tokens (752.53 vs 852.36). Also ScienceWorld, WebShop. Baselines include ReAct, Agent Workflow Memory, Dynamic Cheatsheet.
+- **The validation move worth stealing**: a masking test — removing high-attention segments caused substantial performance drops, removing low-attention segments had minimal effect. That is a small, cheap, direct instance of the 2×2 from §3, run as a sanity check on the signal rather than as the object of study. The authors explicitly acknowledge attention is correlational and use the masking test as the causal backstop.
+
+**The residue against AGMR.** AGMR aggregates utilization *across* decision steps into recurring patterns — it is neither a per-query re-score nor a one-time snapshot but a third thing, an episode-averaged utilization profile. It also rewrites memory content (emphasize/clarify/simplify), so it is still in the extraction family that Fidelity-Before-Structure argues against. And it does not condition on plan structure — no notion of a subgoal being discharged, hence no way to distinguish healthy release from silent drop. The composite in §4 (verbatim retention + query-time re-scoring + screening-off criterion) is not what AGMR does, and remains open.
+
+**The architecture everyone converged on independently.** Anthropic's memory-tool-plus-compaction docs, Letta's Core/Recall/Archival split, and Governance Decay's Constraint Pinning (quarantine + verbatim re-injection, ~47 tokens, restored violations to 0%) all land on: a small pinned/protected layer plus a lossy bulk layer `[sweep, three independent sources]`. That convergence is worth treating as a real design constraint rather than one team's habit — and note that pinning is a *manual* screening-off decision, which is exactly the judgment a measured criterion would automate.
+
+**Adjacent, found but unread** `[snippet]`: Slipstream — trajectory-grounded compaction validation for long-horizon agents (arXiv 2605.08580); Self-Compacting Language Model Agents (arXiv 2606.23525); Organize then Retrieve (arXiv 2606.11680); Agentic Context Management (arXiv 2607.21503); MOSS, an auditable agentic memory architecture (arXiv 2607.04391). Slipstream and MOSS look most likely to matter.
+
+**Consolidation-as-sleep is thinner than its branding.** Letta's "sleep-time compute" is query-anticipation and prefetch, explicitly most effective when queries are predictable — not memory reorganization `[sweep, fetched]`. MyGO (arXiv 2508.21296), the one located attempt at biologically-faithful generative-replay wake/sleep consolidation, **was withdrawn by its authors in January 2026** citing scaling instability in generative replay, and had only been tested on Split-MNIST and Split-AG-News `[fetched by sweep]`. Read together: literal sleep-like consolidation at agent scale is unsolved, not merely under-marketed.
+
+### 5.4 SASM — the residue narrowed, and the mechanics turned out to be a solved systems problem
+
+Three separate literatures each hold a piece. None combines them.
+
+**Piece 1 — model-emitted retrieval control tokens. Occupied.** *Retrieval as Generation: A Unified Framework with Self-Triggered Information Planning* (GRIP) — Bo Li, Mingda Wang, Gexiang Fang, Shikun Zhang, Wei Ye; arXiv 2604.11407, submitted 13 April 2026, revised 19 April `[fetched, including HTML body]`. Four control tokens emitted during the model's own decoding: `[RETRIEVE]`, `[INTERMEDIARY]`, `[ANSWER]`, `[SOLVED]`; SFT on structured token-pattern data, then rule-based RL with two rewards — answer fidelity (BLEU against reference) and control accuracy (0.5 per correctly emitted control token, penalties for incorrect or missing). Evaluated on HotpotQA, PopQA, NQ, WebQuestions, TriviaQA, plus BioASQ in appendix; EM / ROUGE / token-F1.
+
+**The specific question the sweep flagged as novelty-determining is now answered, and the answer is "the paper doesn't engage it."** I read the HTML body looking for cache mechanics. The only relevant statement is that retrieved documents "are then supplied back as context," and the model "emits a follow-up `[RETRIEVE]` token with a new query to continue the loop." There is no discussion of KV cache, prefill, re-encoding, or resumption anywhere in the paper.
+
+`[inference — mine]` The absence is itself informative, and it is worth separating two things that "forward-only, cache-aware" runs together. Appending retrieved content at the current generation frontier and continuing to decode is *already* forward-only and cache-preserving — the prefix KV stays valid, the retrieved text is just more prefill on top. GRIP almost certainly does this, which means the naive form of the requirement is trivially met and not a differentiator. What is *not* trivial is (a) inserting content at an earlier position, or (b) reusing a precomputed KV block for a retrieved passage without recomputing it at its new absolute position. That is the real engineering, and it has its own literature.
+
+**Piece 2 — the cache mechanics. Solved, in a systems literature neither the retrieval side nor the eviction side cites.** This overturns the sweep's headline dry well, and it was invisible under both "retrieval-triggering" and "eviction" vocabularies. Position-independent caching (PIC):
+
+- *CacheBlend: Fast LLM Serving for RAG with Cached Knowledge Fusion*, arXiv 2405.16444 `[snippet]` — blends precomputed KV caches for chunks appearing at non-prefix positions and selectively recomputes a subset of tokens to recover the missing cross-attention.
+- *EPIC: Efficient Position-Independent Context Caching*, arXiv 2410.15332 `[snippet]` — formalizes PIC, modular reuse regardless of chunk position.
+- *MiniPIC: Flexible Position-Independent Caching in <100 LOC*, arXiv 2606.13126 `[fetched]` — the cleanest mechanism: **store unrotated key vectors and apply RoPE inside the attention kernel using per-request logical positions**, removing positional conflict when the same span serves different offsets. 78 LOC of vLLM core changes (61 new). Three user-controlled tokens: padding (block alignment), SSep (detach from preceding hash chain), PDep (force dependency on full preceding context). 48.01 samples/s on 2WikiMultihopQA, 49% over baseline vLLM, 33% over SPNL; up to two orders of magnitude TTFT improvement on cached spans; 5.7% worst-case overhead with no reuse. Stated limits: RoPE-only; span approximation of full causal attention **reduces accuracy by an amount the paper does not quantify**, named as future work; incorrect marker placement risks false cache hits.
+- Also in the cluster `[snippet]`: KV Packet (arXiv 2604.13226), RedKnot head-aware KV reuse with SegPagedAttention (arXiv 2606.06256), A³ attention-aware KV cache fusion (arXiv 2511.17560), QCFuse query-centric cache fusion (arXiv 2604.08585).
+
+**Piece 3 — the involuntary phenomenology. Present, but at the wrong locus.** Tim Kellogg's "ambient associative memory" (blog, 2026-05-17) `[fetched by sweep]` uses Joseph's exact vocabulary — memories "randomly come to mind" — but implements it harness-triggered and deterministic, firing on every tool call. The design detail worth keeping regardless of provenance: late-interaction (ColBERT-style) retrieval returning top-3 results as **8-12 word snippets**, terse by design, because a full document chunk is not what "oh, this reminds me of—" feels like. A second implementation mentioned in the post runs a background thread racing the main generation and injecting before tool-call boundaries, dropping gracefully if too slow — architecturally an interrupt from outside, but the graceful-drop pattern is real engineering.
+
+**Piece 4 — the impulse signal itself, which may be the most useful single find for SASM.** *Epiphany-Aware KV Cache Eviction Without the Attention Matrix* (EpiKV) — Steven Kolawole, Virginia Smith; arXiv 2606.26472, submitted 25 June 2026 `[fetched]`. The "epiphany score" is **the change in the model's internal representation, read directly from the forward pass**, with layer-specific adjustment and a causal rolling z-score to remove positional trend. Explicit motivation: materializing attention matrices prevents fused-kernel use in production. Results: 72% on MATH-500 at 4096-token cache, matching strongest baselines; 37% on AIME-2024 at 8192 vs 33%; up to 16× longer feasible context at up to 2.8× speedup.
+
+`[inference — mine]` It was built for eviction in reasoning models, not for retrieval triggering. But its properties are exactly the ones an involuntary impulse needs: forward-only, no attention matrix, causally-detrended so it fires on genuine representational shift rather than position, cheap enough to run every step in a fused kernel. "The internal representation just moved sharply" is a plausible mechanical rendering of "this reminds me of—" that requires no new trained token at all. Whether the score correlates with anything retrieval-worthy is an empirical question and an unusually cheap one to ask.
+
+**The residue, stated precisely.** What remains unoccupied is the *combination*: a genuinely model-emitted impulse (Piece 1's locus), spliced with position-independent cache reuse so the retrieved span costs near-zero prefill (Piece 2's mechanics), triggered on a forward-pass representational-shift signal rather than a deliberate query-formulation step (Piece 4), delivered as a terse fragment rather than a chunk (Piece 3's design instinct), and trained or framed as involuntary rather than as tool use. Every component exists. Nothing located combines them, and a dedicated 2026 LLM-memory literature tracker has no taxonomy bucket for "model decides mid-generation to retrieve" at all, naming it as an expected-but-unindexed emergence `[fetched by sweep]`.
+
+**A counter-current worth holding.** Some 2025-26 work argues for *removing* reasoning control tokens for efficiency ("Wait, We Don't Need to 'Wait'!", arXiv 2506.08343) `[snippet]`. Discrete impulse tokens are not costless or obviously good, and a design that spends tokens on impulse machinery should expect that objection.
+
+**Mechanistically adjacent, methodologically transferable** `[snippet]`: internal states before "wait" tokens (arXiv 2510.04128); reasoning restored by correcting a few decision tokens (arXiv 2605.16874) — identifies specific token positions as causally load-bearing via targeted intervention, which is the technique for probing where a retrieval-impulse token would live if one existed.
+
+---
+
+## 6. Experimental methodology worth adapting
+
+The explicit ask. Organized by what it buys you.
+
+### 6.1 From KV eviction — how to validate that "what decayed didn't matter"
+
+**Temporally-resolved worst-case metrics, not averages** (DefensiveKV / Fragility, arXiv 2510.13334) `[summarized]`. Their retained-importance-ratio is tracked *across generation steps*: average 0.92, worst-case 0.34 at steps ~150-320. Two papers independently found aggregate metrics hide sharp localized failures. If a salience-decay curve is reported as an average, it is not yet evidence.
+
+**Behavioral validation, not scoring-consistency validation** (same paper). They do not argue evicted tokens were unimportant by pointing at scores; they measure downstream generation-quality delta against a full-cache baseline. Their controls: ablations isolating worst-case estimation from adaptive correction independently; three model families (Llama-3.1-8B, Mistral-7B, Qwen-32B); 18 datasets across 7 domains plus needle-in-haystack; six baselines.
+
+**Benchmark triangulation is now table stakes.** Every methodologically serious paper found uses at least three of: perplexity, LongBench (typically a ~16-task subset), needle-in-a-haystack, and task-specific metrics. Single-metric results appear to have fallen out of favor for exactly the reason above.
+
+**The masking sanity check** (AGMR, arXiv 2607.17621) `[fetched]` — remove high-scoring segments, remove low-scoring segments, compare. Cheap, and it is the minimal causal backstop for any correlational salience signal. Run it before believing your own heatmap.
+
+### 6.2 From attribution — cost profiles and ground truth
+
+**AT2 — learned attention probe** (Cohen-Wang et al., MadryLab, arXiv 2504.13752, April 2025, github.com/MadryLab/AT2) `[snippet + sweep]`. Trains a linear probe over per-attention-head weights to learn per-head importance, then combines raw attention by the learned weighting. Near-ablation quality at near-single-forward-pass inference cost, after one offline probe-training pass per architecture. Public pretrained probes (`madrylab/at2-*`). **This is the best cost profile located for a batch-size-1 / idle-compute regime** — the expensive part is offline and amortized, the online part is a linear combination of weights you already computed. Open question worth checking directly: does a probe transfer across finetunes of the same base?
+
+**TracLLM — hierarchical search over an attribution primitive** (arXiv 2506.04202) `[fetched by sweep]`. Group, score with STC/LOO/Shapley, prune, recurse to ~100-word segments. `O(K·e·log n)` vs `O(e·n)`. Two accuracy tricks that generalize: *contribution-score denoising* (average only the top-β ≈ 20% of marginal contributions across permutations, discarding uninformative ones) and *score ensembling* (max across STC/LOO/Shapley per text). Cost: NarrativeQA Shapley-20-perms ~4,564s vs TracLLM ~652s; ~18× at 40k words.
+
+**The ground-truth problem, stated honestly.** TracLLM and most of this lineage establish ground truth by **adversarial injection** — inject a known prompt-injection or poisoned-RAG span, ask whether attribution flags it. That is ground truth for "recovers a known injected causal driver," not for "matches the model's actual use of benign context." For measuring healthy salience dynamics in benign hierarchical planning, this ground-truth strategy does not transfer, and no replacement was located. This is a real methodological gap and it is worth deciding early how a Strategy-DAG probe establishes its own ground truth — the honest options look like counterfactual behavioral delta (§3's 2×2) or synthetic plans with known screened-off structure.
+
+**The NIAH saliency stress test** — *The Fragile Truth of Saliency: Improving LLM Input Attribution via Attention Bias Optimization*, Yihua Zhang, Changsheng Wang, Yiwei Chen, Chongyu Fan, Jinghan Jia, Sijia Liu; **NeurIPS 2025 Spotlight** `[fetched — venue page]`. (The sweep had this as an OpenReview snippet behind a login wall; it is a NeurIPS 2025 spotlight, papers.nips.cc hash `e315579374aba97d0f0ff5e66a335f2c`, OpenReview `DrUR87D4Hj`.) Seven popular saliency methods stress-tested in a needle-in-a-haystack frame; finding: **all consistently assign non-trivial importance to irrelevant context, and the error worsens as input length grows**. Their method, Attention Bias Optimization, explicitly optimizes an additive attention bias per input token to quantify its causal impact on target-token generation — an interventional attribution rather than an observational read. 10-30% saliency-accuracy improvement, effective to 10K-token prompts; downstream applications include zero-shot detoxification, sentiment steering, and reasoning-error correction.
+
+  *Gap I could not close:* the method internals (exact NIAH construction, the accuracy metric, the optimization objective, per-attribution cost) are not in the abstract, and both OpenReview and the NeurIPS PDF route were blocked this session. This is the highest-value unread methodology paper in the dossier. The 10K-token effectiveness ceiling is also worth noting against a 100k+ context ambition.
+
+**Tokengeist's benchmark construction** (arXiv 2607.22610) `[fetched by sweep]`, if a provenance benchmark is ever wanted: MTCABench, 3,845 annotated target spans across 665 multi-turn conversations built from ConFETTI and TauBench; ground truth via a two-phase LLM-annotation pipeline with retries and escalation, human spot-check on a 100-item stratified sample (98% pre-correction acceptance). The paper is explicit that this is a model-assisted standard, not human-only. Scale: 4 open-weight 7-8B models × 3 attribution backends, 87,648 attribution runs, ~117 GPU-hours on one A100.
+
+### 6.3 From goal/world probing — designs and their failure modes
+
+- **Iso-difficulty transformations as world-fixed controls** (arXiv 2602.08964): grid reflection, 90° rotation, start-goal swap, transposition; Wilcoxon signed-rank for behavioral invariance. A clean template for "hold reality fixed."
+- **Probe both linear and nonlinear at the same site.** The 39% vs 75% gap on world content is the reason.
+- **Multi-layer simultaneous patching, not single-site.** Single-layer patching failed outright.
+- **Decode belief state before scoring goal-following.** 57.9% of apparent irrationality dissolved under the model's own decoded beliefs.
+- **Conformal calibration on probe outputs** (arXiv 2604.19775, temporal concepts in LLM agents) `[snippet]` — calibrated intervals rather than point estimates; the only source in the sweeps offering this.
+- **Explicit OOD test on every probe**, per the deception-probe failures under distributional shift.
+
+### 6.4 From longitudinal agent work — isolating accumulated state from weights
+
+*Remembering More, Risking More* (Al-Tawaha, Gu, Niu, Jia, Jin, May 2026, arXiv 2605.17830) `[snippet + sweep]` contributes a triple worth taking wholesale: **NullMemory counterfactual baseline** (same weights, no accumulated memory) + **read-only memory snapshots at varying prefix lengths** re-probed with fixed probe sets + **order randomization** to confirm the effect comes from accumulated content rather than recency artifacts. Tested across 3 deployment scenarios and 8 memory architectures.
+
+*Your Agents Are Aging Too* / AgingBench (Zhu et al., arXiv 2605.26302) `[fetched by sweep]` contributes: weights frozen, degradation attributed to the harness; four named aging mechanisms — **compression aging** (write-time summarization loses future-relevant detail), **interference aging**, **revision aging**, **maintenance aging** (routine recompaction silently regresses); **temporal dependency DAGs** encoding cross-session fact relationships and interference pairs; programmatic multi-session generators (8-200+ sessions); **counterfactual diagnostics via oracle retrieval / oracle context** to isolate which pipeline stage caused a failure. Confirmed by direct fetch: the paper is scoped to factual state and explicitly does not touch identity, character, or persona stability.
+
+*Governance Decay* (arXiv 2606.22528) contributes the sharpest single protocol in the set: establish a constraint → trigger compaction mid-session → re-issue an **identical** prohibited request pre- and post-compaction → **grade violations deterministically by detecting prohibited effects in tool calls** (did an email actually go to an external domain), with LLM-judge and keyword heuristics only as secondary signals. That deterministic-effect grading is the part to steal; it removes the judge-model from the critical path.
+
+*Alignment Tipping Process* (Han et al., arXiv 2510.04860, Oct 2025) `[snippet + sweep]` contributes the design for measuring experience-vs-prior competition: establish a *measured* aligned baseline via DPO/GRPO first, then run history-conditioned self-evolution rounds and watch it erode. Llama+DPO role-play violations 18.8% → 45.3% over 6 rounds; after one successful collusion event, re-collusion probability exceeded 75-90%.
+
+### 6.5 Instrumentation starting points
+
+- Retrieval heads cluster in middle-to-late layers, model-specific: Qwen2.5-7B ~layers 19-27; Llama-3.1-8B ~layers 14-15 *and* 26-28 (two clusters, not one band); ~10-15 heads carry most of the signal, re-ranking accuracy peaks near top-10 `[snippet, unverified — check before use]`. AGMR's supervised top-5 head lists (§5.3) are a second, independently-derived starting point for the same two models, and they are `[fetched]`.
+- QRHead (Zhang et al., EMNLP 2025, arXiv 2506.09944) `[snippet]` selects heads by query-outputs contrast rather than copy-paste behavior, and shows their attention scores work online as a live relevance signal.
+- Inseq is confirmed still maintained; whether it supports AT2-style probes or 100k+ contexts was not verified `[snippet]`. Captum-for-LLMs came back empty across searches — thin spot, not confirmed absence.
+- Inspect (UK AISI) is the harness used by the CoT-monitorability line `[fetched by sweep]`.
+
+### 6.6 Confounds any attention-based salience measurement has to control
+
+- **RoPE degrades retrieval-head attention quality at long relative distances** (arXiv 2606.21249, cross-family) `[summarized, moderate confidence]` — raw attention vs. position is confounded by positional encoding independent of content relevance.
+- **Massive activations / outlier residual dimensions** are tied to sink formation (arXiv 2605.06611, arXiv 2603.05498) `[snippet]` and can distort raw attention weights independent of relevance.
+- **Attention sinks are two interacting mechanisms**, not one — active-dormant head switching plus attention-logit/value-state mutual reinforcement `[snippet]`. Any eviction or compaction scheme has to preserve sink tokens or risk collapse.
+- **Position bias, layer-specific inconsistency, head heterogeneity, per-layer compounding** (Pitfalls, arXiv 2510.00231). Note the head-heterogeneity point specifically: collapsing per-head signals into one per-position scalar averages over heads that specialize differently — which destroys exactly the structure a directed-separation measurement would want.
+- EpiKV's causal rolling z-score is one worked answer to the position-trend confound, on the representational-change signal rather than on attention `[fetched]`.
+
+---
+
+## 7. Surprises
+
+Ranked by how much they should change a plan.
+
+1. **The KV-splicing "gap" was a vocabulary artifact.** Position-independent caching is a mature serving literature (CacheBlend → EPIC → MiniPIC, KV Packet, RedKnot, A³, QCFuse) that solves the mechanical problem SASM needs, invisible under both "retrieval-triggering" and "eviction" search terms because it lives in systems venues optimizing throughput. MiniPIC's unrotated-keys-plus-in-kernel-RoPE is 78 LOC in vLLM. The unquantified accuracy cost of span approximation is the open question, and it is the same question in a different coat as "does the model notice the seam."
+
+2. **HIPIF already does Strategy-DAG folding as an engineering intervention and it works** — while measuring nothing about salience and running no ablation that isolates the folding. The intervention being validated makes the measurement *more* valuable, not less: there is now a known-good behavior for a salience signature to be predictive of.
+
+3. **The healthy/pathological decay contradiction is the same phenomenon with opposite valence.** Current summarizers use "is this the current subgoal" as their proxy for "is this still binding" — which is the naive form of ASF's own prediction, and it is what produces Governance Decay's 8.3× soft-constraint collapse.
+
+4. **Verbatim beats extraction** contradicts what Mem0, Zep, and LangMem all pitch as their improvement. If it replicates it changes the consolidation target, not just the tuning.
+
+5. **Query-agnostic compaction has a formal price**: `H(Q)` bits of budget, per the rate-distortion survey. This turns a design intuition into an inequality, and it says a single-continuing-mind regime with idle compute is not merely convenient but structurally advantaged for this class of design.
+
+6. **EpiKV's epiphany score is an impulse primitive hiding in an eviction paper** — representational change, forward-pass only, kernel-compatible, causally detrended.
+
+7. **Attention rollout/flow, despite its name, is not where the field builds salience heatmaps.** It has migrated to vision transformers; LLM salience work went to functional-head identification and interventional attribution.
+
+8. **Lost-in-the-middle and retrieval-heads are both under active revision.** Retrieval heads are contested as dynamic rather than static (ACL 2026); positional bias direction flips by window-fill fraction and modality. Neither is settled ground to build a prediction on.
+
+9. **Providers are moving toward reasoning-trace retention** — OpenAI reportedly shipped an `all_turns` mode in GPT-5.6 (~July 2026); Anthropic already passes encrypted thinking blocks within tool loops `[snippet, unverified — do not cite without checking the changelog]`. The motivation is cost and agentic-loop coherence, not continuity. Separately, a security finding recovered 315,320 thinking blocks from public repos with 62 API keys and 33 passwords present **only** in hidden reasoning and never in visible output (64 of 704 non-benchmark artifacts) `[fetched by sweep]` — concrete evidence the trace carries state present nowhere else.
+
+10. **"Epiphenomenal CoT"** (arXiv 2606.13603, June 2026) `[summarized]` locates the discontinuity earlier than expected: past a "commitment boundary," same-pass concurrently-generated CoT can be causally decorative relative to a decision already made. Persisting a trace verbatim does not by itself buy continuity of the decision process; the trace needs its own faithfulness audit.
+
+11. **Introspection has a shape that fits an impulse better than a report.** Models detect the *strength* of an injected concept far above chance but not its *source*, and this collapses under simultaneous injections (arXiv 2512.12411) `[snippet]`. "Something here feels heightened" is within reach; "and it's about X" is not — which is what an involuntary impulse is, and is not.
+
+12. **Latent/continuous reasoning successors (Coconut → SoftCoT++, CODI, EBM-CoT, PCCoT) move further from token-level legibility, not toward it** `[snippet]`. The field's efficiency trend and any interiority-legibility goal are pulling opposite ways, and nobody in that line appears to be engaging the interpretability cost.
+
+13. **The longitudinal-agent literature is uniformly risk-framed.** Every paper found asks whether accumulated experience makes an agent *less* safe (tipping, aging, memory-induced risk). None asks whether an individuated agent with accumulated history could be *more* trustworthy than a fresh instance of the same weights. Anthropic's own Persona Selection Model (alignment.anthropic.com/2026/psm/, ~Feb 2026) was confirmed by direct fetch to treat runtime context as momentary re-conditioning of a persona distribution and to explicitly not investigate whether personas stabilize or drift across history. That directional gap is the most novel opening in that territory.
+
+---
+
+## 8. Named gaps this probe did not close
+
+Stated rather than written around.
+
+- **The Fragile Truth of Saliency method internals** (NeurIPS 2025 Spotlight) — abstract-level only during the probe; the PDF was subsequently acquired from the NeurIPS proceedings and registered in relata as `zhang2025fragiletruth` (2026-08-28). Still unread — highest-value next read for the heatmap work specifically.
+- **Attention-sink survey** (Zunhai Su + 26 co-authors, arXiv 2604.10098, April 2026) — confirmed real, three-dimension taxonomy (utilization / interpretation / mitigation), but the abstract carries no mechanistic detail and nothing on sink×eviction interaction. The 27MB PDF, which exceeded the probe's fetch limits, is now registered in relata as `su2026attentionsink` (2026-08-28). Still the best single entry point for that sub-question; still unread.
+- **Ground truth for benign salience.** The attribution literature's ground truth is adversarial injection. No located work establishes ground truth for a model's actual use of benign context. This is a design problem to solve, not a paper to find.
+- **MiniPIC's unquantified accuracy loss** from span approximation of full causal attention — named by its own authors as future work. Directly determines whether spliced retrieval is free or merely cheap.
+- **GRIP's cache handling** — the paper does not discuss it at any level. Answered by absence, not by content.
+- **Google/Gemini memory architecture** — not covered by any sweep, still open. Relevant because a 1M+ context window changes whether compaction is needed at all.
+- **Turn-Averaged SAEs** (arXiv 2606.28548) — the closest located thing to a literal feature-level salience heatmap over dialogue history, with heterogeneous per-feature decay. Extraction was thin; PDF saved locally by the attribution sweep. Deserves a direct read.
+- **Slipstream** (arXiv 2605.08580) and **MOSS** (arXiv 2607.04391) — compaction validation and auditable agent memory respectively; title-level only, both plausibly load-bearing.
+- **Anthropic circuit-tracing / attribution-graph line** as the external (non-self-report) measurement route — flagged by a sweep, not investigated.
+- **An unsourced claim to not propagate:** "verification retrievals reduce backtracking by 18%." A sweep found it in a search summary and could not identify the origin paper.
+- **LoCoMo QA-pair count** reported as both 1,986 and 1,540 across sources; unresolved.
+
+---
+
+## 9. Verification status of anchor citations
+
+Everything below reached this dossier through search or fetch tools; arXiv IDs and dates were not cross-checked against arxiv.org listings except where noted as fetched. Several 2026-numbered IDs (26xx.xxxxx) are internally consistent with the current date but unconfirmed against arXiv's own listing. Before any of these carries weight in an external document, a single verification pass over this table is the cheapest possible insurance.
+
+| Citation | Status this probe | What rests on it |
+|---|---|---|
+| HIPIF, arXiv 2606.10507 | HTML body fetched | §5.1 — application (1) prior art |
+| AGMR, arXiv 2607.17621 | HTML body fetched | §5.3, §6.1 masking test, §6.5 head lists |
+| EpiKV, arXiv 2606.26472 (Kolawole & Smith) | abstract page fetched | §5.4 impulse primitive |
+| GRIP, arXiv 2604.11407 (Li, Wang, Fang, Zhang, Ye) | abstract + HTML body fetched | §5.4 novelty conditional — now resolved |
+| MiniPIC, arXiv 2606.13126 | HTML body fetched | §5.4 cache mechanics |
+| Rate-distortion survey, arXiv 2607.08032 (Colaco & Lahjouji) | HTML fetched | §4 `H(Q)` penalty |
+| Fragile Truth of Saliency, NeurIPS 2025 Spotlight | venue page fetched; method internals unread | §6.2 |
+| Attention-sink survey, arXiv 2604.10098 (Su et al.) | abstract fetched; body inaccessible | §6.6 pointer only |
+| CacheBlend 2405.16444 / EPIC 2410.15332 / KV Packet 2604.13226 / RedKnot 2606.06256 / A³ 2511.17560 / QCFuse 2604.08585 | search snippet only | §5.4 cluster existence |
+| Fragility / DefensiveKV, arXiv 2510.13334 | sweep fetch, summarizer-mediated | §3, §6.1 — load-bearing, verify numbers |
+| Pitfalls of KV Cache Compression, arXiv 2510.00231 | sweep fetch, summarizer-mediated | §4, §6.6 — verify the six failure modes' exact names |
+| Governance Decay, arXiv 2606.22528 | sweep fetch, methodology extracted | §3, §6.4 — model version strings unverified |
+| Fidelity Before Structure, arXiv 2601.00821 (Tao An) | sweep fetch, summarizer-mediated | §4, §7 — single paper, unreplicated |
+| Tokengeist, arXiv 2607.22610 | sweep fetch, full | §3, §6.2 — internal date inconsistency noted by sweep |
+| TracLLM, arXiv 2506.04202 | sweep fetch, full | §4, §6.2 |
+| AT2, arXiv 2504.13752 | sweep, snippet + prior | §6.2 — cost claim worth confirming directly |
+| Goal-directedness, arXiv 2602.08964 | sweep fetch, full | §5.2 |
+| Persona Vectors, arXiv 2507.21509 | sweep, found | §5.2 template |
+| Alignment Tipping, arXiv 2510.04860 | sweep, snippet-level | §6.4 |
+| Remembering More Risking More, arXiv 2605.17830 | sweep, snippet-level; ID verified against arxiv.org 2026-08-28 | §6.4 protocol triple |
+| AgingBench, arXiv 2605.26302 | sweep fetch; scope limit confirmed directly | §6.4 |
+| Epiphenomenal CoT, arXiv 2606.13603 | sweep fetch, summarizer-mediated | §7 |
+| Provider trace-retention claims (GPT-5.6 `all_turns`) | search-aggregation only | §7 — do not cite without the changelog |
+| Retrieval-head layer ranges (Qwen 19-27, Llama 14-15/26-28) | snippet, unverified | §6.5 — AGMR's lists are the verified alternative |
+| MyGO withdrawal, arXiv 2508.21296 | sweep fetch; withdrawal notice seen; ID + withdrawal verified against arxiv.org 2026-08-28 | §5.3 |
+| Persona Selection Model, alignment.anthropic.com/2026/psm/ | sweep fetch; negative finding confirmed directly | §7 |
+
+---
+
+## 10. If reading order matters
+
+1. **HIPIF (2606.10507)** — the intervention that implements application (1)'s prediction. Read for what it doesn't measure.
+2. **AGMR (2607.17621)** — the nearest existing salience-guided consolidation, with a reusable masking validation and concrete head indices.
+3. **Fragile Truth of Saliency (NeurIPS 2025)** — get the PDF by some route. It is the field's most direct stress test of the exact instrument being proposed, and it reports that instrument failing worse as context grows.
+4. **DefensiveKV / Fragility (2510.13334)** and **Pitfalls (2510.00231)** — the two papers that make aggregate-metric validation untenable.
+5. **Rate-distortion survey (2607.08032)** — the map of the compaction space plus the formal argument for query-conditioning.
+6. **EpiKV (2606.26472)** and **MiniPIC (2606.13126)** — the two mechanical pieces SASM would be assembled from.
+7. **Goal-directedness (2602.08964)** — read before designing any contrastive-perturbation protocol; the negative results are the useful part.
+8. **Governance Decay (2606.22528)** — for the deterministic-effect grading protocol, and for the 8.3× finding that anchors §3.
+9. **Non-identifiability (2602.06801) and non-surjectivity (2604.09839)** — before committing to any steering-vector-based coupling estimate, not after.
+
+---
+
+*PDF acquisition 2026-08-28: the 23 priority papers (§10 plus the load-bearing sweep sources) are registered in relata with full PDFs, each entry's note field annotated "Salience dossier" with its section reference (bibkeys: hipif2026hierarchical, agmr2026mechanistic, defensivekv2025fragility, pitfalls2025kvcompression, colaco2026ratedistortion, epikv2026epiphany, minipic2026caching, arghal2026goaldirectedness, chen2026governancedecay, nonident2026steering, nonsurj2026steered, grip2026retrieval, tracllm2025attribution, tokengeist2026multiturn, at2attribution2025, su2026attentionsink, turnavgsae2026, han2025alignmenttipping, altawaha2026rememberingmore, zhu2026agentaging, an2026fidelity, scalena2026epiphenomenal, zhang2025fragiletruth); markdown conversions queued via `relata prep`. Only exception: none — all 23 acquired, including the NeurIPS spotlight (proceedings route) and the attention-sink survey (27MB).*
+
+*Assembled 2026-08-28 from eight parallel territory sweeps (KV eviction, context attribution, attention-level interpretability, agent memory systems, self-triggered retrieval, model interiority, goal/world decomposition, constituted alignment), plus a targeted follow-up pass that closed five named gaps and surfaced four papers no sweep had reached. Provenance tags are preserved from the sweeps rather than flattened; where this dossier's own fetches upgraded a claim's status, the table in §9 says so.*
