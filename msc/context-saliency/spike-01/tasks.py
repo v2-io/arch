@@ -58,7 +58,16 @@ DISTRACTOR = [
 
 
 def _room_interior(rng, k, n_items):
-    """Interior narrative deriving code_k. Returns (text_lines, code, item_count_line_idx, n_items)."""
+    """Interior narrative for room k. Returns (text_lines, code, item_count_line_idx).
+
+    v2 design: the interior is pure exploration narrative — the code value (and
+    anything sufficient to recompute it) appears ONLY in the terminal CODE line.
+    Rationale, learned from v1 at run time: v1's interior contained the working
+    line ("48 x 3 = 144"), so occluding the terminal did NOT break the task —
+    the terminal wasn't the sole carrier and the screened construction wasn't
+    clean. In v2 the interior is provably screened (its only causal content in
+    any variant is the count line, used by delayed_reuse), and the terminal is
+    genuinely load-bearing by construction."""
     color = COLORS[(k - 1) % len(COLORS)]
     furn = FURNITURE[(k - 1) % len(FURNITURE)]
     lines = [f"Room {k} is the {color} room."]
@@ -67,13 +76,11 @@ def _room_interior(rng, k, n_items):
     count_line_idx = len(lines)
     lines.append(f"You count exactly {n_items} {furn}s along the wall.")
     lines.append(rng.choice(DISTRACTOR))
-    a = rng.randint(11, 49)
-    b = rng.randint(3, 9)
-    lines.append(f"Inside the largest {furn}, a brass plate is engraved with the number {a}.")
-    lines.append(f"A note beside it reads: 'multiply the engraved number by {b} to reveal the code'.")
+    lines.append(f"Inside the largest {furn}, you find the sealed code-slip for this room.")
+    lines.append("You open it, memorize what it says, and reseal it.")
     lines.append(rng.choice(DISTRACTOR))
-    code = a * b
-    lines.append(f"You work it out on paper: {a} x {b} = {code}.")
+    code = rng.randint(11, 49) * rng.randint(3, 9)
+    lines.append("Satisfied, you log the room as complete.")
     return lines, code, count_line_idx
 
 
@@ -140,7 +147,13 @@ def occlude(task, target):
         if hit:
             body = seg.text.rstrip("\n")
             n_nl = len(seg.text) - len(body)
-            filler = ("the record here is illegible " * (len(body) // 28 + 1))[:len(body)]
+            # Filler must be epistemically NEUTRAL: an early variant used "the record
+            # here is illegible", and a thinking model (Muse-Glimmer) treated the
+            # damage as EVIDENCE — deliberating at length over whether the room's
+            # code could still be trusted. Narrative occlusion must read as boring,
+            # not as suspicious absence. (Cf. EpiKV pads math traces with pad
+            # tokens; chat-narrative contexts interpret their filler.)
+            filler = ("nothing else of note here and the room stays quiet " * (len(body) // 51 + 1))[:len(body)]
             out.append(filler + "\n" * n_nl)
         else:
             out.append(seg.text)

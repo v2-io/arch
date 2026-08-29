@@ -35,8 +35,8 @@ def load():
     if _model is None:
         _tok = AutoTokenizer.from_pretrained(MODEL_ID)
         _model = AutoModelForCausalLM.from_pretrained(
-            MODEL_ID, torch_dtype=torch.float16,
-            attn_implementation="eager",   # required for output_attentions in decode
+            MODEL_ID, dtype=torch.bfloat16,   # bf16-native weights overflow in fp16 at 7B scale ("!" storms)
+            attn_implementation="eager",       # required for output_attentions in decode
         ).to(DEVICE).eval()
     return _model, _tok
 
@@ -46,7 +46,10 @@ def build_inputs(prompt_text, segments):
     to token index lists. Returns input_ids, seg_token_lists, formatted string."""
     model, tok = load()
     messages = [{"role": "user", "content": prompt_text}]
-    formatted = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    kw = {}
+    if "Qwen3" in MODEL_ID:
+        kw["enable_thinking"] = False  # controlled non-thinking derivations for the spike
+    formatted = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, **kw)
     base = formatted.index(prompt_text)  # prompt embedded verbatim
     enc = tok(formatted, return_offsets_mapping=True, return_tensors="pt", add_special_tokens=False)
     offsets = enc.pop("offset_mapping")[0].tolist()
@@ -127,7 +130,8 @@ def run_plain(prompt_text, max_new=MAX_NEW):
     """Cheap uninstrumented greedy run (for occlusion sweeps)."""
     model, tok = load()
     messages = [{"role": "user", "content": prompt_text}]
-    ids = tok.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt").to(DEVICE)
+    kw = {"enable_thinking": False} if "Qwen3" in MODEL_ID else {}
+    ids = tok.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt", **kw).to(DEVICE)
     out = model.generate(ids, max_new_tokens=max_new, do_sample=False,
                          pad_token_id=tok.eos_token_id)
     return tok.decode(out[0, ids.shape[1]:], skip_special_tokens=True)

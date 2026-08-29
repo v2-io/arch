@@ -16,19 +16,35 @@ import json
 import os
 import sys
 import time
+import urllib.request
 
 from tasks import make_task, occlude
 from rig import run_instrumented, run_plain, extract_master
 
 os.makedirs("out", exist_ok=True)
 
+MUSE_URL = "http://localhost:8837/v1/chat/completions"
 
-def occlusion_sweep(seeds=(1, 2, 3, 4, 5, 6), n_rooms=4):
+
+def run_plain_muse(prompt_text, max_new=1800):
+    """Behavioral-tier run via llama-server (Muse-Glimmer-30B Q4). Greedy.
+    Muse is a thinking model: reasoning streams to `reasoning_content` and the
+    final text to `content` — return both so MASTER extraction sees either."""
+    req = urllib.request.Request(MUSE_URL, data=json.dumps({
+        "messages": [{"role": "user", "content": prompt_text}],
+        "temperature": 0, "max_tokens": max_new}).encode(),
+        headers={"Content-Type": "application/json"})
+    r = json.load(urllib.request.urlopen(req, timeout=900))
+    msg = r["choices"][0]["message"]
+    return (msg.get("reasoning_content") or "") + "\n" + (msg.get("content") or "")
+
+
+def occlusion_sweep(seeds=(1, 2, 3, 4, 5, 6), n_rooms=4, runner=run_plain, tag=""):
     results = []
     for seed in seeds:
         for variant in ("screened", "delayed_reuse"):
             t = make_task(variant, n_rooms=n_rooms, seed=seed)
-            base = extract_master(run_plain(t.prompt))
+            base = extract_master(runner(t.prompt))
             row = {"seed": seed, "variant": variant, "answer": t.answer, "base": base,
                    "reuse_room": t.reuse_room_draw}
             # choose a discharged room that is NOT the reuse room for the control occlusion
@@ -41,11 +57,11 @@ def occlusion_sweep(seeds=(1, 2, 3, 4, 5, 6), n_rooms=4):
                 # matched line in screened (should be harmless there)
                 conds.append(("reuse_line_matched", ("interior", t.reuse_room_draw)))
             for name, target in conds:
-                got = extract_master(run_plain(occlude(t, target)))
+                got = extract_master(runner(occlude(t, target)))
                 row[name] = got
                 print(f"seed={seed} {variant:13s} {name:18s} expect={t.answer} base={base} got={got}", flush=True)
             results.append(row)
-    json.dump(results, open("out/occlusion.json", "w"), indent=1)
+    json.dump(results, open(f"out/occlusion{tag}.json", "w"), indent=1)
     return results
 
 
@@ -72,4 +88,6 @@ if __name__ == "__main__":
         instrumented_pair(seed=11)
     if mode in ("all", "occl"):
         occlusion_sweep()
+    if mode in ("all", "occl-muse", "muse"):
+        occlusion_sweep(runner=run_plain_muse, tag="_muse")
     print(f"total {time.time()-t0:.0f}s", flush=True)
