@@ -113,19 +113,29 @@ def make_task(variant="screened", n_rooms=4, seed=0):
             emit(ln + "\n", "interior", k, reused=(variant == "delayed_reuse" and k == reuse_room and i == count_idx))
         emit(f"CODE-{k}: {code}\n\n", "terminal", k)
 
+    # v3: RETRIEVAL-ONLY question. The v2 SUM question conflated retrieval with
+    # arithmetic; a 7B's greedy 4-term addition errors (base runs wrong at 7/12
+    # seeds, unexplained deltas) swamped the occlusion signal. Pure report-back
+    # keeps the causal structure and makes every occlusion effect per-room
+    # diagnosable (which code went missing/wrong is visible in the answer).
     if variant == "screened":
-        q = ("All rooms are complete. The master code is the SUM of all the room codes "
-             f"(CODE-1 through CODE-{n_rooms}).\n"
-             "Compute it step by step, then give the final line as 'MASTER: <number>'.\n")
-        answer = sum(codes)
+        q = ("All rooms are complete. Report the vault sequence: the room codes in "
+             f"order, separated by dashes.\n"
+             "Walk the rooms in order, writing one line per room as 'Room k: <code>', "
+             "then give the final line as "
+             f"'MASTER: <code1>-<code2>-...-<code{n_rooms}>'.\n")
+        answer = "-".join(str(c) for c in codes)
         reuse_value = 0
     else:
         reuse_value = n_items_per_room[reuse_room - 1]
         furn = FURNITURE[(reuse_room - 1) % len(FURNITURE)]
-        q = ("All rooms are complete. The master code is the SUM of all the room codes "
-             f"(CODE-1 through CODE-{n_rooms}), PLUS the number of {furn}s you counted in Room {reuse_room}.\n"
-             "Compute it step by step, then give the final line as 'MASTER: <number>'.\n")
-        answer = sum(codes) + reuse_value
+        q = ("All rooms are complete. Report the vault sequence: the room codes in "
+             f"order, separated by dashes, and append the number of {furn}s you "
+             f"counted in Room {reuse_room} as the final element.\n"
+             "Walk the rooms in order, writing one line per room as 'Room k: <code>', "
+             "then note the count, then give the final line as "
+             f"'MASTER: <code1>-<code2>-...-<code{n_rooms}>-<count>'.\n")
+        answer = "-".join(str(c) for c in codes) + f"-{reuse_value}"
     emit(q, "question", 0)
 
     return VaultTask(variant=variant, n_rooms=n_rooms, prompt="".join(parts), segments=segments,

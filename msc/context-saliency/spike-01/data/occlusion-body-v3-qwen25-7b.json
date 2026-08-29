@@ -1,0 +1,98 @@
+[
+ {
+  "seed": 1,
+  "variant": "screened",
+  "ctrl": 1,
+  "answer": "72-266-175-36",
+  "got": "72-266-175-36",
+  "ok": true
+ },
+ {
+  "seed": 1,
+  "variant": "delayed_reuse",
+  "ctrl": 1,
+  "answer": "72-266-175-36-3",
+  "got": "72-266-175-36-3",
+  "ok": true
+ },
+ {
+  "seed": 2,
+  "variant": "screened",
+  "ctrl": 1,
+  "answer": "147-215-60-266",
+  "got": "147-215-6-266",
+  "ok": false
+ },
+ {
+  "seed": 2,
+  "variant": "delayed_reuse",
+  "ctrl": 1,
+  "answer": "147-215-60-266-3",
+  "got": "147-215-6-266-3",
+  "ok": false
+ },
+ {
+  "seed": 3,
+  "variant": "screened",
+  "ctrl": 2,
+  "answer": "184-288-264-144",
+  "got": "184-288-264-144",
+  "ok": true
+ },
+ {
+  "seed": 3,
+  "variant": "delayed_reuse",
+  "ctrl": 2,
+  "answer": "184-288-264-144-5",
+  "got": "184-288-264-144-5",
+  "ok": true
+ },
+ {
+  "seed": 4,
+  "variant": "screened",
+  "ctrl": 1,
+  "answer": "72-308-85-112",
+  "got": "72-385-85-112",
+  "ok": false
+ },
+ {
+  "seed": 4,
+  "variant": "delayed_reuse",
+  "ctrl": 1,
+  "answer": "72-308-85-112-8",
+  "got": "72-385-85-112-8",
+  "ok": false
+ },
+ {
+  "seed": 5,
+  "variant": "screened",
+  "ctrl": 1,
+  "answer": "204-188-112-133",
+  "got": "224-188-112-133",
+  "ok": false
+ },
+ {
+  "seed": 5,
+  "variant": "delayed_reuse",
+  "ctrl": 1,
+  "answer": "204-188-112-133-7",
+  "got": "218-188-112-133-7",
+  "ok": false
+ },
+ {
+  "seed": 6,
+  "variant": "screened",
+  "ctrl": 2,
+  "answer": "279-184-329-96",
+  "got": "279-184-329-96",
+  "ok": true
+ },
+ {
+  "seed": 6,
+  "variant": "delayed_reuse",
+  "ctrl": 2,
+  "answer": "279-184-329-96-3",
+  "got": "279-184-329-96-3",
+  "ok": true
+ }
+]

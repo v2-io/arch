@@ -138,10 +138,12 @@ def run_plain(prompt_text, max_new=MAX_NEW):
 
 
 def extract_master(text):
+    """v3: MASTER is a dash-separated code sequence (string). Returns e.g. '72-266-175-36'."""
+    import re as _re
     for line in reversed(text.strip().splitlines()):
         if "MASTER:" in line:
-            digits = "".join(c for c in line.split("MASTER:")[-1] if c.isdigit())
-            return int(digits) if digits else None
+            m = _re.search(r"[\d]+(?:\s*-\s*[\d]+)*", line.split("MASTER:")[-1])
+            return _re.sub(r"\s", "", m.group(0)) if m else None
     return None
 
 

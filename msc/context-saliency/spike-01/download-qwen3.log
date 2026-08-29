@@ -1,1 +1,2 @@
-Fetching 12 files:   0%|          | 0/12 [00:00<?, ?it/s]Fetching 12 files:   8%|▊         | 1/12 [00:01<00:17,  1.62s/it]Fetching 12 files:  25%|██▌       | 3/12 [00:03<00:09,  1.08s/it]
+Fetching 12 files:   0%|          | 0/12 [00:00<?, ?it/s]Fetching 12 files:   8%|▊         | 1/12 [00:01<00:17,  1.62s/it]Fetching 12 files:  25%|██▌       | 3/12 [00:03<00:09,  1.08s/it]Fetching 12 files:  33%|███▎      | 4/12 [31:21<1:26:43, 650.44s/it]Fetching 12 files:  42%|████▏     | 5/12 [31:30<51:08, 438.32s/it]  Fetching 12 files: 100%|██████████| 12/12 [31:30<00:00, 157.53s/it]
+DONE /Users/josephwecker-v2/.cache/huggingface/hub/models--Qwen--Qwen3-8B/snapshots/b968826d9c46dd6066d109eabc6255188de91218
