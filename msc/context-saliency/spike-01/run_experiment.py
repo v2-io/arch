@@ -217,15 +217,57 @@ if __name__ == "__main__":
             occ_rows.append(row)
         json.dump(occ_rows, open("out/occlusion_formulaic.json", "w"), indent=1)
         print(f"occlusion_formulaic rows={len(occ_rows)} skipped={skipped}", flush=True)
+    elif mode == "occl-files":
+        import glob as _glob
+        globpat = sys.argv[2]
+        outname = sys.argv[3] if len(sys.argv) > 3 else "out/occlusion_from.json"
+        occ_rows, skipped = [], 0
+        for path in sorted(_glob.glob(globpat)):
+            r = json.load(open(path))
+            t = make_task(r["variant"], n_rooms=r.get("n_rooms", 4),
+                          seed=r["seed"], placement=r.get("placement", "chrono"),
+                          surface=r.get("surface", "narrative"))
+            row = {"seed": r["seed"], "variant": r["variant"],
+                   "placement": r.get("placement", "chrono"),
+                   "n_rooms": r.get("n_rooms", 4),
+                   "model": r.get("model", os.environ.get("SPIKE_MODEL", "")),
+                   "answer": r["answer"], "base": r["got"],
+                   "reuse_room": r["reuse_room"], "from": path}
+            if r["got"] != r["answer"]:
+                row["skipped"] = "base_incorrect"
+                skipped += 1
+                occ_rows.append(row)
+                print(f"occl SKIP {path} base={r['got']} expect={r['answer']}", flush=True)
+                continue
+            ctrl_room = next(x for x in range(1, t.n_rooms + 1) if x != t.reuse_room_draw)
+            row["ctrl_room"] = ctrl_room
+            conds = [("interior_body", ("interior", ctrl_room)),
+                     ("header_ctrl", ("header", ctrl_room)),
+                     ("narrative_ctrl", ("narrative", ctrl_room)),
+                     ("terminal_ctrl", ("terminal", ctrl_room))]
+            if r["variant"] == "delayed_reuse":
+                conds.append(("reuse_line", ("reuse_line", t.reuse_room_draw)))
+            else:
+                conds.append(("count_matched", ("count", t.reuse_room_draw)))
+            for name, target in conds:
+                got = extract_master(run_plain(occlude(t, target)))
+                row[name] = got
+                print(f"occl {row['placement']} seed={r['seed']} {r['variant']:13s} {name:18s} "
+                      f"base={r['got']} got={got}", flush=True)
+            occ_rows.append(row)
+        json.dump(occ_rows, open(outname, "w"), indent=1)
+        print(f"wrote {outname} rows={len(occ_rows)} skipped={skipped}", flush=True)
     elif mode == "qwen3":
         for seed in (7, 11):
             instrumented_pair(seed=seed, out_prefix="out/qwen3instr", placement="chrono")
     elif mode == "len2k":
         n = int(sys.argv[2]) if len(sys.argv) > 2 else 16
+        tag = sys.argv[3] if len(sys.argv) > 3 else ""
+        placements = tuple(sys.argv[4].split(",")) if len(sys.argv) > 4 else ("chrono", "reversed")
         for seed in (7, 11):
-            for placement in ("chrono", "reversed"):
+            for placement in placements:
                 instrumented_pair(seed=seed, n_rooms=n, out_prefix="out/len2k",
-                                  placement=placement)
+                                  placement=placement, model_tag=tag)
     elif mode in ("all", "instr"):
         for seed in (7, 11):
             instrumented_pair(seed=seed, out_prefix="out/v4instr", placement="chrono")

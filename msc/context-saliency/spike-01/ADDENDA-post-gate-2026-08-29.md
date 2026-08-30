@@ -35,6 +35,27 @@ Recorded in the gate (seeds 7, 13 delayed_reuse walked *transcript* order). Plac
 
 v4: 0/6 predicted sign, **6/6 opposite** (near-boundary Δ depressed). Pre-registered for the next mint: “boundary depression replicates.” Not claimed as a result at n=6.
 
+## Qwen3-8B 20-room — floor receded; T3 at ~2.3K is live
+
+Moved the 20-room cell to Qwen3-8B (thinking off) instead of changing the code alphabet. Chrono, seeds 7 and 11, both variants: **4/4 base-correct** (`out/len2k_qwen3_20r_chrono_*.json`, n_ctx 2242–2277). 7B on the same construction was 1/8. The length sweep as planned can run on this model × family pairing.
+
+T3, gated on those four (`out/occlusion_qwen3_20r.json`, 0 skipped):
+
+| condition | flipped |
+|---|---|
+| `interior_body` (header preserved) | **0/4** |
+| `header_ctrl` | **0/4** |
+| `narrative_ctrl` (header+body+count of one room) | **0/4** |
+| `terminal_ctrl` | **4/4** (first-code substitution) |
+| `count_matched` (screened) | **0/2** |
+| `reuse_line` | **1/2** (seed 11: count `4`→`9`, silent; seed 7 held) |
+
+The 2×2’s behavioral axis **survives at ~2.3K** on this model: screened interiors are droppable; terminals are not. Headers are not load-bearing here (capability-graded, same direction as Muse-30B at 4-room). Reuse-as-silent-drop is mixed at n=2.
+
+T2-allhead (pre-filter) terminal/body across 80 rooms: **min/median/max = 0.43 / 6.73 / 10.26**. Median still looks like “terminals hotter”; the worst-case room is *colder* than body. That is the Fragility lesson at length — do not headline the median. Reuse-line delayed/screened at final quarter: **0.94 / 0.73** — the 4-room Qwen3 elevation is gone at 20 rooms.
+
+7B 20-room files were not overwritten.
+
 ## Inversion / construction
 
 See `INVERSION-T1-SPATIAL-2026-08-29.md` — the load-bearing note. Formulaic discriminator did not dissolve the inversion at n=10.
