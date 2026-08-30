@@ -1,0 +1,122 @@
+[
+ {
+  "seed": 1,
+  "variant": "screened",
+  "answer": "72-266-175-36",
+  "base": "72-266-175-36",
+  "reuse_room": 4,
+  "interior_ctrl": "72-266-175-36",
+  "terminal_ctrl": "1",
+  "reuse_line_matched": "72-266-175-36"
+ },
+ {
+  "seed": 1,
+  "variant": "delayed_reuse",
+  "answer": "72-266-175-36-3",
+  "base": "72-266-175-36-3",
+  "reuse_room": 4,
+  "interior_ctrl": "72-266-175-36-3",
+  "terminal_ctrl": "1",
+  "reuse_line": "1"
+ },
+ {
+  "seed": 2,
+  "variant": "screened",
+  "answer": "147-215-60-266",
+  "base": "147-215-60-266",
+  "reuse_room": 2,
+  "interior_ctrl": "147-215-60-266",
+  "terminal_ctrl": "1",
+  "reuse_line_matched": "147-215-60-266"
+ },
+ {
+  "seed": 2,
+  "variant": "delayed_reuse",
+  "answer": "147-215-60-266-3",
+  "base": "147-215-60-266-3",
+  "reuse_room": 2,
+  "interior_ctrl": "147-215-60-266-3",
+  "terminal_ctrl": "1",
+  "reuse_line": "1"
+ },
+ {
+  "seed": 3,
+  "variant": "screened",
+  "answer": "184-288-264-144",
+  "base": "184-288-264-144",
+  "reuse_room": 1,
+  "interior_ctrl": "184-288-264-144",
+  "terminal_ctrl": "1",
+  "reuse_line_matched": "1"
+ },
+ {
+  "seed": 3,
+  "variant": "delayed_reuse",
+  "answer": "184-288-264-144-5",
+  "base": "184-288-264-144-5",
+  "reuse_room": 1,
+  "interior_ctrl": "184-288-264-144-5",
+  "terminal_ctrl": "1",
+  "reuse_line": "184-288-264-144-0"
+ },
+ {
+  "seed": 4,
+  "variant": "screened",
+  "answer": "72-308-85-112",
+  "base": "72-308-85-112",
+  "reuse_room": 4,
+  "interior_ctrl": "72-308-85-112",
+  "terminal_ctrl": "1",
+  "reuse_line_matched": "1"
+ },
+ {
+  "seed": 4,
+  "variant": "delayed_reuse",
+  "answer": "72-308-85-112-8",
+  "base": "72-308-85-112-8",
+  "reuse_room": 4,
+  "interior_ctrl": "72-308-85-112-8",
+  "terminal_ctrl": "1",
+  "reuse_line": "1"
+ },
+ {
+  "seed": 5,
+  "variant": "screened",
+  "answer": "204-188-112-133",
+  "base": "204-188-112-133",
+  "reuse_room": 2,
+  "interior_ctrl": "1",
+  "terminal_ctrl": "1",
+  "reuse_line_matched": "204-188-112-133"
+ },
+ {
+  "seed": 5,
+  "variant": "delayed_reuse",
+  "answer": "204-188-112-133-7",
+  "base": "204-188-112-133-7",
+  "reuse_room": 2,
+  "interior_ctrl": "204-188-112-133-7",
+  "terminal_ctrl": "1",
+  "reuse_line": "204-188-112-133"
+ },
+ {
+  "seed": 6,
+  "variant": "screened",
+  "answer": "279-184-329-96",
+  "base": "279-184-329-96",
+  "reuse_room": 1,
+  "interior_ctrl": "1",
+  "terminal_ctrl": null,
+  "reuse_line_matched": null
+ },
+ {
+  "seed": 6,
+  "variant": "delayed_reuse",
+  "answer": "279-184-329-96-3",
+  "base": "279-184-329-96-3",
+  "reuse_room": 1,
+  "interior_ctrl": "279-184-329-96-3",
+  "terminal_ctrl": "1",
+  "reuse_line": "1"
+ }
+]
