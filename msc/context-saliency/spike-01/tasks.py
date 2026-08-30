@@ -7,10 +7,14 @@ are causally screened BY CONSTRUCTION (screened variant) — or one interior det
 is silently needed again (delayed_reuse variant).
 
 Every segment carries a char-span annotation so the rig can map to token spans:
-  role ∈ {preamble, interior, terminal, question}
+  role ∈ {preamble, header, interior, count, terminal, question}
+  header  = the one-line landmark ("Room k is the {color} room.")
+  interior = screened narrative body (distractors)
+  count   = the countable-detail line (delayed-reuse target; screened otherwise)
 Ground-truth salience during the final derivation:
-  screened:      terminal lines + question causal; interiors irrelevant.
-  delayed_reuse: additionally, one named interior detail line is causal.
+  screened:      terminal lines + question causal; interiors and counts irrelevant;
+                 headers structurally load-bearing (occlusion finding, spike-01).
+  delayed_reuse: additionally, one named count line is causal.
 
 Determinism: seeded RNG; codes are 3-digit, derivations are trivial arithmetic
 so a 7B model can execute them reliably (the point is measurement, not difficulty).
@@ -22,12 +26,12 @@ from dataclasses import dataclass, field
 
 @dataclass
 class Segment:
-    role: str          # preamble | interior | terminal | question
+    role: str          # preamble | header | interior | count | terminal | question
     room: int          # 0 = not room-specific
     start: int         # char offset in prompt
     end: int
     text: str
-    reused_detail: bool = False  # delayed_reuse: this interior line is causal
+    reused_detail: bool = False  # delayed_reuse: this count line is causal
 
 
 @dataclass
@@ -41,10 +45,29 @@ class VaultTask:
     reuse_room: int = 0       # delayed_reuse only (0 in screened)
     reuse_value: int = 0      # the interior detail's value
     reuse_room_draw: int = 0  # the room the rng drew (same in both variants at a seed)
+    placement: str = "chrono" # chrono | reversed — presentation order of rooms
+    room_order: list = field(default_factory=list)
 
 
 FURNITURE = ["cabinet", "chest", "drawer", "shelf", "crate", "locker", "trunk", "alcove"]
 COLORS = ["red", "blue", "green", "amber", "violet", "gray", "copper", "ivory"]
+
+
+def _plural(furn):
+    return {"shelf": "shelves"}.get(furn, furn + "s")
+
+
+def room_order_for(n_rooms, placement):
+    """Presentation order of room indices (1-based). Content is generated in
+    index order so placement does not change codes — only where they sit."""
+    order = list(range(1, n_rooms + 1))
+    if placement == "chrono":
+        return order
+    if placement == "reversed":
+        return list(reversed(order))
+    raise ValueError(f"unknown placement {placement!r}; expected chrono|reversed")
+
+
 DISTRACTOR = [
     "The walls are lined with faded tapestries that have no markings of interest.",
     "A draft comes from a sealed window; nothing useful there.",
@@ -74,7 +97,7 @@ def _room_interior(rng, k, n_items):
     lines.append(rng.choice(DISTRACTOR))
     # the countable detail (delayed-reuse target)
     count_line_idx = len(lines)
-    lines.append(f"You count exactly {n_items} {furn}s along the wall.")
+    lines.append(f"You count exactly {n_items} {_plural(furn)} along the wall.")
     lines.append(rng.choice(DISTRACTOR))
     lines.append(f"Inside the largest {furn}, you find the sealed code-slip for this room.")
     lines.append("You open it, memorize what it says, and reseal it.")
@@ -84,9 +107,9 @@ def _room_interior(rng, k, n_items):
     return lines, code, count_line_idx
 
 
-def make_task(variant="screened", n_rooms=4, seed=0):
+def make_task(variant="screened", n_rooms=4, seed=0, placement="chrono"):
     rng = random.Random(seed)
-    parts, segments, codes = [], [], []
+    parts, segments = [], []
     pos = 0
 
     def emit(text, role, room, reused=False):
@@ -106,11 +129,26 @@ def make_task(variant="screened", n_rooms=4, seed=0):
     reuse_room_draw = rng.randint(1, n_rooms)
     reuse_room = reuse_room_draw if variant == "delayed_reuse" else 0
 
+    # Generate content in index order (RNG-stable across placements), emit in
+    # presentation order so a discharged room can sit at the edge or the middle.
+    generated = []
     for k in range(1, n_rooms + 1):
         lines, code, count_idx = _room_interior(rng, k, n_items_per_room[k - 1])
-        codes.append(code)
+        generated.append((k, lines, code, count_idx))
+    codes = [code for (_, _, code, _) in generated]
+    order = room_order_for(n_rooms, placement)
+
+    for k in order:
+        _k, lines, code, count_idx = generated[k - 1]
         for i, ln in enumerate(lines):
-            emit(ln + "\n", "interior", k, reused=(variant == "delayed_reuse" and k == reuse_room and i == count_idx))
+            if i == 0:
+                role = "header"
+            elif i == count_idx:
+                role = "count"
+            else:
+                role = "interior"
+            emit(ln + "\n", role, k,
+                 reused=(variant == "delayed_reuse" and k == reuse_room and i == count_idx))
         emit(f"CODE-{k}: {code}\n\n", "terminal", k)
 
     # v3: RETRIEVAL-ONLY question. The v2 SUM question conflated retrieval with
@@ -130,7 +168,7 @@ def make_task(variant="screened", n_rooms=4, seed=0):
         reuse_value = n_items_per_room[reuse_room - 1]
         furn = FURNITURE[(reuse_room - 1) % len(FURNITURE)]
         q = ("All rooms are complete. Report the vault sequence: the room codes in "
-             f"order, separated by dashes, and append the number of {furn}s you "
+             f"order, separated by dashes, and append the number of {_plural(furn)} you "
              f"counted in Room {reuse_room} as the final element.\n"
              "Walk the rooms in order, writing one line per room as 'Room k: <code>', "
              "then note the count, then give the final line as "
@@ -140,20 +178,35 @@ def make_task(variant="screened", n_rooms=4, seed=0):
 
     return VaultTask(variant=variant, n_rooms=n_rooms, prompt="".join(parts), segments=segments,
                      codes=codes, answer=answer, reuse_room=reuse_room, reuse_value=reuse_value,
-                     reuse_room_draw=reuse_room_draw)
+                     reuse_room_draw=reuse_room_draw, placement=placement, room_order=order)
 
 
 def occlude(task, target):
     """Return a modified prompt with a span replaced by equal-length filler.
-    target: ('interior', room) — all interior lines of that room, keeping the terminal;
-            ('terminal', room) — the CODE line of that room;
-            ('reuse_line', room) — just the countable-detail line.
-    Filler preserves char length (approx token length) to control position."""
+
+    target kind:
+      ('header', room)     — landmark line only
+      ('interior', room)   — narrative body (distractors), header preserved
+      ('count', room)      — countable-detail line of that room
+      ('narrative', room)  — header + interior + count (old full-interior)
+      ('terminal', room)   — the CODE line
+      ('reuse_line', room) — the delayed-reuse count line (reused_detail)
+
+    v4: header is its own role. ('interior', room) is therefore the
+    header-preserved condition from the spike, not the full-room wipe.
+    Filler preserves char length (approx token length) to control position.
+    """
+    kind, room = target
     out = []
     for seg in task.segments:
-        hit = ((target[0] == 'interior' and seg.role == 'interior' and seg.room == target[1]) or
-               (target[0] == 'terminal' and seg.role == 'terminal' and seg.room == target[1]) or
-               (target[0] == 'reuse_line' and seg.reused_detail and seg.room == target[1]))
+        hit = (
+            (kind == "header" and seg.role == "header" and seg.room == room) or
+            (kind == "interior" and seg.role == "interior" and seg.room == room) or
+            (kind == "count" and seg.role == "count" and seg.room == room) or
+            (kind == "narrative" and seg.role in ("header", "interior", "count") and seg.room == room) or
+            (kind == "terminal" and seg.role == "terminal" and seg.room == room) or
+            (kind == "reuse_line" and seg.reused_detail and seg.room == room)
+        )
         if hit:
             body = seg.text.rstrip("\n")
             n_nl = len(seg.text) - len(body)

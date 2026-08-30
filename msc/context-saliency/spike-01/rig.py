@@ -3,12 +3,16 @@
 Prefill the task prompt with attentions OFF (the n-by-n cost lives only in prefill,
 and eager prefill at ~1K tokens is trivial anyway); then decode greedily step by
 step with output_attentions ON — each step's attention is one row [L, H, 1, n],
-aggregated to per-segment mass immediately and discarded. Also records per-step
-hidden-state L2 diffs (EpiKV T1 signal) for the generated tokens, and top-K
-attended context positions for heavy-hitter turnover.
+aggregated to per-segment mass immediately and discarded.
 
-Everything is (context, query)-conditional by construction: the matrix is
-per-decision-step. Outputs a JSON bundle per run.
+Signals:
+  T1-temporal — per-step generated-token hidden-diff `g` plus entropy/logprob
+  T1-spatial  — prefill hidden-diff and KV variance, rolled to segments (once)
+  T2-lite     — all-head all-layer decode-row mass (pre-filter; AGMR heads unwired)
+  heavy-hitter sets for P2 turnover
+
+Everything is (context, query)-conditional by construction for T2/T1-temporal.
+T1-spatial is ingestion-time (query-unknown). Outputs a JSON bundle per run.
 """
 
 import json
@@ -43,7 +47,13 @@ def load():
 
 def build_inputs(prompt_text, segments):
     """Chat-format the task, tokenize with offsets, and map segment char spans
-    to token index lists. Returns input_ids, seg_token_lists, formatted string."""
+    to token index lists. Returns input_ids, seg_token_lists, formatted string.
+
+    Token membership is exclusive (first-wins). The overlapping rule `a<e and b>s`
+    double-counted boundary tokens into adjacent segments; at 8–16 tokens/span
+    that distorts per-token normalization. Prefix tokens (chat template) stay
+    unclaimed.
+    """
     model, tok = load()
     messages = [{"role": "user", "content": prompt_text}]
     kw = {}
@@ -53,12 +63,86 @@ def build_inputs(prompt_text, segments):
     base = formatted.index(prompt_text)  # prompt embedded verbatim
     enc = tok(formatted, return_offsets_mapping=True, return_tensors="pt", add_special_tokens=False)
     offsets = enc.pop("offset_mapping")[0].tolist()
+    claimed = set()
     seg_tokens = []
     for seg in segments:
         s, e = seg.start + base, seg.end + base
-        toks = [i for i, (a, b) in enumerate(offsets) if a < e and b > s and b > a]
+        toks = [i for i, (a, b) in enumerate(offsets)
+                if i not in claimed and a < e and b > s and b > a]
+        claimed.update(toks)
         seg_tokens.append(toks)
     return enc["input_ids"], seg_tokens, formatted
+
+
+def _entropy_logprob(logits, token_id):
+    logp = torch.log_softmax(logits.float(), dim=-1)
+    p = logp.exp()
+    return float(-(p * logp).sum()), float(logp[token_id])
+
+
+def _kv_layers(past, n_ctx):
+    """Yield (key, value) tensors per layer, each [H, n_ctx, D]."""
+    if hasattr(past, "key_cache"):
+        pairs = zip(past.key_cache, past.value_cache)
+    else:
+        pairs = past
+    for k, v in pairs:
+        if k.dim() != 4:
+            raise RuntimeError(f"unexpected KV rank {tuple(k.shape)}")
+        k, v = k[0], v[0]  # drop batch → 3D
+        # HF Qwen2 DynamicCache: [H, S, D]. Seq-first caches: [S, H, D].
+        if k.shape[1] >= n_ctx:
+            yield k[:, :n_ctx].float(), v[:, :n_ctx].float()
+        elif k.shape[0] >= n_ctx:
+            yield k[:n_ctx].transpose(0, 1).float(), v[:n_ctx].transpose(0, 1).float()
+        else:
+            raise RuntimeError(f"cannot locate seq dim in KV {tuple(k.shape)} n_ctx={n_ctx}")
+
+
+def _seg_mean_max(pos_vals, memb):
+    """pos_vals [C, n_ctx] × memb [n_seg, n_ctx] → (mean, max) each [C, n_seg]."""
+    ntok = memb.sum(1).clamp(min=1.0)
+    mean = (pos_vals @ memb.T) / ntok
+    n_seg = memb.shape[0]
+    cols = []
+    for j in range(n_seg):
+        m = memb[j] > 0
+        if m.any():
+            cols.append(pos_vals[:, m].max(dim=1).values)
+        else:
+            cols.append(pos_vals.new_zeros(pos_vals.shape[0]))
+    return mean, torch.stack(cols, dim=1)
+
+
+def t1_spatial_from_prefill(out, n_ctx, memb):
+    """Ingestion-time T1-spatial: prefill hidden-diff and KV variance, rolled to segments.
+
+    Prefill hidden-diff is ||h_l(pos) − h_l(pos−1)|| (EpiKV's signal along the
+    prompt axis). Position 0 has no predecessor and is stored as 0 — analysis
+    must detrend; the positional trend is expected and load-bearing to remove.
+    """
+    hs = torch.stack([h[0, :n_ctx].float() for h in out.hidden_states])  # [L+1, n_ctx, d]
+    dhs = (hs[:, 1:] - hs[:, :-1]).norm(dim=-1)                          # [L+1, n_ctx-1]
+    g_pre = torch.cat([dhs.new_zeros(dhs.shape[0], 1), dhs], dim=1)      # [L+1, n_ctx]
+    g_mean, g_max = _seg_mean_max(g_pre, memb)
+
+    k_pos, v_pos = [], []
+    for k, v in _kv_layers(out.past_key_values, n_ctx):
+        # variance over heads × dim, per position
+        k_pos.append(k.var(dim=(0, 2)))  # [n_ctx]
+        v_pos.append(v.var(dim=(0, 2)))
+    k_pos = torch.stack(k_pos)  # [L, n_ctx]
+    v_pos = torch.stack(v_pos)
+    k_mean, k_max = _seg_mean_max(k_pos, memb)
+    v_mean, v_max = _seg_mean_max(v_pos, memb)
+    return {
+        "g_prefill_seg_mean": g_mean.cpu().tolist(),
+        "g_prefill_seg_max": g_max.cpu().tolist(),
+        "k_var_seg_mean": k_mean.cpu().tolist(),
+        "k_var_seg_max": k_max.cpu().tolist(),
+        "v_var_seg_mean": v_mean.cpu().tolist(),
+        "v_var_seg_max": v_max.cpu().tolist(),
+    }
 
 
 @torch.no_grad()
@@ -78,8 +162,11 @@ def run_instrumented(prompt_text, segments, max_new=MAX_NEW):
     t0 = time.time()
     out = model(input_ids=input_ids, use_cache=True, output_hidden_states=True)
     past = out.past_key_values
+    spatial = t1_spatial_from_prefill(out, n_ctx, memb)
     prev_hidden = torch.stack([h[0, -1].float() for h in out.hidden_states])  # [L+1, d]
-    next_id = out.logits[0, -1].argmax()
+    logits = out.logits[0, -1]
+    next_id = logits.argmax()
+    ent, lp = _entropy_logprob(logits, next_id)
 
     steps = []          # per-step dicts
     gen_ids = []
@@ -96,7 +183,7 @@ def run_instrumented(prompt_text, segments, max_new=MAX_NEW):
         mean_row = rows.mean(0)                        # [n_ctx] all-layer mean
         hh = torch.topk(mean_row, min(TOPK_HH, n_ctx)).indices.tolist()
 
-        # --- T1: hidden-state L2 diffs for this generated token ---
+        # --- T1-temporal: hidden-state L2 diffs for this generated token ---
         hidden = torch.stack([h[0, -1].float() for h in out.hidden_states])   # [L+1, d]
         g = (hidden - prev_hidden).norm(dim=-1)        # [L+1]
         prev_hidden = hidden
@@ -107,8 +194,12 @@ def run_instrumented(prompt_text, segments, max_new=MAX_NEW):
             "ctx_mass_total": float(mean_row.sum()),   # share of attention on prompt vs generated
             "hh": hh,
             "g": g.cpu().tolist(),
+            "entropy": ent,
+            "logprob": lp,
         })
-        next_id = out.logits[0, -1].argmax()
+        logits = out.logits[0, -1]
+        next_id = logits.argmax()
+        ent, lp = _entropy_logprob(logits, next_id)
         if next_id.item() == tok.eos_token_id:
             break
         text_so_far = tok.decode(gen_ids)
@@ -121,6 +212,10 @@ def run_instrumented(prompt_text, segments, max_new=MAX_NEW):
         "seconds": round(time.time() - t0, 1),
         "seg_roles": [(s.role, s.room, bool(s.reused_detail), len(t))
                       for s, t in zip(segments, seg_tokens)],
+        "seg_meta": [{"role": s.role, "room": s.room, "reused": bool(s.reused_detail),
+                      "n_tokens": len(t), "text": s.text.strip()}
+                     for s, t in zip(segments, seg_tokens)],
+        "t1_spatial": spatial,
         "steps": steps,
     }
 
