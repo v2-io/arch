@@ -13,9 +13,19 @@ Four traces, 4-room chrono, seeds 7 and 11, all **base-correct**. T2-allhead reu
 
 The spike’s most robust 7B instrumented finding (query-conditional elevation of the reuse line) **does not travel cleanly**. Seed 7 on Qwen3 is a null. T2-allhead is still pre-filter; this is a cross-model map, not a calibrated measurement.
 
-## 20-room length cell (~2266–2296 n_ctx)
+## 20-room length cell (~2266–2296 n_ctx) — measure the floor, don't mourn the sweep
 
-Eight 7B traces (`out/len2k_20r_*`). Base-correct **1/8** (chrono delayed_reuse seed 11). Failures are digit-level retrieval and dash-collapse, not placement-only. At this length the 7B cannot report a 20-code MASTER reliably, so T2-vs-length and T1-vs-length are not scorable without a smaller code alphabet or base-correct gating that would leave n=1. The length cell’s result is the **base-rate curve**: four 3-digit codes at ~550 tokens were already ~40% fail in the spike; twenty codes at ~2.3K is near-floor.
+Eight 7B traces (`out/len2k_20r_*`). Base-correct **1/8** (chrono delayed_reuse seed 11). Failures are digit-level retrieval and dash-collapse, not placement-only. T2-vs-length and T1-vs-length are **not scorable** on this (model × family) pairing: the retrieval floor swallows the cell. That is a program fact, not a failed experiment.
+
+Capability curve, 3-digit codes, greedy 7B, walk-task, unmodified prompts:
+
+| cell | n_ctx | n_codes | base-correct |
+|---|---|---|---|
+| spike v3 (FINDINGS) | ~550 | 4 | 7/12 (5/12 fail) |
+| v4 mint | 539–587 | 4 | **7/12** |
+| 20-room | 2266–2296 | 20 | **1/8** |
+
+The GOAL file already named this curve as worth having. Length-sweep of salience on 7B Plan-NIAH with 3-digit codes cannot run until the floor recedes (2-digit codes, or a stronger model). The measurement this regime gives for free is the floor itself.
 
 ## Reversed placement (v4 mint) — capability, not just confound
 

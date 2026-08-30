@@ -57,6 +57,27 @@ The inversion **did not go away** when interiors were equalized to terse `AUX-k-
 
 So the construction note above still holds as the *reason the original gate was a stacked test*. The formulaic cell says: even after taking that stacking down a notch, the signed failure is still there. Next discriminator (more seeds, or narrative-embedded codes) is still open. The gate on Plan-NIAH-narrative is still closed.
 
+## Format-composition control on existing arrays (zero new runs)
+
+Fable's cheaper check, after the formulaic cell: terminals and interiors still differ in **span length and format-token mix** (digits, colons, newlines) even when the words go formulaic. We cannot drop format tokens from `g_prefill` itself — those arrays are already rolled to segments — but we have `n_tokens` and `seg_meta` text, so we can residualize the stored per-token mean on span length and on character-level format fraction.
+
+On the **narrative v4 mint** (7 inferred rows, n=35 pairs):
+
+| control | Spearman of residual vs T3 flip |
+|---|---|
+| none (raw) | **−0.242** |
+| linear residual on `n_tokens` | **−0.406** (inversion *strengthens*) |
+| linear residual on format-char fraction (digits+punct+ws) | **+0.179** (sign *flips*) |
+| residual on both | **−0.054** (≈ 0) |
+| `n_tokens` itself vs flip | −0.081 |
+| format-char fraction itself vs flip | **+0.384** |
+
+Mean token-count of flipped vs unflipped spans is almost the same (10.5 vs 10.9). Mean format-fraction is not (0.40 vs 0.23). **Span length does not explain the inversion. Format-character composition does**, on this generator: after taking it out, T1-spatial is no longer anti-causal — it is approximately unrelated to causality.
+
+That is a specification of the construction line, not a retraction of the gate. We put the causal payload in `CODE-k: NNN` (digit/colon/newline) and the screened mass in alphabetic prose *in order to have a 2×2*. The meter covaries with that format split. Once the split is controlled, there is no remaining anti-causal residue on the narrative mint worth promoting. The gate sentence is unchanged: do not use raw `g_prefill` as a causality ranker here. What we should not write is “the instrument inverts causality.” It inverts **format**, which we glued to causality.
+
+Honesty bound: this is a character-level proxy, not per-token exclusion from the residual stream. A capture that stores position-level `g_prefill` would let us drop format tokens for real. Formulaic cell (n=10) has almost no remaining format variance (everything is tag+digit), so residualizing cannot move its ρ=−0.577 — that cell is still the small-n “survives equalization” question, not overturned by this control.
+
 ## Adjacent notes (same mint, not the same claim)
 
 - **T1-temporal 0/6 predicted sign is 6/6 the opposite sign** (near-boundary Δ depressed in every pair). n=6 is one coin-flip from noise; it claims nothing yet. Pre-register for the next mint: “boundary depression replicates.” Strengthen-before-soften on a null: check whether the null is an inverted regularity before writing “does not fire.”
