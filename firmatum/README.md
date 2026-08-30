@@ -51,7 +51,7 @@ Queued (not done): rename, public crate/repo readiness, re-intern as `firmatum/<
 
 ### [`utils/git-heat/`](utils/git-heat/)
 
-Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer. Index: [`utils/git-heat/README.md`](utils/git-heat/README.md). Ages in *commits behind HEAD*, inside one repo.
+Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer. Index: [`utils/git-heat/README.md`](utils/git-heat/README.md). Ages in *commits behind HEAD*, inside one repo. A path that is not a git work tree is ranked by filesystem mtime instead (no half-life).
 
 ```sh
 ln -sfn ~/src/arch/firmatum/utils/git-heat/git-heat-decay/git-heat ~/.local/bin/git-heat

@@ -1,6 +1,6 @@
 # git-heat
 
-Walkable **commit-decay heatmap** for any git repository or subdirectory.
+Walkable **commit-decay heatmap** for any git repository or subdirectory. If the path is **not** a git work tree, ranks by **filesystem mtime** instead (no half-life, no blame).
 
 Each path gets a heat score from how recently (in *commits*, not wall time) it
 was touched. Interactive HTML shows a collapsible tree, a focus slider
@@ -17,7 +17,7 @@ ln -sfn ~/src/arch/firmatum/utils/git-heat/git-heat-decay/git-heat ~/.local/bin/
 # ensure ~/.local/bin is on PATH
 ```
 
-Requires: Python 3.10+, `git` on PATH. HTML viewer uses highlight.js from CDN.
+Requires: Python 3.10+. `git` on PATH for the commit-decay path (mtime ranking does not need it). HTML viewer uses highlight.js from CDN.
 
 ## Usage
 
@@ -32,12 +32,18 @@ git-heat ~/src/arch/asf --serve       # whole repository
 git-heat crates/codegen --serve       # only that subdirectory
 git-heat --half-life 3 --top 25 .     # short memory, ranking only
 git-heat --noise Cargo.toml,Cargo.lock
+git-heat /tmp/scratch                 # not a git repo → mtime ranking
 ```
 
 `path` may be any directory (or file) inside a git work tree. Heat is computed
 from the whole history, then **scoped** to that subdirectory; paths in the
 output are relative to the scope so the file viewer can fetch them when the
 HTML is served from that directory.
+
+If `path` is **not** inside a git work tree, git-heat walks regular files
+(skipping hidden names and build/cache dirs), ranks **newest mtime first**,
+and prints ages. `--half-life` is ignored. HTML `--serve` still works (slider
+and blame hidden; color is recency across the tree, newest = 2).
 
 ## Heat model (brief)
 

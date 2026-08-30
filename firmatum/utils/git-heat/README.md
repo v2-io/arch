@@ -1,6 +1,6 @@
 # firmatum/utils/git-heat
 
-Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer.
+Commit-decay heatmap for any git repo or subdirectory — CLI ranking or interactive HTML tree + file viewer. Non-git trees rank by filesystem mtime (no half-life).
 
 The executable lives in [`git-heat-decay/`](git-heat-decay/). See that README for the heat model and usage.
 

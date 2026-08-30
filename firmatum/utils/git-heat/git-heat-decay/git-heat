@@ -3,6 +3,7 @@
 
 Per-path heat from git history with exponential *commit* decay, optional HTML
 tree + syntax-highlighted file viewer, and a focus slider (half-life in commits).
+If PATH is not inside a git work tree, ranks by filesystem mtime (no half-life).
 
 Heat model
   raw = sum over non-initial touches of exp(-age / tau)
@@ -29,6 +30,7 @@ import argparse
 import html
 import json
 import math
+import os
 import subprocess
 import sys
 import time
@@ -48,6 +50,32 @@ ZERO_HEAT_BG = "#222222"
 DEFAULT_NOISE_BASENAMES: frozenset[str] = frozenset({"Cargo.toml", "SOURCE_REV"})
 NOISE_BASENAMES: set[str] = set(DEFAULT_NOISE_BASENAMES)
 
+# Directories that drown an mtime ranking (build/cache/vcs). Hidden names
+# (leading '.') are skipped separately. Only used when there is no git root.
+SKIP_DIR_NAMES: frozenset[str] = frozenset(
+    {
+        "node_modules",
+        "__pycache__",
+        "venv",
+        "target",
+        "dist",
+        "build",
+        "vendor",
+        ".tox",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".eggs",
+        ".direnv",
+        ".terraform",
+        ".venv",
+        ".cache",
+        ".git",
+        ".hg",
+        ".svn",
+        ".bzr",
+    }
+)
+
 
 def is_noise_path(path: str) -> bool:
     return Path(path).name in NOISE_BASENAMES
@@ -56,6 +84,60 @@ def is_noise_path(path: str) -> bool:
 def set_noise_basenames(names: set[str] | frozenset[str]) -> None:
     NOISE_BASENAMES.clear()
     NOISE_BASENAMES.update(names)
+
+
+def walk_mtime_leaves(root: Path) -> dict[str, float]:
+    """Filesystem mtimes for regular files under root, relative posix paths.
+
+    Skips hidden names and SKIP_DIR_NAMES. Does not follow symlinks.
+    """
+    root = root.resolve()
+    out: dict[str, float] = {}
+    for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
+        dirnames[:] = [
+            d
+            for d in dirnames
+            if d not in SKIP_DIR_NAMES and not d.startswith(".")
+        ]
+        for name in filenames:
+            if name.startswith("."):
+                continue
+            full = Path(dirpath) / name
+            try:
+                st = full.stat()
+            except OSError:
+                continue
+            if not full.is_file() or full.is_symlink():
+                continue
+            rel = full.relative_to(root).as_posix()
+            out[rel] = float(st.st_mtime)
+    return out
+
+
+def heat_from_mtimes(mtime_by_path: dict[str, float]) -> dict[str, float]:
+    """Map mtimes onto the 0–2 display scale used by the git heat palette.
+
+    Newest file → 2, oldest → 0, linear in unix mtime. Not a decay kernel —
+    just a color/span scale so the HTML ramp still has somewhere to go.
+    Noise basenames are 0 and stay out of the span.
+    """
+    usable = {
+        p: mt for p, mt in mtime_by_path.items() if not is_noise_path(p)
+    }
+    if not usable:
+        return {p: 0.0 for p in mtime_by_path}
+    lo = min(usable.values())
+    hi = max(usable.values())
+    span = hi - lo
+    out: dict[str, float] = {}
+    for p, mt in mtime_by_path.items():
+        if is_noise_path(p):
+            out[p] = 0.0
+        elif span <= 0:
+            out[p] = 2.0
+        else:
+            out[p] = 2.0 * (mt - lo) / span
+    return out
 
 
 def git_commit_touch_log(repo: Path) -> list[tuple[str, float, list[str]]]:
@@ -356,6 +438,7 @@ def render_html(
     label: str | None = None,
     git_root: Path | None = None,
     scope_prefix: str = "",
+    mode: str = "git",
 ) -> str:
     data = tree_to_jsonable(tree, now)
     heat_max = max(float(data["heat"]), 0.0)
@@ -363,21 +446,27 @@ def render_html(
     choices = list(HALF_LIFE_CHOICES)
     default_hl = min(choices, key=lambda c: abs(c - half_life))
     display = label or repo.name
+    mtime_mode = mode == "mtime"
     meta = {
         "repo": str(repo),
         "git_root": str(git_root or repo),
         "scope": scope_prefix.rstrip("/"),
         "label": display,
+        "mode": mode,
         "half_life": default_hl,
         "half_life_choices": choices,
-        "unit": "commits",
+        "unit": "mtime" if mtime_mode else "commits",
         "now": time.strftime("%Y-%m-%d %H:%M:%S %z", time.localtime(now)),
         "n_touches": n_touches,
         "n_files": n_files,
         "n_commits": n_commits,
         "heat_max": heat_max,
         "zero_bg": ZERO_HEAT_BG,
-        "note": "initial commit excluded; heat 0 → #222; noise basenames ignored for dir max",
+        "note": (
+            "not a git repository; ranked by filesystem mtime, newest first; no commit-decay"
+            if mtime_mode
+            else "initial commit excluded; heat 0 → #222; noise basenames ignored for dir max"
+        ),
     }
     palette_js = json.dumps(HEAT_PALETTE_RGB)
     payload = json.dumps({"meta": meta, "tree": data}, ensure_ascii=False)
@@ -387,6 +476,21 @@ def render_html(
         f"rgb({r},{g},{b})" for r, g, b in reversed(HEAT_PALETTE_RGB)
     )
     default_idx = choices.index(default_hl)
+    legend_tail = (
+        "unit: filesystem mtime · no half-life · noise ignored for dir heat · click folder/file"
+        if mtime_mode
+        else "unit: commits · initial excluded · noise ignored for dir heat · click folder/file"
+    )
+    viewer_empty = (
+        "Select a file from the tree. Color is recency of filesystem mtime "
+        "(newest = hot); there is no git blame in this mode."
+        if mtime_mode
+        else (
+            "Select a file from the tree. Left column: line numbers on a per-line "
+            "<em>git blame</em> age heatmap (hot = last touched recently; hover for SHA)."
+        )
+    )
+    header_class = "mtime-mode" if mtime_mode else ""
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -491,6 +595,7 @@ def render_html(
       transition: none !important;
     }}
   }}
+  header.mtime-mode #hl-control {{ display: none; }}
   .legend {{
     display: flex;
     align-items: center;
@@ -925,7 +1030,7 @@ def render_html(
 </style>
 </head>
 <body>
-<header title="Hover for focus slider, legend, and expand controls">
+<header class="{header_class}" title="Hover for focus slider, legend, and expand controls">
   <h1>git-heat — {html.escape(display)}</h1>
   <div class="meta" id="meta"></div>
   <div class="header-extras">
@@ -951,7 +1056,7 @@ def render_html(
       <div class="legend">
         <span>cold</span><div class="swatch" title="yellow→green→blue→purple"></div><span>hot</span>
         <span style="margin-left:0.5rem"><span class="zero-swatch"></span> heat&nbsp;0 (initial-only, or noise: Cargo.toml / SOURCE_REV)</span>
-        <span style="margin-left:0.75rem">unit: commits · initial excluded · noise ignored for dir heat · click folder/file</span>
+        <span style="margin-left:0.75rem">{legend_tail}</span>
       </div>
       <div id="toolbar">
         <button type="button" id="expand-1">Expand 1 level</button>
@@ -972,10 +1077,9 @@ def render_html(
     </div>
     <div id="viewer-body">
       <div id="viewer-empty">
-        Select a file from the tree. Left column: line numbers on a per-line
-        <em>git blame</em> age heatmap (hot = last touched recently; hover for SHA).
+        {viewer_empty}
         <br/><br/>
-        Prefer: <code>git-heat --serve</code> (in-memory page; needed for blame + file load).
+        Prefer: <code>git-heat --serve</code> (in-memory page; needed for file load).
         Use <code>--html</code> only if you want a file on disk.
         <br/><br/>
         Opening via <code>file://</code> cannot read sibling files in most browsers.
@@ -1019,6 +1123,7 @@ def render_html(
   const meta = payload.meta;
   const tree = payload.tree;
   const choices = meta.half_life_choices;
+  const mtimeMode = meta.mode === 'mtime';
 
   let halfLife = meta.half_life;
   let heatMax = 1;
@@ -1097,6 +1202,13 @@ def render_html(
   }}
 
   function updateMeta() {{
+    if (mtimeMode) {{
+      document.getElementById('meta').textContent =
+        (meta.repo || '') +
+        ' · mtime (not a git repository) · ' +
+        meta.n_files + ' paths · ' + meta.now;
+      return;
+    }}
     const tau = tauFrom(halfLife);
     const scopeBit = meta.scope ? (' · scope ' + meta.scope) : '';
     document.getElementById('meta').textContent =
@@ -1367,10 +1479,12 @@ def render_html(
 
       const nLines = text.length ? text.split('\\n').length : 0;
       let blameNote = '';
-      const blame = await fetchBlame(path);
-      if (seq !== loadSeq) return;
       let lines = null;
-      if (blame && blame.lines && blame.lines.length) {{
+      const blame = mtimeMode ? null : await fetchBlame(path);
+      if (seq !== loadSeq) return;
+      if (mtimeMode) {{
+        blameNote = '';
+      }} else if (blame && blame.lines && blame.lines.length) {{
         lines = blame.lines;
         if (lines.length < nLines) {{
           const last = lines[lines.length - 1] || {{ sha: '', age: 0, author: '', summary: '' }};
@@ -1484,7 +1598,10 @@ def render_html(
   }}
 
   // initial compute + paint
-  recomputeTree(tree, tauFrom(halfLife));
+  // mtime mode has no ages[]; recomputeTree would zero every leaf.
+  if (!mtimeMode) {{
+    recomputeTree(tree, tauFrom(halfLife));
+  }}
   heatMax = Math.max(tree.heat, 0);
   if (tree.children && tree.children.length) {{
     appendChildren(root, tree.children, 0);
@@ -1494,10 +1611,12 @@ def render_html(
   updateMeta();
 
   const slider = document.getElementById('hl-slider');
-  slider.addEventListener('input', function () {{
-    halfLife = choices[parseInt(slider.value, 10)];
-    refreshHeats();
-  }});
+  if (!mtimeMode) {{
+    slider.addEventListener('input', function () {{
+      halfLife = choices[parseInt(slider.value, 10)];
+      refreshHeats();
+    }});
+  }}
 
   function setOpen(wrap, open) {{
     const nest = wrap.querySelector(':scope > .nest');
@@ -1537,12 +1656,13 @@ def find_git_root(path: Path) -> Path | None:
         return None
 
 
-def resolve_target(path: Path) -> tuple[Path, Path, str]:
-    """Map a user path to (git_root, scope_dir, scope_prefix).
+def resolve_target(path: Path) -> tuple[Path | None, Path, str]:
+    """Map a user path to (git_root | None, scope_dir, scope_prefix).
 
-    scope_prefix is '' at repo root, or 'crates/foo/' for a subdirectory.
-    Paths in the heat map are relative to scope_dir so the HTML file viewer
-    can fetch them when served from that directory.
+    git_root is None when path is not inside a work tree — caller then ranks
+    by filesystem mtime. scope_prefix is '' at repo root, or 'crates/foo/'
+    for a subdirectory. Paths in the heat map are relative to scope_dir so
+    the HTML file viewer can fetch them when served from that directory.
     """
     path = path.expanduser().resolve()
     if not path.exists():
@@ -1550,7 +1670,7 @@ def resolve_target(path: Path) -> tuple[Path, Path, str]:
     scope_dir = path if path.is_dir() else path.parent
     root = find_git_root(scope_dir)
     if root is None:
-        raise RuntimeError(f"not inside a git repository: {path}")
+        return None, scope_dir, ""
     try:
         rel = scope_dir.relative_to(root)
     except ValueError as e:
@@ -1663,7 +1783,7 @@ def git_blame_lines(
 
 def make_git_heat_handler(
     serve_dir: Path,
-    git_root: Path,
+    git_root: Path | None,
     scope_prefix: str,
     *,
     html_doc: str | None = None,
@@ -1713,6 +1833,14 @@ def make_git_heat_handler(
                 if not rel or ".." in rel.split("/"):
                     self.send_error(400, "bad path")
                     return
+                if git_root is None:
+                    self._send_bytes(
+                        json.dumps(
+                            {"path": rel, "repo_path": rel, "lines": []}
+                        ).encode(),
+                        "application/json; charset=utf-8",
+                    )
+                    return
                 repo_path = (scope_prefix + rel).replace("\\", "/")
                 try:
                     if ages_cache is None:
@@ -1738,6 +1866,162 @@ def make_git_heat_handler(
     return GitHeatHandler
 
 
+def write_and_serve_html(
+    html_doc: str,
+    *,
+    scope_dir: Path,
+    git_root: Path | None,
+    scope_prefix: str,
+    args: argparse.Namespace,
+) -> int:
+    """Write --html and/or --serve. Returns 0 when that was the request."""
+    out: Path | None = None
+    if args.html is not None:
+        out = Path(args.html)
+        if not out.is_absolute():
+            out = scope_dir / out
+        out.write_text(html_doc, encoding="utf-8")
+        print(f"wrote {out}", file=sys.stderr)
+
+    if args.serve is not None:
+        import socketserver
+        import webbrowser
+
+        serve_dir = scope_dir.resolve()
+        port = int(args.serve)
+        handler_cls = make_git_heat_handler(
+            serve_dir,
+            git_root,
+            scope_prefix,
+            html_doc=html_doc,
+            html_route="git-heat.html",
+        )
+        socketserver.TCPServer.allow_reuse_address = True
+        with socketserver.TCPServer(("127.0.0.1", port), handler_cls) as httpd:
+            url = f"http://127.0.0.1:{port}/"
+            if git_root is not None:
+                loc = (
+                    f"  git root {git_root}"
+                    f"{', scope ' + scope_prefix.rstrip('/') if scope_prefix else ''}\n"
+                    f"  blame API /__git-heat__/blame"
+                )
+            else:
+                loc = "  mode mtime (not a git repository; no blame)"
+            print(
+                f"serving heatmap from memory · sources from {serve_dir}\n"
+                + loc
+                + (f"\n  also wrote {out}" if out is not None else "\n  (no HTML file written)"),
+                file=sys.stderr,
+            )
+            print(url)
+            try:
+                webbrowser.open(url)
+            except Exception:
+                pass
+            try:
+                httpd.serve_forever()
+            except KeyboardInterrupt:
+                print("\nstopped", file=sys.stderr)
+        return 0
+
+    if args.open and out is not None:
+        import webbrowser
+
+        webbrowser.open(out.as_uri())
+
+    if out is not None:
+        print(
+            f"# wrote HTML only — for interactive viewer without a file:\n"
+            f"#   git-heat {args.path} --serve\n"
+            f"# or serve the written file from its directory",
+            file=sys.stderr,
+        )
+        print(out)
+    return 0
+
+
+def run_mtime(scope_dir: Path, args: argparse.Namespace) -> int:
+    """CLI ranking / HTML for a tree that is not a git work tree."""
+    if "--half-life" in sys.argv:
+        print(
+            "git-heat: ignoring --half-life (not a git repository; ranking by mtime)",
+            file=sys.stderr,
+        )
+    now = time.time()
+    mtime_by_path = walk_mtime_leaves(scope_dir)
+    if not mtime_by_path:
+        print(f"git-heat: no files under {scope_dir}", file=sys.stderr)
+        return 1
+    heat_by_path = heat_from_mtimes(mtime_by_path)
+    n_files = len(mtime_by_path)
+    label = f"{scope_dir.name} (mtime)"
+    ages_by_path = {p: [] for p in mtime_by_path}
+
+    want_html = args.html is not None or args.serve is not None
+    if want_html:
+        tree = build_tree(ages_by_path, mtime_by_path, heat_by_path)
+        html_doc = render_html(
+            tree,
+            repo=scope_dir,
+            half_life=args.half_life,
+            now=now,
+            n_touches=0,
+            n_files=n_files,
+            n_commits=0,
+            label=label,
+            git_root=None,
+            scope_prefix="",
+            mode="mtime",
+        )
+        return write_and_serve_html(
+            html_doc,
+            scope_dir=scope_dir,
+            git_root=None,
+            scope_prefix="",
+            args=args,
+        )
+
+    heat = dict(heat_by_path)
+    mtime = dict(mtime_by_path)
+    if args.dirs:
+        dir_heat: dict[str, float] = defaultdict(float)
+        dir_mt: dict[str, float] = defaultdict(float)
+        for path, h in heat_by_path.items():
+            if is_noise_path(path):
+                continue
+            mt = mtime_by_path.get(path, 0.0)
+            parts = Path(path).parts
+            for i in range(1, len(parts)):
+                d = "/".join(parts[:i]) + "/"
+                if h > dir_heat[d]:
+                    dir_heat[d] = h
+                if mt > dir_mt[d]:
+                    dir_mt[d] = mt
+        for d, h in dir_heat.items():
+            heat[d] = h
+            mtime[d] = dir_mt[d]
+
+    ranked = sorted(
+        ((path, h) for path, h in heat.items() if h >= args.min_heat),
+        key=lambda x: (-x[1], -mtime.get(x[0], 0.0), x[0]),
+    )
+    if args.top > 0:
+        ranked = ranked[: args.top]
+
+    print(
+        f"# git-heat  {label}\n"
+        f"# root={scope_dir}\n"
+        f"# mode=mtime  (not a git repository; no commit-decay)\n"
+        f"# now={time.strftime('%Y-%m-%d %H:%M:%S %z', time.localtime(now))}\n"
+        f"# paths={n_files}  ranked by filesystem mtime, newest first\n"
+        f"# display heat = 2·(mtime−oldest)/(newest−oldest) among non-noise files\n"
+        f"# {'AGE':>12}  PATH"
+    )
+    for path, _h in ranked:
+        print(f"{fmt_age(now, mtime.get(path, 0.0)):>12}  {path}")
+    return 0
+
+
 def main() -> int:
     epilog = """\
 examples:
@@ -1749,11 +2033,12 @@ examples:
   git-heat crates/codegen --serve       one subdirectory
   git-heat --half-life 3 --top 25 .     short memory, top paths
   git-heat --noise Cargo.toml,Cargo.lock  extra noise basenames
+  git-heat /tmp/scratch                 mtime ranking if not a git work tree
 
-heat is scale-invariant: a path touched every commit forever → ~2 at any
-half-life. Focus slider (HTML) moves half-life from long/historical (left)
-to short/recent (right). --serve holds HTML in memory; use --html only when
-you want a file on disk.
+heat (git): scale-invariant commit-decay; a path touched every commit forever
+→ ~2 at any half-life. Not a git repository: rank by filesystem mtime, no
+half-life. --serve holds HTML in memory; use --html only when you want a file
+on disk.
 
 home: ~/src/arch/firmatum/utils/git-heat/git-heat-decay/
 """
@@ -1761,7 +2046,9 @@ home: ~/src/arch/firmatum/utils/git-heat/git-heat-decay/
         prog="git-heat",
         description=(
             "Commit-decay heatmap for a git repo or subdirectory — CLI ranking "
-            "or interactive HTML tree with syntax-highlighted file viewer."
+            "or interactive HTML tree with syntax-highlighted file viewer. "
+            "If PATH is not inside a git work tree, ranks by filesystem mtime "
+            "(no half-life)."
         ),
         epilog=epilog,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -1770,7 +2057,7 @@ home: ~/src/arch/firmatum/utils/git-heat/git-heat-decay/
         "path",
         nargs="?",
         default=".",
-        help="git repo root or any subdirectory (default: cwd)",
+        help="git repo, subdirectory, or any directory (mtime ranking if not git; default: cwd)",
     )
     p.add_argument(
         "--half-life",
@@ -1845,7 +2132,7 @@ home: ~/src/arch/firmatum/utils/git-heat/git-heat-decay/
         "-V",
         "--version",
         action="version",
-        version="git-heat 1.0.0",
+        version="git-heat 1.1.0",
     )
     args = p.parse_args()
 
@@ -1860,6 +2147,9 @@ home: ~/src/arch/firmatum/utils/git-heat/git-heat-decay/
     except (FileNotFoundError, RuntimeError) as e:
         print(f"git-heat: {e}", file=sys.stderr)
         return 2
+
+    if git_root is None:
+        return run_mtime(scope_dir, args)
 
     now = time.time()
     commits = git_commit_touch_log(git_root)
@@ -1898,66 +2188,15 @@ home: ~/src/arch/firmatum/utils/git-heat/git-heat-decay/
             label=label,
             git_root=git_root,
             scope_prefix=scope_prefix,
+            mode="git",
         )
-
-        out: Path | None = None
-        if args.html is not None:
-            out = Path(args.html)
-            if not out.is_absolute():
-                out = scope_dir / out
-            out.write_text(html_doc, encoding="utf-8")
-            print(f"wrote {out}", file=sys.stderr)
-
-        if args.serve is not None:
-            import socketserver
-            import webbrowser
-
-            serve_dir = scope_dir.resolve()
-            port = int(args.serve)
-            # Prefer a clean URL; in-memory page is always available at / and
-            # /git-heat.html regardless of whether --html also wrote a file.
-            handler_cls = make_git_heat_handler(
-                serve_dir,
-                git_root,
-                scope_prefix,
-                html_doc=html_doc,
-                html_route="git-heat.html",
-            )
-            socketserver.TCPServer.allow_reuse_address = True
-            with socketserver.TCPServer(("127.0.0.1", port), handler_cls) as httpd:
-                url = f"http://127.0.0.1:{port}/"
-                print(
-                    f"serving heatmap from memory · sources from {serve_dir}\n"
-                    f"  git root {git_root}"
-                    f"{', scope ' + scope_prefix.rstrip('/') if scope_prefix else ''}\n"
-                    f"  blame API /__git-heat__/blame"
-                    + (f"\n  also wrote {out}" if out is not None else "\n  (no HTML file written)"),
-                    file=sys.stderr,
-                )
-                print(url)
-                try:
-                    webbrowser.open(url)
-                except Exception:
-                    pass
-                try:
-                    httpd.serve_forever()
-                except KeyboardInterrupt:
-                    print("\nstopped", file=sys.stderr)
-            return 0
-
-        if args.open and out is not None:
-            import webbrowser
-            webbrowser.open(out.as_uri())
-
-        if out is not None:
-            print(
-                f"# wrote HTML only — for interactive viewer without a file:\n"
-                f"#   git-heat {args.path} --serve\n"
-                f"# or serve the written file from its directory",
-                file=sys.stderr,
-            )
-            print(out)
-        return 0
+        return write_and_serve_html(
+            html_doc,
+            scope_dir=scope_dir,
+            git_root=git_root,
+            scope_prefix=scope_prefix,
+            args=args,
+        )
 
     heat = dict(heat_by_path)
     mtime = dict(mtime_by_path)
