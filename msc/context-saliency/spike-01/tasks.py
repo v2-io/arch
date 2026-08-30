@@ -47,6 +47,7 @@ class VaultTask:
     reuse_room_draw: int = 0  # the room the rng drew (same in both variants at a seed)
     placement: str = "chrono" # chrono | reversed — presentation order of rooms
     room_order: list = field(default_factory=list)
+    surface: str = "narrative"  # narrative | formulaic
 
 
 FURNITURE = ["cabinet", "chest", "drawer", "shelf", "crate", "locker", "trunk", "alcove"]
@@ -80,34 +81,45 @@ DISTRACTOR = [
 ]
 
 
-def _room_interior(rng, k, n_items):
-    """Interior narrative for room k. Returns (text_lines, code, item_count_line_idx).
+def _room_interior(rng, k, n_items, surface="narrative"):
+    """Interior for room k. Returns (text_lines, code, item_count_line_idx).
 
-    v2 design: the interior is pure exploration narrative — the code value (and
-    anything sufficient to recompute it) appears ONLY in the terminal CODE line.
-    Rationale, learned from v1 at run time: v1's interior contained the working
-    line ("48 x 3 = 144"), so occluding the terminal did NOT break the task —
-    the terminal wasn't the sole carrier and the screened construction wasn't
-    clean. In v2 the interior is provably screened (its only causal content in
-    any variant is the count line, used by delayed_reuse), and the terminal is
-    genuinely load-bearing by construction."""
+    v2: code value appears ONLY in the terminal CODE line (construction).
+    surface='narrative' — colorful screened body (default Plan-NIAH).
+    surface='formulaic' — same roles/line-count, but every non-code line is a
+    terse LOG/COUNT tag like the CODE line. Discriminator for the T1-spatial
+    inversion: if prefill-diff tracks ingestion-novelty, formulaic interiors
+    should collapse the anti-correlation with causality.
+    """
     color = COLORS[(k - 1) % len(COLORS)]
     furn = FURNITURE[(k - 1) % len(FURNITURE)]
+    code = rng.randint(11, 49) * rng.randint(3, 9)
+    if surface == "formulaic":
+        lines = [f"ROOM-{k}: {color}"]
+        lines.append(f"AUX-{k}-1: 0")
+        count_line_idx = len(lines)
+        lines.append(f"COUNT-{k}: {n_items}")
+        lines.append(f"AUX-{k}-2: 0")
+        lines.append(f"AUX-{k}-3: 0")
+        lines.append(f"AUX-{k}-4: 0")
+        lines.append(f"AUX-{k}-5: 0")
+        lines.append(f"AUX-{k}-6: 0")
+        return lines, code, count_line_idx
+    if surface != "narrative":
+        raise ValueError(f"unknown surface {surface!r}; expected narrative|formulaic")
     lines = [f"Room {k} is the {color} room."]
     lines.append(rng.choice(DISTRACTOR))
-    # the countable detail (delayed-reuse target)
     count_line_idx = len(lines)
     lines.append(f"You count exactly {n_items} {_plural(furn)} along the wall.")
     lines.append(rng.choice(DISTRACTOR))
     lines.append(f"Inside the largest {furn}, you find the sealed code-slip for this room.")
     lines.append("You open it, memorize what it says, and reseal it.")
     lines.append(rng.choice(DISTRACTOR))
-    code = rng.randint(11, 49) * rng.randint(3, 9)
     lines.append("Satisfied, you log the room as complete.")
     return lines, code, count_line_idx
 
 
-def make_task(variant="screened", n_rooms=4, seed=0, placement="chrono"):
+def make_task(variant="screened", n_rooms=4, seed=0, placement="chrono", surface="narrative"):
     rng = random.Random(seed)
     parts, segments = [], []
     pos = 0
@@ -133,7 +145,7 @@ def make_task(variant="screened", n_rooms=4, seed=0, placement="chrono"):
     # presentation order so a discharged room can sit at the edge or the middle.
     generated = []
     for k in range(1, n_rooms + 1):
-        lines, code, count_idx = _room_interior(rng, k, n_items_per_room[k - 1])
+        lines, code, count_idx = _room_interior(rng, k, n_items_per_room[k - 1], surface=surface)
         generated.append((k, lines, code, count_idx))
     codes = [code for (_, _, code, _) in generated]
     order = room_order_for(n_rooms, placement)
@@ -158,8 +170,9 @@ def make_task(variant="screened", n_rooms=4, seed=0, placement="chrono"):
     # diagnosable (which code went missing/wrong is visible in the answer).
     if variant == "screened":
         q = ("All rooms are complete. Report the vault sequence: the room codes in "
-             f"order, separated by dashes.\n"
-             "Walk the rooms in order, writing one line per room as 'Room k: <code>', "
+             f"room-number order (Room 1 through Room {n_rooms}), regardless of the order "
+             "the rooms appear in the transcript, separated by dashes.\n"
+             "Walk by room number, writing one line per room as 'Room k: <code>', "
              "then give the final line as "
              f"'MASTER: <code1>-<code2>-...-<code{n_rooms}>'.\n")
         answer = "-".join(str(c) for c in codes)
@@ -167,10 +180,15 @@ def make_task(variant="screened", n_rooms=4, seed=0, placement="chrono"):
     else:
         reuse_value = n_items_per_room[reuse_room - 1]
         furn = FURNITURE[(reuse_room - 1) % len(FURNITURE)]
+        if surface == "formulaic":
+            count_ask = f"the COUNT-{reuse_room} value"
+        else:
+            count_ask = f"the number of {_plural(furn)} you counted in Room {reuse_room}"
         q = ("All rooms are complete. Report the vault sequence: the room codes in "
-             f"order, separated by dashes, and append the number of {_plural(furn)} you "
-             f"counted in Room {reuse_room} as the final element.\n"
-             "Walk the rooms in order, writing one line per room as 'Room k: <code>', "
+             f"room-number order (Room 1 through Room {n_rooms}), regardless of the order "
+             "the rooms appear in the transcript, separated by dashes, and append "
+             f"{count_ask} as the final element.\n"
+             "Walk by room number, writing one line per room as 'Room k: <code>', "
              "then note the count, then give the final line as "
              f"'MASTER: <code1>-<code2>-...-<code{n_rooms}>-<count>'.\n")
         answer = "-".join(str(c) for c in codes) + f"-{reuse_value}"
@@ -178,7 +196,8 @@ def make_task(variant="screened", n_rooms=4, seed=0, placement="chrono"):
 
     return VaultTask(variant=variant, n_rooms=n_rooms, prompt="".join(parts), segments=segments,
                      codes=codes, answer=answer, reuse_room=reuse_room, reuse_value=reuse_value,
-                     reuse_room_draw=reuse_room_draw, placement=placement, room_order=order)
+                     reuse_room_draw=reuse_room_draw, placement=placement, room_order=order,
+                     surface=surface)
 
 
 def occlude(task, target):

@@ -32,6 +32,25 @@ class TestPlacement(unittest.TestCase):
         self.assertEqual(sc.prompt.split("All rooms")[0], dc.prompt.split("All rooms")[0])
         self.assertEqual(sr.prompt.split("All rooms")[0], dr.prompt.split("All rooms")[0])
         self.assertNotEqual(sc.prompt, dc.prompt)
+        self.assertIn("room-number order", sc.prompt)
+        self.assertIn("regardless of the order", sr.prompt)
+
+    def test_formulaic_surface_equalizes_novelty_keeps_roles(self):
+        n = make_task("delayed_reuse", n_rooms=4, seed=7, surface="narrative")
+        f = make_task("delayed_reuse", n_rooms=4, seed=7, surface="formulaic")
+        self.assertEqual(len(n.segments), len(f.segments))
+        self.assertEqual({s.role for s in f.segments}, {s.role for s in n.segments})
+        self.assertEqual(sum(s.reused_detail for s in f.segments), 1)
+        body = f.prompt.split("All rooms")[0]
+        self.assertIn("ROOM-1:", body)
+        self.assertIn("COUNT-", body)
+        self.assertIn("AUX-1-1: 0", body)
+        self.assertNotIn("tapestries", body)
+        self.assertNotIn("tapestries", f.prompt.split("All rooms")[0])
+        # matched pair: only the question differs
+        fs = make_task("screened", n_rooms=4, seed=7, surface="formulaic")
+        self.assertEqual(fs.prompt.split("All rooms")[0], f.prompt.split("All rooms")[0])
+        self.assertIn("COUNT-", f.prompt.split("All rooms")[1])
 
     def test_roles_and_occlusion_length(self):
         t = make_task("delayed_reuse", n_rooms=4, seed=7, placement="reversed")

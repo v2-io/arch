@@ -33,6 +33,8 @@ Higher spatial score does not predict damage when occluded; the bottom quintile 
 
 A follow-up linear detrend of `g_prefill` against segment index (not in `analyze.py`) made this worse (ρ = −0.301; top 0.286 vs bottom 1.000). The no-go is not an undetrended artifact.
 
+**This no-go is for causal ranking on this generator, not a claim that the signal is empty.** The inversion is signed and stable. Plan-NIAH puts causality in the *formulaic* `CODE-k: NNN` line by construction (v1 interiors were not screened; we moved every recompute-sufficient token onto the terminal) and puts screened mass in *varied* narrative. Prefill hidden-diff is an ingestion-novelty instrument. On this task family, novelty and causality are **anti-correlated by design** — the same construction that makes T3 labels decidable. Full characterization, two sentences that must not be collapsed, and the formulaic-surface discriminator: `INVERSION-T1-SPATIAL-2026-08-29.md`.
+
 ## T3 construction (behavioral) — holds on the base-correct subset
 
 Flip counts among inferred cells (condition, flipped?):

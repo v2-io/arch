@@ -76,25 +76,41 @@ def occlusion_sweep(seeds=(1, 2, 3, 4, 5, 6), n_rooms=4, runner=run_plain, tag="
     return results
 
 
-def instrumented_pair(seed=7, n_rooms=4, out_prefix="out/instr", placement="chrono"):
-    """Write `{out_prefix}_{placement}_{variant}_{seed}.json`. Default prefix
-    is not the v3 spike names — never overwrite out/instr_*.json."""
+def instr_path(out_prefix, placement, variant, seed, n_rooms=4, model_tag=""):
+    """v4 4-room 7B keeps `out/v4instr_{placement}_{variant}_{seed}.json`.
+    Extra tags (qwen3, 16r, …) go in the stem so the 12-trace mint is not overwritten."""
+    parts = [out_prefix]
+    if model_tag:
+        parts.append(model_tag)
+    if n_rooms != 4:
+        parts.append(f"{n_rooms}r")
+    parts += [placement, variant, str(seed)]
+    return "_".join(parts) + ".json"
+
+
+def instrumented_pair(seed=7, n_rooms=4, out_prefix="out/instr", placement="chrono",
+                      model_tag="", surface="narrative"):
+    """Never overwrite out/instr_*.json (v3)."""
     paths = []
     for variant in ("screened", "delayed_reuse"):
-        t = make_task(variant, n_rooms=n_rooms, seed=seed, placement=placement)
-        print(f"instrumented {variant} seed={seed} placement={placement} ...", flush=True)
+        path = instr_path(out_prefix, placement, variant, seed, n_rooms, model_tag)
+        t = make_task(variant, n_rooms=n_rooms, seed=seed, placement=placement,
+                      surface=surface)
+        print(f"instrumented {variant} seed={seed} placement={placement} "
+              f"n_rooms={n_rooms} tag={model_tag or '-'} ...", flush=True)
         r = run_instrumented(t.prompt, t.segments)
         r["variant"] = variant
         r["seed"] = seed
         r["placement"] = placement
         r["n_rooms"] = n_rooms
         r["task"] = "walk"
+        r["model"] = os.environ.get("SPIKE_MODEL", "")
         r["answer"] = t.answer
         r["got"] = extract_master(r["gen_text"])
         r["codes"] = t.codes
         r["reuse_room"] = t.reuse_room_draw
         r["room_order"] = t.room_order
-        path = f"{out_prefix}_{placement}_{variant}_{seed}.json"
+        r["surface"] = surface
         json.dump(r, open(path, "w"))
         paths.append(path)
         print(f"  {r['n_steps']} steps in {r['seconds']}s; answer {r['answer']} got {r['got']} -> {path}", flush=True)
@@ -162,6 +178,54 @@ if __name__ == "__main__":
             occ_rows.append(row)
         json.dump(occ_rows, open("out/occlusion_v4.json", "w"), indent=1)
         print(f"occlusion_v4 rows={len(occ_rows)} skipped_base_incorrect={skipped}", flush=True)
+    elif mode == "formulaic":
+        # inversion discriminator: same 2×2, formulaic interiors (Fable 2026-08-29)
+        import glob as _glob
+        for seed in (7, 11):
+            instrumented_pair(seed=seed, out_prefix="out/formulaic", placement="chrono",
+                              surface="formulaic")
+        occ_rows, skipped = [], 0
+        for path in sorted(_glob.glob("out/formulaic_*.json")):
+            r = json.load(open(path))
+            t = make_task(r["variant"], n_rooms=r.get("n_rooms", 4),
+                          seed=r["seed"], placement=r.get("placement", "chrono"),
+                          surface="formulaic")
+            row = {"seed": r["seed"], "variant": r["variant"], "placement": r.get("placement", "chrono"),
+                   "surface": "formulaic", "answer": r["answer"], "base": r["got"],
+                   "reuse_room": r["reuse_room"], "from": path}
+            if r["got"] != r["answer"]:
+                row["skipped"] = "base_incorrect"
+                skipped += 1
+                occ_rows.append(row)
+                print(f"occl SKIP {path} base={r['got']} expect={r['answer']}", flush=True)
+                continue
+            ctrl_room = next(x for x in range(1, t.n_rooms + 1) if x != t.reuse_room_draw)
+            row["ctrl_room"] = ctrl_room
+            conds = [("interior_body", ("interior", ctrl_room)),
+                     ("header_ctrl", ("header", ctrl_room)),
+                     ("narrative_ctrl", ("narrative", ctrl_room)),
+                     ("terminal_ctrl", ("terminal", ctrl_room))]
+            if r["variant"] == "delayed_reuse":
+                conds.append(("reuse_line", ("reuse_line", t.reuse_room_draw)))
+            else:
+                conds.append(("count_matched", ("count", t.reuse_room_draw)))
+            for name, target in conds:
+                got = extract_master(run_plain(occlude(t, target)))
+                row[name] = got
+                print(f"occl formulaic seed={r['seed']} {r['variant']:13s} {name:18s} "
+                      f"base={r['got']} got={got}", flush=True)
+            occ_rows.append(row)
+        json.dump(occ_rows, open("out/occlusion_formulaic.json", "w"), indent=1)
+        print(f"occlusion_formulaic rows={len(occ_rows)} skipped={skipped}", flush=True)
+    elif mode == "qwen3":
+        for seed in (7, 11):
+            instrumented_pair(seed=seed, out_prefix="out/qwen3instr", placement="chrono")
+    elif mode == "len2k":
+        n = int(sys.argv[2]) if len(sys.argv) > 2 else 16
+        for seed in (7, 11):
+            for placement in ("chrono", "reversed"):
+                instrumented_pair(seed=seed, n_rooms=n, out_prefix="out/len2k",
+                                  placement=placement)
     elif mode in ("all", "instr"):
         for seed in (7, 11):
             instrumented_pair(seed=seed, out_prefix="out/v4instr", placement="chrono")
