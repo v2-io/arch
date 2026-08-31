@@ -47,7 +47,7 @@ ZERO_HEAT_BG = "#222222"
 # Predictable churn that drowns signal — shown as heat-0 (#222) and excluded
 # from parent directory max-heat rollup (and from color-scale heat_max).
 # Mutable so --noise can extend for a single run without rebinding the name.
-DEFAULT_NOISE_BASENAMES: frozenset[str] = frozenset({"Cargo.toml", "SOURCE_REV"})
+DEFAULT_NOISE_BASENAMES: frozenset[str] = frozenset({"Cargo.toml", "SOURCE_REV", ".practica"})
 NOISE_BASENAMES: set[str] = set(DEFAULT_NOISE_BASENAMES)
 
 # Directories that drown an mtime ranking (build/cache/vcs). Hidden names
