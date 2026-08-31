@@ -7,8 +7,10 @@
 - rels: `of-kind` → KIND {1,1} · `has` → BODY {1,1}, WORKING-NOTES {0,1}, TRAIL {1,1}, COMPANION {0,N}
 - invariants:
   - Identity is the slug; ordering, numbering, and location are never identity.
+  - Identity is a **maintained binding, not a property the model may assume** *(adopted from the references lexicon 2026-08-30 — see 11)*: the slug is a `@{name}`, the store is its `@{maintainer}`, and uniqueness is a norm policed at mint time, never an invariant. Its two failure modes are first-class and must surface rather than be defined away — `@{dangle}` (the binding no longer reaches a record) and `@{collide}` (one maintainer, two mints of one name).
+  - A record is a `@{referent}`; its manifestation — a file, a directory, an element inside a document — is not its identity, and inner keyed elements are inner `@{location}`s able to hold bindings of their own (this is where sub-record grain attaches).
   - The adjudication grain and the record grain coincide — a record carrying two independently-adjudicable things is two records.
-- fails by: the undeclared mixed composite — part claim, part decision, part history, adjudicable as none of them.
+- fails by: the undeclared mixed composite — part claim, part decision, part history, adjudicable as none of them; and by unpoliced identity — dangles and collisions that never surface.
 
 **KIND** — what a record *does* (its speech-act), individuated by failure-and-repair: two kinds are distinct exactly when they go wrong differently and route to different repairs.
 
@@ -51,9 +53,10 @@
 
 - invariants:
   - Every status a consumer reads is a projection; hand-set status is inexpressible in the model.
+  - A projection is a `@{generator}` *(references lexicon; see 11)* — it **produces** a value rather than standing for one, and is evaluated from an origin, **as of a moment**. There is no untimed evaluation. A status cached in a file is therefore an evaluation carrying its moment, never a standing fact — which is what makes certificate decay (08) a consequence of the object rather than a separate rule.
   - Order-invariant: the same whatever order events arrived in.
   - A projection is declared (strongest-line | every-line-sustains | shown-independent-agreement | …); one unqualified scalar is not a default.
-- fails by: the label-lie — a cell asserting what no events support, or surviving events that invalidated it.
+- fails by: the label-lie — a cell asserting what no events support, or surviving events that invalidated it; precisely, an **untimed answer**: an evaluation served as current whose moment has passed.
 
 **LADDER** — a dimension's ordered rungs with the channel vocabulary that moves between them and a ceiling law.
 
@@ -68,7 +71,7 @@
 
 ## Working Notes
 
-- **Grown-as-needed discipline:** objects are added here only when 03–09 need one this file lacks; each addition logged with its demanding file. *Log:* DIMENSION re-grained to the orthogonality unit (2026-08-14, steward correction via 03 — the earlier cut had let a grouping carry ontology); a FAMILY object existed for one commit before the steward reduced it to a **namespace in the dimension's name** — organization that structurally cannot bear invariants; LINE re-related from foundation-rung to dimension in the same pass, resolving its overlap question. Deliberately absent so far: view/outline objects (carried by [[claim-outline-as-view]] and the cluster definition in theory canon — reuse, don't restate), edge objects (06's subject — typed relations land here once 06 adjudicates them), question/disposition objects (07's subject).
+- **Grown-as-needed discipline:** objects are added here only when 03–09 need one this file lacks; each addition logged with its demanding file. *Log:* RECORD's identity invariant re-cut as a maintained binding, and PROJECTION re-read as a moment-indexed generator (2026-08-30, demanded by 11 at the steward's direction — no new objects minted here: `@{binding}`/`@{generator}` live in the references lexicon and are cited, never restated, so this file gains precision rather than population); DIMENSION re-grained to the orthogonality unit (2026-08-14, steward correction via 03 — the earlier cut had let a grouping carry ontology); a FAMILY object existed for one commit before the steward reduced it to a **namespace in the dimension's name** — organization that structurally cannot bear invariants; LINE re-related from foundation-rung to dimension in the same pass, resolving its overlap question. Deliberately absent so far: view/outline objects (carried by [[claim-outline-as-view]] and the cluster definition in theory canon — reuse, don't restate), edge objects (06's subject — typed relations land here once 06 adjudicates them), question/disposition objects (07's subject).
 - **To-do, carried from the charter's earlier anatomy sketch:** the uniform-anatomy test per dimension (does each dimension's adjudication fit record+trail+projections without strain? — checked as failure-mode bursts land); crumb-routing as the working-notes → trail drain; max/floor/shown-independent-agreement as the named projection set; descent edges' minimal form; the era registry's key vocabulary.
 - **Feedback loop noted:** the udon reference defs this file's style follows are themselves future records of a deployment this model will describe — when 09's language exists, those defs are among its first test articles.
 - Open: whether WORKING-NOTES is an object or a body-part with editable-free semantics; whether TRAIL and the Fidelity dimension are one thing seen twice (substrate vs priced question) or genuinely two.

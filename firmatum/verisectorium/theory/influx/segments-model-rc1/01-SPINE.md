@@ -7,7 +7,7 @@
 A verisectorium governs a living collection: never finished, improved across unbounded sessions, its deliverables emissions rather than endings. Every mind that works it arrives with total turnover of collection-specific knowledge — whatever a session understood and did not exteriorize is gone at its boundary. The collection is therefore the sole carrier of what it knows, and comprehension cost is paid per reader forever while authoring cost is paid once. Three consequences set the entire design:
 
 1. **Every record must say, in itself, how strongly it is held and why** — or every future reader must either re-derive it (unaffordable) or trust it (unwarranted).
-2. **Honesty is only well-defined relative to kind.** Whether a record is sound cannot be judged until you know what the record *does* — asserts, decides, recounts, teaches, prescribes, asks, points, or commits. These fail differently, and a status vocabulary that ignores the difference is dishonest somewhere.
+2. **Honesty is only well-defined relative to kind.** Whether a record is sound cannot be judged until you know what the record *does* — asserts, decides, recounts, teaches, prescribes, asks, refers, or commits. These fail differently, and a status vocabulary that ignores the difference is dishonest somewhere.
 3. **The only status a stranger can trust is one they can recompute.** A hand-set word — "verified," "done," "ratified" — is a label that can lie. A status projected from a trail of recorded acts — who did what, against which criterion, when, with what outcome — can be checked by anyone, forever.
 
 Everything below is machinery for satisfying these three at a cost a living collection can afford.

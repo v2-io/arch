@@ -16,6 +16,16 @@
 
 Each edge is itself a small record: declarer, date, and — where contested — a minted question; an edge nobody stands behind is a guess wearing graph syntax. But edges deliberately do *not* get the full dimension apparatus — an edge's "state" is its type plus its declaration event, and over-building here would recreate the mixed-composite pathology one level down.
 
+## What an edge *is*
+
+*(Adopted from the references lexicon 2026-08-30 — see 11; terms cited in that store's `@{term}` notation, never restated here.)*
+
+An edge declaration is a `@{reference}`: recorded material standing in for `@{referents}`, written once and used many times, valid to write before its referents exist, and resolved from an `@{origin}` **as of a moment**. Three consequences this file previously lacked:
+
+- **Intended cardinality belongs to the edge, declared at writing** — and it is what gives a miss its meaning. Zero found against a {1,1} `supports:` means *the declarer's model of the world is wrong* (actionable); three against {1,1} means *the reference narrowed insufficiently*; zero against a {0,N} `narrates:` is *simply the current answer* and no defect at all. Without the declaration, every consumer guesses which of those an empty result is.
+- **A broken edge is a `@{dangle}`** — a maintenance failure with a named owner — not an unclassified broken link. Its sibling failure, `@{collide}`, belongs to identity (02) rather than here.
+- **Edges reach by two mechanisms with different failure modes.** An edge that consults a maintained binding (`supports: [slug]`) is a `@{designator}`; one that runs a test at use — a glob, a query, "every record citing X" — is a `@{description}`, connecting by `@{match}`. A binding fails through *maintenance lapse*; a match fails through *the world's motion*: the same criteria run later quietly pick out something else, "detectable only if the reference carries something to check against." The typed set above tacitly assumed every edge was a designator; estate practice runs both, and match-shaped edges must carry that check-against or their drift is silent by construction.
+
 ## Dependency re-pricing, made precise
 
 The model's hardest open problem — *when a premise changes, how do dependents re-price?* — largely dissolves under two things this model already committed to, plus the rebut/undercut split:
