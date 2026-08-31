@@ -1364,15 +1364,18 @@ def dim_zero_fills(
     window: list[date],
     days: dict[str, int],
     first_ts: float | None,
+    last_commit_ts: float | None = None,
     *,
     dark: bool,
 ) -> dict[str, str]:
     """iso → hex for cells that shouldn't use jet.
 
-    Head (newest / left): any leading zero run; day 1 is #000078, fading
-    to full dim at day 14, then clamped. Tail (oldest / right): fully dim
-    except a 4-day onramp to #000078 just before first commit, only if
-    that first-ever commit is in-window and the suffix is ≥7 days.
+    Head (newest / left): leading zeros, faded by days since exclusive
+    last-commit (day 1 = #000078, day 14+ = full dim). Last-commit may
+    predate the window — then the whole visible prefix is fully dim.
+    Tail (oldest / right): fully dim except a 4-day onramp to #000078
+    just before first-ever commit, only if that commit is in-window and
+    the suffix is ≥7 days.
     """
     ramp = DIM_HEAD_DARK if dark else DIM_HEAD_LIGHT
     tail_hex = DIM_DARK if dark else DIM_LIGHT
@@ -1398,10 +1401,17 @@ def dim_zero_fills(
 
     def head_ramp(prefix_len: int) -> None:
         last = len(ramp) - 1
+        last_c = local_day(last_commit_ts) if last_commit_ts is not None else None
         for j in range(prefix_len):
-            from_act = prefix_len - j
-            idx = min(last, max(0, from_act - 1))
-            fills[window[j].isoformat()] = ramp[idx]
+            d = window[j]
+            if last_c is not None:
+                idle = (d - last_c).days
+                if idle < 1:
+                    continue
+                idx = min(last, idle - 1)
+            else:
+                idx = last
+            fills[d.isoformat()] = ramp[idx]
 
     def paint_tail(start: int) -> None:
         full_dim = ramp[-1]
@@ -1583,7 +1593,10 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             key = proj.path
         days = counts.get(key, {})
         first_ts = parse_ts(proj.rec.get("first-commit"))
-        fills = dim_zero_fills(window, days, first_ts, dark=dark)
+        last_c = parse_ts(proj.rec.get("last-commit-time"))
+        fills = dim_zero_fills(
+            window, days, first_ts, last_c, dark=dark
+        )
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
         cells = []
         for slot in slots:
