@@ -1,0 +1,48 @@
+# Census file for `projects`. Blank lines and # comments are ignored.
+# Applied after cdpath first-match-wins. `projects --no-census` skips this file.
+#
+# Drop-globs
+#   no `/`  — project name (the `cd` name)
+#   a `/`   — path relative to $HOME (src/_ref/codex), or absolute
+#   `*`/`?` stay in one path segment; `**` crosses directories
+#   `~` / `$HOME` are expanded
+#   `foo/**` does not match `foo` itself — list both if needed
+#
+# Whitelist a cdpath parent (only these child names survive from that group)
+#   only src/arch: asf firmatum logos proprium vivarium
+#   only arch: asf logos          # basename of the cdpath entry also works
+#   only src/_ref:                # empty list = drop the whole group
+# Additional `only` lines for the same parent are unioned.
+#
+# Disposition defaults for census *survivors* (drop/only run first).
+# First matching glob wins. Per-project `.practica` can freeze an override.
+#   disposition <value>: glob [glob…]
+# Values: active, active-ref, active-fork, inactive, inert, ref-only
+
+*.bak
+*.bak.*
+*.snapshot-backup
+_obs
+MOVED
+src/_ref/**
+# src/arch/firmatum
+src/arch/firmatum/utils
+src/_older
+# src/arch/proprium
+src/ops/linkedin-archive-2026-04-18
+src/_core
+~/vaults
+~/vaults/**
+src/_gems
+src/_exp
+
+
+only src/arch: asf logos vivarium explication
+only src/arch/asf: 01-aat-core 02-tst-core 03-llm-core 04-eli-core
+
+# vaults/**
+# src-ext/**
+
+disposition ref-only: src-ext src-ext/**
+disposition inactive: src/_exp src/_exp/**
+disposition active: **
