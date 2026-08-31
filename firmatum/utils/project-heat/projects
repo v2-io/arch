@@ -157,33 +157,61 @@ DIM_HEAD_DARK = _interp_hex_ramp(
 )
 
 
-def _jet_hexes(n: int = 60) -> list[str]:
-    """MATLAB/matplotlib jet: navy → cyan → yellow → red."""
+# matplotlib listed inferno (256 RGB) packed as hex. Cell color is a real
+# log1p t in [0, 1], lerped between adjacent LUT entries — not a bin index.
+_INFERNO_PACKED = (
+    "00000401000501010601010802010a02020c02020e0302100403120403140504"
+    "1706041907051b08051d09061f0a07220b07240c08260d08290e092b10092d11"
+    "0a30120a32140b34150b37160b39180c3c190c3e1b0c411c0c431e0c451f0c48"
+    "210c4a230c4c240c4f260c51280b53290b552b0b572d0b592f0a5b310a5c320a"
+    "5e340a5f3609613809623909633b09643d09653e0966400a67420a68440a6845"
+    "0a69470b6a490b6a4a0c6b4c0c6b4d0d6c4f0d6c510e6c520e6d540f6d550f6d"
+    "57106e59106e5a116e5c126e5d126e5f136e61136e62146e64156e65156e6716"
+    "6e69166e6a176e6c186e6d186e6f196e71196e721a6e741a6e751b6e771c6d78"
+    "1c6d7a1d6d7c1d6d7d1e6d7f1e6c801f6c82206c84206b85216b87216b88226a"
+    "8a226a8c23698d23698f24699025689225689326679526679727669827669a28"
+    "659b29649d29649f2a63a02a63a22b62a32c61a52c60a62d60a82e5fa92e5eab"
+    "2f5ead305dae305cb0315bb1325ab3325ab43359b63458b73557b93556ba3655"
+    "bc3754bd3853bf3952c03a51c13a50c33b4fc43c4ec63d4dc73e4cc83f4bca40"
+    "4acb4149cc4248ce4347cf4446d04545d24644d34743d44842d54a41d74b3fd8"
+    "4c3ed94d3dda4e3cdb503bdd513ade5238df5337e05536e15635e25734e35933"
+    "e45a31e55c30e65d2fe75e2ee8602de9612bea632aeb6429eb6628ec6726ed69"
+    "25ee6a24ef6c23ef6e21f06f20f1711ff1731df2741cf3761bf37819f47918f5"
+    "7b17f57d15f67e14f68013f78212f78410f8850ff8870ef8890cf98b0bf98c0a"
+    "f98e09fa9008fa9207fa9407fb9606fb9706fb9906fb9b06fb9d07fc9f07fca1"
+    "08fca309fca50afca60cfca80dfcaa0ffcac11fcae12fcb014fcb216fcb418fb"
+    "b61afbb81dfbba1ffbbc21fbbe23fac026fac228fac42afac62df9c72ff9c932"
+    "f9cb35f8cd37f8cf3af7d13df7d340f6d543f6d746f5d949f5db4cf4dd4ff4df"
+    "53f4e156f3e35af3e55df2e661f2e865f2ea69f1ec6df1ed71f1ef75f1f179f2"
+    "f27df2f482f3f586f3f68af4f88ef5f992f6fa96f8fb9af9fc9dfafda1fcffa4"
+)
+_INFERNO_N = len(_INFERNO_PACKED) // 6
+SCALE_BAR_N = 120  # twice the old 60-stop jet legend; cells themselves are continuous
 
-    def rgb(t: float) -> tuple[float, float, float]:
-        t = max(0.0, min(1.0, t))
-        if t < 0.125:
-            return 0.0, 0.0, 0.5 + 4.0 * t
-        if t < 0.375:
-            return 0.0, 4.0 * (t - 0.125), 1.0
-        if t < 0.625:
-            return 4.0 * (t - 0.375), 1.0, 1.0 - 4.0 * (t - 0.375)
-        if t < 0.875:
-            return 1.0, 1.0 - 4.0 * (t - 0.625), 0.0
-        return 1.0 - 4.0 * (t - 0.875), 0.0, 0.0
 
-    out: list[str] = []
-    for i in range(n):
-        t = i / (n - 1) if n > 1 else 0.0
-        r, g, b = rgb(t)
-        out.append(
-            f"#{int(round(r * 255)):02x}{int(round(g * 255)):02x}{int(round(b * 255)):02x}"
-        )
-    return out
+def _inferno_rgb_at(i: int) -> tuple[int, int, int]:
+    o = i * 6
+    h = _INFERNO_PACKED[o : o + 6]
+    return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
 
 
-JET_N = 60
-JET = _jet_hexes(JET_N)
+def inferno_hex(t: float) -> str:
+    """t in [0, 1] → inferno RGB hex. Continuous lerp on the 256 LUT."""
+    t = max(0.0, min(1.0, t))
+    last = _INFERNO_N - 1
+    x = t * last
+    lo = int(x)
+    hi = min(lo + 1, last)
+    f = x - lo
+    r0, g0, b0 = _inferno_rgb_at(lo)
+    if f == 0.0 or lo == hi:
+        r, g, b = r0, g0, b0
+    else:
+        r1, g1, b1 = _inferno_rgb_at(hi)
+        r = round(r0 * (1 - f) + r1 * f)
+        g = round(g0 * (1 - f) + g1 * f)
+        b = round(b0 * (1 - f) + b1 * f)
+    return f"#{r:02x}{g:02x}{b:02x}"
 SET_FIELDS = frozenset(
     {
         "base-name",
@@ -1435,7 +1463,7 @@ def dim_zero_fills(
     *,
     dark: bool,
 ) -> dict[str, str]:
-    """iso → hex for cells that shouldn't use jet.
+    """iso → hex for cells that shouldn't use inferno.
 
     Head (newest / left): leading zeros, faded by days since exclusive
     last-commit (day 1 = #000078, day 14+ = full dim). Last-commit may
@@ -1589,13 +1617,18 @@ def heatmap_counts(
     return prune_days(display, window)
 
 
-def color_index(count: int, maxc: int) -> int:
-    """log1p scale so 1–10–30 stay distinct when the max is a busy monorepo day."""
-    last = JET_N - 1
+def heat_hex(count: int, maxc: int) -> str:
+    """log1p scale so 1–10–30 stay distinct when the max is a busy monorepo day.
+
+    Returns a continuous inferno color (not a bin). A positive count is
+    floored one LUT step above empty so 1-commit days don't collapse to 0.
+    """
     if count <= 0 or maxc <= 0:
-        return 0
+        return inferno_hex(0.0)
     t = math.log1p(count) / math.log1p(maxc)
-    return max(1, min(last, int(round(t * last))))
+    t = max(0.0, min(1.0, t))
+    t = max(t, 1.0 / (_INFERNO_N - 1))
+    return inferno_hex(t)
 
 
 def week_gap(a: date, b: date) -> bool:
@@ -1635,7 +1668,10 @@ def month_header(window: list[date], name_w: int) -> str:
 
 
 def scale_bar(maxc: int) -> str:
-    blocks = "".join(ansi_block(h) for h in JET) + "\x1b[0m"
+    last = SCALE_BAR_N - 1
+    blocks = "".join(
+        ansi_block(inferno_hex(i / last if last else 0.0)) for i in range(SCALE_BAR_N)
+    ) + "\x1b[0m"
     label = f"0 → {maxc}/day  (log)"
     return f"{label:>{HEATMAP_NAME_W}}  {blocks}"
 
@@ -1702,7 +1738,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 cells.append(ansi_block(fills[iso]))
                 continue
             c = int(days.get(iso, 0))
-            cells.append(ansi_block(JET[color_index(c, maxc)]))
+            cells.append(ansi_block(heat_hex(c, maxc)))
         print(name + "  " + "".join(cells) + "\x1b[0m")
 
     print(month_header(window, HEATMAP_NAME_W))
@@ -1852,7 +1888,7 @@ def build_parser() -> argparse.ArgumentParser:
             "headings plus that order within each cdpath group.\n"
             "\n"
             "  projects set <name-or-path> field=value   freeze an override\n"
-            "  projects heatmap                          120-day jet rows (active*)"
+            "  projects heatmap                          120-day inferno rows (active*)"
         ),
     )
     p.add_argument("-n", "--names", action="store_true", help="names only (full name)")
