@@ -97,8 +97,31 @@ RECORD_KEY_ORDER = (
 HEATMAP_DAYS = 120
 HEATMAP_NAME_W = 29
 DIM_ZERO_MIN = 7
+# Tail (pre-birth) stays a flat wash. Head idle ramps over ~a week into the bg.
 DIM_LIGHT = "#9999c9"
 DIM_DARK = "#000030"
+DIM_HEAD_LIGHT = [
+    "#1a1a86",
+    "#333393",
+    "#4d4da1",
+    "#6666ae",
+    "#8080bc",
+    "#9999c9",
+    "#b3b3d7",
+    "#cccce4",
+    "#e6e6f2",
+]
+DIM_HEAD_DARK = [
+    "#00006c",
+    "#000060",
+    "#000054",
+    "#000048",
+    "#00003c",
+    "#000030",
+    "#000024",
+    "#000018",
+    "#00000c",
+]
 
 
 def _jet_hexes(n: int = 60) -> list[str]:
@@ -1293,32 +1316,62 @@ def macos_dark() -> bool:
     return r.returncode == 0 and "Dark" in (r.stdout or "")
 
 
-def dim_zero_hex() -> str:
-    return DIM_DARK if macos_dark() else DIM_LIGHT
+def dim_zero_fills(
+    window: list[date],
+    days: dict[str, int],
+    first_ts: float | None,
+    *,
+    dark: bool,
+) -> dict[str, str]:
+    """iso → hex for cells that shouldn't use jet.
 
-
-def dim_zero_dates(
-    window: list[date], days: dict[str, int], first_ts: float | None
-) -> set[str]:
-    """Leading idle ≥7 days; trailing zeros ≥7 only if first-ever commit is in-window."""
+    Head (newest / left): idle run ≥7 days, ramp over 9 days from the last
+    commit toward now (then stay at the dimmest). Tail (oldest / right):
+    flat wash, only if the first-ever commit falls inside the window.
+    """
+    ramp = DIM_HEAD_DARK if dark else DIM_HEAD_LIGHT
+    tail_hex = DIM_DARK if dark else DIM_LIGHT
     counts = [int(days.get(d.isoformat(), 0)) for d in window]
     n = len(window)
-    dim: set[str] = set()
+    fills: dict[str, str] = {}
+    if n == 0:
+        return fills
+
     i = 0
     while i < n and counts[i] == 0:
         i += 1
-    if i >= DIM_ZERO_MIN:
-        dim.update(window[j].isoformat() for j in range(i))
-    if first_ts is not None and n:
+    k = n - 1
+    while k >= 0 and counts[k] == 0:
+        k -= 1
+    suffix = n - 1 - k
+    all_zero = i + suffix >= n and i > 0
+
+    born_in_window = False
+    if first_ts is not None:
         first_d = local_day(first_ts)
-        newest, oldest = window[0], window[-1]
-        if oldest <= first_d <= newest:
-            k = n - 1
-            while k >= 0 and counts[k] == 0:
-                k -= 1
-            if n - 1 - k >= DIM_ZERO_MIN:
-                dim.update(window[j].isoformat() for j in range(k + 1, n))
-    return dim
+        born_in_window = window[-1] <= first_d <= window[0]
+
+    def head_ramp(prefix_len: int) -> None:
+        for j in range(prefix_len):
+            from_act = prefix_len - j
+            idx = min(len(ramp) - 1, max(0, from_act - 1))
+            fills[window[j].isoformat()] = ramp[idx]
+
+    if all_zero:
+        if born_in_window:
+            if n >= DIM_ZERO_MIN:
+                for j in range(n):
+                    fills[window[j].isoformat()] = tail_hex
+        elif i >= DIM_ZERO_MIN:
+            head_ramp(i)
+        return fills
+
+    if i >= DIM_ZERO_MIN:
+        head_ramp(i)
+    if born_in_window and suffix >= DIM_ZERO_MIN:
+        for j in range(k + 1, n):
+            fills[window[j].isoformat()] = tail_hex
+    return fills
 
 
 def heatmap_counts(
@@ -1454,7 +1507,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
 
     mode = sort_mode_from_args(args)
     slots = heatmap_slots(window)
-    idle_hex = dim_zero_hex()
+    dark = macos_dark()
 
     def emit_row(proj: Project) -> None:
         try:
@@ -1463,7 +1516,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             key = proj.path
         days = counts.get(key, {})
         first_ts = parse_ts(proj.rec.get("first-commit"))
-        dim = dim_zero_dates(window, days, first_ts)
+        fills = dim_zero_fills(window, days, first_ts, dark=dark)
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
         cells = []
         for slot in slots:
@@ -1471,8 +1524,8 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 cells.append(" ")
                 continue
             iso = slot.isoformat()
-            if iso in dim:
-                cells.append(ansi_block(idle_hex))
+            if iso in fills:
+                cells.append(ansi_block(fills[iso]))
                 continue
             c = int(days.get(iso, 0))
             cells.append(ansi_block(JET[color_index(c, maxc)]))
