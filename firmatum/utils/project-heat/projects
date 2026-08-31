@@ -842,6 +842,46 @@ def under_child(rel_posix: str, child_rels: list[str]) -> bool:
     return False
 
 
+def exclusive_dirty_mtimes(
+    root: Path,
+    extra: list[str],
+    pathspecs: list[str] | None = None,
+    skip_rels: list[str] | None = None,
+) -> list[float]:
+    """Mtimes of dirty/untracked files under root, excluding census children."""
+    specs = pathspecs or ["."]
+    skip_rels = skip_rels or []
+    code, top = git_run(root, "rev-parse", "--show-toplevel")
+    if code != 0 or not top:
+        return []
+    top_p = Path(top)
+    try:
+        root_p = root.resolve()
+    except OSError:
+        root_p = root
+    code, porc = git_run(root, "status", "--porcelain", "-uall", "--", *specs)
+    if code != 0 or not porc:
+        return []
+    out: list[float] = []
+    for rel in porcelain_paths(porc):
+        fp = top_p / rel
+        try:
+            inside = fp.resolve().relative_to(root_p)
+        except ValueError:
+            continue
+        if under_child(inside.as_posix(), skip_rels):
+            continue
+        if fp.name == PRACTICA_NAME or is_noise_file(fp, extra):
+            continue
+        if any(part in SKIP_DIR_NAMES or part.startswith(".") for part in fp.parts):
+            continue
+        try:
+            out.append(fp.stat().st_mtime)
+        except OSError:
+            continue
+    return out
+
+
 def detect_last_action(
     root: Path,
     git_info: dict,
@@ -862,32 +902,9 @@ def detect_last_action(
                 best = commit_ts
             except ValueError:
                 pass
-        code, top = git_run(root, "rev-parse", "--show-toplevel")
-        top_p = Path(top) if code == 0 and top else root
-        try:
-            root_p = root.resolve()
-        except OSError:
-            root_p = root
-        code, porc = git_run(root, "status", "--porcelain", "-uall", "--", *specs)
-        if code == 0 and porc:
-            for rel in porcelain_paths(porc):
-                fp = top_p / rel
-                try:
-                    inside = fp.resolve().relative_to(root_p)
-                except ValueError:
-                    continue
-                if under_child(inside.as_posix(), skip_rels):
-                    continue
-                if fp.name == PRACTICA_NAME or is_noise_file(fp, extra):
-                    continue
-                if any(part in SKIP_DIR_NAMES or part.startswith(".") for part in fp.parts):
-                    continue
-                try:
-                    mt = fp.stat().st_mtime
-                except OSError:
-                    continue
-                if best is None or mt > best:
-                    best = mt
+        for mt in exclusive_dirty_mtimes(root, extra, specs, skip_rels):
+            if best is None or mt > best:
+                best = mt
         if best is not None:
             return best, commit_ts
     return max_mtime_walk(root, extra), commit_ts
@@ -1142,13 +1159,13 @@ def sort_projects(projects: list[Project], mode: str) -> list[Project]:
         return sorted(projects, key=lambda p: name_key(display_name(p)))
     if mode == "changed":
 
-        def commit_ts(p: Project) -> float:
-            t = parse_ts(p.rec.get("last-commit-time"))
+        def action_ts(p: Project) -> float:
+            t = parse_ts(p.rec.get("last-action-time"))
             if t is None:
-                t = parse_ts(p.rec.get("last-action-time"))
+                t = parse_ts(p.rec.get("last-commit-time"))
             return t if t is not None else float("-inf")
 
-        return sorted(projects, key=commit_ts, reverse=True)
+        return sorted(projects, key=action_ts, reverse=True)
     return list(projects)
 
 
@@ -1460,6 +1477,8 @@ def heatmap_counts(
     write: bool,
 ) -> dict[str, int]:
     rec = proj.rec
+    extra = rec.get("extra-noise") or []
+    extra_s = [str(x) for x in extra] if isinstance(extra, list) else []
     gitish = bool(rec.get("git") or rec.get("subgit"))
     if gitish and (refresh or not rec.get("first-commit")):
         fts = git_first_commit_ts(proj.path)
@@ -1484,17 +1503,22 @@ def heatmap_counts(
         days = {str(k): int(v) for k, v in cached.items() if str(k)}
         after = as_of
     stamps = git_commit_times_since(proj.path, after, specs)
-    if stamps is None:
-        return prune_days(days, window)
-    add_timestamps(days, stamps)
-    days = prune_days(days, window)
-    now = datetime.now(tz=timezone.utc).timestamp()
-    set_derived(rec, "heatmap-days", days)
-    set_derived(rec, "heatmap-as-of", iso_utc(now))
-    set_derived(rec, "heatmap-kids", kids)
-    if write:
-        save_practica(proj.path, rec)
-    return days
+    if stamps is not None:
+        add_timestamps(days, stamps)
+        days = prune_days(days, window)
+        now = datetime.now(tz=timezone.utc).timestamp()
+        set_derived(rec, "heatmap-days", days)
+        set_derived(rec, "heatmap-as-of", iso_utc(now))
+        set_derived(rec, "heatmap-kids", kids)
+        if write:
+            save_practica(proj.path, rec)
+    else:
+        days = prune_days(days, window)
+    display = dict(days)
+    add_timestamps(
+        display, exclusive_dirty_mtimes(proj.path, extra_s, specs, kids)
+    )
+    return prune_days(display, window)
 
 
 def color_index(count: int, maxc: int) -> int:
@@ -1593,7 +1617,9 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             key = proj.path
         days = counts.get(key, {})
         first_ts = parse_ts(proj.rec.get("first-commit"))
-        last_c = parse_ts(proj.rec.get("last-commit-time"))
+        last_c = parse_ts(proj.rec.get("last-action-time")) or parse_ts(
+            proj.rec.get("last-commit-time")
+        )
         fills = dim_zero_fills(
             window, days, first_ts, last_c, dark=dark
         )
