@@ -87,6 +87,7 @@ RECORD_KEY_ORDER = (
     "org",
     "extra-noise",
     "last-action-time",
+    "last-commit-time",
     "last-session",
     "heatmap-as-of",
     "heatmap-days",
@@ -847,15 +848,18 @@ def detect_last_action(
     extra: list[str],
     pathspecs: list[str] | None = None,
     skip_rels: list[str] | None = None,
-) -> float | None:
+) -> tuple[float | None, float | None]:
+    """Return (last-action including dirty, last exclusive commit)."""
     specs = pathspecs or ["."]
     skip_rels = skip_rels or []
+    commit_ts: float | None = None
     best: float | None = None
     if git_info.get("git") or git_info.get("subgit"):
         code, out = git_run(root, "log", "-1", "--format=%ct", "--", *specs)
         if code == 0 and out:
             try:
-                best = float(out.splitlines()[0])
+                commit_ts = float(out.splitlines()[0])
+                best = commit_ts
             except ValueError:
                 pass
         code, top = git_run(root, "rev-parse", "--show-toplevel")
@@ -885,8 +889,8 @@ def detect_last_action(
                 if best is None or mt > best:
                     best = mt
         if best is not None:
-            return best
-    return max_mtime_walk(root, extra)
+            return best, commit_ts
+    return max_mtime_walk(root, extra), commit_ts
 
 
 def claude_slug(path: Path) -> str:
@@ -1005,6 +1009,8 @@ def pass1_detect(
         redo_git = refresh or git_cache_stale(proj.path, rec)
         if list(rec.get("stat-kids") or []) != kids:
             redo_git = True
+        if (rec.get("git") or rec.get("subgit")) and not rec.get("last-commit-time"):
+            redo_git = True
         if redo_git:
             n_git += 1
             info = detect_git(proj.path)
@@ -1015,7 +1021,7 @@ def pass1_detect(
                 set_derived(rec, "git-head", head)
             elif "git-head" not in frozen_of(rec):
                 rec.pop("git-head", None)
-            action = detect_last_action(
+            action, commit = detect_last_action(
                 proj.path,
                 info,
                 extra_s,
@@ -1027,6 +1033,10 @@ def pass1_detect(
                 set_derived(rec, "last-action-time", iso_utc(action))
             elif "last-action-time" not in frozen_of(rec):
                 rec.pop("last-action-time", None)
+            if commit is not None:
+                set_derived(rec, "last-commit-time", iso_utc(commit))
+            elif "last-commit-time" not in frozen_of(rec):
+                rec.pop("last-commit-time", None)
 
         sess_cached = None
         ls = rec.get("last-session")
@@ -1132,11 +1142,13 @@ def sort_projects(projects: list[Project], mode: str) -> list[Project]:
         return sorted(projects, key=lambda p: name_key(display_name(p)))
     if mode == "changed":
 
-        def action_ts(p: Project) -> float:
-            t = parse_ts(p.rec.get("last-action-time"))
+        def commit_ts(p: Project) -> float:
+            t = parse_ts(p.rec.get("last-commit-time"))
+            if t is None:
+                t = parse_ts(p.rec.get("last-action-time"))
             return t if t is not None else float("-inf")
 
-        return sorted(projects, key=action_ts, reverse=True)
+        return sorted(projects, key=commit_ts, reverse=True)
     return list(projects)
 
 
@@ -1358,8 +1370,9 @@ def dim_zero_fills(
     """iso → hex for cells that shouldn't use jet.
 
     Head (newest / left): any leading zero run; day 1 is #000078, fading
-    to full dim at day 14, then clamped. Tail (oldest / right): flat wash,
-    only if the first-ever commit falls inside the window and n≥7.
+    to full dim at day 14, then clamped. Tail (oldest / right): fully dim
+    except a 4-day onramp to #000078 just before first commit, only if
+    that first-ever commit is in-window and the suffix is ≥7 days.
     """
     ramp = DIM_HEAD_DARK if dark else DIM_HEAD_LIGHT
     tail_hex = DIM_DARK if dark else DIM_LIGHT
@@ -1390,11 +1403,33 @@ def dim_zero_fills(
             idx = min(last, max(0, from_act - 1))
             fills[window[j].isoformat()] = ramp[idx]
 
+    def paint_tail(start: int) -> None:
+        full_dim = ramp[-1]
+        onramp = _interp_hex_ramp([full_dim, "#000078"], 5)[1:]
+        for j in range(start, n):
+            fills[window[j].isoformat()] = full_dim
+        if first_ts is None:
+            return
+        first_d = local_day(first_ts)
+        for ahead in range(1, 5):
+            d = first_d - timedelta(days=ahead)
+            iso = d.isoformat()
+            if iso in fills:
+                fills[iso] = onramp[4 - ahead]
+
     if all_zero:
-        if born_in_window:
-            if n >= DIM_ZERO_MIN:
-                for j in range(n):
-                    fills[window[j].isoformat()] = tail_hex
+        if born_in_window and first_ts is not None:
+            first_d = local_day(first_ts)
+            j = 0
+            while j < n and window[j] > first_d:
+                j += 1
+            if j > 0:
+                head_ramp(j)
+            t = n - 1
+            while t >= 0 and window[t] < first_d:
+                t -= 1
+            if n - 1 - t >= DIM_ZERO_MIN:
+                paint_tail(t + 1)
         elif i > 0:
             head_ramp(i)
         return fills
@@ -1402,8 +1437,7 @@ def dim_zero_fills(
     if i > 0:
         head_ramp(i)
     if born_in_window and suffix >= DIM_ZERO_MIN:
-        for j in range(k + 1, n):
-            fills[window[j].isoformat()] = tail_hex
+        paint_tail(k + 1)
     return fills
 
 
