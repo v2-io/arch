@@ -772,9 +772,37 @@ def is_noise_file(path: Path, extra: list[str]) -> bool:
     return False
 
 
-def max_mtime_walk(root: Path, extra: list[str], limit: int = 8000) -> float | None:
-    best: float | None = None
+def dir_birth_ts(root: Path) -> float | None:
+    """When this directory inode appeared (macOS birthtime; ctime elsewhere)."""
+    try:
+        st = root.stat()
+    except OSError:
+        return None
+    birth = getattr(st, "st_birthtime", None)
+    if birth:
+        return float(birth)
+    return float(st.st_ctime)
+
+
+def file_event_times(
+    root: Path,
+    extra: list[str],
+    skip_rels: list[str] | None = None,
+    limit: int | None = 8000,
+) -> list[float]:
+    """Birth + mtime of each non-noise file, excluding census-child subtrees.
+
+    Two stamps per file when birth and mtime differ by ≥1s (create vs later
+    edit); one stamp when they coincide. This is the no-git stand-in for a
+    commit stream: counts, first, and most-recent all come from the same walk.
+    """
+    skip_rels = skip_rels or []
+    stamps: list[float] = []
     n = 0
+    try:
+        root_p = root.resolve()
+    except OSError:
+        root_p = root
     try:
         for dirpath, dirnames, filenames in os.walk(root, followlinks=False):
             dirnames[:] = [
@@ -782,22 +810,41 @@ def max_mtime_walk(root: Path, extra: list[str], limit: int = 8000) -> float | N
                 for d in dirnames
                 if not d.startswith(".") and d not in SKIP_DIR_NAMES
             ]
+            dp = Path(dirpath)
+            try:
+                rel_dir = dp.resolve().relative_to(root_p).as_posix()
+            except ValueError:
+                rel_dir = ""
+            if rel_dir in {".", ""}:
+                rel_dir = ""
+            elif under_child(rel_dir, skip_rels):
+                dirnames[:] = []
+                continue
+            keep: list[str] = []
+            for d in dirnames:
+                child = f"{rel_dir}/{d}" if rel_dir else d
+                if not under_child(child, skip_rels):
+                    keep.append(d)
+            dirnames[:] = keep
             for fn in filenames:
                 if fn.startswith(".") or fn in noise_basenames(extra):
                     continue
                 n += 1
-                if n > limit:
-                    return best
-                fp = Path(dirpath) / fn
+                if limit is not None and n > limit:
+                    return stamps
+                fp = dp / fn
                 try:
-                    mt = fp.stat().st_mtime
+                    st = fp.stat()
                 except OSError:
                     continue
-                if best is None or mt > best:
-                    best = mt
+                mt = float(st.st_mtime)
+                stamps.append(mt)
+                birth = getattr(st, "st_birthtime", None)
+                if birth is not None and abs(float(birth) - mt) >= 1.0:
+                    stamps.append(float(birth))
     except OSError:
         pass
-    return best
+    return stamps
 
 
 def census_child_rels(proj: Project, projects: list[Project]) -> list[str]:
@@ -907,7 +954,10 @@ def detect_last_action(
                 best = mt
         if best is not None:
             return best, commit_ts
-    return max_mtime_walk(root, extra), commit_ts
+    events = file_event_times(root, extra, skip_rels)
+    if not events:
+        return None, commit_ts
+    return max(events), commit_ts
 
 
 def claude_slug(path: Path) -> str:
@@ -1480,16 +1530,34 @@ def heatmap_counts(
     extra = rec.get("extra-noise") or []
     extra_s = [str(x) for x in extra] if isinstance(extra, list) else []
     gitish = bool(rec.get("git") or rec.get("subgit"))
+    kids = census_child_rels(proj, projects)
     if gitish and (refresh or not rec.get("first-commit")):
         fts = git_first_commit_ts(proj.path)
         if fts is not None:
             set_derived(rec, "first-commit", iso_utc(fts))
     if not gitish:
-        # No commit stream to increment; a file-mtime walk is not commits/day
-        # and would dominate the shared color scale (clone dumps, _ref, …).
-        return {}
+        # No commit stream: file birth + mtime are the proxy for change-counts,
+        # first-commit, and last-action. Heatmap only lists active*; ref-only
+        # clone dumps stay off this grid.
+        events = file_event_times(proj.path, extra_s, kids, limit=None)
+        days: dict[str, int] = {}
+        if events:
+            add_timestamps(days, events)
+            set_derived(rec, "first-commit", iso_utc(min(events)))
+            set_derived(rec, "last-action-time", iso_utc(max(events)))
+        else:
+            fts = dir_birth_ts(proj.path)
+            if fts is not None:
+                set_derived(rec, "first-commit", iso_utc(fts))
+        days = prune_days(days, window)
+        now = datetime.now(tz=timezone.utc).timestamp()
+        set_derived(rec, "heatmap-days", days)
+        set_derived(rec, "heatmap-as-of", iso_utc(now))
+        set_derived(rec, "heatmap-kids", kids)
+        if write:
+            save_practica(proj.path, rec)
+        return days
 
-    kids = census_child_rels(proj, projects)
     specs = git_pathspecs(kids)
     cached = rec.get("heatmap-days") if isinstance(rec.get("heatmap-days"), dict) else {}
     as_of = parse_ts(rec.get("heatmap-as-of"))
