@@ -96,32 +96,64 @@ RECORD_KEY_ORDER = (
 )
 HEATMAP_DAYS = 120
 HEATMAP_NAME_W = 29
-DIM_ZERO_MIN = 7
-# Tail (pre-birth) stays a flat wash. Head idle ramps over ~a week into the bg.
+DIM_ZERO_MIN = 7  # tail (pre-birth) only
+DIM_HEAD_DAYS = 14
+# Tail stays a flat wash. Head idle: 10 control points (day-1 #000078),
+# interpolated across 14 days to full fade.
 DIM_LIGHT = "#9999c9"
 DIM_DARK = "#000030"
-DIM_HEAD_LIGHT = [
-    "#1a1a86",
-    "#333393",
-    "#4d4da1",
-    "#6666ae",
-    "#8080bc",
-    "#9999c9",
-    "#b3b3d7",
-    "#cccce4",
-    "#e6e6f2",
-]
-DIM_HEAD_DARK = [
-    "#00006c",
-    "#000060",
-    "#000054",
-    "#000048",
-    "#00003c",
-    "#000030",
-    "#000024",
-    "#000018",
-    "#00000c",
-]
+
+
+def _interp_hex_ramp(colors: list[str], n: int) -> list[str]:
+    rgb = []
+    for h in colors:
+        h = h.lstrip("#")
+        rgb.append((int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)))
+    out: list[str] = []
+    last = len(rgb) - 1
+    for i in range(n):
+        t = 0.0 if n == 1 else i / (n - 1)
+        x = t * last
+        lo = int(x)
+        hi = min(lo + 1, last)
+        f = x - lo
+        r = round(rgb[lo][0] * (1 - f) + rgb[hi][0] * f)
+        g = round(rgb[lo][1] * (1 - f) + rgb[hi][1] * f)
+        b = round(rgb[lo][2] * (1 - f) + rgb[hi][2] * f)
+        out.append(f"#{r:02x}{g:02x}{b:02x}")
+    return out
+
+
+DIM_HEAD_LIGHT = _interp_hex_ramp(
+    [
+        "#000078",
+        "#1a1a86",
+        "#333393",
+        "#4d4da1",
+        "#6666ae",
+        "#8080bc",
+        "#9999c9",
+        "#b3b3d7",
+        "#cccce4",
+        "#e6e6f2",
+    ],
+    DIM_HEAD_DAYS,
+)
+DIM_HEAD_DARK = _interp_hex_ramp(
+    [
+        "#000078",
+        "#00006c",
+        "#000060",
+        "#000054",
+        "#000048",
+        "#00003c",
+        "#000030",
+        "#000024",
+        "#000018",
+        "#00000c",
+    ],
+    DIM_HEAD_DAYS,
+)
 
 
 def _jet_hexes(n: int = 60) -> list[str]:
@@ -1325,9 +1357,9 @@ def dim_zero_fills(
 ) -> dict[str, str]:
     """iso → hex for cells that shouldn't use jet.
 
-    Head (newest / left): idle run ≥7 days, ramp over 9 days from the last
-    commit toward now (then stay at the dimmest). Tail (oldest / right):
-    flat wash, only if the first-ever commit falls inside the window.
+    Head (newest / left): any leading zero run; day 1 is #000078, fading
+    to full dim at day 14, then clamped. Tail (oldest / right): flat wash,
+    only if the first-ever commit falls inside the window and n≥7.
     """
     ramp = DIM_HEAD_DARK if dark else DIM_HEAD_LIGHT
     tail_hex = DIM_DARK if dark else DIM_LIGHT
@@ -1352,9 +1384,10 @@ def dim_zero_fills(
         born_in_window = window[-1] <= first_d <= window[0]
 
     def head_ramp(prefix_len: int) -> None:
+        last = len(ramp) - 1
         for j in range(prefix_len):
             from_act = prefix_len - j
-            idx = min(len(ramp) - 1, max(0, from_act - 1))
+            idx = min(last, max(0, from_act - 1))
             fills[window[j].isoformat()] = ramp[idx]
 
     if all_zero:
@@ -1362,11 +1395,11 @@ def dim_zero_fills(
             if n >= DIM_ZERO_MIN:
                 for j in range(n):
                     fills[window[j].isoformat()] = tail_hex
-        elif i >= DIM_ZERO_MIN:
+        elif i > 0:
             head_ramp(i)
         return fills
 
-    if i >= DIM_ZERO_MIN:
+    if i > 0:
         head_ramp(i)
     if born_in_window and suffix >= DIM_ZERO_MIN:
         for j in range(k + 1, n):
