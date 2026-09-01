@@ -96,7 +96,7 @@ RECORD_KEY_ORDER = (
     "stat-kids",
     "first-commit",
 )
-HEATMAP_DAYS = 120
+HEATMAP_FULL_WEEKS = 17
 HEATMAP_NAME_W = 29
 DIM_ZERO_MIN = 7  # tail (pre-birth) only
 DIM_HEAD_DAYS = 14
@@ -1374,10 +1374,17 @@ def ansi_block(hex_color: str) -> str:
 
 
 def heatmap_window(today: date | None = None) -> list[date]:
-    """Newest first (far left = today)."""
+    """Newest first (far left = today).
+
+    Always 17 complete Sun–Sat weeks plus the current week through today.
+    Grows one column a day (Sun = shortest, Sat = longest); the next Sunday
+    drops the oldest full week and snaps back.
+    """
     if today is None:
         today = datetime.now().astimezone().date()
-    return [today - timedelta(days=i) for i in range(HEATMAP_DAYS)]
+    into = (today.weekday() + 1) % 7  # 0 on Sunday, 6 on Saturday
+    n = HEATMAP_FULL_WEEKS * 7 + into + 1
+    return [today - timedelta(days=i) for i in range(n)]
 
 
 def local_day(ts: float) -> date:
@@ -2032,7 +2039,7 @@ def build_parser() -> argparse.ArgumentParser:
             "headings plus that order within each cdpath group.\n"
             "\n"
             "  projects set <name-or-path> field=value   freeze an override\n"
-            "  projects heatmap                          120-day inferno rows (active*)"
+            "  projects heatmap                          17-week inferno rows (active*)"
         ),
     )
     p.add_argument("-n", "--names", action="store_true", help="names only (full name)")
