@@ -26,7 +26,7 @@ Declared-axis defaults come from `census-details.txt` `default <axis>=<value>: g
 - `-v` — a 7-character **AXES** block (one column per axis, order as the table above; position = which axis, glyph = value, `·` = undeclared/unknown) + names + paths. Vocabulary is provisional v0, taught in `--help`.
 - `-vv` — adds `desc`. `-vvv` — adds last-action + git.
 - `projects set NAME experiment paused` — bare tokens resolve to their axes (every value is unique across axes except `group`, which sets both git axes; `rel-group` / `vis-group` pick one). `projects set NAME desc="…"` for the one-line description.
-- There is deliberately no unfreeze verb yet (open ruling); un-freezing currently means editing the `.practica` `frozen` list by hand.
+- `projects unset NAME field [field…]` unfreezes and clears; detection / census defaults refill on the same run.
 
 ## Edges — `census-edges.txt`
 

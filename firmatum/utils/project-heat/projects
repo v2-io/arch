@@ -1246,9 +1246,22 @@ def git_rel_of(rec: dict, root: Path, kids: list[str]) -> str:
         return "gitroot"
     if rec.get("subgit"):
         return "subgit"
+    # group = no git of its own, but holds git roots — census children or
+    # plain immediate subdirs (e.g. ~/src-ext/aisi: 30 clones, none census).
     for rel in kids:
         if (root / rel / ".git").exists():
             return "group"
+    try:
+        for child in root.iterdir():
+            if child.name.startswith(".") or child.name in SKIP_DIR_NAMES:
+                continue
+            try:
+                if child.is_dir() and (child / ".git").exists():
+                    return "group"
+            except OSError:
+                continue
+    except OSError:
+        pass
     return "no-git"
 
 
@@ -2557,6 +2570,43 @@ def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_unset(argv: list[str], list_ns: argparse.Namespace) -> int:
+    """`projects unset <name> field [field…]` — remove the frozen mark and
+    the stored value; detection / census defaults refill immediately."""
+    if not argv or argv[0] in {"-h", "--help"}:
+        print("usage: projects unset <name-or-path> field [field…]")
+        print("removes each field from `frozen` and clears the stored value;")
+        print("detection and census defaults refill it on the same run")
+        return 0 if argv and argv[0] in {"-h", "--help"} else 2
+    ident = argv[0]
+    fields = argv[1:]
+    if not fields:
+        die("unset: need at least one field name", 2)
+    home = Path.home()
+    projects, filters, _parents = gather(list_ns, home)
+    populate(projects, filters, home, write=True, refresh=False)
+    proj = find_project(ident, projects, home)
+    fz = frozen_of(proj.rec)
+    for f in fields:
+        if f not in SET_FIELDS and f not in fz:
+            die(
+                f"unset: unknown field {f!r} (settable: "
+                f"{', '.join(sorted(SET_FIELDS))})",
+                2,
+            )
+        fz.discard(f)
+        proj.rec.pop(f, None)
+    proj.rec["frozen"] = sorted(fz)
+    save_practica(proj.path, proj.rec)
+    # refill from detection / census defaults in the same run
+    populate(projects, filters, home, write=True, refresh=False)
+    print(f"{display_name(proj)}  {disp(proj.path, home)}")
+    for f in fields:
+        val = proj.rec.get(f)
+        print(f"  {f}={val!r}  (unfrozen{'' if val is not None else ', now absent'})")
+    return 0
+
+
 def version_string() -> str:
     """name + semver, +sha while there is no tagged-release story."""
     ver = "projects 0.3.0"
@@ -2810,6 +2860,8 @@ def build_parser() -> argparse.ArgumentParser:
             "                                            symlink to this script works too)\n"
             "  projects set <name-or-path> field=value   freeze an override\n"
             "  projects set <name-or-path> <axis-value>   bare shorthand (see AXES)\n"
+            "  projects unset <name-or-path> field [f…]  unfreeze + clear; detection\n"
+            "                                            and census defaults refill\n"
             "  projects heatmap                          17-week inferno rows (activity=active)\n"
             "  projects heatmap --double | --triple      + 17 / 34 older weeks below\n"
             "  projects feedback <text…>                 report friction to the inbox\n"
@@ -3000,6 +3052,8 @@ def main(argv: list[str] | None = None) -> int:
     if argv and argv[0] == "set":
         list_ns = parser.parse_args([])
         return cmd_set(argv[1:], list_ns)
+    if argv and argv[0] == "unset":
+        return cmd_unset(argv[1:], parser.parse_args([]))
     if argv and argv[0] == "heatmap":
         return cmd_heatmap(parser.parse_args(argv[1:]))
 
