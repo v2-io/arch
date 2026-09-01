@@ -92,6 +92,7 @@ RECORD_KEY_ORDER = (
     "heatmap-as-of",
     "heatmap-days",
     "heatmap-kids",
+    "heatmap-head",
     "stat-kids",
     "first-commit",
 )
@@ -735,6 +736,44 @@ def git_cache_stale(root: Path, rec: dict) -> bool:
     return head != cached
 
 
+def nearest_git_root(root: Path) -> Path | None:
+    """Work tree that owns `root` (the project itself, or a parent for subgit)."""
+    try:
+        cur = root.resolve()
+    except OSError:
+        cur = root
+    seen: set[Path] = set()
+    while cur not in seen:
+        seen.add(cur)
+        if own_git_meta(cur) is not None:
+            return cur
+        parent = cur.parent
+        if parent == cur:
+            break
+        cur = parent
+    return None
+
+
+def containing_head_id(root: Path) -> str | None:
+    """HEAD of this tree, or of the repo that contains it (subgit). File reads only."""
+    top = nearest_git_root(root)
+    return git_head_id(top) if top is not None else None
+
+
+_porcelain_cache: dict[str, list[str]] = {}
+
+
+def toplevel_porcelain(top: Path) -> list[str]:
+    """Repo-relative dirty/untracked paths. One `git status` per work tree per process."""
+    key = str(top)
+    if key in _porcelain_cache:
+        return _porcelain_cache[key]
+    code, porc = git_run(top, "status", "--porcelain", "-uall")
+    rels = porcelain_paths(porc) if code == 0 and porc else []
+    _porcelain_cache[key] = rels
+    return rels
+
+
 def session_stamp(root: Path, home: Path) -> float | None:
     times: list[float] = []
     claude = home / ".claude" / "projects" / claude_slug(root)
@@ -950,21 +989,16 @@ def exclusive_dirty_mtimes(
     skip_rels: list[str] | None = None,
 ) -> list[float]:
     """Mtimes of dirty/untracked files under root, excluding census children."""
-    specs = pathspecs or ["."]
     skip_rels = skip_rels or []
-    code, top = git_run(root, "rev-parse", "--show-toplevel")
-    if code != 0 or not top:
+    top_p = nearest_git_root(root)
+    if top_p is None:
         return []
-    top_p = Path(top)
     try:
         root_p = root.resolve()
     except OSError:
         root_p = root
-    code, porc = git_run(root, "status", "--porcelain", "-uall", "--", *specs)
-    if code != 0 or not porc:
-        return []
     out: list[float] = []
-    for rel in porcelain_paths(porc):
+    for rel in toplevel_porcelain(top_p):
         fp = top_p / rel
         try:
             inside = fp.resolve().relative_to(root_p)
@@ -1607,16 +1641,23 @@ def heatmap_counts(
     gitish = bool(rec.get("git") or rec.get("subgit"))
     kids = census_child_rels(proj, projects)
     specs = git_pathspecs(kids)
-    if gitish:
-        # Always recompute: a cached first-commit from `log --reverse -1`
-        # was the *newest* commit. Cheap (timestamps only).
+    kids_changed = list(rec.get("heatmap-kids") or []) != kids
+    head = containing_head_id(proj.path) if gitish else None
+    head_changed = bool(gitish) and rec.get("heatmap-head") != head
+
+    if gitish and (refresh or kids_changed or not rec.get("first-commit")):
         fts = git_first_commit_ts(proj.path, specs)
         if fts is not None:
             set_derived(rec, "first-commit", iso_utc(fts))
     if not gitish:
-        # No commit stream: file birth + mtime are the proxy for change-counts,
-        # first-commit, and last-action. Heatmap only lists active*; ref-only
-        # clone dumps stay off this grid.
+        # No commit stream: file birth + mtime are the proxy for change-counts.
+        # Active no-git rows are tiny; still reuse the day cache unless refresh.
+        cached_ng = rec.get("heatmap-days") if isinstance(rec.get("heatmap-days"), dict) else {}
+        if not refresh and rec.get("first-commit") and cached_ng:
+            return prune_days(
+                {str(k): int(v) for k, v in cached_ng.items() if str(k)},
+                window,
+            )
         events = file_event_times(proj.path, extra_s, kids, limit=None)
         days: dict[str, int] = {}
         if events:
@@ -1640,9 +1681,19 @@ def heatmap_counts(
     as_of = parse_ts(rec.get("heatmap-as-of"))
     oldest = min(window)
     start_ts = datetime.combine(oldest, datetime.min.time()).timestamp()
-    kids_changed = list(rec.get("heatmap-kids") or []) != kids
+    need_log = refresh or as_of is None or kids_changed or head_changed
+    if not need_log:
+        # HEAD unchanged: reuse day counts. Skip git status — AISI-responses
+        # alone is ~2s of lstat over a 300k-file work tree, and 44 statuses
+        # were the whole warm-run cost. Dirty overlay still runs when HEAD
+        # moves or on --refresh.
+        return prune_days(
+            {str(k): int(v) for k, v in cached.items() if str(k)},
+            window,
+        )
+
     if refresh or as_of is None or kids_changed:
-        days: dict[str, int] = {}
+        days = {}
         after = start_ts - 1
     else:
         days = {str(k): int(v) for k, v in cached.items() if str(k)}
@@ -1655,6 +1706,8 @@ def heatmap_counts(
         set_derived(rec, "heatmap-days", days)
         set_derived(rec, "heatmap-as-of", iso_utc(now))
         set_derived(rec, "heatmap-kids", kids)
+        if head is not None:
+            set_derived(rec, "heatmap-head", head)
         if write:
             save_practica(proj.path, rec)
     else:
