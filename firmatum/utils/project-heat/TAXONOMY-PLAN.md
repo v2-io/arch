@@ -22,7 +22,9 @@ The key design question per axis is **who answers it** — detection, census def
 
 **Value-collision check** (matters for the `set` bare-token shorthand): every value is unique to its axis except `group` (git-rel ∩ git-vis) — and that collision is meaningful, not accidental: a group usually *is* both. Decided (Joseph 2026-09-01): bare `group` sets **both** axes; `rel-group` / `vis-group` set them independently. All other bare tokens resolve axis-free.
 
-## 2. Mapping the current dispositions
+## 2. Mapping the current dispositions — **SUPERSEDED (Joseph, 2026-09-01)**
+
+> *"Tell it not to migrate anything — the new axes were because disposition wasn't working and should be ignored."* The old values were agent-evolved noise; translating them would pollute the new axes with junk wearing frozen authority. No migration, no translation on `set` (old tokens refuse with an error-as-menu naming the new axes), no census-line translation. New axes start fresh: census `default` lines + explicit sets only. The table below is kept for the historical record of what the tokens loosely meant, nothing more.
 
 | today | activity | lifecycle | notes |
 |---|---|---|---|
