@@ -104,6 +104,11 @@ DIM_ZERO_MIN = 7  # tail (pre-birth) only
 DIM_HEAD_DAYS = 14
 # Pre-birth (right): wash → peak. Light is as specified; dark is RGB-invert.
 TAIL_WASH_LIGHT = "#e6e6f1"
+# After 4 weeks idle (past the cooldown), fade white-zero toward this
+# off-white over the 5th week — defunct vs merely neglected.
+STALE_AFTER_DAYS = 28
+STALE_FADE_DAYS = 7
+STALE_LIGHT = "#eff1f5"
 
 
 def invert_hex(h: str) -> str:
@@ -1580,10 +1585,10 @@ def dim_zero_fills(
     """iso → hex for cells that shouldn't use inferno.
 
     Head (newest / left): idle walks the heat scale from the last
-    non-zero day's t down to 0 (not an RGB lerp). Fade length scales
-    with that day's count vs the grid max. Tail (oldest / right): wash
-    #e6e6f1 except a 4-day onramp up the heat scale to t=0.5. If first
-    commit is after this window (older --double/--triple bands), the
+    non-zero day's t down to 0. After 4 weeks of inactivity the 5th
+    week fades that white-zero toward #eff1f5 (historical vs neglected).
+    Tail (oldest / right): wash #e6e6f1 except a 4-day onramp up the
+    heat scale to t=0.5. If first commit is after this window, the
     whole panel is pre-birth wash, not activity-zero.
     """
     invert = not dark
@@ -1620,6 +1625,7 @@ def dim_zero_fills(
         t0 = scale_t(last_count, maxc)
         span = idle_span_days(last_count, maxc)
         zero = inferno_hex(0.0, invert=invert)
+        stale = invert_hex(STALE_LIGHT) if dark else STALE_LIGHT
         for j in range(prefix_len):
             d = window[j]
             if last_c is None:
@@ -1628,9 +1634,15 @@ def dim_zero_fills(
             idle = (d - last_c).days
             if idle < 1:
                 continue
-            progress = min(1.0, idle / span)
-            t = t0 * (1.0 - progress)
-            fills[d.isoformat()] = inferno_hex(t, invert=invert)
+            if idle <= span:
+                progress = idle / span
+                t = t0 * (1.0 - progress)
+                fills[d.isoformat()] = inferno_hex(t, invert=invert)
+            elif idle <= STALE_AFTER_DAYS:
+                fills[d.isoformat()] = zero
+            else:
+                p = min(1.0, (idle - STALE_AFTER_DAYS) / STALE_FADE_DAYS)
+                fills[d.isoformat()] = mix_hex(zero, stale, p)
 
     def paint_tail(start: int) -> None:
         for j in range(start, n):
