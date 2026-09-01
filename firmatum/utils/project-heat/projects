@@ -126,11 +126,12 @@ PSEUDO_KINDS = frozenset({"onramp", "offramp"})
 
 # Agent/pipe rendering (no ANSI): same look, glyph encoding. Lower-eighths
 # carry the heat ramp — U+258N is N/8 fill by design, so the magnitude is
-# computable from the codepoint and reads as a sparkline. Shade/texture
-# glyphs are deliberately a different alphabet for non-activity fills.
+# computable from the codepoint and reads as a sparkline. Non-activity
+# fills follow the color design's prominence order: wash is barely-there,
+# stale is dimmest of all (blank, like the near-background #eff1f5).
 GLYPH_RAMP = " ▁▂▃▄▅▆▇█"  # index = ceil(t*8), t in (0,1]
-GLYPH_WASH = "░"  # pre-birth
-GLYPH_STALE = "·"  # 4+ weeks idle, fading out
+GLYPH_WASH = "·"  # pre-birth
+GLYPH_STALE = " "  # 4+ weeks idle, faded out
 
 
 def ramp_glyph(t: float) -> str:
@@ -1975,7 +1976,7 @@ def glyph_legend(maxc: int) -> str:
     label = f"0 → {maxc}/day  (log)"
     return (
         f"{label:>{HEATMAP_NAME_W}}  "
-        f"{GLYPH_RAMP[1:]}   {GLYPH_WASH} pre-birth   {GLYPH_STALE} stale"
+        f"{GLYPH_RAMP[1:]}   {GLYPH_WASH} pre-birth   (zero/stale blank)"
     )
 
 
@@ -2397,7 +2398,7 @@ def build_parser() -> argparse.ArgumentParser:
         choices=["auto", "always", "never"],
         default="auto",
         help="auto (default) colors only a TTY; a pipe gets the plain "
-        "glyph rendering (heatmap: ▁▂▃▄▅▆▇█ ramp, ░ pre-birth, · stale)",
+        "glyph rendering (heatmap: ▁▂▃▄▅▆▇█ ramp, · pre-birth)",
     )
     p.add_argument(
         "--version",
