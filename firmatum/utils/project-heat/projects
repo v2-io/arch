@@ -113,51 +113,82 @@ AXIS_GLYPHS_BUILTIN: dict[str, dict[str, str]] = {
 }
 
 GLYPHS_FILE = HERE / "axis-glyphs.json"
+_HEX_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
 
 
-def load_axis_glyphs() -> dict[str, dict[str, str]]:
-    """Built-in table overlaid with axis-glyphs.json (missing file is fine;
-    unreadable file warns and falls back; unknown axes/values and non-1-char
-    glyphs are skipped with a note so a typo can't silently break a column)."""
+def load_axis_glyphs() -> tuple[dict[str, dict[str, str]], dict[str, dict[str, dict[str, str]]]]:
+    """Built-in glyph table overlaid with axis-glyphs.json, plus a color
+    table. Per-axis keys: `glyph-<value>` (one char), `fg-<value>` /
+    `bg-<value>` (hex for a light terminal; "" = none), and optional
+    `fg-dark-<value>` / `bg-dark-<value>` (dark terminals otherwise get
+    the channel-inverted light color, matching the heatmap convention).
+    A bare `<value>: glyph` entry still reads as a glyph. Colors are
+    presentation only — applied solely on the TTY/--color path; pipes
+    and agents get bare glyphs untouched. Missing file is fine;
+    unreadable warns and falls back; bad entries are skipped with notes."""
     table = {ax: dict(vals) for ax, vals in AXIS_GLYPHS_BUILTIN.items()}
+    colors: dict[str, dict[str, dict[str, str]]] = {}
     try:
         raw = json.loads(GLYPHS_FILE.read_text(encoding="utf-8"))
     except FileNotFoundError:
-        return table
+        return table, colors
     except (OSError, json.JSONDecodeError) as e:
         print(
             f"projects: {GLYPHS_FILE.name} unreadable ({e}); using built-in glyphs",
             file=sys.stderr,
         )
-        return table
+        return table, colors
+
+    def note(msg: str) -> None:
+        print(f"projects: {GLYPHS_FILE.name}: {msg}", file=sys.stderr)
+
     if not isinstance(raw, dict):
-        return table
+        return table, colors
+    prefixes = ("glyph-", "fg-dark-", "bg-dark-", "fg-", "bg-")
     for ax, vals in raw.items():
         if ax not in table or not isinstance(vals, dict):
-            print(
-                f"projects: {GLYPHS_FILE.name}: unknown axis {ax!r} skipped",
-                file=sys.stderr,
-            )
+            note(f"unknown axis {ax!r} skipped")
             continue
-        for v, g in vals.items():
-            if v not in AXES[ax]:
-                print(
-                    f"projects: {GLYPHS_FILE.name}: unknown {ax} value {v!r} skipped",
-                    file=sys.stderr,
-                )
+        allowed = set(AXES[ax]) | {"undeclared"}
+        for key, g in vals.items():
+            kind, value = "glyph", key
+            for pre in prefixes:
+                if key.startswith(pre):
+                    kind, value = pre[:-1], key[len(pre):]
+                    break
+            if value not in allowed:
+                note(f"unknown {ax} value {value!r} skipped")
                 continue
-            if not isinstance(g, str) or len(g) != 1:
-                print(
-                    f"projects: {GLYPHS_FILE.name}: {ax}.{v} glyph must be "
-                    f"exactly one character, got {g!r} — skipped",
-                    file=sys.stderr,
-                )
-                continue
-            table[ax][v] = g
-    return table
+            if kind == "glyph":
+                if value == "undeclared" and isinstance(g, str) and len(g) == 1:
+                    continue  # '·' is fixed; glyph-undeclared accepted as no-op
+                if not isinstance(g, str) or len(g) != 1:
+                    note(f"{ax}.{value} glyph must be exactly one character, got {g!r} — skipped")
+                    continue
+                table[ax][value] = g
+            else:
+                if not isinstance(g, str) or (g and not _HEX_RE.match(g)):
+                    note(f"{ax}.{key} wants '#rrggbb' or '', got {g!r} — skipped")
+                    continue
+                if g:
+                    colors.setdefault(ax, {}).setdefault(value, {})[kind] = g
+    return table, colors
 
 
-AXIS_GLYPHS = load_axis_glyphs()
+AXIS_GLYPHS, AXIS_COLORS = load_axis_glyphs()
+
+
+def axis_color(ax: str, value: str, kind: str, dark: bool) -> str:
+    """Hex for this cell, '' = none. Light hexes are authored; dark falls
+    back to channel-inversion (the heatmap's existing convention)."""
+    c = AXIS_COLORS.get(ax, {}).get(value or "undeclared", {})
+    if dark:
+        hx = c.get(f"{kind}-dark", "")
+        if hx:
+            return hx
+        base = c.get(kind, "")
+        return invert_hex(base) if base else ""
+    return c.get(kind, "")
 
 # Derived public-use floor (Joseph, 2026-09-01): measured community weight
 # reads as clearly-published. Declared/frozen values still win.
@@ -1645,6 +1676,30 @@ def axis_block(rec: dict) -> str:
     return "".join(out)
 
 
+def axis_block_colored(rec: dict, dark: bool) -> str:
+    """TTY rendering of the axis block: same glyphs, fg/bg from
+    axis-glyphs.json. Targeted resets (39/49) so row underline survives.
+    Never used on the pipe/agent path — bare glyphs there."""
+    out = []
+    for ax in AXIS_ORDER:
+        v = rec.get(ax)
+        key = str(v) if v else ""
+        glyph = AXIS_GLYPHS[ax].get(key, "·") if key else "·"
+        fg = axis_color(ax, key, "fg", dark)
+        bg = axis_color(ax, key, "bg", dark)
+        if not fg and not bg:
+            out.append(glyph)
+            continue
+        pre = ""
+        if fg:
+            pre += ansi_fg(fg)
+        if bg:
+            r, g, b = hex_rgb(bg)
+            pre += f"\x1b[48;2;{r};{g};{b}m"
+        out.append(f"{pre}{glyph}\x1b[39;49m")
+    return "".join(out)
+
+
 def emit_table(
     projects: list[Project],
     cdpath_parents: list[Path],
@@ -1666,6 +1721,7 @@ def emit_table(
             by_root[p.path.resolve()] = display_name(p)
         except OSError:
             by_root[p.path] = display_name(p)
+    dark = macos_dark() if use_color else False
 
     # Counting verbosity: (none) names → -v axes+paths → -vv +desc → -vvv +last/git
     if verbosity <= 1:
@@ -1727,7 +1783,8 @@ def emit_table(
         if not use_color:
             print(f"{axes_s}  {nm:<{widths['name']}}  {rest}".rstrip())
             return
-        named = style_name(f"{nm:<{widths['name']}}", level, dark=macos_dark())
+        axes_s = axis_block_colored(proj.rec, dark)
+        named = style_name(f"{nm:<{widths['name']}}", level, dark=dark)
         line = f"{axes_s}  {named}"
         if level >= HIGHLIGHT_UNDERLINE_AT:
             print(f"\x1b[4m{line}  {rest}\x1b[0m")
