@@ -1415,22 +1415,6 @@ def highlight_level(rec: dict) -> int:
     return max(0, min(10, n))
 
 
-def style_cell_hex(h: str, level: int, *, dark: bool) -> str:
-    if level <= 0:
-        r, g, b = hex_rgb(h)
-        y = 0.299 * r + 0.587 * g + 0.114 * b
-        if dark:
-            y = max(28.0, y * 0.4)
-        else:
-            y = 200.0 + y * 0.15
-        gch = int(max(0, min(255, round(y))))
-        return f"#{gch:02x}{gch:02x}{gch:02x}"
-    if level <= 1:
-        return h
-    t = (level - 1) / 9.0
-    return mix_hex(h, HIGHLIGHT_RED, t * 0.55)
-
-
 def style_name(name: str, level: int, *, dark: bool) -> str:
     if level <= 0:
         hx = "#6a6a6a" if dark else "#9a9a9a"
@@ -1439,7 +1423,10 @@ def style_name(name: str, level: int, *, dark: bool) -> str:
         return name
     t = (level - 1) / 9.0
     base = "#dddddd" if dark else "#222222"
-    return ansi_fg(mix_hex(base, HIGHLIGHT_RED, t)) + name
+    out = ansi_fg(mix_hex(base, HIGHLIGHT_RED, t)) + name
+    if level >= 10:
+        out = "\x1b[1;3m" + out + "\x1b[22;23m"
+    return out
 
 
 def heatmap_window(today: date | None = None) -> list[date]:
@@ -1988,7 +1975,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 hx = fills[iso]
             else:
                 hx = heat_hex(int(days.get(iso, 0)), maxc, invert=invert)
-            cells.append(ansi_block(style_cell_hex(hx, level, dark=dark)))
+            cells.append(ansi_block(hx))
         prefix = "\x1b[4m" if level >= HIGHLIGHT_UNDERLINE_AT else ""
         print(prefix + named + "  " + "".join(cells) + "\x1b[0m")
 

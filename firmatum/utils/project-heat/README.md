@@ -46,7 +46,7 @@ On disk: `.practica` is JSON. Values are top-level keys. A `frozen` list names t
 | remote     | if(remote?) | detected | remote repo url |
 | org        | if(remote?) | remote's org | but, like the others, can be overridden or set even without it having a remote |
 | extra-noise | false | (none) | additional basenames passed to `git-heat --noise` (even if not a git repo). See below |
-| highlight | false | 1 | 0 = grayed out; 1 = normal; 10 = brightest (red, row underline). `projects set NAME highlight=10` |
+| highlight | false | 1 | 0 = gray name; 1 = normal; 2–10 = name toward red; 8–10 underline the row; 10 also bold+italic. `projects set NAME highlight=10` |
 
 
 ### Derived / lazy (can be cached)
