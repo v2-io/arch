@@ -1738,12 +1738,12 @@ def week_stats_line(
     zero: str,
     name_w: int,
 ) -> str:
-    """`NN|NNNN` over each full (7-day) week: distinct projects | total counts.
+    """`NN·NNNN` over each full (7-day) week; `|` in the Sat/Sun gaps.
 
     A project counts if it has any commits that week or any onramp/offramp
     fill that isn't the flat wash or the 0-commit color.
     """
-    cols = [" "] * len(slots)
+    cols = ["|" if s is None else " " for s in slots]
     for start, wdays in week_runs(slots):
         if len(wdays) != 7:
             continue
@@ -1765,12 +1765,12 @@ def week_stats_line(
             if active:
                 nproj += 1
             ncontrib += week_sum
-        label = f"{nproj:>2}|{ncontrib:>4}"
+        label = f"{nproj:>2}·{ncontrib:>4}"
         for k, ch in enumerate(label):
             j = start + k
             if j >= len(cols):
                 break
-            if k < 7 or slots[j] is None:
+            if slots[j] is not None:
                 cols[j] = ch
     return " " * name_w + "  " + "".join(cols)
 
