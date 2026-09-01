@@ -1303,13 +1303,12 @@ def git_vis_of(rec: dict, filters: Filters) -> str:
         org = str(rec.get("org") or "")
         ghv = str(rec.get("gh-visibility") or "")
         if org and org in filters.internal_orgs:
-            # Only gh-measured visibility (cached on --refresh) settles the
-            # public/private split. Measured reality is a 20/20 split, so an
-            # org-membership default carries zero information: absent, never
-            # faked, until measured (or frozen).
+            # gh-measured visibility (cached on --refresh) is the primary
+            # source — real answers from the network, overridable by
+            # freezing git-vis when necessary (Joseph, 2026-09-01).
             if ghv in ("public", "private", "internal"):
                 return "private" if ghv == "internal" else ghv
-            return ""
+            return "private"  # unmeasured fallback until the next --refresh
         return "external"
     return "local"
 
@@ -2918,10 +2917,9 @@ def build_parser() -> argparse.ArgumentParser:
             "and public-use default to 'undeclared'). The old `disposition`\n"
             "field is retired and ignored — not migrated; refusals name the\n"
             "axes an old token splits into. --refresh also asks `gh` for each\n"
-            "github remote's visibility (cached as gh-visibility); an\n"
-            "internal-org repo's public/private comes ONLY from that\n"
-            "measurement (or a frozen value) — unmeasured is absent, not\n"
-            "defaulted. Normal runs never touch the network.\n"
+            "github remote's visibility (cached as gh-visibility) — the\n"
+            "primary source for an internal-org repo's public/private;\n"
+            "freeze git-vis to override. Normal runs never touch the network.\n"
             "\n"
             "-v shows a 7-char block, one column per axis, '·' = undeclared\n"
             "(glyphs are a PROVISIONAL v0 vocabulary):\n"
