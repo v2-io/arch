@@ -170,6 +170,9 @@ RECORD_KEY_ORDER = (
     "remote",
     "org",
     "gh-visibility",
+    "gh-stars",
+    "gh-forks",
+    "gh-watchers",
     "extra-noise",
     "highlight",
     "last-action-time",
@@ -1266,10 +1269,11 @@ def git_rel_of(rec: dict, root: Path, kids: list[str]) -> str:
     return "no-git"
 
 
-def gh_visibility(remote: str) -> str | None:
-    """Ask `gh` for a github repo's visibility. None (absent, never faked)
-    when the remote isn't github, gh is missing/unauthenticated, or the
-    call fails. Only invoked on --refresh — never on a normal cached run."""
+def gh_repo_facts(remote: str) -> dict | None:
+    """Ask `gh` for a github repo's visibility + star/fork/watcher counts
+    in one call. None (absent, never faked) when the remote isn't github,
+    gh is missing/unauthenticated, or the call fails. Only invoked on
+    --refresh — never on a normal cached run."""
     if "github.com" not in remote:
         return None
     m = REMOTE_ORG_RE.search(remote.strip())
@@ -1278,7 +1282,10 @@ def gh_visibility(remote: str) -> str | None:
     slug = f"{m.group('org')}/{m.group('repo')}"
     try:
         r = subprocess.run(
-            ["gh", "repo", "view", slug, "--json", "visibility", "-q", ".visibility"],
+            [
+                "gh", "repo", "view", slug,
+                "--json", "visibility,stargazerCount,forkCount,watchers",
+            ],
             capture_output=True,
             text=True,
             timeout=15,
@@ -1287,8 +1294,24 @@ def gh_visibility(remote: str) -> str | None:
         return None
     if r.returncode != 0:
         return None
-    vis = (r.stdout or "").strip().lower()
-    return vis if vis in ("public", "private", "internal") else None
+    try:
+        data = json.loads(r.stdout or "{}")
+    except json.JSONDecodeError:
+        return None
+    out: dict = {}
+    vis = str(data.get("visibility") or "").lower()
+    if vis in ("public", "private", "internal"):
+        out["gh-visibility"] = vis
+    for src, key in (
+        ("stargazerCount", "gh-stars"),
+        ("forkCount", "gh-forks"),
+    ):
+        if isinstance(data.get(src), int):
+            out[key] = data[src]
+    w = data.get("watchers")
+    if isinstance(w, dict) and isinstance(w.get("totalCount"), int):
+        out["gh-watchers"] = w["totalCount"]
+    return out or None
 
 
 def git_vis_of(rec: dict, filters: Filters) -> str:
@@ -1375,9 +1398,10 @@ def pass1_detect(
                 rec.pop("last-commit-time", None)
 
         if refresh and rec.get("has-remote"):
-            vis = gh_visibility(str(rec.get("remote") or ""))
-            if vis is not None:
-                set_derived(rec, "gh-visibility", vis)
+            facts = gh_repo_facts(str(rec.get("remote") or ""))
+            if facts:
+                for k, v in facts.items():
+                    set_derived(rec, k, v)
         set_derived(rec, "git-rel", git_rel_of(rec, proj.path, kids))
         set_derived(rec, "git-vis", git_vis_of(rec, filters))
 
@@ -1591,21 +1615,32 @@ def emit_table(
     elif verbosity == 2:
         cols = ["axes", "name", "path", "desc"]
     else:
-        cols = ["axes", "name", "last", "git", "path", "desc"]
+        # counts in desc's -vvv slot for now, per Joseph 2026-09-01 —
+        # eyeballing whether star/fork/watcher is the right meaningfulness level
+        cols = ["axes", "name", "last", "git", "gh", "path"]
     headers = {
         "axes": "AXES", "name": "NAME", "last": "LAST",
-        "git": "GIT", "path": "PATH", "desc": "DESC",
+        "git": "GIT", "path": "PATH", "desc": "DESC", "gh": "★·⑂·◉",
     }
 
     def row_cells(proj: Project) -> dict[str, str]:
         extra = ""
         if show_shadows and proj.shadows:
             extra = "  (shadows " + ", ".join(disp(s, home) for s in proj.shadows) + ")"
+        gh_parts = [
+            proj.rec.get(k) for k in ("gh-stars", "gh-forks", "gh-watchers")
+        ]
+        gh = (
+            "·".join(str(x) for x in gh_parts)
+            if all(isinstance(x, int) for x in gh_parts)
+            else ""
+        )
         return {
             "axes": axis_block(proj.rec),
             "name": display_name(proj),
             "last": ago(parse_ts(proj.rec.get("last-action-time")), now),
             "git": git_cell(proj, by_root),
+            "gh": gh,
             "path": disp(proj.path, home) + extra,
             "desc": str(proj.rec.get("desc") or ""),
         }

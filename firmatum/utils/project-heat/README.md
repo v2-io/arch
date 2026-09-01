@@ -27,6 +27,7 @@ Declared-axis defaults come from `census-details.txt` `default <axis>=<value>: g
 - `-vv` — adds `desc`. `-vvv` — adds last-action + git.
 - `projects set NAME experiment paused` — bare tokens resolve to their axes (every value is unique across axes except `group`, which sets both git axes; `rel-group` / `vis-group` pick one). `projects set NAME desc="…"` for the one-line description.
 - `projects unset NAME field [field…]` unfreezes and clears; detection / census defaults refill on the same run.
+- `--refresh` also caches `gh-stars` / `gh-forks` / `gh-watchers` per github remote (same single `gh repo view` call as visibility; absent when unmeasured). Shown at `-vvv` as a `★·⑂·◉` column — temporarily in desc's slot while Joseph gauges whether that's the right meaningfulness level (desc stays at `-vv`).
 
 ## Edges — `census-edges.txt`
 
