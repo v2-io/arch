@@ -1595,8 +1595,9 @@ def dim_zero_fills(
     Head (newest / left): idle walks the heat scale from the last
     non-zero day's t down to 0 (not an RGB lerp). Fade length scales
     with that day's count vs the grid max. Tail (oldest / right): wash
-    #e6e6f1 except a 4-day onramp up the heat scale to t=0.5 (not the
-    hot end), only if first-ever commit is in-window and suffix ≥7.
+    #e6e6f1 except a 4-day onramp up the heat scale to t=0.5. If first
+    commit is after this window (older --double/--triple bands), the
+    whole panel is pre-birth wash, not activity-zero.
     """
     invert = not dark
     wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
@@ -1616,10 +1617,11 @@ def dim_zero_fills(
     suffix = n - 1 - k
     all_zero = i + suffix >= n and i > 0
 
-    born_in_window = False
-    if first_ts is not None:
-        first_d = local_day(first_ts)
-        born_in_window = window[-1] <= first_d <= window[0]
+    first_d = local_day(first_ts) if first_ts is not None else None
+    born_in_window = (
+        first_d is not None and window[-1] <= first_d <= window[0]
+    )
+    born_after_window = first_d is not None and first_d > window[0]
 
     def head_ramp(prefix_len: int) -> None:
         last_c = local_day(last_commit_ts) if last_commit_ts is not None else None
@@ -1655,6 +1657,10 @@ def dim_zero_fills(
             if iso in fills:
                 t = 0.5 * (5 - ahead) / 4.0
                 fills[iso] = inferno_hex(t, invert=invert)
+
+    if born_after_window:
+        paint_tail(0)
+        return fills
 
     if all_zero:
         if born_in_window and first_ts is not None:
