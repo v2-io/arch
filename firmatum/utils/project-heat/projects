@@ -1991,23 +1991,24 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         prefix = "\x1b[4m" if level >= HIGHLIGHT_UNDERLINE_AT else ""
         print(prefix + named + "  " + "".join(cells) + "\x1b[0m")
 
-    def existed_entire_window(proj: Project, window: list[date]) -> bool:
-        """True if first-commit is on or before this panel's oldest day.
+    def existed_in_window(proj: Project, window: list[date]) -> bool:
+        """True unless first-commit is after this panel's newest day.
 
-        Extra bands drop rows that were born mid-window or after it — they
-        were not alive for the whole 17 weeks. Unknown first-commit stays.
+        Extra bands drop rows that were not yet born at any point in those
+        17 weeks (the whole-row pre-birth wash). Born mid-window stays —
+        that's where the activity is. Unknown first-commit stays.
         """
         first_ts = parse_ts(proj.rec.get("first-commit"))
         if first_ts is None:
             return True
-        return local_day(first_ts) <= window[-1]
+        return local_day(first_ts) <= window[0]
 
     def render_panel(
-        window: list[date], left_pad: int, *, full_span_only: bool = False
+        window: list[date], left_pad: int, *, omit_unborn: bool = False
     ) -> None:
         shown = (
-            [p for p in active if existed_entire_window(p, window)]
-            if full_span_only
+            [p for p in active if existed_in_window(p, window)]
+            if omit_unborn
             else list(active)
         )
         slots = heatmap_slots(window)
@@ -2062,7 +2063,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
     for i, panel in enumerate(panels):
         if i > 0:
             print()
-        render_panel(panel, 0 if i == 0 else align, full_span_only=i > 0)
+        render_panel(panel, 0 if i == 0 else align, omit_unborn=i > 0)
     print(scale_bar(maxc, invert=invert))
     return 0
 
