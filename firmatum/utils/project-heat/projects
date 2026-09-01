@@ -86,6 +86,7 @@ RECORD_KEY_ORDER = (
     "remote",
     "org",
     "extra-noise",
+    "highlight",
     "last-action-time",
     "last-commit-time",
     "last-session",
@@ -186,6 +187,7 @@ SET_FIELDS = frozenset(
         "subgit",
         "submodule",
         "has-remote",
+        "highlight",
     }
 )
 
@@ -1319,7 +1321,16 @@ def emit_table(
             print(proj.path)
             return
         nm, last, disp_s, git_s, path_s = row_cells(proj)
-        print(f"{nm:<{nw}}  {last:<{lw}}  {disp_s:<{dw}}  {git_s:<{gw}}  {path_s}")
+        level = highlight_level(proj.rec)
+        dark = macos_dark()
+        named = style_name(f"{nm:<{nw}}", level, dark=dark)
+        rest = f"{last:<{lw}}  {disp_s:<{dw}}  {git_s:<{gw}}  {path_s}"
+        if level >= HIGHLIGHT_UNDERLINE_AT:
+            print(f"\x1b[4m{named}  {rest}\x1b[0m")
+        elif level != 1:
+            print(f"{named}\x1b[0m  {rest}")
+        else:
+            print(f"{nm:<{nw}}  {rest}")
 
     if names_only or paths_only or nul:
         nw = lw = dw = gw = 1
@@ -1369,9 +1380,66 @@ def hex_rgb(h: str) -> tuple[int, int, int]:
     return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
 
 
+def mix_hex(a: str, b: str, t: float) -> str:
+    t = max(0.0, min(1.0, t))
+    ar, ag, ab = hex_rgb(a)
+    br, bg, bb = hex_rgb(b)
+    r = round(ar * (1 - t) + br * t)
+    g = round(ag * (1 - t) + bg * t)
+    b = round(ab * (1 - t) + bb * t)
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
+def ansi_fg(hex_color: str) -> str:
+    r, g, b = hex_rgb(hex_color)
+    return f"\x1b[38;2;{r};{g};{b}m"
+
+
 def ansi_block(hex_color: str) -> str:
     r, g, b = hex_rgb(hex_color)
     return f"\x1b[38;2;{r};{g};{b}m█"
+
+
+HIGHLIGHT_RED = "#ff1a1a"
+HIGHLIGHT_UNDERLINE_AT = 8
+
+
+def highlight_level(rec: dict) -> int:
+    raw = rec.get("highlight")
+    if raw is None or raw == "":
+        return 1
+    try:
+        n = int(raw)
+    except (TypeError, ValueError):
+        return 1
+    return max(0, min(10, n))
+
+
+def style_cell_hex(h: str, level: int, *, dark: bool) -> str:
+    if level <= 0:
+        r, g, b = hex_rgb(h)
+        y = 0.299 * r + 0.587 * g + 0.114 * b
+        if dark:
+            y = max(28.0, y * 0.4)
+        else:
+            y = 200.0 + y * 0.15
+        gch = int(max(0, min(255, round(y))))
+        return f"#{gch:02x}{gch:02x}{gch:02x}"
+    if level <= 1:
+        return h
+    t = (level - 1) / 9.0
+    return mix_hex(h, HIGHLIGHT_RED, t * 0.55)
+
+
+def style_name(name: str, level: int, *, dark: bool) -> str:
+    if level <= 0:
+        hx = "#6a6a6a" if dark else "#9a9a9a"
+        return ansi_fg(hx) + name
+    if level <= 1:
+        return name
+    t = (level - 1) / 9.0
+    base = "#dddddd" if dark else "#222222"
+    return ansi_fg(mix_hex(base, HIGHLIGHT_RED, t)) + name
 
 
 def heatmap_window(today: date | None = None) -> list[date]:
@@ -1901,7 +1969,9 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
     ) -> None:
         key = proj_key(proj)
         days = counts.get(key, {})
+        level = highlight_level(proj.rec)
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
+        named = style_name(name, level, dark=dark)
         cells = [" "] * left_pad
         for slot in slots:
             if slot is None:
@@ -1909,11 +1979,12 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 continue
             iso = slot.isoformat()
             if iso in fills:
-                cells.append(ansi_block(fills[iso]))
-                continue
-            c = int(days.get(iso, 0))
-            cells.append(ansi_block(heat_hex(c, maxc, invert=invert)))
-        print(name + "  " + "".join(cells) + "\x1b[0m")
+                hx = fills[iso]
+            else:
+                hx = heat_hex(int(days.get(iso, 0)), maxc, invert=invert)
+            cells.append(ansi_block(style_cell_hex(hx, level, dark=dark)))
+        prefix = "\x1b[4m" if level >= HIGHLIGHT_UNDERLINE_AT else ""
+        print(prefix + named + "  " + "".join(cells) + "\x1b[0m")
 
     def render_panel(window: list[date], left_pad: int) -> None:
         slots = heatmap_slots(window)
@@ -1987,6 +2058,14 @@ def parse_set_value(key: str, raw: str) -> object:
         die(f"set: {key} wants true/false, got {raw!r}", 2)
     if key == "disposition" and raw.strip() not in DISPOSITIONS:
         die(f"set: unknown disposition {raw!r}", 2)
+    if key == "highlight":
+        try:
+            n = int(raw.strip())
+        except ValueError:
+            die(f"set: highlight wants 0–10, got {raw!r}", 2)
+        if n < 0 or n > 10:
+            die(f"set: highlight wants 0–10, got {raw!r}", 2)
+        return n
     return raw
 
 
