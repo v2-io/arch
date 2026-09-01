@@ -1,6 +1,6 @@
 # Compaction design theory — hypothesis document, 2026-08-29
 
-*Status: **hypothesis document** — a coherent, falsifiable design theory for compaction summaries, assembled from one day's derivations (founding dialog + literature dossier + spike-01 measurements + Joseph's three scope corrections, all in this directory). Written as the spec for a working integration into grok-build's compaction crate. Every design principle carries its rationale and its evidence tier; nothing here is claimed as established beyond what the citations carry. Joseph ratifies what proceeds.*
+*Status: **hypothesis document** — a coherent, falsifiable design theory for compaction summaries, assembled from one day's derivations (founding dialog + literature dossier + spike-01 measurements + Joseph's three scope corrections, all in this directory). Written as the spec for a working integration into grok-build's compaction crate. Every design principle carries its rationale and its evidence tier; nothing here is claimed as established beyond what the citations carry. Joseph ratifies what proceeds. §8 is an 2026-08-31 addendum after the first natural auto-compact under the new templates; it does not silently rewrite §§1–7.*
 
 ## 1. What compaction is for (the objective, stated honestly)
 
@@ -87,3 +87,23 @@ Tiers are separately valuable and separately revertible; the fork should prefer 
 - Prospective sections that confabulate future needs and anchor the successor wrongly (prediction is a capability bet; below some capability it may be worse than silence).
 - Verbatim floors that blow the token budget without moving the probe metric.
 - The probe trichotomy failing to separate policies (all policies clustering) — would mean the metric, not the mechanism, needs rework.
+
+## 8. Addendum 2026-08-31 — the summary as a genre that leaves the session
+
+*Joseph, after the first natural auto-compact under the P1–P8 / P10 templates (session `01a0533d`, project-heat). Hypothesis-grade; first-run, uncontrolled. His words first; the run is evidence about them, not a substitute for them.*
+
+> As I continue to reflect on the compaction summary and how it fails continuity, one of the thing that I should have been thinking of due to past experiments is the fact that the summary as it is, except for a few points (initial request, current work, ordering of the user quotes), attempts to separate the session as an informational synthesis *away from* it's actual temporal nature and rhythm. Summaries as they are currently implemented generally tend to:
+>
+> - Suck the life out of any phenomenology by considering tone, relation, felt importance, etc. as secondary to information content
+> - Suck the temporal rhythm out by condensing into non-temporal sections instead of the actual experiential and causal chain
+> - (As established in the hypothesis already) Suck the *purpose* out by asking for summarization instead of a causal best prediction of the new agents' future needs.
+>
+> The reality is that a failure to capture the actual verbatim exchanges between the user and the assistant is just a symptom of those critical defects. The third one should have caused an agent to think "As long as the new agent fully reads 'projects' (the script), README.md, and the other .txt file, they will be able to implement what they need after I give them this additional stuff..." But in our case it didn't even occur to the new agent to simply read those three files instead of assuming the context summary was "enough" (when in reality it captured what the template had asked for, but is all completely wasted as most of it could easily be inferred from just reading the single code file in this case as the grounding anchor for additional knowledge).
+
+**What this does to the 08-29 principles.** Leg 1 / P5 named the purpose-failure and still licensed a *section* inside a synthesis ("Likely next," Pending Tasks, Optional Next Step). That is still summarization with a forward-looking bucket. Purpose-correct compaction, on this account, is not another heading: it is a prediction of what the successor will need *that it cannot get by re-entering the live work*. In this session that prediction is almost small: *read `projects`, README.md, and `census-details.txt` whole; then here is the residue the files will not tell you* (the latest ask, the screenshot diagnosis, standing constraints, what is still uncommitted). Phenomenology and temporal/causal chain were never first-class in P1–P10 — P7 protects user wording as reconstruction-difficulty, which is not tone, relation, or felt importance, and P6's "phases, one line each" can still be a table of contents of a synthesis rather than the experiential sequence. The verbatim-floor miss observed on this run is, as Joseph says, a symptom of those three; retitling §6 and adding Known Holes treats the symptom.
+
+**First-run sequence (checked against `chat_history.jsonl`, not against the summary).** The successor's first act after the banner was to implement from the summary's diagnosis ("I'll look at how the tail off-ramp currently keys off own-git first-commit, then extend…") and then grep / window-read `projects`. README was sampled the same way. `census-details.txt` was not `read_file`'d at all until Joseph asked. Known Holes had already said the Python source was "only described; successor must read the file on disk." That instruction did not fire. After ~20 minutes of churn the first task was still wrong; Joseph asked whether those three files were whole in context and whether `projects` had been run as orientation. Only then, whole reads. The successor, in its own words (assistant item after that ask, then again once the bug was visible):
+
+> No. I did not have those three files whole, and I had not sat with a `projects` run as orientation — I grepped and sampled. That’s why the first task shipped wrong.
+
+The hole-map plus honesty banner did not defeat false-completeness: the rest of the artifact still performed a complete picture, so "proceed on what you have" meant proceed on the synthesis. Sampling the code under that picture is not the same act as taking the code as the grounding anchor. The wasted mass of the 11-section template is the evidence that the template got what it asked for.

@@ -28,7 +28,7 @@
 #  `experiment`: In ther very loose sense of the word-- might be empirical (distinct from its paper), a theory, coding spike, attempt at proof-of-concept, toy idea, etc.
 #  `pre-*`:      Active development toward a named milestone (poc / mvp / release); re-enterable — lifecycle is not a one-way ladder.
 #  `ongoing`:    Unlike maintenance, it is expected to stay active without any particular "finished" objective (whereas maintenance has usually reached its primary objective).
-#  `reference`:  Defunct / not in use, but could definitely continue to influence things. (paused+reference = dormant but resurrectable.)
+#  `reference`:  Could definitely continue to influence things. paused+reference is a typical combination for internal projects that are resurrectable. (Usage itself is the local-use axis's business; paused already kind of implies not-in-use or it would be maintenance.)
 #
 # *activity*
 #  `active`:     Aspires to regular active pushing toward some milestone.

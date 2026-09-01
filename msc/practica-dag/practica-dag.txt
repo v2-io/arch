@@ -2,6 +2,32 @@ node { shape: rounded; font: inter; }
 node.active { fill: beige; shape: rounded; }
 
 
+(Udon
+(0.10.01
+[Spec]
+)
+[Address Theory]
+)
+
+[Spec] <--> [Address Theory]
+
+(Cos
+[sharpen] --> [sharpen]
+[autocolors/night+dayfox]
+[plan]
+)
+
+
+
+
+
+
+
+
+
+
+
+
 # [new-diagram]  {class: active; label: "New Epistemology Diagram";}
 # [essay-truth-1]{class: active; label: "Explication/Essay\nTruth (1)";}
 # [aspectus]     {class: active; font: "VictorMono Nerd Font Mono"; color: #444; fontsize: 0.8em;}
@@ -11,7 +37,7 @@ node.active { fill: beige; shape: rounded; }
 # [application]  {label: "γ"; fontsize: 1.3em; shape: circle; fill: #ffffe4;}
 # γ δ ε ζ η θ
 
-[SIGNA]{class: active;} --> [aspectus]
+# [SIGNA]{class: active;} --> [aspectus]
 # [new-diagram] --> [Verisectorium / Epistemology]
 # [new-diagram] ==> [essay-truth-1]
 # [Verisectorium / Epistemology] --> [essay-truth-1]
