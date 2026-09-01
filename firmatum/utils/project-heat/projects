@@ -121,8 +121,8 @@ STALE_AFTER_DAYS = 28
 STALE_FADE_DAYS = 7
 STALE_LIGHT = "#eff1f5"
 # Week-stats pseudo-work: birth onramp + idle cooldown only.
-# 0-commit white, pre-birth wash, and stale fade do not count.
-PSEUDO_KINDS = frozenset({"onramp", "offramp", "birth"})
+# 0-commit white, pre-birth wash, the birth marker, and stale fade do not count.
+PSEUDO_KINDS = frozenset({"onramp", "offramp"})
 
 
 def invert_hex(h: str) -> str:
@@ -939,7 +939,6 @@ def under_child(rel_posix: str, child_rels: list[str]) -> bool:
 def exclusive_dirty_mtimes(
     root: Path,
     extra: list[str],
-    pathspecs: list[str] | None = None,
     skip_rels: list[str] | None = None,
 ) -> list[float]:
     """Mtimes of dirty/untracked files under root, excluding census children."""
@@ -991,7 +990,7 @@ def detect_last_action(
                 best = commit_ts
             except ValueError:
                 pass
-        for mt in exclusive_dirty_mtimes(root, extra, specs, skip_rels):
+        for mt in exclusive_dirty_mtimes(root, extra, skip_rels):
             if best is None or mt > best:
                 best = mt
         if best is not None:
@@ -1605,8 +1604,8 @@ def dim_zero_fills(
     heat scale to t=0.5. If first commit is after this window, the
     whole panel is pre-birth wash, not activity-zero.
 
-    Kinds: onramp / offramp / birth count as week-stats pseudo-work.
-    wash / zero / stale do not.
+    Kinds: onramp / offramp count as week-stats pseudo-work.
+    wash / zero / birth / stale do not.
     """
     invert = not dark
     wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
@@ -1741,9 +1740,13 @@ def heatmap_counts(
             set_derived(rec, "first-commit", iso_utc(fts))
     if not gitish:
         # No commit stream: file birth + mtime are the proxy for change-counts.
-        # Active no-git rows are tiny; still reuse the day cache unless refresh.
+        # Active no-git rows are tiny; still reuse the day cache unless refresh
+        # or the window grew past what the cache was pruned to (--double/--triple).
         cached_ng = rec.get("heatmap-days") if isinstance(rec.get("heatmap-days"), dict) else {}
-        if not refresh and rec.get("first-commit") and cached_ng:
+        ng_span = min(window).isoformat()
+        ng_cached_span = str(rec.get("heatmap-span-oldest") or "")[:10]
+        ng_span_ok = bool(ng_cached_span) and ng_cached_span <= ng_span
+        if not refresh and rec.get("first-commit") and cached_ng and ng_span_ok:
             return prune_days(
                 {str(k): int(v) for k, v in cached_ng.items() if str(k)},
                 window,
@@ -1763,6 +1766,7 @@ def heatmap_counts(
         set_derived(rec, "heatmap-days", days)
         set_derived(rec, "heatmap-as-of", iso_utc(now))
         set_derived(rec, "heatmap-kids", kids)
+        set_derived(rec, "heatmap-span-oldest", ng_span)
         if write:
             save_practica(proj.path, rec)
         return days
@@ -1808,7 +1812,7 @@ def heatmap_counts(
         days = prune_days(days, window)
     display = dict(days)
     add_timestamps(
-        display, exclusive_dirty_mtimes(proj.path, extra_s, specs, kids)
+        display, exclusive_dirty_mtimes(proj.path, extra_s, kids)
     )
     return prune_days(display, window)
 
@@ -1874,7 +1878,7 @@ def week_stats_line(
     nproj·ncontrib, then spaces until the next Sat/Sun pipe.
 
     A project counts if it has any commits that week, or an onramp /
-    offramp / birth fill (not 0-commit white, wash, or stale).
+    offramp fill (not 0-commit white, wash, birth, or stale).
     """
     cols = ["|" if s is None else " " for s in slots]
     for start, wdays in week_runs(slots):
@@ -2143,8 +2147,8 @@ def find_project(ident: str, projects: list[Project], home: Path) -> Project:
         return hits[0]
     if len(hits) > 1:
         names = ", ".join(display_name(p) for p in hits)
-        die(f"set: {ident!r} is ambiguous ({names})", 2)
-    die(f"set: no census project matching {ident!r}", 2)
+        die(f"{ident!r} is ambiguous ({names})", 2)
+    die(f"no census project matching {ident!r}", 2)
 
 
 def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
@@ -2180,6 +2184,26 @@ def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
     print(f"{display_name(proj)}  {disp(proj.path, home)}")
     for k, _ in updates:
         print(f"  {k}={proj.rec.get(k)!r}  (frozen)")
+    return 0
+
+
+def cmd_pd(argv: list[str], list_ns: argparse.Namespace) -> int:
+    """`pd <name>` — print the project directory. Fast path: no git/session
+    detection, just census + stored .practica names (names in `.practica`
+    are current from any prior full run; pass2 recomputes them anyway)."""
+    if not argv or argv[0] in {"-h", "--help"}:
+        print("usage: pd <name-or-path>   (projects pd <name-or-path>)")
+        print("prints the project-root directory for scripting / prefixing")
+        return 0 if argv and argv[0] in {"-h", "--help"} else 2
+    if len(argv) > 1:
+        die("pd: exactly one name", 2)
+    home = Path.home()
+    projects, _filters, _parents = gather(list_ns, home)
+    for proj in projects:
+        proj.rec = load_practica(proj.path)
+    pass2_names(projects, write=False)
+    proj = find_project(argv[0], projects, home)
+    print(proj.path)
     return 0
 
 
@@ -2228,6 +2252,8 @@ def build_parser() -> argparse.ArgumentParser:
             "-c change-date; -a alphabetical. -g combines with -c/-a as\n"
             "headings plus that order within each cdpath group.\n"
             "\n"
+            "  projects pd <name>                        print project dir (a `pd`\n"
+            "                                            symlink to this script works too)\n"
             "  projects set <name-or-path> field=value   freeze an override\n"
             "  projects set <name-or-path> <disposition>  shorthand (no =)\n"
             "  projects heatmap                          17-week inferno rows (active*)\n"
@@ -2331,6 +2357,11 @@ def main(argv: list[str] | None = None) -> int:
     if argv is None:
         argv = sys.argv[1:]
     parser = build_parser()
+    prog = Path(sys.argv[0]).name if sys.argv else ""
+    if prog == "pd":
+        return cmd_pd(argv, parser.parse_args([]))
+    if argv and argv[0] == "pd":
+        return cmd_pd(argv[1:], parser.parse_args([]))
     if argv and argv[0] == "set":
         list_ns = parser.parse_args([])
         return cmd_set(argv[1:], list_ns)
