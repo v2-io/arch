@@ -1894,6 +1894,11 @@ def week_stats_line(
 
 
 def month_header(window: list[date], name_w: int, left_pad: int = 0) -> str:
+    """`<- Aug |          <- Jul | …` at the newer (left) edge of each month.
+
+    Newest is left, so the arrow marks time running toward the present.
+    Omitted if the month's columns are too short to fit the label.
+    """
     slots = heatmap_slots(window)
     cols = [" "] * len(slots)
     i = 0
@@ -1902,15 +1907,17 @@ def month_header(window: list[date], name_w: int, left_pad: int = 0) -> str:
         if d is None:
             i += 1
             continue
-        label = d.strftime("%b")
-        for j, ch in enumerate(label):
-            k = i + j
-            if k < len(cols):
-                cols[k] = ch
         ym = (d.year, d.month)
-        i += 1
-        while i < len(slots) and (slots[i] is None or (slots[i].year, slots[i].month) == ym):
-            i += 1
+        end = i + 1
+        while end < len(slots) and (
+            slots[end] is None or (slots[end].year, slots[end].month) == ym
+        ):
+            end += 1
+        label = f"<- {d.strftime('%b')} |"
+        if end - i >= len(label):
+            for j, ch in enumerate(label):
+                cols[i + j] = ch
+        i = end
     return " " * name_w + "  " + (" " * left_pad) + "".join(cols)
 
 
@@ -2069,9 +2076,10 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 emit_row(proj, slots, fills_by.get(proj_key(proj), {}), left_pad)
             print()
 
+    rule_w = HEATMAP_NAME_W + 2 + len(heatmap_slots(panels[0]))
     for i, panel in enumerate(panels):
         if i > 0:
-            print()
+            print("─" * rule_w)
         render_panel(panel, 0 if i == 0 else align, omit_unborn=i > 0)
     print(scale_bar(maxc, invert=invert))
     return 0
