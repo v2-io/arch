@@ -11,7 +11,7 @@ The retired single `disposition` field is replaced by seven independent axes. **
 | axis | values | provenance |
 |---|---|---|
 | git-rel | gitroot · subgit · submodule · no-git · group | **detected** (group = no own git but census children with git) |
-| git-vis | local · private · public · external · group | **detected default, freezable** — remote org in `internal-git-orgs` → `private` (freeze `public` when known; no network calls); other org → `external`; no remote → `local`; a subgit inherits its census parent's git-vis, never guessed from its own remoteless state |
+| git-vis | local · private · public · external · group | **detected default, freezable** — remote org in `internal-git-orgs` → `private`, unless `--refresh`'s `gh repo view` measured it `public` (cached as `gh-visibility`; absent when gh is unavailable; normal runs never touch the network); other org → `external`; no remote → `local`; a subgit inherits its census parent's git-vis, never guessed from its own remoteless state |
 | lifecycle | nascent · experiment · pre-poc · pre-mvp · pre-release · ongoing · maintenance · reference | **declared** (pre-\* are re-enterable milestones; reference = still influence-bearing; usage is local-use's business) |
 | activity | active · paused · watch · archived | **declared** — aspiration/directive, never auto-demoted from staleness |
 | proj-rel | root · mid · leaf · isolated | **derived** from the census parent graph |

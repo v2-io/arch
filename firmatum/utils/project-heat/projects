@@ -169,6 +169,7 @@ RECORD_KEY_ORDER = (
     "has-remote",
     "remote",
     "org",
+    "gh-visibility",
     "extra-noise",
     "highlight",
     "last-action-time",
@@ -1265,6 +1266,31 @@ def git_rel_of(rec: dict, root: Path, kids: list[str]) -> str:
     return "no-git"
 
 
+def gh_visibility(remote: str) -> str | None:
+    """Ask `gh` for a github repo's visibility. None (absent, never faked)
+    when the remote isn't github, gh is missing/unauthenticated, or the
+    call fails. Only invoked on --refresh — never on a normal cached run."""
+    if "github.com" not in remote:
+        return None
+    m = REMOTE_ORG_RE.search(remote.strip())
+    if not m:
+        return None
+    slug = f"{m.group('org')}/{m.group('repo')}"
+    try:
+        r = subprocess.run(
+            ["gh", "repo", "view", slug, "--json", "visibility", "-q", ".visibility"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if r.returncode != 0:
+        return None
+    vis = (r.stdout or "").strip().lower()
+    return vis if vis in ("public", "private", "internal") else None
+
+
 def git_vis_of(rec: dict, filters: Filters) -> str:
     gr = rec.get("git-rel")
     if gr == "group":
@@ -1275,8 +1301,11 @@ def git_vis_of(rec: dict, filters: Filters) -> str:
         return ""
     if rec.get("has-remote"):
         org = str(rec.get("org") or "")
+        ghv = str(rec.get("gh-visibility") or "")
         if org and org in filters.internal_orgs:
-            return "private"  # safe default; freeze git-vis=public when known
+            # gh-measured visibility (cached on --refresh) settles the
+            # public/private split; org-membership is the offline default.
+            return "public" if ghv == "public" else "private"
         return "external"
     return "local"
 
@@ -1342,6 +1371,10 @@ def pass1_detect(
             elif "last-commit-time" not in frozen_of(rec):
                 rec.pop("last-commit-time", None)
 
+        if refresh and rec.get("has-remote"):
+            vis = gh_visibility(str(rec.get("remote") or ""))
+            if vis is not None:
+                set_derived(rec, "gh-visibility", vis)
         set_derived(rec, "git-rel", git_rel_of(rec, proj.path, kids))
         set_derived(rec, "git-vis", git_vis_of(rec, filters))
 
@@ -2880,7 +2913,10 @@ def build_parser() -> argparse.ArgumentParser:
             "lines set defaults; `projects set` freezes per-project; local-use\n"
             "and public-use default to 'undeclared'). The old `disposition`\n"
             "field is retired and ignored — not migrated; refusals name the\n"
-            "axes an old token splits into.\n"
+            "axes an old token splits into. --refresh also asks `gh` for each\n"
+            "github remote's visibility (cached as gh-visibility; a measured\n"
+            "'public' flips an internal-org repo's git-vis to public; absent\n"
+            "when gh is unavailable — normal runs never touch the network).\n"
             "\n"
             "-v shows a 7-char block, one column per axis, '·' = undeclared\n"
             "(glyphs are a PROVISIONAL v0 vocabulary):\n"
