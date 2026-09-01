@@ -1,6 +1,6 @@
 # Plan: multi-axis taxonomy, replacing `disposition`
 
-*Drafted 2026-09-01 (Claude, session with Joseph) from the TODO block at the top of `census-details.txt`. Status: **proposed** — the axis/value inventory is Joseph's (from that block, verbatim); the provenance carves, mapping table, and phasing below are this plan's contribution and want his read before phase 2. Register: "may want to" throughout; nothing here is decided beyond what the census header already decided.*
+*Drafted 2026-09-01 (Claude, session with Joseph) from the TODO block at the top of `census-details.txt`; revised same day after Joseph's in-session answers (undeclared default, group shorthand, edges-as-census-file, active-ref mapping). Status: **ratified in the large** — the axis inventory is his; the provenance carves and §2/§7 shapes got his read; the phasing is trusted-not-reviewed (his words), and he notes the current disposition values were evolved by a grok agent, not core principles — so mapping fidelity is best-effort, not sacred.*
 
 ## What problem this solves
 
@@ -17,10 +17,10 @@ The key design question per axis is **who answers it** — detection, census def
 | `proj-rel` | root · mid · leaf · isolated | **derived** | Already computed (pass2 parent detection + has-children); pure rename/derivation, never stored frozen. |
 | `lifecycle` | nascent · experiment · ongoing · maintenance · reference | **declared** (census-blob defaults + frozen overrides) | Human judgment. Census defaults by glob (e.g. `src/_exp/**` → experiment, `src-ext/**` → reference). |
 | `activity` | active · paused · watch · archived | **declared** (same mechanism) | Intent, not measurement — last-action can *suggest* ("active but idle 60d") but never rewrite; auto-demoting activity would make the census lie about aspiration, which is what this axis records ("aspires to regular active pushing"). |
-| `local-use` | pending · pilot · transition · secondary · primary | **declared** | No detection, no census default beyond unset; unset prints nothing (absent, never faked). |
-| `public-use` | unlikely · peers-only · undecided · planned · preprint · submitted · accepted · published · early · broad | **declared** | Same. Papers/books axes ride the same field. |
+| `local-use` | undeclared · pending · pilot · transition · secondary · primary | **declared** | `undeclared` is the non-frozen default (Joseph 2026-09-01) — the field is present and honest about not having been decided, distinct from a decided value. |
+| `public-use` | undeclared · unlikely · peers-only · undecided · planned · preprint · submitted · accepted · published · early · broad | **declared** | Same `undeclared` default. Papers/books stages ride the same field. (`undecided` = considered and genuinely open; `undeclared` = never considered.) |
 
-**Value-collision check** (matters for the `set` bare-token shorthand): every value is unique to its axis except `group` (git-rel ∩ git-vis). So `projects set NAME experiment` can keep working axis-free; `group` alone is refused with a menu (`git-rel=group` / `git-vis=group`) — and both are detected anyway, so it should rarely come up.
+**Value-collision check** (matters for the `set` bare-token shorthand): every value is unique to its axis except `group` (git-rel ∩ git-vis) — and that collision is meaningful, not accidental: a group usually *is* both. Decided (Joseph 2026-09-01): bare `group` sets **both** axes; `rel-group` / `vis-group` set them independently. All other bare tokens resolve axis-free.
 
 ## 2. Mapping the current dispositions
 
@@ -29,7 +29,7 @@ The key design question per axis is **who answers it** — detection, census def
 | `active` | active | ongoing | the default blob |
 | `active-maintenance` | active | maintenance | |
 | `active-exp` | active | experiment | |
-| `active-ref` | watch *or* active | reference | few rows; confirm each with Joseph at migration |
+| `active-ref` | active | reference | + usually `git-vis=external` (detected). Decided: active and reference are separate axes now, so this compound dissolves cleanly. |
 | `active-fork` | active | ongoing | + `git-vis=external` (grok-build fork); the "fork" fact is git-vis, not activity |
 | `inactive` | paused | *(keep existing/unset)* | |
 | `inert` | archived | *(unset)* | |
@@ -37,7 +37,7 @@ The key design question per axis is **who answers it** — detection, census def
 | `ref-only` | watch | reference | usually also `git-vis=external` (detected) |
 | `historical` | archived | *(unset)* | |
 
-Frozen `disposition` → the mapped fields land **frozen**; blob-derived → mapped fields stay derived. **Heatmap membership** becomes `activity == active` (matches today's `active*` exactly under this table, modulo the `active-ref` rows to confirm). Table `DISP` column → two columns or one composite; suggestion: show `activity` (the question the table answers) with lifecycle appended only when set and ≠ ongoing (`paused·exp`); full facts in `--format=json` regardless.
+Frozen `disposition` → the mapped fields land **frozen**; blob-derived → mapped fields stay derived. **Heatmap membership** becomes `activity == active` (matches today's `active*` exactly under this table; `watch` rows stay off the heatmap, as `ref-only` does today). Table `DISP` column → two columns or one composite; suggestion: show `activity` (the question the table answers) with lifecycle appended only when set and ≠ ongoing (`paused·exp`); full facts in `--format=json` regardless.
 
 ## 3. Census file format
 
@@ -76,22 +76,27 @@ Rollback at any phase = revert the commit; `.practica` files never lose informat
 - **No auto-demotion of `activity`** from last-action (see §1 — the axis records aspiration; staleness is already visible in LAST and the heatmap).
 - **No new sort/group semantics** in this transition — `-c`/`-a`/`-g` untouched.
 
-## 7. Lineage (adjacent, riding the same migration — from `inbox.md` 2026-09-01)
+## 7. Edges — `census-edges.txt` (decided in shape, Joseph 2026-09-01)
 
-Evolve `related` (unused today) into typed edges, one line per relation in `.practica`:
+Lineage/relations do **not** go through `set` or a CLI edge verb, and do not live per-project in `.practica`. Joseph's vote: a hand-typeable file beside the census, `census-edges.txt`, same comment/blank conventions, maybe globs. Line shape (his sketch, generalized edges, not just lineage):
 
-```json
-"related": [
-  {"name": "udon", "kind": "influenced"},
-  {"name": "verisectorium", "kind": "influenced"}
-]
+```
+# FROM TO RELATION [INVERSE-RELATION]
+#   FROM/TO: comma-separated names (globs allowed, expanding against census names)
+#   RELATION/INVERSE: comma-lists pairing positionally with FROM when FROM is a list
+#   INVERSE omitted → derived from the known-inverses table; '-' → explicitly none
+rowan,verisectorium arch/udon influence,waiting-for influenced-by,-
+verisectorium arch/udon depends-on-critically
+chiridion arch/udon influence
 ```
 
-Kinds (from Joseph's in-session carve): `predecessor` (direct lineal — successor absorbed it), `influenced` (critical influence; project stayed itself), `influenced-resurrectable` (influence + defunct only because the need lapsed — the ruby→rust cases). Plain strings in `related` keep parsing as `{"kind": "related"}` (untyped). Edges are declared on the *predecessor* side (the dying row knows its heirs; cheap to invert at read time). Rendering (a lineage thread in the heatmap from a fading row to its successor) is future work — the data model just shouldn't block it.
+- **Either side may declare** — `influenced-by` on the successor is as valid as `influence` on the predecessor; the reader collapses both-side declarations into one directional edge set (dedupe on from/to/relation after inverse-normalization).
+- **Relation vocabulary is open**, not an enum — `influence`, `influenced-by`, `depends-on-critically`, `waiting-for`, `predecessor-of`, … A small growable known-inverses table (`influence ↔ influenced-by`, `predecessor-of ↔ successor-of`, `depends-on-critically ↔ critically-depended-on-by`) drives derivation; an unknown relation with no stated inverse simply has none derived (absent, never faked).
+- **Resurrectability** is a property of the *project*, not the edge — it lands as a categories tag or a lifecycle note, not a relation kind. (Refines the earlier in-session carve, where it rode the edge type; the inbox.md entry stands as the original record.)
+- `.practica`'s `related` field stays as-is (untouched, still optional free-form) until the edges file exists; then JSON output exposes each project's collapsed in/out edges computed from the file.
+- Rendering (a lineage thread from a fading heatmap row to its successor) stays future work; this format just mustn't block it.
 
 ## Open questions for Joseph
 
-1. `active-ref` rows: watch or active, per row?
-2. Table `DISP` display: composite `activity·lifecycle` as suggested, or two columns?
-3. Should `watch` rows appear on the heatmap (today's `active-ref` does, `ref-only` doesn't — the mapping has to pick)?
-4. Lineage kinds' spelling — happy with `predecessor` / `influenced` / `influenced-resurrectable`?
+1. Table `DISP` display: composite `activity·lifecycle-when-set` as suggested in §2, or two columns?
+2. Known-inverses table: seed spellings above OK, or do you want to dictate the initial vocabulary when you first type the file?
