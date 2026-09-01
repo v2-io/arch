@@ -1859,7 +1859,8 @@ def week_stats_line(
     name_w: int,
     left_pad: int = 0,
 ) -> str:
-    """`NN·NNNN` over each full (7-day) week; `|` in the Sat/Sun gaps.
+    """`| 25·254 |` over each full week — space after the pipe, then
+    nproj·ncontrib, then spaces until the next Sat/Sun pipe.
 
     A project counts if it has any commits that week, or an onramp /
     offramp / birth fill (not 0-commit white, wash, or stale).
@@ -1882,13 +1883,12 @@ def week_stats_line(
             if active:
                 nproj += 1
             ncontrib += week_sum
-        label = f"{nproj:>2}·{ncontrib:>4}"
+        label = f" {nproj}·{ncontrib}"
         for k, ch in enumerate(label):
             j = start + k
-            if j >= len(cols):
+            if j >= len(cols) or slots[j] is None:
                 break
-            if slots[j] is not None:
-                cols[j] = ch
+            cols[j] = ch
     prefix = " " * left_pad
     return " " * name_w + "  " + prefix + "".join(cols)
 
