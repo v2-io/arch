@@ -1894,10 +1894,11 @@ def week_stats_line(
 
 
 def month_header(window: list[date], name_w: int, left_pad: int = 0) -> str:
-    """`<- Aug |          <- Jul | …` at the newer (left) edge of each month.
+    """`<- Aug |` at the start of the month — the older/right edge.
 
-    Newest is left, so the arrow marks time running toward the present.
-    Omitted if the month's columns are too short to fit the label.
+    Newest is left, so day 1 sits on the right of that month's span.
+    Reading right-to-left: `|` then immediately left of it, `<- Aug`.
+    Omitted if the span is too short to fit.
     """
     slots = heatmap_slots(window)
     cols = [" "] * len(slots)
@@ -1914,9 +1915,10 @@ def month_header(window: list[date], name_w: int, left_pad: int = 0) -> str:
         ):
             end += 1
         label = f"<- {d.strftime('%b')} |"
-        if end - i >= len(label):
+        pos = end - len(label)
+        if pos >= i:
             for j, ch in enumerate(label):
-                cols[i + j] = ch
+                cols[pos + j] = ch
         i = end
     return " " * name_w + "  " + (" " * left_pad) + "".join(cols)
 
