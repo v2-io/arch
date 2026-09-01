@@ -82,9 +82,10 @@ for _ax, _vals in AXES.items():
             VALUE_AXIS[_v] = _ax
 
 # 7-char axis glyph block (one column per axis in AXIS_ORDER; position =
-# which axis, glyph = value; '·' = undeclared/unknown). PROVISIONAL v0
-# vocabulary — taught in --help, expected to be iterated on sight.
-AXIS_GLYPHS: dict[str, dict[str, str]] = {
+# which axis, glyph = value; '·' = undeclared/unknown). Built-in fallback;
+# the live vocabulary loads from axis-glyphs.json beside this script (edit
+# it to experiment — --help's AXES section renders from the loaded table).
+AXIS_GLYPHS_BUILTIN: dict[str, dict[str, str]] = {
     "git-rel": {
         "gitroot": "g", "submodule": "s", "subgit": "j",
         "no-git": "-", "group": "G",
@@ -110,6 +111,57 @@ AXIS_GLYPHS: dict[str, dict[str, str]] = {
         "accepted": "a", "published": "P", "early": "E", "broad": "B",
     },
 }
+
+GLYPHS_FILE = HERE / "axis-glyphs.json"
+
+
+def load_axis_glyphs() -> dict[str, dict[str, str]]:
+    """Built-in table overlaid with axis-glyphs.json (missing file is fine;
+    unreadable file warns and falls back; unknown axes/values and non-1-char
+    glyphs are skipped with a note so a typo can't silently break a column)."""
+    table = {ax: dict(vals) for ax, vals in AXIS_GLYPHS_BUILTIN.items()}
+    try:
+        raw = json.loads(GLYPHS_FILE.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return table
+    except (OSError, json.JSONDecodeError) as e:
+        print(
+            f"projects: {GLYPHS_FILE.name} unreadable ({e}); using built-in glyphs",
+            file=sys.stderr,
+        )
+        return table
+    if not isinstance(raw, dict):
+        return table
+    for ax, vals in raw.items():
+        if ax not in table or not isinstance(vals, dict):
+            print(
+                f"projects: {GLYPHS_FILE.name}: unknown axis {ax!r} skipped",
+                file=sys.stderr,
+            )
+            continue
+        for v, g in vals.items():
+            if v not in AXES[ax]:
+                print(
+                    f"projects: {GLYPHS_FILE.name}: unknown {ax} value {v!r} skipped",
+                    file=sys.stderr,
+                )
+                continue
+            if not isinstance(g, str) or len(g) != 1:
+                print(
+                    f"projects: {GLYPHS_FILE.name}: {ax}.{v} glyph must be "
+                    f"exactly one character, got {g!r} — skipped",
+                    file=sys.stderr,
+                )
+                continue
+            table[ax][v] = g
+    return table
+
+
+AXIS_GLYPHS = load_axis_glyphs()
+
+# Derived public-use floor (Joseph, 2026-09-01): measured community weight
+# reads as clearly-published. Declared/frozen values still win.
+GH_PUBLISHED_THRESHOLD = 50
 
 # Internal-only keys: hydrated in memory (from git-rel / parenthood), never
 # written back to .practica. `disposition` is the migrated-away legacy key.
@@ -1404,6 +1456,12 @@ def pass1_detect(
                     set_derived(rec, k, v)
         set_derived(rec, "git-rel", git_rel_of(rec, proj.path, kids))
         set_derived(rec, "git-vis", git_vis_of(rec, filters))
+        gh_counts = [
+            rec.get(k) for k in ("gh-stars", "gh-forks", "gh-watchers")
+        ]
+        measured = [x for x in gh_counts if isinstance(x, int)]
+        if measured and sum(measured) > GH_PUBLISHED_THRESHOLD:
+            set_derived(rec, "public-use", "published")
 
         sess_cached = None
         ls = rec.get("last-session")
@@ -2916,6 +2974,35 @@ def gather(
     return projects, filters, parents
 
 
+def axes_help_text() -> str:
+    """AXES teaching for --help, rendered from the loaded glyph table so
+    edits to axis-glyphs.json show up in usage automatically."""
+    lines = [
+        "-v shows a 7-char block, one column per axis, '·' = undeclared\n"
+        f"(vocabulary loads from {GLYPHS_FILE.name} beside this script —\n"
+        "edit it and this section updates; one character per glyph):",
+    ]
+    for i, ax in enumerate(AXIS_ORDER, 1):
+        pairs = [
+            f"{AXIS_GLYPHS[ax].get(v, '·')} {v}"
+            for v in AXES[ax]
+            if v != "undeclared"
+        ]
+        head = f"  {i} {ax:<11} "
+        cur = head
+        first = True
+        for p in pairs:
+            add = p if first else "  " + p
+            if len(cur) + len(add) > 76:
+                lines.append(cur)
+                cur = " " * len(head) + p
+            else:
+                cur += add
+            first = False
+        lines.append(cur)
+    return "\n".join(lines)
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="projects",
@@ -2956,18 +3043,10 @@ def build_parser() -> argparse.ArgumentParser:
             "primary source for an internal-org repo's public/private;\n"
             "freeze git-vis to override. Normal runs never touch the network.\n"
             "\n"
-            "-v shows a 7-char block, one column per axis, '·' = undeclared\n"
-            "(glyphs are a PROVISIONAL v0 vocabulary):\n"
-            "  1 git-rel     g gitroot  s submodule  j subgit  - no-git  G group\n"
-            "  2 git-vis     l local  p private  P public  x external  G group\n"
-            "  3 lifecycle   n nascent  e experiment  1 pre-poc  2 pre-mvp\n"
-            "                3 pre-release  o ongoing  m maintenance  r reference\n"
-            "  4 activity    a active  = paused  w watch  z archived\n"
-            "  5 proj-rel    R root  m mid  l leaf  i isolated\n"
-            "  6 local-use   p pending  i pilot  t transition  2 secondary  1 primary\n"
-            "  7 public-use  u unlikely  e peers-only  ? undecided  n planned\n"
-            "                r preprint  s submitted  a accepted  P published\n"
-            "                E early  B broad\n"
+            + axes_help_text() + "\n"
+            "\n"
+            f"public-use floors to 'published' when measured gh\n"
+            f"stars+forks+watchers > {GH_PUBLISHED_THRESHOLD} (derived; declared/frozen win).\n"
             "\n"
             f"Edges: {DEFAULT_EDGES.name} beside the census — typed relations\n"
             "(`FROM REL TO [INV]`, sentence order; inverse:/alias: lines;\n"

@@ -27,7 +27,8 @@ Declared-axis defaults come from `census-details.txt` `default <axis>=<value>: g
 - `-vv` — adds `desc`. `-vvv` — adds last-action + git.
 - `projects set NAME experiment paused` — bare tokens resolve to their axes (every value is unique across axes except `group`, which sets both git axes; `rel-group` / `vis-group` pick one). `projects set NAME desc="…"` for the one-line description.
 - `projects unset NAME field [field…]` unfreezes and clears; detection / census defaults refill on the same run.
-- `--refresh` also caches `gh-stars` / `gh-forks` / `gh-watchers` per github remote (same single `gh repo view` call as visibility; absent when unmeasured). Shown at `-vvv` as a `★·⑂·◉` column — temporarily in desc's slot while Joseph gauges whether that's the right meaningfulness level (desc stays at `-vv`).
+- `--refresh` also caches `gh-stars` / `gh-forks` / `gh-watchers` per github remote (same single `gh repo view` call as visibility; absent when unmeasured). Shown at `-vvv` as a `★·⑂·◉` column — temporarily in desc's slot while Joseph gauges whether that's the right meaningfulness level (desc stays at `-vv`). **Derived public-use floor:** measured stars+forks+watchers > 50 → `public-use=published` (derived; declared/frozen values win).
+- The axis glyph vocabulary lives in `axis-glyphs.json` beside the script — edit it to experiment; `--help`'s AXES section renders from the loaded table so changes show up in usage automatically. Missing file falls back to built-ins; unknown axes/values and non-single-character glyphs are skipped with a stderr note.
 
 ## Edges — `census-edges.txt`
 

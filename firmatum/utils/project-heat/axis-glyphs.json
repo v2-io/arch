@@ -1,0 +1,59 @@
+{
+  "git-rel": {
+    "gitroot": "g",
+    "submodule": "s",
+    "subgit": "j",
+    "no-git": "-",
+    "group": "G"
+  },
+  "git-vis": {
+    "local": "l",
+    "private": "p",
+    "public": "P",
+    "external": "x",
+    "group": "G"
+  },
+  "lifecycle": {
+    "nascent": "n",
+    "experiment": "e",
+    "pre-poc": "1",
+    "pre-mvp": "2",
+    "pre-release": "3",
+    "ongoing": "o",
+    "maintenance": "m",
+    "reference": "r"
+  },
+  "activity": {
+    "active": "a",
+    "paused": "=",
+    "watch": "w",
+    "archived": "z"
+  },
+  "proj-rel": {
+    "root": "R",
+    "mid": "m",
+    "leaf": "l",
+    "isolated": "i"
+  },
+  "local-use": {
+    "undeclared": "·",
+    "pending": "p",
+    "pilot": "i",
+    "transition": "t",
+    "secondary": "2",
+    "primary": "1"
+  },
+  "public-use": {
+    "undeclared": "·",
+    "unlikely": "u",
+    "peers-only": "e",
+    "undecided": "?",
+    "planned": "n",
+    "preprint": "r",
+    "submitted": "s",
+    "accepted": "a",
+    "published": "P",
+    "early": "E",
+    "broad": "B"
+  }
+}
