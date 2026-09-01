@@ -1738,7 +1738,7 @@ def week_stats_line(
     zero: str,
     name_w: int,
 ) -> str:
-    """`NN|NNN` over each full (7-day) week: distinct projects | total counts.
+    """`NN|NNNN` over each full (7-day) week: distinct projects | total counts.
 
     A project counts if it has any commits that week or any onramp/offramp
     fill that isn't the flat wash or the 0-commit color.
@@ -1765,7 +1765,7 @@ def week_stats_line(
             if active:
                 nproj += 1
             ncontrib += week_sum
-        label = f"{nproj:>2}|{ncontrib}"
+        label = f"{nproj:>2}|{ncontrib:>4}"
         for k, ch in enumerate(label):
             j = start + k
             if j >= len(cols):
