@@ -37,8 +37,11 @@ DISPOSITIONS = frozenset(
         "active",
         "active-ref",
         "active-fork",
+        "active-maintenance",
+        "active-exp",
         "inactive",
         "inert",
+        "inert-exp",
         "ref-only",
         "historical",
     }

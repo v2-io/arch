@@ -9,7 +9,7 @@
 - Populates and Utilizes `.practica` within the project directories, which should
   also be in the global gitignore so it can be dropped in external repos etc.
   (that are reference only).
-- `projects` will allow for manually setting / overriding fields specified below. `projects set NAME field=value` freezes the field; a bare token (`projects set NAME historical`) is `disposition=<token>`. Heatmap rows are `active*` only, so `historical` (like `inactive` / `inert` / `ref-only`) stays in the table and drops off the heatmap.
+- `projects` will allow for manually setting / overriding fields specified below. `projects set NAME field=value` freezes the field; a bare token (`projects set NAME historical`) is `disposition=<token>`. Heatmap rows are `active*` only (`active`, `active-ref`, `active-fork`, `active-maintenance`, `active-exp`); `historical` / `inactive` / `inert` / `inert-exp` / `ref-only` stay in the table and drop off the heatmap.
 - Unless a field specifically asks for `base-name`, `name` is the identifier everywhere (`related`, heat, session join, CLI).
 
 Below, a key ending with '?' means boolean. A key *starting* with '? ' is just
@@ -36,7 +36,7 @@ On disk: `.practica` is JSON. Values are top-level keys. A `frozen` list names t
 | base-name | true | final directory name | project base name |
 | project-root | true | given | directory of the project root |
 | categories | false | (none) | list of tags that categorize it |
-| disposition | true | from `census-details.txt` blobs (see below) | {active, active-ref, active-fork, inactive, inert, ref-only, historical} |
+| disposition | true | from `census-details.txt` blobs (see below) | {active, active-ref, active-fork, active-maintenance, active-exp, inactive, inert, inert-exp, ref-only, historical} |
 | related    | false | (none) | list of related projects by `name` |
 | git?       | true   | detected | whether or not the project is also its own git repository |
 | subproject? | true  | false    | true if another census project's root is a prefix of this one |
