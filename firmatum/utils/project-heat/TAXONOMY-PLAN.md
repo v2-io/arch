@@ -96,7 +96,21 @@ chiridion arch/udon influence
 - `.practica`'s `related` field stays as-is (untouched, still optional free-form) until the edges file exists; then JSON output exposes each project's collapsed in/out edges computed from the file.
 - Rendering (a lineage thread from a fading heatmap row to its successor) stays future work; this format just mustn't block it.
 
-## Open questions for Joseph
+## 8. Display: verbosity ladder + 7-axis glyph block (Joseph, 2026-09-01)
 
-1. Table `DISP` display: composite `activity·lifecycle-when-set` as suggested in §2, or two columns?
-2. Known-inverses table: seed spellings above OK, or do you want to dictate the initial vocabulary when you first type the file?
+The current table columns were guessed by the grok agent, never iterated. New model — `-v` becomes counting verbosity (we now have a story for it, so form-shared-flags is satisfied):
+
+- *(no flag)* — just names (full `name`), like today's `-n`.
+- `-v` — a **7-character axis block before the name** (one column per axis, fixed order: git-rel · git-vis · lifecycle · activity · proj-rel · local-use · public-use; position = which axis, glyph = value, `ls -l`-permission-block style; `·` = undeclared/unset) plus the directory.
+- `-vv` — adds `desc`.
+- `-vvv`+ — adds the rest (last-action, git remote, …); exact allocation is implementation latitude.
+
+Glyph vocabulary is **provisional v0** — taught in `--help` (law channel), expected to be iterated by Joseph on sight before it ossifies. Old `-n`/`-p` stay for scripting. Sorting flags unchanged. Longer term Joseph expects the primary output to become udon; this ladder is the interim shape.
+
+## 9. Edges file — decided
+
+`census-edges.txt` (created 2026-09-01, beside the census): carries `inverse: A <-> B` declarations and `alias: NAME -> REL` shorthands in-file (Joseph's spellings: predecessor-of↔successor-of, depends-on-critically↔critically-needed-by, informed↔was-influenced-by, influences↔is-influenced-by; aliases requires/informs/became), plus edge lines per §7. Seeded with the session's known edges.
+
+## 10. Go decision (Joseph, 2026-09-01)
+
+Implement now, in one pass — *"The project is only 1 day old and only used by me… doesn't need to be that safe."* The five phases collapse into a single working landing: detection axes + declared axes + census `default` lines + consumer flip + `.practica` migration on first run + **immediate** disposition switch (old tokens translate on `set` and print what they applied; no deprecation window).
