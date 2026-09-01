@@ -93,6 +93,7 @@ RECORD_KEY_ORDER = (
     "heatmap-days",
     "heatmap-kids",
     "heatmap-head",
+    "heatmap-span-oldest",
     "stat-kids",
     "first-commit",
 )
@@ -1387,6 +1388,37 @@ def heatmap_window(today: date | None = None) -> list[date]:
     return [today - timedelta(days=i) for i in range(n)]
 
 
+def heatmap_panels(extra: int = 0, today: date | None = None) -> list[list[date]]:
+    """Primary window, then `extra` older 17-week bands (contiguous, newest first)."""
+    primary = heatmap_window(today)
+    if extra <= 0:
+        return [primary]
+    n = len(primary) + extra * HEATMAP_FULL_WEEKS * 7
+    full = [primary[0] - timedelta(days=i) for i in range(n)]
+    panels = [full[: len(primary)]]
+    off = len(primary)
+    chunk = HEATMAP_FULL_WEEKS * 7
+    for _ in range(extra):
+        panels.append(full[off : off + chunk])
+        off += chunk
+    return panels
+
+
+def week_align_pad(slots: list[date | None]) -> int:
+    """Columns to shift an older band so its weeks sit under the primary's weeks."""
+    runs = week_runs(slots)
+    if not runs:
+        return 0
+    start, days = runs[0]
+    if len(days) >= 7:
+        return 0
+    pad = len(days)
+    gap = start + len(days)
+    if gap < len(slots) and slots[gap] is None:
+        pad += 1
+    return pad
+
+
 def local_day(ts: float) -> date:
     return datetime.fromtimestamp(ts).date()
 
@@ -1642,7 +1674,10 @@ def heatmap_counts(
     as_of = parse_ts(rec.get("heatmap-as-of"))
     oldest = min(window)
     start_ts = datetime.combine(oldest, datetime.min.time()).timestamp()
-    need_log = refresh or as_of is None or kids_changed or head_changed
+    span_iso = oldest.isoformat()
+    cached_span = str(rec.get("heatmap-span-oldest") or "")[:10]
+    span_short = (not cached_span) or cached_span > span_iso
+    need_log = refresh or as_of is None or kids_changed or head_changed or span_short
     if not need_log:
         # HEAD unchanged: reuse day counts. Skip git status — AISI-responses
         # alone is ~2s of lstat over a 300k-file work tree, and 44 statuses
@@ -1653,7 +1688,7 @@ def heatmap_counts(
             window,
         )
 
-    if refresh or as_of is None or kids_changed:
+    if refresh or as_of is None or kids_changed or span_short:
         days = {}
         after = start_ts - 1
     else:
@@ -1667,6 +1702,7 @@ def heatmap_counts(
         set_derived(rec, "heatmap-days", days)
         set_derived(rec, "heatmap-as-of", iso_utc(now))
         set_derived(rec, "heatmap-kids", kids)
+        set_derived(rec, "heatmap-span-oldest", span_iso)
         if head is not None:
             set_derived(rec, "heatmap-head", head)
         if write:
@@ -1737,6 +1773,7 @@ def week_stats_line(
     wash: str,
     zero: str,
     name_w: int,
+    left_pad: int = 0,
 ) -> str:
     """`NN·NNNN` over each full (7-day) week; `|` in the Sat/Sun gaps.
 
@@ -1772,10 +1809,11 @@ def week_stats_line(
                 break
             if slots[j] is not None:
                 cols[j] = ch
-    return " " * name_w + "  " + "".join(cols)
+    prefix = " " * left_pad
+    return " " * name_w + "  " + prefix + "".join(cols)
 
 
-def month_header(window: list[date], name_w: int) -> str:
+def month_header(window: list[date], name_w: int, left_pad: int = 0) -> str:
     slots = heatmap_slots(window)
     cols = [" "] * len(slots)
     i = 0
@@ -1793,7 +1831,7 @@ def month_header(window: list[date], name_w: int) -> str:
         i += 1
         while i < len(slots) and (slots[i] is None or (slots[i].year, slots[i].month) == ym):
             i += 1
-    return " " * name_w + "  " + "".join(cols)
+    return " " * name_w + "  " + (" " * left_pad) + "".join(cols)
 
 
 def scale_bar(maxc: int, *, invert: bool = False) -> str:
@@ -1821,13 +1859,15 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         for p in projects
         if str(p.rec.get("disposition") or "").startswith("active")
     ]
-    window = heatmap_window()
+    extra = 2 if getattr(args, "triple", False) else 1 if getattr(args, "double", False) else 0
+    panels = heatmap_panels(extra)
+    fetch_window = [d for panel in panels for d in panel]
     counts: dict[Path, dict[str, int]] = {}
     maxc = 0
     for proj in active:
         days = heatmap_counts(
             proj,
-            window,
+            fetch_window,
             projects,
             refresh=args.refresh,
             write=not args.no_write,
@@ -1841,11 +1881,11 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             maxc = max(maxc, max(days.values()))
 
     mode = sort_mode_from_args(args)
-    slots = heatmap_slots(window)
     dark = macos_dark()
     invert = not dark
     wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
     zero = heat_hex(0, maxc, invert=invert)
+    align = week_align_pad(heatmap_slots(panels[0]))
 
     def proj_key(proj: Project) -> Path:
         try:
@@ -1853,24 +1893,16 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         except OSError:
             return proj.path
 
-    fills_by: dict[Path, dict[str, str]] = {}
-    for proj in active:
+    def emit_row(
+        proj: Project,
+        slots: list[date | None],
+        fills: dict[str, str],
+        left_pad: int,
+    ) -> None:
         key = proj_key(proj)
         days = counts.get(key, {})
-        first_ts = parse_ts(proj.rec.get("first-commit"))
-        last_c = parse_ts(proj.rec.get("last-action-time")) or parse_ts(
-            proj.rec.get("last-commit-time")
-        )
-        fills_by[key] = dim_zero_fills(
-            window, days, first_ts, last_c, dark=dark, maxc=maxc
-        )
-
-    def emit_row(proj: Project) -> None:
-        key = proj_key(proj)
-        days = counts.get(key, {})
-        fills = fills_by.get(key, {})
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
-        cells = []
+        cells = [" "] * left_pad
         for slot in slots:
             if slot is None:
                 cells.append(" ")
@@ -1883,39 +1915,61 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             cells.append(ansi_block(heat_hex(c, maxc, invert=invert)))
         print(name + "  " + "".join(cells) + "\x1b[0m")
 
-    print(month_header(window, HEATMAP_NAME_W))
-    print(
-        week_stats_line(
-            slots,
-            [(counts.get(proj_key(p), {}), fills_by.get(proj_key(p), {})) for p in active],
-            wash=wash,
-            zero=zero,
-            name_w=HEATMAP_NAME_W,
-        )
-    )
-    if args.group:
-        by_parent: dict[Path, list[Project]] = {p: [] for p in parents}
+    def render_panel(window: list[date], left_pad: int) -> None:
+        slots = heatmap_slots(window)
+        fills_by: dict[Path, dict[str, str]] = {}
         for proj in active:
-            by_parent.setdefault(proj.cdpath_parent, []).append(proj)
-        first = True
-        for parent in parents:
-            group = by_parent.get(parent, [])
-            if not group:
-                continue
-            group = sort_projects(group, mode)
+            key = proj_key(proj)
+            days = prune_days(counts.get(key, {}), window)
+            first_ts = parse_ts(proj.rec.get("first-commit"))
+            last_c = parse_ts(proj.rec.get("last-action-time")) or parse_ts(
+                proj.rec.get("last-commit-time")
+            )
+            fills_by[key] = dim_zero_fills(
+                window, days, first_ts, last_c, dark=dark, maxc=maxc
+            )
+        print(month_header(window, HEATMAP_NAME_W, left_pad=left_pad))
+        print(
+            week_stats_line(
+                slots,
+                [
+                    (prune_days(counts.get(proj_key(p), {}), window), fills_by.get(proj_key(p), {}))
+                    for p in active
+                ],
+                wash=wash,
+                zero=zero,
+                name_w=HEATMAP_NAME_W,
+                left_pad=left_pad,
+            )
+        )
+        if args.group:
+            by_parent: dict[Path, list[Project]] = {p: [] for p in parents}
+            for proj in active:
+                by_parent.setdefault(proj.cdpath_parent, []).append(proj)
+            first = True
+            for parent in parents:
+                group = by_parent.get(parent, [])
+                if not group:
+                    continue
+                group = sort_projects(group, mode)
+                if not first:
+                    print()
+                print(f"# {disp(parent, home)}")
+                first = False
+                for proj in group:
+                    emit_row(proj, slots, fills_by.get(proj_key(proj), {}), left_pad)
             if not first:
                 print()
-            print(f"# {disp(parent, home)}")
-            first = False
-            for proj in group:
-                emit_row(proj)
-        if not first:
+        else:
+            for proj in sort_projects(active, mode):
+                emit_row(proj, slots, fills_by.get(proj_key(proj), {}), left_pad)
             print()
-    else:
-        for proj in sort_projects(active, mode):
-            emit_row(proj)
-        print()
-    print(scale_bar(maxc, invert=not dark))
+
+    for i, panel in enumerate(panels):
+        if i > 0:
+            print()
+        render_panel(panel, 0 if i == 0 else align)
+    print(scale_bar(maxc, invert=invert))
     return 0
 
 
@@ -2039,7 +2093,9 @@ def build_parser() -> argparse.ArgumentParser:
             "headings plus that order within each cdpath group.\n"
             "\n"
             "  projects set <name-or-path> field=value   freeze an override\n"
-            "  projects heatmap                          17-week inferno rows (active*)"
+            "  projects heatmap                          17-week inferno rows (active*)\n"
+            "  projects heatmap --double                 + previous 17 weeks below\n"
+            "  projects heatmap --triple                 + two older 17-week bands"
         ),
     )
     p.add_argument("-n", "--names", action="store_true", help="names only (full name)")
@@ -2064,6 +2120,17 @@ def build_parser() -> argparse.ArgumentParser:
         "--group",
         action="store_true",
         help="group headings by cdpath parent (canonical, or with -c/-a within groups)",
+    )
+    span = p.add_mutually_exclusive_group()
+    span.add_argument(
+        "--double",
+        action="store_true",
+        help="heatmap: stack the previous 17 weeks below, weeks aligned",
+    )
+    span.add_argument(
+        "--triple",
+        action="store_true",
+        help="heatmap: stack two older 17-week bands (~a year)",
     )
     p.add_argument(
         "-H",
