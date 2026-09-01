@@ -1,7 +1,8 @@
 # Census file for `projects`. Blank lines and # comments are ignored.
 
-# # Github orgs that are internal:
-# internal-git-orgs: v2-io, josephwecker
+# Github orgs that are internal (remote in one of these → git-vis defaults
+# to `private`; freeze git-vis=public per-project when known):
+internal-git-orgs: v2-io, josephwecker
 
 #----------- TODO: Refactor several README.md project attributes and this file's "disposition" etc. to the following: ------------
 #
@@ -84,11 +85,15 @@ only src/arch: asf logos vivarium explication
 only src/arch/asf: 01-aat-core 02-tst-core 03-llm-core 04-eli-core
 
 
-#----------- For setting disposition defaults (soon to be refactored) ---------------
-# Disposition defaults for census *survivors* (drop/only run first).
-# First matching glob wins. Per-project `.practica` can freeze an override.
-#   disposition <value>: glob [glob…]
+#----------- Axis defaults for census *survivors* (drop/only run first) -------------
+# First matching glob wins, per axis. Per-project `.practica` can freeze an
+# override (`projects set NAME <value>`).
+#   default <axis>=<value>: glob [glob…]
+# (legacy `disposition <value>: glob…` lines still parse, translated.)
 
-disposition ref-only: src-ext src-ext/**
-disposition inactive: src/_exp src/_exp/**
-disposition active: **
+default activity=watch:       src-ext src-ext/**
+default lifecycle=reference:  src-ext src-ext/**
+default activity=paused:      src/_exp src/_exp/**
+default lifecycle=experiment: src/_exp src/_exp/**
+default activity=active:      **
+default lifecycle=ongoing:    **

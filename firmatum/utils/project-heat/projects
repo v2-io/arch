@@ -32,21 +32,91 @@ from urllib.parse import quote
 HERE = Path(__file__).resolve().parent
 DEFAULT_CENSUS = HERE / "census-details.txt"
 PRACTICA_NAME = ".practica"
-DISPOSITIONS = frozenset(
-    {
-        "active",
-        "active-ref",
-        "active-fork",
-        "active-maintenance",
-        "active-exp",
-        "inactive",
-        "inert",
-        "inert-exp",
-        "ref-only",
-        "historical",
-    }
+# --- taxonomy axes (TAXONOMY-PLAN.md; the census header is the inventory) --
+AXES: dict[str, tuple[str, ...]] = {
+    "git-rel": ("gitroot", "subgit", "submodule", "no-git", "group"),
+    "git-vis": ("local", "private", "public", "external", "group"),
+    "lifecycle": (
+        "nascent", "experiment", "pre-poc", "pre-mvp", "pre-release",
+        "ongoing", "maintenance", "reference",
+    ),
+    "activity": ("active", "paused", "watch", "archived"),
+    "proj-rel": ("root", "mid", "leaf", "isolated"),
+    "local-use": (
+        "undeclared", "pending", "pilot", "transition", "secondary", "primary",
+    ),
+    "public-use": (
+        "undeclared", "unlikely", "peers-only", "undecided", "planned",
+        "preprint", "submitted", "accepted", "published", "early", "broad",
+    ),
+}
+AXIS_ORDER = (
+    "git-rel", "git-vis", "lifecycle", "activity", "proj-rel",
+    "local-use", "public-use",
 )
+DECLARED_AXES = ("lifecycle", "activity", "local-use", "public-use")
+
+# Retired single-field disposition vocabulary. NOT migrated or translated —
+# Joseph's ruling (2026-09-01): the new axes exist because disposition wasn't
+# working; its values should be ignored, not carried. Kept only so `set` can
+# refuse an old token with a menu naming the axes it splits into.
+RETIRED_DISPOSITIONS: dict[str, str] = {
+    "active": "activity=active (+ lifecycle=…)",
+    "active-maintenance": "activity=active lifecycle=maintenance",
+    "active-exp": "activity=active lifecycle=experiment",
+    "active-ref": "activity=active lifecycle=reference",
+    "active-fork": "activity=active (fork-ness is git-vis, detected)",
+    "inactive": "activity=paused",
+    "inert": "activity=archived",
+    "inert-exp": "activity=archived lifecycle=experiment",
+    "ref-only": "activity=watch lifecycle=reference",
+    "historical": "activity=archived",
+}
+
+# Bare-token `set` resolution: every axis value is unique except `group`,
+# which deliberately sets both git axes (rel-group / vis-group pick one).
+VALUE_AXIS: dict[str, str] = {}
+for _ax, _vals in AXES.items():
+    for _v in _vals:
+        if _v != "group":
+            VALUE_AXIS[_v] = _ax
+
+# 7-char axis glyph block (one column per axis in AXIS_ORDER; position =
+# which axis, glyph = value; '·' = undeclared/unknown). PROVISIONAL v0
+# vocabulary — taught in --help, expected to be iterated on sight.
+AXIS_GLYPHS: dict[str, dict[str, str]] = {
+    "git-rel": {
+        "gitroot": "g", "submodule": "s", "subgit": "j",
+        "no-git": "-", "group": "G",
+    },
+    "git-vis": {
+        "local": "l", "private": "p", "public": "P",
+        "external": "x", "group": "G",
+    },
+    "lifecycle": {
+        "nascent": "n", "experiment": "e", "pre-poc": "1", "pre-mvp": "2",
+        "pre-release": "3", "ongoing": "o", "maintenance": "m",
+        "reference": "r",
+    },
+    "activity": {"active": "a", "paused": "=", "watch": "w", "archived": "z"},
+    "proj-rel": {"root": "R", "mid": "m", "leaf": "l", "isolated": "i"},
+    "local-use": {
+        "undeclared": "·", "pending": "p", "pilot": "i", "transition": "t",
+        "secondary": "2", "primary": "1",
+    },
+    "public-use": {
+        "undeclared": "·", "unlikely": "u", "peers-only": "e",
+        "undecided": "?", "planned": "n", "preprint": "r", "submitted": "s",
+        "accepted": "a", "published": "P", "early": "E", "broad": "B",
+    },
+}
+
+# Internal-only keys: hydrated in memory (from git-rel / parenthood), never
+# written back to .practica. `disposition` is the migrated-away legacy key.
+SAVE_EXCLUDE = frozenset({"disposition", "git", "subgit", "submodule", "subproject"})
+
 DEFAULT_CDPATH_FILE = Path.home() / ".config/zsh/interactive/20-cd.zsh"
+DEFAULT_EDGES = HERE / "census-edges.txt"
 
 CDPATH_ASSIGN_RE = re.compile(r"^cdpath=\(\s*(.*?)^\s*\)", re.M | re.S)
 REMOTE_ORG_RE = re.compile(
@@ -86,14 +156,16 @@ RECORD_KEY_ORDER = (
     "desc",
     "parent-name",
     "project-root",
-    "disposition",
+    "git-rel",
+    "git-vis",
+    "lifecycle",
+    "activity",
+    "proj-rel",
+    "local-use",
+    "public-use",
     "categories",
     "related",
-    "git",
     "git-head",
-    "subproject",
-    "subgit",
-    "submodule",
     "has-remote",
     "remote",
     "org",
@@ -212,18 +284,19 @@ SET_FIELDS = frozenset(
     {
         "base-name",
         "desc",
-        "disposition",
         "categories",
         "related",
         "org",
         "remote",
         "extra-noise",
-        "git",
-        "subproject",
-        "subgit",
-        "submodule",
         "has-remote",
         "highlight",
+        "git-rel",
+        "git-vis",
+        "lifecycle",
+        "activity",
+        "local-use",
+        "public-use",
     }
 )
 
@@ -305,7 +378,9 @@ def glob_to_re(pattern: str) -> re.Pattern[str]:
 class Filters:
     exclude: list[tuple[str, re.Pattern[str]]] = field(default_factory=list)
     only: dict[str, frozenset[str]] = field(default_factory=dict)
-    disposition: list[tuple[str, re.Pattern[str], str]] = field(default_factory=list)
+    # (axis, value, pattern, rx) — first match wins per axis
+    defaults: list[tuple[str, str, str, re.Pattern[str]]] = field(default_factory=list)
+    internal_orgs: frozenset[str] = frozenset()
 
 
 def parent_idents(parent: Path, home: Path) -> set[str]:
@@ -351,35 +426,62 @@ def load_filters(path: Path, home: Path) -> Filters:
                 prev = filters.only.get(key, frozenset())
                 filters.only[key] = prev | names
             continue
-        if line.lower().startswith("disposition "):
+        if line.lower().startswith("internal-git-orgs:"):
+            orgs = line.split(":", 1)[1]
+            filters.internal_orgs = filters.internal_orgs | {
+                o.strip() for o in orgs.split(",") if o.strip()
+            }
+            continue
+        if line.lower().startswith("default "):
             rest = line.split(None, 1)[1]
             if ":" not in rest:
                 die(
-                    f"{path.name}: 'disposition' line needs a colon: "
-                    "disposition <value>: glob [glob…]",
+                    f"{path.name}: 'default' line needs a colon: "
+                    "default <axis>=<value>: glob [glob…]",
                     2,
                 )
-            value, globspec = rest.split(":", 1)
-            value = value.strip()
-            if value not in DISPOSITIONS:
+            spec, globspec = rest.split(":", 1)
+            if "=" not in spec:
+                die(f"{path.name}: 'default' wants axis=value, got {spec.strip()!r}", 2)
+            axis, value = (x.strip() for x in spec.split("=", 1))
+            if axis not in DECLARED_AXES:
                 die(
-                    f"{path.name}: unknown disposition {value!r} "
-                    f"(want {', '.join(sorted(DISPOSITIONS))})",
+                    f"{path.name}: 'default' axis must be one of "
+                    f"{', '.join(DECLARED_AXES)}, got {axis!r}",
                     2,
                 )
-            try:
-                globs = shlex.split(globspec)
-            except ValueError as e:
-                die(f"{path.name}: {e}", 2)
-            if not globs:
-                die(f"{path.name}: disposition {value} has no globs", 2)
-            for g in globs:
-                pat = expand_userish(g, home)
-                filters.disposition.append((pat, glob_to_re(pat), value))
+            if value not in AXES[axis]:
+                die(
+                    f"{path.name}: unknown {axis} {value!r} "
+                    f"(want {', '.join(AXES[axis])})",
+                    2,
+                )
+            _add_defaults(filters, path, axis, value, globspec, home)
             continue
+        if line.lower().startswith("disposition "):
+            die(
+                f"{path.name}: 'disposition' lines are retired — use "
+                "'default <axis>=<value>: glob…' (axes: "
+                f"{', '.join(DECLARED_AXES)})",
+                2,
+            )
         pat = expand_userish(line, home)
         filters.exclude.append((pat, glob_to_re(pat)))
     return filters
+
+
+def _add_defaults(
+    filters: Filters, path: Path, axis: str, value: str, globspec: str, home: Path
+) -> None:
+    try:
+        globs = shlex.split(globspec)
+    except ValueError as e:
+        die(f"{path.name}: {e}", 2)
+    if not globs:
+        die(f"{path.name}: default {axis}={value} has no globs", 2)
+    for g in globs:
+        pat = expand_userish(g, home)
+        filters.defaults.append((axis, value, pat, glob_to_re(pat)))
 
 
 def only_names(parent: Path, filters: Filters, home: Path) -> frozenset[str] | None:
@@ -406,16 +508,23 @@ def dropped(proj: Project, filters: Filters, home: Path) -> bool:
     return False
 
 
-def census_disposition(proj: Project, filters: Filters, home: Path) -> str:
+def census_axis_defaults(proj: Project, filters: Filters, home: Path) -> dict[str, str]:
+    """Per-axis census defaults; first matching glob wins per axis."""
     path_abs = proj.path.as_posix()
     path_rel = rel_home(proj.path, home)
-    for pat, rx, val in filters.disposition:
+    out: dict[str, str] = {}
+    for axis, val, pat, rx in filters.defaults:
+        if axis in out:
+            continue
         if "/" in pat:
             if rx.match(path_rel) or rx.match(path_abs):
-                return val
+                out[axis] = val
         elif rx.match(proj.cd_name):
-            return val
-    return "active"
+            out[axis] = val
+    out.setdefault("activity", "active")
+    for axis in ("local-use", "public-use"):
+        out.setdefault(axis, "undeclared")
+    return out
 
 
 def rel_home(path: Path, home: Path) -> str:
@@ -510,7 +619,7 @@ def ordered_record(rec: dict) -> dict:
                 continue
             out[k] = rec[k]
     for k, v in rec.items():
-        if k.startswith("__"):
+        if k.startswith("__") or k in SAVE_EXCLUDE:
             continue
         if k not in out and v not in (None, "", [], {}):
             out[k] = v
@@ -1105,6 +1214,60 @@ def detect_last_session(root: Path, home: Path) -> dict | None:
     return best
 
 
+def hydrate_git_flags(rec: dict) -> None:
+    """In-memory git booleans from stored git-rel (booleans are not saved)."""
+    if "git" in rec:
+        return
+    gr = str(rec.get("git-rel") or "")
+    if not gr:
+        return
+    rec["git"] = gr in ("gitroot", "submodule")
+    rec["subgit"] = gr == "subgit"
+    rec["submodule"] = gr == "submodule"
+
+
+def drop_disposition(rec: dict) -> None:
+    """The retired `disposition` field is ignored, not migrated (Joseph,
+    2026-09-01: the new axes exist because it wasn't working). Drop the
+    key and its frozen mark; axes start fresh from census defaults."""
+    if "disposition" not in rec and "disposition" not in frozen_of(rec):
+        return
+    rec.pop("disposition", None)
+    fz = frozen_of(rec)
+    if "disposition" in fz:
+        fz.discard("disposition")
+        rec["frozen"] = sorted(fz)
+
+
+def git_rel_of(rec: dict, root: Path, kids: list[str]) -> str:
+    if rec.get("submodule"):
+        return "submodule"
+    if rec.get("git"):
+        return "gitroot"
+    if rec.get("subgit"):
+        return "subgit"
+    for rel in kids:
+        if (root / rel / ".git").exists():
+            return "group"
+    return "no-git"
+
+
+def git_vis_of(rec: dict, filters: Filters) -> str:
+    gr = rec.get("git-rel")
+    if gr == "group":
+        return "group"
+    if gr == "subgit":
+        # A subgit has no governing remote of its own; pass2 inherits the
+        # census parent's git-vis. Until then: absent, never guessed.
+        return ""
+    if rec.get("has-remote"):
+        org = str(rec.get("org") or "")
+        if org and org in filters.internal_orgs:
+            return "private"  # safe default; freeze git-vis=public when known
+        return "external"
+    return "local"
+
+
 def pass1_detect(
     projects: list[Project],
     filters: Filters,
@@ -1116,13 +1279,16 @@ def pass1_detect(
     n_git = n_sess = n_hit = 0
     for proj in projects:
         rec = load_practica(proj.path)
+        hydrate_git_flags(rec)
         before = json.dumps(ordered_record(rec), sort_keys=True)
+        drop_disposition(rec)
         extra = rec.get("extra-noise") or []
         if not isinstance(extra, list):
             extra = []
         extra_s = [str(x) for x in extra]
         set_derived(rec, "project-root", str(proj.path.resolve()))
-        set_derived(rec, "disposition", census_disposition(proj, filters, home))
+        for axis, value in census_axis_defaults(proj, filters, home).items():
+            set_derived(rec, axis, value)
         if "categories" not in rec:
             rec["categories"] = []
         if "related" not in rec:
@@ -1163,6 +1329,9 @@ def pass1_detect(
             elif "last-commit-time" not in frozen_of(rec):
                 rec.pop("last-commit-time", None)
 
+        set_derived(rec, "git-rel", git_rel_of(rec, proj.path, kids))
+        set_derived(rec, "git-vis", git_vis_of(rec, filters))
+
         sess_cached = None
         ls = rec.get("last-session")
         if isinstance(ls, dict):
@@ -1196,9 +1365,10 @@ def resolved(proj: Project) -> Path:
 def pass2_names(projects: list[Project], *, write: bool) -> None:
     """Closest to ~ first, then outward. Parent = another census root that is a prefix."""
     ordered = sorted(projects, key=lambda p: (len(resolved(p).parts), str(resolved(p))))
+    befores: dict[int, str] = {}
     for proj in ordered:
         rec = proj.rec
-        before = json.dumps(ordered_record(rec), sort_keys=True)
+        befores[id(proj)] = json.dumps(ordered_record(rec), sort_keys=True)
         rp = resolved(proj)
         parent: Project | None = None
         best = -1
@@ -1231,7 +1401,29 @@ def pass2_names(projects: list[Project], *, write: bool) -> None:
         if not rec.get("last-session") and parent and parent.rec.get("last-session"):
             if "last-session" not in frozen_of(rec):
                 rec["last-session"] = dict(parent.rec["last-session"])
-        if write and json.dumps(ordered_record(rec), sort_keys=True) != before:
+
+    # proj-rel needs the whole parent graph; subgit inherits its census
+    # parent's git-vis (a subgit has no remote of its own to judge by).
+    has_kids: set[int] = set()
+    for proj in projects:
+        if proj.parent_proj is not None:
+            has_kids.add(id(proj.parent_proj))
+    for proj in ordered:
+        rec = proj.rec
+        kids = id(proj) in has_kids
+        parented = proj.parent_proj is not None
+        pr = (
+            "mid" if (kids and parented)
+            else "root" if kids
+            else "leaf" if parented
+            else "isolated"
+        )
+        set_derived(rec, "proj-rel", pr)
+        if rec.get("git-rel") == "subgit" and proj.parent_proj is not None:
+            pvis = proj.parent_proj.rec.get("git-vis")
+            if pvis:
+                set_derived(rec, "git-vis", pvis)
+        if write and json.dumps(ordered_record(rec), sort_keys=True) != befores[id(proj)]:
             save_practica(proj.path, rec)
 
 
@@ -1313,6 +1505,15 @@ def git_cell(proj: Project, by_root: dict[Path, str]) -> str:
     return "--"
 
 
+def axis_block(rec: dict) -> str:
+    """7 chars, one per axis in AXIS_ORDER; '·' = undeclared/unknown."""
+    out = []
+    for ax in AXIS_ORDER:
+        v = rec.get(ax)
+        out.append(AXIS_GLYPHS[ax].get(str(v), "·") if v else "·")
+    return "".join(out)
+
+
 def emit_table(
     projects: list[Project],
     cdpath_parents: list[Path],
@@ -1326,6 +1527,7 @@ def emit_table(
     home: Path,
     now: float,
     use_color: bool = True,
+    verbosity: int = 0,
 ) -> None:
     by_root: dict[Path, str] = {}
     for p in projects:
@@ -1334,51 +1536,75 @@ def emit_table(
         except OSError:
             by_root[p.path] = display_name(p)
 
-    def row_cells(proj: Project) -> tuple[str, str, str, str, str]:
+    # Counting verbosity: (none) names → -v axes+paths → -vv +desc → -vvv +last/git
+    if verbosity <= 1:
+        cols = ["axes", "name", "path"]
+    elif verbosity == 2:
+        cols = ["axes", "name", "path", "desc"]
+    else:
+        cols = ["axes", "name", "last", "git", "path", "desc"]
+    headers = {
+        "axes": "AXES", "name": "NAME", "last": "LAST",
+        "git": "GIT", "path": "PATH", "desc": "DESC",
+    }
+
+    def row_cells(proj: Project) -> dict[str, str]:
         extra = ""
         if show_shadows and proj.shadows:
             extra = "  (shadows " + ", ".join(disp(s, home) for s in proj.shadows) + ")"
-        return (
-            display_name(proj),
-            ago(parse_ts(proj.rec.get("last-action-time")), now),
-            str(proj.rec.get("disposition") or "—"),
-            git_cell(proj, by_root),
-            disp(proj.path, home) + extra,
-        )
+        return {
+            "axes": axis_block(proj.rec),
+            "name": display_name(proj),
+            "last": ago(parse_ts(proj.rec.get("last-action-time")), now),
+            "git": git_cell(proj, by_root),
+            "path": disp(proj.path, home) + extra,
+            "desc": str(proj.rec.get("desc") or ""),
+        }
 
     def row(proj: Project) -> None:
         if nul:
             sys.stdout.buffer.write(os.fsencode(proj.path) + b"\0")
             return
-        if names_only:
+        if names_only or verbosity < 1:
             print(display_name(proj))
             return
         if paths_only:
             print(proj.path)
             return
-        nm, last, disp_s, git_s, path_s = row_cells(proj)
+        c = row_cells(proj)
         level = highlight_level(proj.rec)
-        rest = f"{last:<{lw}}  {disp_s:<{dw}}  {git_s:<{gw}}  {path_s}"
+        parts: list[str] = []
+        for col in cols:
+            if col == "name":
+                continue
+            pad = widths[col] if col != cols[-1] else 0
+            parts.append(f"{c[col]:<{pad}}" if pad else c[col])
+        axes_s = parts.pop(0)
+        rest = "  ".join(parts).rstrip()
+        nm = c["name"]
         if not use_color:
-            print(f"{nm:<{nw}}  {rest}")
+            print(f"{axes_s}  {nm:<{widths['name']}}  {rest}".rstrip())
             return
-        named = style_name(f"{nm:<{nw}}", level, dark=macos_dark())
+        named = style_name(f"{nm:<{widths['name']}}", level, dark=macos_dark())
+        line = f"{axes_s}  {named}"
         if level >= HIGHLIGHT_UNDERLINE_AT:
-            print(f"\x1b[4m{named}  {rest}\x1b[0m")
+            print(f"\x1b[4m{line}  {rest}\x1b[0m")
         elif level != 1:
-            print(f"{named}\x1b[0m  {rest}")
+            print(f"{line}\x1b[0m  {rest}")
         else:
-            print(f"{nm:<{nw}}  {rest}")
+            print(f"{axes_s}  {nm:<{widths['name']}}  {rest}".rstrip())
 
-    if names_only or paths_only or nul:
-        nw = lw = dw = gw = 1
-    else:
+    widths: dict[str, int] = {}
+    if not (names_only or paths_only or nul or verbosity < 1):
         cells = [row_cells(p) for p in projects]
-        nw = max([len("NAME")] + [len(c[0]) for c in cells])
-        lw = max([len("LAST")] + [len(c[1]) for c in cells])
-        dw = max([len("DISP")] + [len(c[2]) for c in cells])
-        gw = max([len("GIT")] + [len(c[3]) for c in cells])
-        print(f"{'NAME':<{nw}}  {'LAST':<{lw}}  {'DISP':<{dw}}  {'GIT':<{gw}}  PATH")
+        for col in cols:
+            widths[col] = max(
+                [len(headers[col])] + [len(c[col]) for c in cells]
+            )
+        print("  ".join(
+            f"{headers[col]:<{widths[col]}}" if col != cols[-1] else headers[col]
+            for col in cols
+        ).rstrip())
 
     if grouped:
         by_parent: dict[Path, list[Project]] = {p: [] for p in cdpath_parents}
@@ -2001,11 +2227,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         write=not args.no_write,
         refresh=args.refresh,
     )
-    active = [
-        p
-        for p in projects
-        if str(p.rec.get("disposition") or "").startswith("active")
-    ]
+    active = [p for p in projects if p.rec.get("activity") == "active"]
     extra = 2 if getattr(args, "triple", False) else 1 if getattr(args, "double", False) else 0
     panels = heatmap_panels(extra)
     fetch_window = [d for panel in panels for d in panel]
@@ -2219,15 +2441,18 @@ def parse_set_value(key: str, raw: str) -> object:
         if not raw.strip():
             return []
         return [p.strip() for p in raw.split(",") if p.strip()]
-    if key in {"git", "subproject", "subgit", "submodule", "has-remote"}:
+    if key == "has-remote":
         v = raw.strip().lower()
         if v in {"1", "true", "yes", "y"}:
             return True
         if v in {"0", "false", "no", "n"}:
             return False
         die(f"set: {key} wants true/false, got {raw!r}", 2)
-    if key == "disposition" and raw.strip() not in DISPOSITIONS:
-        die(f"set: unknown disposition {raw!r}", 2)
+    if key in AXES:
+        v = raw.strip()
+        if v not in AXES[key]:
+            die(f"set: {key} wants one of {', '.join(AXES[key])}; got {v!r}", 2)
+        return v
     if key == "highlight":
         try:
             n = int(raw.strip())
@@ -2266,21 +2491,52 @@ def find_project(ident: str, projects: list[Project], home: Path) -> Project:
 def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
     if not argv or argv[0] in {"-h", "--help"}:
         print("usage: projects set <name-or-path> field=value [field=value…]")
-        print("       projects set <name-or-path> <disposition>")
+        print("       projects set <name-or-path> <axis-value> [<axis-value>…]")
         print("fields:", ", ".join(sorted(SET_FIELDS)))
-        print("a bare token (no =) is disposition=<token>")
+        print("a bare token is an axis value (unique across axes); 'group'")
+        print("sets git-rel AND git-vis; rel-group / vis-group pick one.")
+        print("legacy disposition tokens (active-exp, ref-only, …) translate")
+        print("to activity/lifecycle and print what they applied.")
         print("marks each field frozen in that project's .practica")
         return 0 if argv and argv[0] in {"-h", "--help"} else 2
     ident = argv[0]
     pairs = argv[1:]
     if not pairs:
-        die("set: need at least one field=value (or a disposition name)", 2)
+        die("set: need at least one field=value (or an axis value)", 2)
     updates: list[tuple[str, object]] = []
+    notes: list[str] = []
+
     for pair in pairs:
         if "=" not in pair:
-            k, v = "disposition", pair
-        else:
-            k, v = pair.split("=", 1)
+            tok = pair.strip()
+            if tok in RETIRED_DISPOSITIONS and tok not in VALUE_AXIS:
+                die(
+                    f"set: {tok!r} is a retired disposition — say what you "
+                    f"mean on the axes, e.g.: {RETIRED_DISPOSITIONS[tok]}",
+                    2,
+                )
+            if tok == "group":
+                updates.append(("git-rel", "group"))
+                updates.append(("git-vis", "group"))
+            elif tok == "rel-group":
+                updates.append(("git-rel", "group"))
+            elif tok == "vis-group":
+                updates.append(("git-vis", "group"))
+            elif tok in VALUE_AXIS:
+                updates.append((VALUE_AXIS[tok], tok))
+            else:
+                die(
+                    f"set: unknown axis value {tok!r} — see --help for the "
+                    "axis vocabularies (or use field=value)",
+                    2,
+                )
+            continue
+        k, v = pair.split("=", 1)
+        if k == "disposition":
+            hint = RETIRED_DISPOSITIONS.get(
+                v.strip(), "activity=… lifecycle=… (see --help AXES)"
+            )
+            die(f"set: 'disposition' is retired — say what you mean: {hint}", 2)
         if k not in SET_FIELDS:
             die(f"set: unknown field {k!r} (want {', '.join(sorted(SET_FIELDS))})", 2)
         updates.append((k, parse_set_value(k, v)))
@@ -2294,6 +2550,8 @@ def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
     save_practica(proj.path, proj.rec)
     pass2_names(projects, write=True)
     print(f"{display_name(proj)}  {disp(proj.path, home)}")
+    for note in notes:
+        print(f"  {note}")
     for k, _ in updates:
         print(f"  {k}={proj.rec.get(k)!r}  (frozen)")
     return 0
@@ -2301,7 +2559,7 @@ def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
 
 def version_string() -> str:
     """name + semver, +sha while there is no tagged-release story."""
-    ver = "projects 0.2.0"
+    ver = "projects 0.3.0"
     head = containing_head_id(HERE)
     if head:
         sha = head.split()[-1]
@@ -2358,6 +2616,160 @@ def cmd_pd(argv: list[str], list_ns: argparse.Namespace) -> int:
     return 0
 
 
+def edge_fields(line: str) -> list[str]:
+    """Whitespace-separated fields; [brackets] guard spaces (DAG-grammar style)."""
+    fields: list[str] = []
+    buf: list[str] = []
+    depth = 0
+    for ch in line:
+        if ch == "[":
+            depth += 1
+            buf.append(ch)
+        elif ch == "]":
+            depth = max(0, depth - 1)
+            buf.append(ch)
+        elif ch.isspace() and depth == 0:
+            if buf:
+                fields.append("".join(buf))
+                buf = []
+        else:
+            buf.append(ch)
+    if buf:
+        fields.append("".join(buf))
+    return fields
+
+
+def edge_list(fieldval: str) -> list[str]:
+    """Comma-list inside one field; commas inside [brackets] don't split;
+    brackets are stripped from each element."""
+    out: list[str] = []
+    buf: list[str] = []
+    depth = 0
+    for ch in fieldval:
+        if ch == "[":
+            depth += 1
+        elif ch == "]":
+            depth = max(0, depth - 1)
+        elif ch == "," and depth == 0:
+            tok = "".join(buf).strip()
+            if tok:
+                out.append(tok)
+            buf = []
+            continue
+        buf.append(ch)
+    tok = "".join(buf).strip()
+    if tok:
+        out.append(tok)
+    return [t[1:-1].strip() if t.startswith("[") and t.endswith("]") else t for t in out]
+
+
+def load_edges(
+    path: Path, names: list[str]
+) -> tuple[dict[str, list[dict]], dict[str, list[dict]]]:
+    """census-edges.txt → (edges-out by name, edges-in by name).
+
+    Lines: `inverse: A <-> B`, `alias: NAME -> REL`, and edges
+    `FROM REL TO [INV]` (sentence order; comma-lists; globs; [brackets]
+    guard spaces; INV '-' = explicitly none). Both-side declarations
+    collapse: a relation declared as the right side of an inverse pair
+    is flipped to its left-side (canonical) form before dedupe.
+    """
+    out_map: dict[str, list[dict]] = {}
+    in_map: dict[str, list[dict]] = {}
+    if not path.is_file():
+        return out_map, in_map
+    inverses: dict[str, str] = {}
+    canon_left: set[str] = set()
+    aliases: dict[str, str] = {}
+    edges: dict[tuple[str, str, str], str] = {}  # (from, to, rel) -> inv ('' = none)
+    nameset = set(names)
+
+    def expand_names(spec: str, line: str) -> list[str]:
+        hits: list[str] = []
+        for tok in edge_list(spec):
+            if "*" in tok or "?" in tok:
+                rx = glob_to_re(tok)
+                found = [n for n in names if rx.match(n)]
+                if not found:
+                    print(
+                        f"projects: census-edges: {tok!r} matches no census "
+                        f"project ({line})",
+                        file=sys.stderr,
+                    )
+                hits += found
+            elif tok in nameset:
+                hits.append(tok)
+            else:
+                print(
+                    f"projects: census-edges: unknown project {tok!r} ({line})",
+                    file=sys.stderr,
+                )
+        return hits
+
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        low = line.lower()
+        if low.startswith("inverse:"):
+            body = line.split(":", 1)[1]
+            if "<->" not in body:
+                die(f"census-edges: inverse wants 'A <-> B': {line}", 2)
+            a, b = (x.strip() for x in body.split("<->", 1))
+            inverses[a] = b
+            inverses[b] = a
+            canon_left.add(a)
+            continue
+        if low.startswith("alias:"):
+            body = line.split(":", 1)[1]
+            if "->" not in body:
+                die(f"census-edges: alias wants 'NAME -> REL': {line}", 2)
+            a, b = (x.strip() for x in body.split("->", 1))
+            aliases[a] = b
+            continue
+        fields = edge_fields(line)
+        if len(fields) not in (3, 4):
+            die(f"census-edges: edge wants 'FROM REL TO [INV]': {line}", 2)
+        froms = expand_names(fields[0], line)
+        rels = [aliases.get(r, r) for r in edge_list(fields[1])]
+        tos = expand_names(fields[2], line)
+        invs = [aliases.get(i, i) for i in edge_list(fields[3])] if len(fields) == 4 else []
+        if len(rels) == 1 and len(froms) > 1:
+            rels = rels * len(froms)
+        if froms and len(rels) != len(froms):
+            die(
+                f"census-edges: {len(froms)} FROM but {len(rels)} REL "
+                f"(they pair positionally): {line}",
+                2,
+            )
+        if invs:
+            if len(invs) == 1 and len(froms) > 1:
+                invs = invs * len(froms)
+            if froms and len(invs) != len(froms):
+                die(f"census-edges: INV count mismatch: {line}", 2)
+        for idx, f in enumerate(froms):
+            rel = rels[idx]
+            inv = invs[idx] if invs else inverses.get(rel, "")
+            if inv == "-":
+                inv = ""
+            for t in tos:
+                ff, tt, rr, ii = f, t, rel, inv
+                if rel in inverses and rel not in canon_left:
+                    # declared from the other side; flip to canonical
+                    ff, tt, rr, ii = t, f, inverses[rel], rel
+                edges.setdefault((ff, tt, rr), ii)
+
+    for (f, t, r), inv in sorted(edges.items()):
+        out_map.setdefault(f, []).append({"to": t, "rel": r})
+        entry: dict = {"from": f}
+        if inv or inverses.get(r):
+            entry["rel"] = inv or inverses[r]
+        else:
+            entry["reverse-of"] = r
+        in_map.setdefault(t, []).append(entry)
+    return out_map, in_map
+
+
 def gather(
     args: argparse.Namespace, home: Path
 ) -> tuple[list[Project], Filters, list[Path]]:
@@ -2393,12 +2805,12 @@ def build_parser() -> argparse.ArgumentParser:
         ),
         epilog=(
             "commands:\n"
-            "  projects [flags]                          the census table (default)\n"
+            "  projects [flags]                          census listing (default: names)\n"
             "  projects pd <name>                        print project dir (a `pd`\n"
             "                                            symlink to this script works too)\n"
             "  projects set <name-or-path> field=value   freeze an override\n"
-            "  projects set <name-or-path> <disposition>  shorthand (no =)\n"
-            "  projects heatmap                          17-week inferno rows (active*)\n"
+            "  projects set <name-or-path> <axis-value>   bare shorthand (see AXES)\n"
+            "  projects heatmap                          17-week inferno rows (activity=active)\n"
             "  projects heatmap --double | --triple      + 17 / 34 older weeks below\n"
             "  projects feedback <text…>                 report friction to the inbox\n"
             "\n"
@@ -2410,6 +2822,32 @@ def build_parser() -> argparse.ArgumentParser:
             "Nested names: second pass, closest-to-~ first; parent is another\n"
             "census project whose root prefixes this one.\n"
             "\n"
+            "AXES — seven per-project facts (TAXONOMY-PLAN.md). git-rel /\n"
+            "git-vis / proj-rel are detected; lifecycle / activity / local-use /\n"
+            "public-use are declared (census `default <axis>=<value>: glob…`\n"
+            "lines set defaults; `projects set` freezes per-project; local-use\n"
+            "and public-use default to 'undeclared'). The old `disposition`\n"
+            "field is retired and ignored — not migrated; refusals name the\n"
+            "axes an old token splits into.\n"
+            "\n"
+            "-v shows a 7-char block, one column per axis, '·' = undeclared\n"
+            "(glyphs are a PROVISIONAL v0 vocabulary):\n"
+            "  1 git-rel     g gitroot  s submodule  j subgit  - no-git  G group\n"
+            "  2 git-vis     l local  p private  P public  x external  G group\n"
+            "  3 lifecycle   n nascent  e experiment  1 pre-poc  2 pre-mvp\n"
+            "                3 pre-release  o ongoing  m maintenance  r reference\n"
+            "  4 activity    a active  = paused  w watch  z archived\n"
+            "  5 proj-rel    R root  m mid  l leaf  i isolated\n"
+            "  6 local-use   p pending  i pilot  t transition  2 secondary  1 primary\n"
+            "  7 public-use  u unlikely  e peers-only  ? undecided  n planned\n"
+            "                r preprint  s submitted  a accepted  P published\n"
+            "                E early  B broad\n"
+            "\n"
+            f"Edges: {DEFAULT_EDGES.name} beside the census — typed relations\n"
+            "(`FROM REL TO [INV]`, sentence order; inverse:/alias: lines;\n"
+            "[brackets] guard spaces). Exposed per-project in --format=json\n"
+            "as edges-out / edges-in.\n"
+            "\n"
             "Sort (listing and heatmap): default canonical; -g headings;\n"
             "-c change-date; -a alphabetical. -g combines with -c/-a as\n"
             "headings plus that order within each cdpath group.\n"
@@ -2419,12 +2857,23 @@ def build_parser() -> argparse.ArgumentParser:
             "glyphs: ▁▂▃▄▅▆▇█ heat (log), · pre-birth, blank zero/stale.\n"
             "\n"
             "examples:\n"
-            "  projects -c                    table, most recently touched first\n"
+            "  projects -vc                   axes + paths, most recently touched first\n"
+            "  projects -vvv                  the full table (last-action, git, desc)\n"
             "  projects heatmap --triple -c   ~a year of activity, stacked bands\n"
             "  aspectus $(pd arch)            use a project root in another command\n"
-            "  projects set cos active-exp    freeze a disposition\n"
-            "  projects --format=json -c      census records for machine consumers"
+            "  projects set cos experiment    freeze lifecycle=experiment\n"
+            "  projects set x pre-mvp paused  bare tokens resolve to their axes\n"
+            "  projects --format=json -c      census records + edges for machines"
         ),
+    )
+    p.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        dest="verbose",
+        help="counting verbosity: (none) names → -v axes+paths → -vv +desc "
+        "→ -vvv +last/git",
     )
     p.add_argument("-n", "--names", action="store_true", help="names only (full name)")
     p.add_argument("-p", "--paths", action="store_true", help="absolute paths only")
@@ -2570,10 +3019,18 @@ def main(argv: list[str] | None = None) -> int:
         refresh=args.refresh,
     )
     if args.format == "json":
+        edges_out, edges_in = load_edges(
+            DEFAULT_EDGES, [display_name(p) for p in projects]
+        )
         out = []
         for proj in sort_projects(projects, sort_mode_from_args(args)):
             rec = ordered_record(proj.rec)
             rec["path"] = str(proj.path)
+            name = display_name(proj)
+            if edges_out.get(name):
+                rec["edges-out"] = edges_out[name]
+            if edges_in.get(name):
+                rec["edges-in"] = edges_in[name]
             out.append(rec)
         print(json.dumps(out, indent=2, ensure_ascii=False))
         return 0
@@ -2589,6 +3046,7 @@ def main(argv: list[str] | None = None) -> int:
         home=home,
         now=datetime.now(tz=timezone.utc).timestamp(),
         use_color=color_enabled(args.color),
+        verbosity=args.verbose,
     )
     return 0
 
