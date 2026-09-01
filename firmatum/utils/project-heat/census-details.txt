@@ -1,4 +1,51 @@
 # Census file for `projects`. Blank lines and # comments are ignored.
+
+# # Github orgs that are internal:
+# internal-git-orgs: v2-io, josephwecker
+
+#----------- TODO: Refactor several README.md project attributes and this file's "disposition" etc. to the following: ------------
+#
+# - git-rel:    `gitroot`   || `subgit`     || `submodule`  || `no-git`      || `group`
+# - git-vis:    `local`     || `private`    || `public`     || `external`    || `group`
+# - lifecycle:  `nascent`   || `experiment` || `ongoing`    || `maintenance` || `reference`
+# - activity:   `active`    || `paused`     || `watch`      || `archived`
+# - proj-rel:   `root`      || `mid`        || `leaf`       || `isolated`
+# - local-use:  `pending`   || `pilot`      || `transition` || `secondary`   || `primary`
+# - public-use: `unlikely`  || `peers-only` || `undecided`  || `planned`     || `preprint` || `submitted` || `accepted` || `published`  || `early` || `broad`
+#
+# **NOTES:**
+# *git-rel*      How it's represented or rather its relationship wrt git
+#  `gitroot`:    Project directory is its own git root
+#  `sub(*)`:     A submodule is a normal git root that is also a submodule of another repo. Subgit means tracked by git but a subdirectory within.
+#  `group`:      A directory with a set of repos (e.g., all from one org) and usually some basic scripts. Like `no-git` but has cloned child git-repositories in subdirs.
+
+# *git-vis*      Git visibility, with `private`, `public`, and `external` implying it has a remote.
+#  `external`:   External usually implies `public`-- but could technically be a private repo where we are invited as a contributor or viewer etc.
+#  `group`:      Groups may have repos w/ various visibility, but usually external.
+#
+# *lifecycle*
+#  `nascent`:    Often little more than the core ideas and/or tiny proof of concept and/or originating spike etc.
+#  `experiment`: In ther very loose sense of the word-- might be empirical (distinct from its paper), a theory, coding spike, attempt at proof-of-concept, toy idea, etc.
+#  `ongoing`:    Unlike maintenance, it is expected to stay active without any particular "finished" objective (whereas maintenance has usually reached its primary objective).
+#
+# *activity*
+#  `active`:     Aspires to regular active pushing toward some milestone.
+#  `watch`:      Not being actively contributed to necessarily, but watching for changes, updates, requests, etc.
+#
+# *proj-rel*     Relationships with other projects. Alias for (`root` || `mid`) is `parent`
+#  `root`:       A *root* is a project *with children* and but *no* parent project of its own.
+#  `mid`:        A project *with children* and at least an immediate *parent*. Alias: `internal`
+#  `leaf`:       No children of its own, but at least an immediate parent (which would be a `mid` or `root`
+#  `isolated`:   An otherwise project root with no parent and no children.
+#
+# *public-use*  `preprint`, `submitted`, & `accepted` are especially intended for papers & books, although also datasets & related code.
+#  `published`: Accepted and published for papers and books or preprint traction; public and discoverable via common sources (brew, cargo, etc.) if code.
+#  `early`:     Innovators through early adopters adoption, or at least a few strangers with at least a nominal growth profile.
+#  `broad`:     Late early-adopters through early-majority and beyond. Or, for papers, significant citations and discussions.
+#
+
+
+#--------- Narrowings / filters on the cdpath expansions (so directory-relevant, not project-name relevant) ---------
 # Applied after cdpath first-match-wins. `projects --no-census` skips this file.
 #
 # Drop-globs
@@ -7,17 +54,6 @@
 #   `*`/`?` stay in one path segment; `**` crosses directories
 #   `~` / `$HOME` are expanded
 #   `foo/**` does not match `foo` itself — list both if needed
-#
-# Whitelist a cdpath parent (only these child names survive from that group)
-#   only src/arch: asf firmatum logos proprium vivarium
-#   only arch: asf logos          # basename of the cdpath entry also works
-#   only src/_ref:                # empty list = drop the whole group
-# Additional `only` lines for the same parent are unioned.
-#
-# Disposition defaults for census *survivors* (drop/only run first).
-# First matching glob wins. Per-project `.practica` can freeze an override.
-#   disposition <value>: glob [glob…]
-# Values: active, active-ref, active-fork, inactive, inert, ref-only
 
 *.bak
 *.bak.*
@@ -25,23 +61,31 @@
 _obs
 MOVED
 src/_ref/**
-# src/arch/firmatum
 src/arch/firmatum/utils
 src/_older
-# src/arch/proprium
 src/ops/linkedin-archive-2026-04-18
 src/_core
 ~/vaults
 ~/vaults/**
 src/_gems
 src/_exp
+src/_ref
 
+#---------- Additional narrowings (via whitelist) on directories post cdpath --------------
+# Whitelist a cdpath parent (only these child names survive from that group)
+#   only src/arch: asf firmatum logos proprium vivarium
+#   only arch: asf logos          # basename of the cdpath entry also works
+#   only src/_ref:                # empty list = drop the whole group
+# Additional `only` lines for the same parent are unioned.
 
 only src/arch: asf logos vivarium explication
 only src/arch/asf: 01-aat-core 02-tst-core 03-llm-core 04-eli-core
 
-# vaults/**
-# src-ext/**
+
+#----------- For setting disposition defaults (soon to be refactored) ---------------
+# Disposition defaults for census *survivors* (drop/only run first).
+# First matching glob wins. Per-project `.practica` can freeze an override.
+#   disposition <value>: glob [glob…]
 
 disposition ref-only: src-ext src-ext/**
 disposition inactive: src/_exp src/_exp/**
