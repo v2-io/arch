@@ -1977,6 +1977,7 @@ def glyph_legend(maxc: int) -> str:
     return (
         f"{label:>{HEATMAP_NAME_W}}  "
         f"{GLYPH_RAMP[1:]}   {GLYPH_WASH} pre-birth   (zero/stale blank)"
+        f"   weeks: |nproj·ncommits"
     )
 
 
@@ -2025,6 +2026,8 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             maxc = max(maxc, max(days.values()))
 
     mode = sort_mode_from_args(args)
+    if args.format == "json":
+        return heatmap_json(active, counts, maxc, fetch_window, mode)
     use_color = color_enabled(args.color)
     dark = macos_dark() if use_color else False
     invert = not dark
@@ -2175,6 +2178,40 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
     return 0
 
 
+def heatmap_json(
+    active: list[Project],
+    counts: dict[Path, dict[str, int]],
+    maxc: int,
+    fetch_window: list[date],
+    mode: str,
+) -> int:
+    def key_of(p: Project) -> Path:
+        try:
+            return p.path.resolve()
+        except OSError:
+            return p.path
+    payload = {
+        "as-of": iso_utc(datetime.now(tz=timezone.utc).timestamp()),
+        "window": {
+            "newest": max(fetch_window).isoformat(),
+            "oldest": min(fetch_window).isoformat(),
+        },
+        "max-per-day": maxc,
+        "scale": "log1p(count)/log1p(max-per-day)",
+        "projects": [
+            {
+                "name": display_name(p),
+                "path": str(p.path),
+                "first-commit": p.rec.get("first-commit") or None,
+                "days": counts.get(key_of(p), {}),
+            }
+            for p in sort_projects(active, mode)
+        ],
+    }
+    print(json.dumps(payload, indent=2, ensure_ascii=False))
+    return 0
+
+
 def parse_set_value(key: str, raw: str) -> object:
     if key in {"categories", "related", "extra-noise", "frozen"}:
         if not raw.strip():
@@ -2221,7 +2258,7 @@ def find_project(ident: str, projects: list[Project], home: Path) -> Project:
     if len(hits) > 1:
         names = ", ".join(display_name(p) for p in hits)
         die(f"{ident!r} is ambiguous ({names})", 2)
-    die(f"no census project matching {ident!r}", 2)
+    die(f"no census project matching {ident!r} (list names: projects -n)", 2)
 
 
 def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
@@ -2257,6 +2294,45 @@ def cmd_set(argv: list[str], list_ns: argparse.Namespace) -> int:
     print(f"{display_name(proj)}  {disp(proj.path, home)}")
     for k, _ in updates:
         print(f"  {k}={proj.rec.get(k)!r}  (frozen)")
+    return 0
+
+
+def version_string() -> str:
+    """name + semver, +sha while there is no tagged-release story."""
+    ver = "projects 0.2.0"
+    head = containing_head_id(HERE)
+    if head:
+        sha = head.split()[-1]
+        if len(sha) >= 7:
+            ver += f"+{sha[:9]}"
+    return ver
+
+
+def cmd_feedback(argv: list[str]) -> int:
+    """`projects feedback <text>` — append friction/feedback to the tool's
+    inbox with provenance (when/version/cwd). Never blocks the report."""
+    if not argv or argv[0] in {"-h", "--help"}:
+        print("usage: projects feedback <text…>")
+        print("appends to the tool's inbox.md with timestamp/version/cwd")
+        return 0 if argv and argv[0] in {"-h", "--help"} else 2
+    text = " ".join(argv).strip()
+    inbox = HERE / "inbox.md"
+    stamp = iso_utc(datetime.now(tz=timezone.utc).timestamp())
+    entry = f"\n- {stamp} · {version_string()} · cwd `{os.getcwd()}`\n  {text}\n"
+    try:
+        if not inbox.is_file():
+            inbox.write_text(
+                "# projects — feedback inbox\n\n"
+                "Appended by `projects feedback <text>`; read by whoever "
+                "works on this tool next.\n",
+                encoding="utf-8",
+            )
+        with open(inbox, "a", encoding="utf-8") as f:
+            f.write(entry)
+    except OSError as e:
+        print(f"projects: could not record feedback: {e}", file=sys.stderr)
+        return 1
+    print(f"noted → {disp(inbox, Path.home())}", file=sys.stderr)
     return 0
 
 
@@ -2314,24 +2390,38 @@ def build_parser() -> argparse.ArgumentParser:
             "Default order: canonical (cdpath, then lexical)."
         ),
         epilog=(
-            f"Census file: {DEFAULT_CENSUS}\n"
-            "Each project root gets a .practica (JSON), which is also the cache.\n"
-            "Default runs reuse it; --refresh reruns git/session detection.\n"
-            "Frozen fields are never overwritten. Nested names: second pass,\n"
-            "closest-to-~ first; parent is another census project whose root\n"
-            "prefixes this one.\n"
-            "\n"
-            "Sort (listing and heatmap): default canonical; -g headings;\n"
-            "-c change-date; -a alphabetical. -g combines with -c/-a as\n"
-            "headings plus that order within each cdpath group.\n"
-            "\n"
+            "commands:\n"
+            "  projects [flags]                          the census table (default)\n"
             "  projects pd <name>                        print project dir (a `pd`\n"
             "                                            symlink to this script works too)\n"
             "  projects set <name-or-path> field=value   freeze an override\n"
             "  projects set <name-or-path> <disposition>  shorthand (no =)\n"
             "  projects heatmap                          17-week inferno rows (active*)\n"
-            "  projects heatmap --double                 + previous 17 weeks below\n"
-            "  projects heatmap --triple                 + two older 17-week bands"
+            "  projects heatmap --double | --triple      + 17 / 34 older weeks below\n"
+            "  projects feedback <text…>                 report friction to the inbox\n"
+            "\n"
+            f"Census file: {DEFAULT_CENSUS}\n"
+            "Each project root gets a .practica (JSON), which is also the cache —\n"
+            "note the tool WRITES those files into project roots on every run\n"
+            "(--no-write to suppress). Default runs reuse the cache; --refresh\n"
+            "reruns git/session detection. Frozen fields are never overwritten.\n"
+            "Nested names: second pass, closest-to-~ first; parent is another\n"
+            "census project whose root prefixes this one.\n"
+            "\n"
+            "Sort (listing and heatmap): default canonical; -g headings;\n"
+            "-c change-date; -a alphabetical. -g combines with -c/-a as\n"
+            "headings plus that order within each cdpath group.\n"
+            "\n"
+            "Heatmap week stats read `| 25·254|` = distinct projects · total\n"
+            "commits that week. In a pipe (or --color=never) the heatmap is\n"
+            "glyphs: ▁▂▃▄▅▆▇█ heat (log), · pre-birth, blank zero/stale.\n"
+            "\n"
+            "examples:\n"
+            "  projects -c                    table, most recently touched first\n"
+            "  projects heatmap --triple -c   ~a year of activity, stacked bands\n"
+            "  aspectus $(pd arch)            use a project root in another command\n"
+            "  projects set cos active-exp    freeze a disposition\n"
+            "  projects --format=json -c      census records for machine consumers"
         ),
     )
     p.add_argument("-n", "--names", action="store_true", help="names only (full name)")
@@ -2403,7 +2493,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--version",
         action="version",
-        version="projects 0.2.0",
+        version=version_string(),
+    )
+    p.add_argument(
+        "--format",
+        choices=["table", "json"],
+        default="table",
+        help="json: census records (facts — ISO times, booleans, paths); "
+        "for heatmap, per-project day counts plus the scale",
     )
     p.add_argument(
         "--no-write",
@@ -2447,6 +2544,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_pd(argv, parser.parse_args([]))
     if argv and argv[0] == "pd":
         return cmd_pd(argv[1:], parser.parse_args([]))
+    if argv and argv[0] == "feedback":
+        return cmd_feedback(argv[1:])
     if argv and argv[0] == "set":
         list_ns = parser.parse_args([])
         return cmd_set(argv[1:], list_ns)
@@ -2468,6 +2567,14 @@ def main(argv: list[str] | None = None) -> int:
         write=not args.no_write,
         refresh=args.refresh,
     )
+    if args.format == "json":
+        out = []
+        for proj in sort_projects(projects, sort_mode_from_args(args)):
+            rec = ordered_record(proj.rec)
+            rec["path"] = str(proj.path)
+            out.append(rec)
+        print(json.dumps(out, indent=2, ensure_ascii=False))
+        return 0
     emit_table(
         projects,
         parents,
@@ -2485,4 +2592,12 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        code = main()
+    except KeyboardInterrupt:
+        code = 130
+    except BrokenPipeError:
+        # e.g. `projects | head` — the cut is the caller's, not an error
+        os.dup2(os.open(os.devnull, os.O_WRONLY), sys.stdout.fileno())
+        code = 0
+    raise SystemExit(code)
