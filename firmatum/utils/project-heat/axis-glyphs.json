@@ -16,9 +16,9 @@
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
     "glyph-local": "⌂",
-    "glyph-private": "∅",
-    "glyph-public": "☉",
-    "glyph-external": "↗",
+    "glyph-private": "∕",
+    "glyph-public": "*",
+    "glyph-external": "✺",
     "glyph-group": "▦"
   },
   "lifecycle": {
@@ -36,14 +36,14 @@
     "glyph-reference": "※"
   },
   "activity": {
-    "glyph-undeclared": "·",
+    "glyph-undeclared": "[·]",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-active": "⏵",
-    "glyph-paused": "⏸",
-    "glyph-watch": "⏿",
-    "glyph-archived": "⏹"
+    "glyph-active": "[⏵]",
+    "glyph-paused": "[⏸]",
+    "glyph-watch": "[⏿]",
+    "glyph-archived": "[⏹]"
   },
   "proj-rel": {
     "glyph-undeclared": "·",
@@ -56,18 +56,18 @@
     "glyph-isolated": "⯌"
   },
   "local-use": {
-    "glyph-undeclared": "·",
+    "glyph-undeclared": "›",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-pending": "░",
-    "glyph-pilot": "▒",
-    "glyph-transition": "▓",
-    "glyph-secondary": "▊",
-    "glyph-primary": "█"
+    "glyph-pending": ">",
+    "glyph-pilot": "⪖",
+    "glyph-transition": "⪜",
+    "glyph-secondary": "⪢",
+    "glyph-primary": "⫸"
   },
   "public-use": {
-    "glyph-undeclared": ">",
+    "glyph-undeclared": "⸱",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",

@@ -160,8 +160,8 @@ def load_axis_glyphs() -> tuple[dict[str, dict[str, str]], dict[str, dict[str, d
                 note(f"unknown {ax} value {value!r} skipped")
                 continue
             if kind == "glyph":
-                if not isinstance(g, str) or len(g) != 1:
-                    note(f"{ax}.{value} glyph must be exactly one character, got {g!r} — skipped")
+                if not isinstance(g, str) or not g:
+                    note(f"{ax}.{value} glyph must be a non-empty string, got {g!r} — skipped")
                     continue
                 table[ax][value] = g
             else:
@@ -174,6 +174,12 @@ def load_axis_glyphs() -> tuple[dict[str, dict[str, str]], dict[str, dict[str, d
 
 
 AXIS_GLYPHS, AXIS_COLORS = load_axis_glyphs()
+# Per-axis column width: widest loaded glyph (no one-char limit — Joseph
+# 2026-09-01; his eyeball arbitrates rendering width, we align by padding).
+AXIS_W = {
+    ax: max([len(g) for g in AXIS_GLYPHS[ax].values()] + [1])
+    for ax in AXIS_ORDER
+}
 
 
 def axis_color(ax: str, value: str, kind: str, dark: bool) -> str:
@@ -1674,8 +1680,12 @@ def axis_glyph(ax: str, value: str) -> str:
 
 
 def axis_block(rec: dict) -> str:
-    """7 chars, one per axis in AXIS_ORDER; undeclared glyph when unset."""
-    return "".join(axis_glyph(ax, str(rec.get(ax) or "")) for ax in AXIS_ORDER)
+    """One column per axis in AXIS_ORDER, each padded to its axis's widest
+    loaded glyph; undeclared glyph when unset."""
+    return "".join(
+        axis_glyph(ax, str(rec.get(ax) or "")).ljust(AXIS_W[ax])
+        for ax in AXIS_ORDER
+    )
 
 
 def axis_block_colored(rec: dict, dark: bool) -> str:
@@ -1689,8 +1699,9 @@ def axis_block_colored(rec: dict, dark: bool) -> str:
         glyph = axis_glyph(ax, key)
         fg = axis_color(ax, key, "fg", dark)
         bg = axis_color(ax, key, "bg", dark)
+        pad = " " * (AXIS_W[ax] - len(glyph))
         if not fg and not bg:
-            out.append(glyph)
+            out.append(glyph + pad)
             continue
         pre = ""
         if fg:
@@ -1698,7 +1709,7 @@ def axis_block_colored(rec: dict, dark: bool) -> str:
         if bg:
             r, g, b = hex_rgb(bg)
             pre += f"\x1b[48;2;{r};{g};{b}m"
-        out.append(f"{pre}{glyph}\x1b[39;49m")
+        out.append(f"{pre}{glyph}\x1b[39;49m{pad}")
     return "".join(out)
 
 
@@ -3037,9 +3048,10 @@ def axes_help_text() -> str:
     """AXES teaching for --help, rendered from the loaded glyph table so
     edits to axis-glyphs.json show up in usage automatically."""
     lines = [
-        "-v shows a 7-char block, one column per axis, '·' = undeclared\n"
+        "-v shows an AXES block, one column per axis, '·' = undeclared\n"
         f"(vocabulary loads from {GLYPHS_FILE.name} beside this script —\n"
-        "edit it and this section updates; one character per glyph):",
+        "edit it and this section updates; columns pad to the axis's\n"
+        "widest glyph):",
     ]
     for i, ax in enumerate(AXIS_ORDER, 1):
         pairs = [
