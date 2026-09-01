@@ -83,6 +83,7 @@ RECORD_KEY_ORDER = (
     "frozen",
     "base-name",
     "name",
+    "desc",
     "parent-name",
     "project-root",
     "disposition",
@@ -210,6 +211,7 @@ def inferno_hex(t: float, *, invert: bool = False) -> str:
 SET_FIELDS = frozenset(
     {
         "base-name",
+        "desc",
         "disposition",
         "categories",
         "related",

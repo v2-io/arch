@@ -38,6 +38,7 @@ On disk: `.practica` is JSON. Values are top-level keys. A `frozen` list names t
 | field | required | default | desc |
 | ---- | ----------- | ------- | ---- |
 | base-name | true | final directory name | project base name |
+| desc | false | (none) | one-line description, set via `projects set NAME desc="…"` |
 | project-root | true | given | directory of the project root |
 | categories | false | (none) | list of tags that categorize it |
 | disposition | true | from `census-details.txt` blobs (see below) | {active, active-ref, active-fork, active-maintenance, active-exp, inactive, inert, inert-exp, ref-only, historical} |
