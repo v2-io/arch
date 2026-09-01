@@ -1532,6 +1532,19 @@ def macos_dark() -> bool:
     return r.returncode == 0 and "Dark" in (r.stdout or "")
 
 
+def idle_span_days(last_count: int, maxc: int) -> int:
+    """Head-fade length: 14 days at scale max, ~1–2 days for a couple of commits.
+
+    Uses the same log1p t as the activity colors so a hot last day takes the
+    full two weeks to wash out, and a 1–2 commit day fades in a day or two.
+    """
+    if last_count <= 0 or maxc <= 0:
+        return DIM_HEAD_DAYS
+    t = math.log1p(last_count) / math.log1p(maxc)
+    t = max(0.0, min(1.0, t))
+    return max(1, int(round(DIM_HEAD_DAYS * t)))
+
+
 def dim_zero_fills(
     window: list[date],
     days: dict[str, int],
@@ -1539,13 +1552,15 @@ def dim_zero_fills(
     last_commit_ts: float | None = None,
     *,
     dark: bool,
+    maxc: int = 0,
 ) -> dict[str, str]:
     """iso → hex for cells that shouldn't use inferno.
 
-    Head (newest / left, after initiation): idle from last-commit, day 1
-    = inferno #1b0c41 through bluish tints to the *less-dulled* wash
-    (#9999c9 / #000030) at day 14+. Tail (oldest / right, before start):
-    *more-dulled* wash (#e6e6f2 / #00000c) except a 4-day onramp toward
+    Head (newest / left, after initiation): idle from last-commit, from
+    inferno #1b0c41 through bluish tints to the *less-dulled* wash. Fade
+    length scales with the last non-zero day's count vs the grid max
+    (14 days at max, ~1–2 for a couple of commits). Tail (oldest / right,
+    before start): *more-dulled* wash except a 4-day onramp toward
     #1b0c41 just before first-ever commit, only if that commit is
     in-window and the suffix is ≥7 days.
     """
@@ -1574,13 +1589,24 @@ def dim_zero_fills(
     def head_ramp(prefix_len: int) -> None:
         last = len(ramp) - 1
         last_c = local_day(last_commit_ts) if last_commit_ts is not None else None
+        last_count = 0
+        if 0 <= prefix_len < n:
+            last_count = counts[prefix_len]
+        elif i < n:
+            last_count = counts[i]
+        span = idle_span_days(last_count, maxc)
+        denom = max(span - 1, 1)
         for j in range(prefix_len):
             d = window[j]
             if last_c is not None:
                 idle = (d - last_c).days
                 if idle < 1:
                     continue
-                idx = min(last, idle - 1)
+                if span <= 1:
+                    progress = 1.0
+                else:
+                    progress = min(1.0, (idle - 1) / denom)
+                idx = min(last, int(round(progress * last)))
             else:
                 idx = last
             fills[d.isoformat()] = ramp[idx]
@@ -1835,7 +1861,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             proj.rec.get("last-commit-time")
         )
         fills = dim_zero_fills(
-            window, days, first_ts, last_c, dark=dark
+            window, days, first_ts, last_c, dark=dark, maxc=maxc
         )
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
         cells = []
