@@ -3,10 +3,11 @@
 #
 #   inverse: REL <-> REL          declares an inversion pair
 #   alias:   NAME -> REL          shorthand that expands to a relation
-#   FROM TO REL [INV]             an edge; FROM/TO comma-lists (globs ok),
-#                                 REL/INV comma-lists pair positionally with
-#                                 FROM when FROM is a list; INV omitted =>
-#                                 derived from the inverse table; '-' => none.
+#   FROM REL TO [INV]             an edge, reading as a sentence; FROM/TO
+#                                 comma-lists (globs ok), REL/INV comma-lists
+#                                 pair positionally with FROM when FROM is a
+#                                 list; INV omitted => derived from the
+#                                 inverse table; '-' => none.
 #
 # Either side may declare (influenced-by on the successor is as valid as
 # influences on the predecessor); readers collapse both-side declarations
@@ -27,5 +28,5 @@ alias: became -> predecessor-of
 # From the 2026-09-01 session (Joseph, in dialog): chiridion influenced how
 # he thinks about udon stores and verisectorium; so did rowan, "quite
 # strongly."
-chiridion arch/udon,arch/verisectorium influences
-rowan arch/udon,arch/verisectorium influences
+chiridion influences arch/udon,arch/verisectorium
+rowan influences arch/udon,arch/verisectorium
