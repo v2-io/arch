@@ -1703,6 +1703,71 @@ def heatmap_slots(window: list[date]) -> list[date | None]:
     return slots
 
 
+def week_runs(slots: list[date | None]) -> list[tuple[int, list[date]]]:
+    """Consecutive day runs between Sat/Sun gaps: (start index in slots, days)."""
+    runs: list[tuple[int, list[date]]] = []
+    start: int | None = None
+    days: list[date] = []
+    for i, s in enumerate(slots):
+        if s is None:
+            if days and start is not None:
+                runs.append((start, days))
+            start = None
+            days = []
+            continue
+        if start is None:
+            start = i
+        days.append(s)
+    if days and start is not None:
+        runs.append((start, days))
+    return runs
+
+
+def week_stats_line(
+    slots: list[date | None],
+    rows: list[tuple[dict[str, int], dict[str, str]]],
+    *,
+    wash: str,
+    zero: str,
+    name_w: int,
+) -> str:
+    """`NN|NNN` over each full (7-day) week: distinct projects | total counts.
+
+    A project counts if it has any commits that week or any onramp/offramp
+    fill that isn't the flat wash or the 0-commit color.
+    """
+    cols = [" "] * len(slots)
+    for start, wdays in week_runs(slots):
+        if len(wdays) != 7:
+            continue
+        isos = [d.isoformat() for d in wdays]
+        nproj = 0
+        ncontrib = 0
+        for days, fills in rows:
+            week_sum = 0
+            active = False
+            for iso in isos:
+                c = int(days.get(iso, 0))
+                week_sum += c
+                if c > 0:
+                    active = True
+                else:
+                    col = fills.get(iso)
+                    if col is not None and col != wash and col != zero:
+                        active = True
+            if active:
+                nproj += 1
+            ncontrib += week_sum
+        label = f"{nproj:>2}|{ncontrib}"
+        for k, ch in enumerate(label):
+            j = start + k
+            if j >= len(cols):
+                break
+            if k < 7 or slots[j] is None:
+                cols[j] = ch
+    return " " * name_w + "  " + "".join(cols)
+
+
 def month_header(window: list[date], name_w: int) -> str:
     slots = heatmap_slots(window)
     cols = [" "] * len(slots)
@@ -1771,20 +1836,32 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
     mode = sort_mode_from_args(args)
     slots = heatmap_slots(window)
     dark = macos_dark()
+    invert = not dark
+    wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
+    zero = heat_hex(0, maxc, invert=invert)
 
-    def emit_row(proj: Project) -> None:
+    def proj_key(proj: Project) -> Path:
         try:
-            key = proj.path.resolve()
+            return proj.path.resolve()
         except OSError:
-            key = proj.path
+            return proj.path
+
+    fills_by: dict[Path, dict[str, str]] = {}
+    for proj in active:
+        key = proj_key(proj)
         days = counts.get(key, {})
         first_ts = parse_ts(proj.rec.get("first-commit"))
         last_c = parse_ts(proj.rec.get("last-action-time")) or parse_ts(
             proj.rec.get("last-commit-time")
         )
-        fills = dim_zero_fills(
+        fills_by[key] = dim_zero_fills(
             window, days, first_ts, last_c, dark=dark, maxc=maxc
         )
+
+    def emit_row(proj: Project) -> None:
+        key = proj_key(proj)
+        days = counts.get(key, {})
+        fills = fills_by.get(key, {})
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
         cells = []
         for slot in slots:
@@ -1796,10 +1873,19 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 cells.append(ansi_block(fills[iso]))
                 continue
             c = int(days.get(iso, 0))
-            cells.append(ansi_block(heat_hex(c, maxc, invert=not dark)))
+            cells.append(ansi_block(heat_hex(c, maxc, invert=invert)))
         print(name + "  " + "".join(cells) + "\x1b[0m")
 
     print(month_header(window, HEATMAP_NAME_W))
+    print(
+        week_stats_line(
+            slots,
+            [(counts.get(proj_key(p), {}), fills_by.get(proj_key(p), {})) for p in active],
+            wash=wash,
+            zero=zero,
+            name_w=HEATMAP_NAME_W,
+        )
+    )
     if args.group:
         by_parent: dict[Path, list[Project]] = {p: [] for p in parents}
         for proj in active:
