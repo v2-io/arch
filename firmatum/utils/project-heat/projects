@@ -99,10 +99,17 @@ HEATMAP_DAYS = 120
 HEATMAP_NAME_W = 29
 DIM_ZERO_MIN = 7  # tail (pre-birth) only
 DIM_HEAD_DAYS = 14
-# Tail stays a flat wash. Head idle: 10 control points (day-1 #000078),
-# interpolated across 14 days to full fade.
-DIM_LIGHT = "#9999c9"
-DIM_DARK = "#000030"
+# Two washes: less-dulled after initiation (head clamp), more-dulled
+# before the project exists (tail). Idle ramps start at inferno #1b0c41
+# and interpolate through the old bluish tints toward those washes.
+INFERNO_DIM = "#1b0c41"
+DIM_POST_LIGHT = "#9999c9"  # less dulled — idle after first commit
+DIM_POST_DARK = "#000030"
+DIM_PRE_LIGHT = "#e6e6f2"  # more dulled — pre-birth
+DIM_PRE_DARK = "#00000c"
+# Aliases: DIM_LIGHT/DARK remain the less-dulled (post-birth) pair.
+DIM_LIGHT = DIM_POST_LIGHT
+DIM_DARK = DIM_POST_DARK
 
 
 def _interp_hex_ramp(colors: list[str], n: int) -> list[str]:
@@ -125,7 +132,32 @@ def _interp_hex_ramp(colors: list[str], n: int) -> list[str]:
     return out
 
 
-DIM_HEAD_LIGHT = _interp_hex_ramp(
+def _mix_hex(a: str, c: str, t: float) -> str:
+    """t=0 → a, t=1 → c."""
+    def rgb(h: str) -> tuple[int, int, int]:
+        h = h.lstrip("#")
+        return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+
+    t = max(0.0, min(1.0, t))
+    ar, ag, ab = rgb(a)
+    cr, cg, cb = rgb(c)
+    r = round(ar * (1 - t) + cr * t)
+    g = round(ag * (1 - t) + cg * t)
+    b = round(ab * (1 - t) + cb * t)
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
+def _inferno_blue_ramp(blues: list[str], n: int) -> list[str]:
+    last = len(blues) - 1
+    mixed = [
+        _mix_hex(INFERNO_DIM, c, (i / last if last else 0.0))
+        for i, c in enumerate(blues)
+    ]
+    return _interp_hex_ramp(mixed, n)
+
+
+# Head idle: inferno purple → bluish tints → less-dulled wash (14 days).
+DIM_HEAD_LIGHT = _inferno_blue_ramp(
     [
         "#000078",
         "#1a1a86",
@@ -133,14 +165,11 @@ DIM_HEAD_LIGHT = _interp_hex_ramp(
         "#4d4da1",
         "#6666ae",
         "#8080bc",
-        "#9999c9",
-        "#b3b3d7",
-        "#cccce4",
-        "#e6e6f2",
+        DIM_POST_LIGHT,
     ],
     DIM_HEAD_DAYS,
 )
-DIM_HEAD_DARK = _interp_hex_ramp(
+DIM_HEAD_DARK = _inferno_blue_ramp(
     [
         "#000078",
         "#00006c",
@@ -148,10 +177,7 @@ DIM_HEAD_DARK = _interp_hex_ramp(
         "#000054",
         "#000048",
         "#00003c",
-        "#000030",
-        "#000024",
-        "#000018",
-        "#00000c",
+        DIM_POST_DARK,
     ],
     DIM_HEAD_DAYS,
 )
@@ -1476,15 +1502,15 @@ def dim_zero_fills(
 ) -> dict[str, str]:
     """iso → hex for cells that shouldn't use inferno.
 
-    Head (newest / left): leading zeros, faded by days since exclusive
-    last-commit (day 1 = #000078, day 14+ = full dim). Last-commit may
-    predate the window — then the whole visible prefix is fully dim.
-    Tail (oldest / right): fully dim except a 4-day onramp to #000078
-    just before first-ever commit, only if that commit is in-window and
-    the suffix is ≥7 days.
+    Head (newest / left, after initiation): idle from last-commit, day 1
+    = inferno #1b0c41 through bluish tints to the *less-dulled* wash
+    (#9999c9 / #000030) at day 14+. Tail (oldest / right, before start):
+    *more-dulled* wash (#e6e6f2 / #00000c) except a 4-day onramp toward
+    #1b0c41 just before first-ever commit, only if that commit is
+    in-window and the suffix is ≥7 days.
     """
     ramp = DIM_HEAD_DARK if dark else DIM_HEAD_LIGHT
-    tail_hex = DIM_DARK if dark else DIM_LIGHT
+    tail_hex = DIM_PRE_DARK if dark else DIM_PRE_LIGHT
     counts = [int(days.get(d.isoformat(), 0)) for d in window]
     n = len(window)
     fills: dict[str, str] = {}
@@ -1520,10 +1546,8 @@ def dim_zero_fills(
             fills[d.isoformat()] = ramp[idx]
 
     def paint_tail(start: int) -> None:
-        # Wash is DIM_* (visible periwinkle / near-black), not the head-ramp
-        # end (#e6e6f2), which vanishes on a light terminal.
         wash = tail_hex
-        onramp = _interp_hex_ramp([wash, "#000078"], 5)[1:]
+        onramp = _interp_hex_ramp([wash, INFERNO_DIM], 5)[1:]
         for j in range(start, n):
             fills[window[j].isoformat()] = wash
         if first_ts is None:
@@ -1553,7 +1577,7 @@ def dim_zero_fills(
         if first_ts is not None:
             biso = local_day(first_ts).isoformat()
             if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-                fills[biso] = "#000078"
+                fills[biso] = INFERNO_DIM
         return fills
 
     if i > 0:
@@ -1565,7 +1589,7 @@ def dim_zero_fills(
     if first_ts is not None:
         biso = local_day(first_ts).isoformat()
         if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-            fills[biso] = "#000078"
+            fills[biso] = INFERNO_DIM
     return fills
 
 
