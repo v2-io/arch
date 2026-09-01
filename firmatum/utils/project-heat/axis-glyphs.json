@@ -1,14 +1,24 @@
 {
-  "git-rel": {
+  "proj-rel": {
     "glyph-undeclared": "·",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-gitroot": "⯍",
-    "glyph-subgit": "⯏",
-    "glyph-submodule": "🟄",
-    "glyph-no-git": "─",
-    "glyph-group": "▦"
+    "glyph-root": "⯍",
+    "glyph-mid": "⯏",
+    "glyph-leaf": "⯎",
+    "glyph-isolated": "⯌"
+  },
+  "git-rel": {
+    "glyph-undeclared": "⦗·",
+    "fg-undeclared": "",
+    "fg-dark-undeclared": "",
+    "bg-undeclared": "",
+    "glyph-gitroot": "⦗⯍",
+    "glyph-subgit": "⦗⯏",
+    "glyph-submodule": "⦗🟄",
+    "glyph-no-git": "⦗─",
+    "glyph-group": "⦗▦"
   },
   "git-vis": {
     "glyph-undeclared": "·",
@@ -36,24 +46,14 @@
     "glyph-reference": "※"
   },
   "activity": {
-    "glyph-undeclared": "[·]",
+    "glyph-undeclared": "┊·┊",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-active": "[⏵]",
-    "glyph-paused": "[⏸]",
-    "glyph-watch": "[⏿]",
-    "glyph-archived": "[⏹]"
-  },
-  "proj-rel": {
-    "glyph-undeclared": "·",
-    "fg-undeclared": "",
-    "fg-dark-undeclared": "",
-    "bg-undeclared": "",
-    "glyph-root": "⯍",
-    "glyph-mid": "⯏",
-    "glyph-leaf": "⯎",
-    "glyph-isolated": "⯌"
+    "glyph-active": "┊⏵┊",
+    "glyph-paused": "┊⏸┊",
+    "glyph-watch": "┊⏿┊",
+    "glyph-archived": "┊⏹┊"
   },
   "local-use": {
     "glyph-undeclared": "›",
@@ -67,19 +67,19 @@
     "glyph-primary": "⫸"
   },
   "public-use": {
-    "glyph-undeclared": "⸱",
+    "glyph-undeclared": "⸱⦘",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-unlikely": "≯",
-    "glyph-peers-only": "≳",
-    "glyph-undecided": "⩼",
-    "glyph-planned": ">",
-    "glyph-preprint": "⪖",
-    "glyph-submitted": "⪜",
-    "glyph-accepted": "⭃",
-    "glyph-published": "⪢",
-    "glyph-early": "𜲂",
-    "glyph-broad": "⫸"
+    "glyph-unlikely": "≯⦘",
+    "glyph-peers-only": "≳⦘",
+    "glyph-undecided": "⩼⦘",
+    "glyph-planned": ">⦘",
+    "glyph-preprint": "⪖⦘",
+    "glyph-submitted": "⪜⦘",
+    "glyph-accepted": "⭃⦘",
+    "glyph-published": "⪢⦘",
+    "glyph-early": "𜲂⦘",
+    "glyph-broad": "⫸⦘"
   }
 }

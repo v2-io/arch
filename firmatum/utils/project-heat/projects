@@ -51,7 +51,7 @@ AXES: dict[str, tuple[str, ...]] = {
     ),
 }
 AXIS_ORDER = (
-    "git-rel", "git-vis", "lifecycle", "activity", "proj-rel",
+    "proj-rel", "git-rel", "git-vis", "lifecycle", "activity",
     "local-use", "public-use",
 )
 DECLARED_AXES = ("lifecycle", "activity", "local-use", "public-use")
@@ -243,11 +243,11 @@ RECORD_KEY_ORDER = (
     "desc",
     "parent-name",
     "project-root",
+    "proj-rel",
     "git-rel",
     "git-vis",
     "lifecycle",
     "activity",
-    "proj-rel",
     "local-use",
     "public-use",
     "categories",
