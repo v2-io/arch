@@ -100,17 +100,9 @@ HEATMAP_DAYS = 120
 HEATMAP_NAME_W = 29
 DIM_ZERO_MIN = 7  # tail (pre-birth) only
 DIM_HEAD_DAYS = 14
-# Two washes: less-dulled after initiation (head clamp), more-dulled
-# before the project exists (tail). Idle ramps start at inferno #1b0c41
-# and interpolate through the old bluish tints toward those washes.
-INFERNO_DIM = "#1b0c41"
-DIM_POST_LIGHT = "#9999c9"  # less dulled — idle after first commit
-DIM_POST_DARK = "#000030"
-DIM_PRE_LIGHT = "#e6e6f2"  # more dulled — pre-birth
-DIM_PRE_DARK = "#00000c"
-# Aliases: DIM_LIGHT/DARK remain the less-dulled (post-birth) pair.
-DIM_LIGHT = DIM_POST_LIGHT
-DIM_DARK = DIM_POST_DARK
+# Pre-birth (right): wash → peak. Light is as specified; dark is RGB-invert.
+TAIL_WASH_LIGHT = "#e6e6f1"
+TAIL_PEAK_LIGHT = "#0a076d"
 
 
 def _interp_hex_ramp(colors: list[str], n: int) -> list[str]:
@@ -133,55 +125,10 @@ def _interp_hex_ramp(colors: list[str], n: int) -> list[str]:
     return out
 
 
-def _mix_hex(a: str, c: str, t: float) -> str:
-    """t=0 → a, t=1 → c."""
-    def rgb(h: str) -> tuple[int, int, int]:
-        h = h.lstrip("#")
-        return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
-
-    t = max(0.0, min(1.0, t))
-    ar, ag, ab = rgb(a)
-    cr, cg, cb = rgb(c)
-    r = round(ar * (1 - t) + cr * t)
-    g = round(ag * (1 - t) + cg * t)
-    b = round(ab * (1 - t) + cb * t)
-    return f"#{r:02x}{g:02x}{b:02x}"
-
-
-def _inferno_blue_ramp(blues: list[str], n: int) -> list[str]:
-    last = len(blues) - 1
-    mixed = [
-        _mix_hex(INFERNO_DIM, c, (i / last if last else 0.0))
-        for i, c in enumerate(blues)
-    ]
-    return _interp_hex_ramp(mixed, n)
-
-
-# Head idle: inferno purple → bluish tints → less-dulled wash (14 days).
-DIM_HEAD_LIGHT = _inferno_blue_ramp(
-    [
-        "#000078",
-        "#1a1a86",
-        "#333393",
-        "#4d4da1",
-        "#6666ae",
-        "#8080bc",
-        DIM_POST_LIGHT,
-    ],
-    DIM_HEAD_DAYS,
-)
-DIM_HEAD_DARK = _inferno_blue_ramp(
-    [
-        "#000078",
-        "#00006c",
-        "#000060",
-        "#000054",
-        "#000048",
-        "#00003c",
-        DIM_POST_DARK,
-    ],
-    DIM_HEAD_DAYS,
-)
+def invert_hex(h: str) -> str:
+    h = h.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return f"#{255 - r:02x}{255 - g:02x}{255 - b:02x}"
 
 
 # matplotlib listed inferno (256 RGB) packed as hex. Cell color is a real
@@ -1556,16 +1503,16 @@ def dim_zero_fills(
 ) -> dict[str, str]:
     """iso → hex for cells that shouldn't use inferno.
 
-    Head (newest / left, after initiation): idle from last-commit, from
-    inferno #1b0c41 through bluish tints to the *less-dulled* wash. Fade
-    length scales with the last non-zero day's count vs the grid max
-    (14 days at max, ~1–2 for a couple of commits). Tail (oldest / right,
-    before start): *more-dulled* wash except a 4-day onramp toward
-    #1b0c41 just before first-ever commit, only if that commit is
-    in-window and the suffix is ≥7 days.
+    Head (newest / left): idle from last-commit interpolates the last
+    non-zero day's activity color down to the 0-commit color (inverted
+    inferno white on light). Fade length scales with that day's count vs
+    the grid max. Tail (oldest / right): wash #e6e6f1 except a 4-day
+    onramp toward #0a076d just before first-ever commit, only if that
+    commit is in-window and the suffix is ≥7 days.
     """
-    ramp = DIM_HEAD_DARK if dark else DIM_HEAD_LIGHT
-    tail_hex = DIM_PRE_DARK if dark else DIM_PRE_LIGHT
+    invert = not dark
+    wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
+    peak = invert_hex(TAIL_PEAK_LIGHT) if dark else TAIL_PEAK_LIGHT
     counts = [int(days.get(d.isoformat(), 0)) for d in window]
     n = len(window)
     fills: dict[str, str] = {}
@@ -1587,33 +1534,30 @@ def dim_zero_fills(
         born_in_window = window[-1] <= first_d <= window[0]
 
     def head_ramp(prefix_len: int) -> None:
-        last = len(ramp) - 1
         last_c = local_day(last_commit_ts) if last_commit_ts is not None else None
         last_count = 0
         if 0 <= prefix_len < n:
             last_count = counts[prefix_len]
         elif i < n:
             last_count = counts[i]
+        start = heat_hex(last_count, maxc, invert=invert)
+        end = heat_hex(0, maxc, invert=invert)
         span = idle_span_days(last_count, maxc)
-        denom = max(span - 1, 1)
+        n_pts = span + 1
+        row_ramp = _interp_hex_ramp([start, end], n_pts)
         for j in range(prefix_len):
             d = window[j]
-            if last_c is not None:
-                idle = (d - last_c).days
-                if idle < 1:
-                    continue
-                if span <= 1:
-                    progress = 1.0
-                else:
-                    progress = min(1.0, (idle - 1) / denom)
-                idx = min(last, int(round(progress * last)))
-            else:
-                idx = last
-            fills[d.isoformat()] = ramp[idx]
+            if last_c is None:
+                fills[d.isoformat()] = end
+                continue
+            idle = (d - last_c).days
+            if idle < 1:
+                continue
+            idx = min(span, idle)
+            fills[d.isoformat()] = row_ramp[idx]
 
     def paint_tail(start: int) -> None:
-        wash = tail_hex
-        onramp = _interp_hex_ramp([wash, INFERNO_DIM], 5)[1:]
+        onramp = _interp_hex_ramp([wash, peak], 5)[1:]
         for j in range(start, n):
             fills[window[j].isoformat()] = wash
         if first_ts is None:
@@ -1643,19 +1587,18 @@ def dim_zero_fills(
         if first_ts is not None:
             biso = local_day(first_ts).isoformat()
             if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-                fills[biso] = INFERNO_DIM
+                fills[biso] = peak
         return fills
 
     if i > 0:
         head_ramp(i)
     if born_in_window and suffix >= DIM_ZERO_MIN:
         paint_tail(k + 1)
-    # Birth day with no events must not fall through to inferno-0 (black):
-    # that was the floating blob on empty no-git rows.
+    # Birth day with no events: tail peak, not activity-zero.
     if first_ts is not None:
         biso = local_day(first_ts).isoformat()
         if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-            fills[biso] = INFERNO_DIM
+            fills[biso] = peak
     return fills
 
 
