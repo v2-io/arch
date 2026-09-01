@@ -7,7 +7,7 @@
 #
 # - git-rel:    `gitroot`   || `subgit`     || `submodule`  || `no-git`      || `group`
 # - git-vis:    `local`     || `private`    || `public`     || `external`    || `group`
-# - lifecycle:  `nascent`   || `experiment` || `ongoing`    || `maintenance` || `reference`
+# - lifecycle:  `nascent`   || `experiment` || `pre-poc` || `pre-mvp` || `pre-release` || `ongoing`    || `maintenance` || `reference`
 # - activity:   `active`    || `paused`     || `watch`      || `archived`
 # - proj-rel:   `root`      || `mid`        || `leaf`       || `isolated`
 # - local-use:  `pending`   || `pilot`      || `transition` || `secondary`   || `primary`
@@ -26,7 +26,9 @@
 # *lifecycle*
 #  `nascent`:    Often little more than the core ideas and/or tiny proof of concept and/or originating spike etc.
 #  `experiment`: In ther very loose sense of the word-- might be empirical (distinct from its paper), a theory, coding spike, attempt at proof-of-concept, toy idea, etc.
+#  `pre-*`:      Active development toward a named milestone (poc / mvp / release); re-enterable — lifecycle is not a one-way ladder.
 #  `ongoing`:    Unlike maintenance, it is expected to stay active without any particular "finished" objective (whereas maintenance has usually reached its primary objective).
+#  `reference`:  Defunct / not in use, but could definitely continue to influence things. (paused+reference = dormant but resurrectable.)
 #
 # *activity*
 #  `active`:     Aspires to regular active pushing toward some milestone.
