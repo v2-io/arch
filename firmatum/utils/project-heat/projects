@@ -1991,10 +1991,28 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         prefix = "\x1b[4m" if level >= HIGHLIGHT_UNDERLINE_AT else ""
         print(prefix + named + "  " + "".join(cells) + "\x1b[0m")
 
-    def render_panel(window: list[date], left_pad: int) -> None:
+    def existed_entire_window(proj: Project, window: list[date]) -> bool:
+        """True if first-commit is on or before this panel's oldest day.
+
+        Extra bands drop rows that were born mid-window or after it — they
+        were not alive for the whole 17 weeks. Unknown first-commit stays.
+        """
+        first_ts = parse_ts(proj.rec.get("first-commit"))
+        if first_ts is None:
+            return True
+        return local_day(first_ts) <= window[-1]
+
+    def render_panel(
+        window: list[date], left_pad: int, *, full_span_only: bool = False
+    ) -> None:
+        shown = (
+            [p for p in active if existed_entire_window(p, window)]
+            if full_span_only
+            else list(active)
+        )
         slots = heatmap_slots(window)
         fills_by: dict[Path, dict[str, str]] = {}
-        for proj in active:
+        for proj in shown:
             key = proj_key(proj)
             days = prune_days(counts.get(key, {}), window)
             first_ts = parse_ts(proj.rec.get("first-commit"))
@@ -2010,7 +2028,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 slots,
                 [
                     (prune_days(counts.get(proj_key(p), {}), window), fills_by.get(proj_key(p), {}))
-                    for p in active
+                    for p in shown
                 ],
                 wash=wash,
                 zero=zero,
@@ -2020,7 +2038,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         )
         if args.group:
             by_parent: dict[Path, list[Project]] = {p: [] for p in parents}
-            for proj in active:
+            for proj in shown:
                 by_parent.setdefault(proj.cdpath_parent, []).append(proj)
             first = True
             for parent in parents:
@@ -2037,14 +2055,14 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             if not first:
                 print()
         else:
-            for proj in sort_projects(active, mode):
+            for proj in sort_projects(shown, mode):
                 emit_row(proj, slots, fills_by.get(proj_key(proj), {}), left_pad)
             print()
 
     for i, panel in enumerate(panels):
         if i > 0:
             print()
-        render_panel(panel, 0 if i == 0 else align)
+        render_panel(panel, 0 if i == 0 else align, full_span_only=i > 0)
     print(scale_bar(maxc, invert=invert))
     return 0
 
