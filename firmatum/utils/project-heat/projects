@@ -102,27 +102,6 @@ DIM_ZERO_MIN = 7  # tail (pre-birth) only
 DIM_HEAD_DAYS = 14
 # Pre-birth (right): wash → peak. Light is as specified; dark is RGB-invert.
 TAIL_WASH_LIGHT = "#e6e6f1"
-TAIL_PEAK_LIGHT = "#0a076d"
-
-
-def _interp_hex_ramp(colors: list[str], n: int) -> list[str]:
-    rgb = []
-    for h in colors:
-        h = h.lstrip("#")
-        rgb.append((int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)))
-    out: list[str] = []
-    last = len(rgb) - 1
-    for i in range(n):
-        t = 0.0 if n == 1 else i / (n - 1)
-        x = t * last
-        lo = int(x)
-        hi = min(lo + 1, last)
-        f = x - lo
-        r = round(rgb[lo][0] * (1 - f) + rgb[hi][0] * f)
-        g = round(rgb[lo][1] * (1 - f) + rgb[hi][1] * f)
-        b = round(rgb[lo][2] * (1 - f) + rgb[hi][2] * f)
-        out.append(f"#{r:02x}{g:02x}{b:02x}")
-    return out
 
 
 def invert_hex(h: str) -> str:
@@ -1479,16 +1458,19 @@ def macos_dark() -> bool:
     return r.returncode == 0 and "Dark" in (r.stdout or "")
 
 
-def idle_span_days(last_count: int, maxc: int) -> int:
-    """Head-fade length: 14 days at scale max, ~1–2 days for a couple of commits.
+def scale_t(count: int, maxc: int) -> float:
+    """log1p t in [0, 1] matching activity colors. 0 if no count/max."""
+    if count <= 0 or maxc <= 0:
+        return 0.0
+    t = math.log1p(count) / math.log1p(maxc)
+    return max(1.0 / (_INFERNO_N - 1), min(1.0, t))
 
-    Uses the same log1p t as the activity colors so a hot last day takes the
-    full two weeks to wash out, and a 1–2 commit day fades in a day or two.
-    """
-    if last_count <= 0 or maxc <= 0:
+
+def idle_span_days(last_count: int, maxc: int) -> int:
+    """Head-fade length: 14 days at scale max, ~1–2 days for a couple of commits."""
+    t = scale_t(last_count, maxc)
+    if t <= 0:
         return DIM_HEAD_DAYS
-    t = math.log1p(last_count) / math.log1p(maxc)
-    t = max(0.0, min(1.0, t))
     return max(1, int(round(DIM_HEAD_DAYS * t)))
 
 
@@ -1503,16 +1485,15 @@ def dim_zero_fills(
 ) -> dict[str, str]:
     """iso → hex for cells that shouldn't use inferno.
 
-    Head (newest / left): idle from last-commit interpolates the last
-    non-zero day's activity color down to the 0-commit color (inverted
-    inferno white on light). Fade length scales with that day's count vs
-    the grid max. Tail (oldest / right): wash #e6e6f1 except a 4-day
-    onramp toward #0a076d just before first-ever commit, only if that
-    commit is in-window and the suffix is ≥7 days.
+    Head (newest / left): idle walks the heat scale from the last
+    non-zero day's t down to 0 (not an RGB lerp). Fade length scales
+    with that day's count vs the grid max. Tail (oldest / right): wash
+    #e6e6f1 except a 4-day onramp up the heat scale to t=0.5 (not the
+    hot end), only if first-ever commit is in-window and suffix ≥7.
     """
     invert = not dark
     wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
-    peak = invert_hex(TAIL_PEAK_LIGHT) if dark else TAIL_PEAK_LIGHT
+    mid = inferno_hex(0.5, invert=invert)
     counts = [int(days.get(d.isoformat(), 0)) for d in window]
     n = len(window)
     fills: dict[str, str] = {}
@@ -1540,24 +1521,22 @@ def dim_zero_fills(
             last_count = counts[prefix_len]
         elif i < n:
             last_count = counts[i]
-        start = heat_hex(last_count, maxc, invert=invert)
-        end = heat_hex(0, maxc, invert=invert)
+        t0 = scale_t(last_count, maxc)
         span = idle_span_days(last_count, maxc)
-        n_pts = span + 1
-        row_ramp = _interp_hex_ramp([start, end], n_pts)
+        zero = inferno_hex(0.0, invert=invert)
         for j in range(prefix_len):
             d = window[j]
             if last_c is None:
-                fills[d.isoformat()] = end
+                fills[d.isoformat()] = zero
                 continue
             idle = (d - last_c).days
             if idle < 1:
                 continue
-            idx = min(span, idle)
-            fills[d.isoformat()] = row_ramp[idx]
+            progress = min(1.0, idle / span)
+            t = t0 * (1.0 - progress)
+            fills[d.isoformat()] = inferno_hex(t, invert=invert)
 
     def paint_tail(start: int) -> None:
-        onramp = _interp_hex_ramp([wash, peak], 5)[1:]
         for j in range(start, n):
             fills[window[j].isoformat()] = wash
         if first_ts is None:
@@ -1567,7 +1546,8 @@ def dim_zero_fills(
             d = first_d - timedelta(days=ahead)
             iso = d.isoformat()
             if iso in fills:
-                fills[iso] = onramp[4 - ahead]
+                t = 0.5 * (5 - ahead) / 4.0
+                fills[iso] = inferno_hex(t, invert=invert)
 
     if all_zero:
         if born_in_window and first_ts is not None:
@@ -1587,18 +1567,17 @@ def dim_zero_fills(
         if first_ts is not None:
             biso = local_day(first_ts).isoformat()
             if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-                fills[biso] = peak
+                fills[biso] = mid
         return fills
 
     if i > 0:
         head_ramp(i)
     if born_in_window and suffix >= DIM_ZERO_MIN:
         paint_tail(k + 1)
-    # Birth day with no events: tail peak, not activity-zero.
     if first_ts is not None:
         biso = local_day(first_ts).isoformat()
         if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-            fills[biso] = peak
+            fills[biso] = mid
     return fills
 
 
