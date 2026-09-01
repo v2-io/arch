@@ -160,8 +160,6 @@ def load_axis_glyphs() -> tuple[dict[str, dict[str, str]], dict[str, dict[str, d
                 note(f"unknown {ax} value {value!r} skipped")
                 continue
             if kind == "glyph":
-                if value == "undeclared" and isinstance(g, str) and len(g) == 1:
-                    continue  # '·' is fixed; glyph-undeclared accepted as no-op
                 if not isinstance(g, str) or len(g) != 1:
                     note(f"{ax}.{value} glyph must be exactly one character, got {g!r} — skipped")
                     continue
@@ -1667,13 +1665,17 @@ def git_cell(proj: Project, by_root: dict[Path, str]) -> str:
     return "--"
 
 
+def axis_glyph(ax: str, value: str) -> str:
+    """One glyph for one axis cell; unset/unknown falls to the axis's own
+    'undeclared' glyph (overridable in axis-glyphs.json), then '·'."""
+    table = AXIS_GLYPHS[ax]
+    und = table.get("undeclared", "·")
+    return table.get(value, und) if value else und
+
+
 def axis_block(rec: dict) -> str:
-    """7 chars, one per axis in AXIS_ORDER; '·' = undeclared/unknown."""
-    out = []
-    for ax in AXIS_ORDER:
-        v = rec.get(ax)
-        out.append(AXIS_GLYPHS[ax].get(str(v), "·") if v else "·")
-    return "".join(out)
+    """7 chars, one per axis in AXIS_ORDER; undeclared glyph when unset."""
+    return "".join(axis_glyph(ax, str(rec.get(ax) or "")) for ax in AXIS_ORDER)
 
 
 def axis_block_colored(rec: dict, dark: bool) -> str:
@@ -1684,7 +1686,7 @@ def axis_block_colored(rec: dict, dark: bool) -> str:
     for ax in AXIS_ORDER:
         v = rec.get(ax)
         key = str(v) if v else ""
-        glyph = AXIS_GLYPHS[ax].get(key, "·") if key else "·"
+        glyph = axis_glyph(ax, key)
         fg = axis_color(ax, key, "fg", dark)
         bg = axis_color(ax, key, "bg", dark)
         if not fg and not bg:
