@@ -124,6 +124,20 @@ STALE_LIGHT = "#eff1f5"
 # 0-commit white, pre-birth wash, the birth marker, and stale fade do not count.
 PSEUDO_KINDS = frozenset({"onramp", "offramp"})
 
+# Agent/pipe rendering (no ANSI): same look, glyph encoding. Lower-eighths
+# carry the heat ramp — U+258N is N/8 fill by design, so the magnitude is
+# computable from the codepoint and reads as a sparkline. Shade/texture
+# glyphs are deliberately a different alphabet for non-activity fills.
+GLYPH_RAMP = " ▁▂▃▄▅▆▇█"  # index = ceil(t*8), t in (0,1]
+GLYPH_WASH = "░"  # pre-birth
+GLYPH_STALE = "·"  # 4+ weeks idle, fading out
+
+
+def ramp_glyph(t: float) -> str:
+    if t <= 0:
+        return " "
+    return GLYPH_RAMP[max(1, min(8, math.ceil(t * 8)))]
+
 
 def invert_hex(h: str) -> str:
     h = h.lstrip("#")
@@ -1308,6 +1322,7 @@ def emit_table(
     nul: bool,
     home: Path,
     now: float,
+    use_color: bool = True,
 ) -> None:
     by_root: dict[Path, str] = {}
     for p in projects:
@@ -1340,9 +1355,11 @@ def emit_table(
             return
         nm, last, disp_s, git_s, path_s = row_cells(proj)
         level = highlight_level(proj.rec)
-        dark = macos_dark()
-        named = style_name(f"{nm:<{nw}}", level, dark=dark)
         rest = f"{last:<{lw}}  {disp_s:<{dw}}  {git_s:<{gw}}  {path_s}"
+        if not use_color:
+            print(f"{nm:<{nw}}  {rest}")
+            return
+        named = style_name(f"{nm:<{nw}}", level, dark=macos_dark())
         if level >= HIGHLIGHT_UNDERLINE_AT:
             print(f"\x1b[4m{named}  {rest}\x1b[0m")
         elif level != 1:
@@ -1606,6 +1623,9 @@ def dim_zero_fills(
 
     Kinds: onramp / offramp count as week-stats pseudo-work.
     wash / zero / birth / stale do not.
+
+    Third return: iso → heat-scale t for the ramped kinds
+    (onramp / offramp / birth), so a glyph rendering can share the scale.
     """
     invert = not dark
     wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
@@ -1614,12 +1634,15 @@ def dim_zero_fills(
     n = len(window)
     fills: dict[str, str] = {}
     kinds: dict[str, str] = {}
+    tvals: dict[str, float] = {}
     if n == 0:
-        return fills, kinds
+        return fills, kinds, tvals
 
-    def paint(iso: str, hx: str, kind: str) -> None:
+    def paint(iso: str, hx: str, kind: str, t: float | None = None) -> None:
         fills[iso] = hx
         kinds[iso] = kind
+        if t is not None:
+            tvals[iso] = t
 
     i = 0
     while i < n and counts[i] == 0:
@@ -1659,7 +1682,7 @@ def dim_zero_fills(
             if idle <= span:
                 progress = idle / span
                 t = t0 * (1.0 - progress)
-                paint(iso, inferno_hex(t, invert=invert), "offramp")
+                paint(iso, inferno_hex(t, invert=invert), "offramp", t)
             elif idle <= STALE_AFTER_DAYS:
                 paint(iso, zero, "zero")
             else:
@@ -1677,18 +1700,18 @@ def dim_zero_fills(
             iso = d.isoformat()
             if iso in fills:
                 t = 0.5 * (5 - ahead) / 4.0
-                paint(iso, inferno_hex(t, invert=invert), "onramp")
+                paint(iso, inferno_hex(t, invert=invert), "onramp", t)
 
     def paint_birth() -> None:
         if first_ts is None:
             return
         biso = local_day(first_ts).isoformat()
         if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-            paint(biso, mid, "birth")
+            paint(biso, mid, "birth", 0.5)
 
     if born_after_window:
         paint_tail(0)
-        return fills, kinds
+        return fills, kinds, tvals
 
     if all_zero:
         if born_in_window and first_ts is not None:
@@ -1706,14 +1729,14 @@ def dim_zero_fills(
         elif i > 0:
             head_ramp(i)
         paint_birth()
-        return fills, kinds
+        return fills, kinds, tvals
 
     if i > 0:
         head_ramp(i)
     if born_in_window and suffix >= DIM_ZERO_MIN:
         paint_tail(k + 1)
     paint_birth()
-    return fills, kinds
+    return fills, kinds, tvals
 
 
 def heatmap_counts(
@@ -1948,6 +1971,22 @@ def scale_bar(maxc: int, *, invert: bool = False) -> str:
     return f"{label:>{HEATMAP_NAME_W}}  {blocks}"
 
 
+def glyph_legend(maxc: int) -> str:
+    label = f"0 → {maxc}/day  (log)"
+    return (
+        f"{label:>{HEATMAP_NAME_W}}  "
+        f"{GLYPH_RAMP[1:]}   {GLYPH_WASH} pre-birth   {GLYPH_STALE} stale"
+    )
+
+
+def color_enabled(mode: str) -> bool:
+    if mode == "always":
+        return True
+    if mode == "never":
+        return False
+    return sys.stdout.isatty()
+
+
 def cmd_heatmap(args: argparse.Namespace) -> int:
     home = Path.home()
     projects, filters, parents = gather(args, home)
@@ -1985,7 +2024,8 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             maxc = max(maxc, max(days.values()))
 
     mode = sort_mode_from_args(args)
-    dark = macos_dark()
+    use_color = color_enabled(args.color)
+    dark = macos_dark() if use_color else False
     invert = not dark
     align = week_align_pad(heatmap_slots(panels[0]))
 
@@ -1999,12 +2039,34 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         proj: Project,
         slots: list[date | None],
         fills: dict[str, str],
+        kinds: dict[str, str],
+        tvals: dict[str, float],
         left_pad: int,
     ) -> None:
         key = proj_key(proj)
         days = counts.get(key, {})
         level = highlight_level(proj.rec)
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
+        if not use_color:
+            cells = [" "] * left_pad
+            for slot in slots:
+                if slot is None:
+                    cells.append(" ")
+                    continue
+                iso = slot.isoformat()
+                kind = kinds.get(iso)
+                if kind == "wash":
+                    cells.append(GLYPH_WASH)
+                elif kind == "stale":
+                    cells.append(GLYPH_STALE)
+                elif kind == "zero":
+                    cells.append(" ")
+                elif kind in ("onramp", "offramp", "birth"):
+                    cells.append(ramp_glyph(tvals.get(iso, 0.0)))
+                else:
+                    cells.append(ramp_glyph(scale_t(int(days.get(iso, 0)), maxc)))
+            print(name + "  " + "".join(cells))
+            return
         named = style_name(name, level, dark=dark)
         cells = [" "] * left_pad
         for slot in slots:
@@ -2043,6 +2105,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         slots = heatmap_slots(window)
         fills_by: dict[Path, dict[str, str]] = {}
         kinds_by: dict[Path, dict[str, str]] = {}
+        tvals_by: dict[Path, dict[str, float]] = {}
         for proj in shown:
             key = proj_key(proj)
             days = prune_days(counts.get(key, {}), window)
@@ -2050,11 +2113,12 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             last_c = parse_ts(proj.rec.get("last-action-time")) or parse_ts(
                 proj.rec.get("last-commit-time")
             )
-            fills, kinds = dim_zero_fills(
+            fills, kinds, tvals = dim_zero_fills(
                 window, days, first_ts, last_c, dark=dark, maxc=maxc
             )
             fills_by[key] = fills
             kinds_by[key] = kinds
+            tvals_by[key] = tvals
         print(month_header(window, HEATMAP_NAME_W, left_pad=left_pad))
         print(
             week_stats_line(
@@ -2085,12 +2149,20 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 print(f"# {disp(parent, home)}")
                 first = False
                 for proj in group:
-                    emit_row(proj, slots, fills_by.get(proj_key(proj), {}), left_pad)
+                    k = proj_key(proj)
+                    emit_row(
+                        proj, slots, fills_by.get(k, {}), kinds_by.get(k, {}),
+                        tvals_by.get(k, {}), left_pad,
+                    )
             if not first:
                 print()
         else:
             for proj in sort_projects(shown, mode):
-                emit_row(proj, slots, fills_by.get(proj_key(proj), {}), left_pad)
+                k = proj_key(proj)
+                emit_row(
+                    proj, slots, fills_by.get(k, {}), kinds_by.get(k, {}),
+                    tvals_by.get(k, {}), left_pad,
+                )
             print()
 
     rule_w = HEATMAP_NAME_W + 2 + len(heatmap_slots(panels[0]))
@@ -2098,7 +2170,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         if i > 0:
             print("─" * rule_w)
         render_panel(panel, 0 if i == 0 else align, omit_unborn=i > 0)
-    print(scale_bar(maxc, invert=invert))
+    print(scale_bar(maxc, invert=invert) if use_color else glyph_legend(maxc))
     return 0
 
 
@@ -2321,6 +2393,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="NUL-separate (implies -p)",
     )
     p.add_argument(
+        "--color",
+        choices=["auto", "always", "never"],
+        default="auto",
+        help="auto (default) colors only a TTY; a pipe gets the plain "
+        "glyph rendering (heatmap: ▁▂▃▄▅▆▇█ ramp, ░ pre-birth, · stale)",
+    )
+    p.add_argument(
+        "--version",
+        action="version",
+        version="projects 0.2.0",
+    )
+    p.add_argument(
         "--no-write",
         action="store_true",
         help="do not write .practica files",
@@ -2394,6 +2478,7 @@ def main(argv: list[str] | None = None) -> int:
         nul=args.nul,
         home=home,
         now=datetime.now(tz=timezone.utc).timestamp(),
+        use_color=color_enabled(args.color),
     )
     return 0
 
