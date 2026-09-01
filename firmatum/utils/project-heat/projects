@@ -222,9 +222,15 @@ def _inferno_rgb_at(i: int) -> tuple[int, int, int]:
     return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
 
 
-def inferno_hex(t: float) -> str:
-    """t in [0, 1] → inferno RGB hex. Continuous lerp on the 256 LUT."""
+def inferno_hex(t: float, *, reverse: bool = False) -> str:
+    """t in [0, 1] → inferno RGB hex. Continuous lerp on the 256 LUT.
+
+    `reverse` is matplotlib inferno_r: pale yellow at 0, black at 1. Use on
+    light terminals (inferno itself is built for a dark background).
+    """
     t = max(0.0, min(1.0, t))
+    if reverse:
+        t = 1.0 - t
     last = _INFERNO_N - 1
     x = t * last
     lo = int(x)
@@ -1719,18 +1725,19 @@ def heatmap_counts(
     return prune_days(display, window)
 
 
-def heat_hex(count: int, maxc: int) -> str:
+def heat_hex(count: int, maxc: int, *, reverse: bool = False) -> str:
     """log1p scale so 1–10–30 stay distinct when the max is a busy monorepo day.
 
     Returns a continuous inferno color (not a bin). A positive count is
     floored one LUT step above empty so 1-commit days don't collapse to 0.
+    `reverse` for light terminals (inferno_r).
     """
     if count <= 0 or maxc <= 0:
-        return inferno_hex(0.0)
+        return inferno_hex(0.0, reverse=reverse)
     t = math.log1p(count) / math.log1p(maxc)
     t = max(0.0, min(1.0, t))
     t = max(t, 1.0 / (_INFERNO_N - 1))
-    return inferno_hex(t)
+    return inferno_hex(t, reverse=reverse)
 
 
 def week_gap(a: date, b: date) -> bool:
@@ -1769,10 +1776,11 @@ def month_header(window: list[date], name_w: int) -> str:
     return " " * name_w + "  " + "".join(cols)
 
 
-def scale_bar(maxc: int) -> str:
+def scale_bar(maxc: int, *, reverse: bool = False) -> str:
     last = SCALE_BAR_N - 1
     blocks = "".join(
-        ansi_block(inferno_hex(i / last if last else 0.0)) for i in range(SCALE_BAR_N)
+        ansi_block(inferno_hex(i / last if last else 0.0, reverse=reverse))
+        for i in range(SCALE_BAR_N)
     ) + "\x1b[0m"
     label = f"0 → {maxc}/day  (log)"
     return f"{label:>{HEATMAP_NAME_W}}  {blocks}"
@@ -1840,7 +1848,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 cells.append(ansi_block(fills[iso]))
                 continue
             c = int(days.get(iso, 0))
-            cells.append(ansi_block(heat_hex(c, maxc)))
+            cells.append(ansi_block(heat_hex(c, maxc, reverse=not dark)))
         print(name + "  " + "".join(cells) + "\x1b[0m")
 
     print(month_header(window, HEATMAP_NAME_W))
@@ -1866,7 +1874,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         for proj in sort_projects(active, mode):
             emit_row(proj)
         print()
-    print(scale_bar(maxc))
+    print(scale_bar(maxc, reverse=not dark))
     return 0
 
 
