@@ -81,7 +81,7 @@ Rollback at any phase = revert the commit; `.practica` files never lose informat
 Lineage/relations do **not** go through `set` or a CLI edge verb, and do not live per-project in `.practica`. Joseph's vote: a hand-typeable file beside the census, `census-edges.txt`, same comment/blank conventions, maybe globs. Line shape (his sketch, generalized edges, not just lineage):
 
 ```
-# FROM RELATION TO [INVERSE-RELATION]     (reads as a sentence — Joseph, 2026-09-01)
+# FROM RELATION TO [INVERSE-RELATION]     (reads as a sentence; tokens may be [bracket-delimited] to carry spaces, as in the DAG grammars — Joseph, 2026-09-01)
 #   FROM/TO: comma-separated names (globs allowed, expanding against census names)
 #   RELATION/INVERSE: comma-lists pairing positionally with FROM when FROM is a list
 #   INVERSE omitted → derived from the known-inverses table; '-' → explicitly none

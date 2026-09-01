@@ -8,6 +8,10 @@
 #                                 pair positionally with FROM when FROM is a
 #                                 list; INV omitted => derived from the
 #                                 inverse table; '-' => none.
+#   [ ] delimiting                any token (name or relation) may be
+#                                 bracket-delimited to carry spaces etc.,
+#                                 as in the DAG grammars:
+#                                 [my old thing] influences [udon stores]
 #
 # Either side may declare (influenced-by on the successor is as valid as
 # influences on the predecessor); readers collapse both-side declarations
