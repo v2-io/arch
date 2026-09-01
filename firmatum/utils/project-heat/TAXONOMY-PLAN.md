@@ -74,7 +74,7 @@ Rollback at any phase = revert the commit; `.practica` files never lose informat
 
 ## 6. Not doing (named so they're decisions)
 
-- **No network** for `git-vis` (no `gh` calls; `public` is a frozen human claim).
+- ~~**No network** for `git-vis` (no `gh` calls; `public` is a frozen human claim).~~ **Superseded (Joseph, 2026-09-01):** "public-use should be pretty easy to detect with most gh public repos" — `gh`-based visibility detection is welcome as a derived default (cached in `.practica`, refreshed on `--refresh`, absent-not-faked when `gh` is unavailable/fails; never blocking a normal run on the network).
 - **No auto-demotion of `activity`** from last-action (see §1 — the axis records aspiration; staleness is already visible in LAST and the heatmap).
 - **No new sort/group semantics** in this transition — `-c`/`-a`/`-g` untouched.
 
