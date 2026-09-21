@@ -1,0 +1,341 @@
+; rc1-in-udon.ud — RC1's object model written as udon logical chunks
+;
+; Register: spike / ground-validation, sibling of vsl.py (2026-09-01, Fable).
+; Syntax: udon 0.10.01-draft (../../../../../udon/v2/spec-0.10.01/CORE.md),
+; itself a PROPOSAL — every ⟨P⟩ spelling it leans on is flagged where used.
+; Nothing here is ratified. What this file asks: when RC1's objects have to
+; be typed by a founding agent, what does each one become, where does it
+; live, and what does the syntax refuse to say?
+;
+; Two files of one verisectorium are shown. Part A is the DECLARATION layer
+; (09-LANGUAGE's forms: dimension / kind / edge-kind / projection / rule).
+; Part B is one RECORD CLUSTER under those declarations — a udon-spec rule,
+; continuing the 2026-08-30 founding walkthrough — body + trail + a view row.
+; Part C lists the lints the layout makes mechanical, and the strains found
+; while writing (the file's real yield).
+;
+; The one structural finding, stated up front because everything below
+; exercises it: in udon a RECORD's status is never material. RC1 says a
+; projection is a @{generator} (11 §2); udon says a generator is the `!`
+; species, held by recognition and evaluated by a consumer as-of a moment
+; (CORE G5, §9.2). So a status cell is spelled `!projection @record[x]` —
+; hand-set status has no syntax because `:status verified` is *material*
+; in a slot only a generator may fill. 09's third refusal, for free.
+
+;;; ===================================================================
+;;; PART A — declarations. Home: the instance's SOP store (rules are norms
+;;; with machine teeth — 09 working notes). One element per declaration;
+;;; the slug in [key] is the maintained @{binding} (def-binding).
+;;; ===================================================================
+
+;; --- dimensions -------------------------------------------------------
+;; Namespace lives in the NAME (03: organization, not an object). `/` is
+;; name-continue in udon (CORE §5.2), so `evidence/derivation` is one key.
+
+|dimension[evidence/derivation]
+  :question "is it true, by derivation from named premises?"
+  :family derivation
+  :rungs [unopened sketch drafted deps-verified re-derived]
+  :strong-at deps-verified                 ; below this, no line counts toward agreement (04)
+  :ceiling exact-under-named-premises
+  |channel[formal-expression-written]  :to drafted
+  |channel[premises-named-and-checked] :to deps-verified
+  |channel[independent-re-derivation]  :to re-derived :commitment-required pre
+  |refutes[counterexample-found] :lands no-go        ; signed: a refutation is a result
+
+|dimension[evidence/in-vivo]
+  :question "does it hold in the authored world?"
+  :family in-vivo-measurement
+  :rungs [unopened pre-registered run-once swept independently-reproduced]
+  :strong-at run-once
+  :ceiling exact-for-authored-world
+  :era-keyed? true                         ; every measured event carries an era key
+  |channel[pre-register] :to pre-registered
+  |channel[first-run]    :to run-once
+  |channel[sweep]        :to swept
+  |channel[independent-re-run] :to independently-reproduced
+  |refutes[prediction-miss] :lands recorded-miss
+
+|dimension[decision/grounding]
+  :question "on what grounds, recorded before the call?"
+  :family decision-events
+  :rungs [assumed-implicit assumptions-explicit falsifiers-declared]
+  :strong-at falsifiers-declared
+  :ceiling decided
+  |channel[name-assumptions]  :to assumptions-explicit
+  |channel[declare-falsifiers] :to falsifiers-declared
+
+|dimension[decision/consultation]
+  :question "who knew, who could object?"
+  :family decision-events
+  :rungs [unannounced announced-to-affected feedback-collected]
+  :strong-at feedback-collected
+  :ceiling decided
+  |channel[announce]         :to announced-to-affected
+  |channel[collect-feedback] :to feedback-collected
+
+|dimension[decision/accountability]
+  :question "who stands behind this, and how?"
+  :family decision-events
+  :rungs [proposed supported ratified ruled]
+  :terminals [rejected superseded]           ; not rungs: exits
+  :honesty-states [defacto transition]       ; udon-references DECISIONS vocabulary
+  :strong-at ratified
+  :ceiling ruled
+  |channel[no-objection]           :to supported
+  |channel[real-read-stands-behind] :to ratified
+  |channel[reserved-fiat]          :to ruled    ; deliberately no grounding guard (04)
+
+|dimension[efficacy]
+  :question "does it fire when its moment comes?"
+  :family firings
+  :rungs [unfired fired-for-author fired-for-inheritor]
+  :strong-at fired-for-inheritor
+  :ceiling empirical
+  |channel[fired]   :to fired-for-author :actor-class author
+  |channel[fired]   :to fired-for-inheritor :actor-class inheritor   ; same channel, different actor → different rung
+  |refutes[failed-to-fire] :lands recorded-miss
+
+|dimension[comprehension]
+  :question "does it land in a reader's mind?"
+  :family reader-events
+  :rungs [unread walked landed]
+  :strong-at landed
+  :ceiling empirical
+  |channel[first-encounter-walk] :to walked
+  |channel[quiz-pass]            :to landed
+  |refutes[reader-miss] :lands recorded-miss
+  |refutes[misconception-installed] :lands recorded-miss
+
+;; --- kinds ------------------------------------------------------------
+;; A kind is a dimension-composition profile (03). `opens` maps a declared
+;; foundation rung to the dimension it opens; a rung not declared on the
+;; record never opens (04 MINT). `@dimension[…]` is a designator reference
+;; on the binding (def-match): it fails by @{dangle}, never by the world's motion.
+
+|kind[claim]
+  :speech-act asserts
+  :write replacement
+  :fails-by [false overclaimed under-recorded mis-scoped]
+  |opens[derivable]        @dimension[evidence/derivation]
+  |opens[in-vivo-testable] @dimension[evidence/in-vivo]
+
+|kind[decision]
+  :speech-act decides
+  :write append-or-expressly-overturn
+  :fails-by [silent-overturn drift-from grounds-reconstructed-post-hoc]
+  |opens[grounded]  @dimension[decision/grounding]
+  |opens[consulted] @dimension[decision/consultation]
+  |opens[backed]    @dimension[decision/accountability]
+
+;; A composite kind, straight from the 2026-08-30 strain (10 working notes):
+;; a spec RULE decides + prescribes + must fire + must land. It is ONE record
+;; because these fail together — a rule's rationale is its own decision/grounding,
+;; not a second record. Its examples and its teaching prose fail APART (per
+;; parser-era; per reader) and are therefore separate records, joined by edges.
+
+|kind[rule]
+  :speech-act [decides prescribes]          ; Q1's honest output is a list
+  :write replacement
+  :fails-by [silently-overturned unfired-at-its-moment mis-taught grounds-lost]
+  |opens[grounded]   @dimension[decision/grounding]
+  |opens[consulted]  @dimension[decision/consultation]
+  |opens[backed]     @dimension[decision/accountability]
+  |opens[prescribed] @dimension[efficacy]
+  |opens[taught]     @dimension[comprehension]
+
+|kind[example]
+  :speech-act [asserts refers]               ; asserts "this input yields this"; refers to the rule it exercises
+  :write replacement
+  :fails-by [rots-per-parser-era contradicts-its-rule]
+  |opens[in-vivo-testable] @dimension[evidence/in-vivo]   ; the parser IS the authored world; era = parser version
+
+;; --- edge kinds (06) --------------------------------------------------
+;; An edge is a @{reference} with declared intended-cardinality (11 §3).
+;; Composability is declared per kind — the compound-error lesson.
+
+|edge-kind[supports]  :meaning "B is premise or ground for A"  :strength-composes never :reachability-composes notification-only
+|edge-kind[rebuts]    :meaning "R attacks A's conclusion"       :strength-composes never :cascade hard
+|edge-kind[undercuts] :meaning "R weakens A's support via B"    :strength-composes never :cascade soft
+|edge-kind[seeded-by] :meaning "A's framing descends from S"    :strength-composes transitively   ; the one edge where propagation is the point
+|edge-kind[narrates]  :meaning "teaching material speaks about A" :strength-composes never :resets @dimension[comprehension]
+|edge-kind[exercises] :meaning "an example exercises a rule"    :strength-composes never   ; admitted by a consumer this file needed: example→rule re-pricing
+
+;; --- projections (02 PROJECTION; 11 §2) --------------------------------
+;; Declared here; USED as `!name` generators wherever a status is shown.
+;; The declaration says what the trail-computation is and what its value
+;; licenses. The generator carries no value in the file — a consumer
+;; evaluates it as-of a moment (CORE §9.4), which is what makes decay
+;; a consequence rather than a rule.
+
+|projection[strongest-line]
+  :over opened-dimensions :computes "max rung over non-expired channel events"
+  :licenses "cite at that rung, scoped by any refutation notes"
+|projection[every-line-sustains]
+  :over opened-dimensions :computes "min rung over dimensions with any event"
+  :licenses "the floor an adversarial reader may hold the record to"
+|projection[shown-independent-agreement]
+  :over opened-dimensions :computes "≥2 distinct base families at or above strong-at, carriage looked through"
+  :licenses "cite as corroborated; otherwise the coherence default applies"
+|projection[flags]
+  :over trail :computes "resettable process flags: drafted / checked / deps-check / … cleared by later edit events"
+  :licenses nothing                        ; bookkeeping, never strength (form-state-flags-not-gates)
+
+;; --- rules (09's extension form) ---------------------------------------
+;; udon has no expression grammar, so a guard is DATA the guard-tool reads:
+;; each |when is one (dimension ≥ rung) conjunct. That is a strain (Part C).
+
+|rule[ratified-requires-grounds-and-consult]
+  :allow @dimension[decision/accountability] :rung ratified
+  |when @dimension[decision/grounding]    :at-least falsifiers-declared
+  |when @dimension[decision/consultation] :at-least announced-to-affected
+
+;; Substitution is unrepresentable by construction: `:allow` names a rung
+;; that must exist in the target dimension's own :rungs. A rule whose :rung
+;; is another dimension's word is a dangle-class lint, not a semantic.
+
+;;; ===================================================================
+;;; PART B — one record cluster under those declarations.
+;;; The record: udon CORE §2.2, the Nesting Rule, as a `rule` in a
+;;; verisectorium whose atoms are the spec's own logical chunks.
+;;;
+;;; Layout (form-write-isolation: concurrency by layout): the cluster is a
+;;; directory, because its parts have different write semantics —
+;;;   src/rule-nesting/body.ud    replacement   (the collision surface)
+;;;   src/rule-nesting/trail.ud   append-only   (one element per event, O_APPEND)
+;;;   src/rule-nesting/notes.ud   free          (forward work only)
+;;; `rule-nesting` is the binding; the directory is its @{location}; inner
+;;; keyed elements (|clause[…]) are inner locations that can carry grain.
+;;; ===================================================================
+
+;; ---- src/rule-nesting/body.ud ------------------------------------------
+|record[rule-nesting] :kind @kind[rule]
+  :foundation [grounded consulted backed prescribed taught]   ; derives which lines open
+  :supports @record[def-structure-position]                   ; {1,1} default (CORE §9.1 ⟨P⟩)
+  :supports @record[post-indentation-is-hierarchy]
+  :seeded-by @record[spec-0.10.00-nesting]*                    ; descent recorded → coherence default computable
+  |title The Nesting Rule
+  |summary Open geometric items form a stack keyed by base column; a new structural line pops while c <= top.base, then pushes under the result.
+  |clause[pop-push]
+    pop while c <= stack_top.base_column
+    then push the new item under the resulting top
+  |clause[sameline]
+    Items introduced later on one line occupy their true columns; a closed item's former column has no residual meaning.
+  |clause[text-interior]
+    Once an element has an established content base, a deeper line is inside the text, literal even if it begins with a marker.
+  |ceiling @dimension[decision/accountability] ruled        ; the spec author may rule this; a deployment adopting it may only ratify adoption (03 ownership → ceiling)
+
+;; No `:status` anywhere in the body. Where a reader wants one, it is shown
+;; by a view (below), never stored here.
+
+;; ---- src/rule-nesting/trail.ud -----------------------------------------
+;; Event tuple (02): channel · actor(+authority) · criterion · commitment · date · outcome · era.
+;; Each event is a complete top-level element (vivarium's one-O_APPEND-write law).
+;; `:on` is implied by the file's location; carried explicitly so a store-level
+;; WAL could hold the same lines unchanged (the EPISODE question, 90 §6).
+
+|event[n1] :on @record[rule-nesting] :dim @dimension[decision/grounding] :channel name-assumptions
+  :actor coord :date <2026-08-30> :outcome pass
+  :assumptions [bounded-lookahead spaces-only-indentation]
+|event[n2] :on @record[rule-nesting] :dim @dimension[decision/grounding] :channel declare-falsifiers
+  :actor coord :date <2026-08-30> :outcome pass
+  :triggers [tab-indentation-admitted unbounded-lookahead-admitted]
+|event[n3] :on @record[rule-nesting] :dim @dimension[decision/consultation] :channel announce
+  :actor coord :date <2026-08-30> :outcome pass :to [parser-owners tooling-owners]
+|event[n4] :on @record[rule-nesting] :dim @dimension[decision/accountability] :channel no-objection
+  :actor steward :date <2026-08-31> :outcome pass
+|event[n5] :on @record[rule-nesting] :dim @dimension[decision/accountability] :channel declined-lift
+  :actor steward :date <2026-08-31> :toward ratified
+  :reason "have not done the real read of the sameline clause yet"
+  ; the decline-event (03/08): absence keeps meaning UNRUN, never "saw a problem"
+|event[n6] :on @record[rule-nesting] :dim @dimension[efficacy] :channel fired
+  :actor udon-core-parser :actor-class inheritor :date <2026-08-31> :outcome pass
+  :criterion "fixtures/nesting/* pass byte-exact" :commitment pre :era "parser@0.10.01"
+  ; NOTE the quotes: bare `parser@0.10.01` would fire the `@` guard mid-value (CORE §3). Strain S1.
+|event[n7] :on @record[rule-nesting] :dim @dimension[comprehension] :channel reader-miss
+  :actor stranger-read-2 :date <2026-08-31>
+  :note "read 'same ⇒ sibling' as 'same ⇒ child of previous'"
+  :mints @question[nesting-sibling-wording]?      ; {0,1}: the question may not exist yet — valid to write before it does (def-reference)
+|event[n8] :on @record[rule-nesting] :dim @dimension[decision/grounding] :channel edit
+  :actor coord :date <2026-09-01> :touched [clause/sameline]
+  ; an edit event: resets the process flags whose verification it invalidates (!flags reads this);
+  ; STRENGTH is untouched — n1..n5 still compute the same rungs (flags-not-gates).
+
+;; ---- one example record, joined by an edge, failing apart on its own era ----
+|record[ex-nesting-sameline-abc] :kind @kind[example]
+  :foundation [in-vivo-testable]
+  :exercises @record[rule-nesting]
+  |input
+    ```
+    |a |b |c
+    ```
+  |yields a > b > c
+;; its trail carries `:era "parser@0.10.01"` on every first-run; an era-bump
+;; expires those events visibly while rule-nesting's decision/* lines stand —
+;; the fail-apart test (10, missing sentence 1) is what made it a second record.
+
+;; ---- a view row (the outline) -----------------------------------------
+;; The outline is authored (claim-outline-as-view); its cells are GENERATORS.
+;; This is the pragmatic center of the whole file: a State cell that a hand
+;; could type as a word is instead an expression a tool evaluates as-of now.
+
+|row @record[rule-nesting]
+  :expected-type rule
+  :strength !strongest-line @record[rule-nesting]
+  :floor    !every-line-sustains @record[rule-nesting]
+  :state    !flags @record[rule-nesting]
+  :as-of    !now                           ; the moment travels with every evaluation (def-generator)
+  |description The rule that makes closing tags unnecessary.    ; the view's own perspective — authored, not projected
+
+;;; ===================================================================
+;;; PART C — what the layout makes mechanical, and what strained.
+;;; ===================================================================
+
+;; Lints a udon-aware tool gets from this layout with no semantics of its own:
+;;  L1  material in a status slot        — any `:status`/`:strength`/`:state` whose value is not a `!` generator
+;;  L2  fusion                            — a |dimension whose :rungs are cross-products of two other dimensions' :rungs (vsl's test, unchanged)
+;;  L3  substitution                      — a |rule :rung not in its :allow dimension's :rungs
+;;  L4  unopened line                     — an |event whose :dim is not opened by the record's :foundation through its kind
+;;  L5  dangle                            — any @kind/@dimension/@record designator with no binding (asf lint-outline generalized)
+;;  L6  collide                           — two mints of one [key] in one scope (CORE §1's duplicate-(name,key) menu, default error)
+;;  L7  missing decline                   — securing events on a dimension with a later edit and no lift and no declined-lift (a heuristic, not a proof: the under-recording smell)
+;;  L8  era-keyed without era             — an event on an :era-keyed? dimension carrying no :era
+;;  L9  miss with meaning                 — a `:supports @x` {1,1} resolving to zero is the writer's model wrong; `:mints @q?` to zero is fine (11 §3)
+
+;; Strains — the honest yield. Each is a place the syntax made a choice RC1 hasn't.
+;;  S1  `@` inside values. `sim@k1` / `parser@0.10.01` fire the reference guard. Era keys want
+;;      either quoting (done above), a capture `<era: parser 0.10.01>`, or a registry element
+;;      `|era[parser] 0.10.01` with events carrying `:era-key parser :era-at 0.10.01`. The
+;;      registry form is the one 02's ERA object actually describes; the ad-hoc string is the hack.
+;;  S2  Guards are data, not expressions. `|when @dim :at-least rung` is one conjunct; disjunction,
+;;      negation, and era-currency (`era-current sim`) have no spelling. Either the language stays
+;;      conjunctive (probably right: 04's guards are all conjunctions) or the rule body is a capture
+;;      `<guard: …>` construed by a vocabulary — which is CORE's own answer to "everything else".
+;;  S3  Trail placement. Per-record trail.ud is clean for a single record and wrong for an episode
+;;      (95 addendum): a cascade touching four records writes four files or loses its unity. The
+;;      `:on` field is carried explicitly so the same event lines can live in a store-level WAL with
+;;      per-record trails as `!trail-of @record[x]` projections — the EPISODE factorization, with
+;;      nothing else changed. SPECIMEN #3 decides; this file only keeps the door open.
+;;  S4  Description-edges. Every edge above is a designator (`@record[key]`). "every record citing X"
+;;      needs a match head, which is CARVEOUTS §PATH — not yet spelled. Until then description-shaped
+;;      edges are captures a consumer runs, and they must carry a check-against (def-match) or drift silently.
+;;  S5  The outline is markdown today. The `|row` form is what an outline WOULD be in udon; the theory
+;;      instance's OUTLINE.md cells are hand-typed words — i.e. the theory's own outline is L1-noncompliant
+;;      by construction, which is honest to say and cheap to change only once a `!` evaluator exists.
+;;  S6  Kind `rule` opens efficacy through a foundation rung named `prescribed`. Nothing in RC1 says what
+;;      the foundation-rung vocabulary IS beyond the evidence family (derivable / in-vivo-testable / …);
+;;      `grounded consulted backed prescribed taught` is this file's invention. The rung vocabulary is
+;;      per-dimension and should probably be declared ON the dimension (`:opened-by prescribed`), not on
+;;      the kind — that would remove one free variable from every founding.
+;;  S7  Two `|channel[fired]` with different :actor-class in efficacy is a same-key collision under L6.
+;;      Either the channel key includes the actor class (`fired-for-author`) or rung is a function of
+;;      (channel, actor-class) and the dimension declares that. RC1 03 says the two are "different events";
+;;      it doesn't say whether they're different channels. Open.
+;;  S8  `:ceiling @dimension[x] ruled` on the record is a per-record override of the kind's ceiling
+;;      (ownership → ceiling, 03). RC1 puts ceilings on ladders (02 LADDER) and derives per-record from
+;;      ownership; a record-level override field is the cheapest realization but is not in 02. Open.
+
+;; What survived contact unchanged: kind-as-dimension-profile; namespace-in-the-name; events as
+;; the only movers; refutation as a signed channel; decline-events; the fail-apart record boundary;
+;; edges as cardinality-carrying references; and — the one this file exists to show — status as a
+;; generator. Everything in 09's "three properties" is expressible except the guard expressions (S2).

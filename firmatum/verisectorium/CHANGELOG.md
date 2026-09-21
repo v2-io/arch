@@ -2,6 +2,10 @@
 
 *What happened and why. Present truth lives in theory/ (segments + OUTLINE); process rules in theory/sop/ORIENT.md; state in PRACTICA.ud. The misfire-era CHANGELOG.un is archived beside the rest of that attempt's record.*
 
+## 2026-09-01 (Fable) — RC1 written as udon chunks
+
+- Steward asked what RC1 means pragmatically as a set of udon logical chunks. `theory/influx/segments-model-rc1/lang/rc1-in-udon.ud` (spike register) writes the declaration layer and one record cluster in udon 0.10.01-draft syntax. The record is udon CORE §2.2's Nesting Rule as a composite `rule` kind (decides + prescribes + must fire + must land), with its example as a separate record joined by an `exercises` edge — the fail-apart boundary test from 10's 2026-08-30 strain, exercised. Finding: RC1's "projection is a generator" (11 §2) and udon's `!` species coincide, so a status cell is `!projection @record[x]` and hand-set status is a lint (material in a generator slot), not a discipline. Eight syntax-forced strains recorded in the file (era keys vs the `@` guard; guards as data not expressions; trail placement vs the EPISODE question; description-edges waiting on PATH; the theory's own markdown outline being L1-noncompliant; foundation-rung vocabulary invented on the kind; efficacy's same-channel/different-actor-class collision; per-record ceiling override not in 02). Not committed; not executed by any tool.
+
 ## 2026-08-30 (teaching session, Fable) — Q1 strain surfaced and banked
 
 - Steward, working a hypothetical founding (`veris atom-types new` walkthrough for a udon 0.10.02 spec), hit the strain both stranger reads had gestured at: Q1 reads as pick-one-verb, and nothing in the set says where the topical spine lives. Two proposed repair sentences banked in `10-FOUNDING-QUESTIONS.md` Working Notes (record-boundary question precedes speech-act; outline carries topic, kinds only adjudicate), register proposed, body-landing held for ratification.
