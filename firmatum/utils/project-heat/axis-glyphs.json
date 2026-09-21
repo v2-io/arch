@@ -1,24 +1,24 @@
 {
   "proj-rel": {
-    "glyph-undeclared": "·",
-    "fg-undeclared": "",
-    "fg-dark-undeclared": "",
-    "bg-undeclared": "",
-    "glyph-root": "⯍",
-    "glyph-mid": "⯏",
-    "glyph-leaf": "⯎",
-    "glyph-isolated": "⯌"
-  },
-  "git-rel": {
     "glyph-undeclared": "⦗·",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-gitroot": "⦗⯍",
-    "glyph-subgit": "⦗⯏",
-    "glyph-submodule": "⦗🟄",
-    "glyph-no-git": "⦗─",
-    "glyph-group": "⦗▦"
+    "glyph-root": "⦗⯍",
+    "glyph-mid": "⦗⯏",
+    "glyph-leaf": "⦗⯎",
+    "glyph-isolated": "⦗⯌"
+  },
+  "git-rel": {
+    "glyph-undeclared": "·",
+    "fg-undeclared": "",
+    "fg-dark-undeclared": "",
+    "bg-undeclared": "",
+    "glyph-gitroot": "⯍",
+    "glyph-subgit": "⯏",
+    "glyph-submodule": "+",
+    "glyph-no-git": "─",
+    "glyph-group": "▦"
   },
   "git-vis": {
     "glyph-undeclared": "·",
@@ -32,28 +32,28 @@
     "glyph-group": "▦"
   },
   "lifecycle": {
-    "glyph-undeclared": "·",
+    "glyph-undeclared": "┊·",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-nascent": "∘",
-    "glyph-experiment": "◦",
-    "glyph-pre-poc": "○",
-    "glyph-pre-mvp": "◔",
-    "glyph-pre-release": "◐",
-    "glyph-ongoing": "●",
-    "glyph-maintenance": "◎",
-    "glyph-reference": "※"
+    "glyph-nascent": "┊∘",
+    "glyph-experiment": "┊◦",
+    "glyph-pre-poc": "┊○",
+    "glyph-pre-mvp": "┊◔",
+    "glyph-pre-release": "┊◐",
+    "glyph-ongoing": "┊●",
+    "glyph-maintenance": "┊◎",
+    "glyph-reference": "┊※"
   },
   "activity": {
-    "glyph-undeclared": "┊·┊",
+    "glyph-undeclared": "·┊",
     "fg-undeclared": "",
     "fg-dark-undeclared": "",
     "bg-undeclared": "",
-    "glyph-active": "┊⏵┊",
-    "glyph-paused": "┊⏸┊",
-    "glyph-watch": "┊⏿┊",
-    "glyph-archived": "┊⏹┊"
+    "glyph-active": "⏵┊",
+    "glyph-paused": "⏸┊",
+    "glyph-watch": "⏿┊",
+    "glyph-archived": "⏹┊"
   },
   "local-use": {
     "glyph-undeclared": "›",

@@ -58,12 +58,15 @@ internal-git-orgs: v2-io, josephwecker
 #   `~` / `$HOME` are expanded
 #   `foo/**` does not match `foo` itself — list both if needed
 
+
+
+#### -- EXCLUDE THESE -- ####
 *.bak
 *.bak.*
 *.snapshot-backup
 _obs
 MOVED
-src/_ref/**
+# src/_ref/**
 src/arch/firmatum/utils
 src/_older
 src/ops/linkedin-archive-2026-04-18
@@ -72,7 +75,15 @@ src/_core
 ~/vaults/**
 src/_gems
 src/_exp
+src/_ref/_arch/obsidian*
+src/_ref/_arch/bak*
+src/_ref/_arch/venv
+src-ext/subagent-example-script
 src/_ref
+src/_ref/_arch
+src/_ref/_arch/other-agents
+src/_ref/_arch/second-other-client
+src/_ref/_arch/third-other-client
 
 #---------- Additional narrowings (via whitelist) on directories post cdpath --------------
 # Whitelist a cdpath parent (only these child names survive from that group)
@@ -83,7 +94,7 @@ src/_ref
 
 only src/arch: asf logos vivarium explication
 only src/arch/asf: 01-aat-core 02-tst-core 03-llm-core 04-eli-core
-
+only src/_ref: _arch
 
 #----------- Axis defaults for census *survivors* (drop/only run first) -------------
 # First matching glob wins, per axis. Per-project `.practica` can freeze an
@@ -92,8 +103,18 @@ only src/arch/asf: 01-aat-core 02-tst-core 03-llm-core 04-eli-core
 # (legacy `disposition <value>: glob…` lines still parse, translated.)
 
 default activity=watch:       src-ext src-ext/**
-default lifecycle=reference:  src-ext src-ext/**
 default activity=paused:      src/_exp src/_exp/**
-default lifecycle=experiment: src/_exp src/_exp/**
+default activity=paused:      src/_gem src/_exp/**
 default activity=active:      **
-default lifecycle=ongoing:    **
+
+default lifecycle=nascent:    src/arch/msc/**
+default lifecycle=reference:  src-ext src-ext/**
+default lifecycle=experiment: src/_exp src/_exp/**
+default lifecycle=pre-release:    **
+
+default local-use=primary: src/arch/firmatum/utils/**
+default local-use=transition: src/arch/**
+default local-use=pending: src/
+
+default public-use=planned: src/arch
+default public-use=planned: src/arch/**

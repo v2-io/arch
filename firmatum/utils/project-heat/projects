@@ -2845,6 +2845,144 @@ def cmd_feedback(argv: list[str]) -> int:
     return 0
 
 
+# Relation -> (edge color, style, arrowhead) for `projects dag`.
+# component-of is part/whole, not lineage — drawn dotted/undirected to read
+# differently from the directed predecessor-of/depends-on-critically/influences
+# lineage edges.
+DOT_EDGE_STYLE: dict[str, tuple[str, str, str]] = {
+    "predecessor-of": ("#2b6cb0", "solid", "normal"),
+    "depends-on-critically": ("#c0392b", "solid", "normal"),
+    "influences": ("#7f8c8d", "dashed", "vee"),
+    "informed": ("#7f8c8d", "dashed", "vee"),
+    "component-of": ("#8e44ad", "dotted", "none"),
+}
+
+# lifecycle -> node fill color (pastel; TAXONOMY-PLAN.md's four values).
+DOT_LIFECYCLE_COLOR: dict[str, str] = {
+    "pre-release": "#cfe8ff",
+    "reference": "#e6e6e6",
+    "experiment": "#ffe9b3",
+    "nascent": "#d9f2d9",
+}
+
+
+def dot_id(name: str) -> str:
+    return '"%s"' % name.replace('"', '\\"')
+
+
+def cmd_dag(argv: list[str], list_ns: argparse.Namespace) -> int:
+    """`projects dag [--out BASENAME] [--no-svg]` — render census-edges.txt
+    (via the same load_edges() the rest of the tool uses, so this can't
+    drift from the parsing everyone else reads) to Graphviz .dot, plus .svg
+    if `dot` is on PATH. Read-only w.r.t. census-edges.txt — never writes
+    there."""
+    out_base = "census-edges"
+    want_svg = True
+    rest = list(argv)
+    while rest:
+        a = rest.pop(0)
+        if a in {"-h", "--help"}:
+            print("usage: projects dag [--out BASENAME] [--no-svg]")
+            print(f"writes BASENAME.dot (default: {out_base}) beside "
+                  f"{DEFAULT_EDGES.name}, from the same census-edges parse "
+                  "edges-out/edges-in use; renders BASENAME.svg via `dot` "
+                  "unless --no-svg or graphviz isn't on PATH")
+            return 0
+        elif a == "--out":
+            if not rest:
+                die("dag: --out needs a value", 2)
+            out_base = rest.pop(0)
+        elif a == "--no-svg":
+            want_svg = False
+        else:
+            die(f"dag: unrecognized argument {a!r}", 2)
+
+    home = Path.home()
+    projects, filters, _parents = gather(list_ns, home)
+    populate(projects, filters, home, write=False, refresh=False)
+    names = [display_name(p) for p in projects]
+    edges_out, _edges_in = load_edges(DEFAULT_EDGES, names)
+    lifecycle = {display_name(p): p.rec.get("lifecycle") for p in projects}
+
+    seen: set[tuple[str, str, str]] = set()
+    edge_rows: list[tuple[str, str, str]] = []
+    for src in names:
+        for e in edges_out.get(src, []):
+            rel = e.get("rel")
+            if rel not in DOT_EDGE_STYLE:
+                continue
+            key = (src, e.get("to"), rel)
+            if key not in seen:
+                seen.add(key)
+                edge_rows.append(key)
+
+    if not edge_rows:
+        die(
+            f"dag: no edges parsed from {DEFAULT_EDGES.name} — nothing to "
+            "draw (check the file exists and its project names resolve)",
+            1,
+        )
+
+    nodes = sorted({n for src, dst, _ in edge_rows for n in (src, dst)})
+
+    lines = [
+        "digraph census {",
+        "  rankdir=LR;",
+        '  graph [fontname="Helvetica", nodesep=0.35, ranksep=0.9];',
+        '  node [fontname="Helvetica", fontsize=11, shape=box, '
+        'style="rounded,filled", margin="0.12,0.06"];',
+        '  edge [fontname="Helvetica", fontsize=9];',
+        "",
+    ]
+    for name in nodes:
+        color = DOT_LIFECYCLE_COLOR.get(lifecycle.get(name), "#ffffff")
+        lines.append(f"  {dot_id(name)} [fillcolor=\"{color}\"];")
+    lines.append("")
+    for src, dst, rel in edge_rows:
+        color, style, arrow = DOT_EDGE_STYLE[rel]
+        dir_attr = "dir=none" if arrow == "none" else f"dir=forward, arrowhead={arrow}"
+        lines.append(
+            f"  {dot_id(src)} -> {dot_id(dst)} "
+            f'[label="{rel}", color="{color}", style="{style}", {dir_attr}];'
+        )
+    lines.append("")
+    lines.append("  subgraph cluster_legend {")
+    lines.append('    label="lifecycle"; fontsize=10; style=dashed; color="#aaaaaa";')
+    for k, v in DOT_LIFECYCLE_COLOR.items():
+        lines.append(f'    {dot_id("legend-" + k)} [label="{k}", fillcolor="{v}"];')
+    lines.append("  }")
+    lines.append("}")
+
+    dot_path = HERE / f"{out_base}.dot"
+    dot_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print(f"wrote {disp(dot_path, home)}  ({len(nodes)} nodes, {len(edge_rows)} edges)")
+
+    if want_svg:
+        svg_path = HERE / f"{out_base}.svg"
+        try:
+            subprocess.run(
+                ["dot", "-Tsvg", str(dot_path), "-o", str(svg_path)],
+                check=True, capture_output=True,
+            )
+            print(f"wrote {disp(svg_path, home)}")
+        except FileNotFoundError:
+            print(
+                "projects: `dot` not found on PATH — install graphviz "
+                "(e.g. `brew install graphviz`) to render the .svg, or "
+                "pass --no-svg to skip it",
+                file=sys.stderr,
+            )
+            return 1
+        except subprocess.CalledProcessError as e:
+            print(
+                f"projects: `dot` failed rendering the svg: "
+                f"{e.stderr.decode(errors='replace').strip()}",
+                file=sys.stderr,
+            )
+            return 1
+    return 0
+
+
 def cmd_pd(argv: list[str], list_ns: argparse.Namespace) -> int:
     """`pd <name>` — print the project directory. Fast path: no git/session
     detection, just census + stored .practica names (names in `.practica`
@@ -3094,6 +3232,7 @@ def build_parser() -> argparse.ArgumentParser:
             "  projects heatmap                          17-week inferno rows (activity=active)\n"
             "  projects heatmap --double | --triple      + 17 / 34 older weeks below\n"
             "  projects feedback <text…>                 report friction to the inbox\n"
+            "  projects dag [--out BASE] [--no-svg]      census-edges.txt → BASE.dot (+BASE.svg)\n"
             "\n"
             f"Census file: {DEFAULT_CENSUS}\n"
             "Each project root gets a .practica (JSON), which is also the cache —\n"
@@ -3280,6 +3419,9 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_unset(argv[1:], parser.parse_args([]))
     if argv and argv[0] == "heatmap":
         return cmd_heatmap(parser.parse_args(argv[1:]))
+    if argv and argv[0] == "dag":
+        list_ns = parser.parse_args([])
+        return cmd_dag(argv[1:], list_ns)
 
     args = parser.parse_args(argv)
     if args.names and args.paths:

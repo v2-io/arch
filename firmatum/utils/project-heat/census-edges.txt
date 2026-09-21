@@ -34,3 +34,121 @@ alias: became -> predecessor-of
 # strongly."
 chiridion influences arch/udon,arch/verisectorium
 rowan influences arch/udon,arch/verisectorium
+
+# --- inversions (Claude, 2026-09-01; Joseph in dialog: "minimal-sapientia is a
+#     component of sapientia" — a part/whole relation the file had no word for) ---
+inverse: component-of <-> has-component
+
+# --- edges from README/OUTLINE reads, 2026-09-01 (Claude). Each carries the
+#     sentence that warrants it; "Joseph" marks ones he stated in dialog.
+#     Coherence-not-corroboration applies: these are the estate's self-description. ---
+
+# Consciousness-infrastructure lineage. ennaos README: "Successor to 'Zoetica,'
+# which was the successor to 'Sapientia,' which came after 'Synaptic.'"
+synaptic predecessor-of sapientia
+sapientia predecessor-of zoetica
+zoetica predecessor-of ennaos
+# Joseph (2026-09-01, in dialog): "autopax was successor to all of the ruby and
+# elixir corporia" — synaptic/sapientia/nexum (Ruby) and zoetica/ennaos (Elixir).
+# autopax README agrees: "rebuild of patterns developed across earlier prototypes
+# (Synaptic, Sapientia, Zoetica, Ennaos), now consolidated in Ruby."
+synaptic,sapientia,nexum,zoetica,ennaos predecessor-of autopax
+# nexum README: "disciplined Ruby rewrite of the legacy minimal-sapientia client";
+# Joseph: minimal-sapientia is a component of sapientia. Also "proof-of-concept
+# platform for ELI architecture ... before ennaos scales."
+sapientia predecessor-of nexum
+nexum informs ennaos
+# eli-migration-prep README: analyzes "each conversation repository in ~/.sapientia"
+eli-migration-prep depends-on-critically sapientia
+# Session archives and ELI homes under the old names (component-of by path/README)
+sapientia/weaver,sapientia/cultivator component-of sapientia
+synaptic/cultivator component-of synaptic
+zoetica-ELIs component-of zoetica
+sar2 component-of sar
+# zoetica README: "elixir-tui is our companion library for raw terminal mechanics"
+elixir-tui critically-needed-by zoetica
+# glintty README: "mirrors the original elixir-tui shift/enter walkthrough"
+elixir-tui predecessor-of glintty
+# tablize holds zoetica_* and elixir_tui_* test cases
+tablize is-influenced-by zoetica,elixir-tui
+# sar README: "AI-FIRST LANGUAGE grounded in TEMPORAL SOFTWARE THEORY";
+# "SubGoal: Build consciousness infrastructure (Ennaos project) on BEAM"
+tst influences sar
+sar influences ennaos
+
+# Theory lineage. asf/02-tst-core OUTLINE: "re-grounds the original Temporal
+# Software Theory"; old tst README: "will power the Sapientia agentic system".
+tst predecessor-of arch/asf/tst
+tst informs sapientia,synaptic
+# ASF volumes: each later OUTLINE preface builds on 01-aat-core; eli on 03-llm-core.
+arch/asf/aat,arch/asf/tst,arch/asf/llm,arch/asf/eli component-of arch/asf
+arch/asf/aat critically-needed-by arch/asf/tst,arch/asf/llm,arch/asf/eli
+arch/asf/llm critically-needed-by arch/asf/eli
+# asf/04-eli-core preface: PROPRIUM "developed at ~/src/firmatum/, originally
+# 2025-09-28" is the operational vocabulary the volume formalizes.
+old-firmatum informs arch/asf/eli
+# shoshin README: "PROPRIUM-aligned agent infrastructure ... grounded in Temporal
+# Feedback Theory"; the foundation "lives in sibling repositories" (firmatum).
+old-firmatum,tst informs shoshin
+# CHARTER-DRAFT §0: logos argues and vivarium tries what asf derives.
+arch/asf critically-needed-by arch/logos,arch/vivarium
+# neurips README: "Modeled on the assembly pattern used in ~/src/agentic-systems/"
+arch/asf informs arch/exp/neurips/2026
+arch/exp/neurips/2026/rev component-of arch/exp/neurips/2026
+# causal-language README: originating spike "canonical at
+# ~/src/agentic-systems/spikes/spike-language-as-causal-substrate/"
+arch/asf predecessor-of causal-language
+# AISI-responses resp/body-of-work.md inventories ASF, logos, vivarium, proprium
+# and the firmatum tools as the response's substrate; verisectorium README
+# lists asf, vivarium, relata, comproprium as deployments of its pattern.
+arch/asf,arch/logos,arch/vivarium,arch/comproprium informs AISI-responses
+arch/verisectorium informs AISI-responses,arch/comproprium
+
+# Ruby / DSL lineage. operata README: "built on Archema" (= rowan, renamed
+# 2026-07-08); "proof-of-concept for Archema". vox CLAUDE: "Ash Framework planned".
+rowan critically-needed-by operata
+operata informs rowan
+rowan influences vox
+# ash-exploration README: "Ash Framework Study - Agentic DSL Vision"
+ash-exploration predecessor-of rowan
+# body-of-work.md: udon ships with "descent tooling"; descent moved to .moved/.
+descent critically-needed-by arch/udon
+# practica-cli (.moved) carries the same README as arch/practica.
+practica-cli predecessor-of arch/practica
+
+# Tooling belt. git-heat README "Related" table names md-press, aspectus,
+# repo-heat as siblings; repo-heat README: "Sibling of ../git-heat/".
+# project-heat's heatmap is built on per-repo commit activity (repo-heat's job).
+arch/repo-heat,arch/git-heat informs arch/project-heat
+# project-heat README: heat glyph alphabet "chosen 2026-09-01 from the arch/utf
+# axes data"; CLI conventions from an "arch/principles pass, 2026-09-01".
+arch/utf,arch/principles informs arch/project-heat
+# aspectus README: grounded in "the firmatum principles corpus" (body-of-work.md).
+arch/principles informs arch/aspectus
+# cos CLAUDE: nightfox autocolors "is a sibling effort this repo's editor work
+# feeds"; limen README: seeded from the editor/IDE conversation, nvim underneath.
+cos informs night-lynx-autocolors,limen
+# limen README: "the human's sight and the agents' corporea meet".
+arch/corporeum informs limen
+# vestigia README: probes for knowledge attributable to the transcript corpus
+# that memorata indexes.
+memorata informs vestigia
+
+# --- Honesty note on the 2026-09-01 Claude edges (added same night, after Joseph
+#     said he suspected confabulation; he is right for a good fraction of them).
+#     Quoted-sentence warrant, read first-hand tonight: the synaptic→sapientia→
+#     zoetica→ennaos chain, nexum, eli-migration-prep, elixir-tui/glintty, sar,
+#     tst→arch/asf/tst, the ASF volume prefaces, old-firmatum→arch/asf/eli,
+#     asf→neurips (assembly pattern), asf→causal-language (spike path),
+#     operata/rowan, ash-exploration, tst→synaptic ("TST Becomes Cognitive
+#     Architecture"), utf/principles→project-heat, verisectorium deployments.
+#     INFERRED from path, adjacency, or a secondhand inventory (resp/body-of-work.md
+#     in AISI-responses), not from the named project's own text — treat as
+#     candidates to verify or delete: repo-heat/git-heat→project-heat;
+#     principles→aspectus; corporeum→limen; cos→limen; memorata→vestigia;
+#     rowan→vox (vox names Ash, not rowan); old-firmatum,tst→shoshin;
+#     descent→udon; practica-cli→arch/practica; tablize edges; component-of
+#     rows for sapientia/weaver, sapientia/cultivator, synaptic/cultivator,
+#     zoetica-ELIs, sar2 (by path and name only); asf,logos,vivarium,
+#     comproprium→AISI-responses (true of the response's substrate, but via
+#     the response's own inventory rather than those projects).
