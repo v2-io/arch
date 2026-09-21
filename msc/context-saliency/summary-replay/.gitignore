@@ -1,0 +1,8 @@
+out/
+__pycache__/
+.venv/
+.env
+*.pyc
+body-dump.json
+fixtures/*.jsonl
+fixtures/*-compaction-request.json

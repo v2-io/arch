@@ -1,0 +1,25 @@
+{
+  "source": "/Users/josephwecker-v2/.grok/sessions/%2FUsers%2Fjosephwecker-v2/01a0533d-9ff3-7e11-adf4-00fffc4cd0f2/updates.jsonl",
+  "copy": "/Users/josephwecker-v2/src/arch/msc/context-saliency/summary-replay/fixtures/01a0533d-precompact-updates.jsonl",
+  "session_id": "01a0533d-9ff3-7e11-adf4-00fffc4cd0f2",
+  "cut": {
+    "inclusive_lines": 1456,
+    "line_index_range": [
+      0,
+      1455
+    ],
+    "rule": "all updates.jsonl lines strictly before sessionUpdate=auto_compact_started",
+    "last_included_sessionUpdate": "tool_call_update",
+    "last_included_timestamp": 1788189633,
+    "excluded_next_sessionUpdate": "auto_compact_started",
+    "excluded_next_timestamp": 1788189633,
+    "excluded_next": {
+      "sessionUpdate": "auto_compact_started",
+      "tokens_used": 451524,
+      "context_window": 500000,
+      "percentage": 90,
+      "reason": "Context window 90% full"
+    }
+  },
+  "note": "Current session chat_history.jsonl is the post-compact conversation. This copy is the live event stream as it stood when auto-compact fired (90% of 500k, 451524 tokens). Compact events and everything after are omitted."
+}
