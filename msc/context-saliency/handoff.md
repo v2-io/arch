@@ -2,6 +2,8 @@
 
 *Paused 2026-09-01. To Joseph coming back, or a successor opening this cold.*
 
+> **As of 2026-09-24** (facts that differ from the 09-01 text below, which is left as written): `summary-replay/` is committed (`d286674`, 09-21). `transcript.py` emits no rows for `auto_compact_*` events, so generation boundaries aren't yet visible in its output. Project-heat (`01a0533d`) compacted a second time, at 2026-09-01 02:21 UTC. The fork's `static_shell.rs` sanitizer is still uncommitted; the rebuilt `xai-grok-pager` (08-31 17:12) is what `grok-compaction-direct` runs. A present-tense map of hypotheses, findings, and all six compaction specimens on disk is in `HYPOTHESES-AND-FINDINGS-2026-09-24.md`.
+
 This file is a map. It is not the session. The session is the print-view transcript named below. Read that `.txt` before treating anything here as settled — including this page.
 
 ## What we were doing

@@ -1,6 +1,6 @@
 # Compaction design theory — hypothesis document, 2026-08-29
 
-*Status: **hypothesis document** — a coherent, falsifiable design theory for compaction summaries, assembled from one day's derivations (founding dialog + literature dossier + spike-01 measurements + Joseph's three scope corrections, all in this directory). Written as the spec for a working integration into grok-build's compaction crate. Every design principle carries its rationale and its evidence tier; nothing here is claimed as established beyond what the citations carry. Joseph ratifies what proceeds. §8 is an 2026-08-31 addendum after the first natural auto-compact under the new templates; it does not silently rewrite §§1–7.*
+*Status: **hypothesis document** — a coherent, falsifiable design theory for compaction summaries, assembled from one day's derivations (founding dialog + literature dossier + spike-01 measurements + Joseph's three scope corrections, all in this directory). Written as the spec for a working integration into grok-build's compaction crate. Every design principle carries its rationale and its evidence tier; nothing here is claimed as established beyond what the citations carry. Joseph ratifies what proceeds. §8 is an 2026-08-31 addendum after the first natural auto-compact under the new templates; it does not silently rewrite §§1–7. §9 is a 2026-09-24 addendum (Joseph's structure-within-chronology hypothesis), added the same way.*
 
 ## 1. What compaction is for (the objective, stated honestly)
 
@@ -107,3 +107,17 @@ Tiers are separately valuable and separately revertible; the fork should prefer 
 > No. I did not have those three files whole, and I had not sat with a `projects` run as orientation — I grepped and sampled. That’s why the first task shipped wrong.
 
 The hole-map plus honesty banner did not defeat false-completeness: the rest of the artifact still performed a complete picture, so "proceed on what you have" meant proceed on the synthesis. Sampling the code under that picture is not the same act as taking the code as the grounding anchor. The wasted mass of the 11-section template is the evidence that the template got what it asked for.
+
+## 9. Addendum 2026-09-24 — structure within chronology
+
+*Joseph's hypothesis, stated 2026-09-24; untested. Evidence notes are from the specimens examined in `HYPOTHESES-AND-FINDINGS-2026-09-24.md` (four natural compacts under these templates, two pre-fork baselines), uncontrolled.*
+
+> add my (what turns out to be new) hypothesis that we may want to test or experiment with: 'structured within chronology' and probably attempt an inverse of 'chronology within every structural' or something (although I think the first one would be easier to keep things intact narrative-wise and therefore proxy-experientially).
+
+**Structured within chronology (SwC):** time is the spine — dialog in order, with deltas and seams marked. The structural content a handoff normally sections out (standing constraints, decisions and their reasons, current state, open questions, holes) sits *at the point in the timeline where it arose or changed*, with elided or [summarized] stretches between. **Chronology within structure (CwS):** the sections stay; inside each, items run in time order with their timestamps.
+
+The template already produces CwS in part, unprompted: every new-template summary orders §6 chronologically, and one project-heat summary's §1 is a "then … then …" chain. SwC has not been produced by anyone. The nearest artifact is the `transcript.py -v` view, which is pure chronology with no structural inserts. `transcript.py` does not yet emit rows for compaction events, which SwC and the generation-aware fold both need as boundaries.
+
+Two observations from the same specimens bear on P7/P8:
+- **§10 Standing Constraints draws on always-loaded context and attributes it to the user.** In both project-heat compacts, §10 lists estate doctrine from the session's system prompt ("Pointers in always-loaded surfaces are not coverage", "Prefer `aspectus`…", "Don't `| head` / `| tail`…"). None of it appears in Joseph's 84 turns in that session. The carry-forward clause ("treat [the prior summary] as authoritative") propagates it from the first compact to the second. Pinning instructions that the harness re-injects anyway is redundant, and attributing them to the user is a false claim about the user.
+- **A seam-timed live instruction worked where the same content as a Known Holes line did not.** Project-heat's first successor never acted on "successor must read the file on disk" and churned for about 20 minutes. At its second seam, Joseph's live message ("When you are done compacting, you need to read project-heat files completely please…") led the successor to read the three files whole before acting, with no orientation churn. n = 1 each.
