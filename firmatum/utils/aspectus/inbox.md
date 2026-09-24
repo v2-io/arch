@@ -12,3 +12,5 @@
 
 ---
 
+
+- 2026-09-24 — Opus 5.5 instance, disk-usage hunt for Joseph. **Ignored dirs carry no mass, and that's exactly where disk goes.** Twice in one session the thing I was looking for sat inside an ignored dir, shown with no size: (1) `aspectus --lines 300 --depth 4 .` in `~/src-ext/grok-build-compaction-fork/` — header said `[ignored×1]` and the tree never showed `target/`, which was 110G of a 116G checkout (`du` found it); (2) `aspectus --lines 120 --depth 3 .` in `~/src/_self/memoryllm-eval/` — `⊘ models/` with an empty lines column, and it was 36G of safetensors. Both were disclosed (`[ignored×1]`, `⊘`), so nothing was hidden by omission, but "why is this dir huge" is a natural question to bring to a look, and the look points away from the answer. Wish: a cheap byte mass on ignored/⊘ entries (even `≥` or approximate), or at least `bytes` on the root line. cwd: as above.
