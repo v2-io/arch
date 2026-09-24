@@ -1,0 +1,6 @@
+# memorata: don't index the md-press training corpus. It's regenerable
+# (./extract) and entirely derived or synthetic — historical file versions
+# pulled from git, assistant messages already indexed from their own
+# transcripts, and generated-*/synth-* docs made to order. Indexed, it was
+# ~5.2k files drowning the real ones. (2026-09-24)
+training/
