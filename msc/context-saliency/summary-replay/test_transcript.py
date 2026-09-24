@@ -22,6 +22,36 @@ def ev(ts, **update):
 
 
 class Unit(unittest.TestCase):
+    def test_compaction_seam_rows(self):
+        recs = convert(
+            [
+                ev(1, sessionUpdate="user_message_chunk", content={"type": "text", "text": "go"}, _meta={"promptIndex": 0}),
+                ev(2, sessionUpdate="auto_compact_started", tokens_used=457163, context_window=500000, percentage=91, reason="Context window 91% full"),
+                ev(3, sessionUpdate="auto_compact_cancelled", reason="user_cancelled"),
+                ev(4, sessionUpdate="auto_compact_started", tokens_used=457200, context_window=500000, percentage=91, reason="x"),
+                ev(5, sessionUpdate="compaction_checkpoint", checkpoint_id="c1", checkpoint_file="compaction_checkpoints/c1.json"),
+                ev(6, sessionUpdate="auto_compact_completed", tokens_before=457200, tokens_after=77677, elapsed_ms=66665),
+                ev(7, sessionUpdate="auto_compact_started", tokens_used=452000, context_window=500000, percentage=90, reason="x"),
+            ]
+        )
+        seams = [r for r in recs if r.get("kind") == "compact"]
+        self.assertEqual(
+            [r["value"] for r in seams],
+            [
+                "#1 started · 91% (457,163/500,000 tokens)",
+                "#1 cancelled (user_cancelled)",
+                "#1 started · 91% (457,200/500,000 tokens)",
+                "#1 checkpoint compaction_checkpoints/c1.json",
+                "#1 completed · 457,200 → 77,677 tokens in 66.7s",
+                "#2 started · 90% (452,000/500,000 tokens)",
+            ],
+        )
+        # the open user turn is flushed before the seam, so order is preserved
+        kinds = [(r["type"], r.get("kind")) for r in recs if r["type"] != "meta" or r.get("kind") == "compact"]
+        self.assertEqual(kinds[0], ("user", None))
+        view = format_print(recs)
+        self.assertIn("| meta | compact | #1 completed", view)
+
     def test_print_layout(self):
         text = format_print(
             [

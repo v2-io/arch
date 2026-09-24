@@ -6,6 +6,9 @@ Emits one JSON object per line, in the source event order:
   user       typed message (images as uri/mime only, no pixels)
   assistant  displayed reply text (thoughts / recaps / tool payloads omitted)
   tool       file/command summary (name: read/edit/write/shell/commit/…)
+  meta       ts / cwd / dir and file aliases / compact (auto-compaction
+             started, cancelled, checkpoint, completed; `n` counts completed
+             compactions, so rows after completed #n belong to generation n)
 
 Usage:
   python3 transcript.py fixtures/01a0533d-precompact-updates.jsonl -o out/01a0533d-precompact-transcript.jsonl
@@ -236,6 +239,7 @@ class Transcript:
         self._assistant_ts: int | None = None
         self._assistant_ts_end: int | None = None
         self._user_open: dict | None = None
+        self.compactions_completed = 0
 
     def emit_cwd(self, ts: int, path: str) -> None:
         self.cwd = path.rstrip("/")
@@ -319,6 +323,33 @@ class Transcript:
             self._assistant_ts = ts
         self._assistant_ts_end = ts
         self._assistant.append(text)
+
+    def add_compact(self, ts: int, u: dict) -> None:
+        """Seam rows: the log shows where each auto-compaction happened."""
+        self.flush_user()
+        self.flush_assistant()
+        kind = u.get("sessionUpdate")
+        n = self.compactions_completed + 1
+        if kind == "auto_compact_started":
+            used, window = u.get("tokens_used"), u.get("context_window")
+            value = f"#{n} started · {u.get('percentage')}%"
+            if used is not None and window is not None:
+                value += f" ({used:,}/{window:,} tokens)"
+        elif kind == "auto_compact_cancelled":
+            value = f"#{n} cancelled ({u.get('reason') or 'no reason given'})"
+        elif kind == "compaction_checkpoint":
+            value = f"#{n} checkpoint {u.get('checkpoint_file') or u.get('checkpoint_id')}"
+        else:  # auto_compact_completed
+            self.compactions_completed = n
+            before, after = u.get("tokens_before"), u.get("tokens_after")
+            value = f"#{n} completed"
+            if before is not None and after is not None:
+                value += f" · {before:,} → {after:,} tokens"
+            if u.get("elapsed_ms") is not None:
+                value += f" in {u['elapsed_ms'] / 1000:.1f}s"
+        self.records.append(
+            {"type": "meta", "kind": "compact", "ts": iso(ts), "n": n, "event": kind, "value": value}
+        )
 
     def mark_known(self, path: str | None) -> bool:
         if not path:
@@ -715,6 +746,13 @@ def convert(events: list[tuple[int, dict]]) -> list[dict]:
                     known_paths_for(title, raw),
                 )
             open_tools.pop(cid, None)
+        elif kind in (
+            "auto_compact_started",
+            "auto_compact_cancelled",
+            "auto_compact_completed",
+            "compaction_checkpoint",
+        ):
+            t.add_compact(ts, u)
         elif kind == "turn_completed":
             t.flush_user()
             t.flush_assistant()
