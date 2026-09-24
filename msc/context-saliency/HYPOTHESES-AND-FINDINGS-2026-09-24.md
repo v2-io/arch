@@ -138,7 +138,7 @@ A related point [derived]: pointers that arrive attached to the live question ar
 - **P10 [J].** Brevity pressure eats whatever the instructions rank as optional, so protection has to be structural rather than verbal. The fork census adds a corollary: **section order is itself a length hazard**, because a length cut consumes the tail first.
 - **Named falsifiers.** Chief among them: hole-maps could *amplify* rumination.
 
-**Fork state.** Branch `compaction-design-theory` in `~/src-ext/grok-build-compaction-fork` carries tiers 0–2 plus P10, committed 08-29. Tier 3 (harness-side lazy recall) is not built.
+**Fork state, 08-29.** Branch `compaction-design-theory` in `~/src-ext/grok-build-compaction-fork` gets tiers 0–2 plus P10, committed that evening. Tier 3 (harness-side lazy recall) is not built.
 
 **Side finding** (`notes/grok-build-thinking-opacity`): xAI returns reasoning only as a *summary* plus an encrypted blob. For grok-hosted models, then, the harness-held context has no thinking in cleartext, and the lazy-differential design's fidelity claim holds only for providers that return reasoning in cleartext.
 
@@ -258,7 +258,12 @@ Folding kind (1) as retries would teach a successor that the agent "was fighting
 
 All three are search in progress, not findings. The third is already false in the older log (bash #1 carries the prefix). The pre-compact agent's last tool rows show mixed evidence ("first 8 bash unmatched? 4 … clean").
 
-The successor treats the summary's account as settled for its first stretch. It then finds the real path with `ps`: `static_shell.rs`, running `snap=$(cat <&3); eval "$snap";` joined with a **semicolon**. A literal NUL byte in a `typeset -f` dump of zsh-vi-mode breaks the restore. The command after the error line is real, and the aliases never install. It writes a sanitizer into the fork, which is still uncommitted.
+The successor treats the summary's account as settled for its first stretch. It then finds the real path with `ps`: `static_shell.rs`, running `snap=$(cat <&3); eval "$snap";` joined with a **semicolon**. The command after the error line is real, and the aliases never install. It attributes the break to a literal NUL byte in the `typeset -f` dump and writes a NUL sanitizer. That diagnosis is wrong [checked 2026-09-24 against the real rc]:
+- The actual cause is the capture's `\x01` start/end marker. zsh-vi-mode's `zvm_switch_keyword` compares `$keys` to a literal Ctrl-A, and `split('\x01')` truncates the snapshot there, mid-quote.
+- The NUL is harmless: zsh carries it through `$(cat)` and `eval`.
+- The generation-1 agent had the evidence in hand. Its live `$snap` was ~322 KB and ended on the hanging `if [[ $keys == '`, which is exactly the size of the SOH truncation.
+
+This is one more instance of a search settled early, this time inside a live generation rather than across a seam. The fix and the upstream comparison are in `notes/grok-build-upstream-compaction-2026-09-24.md`.
 
 **The independent reader [observed, uncontrolled; unprimed by theory].** Joseph has the project-heat successor read the `-v` log of its own pre-compact session. It knows none of the hypotheses. Its reply, quoted whole because it is the most direct evidence in the record:
 
@@ -298,7 +303,10 @@ About 23 KB of project-heat's `-v` log is full user text, agent text, and commit
 **Generation-aware fold [J; designed, not built]:**
 > *"keep the tools at the current granularity (-v level, that is) for the* immediately *prior chunk of the session (the predecessor's full time)-- but any that are 2 or more a way get all of the tool uses folded together … with the deterministic script still instead of needing an agent to summarize."*
 
-Then: *"Don't worry about running it-- I'll make sure your successor runs it (so that the generation count is correct)."* The second compact starts about a minute later. The log records `auto_compact_started` three times (00:53:53, ~00:54:30, and ~00:55:31 UTC) before completion at 00:57:27. I haven't investigated why it restarted.
+Then: *"Don't worry about running it-- I'll make sure your successor runs it (so that the generation count is correct)."* The second compact fires as he sends this, and the seam rows show what the delta column alone could not [observed, from `updates.jsonl`]:
+- The first attempt starts at 00:53:53 UTC and ends `user_cancelled` after 36.6 s, 0.01 s before this message is logged.
+- A second attempt runs 60.8 s and ends `user_cancelled` 0.01 s before his next message (below).
+- The third attempt completes at 00:57:27 after 116.1 s (452,751 → 82,561 tokens). So both of his last two messages are inside the compacted material.
 
 ### 2026-09-01 00:57 → 18:34 UTC: `01a05886`, generation 2 *(Δ = the second seam)*
 
@@ -322,6 +330,8 @@ An agent that holds the theory, working inside the injected template, can steer 
 
 Generation 2 [self-report]:
 > *"I do not have a clean inner report of "felt time" for `10730.32` or `721.56`. I did not live those waits. What the column did, without my having a theory for it at the time: it sorted* kind *of turn. A burst of `0.00` tools is one gesture. Your rows with hundreds of seconds are you reading and typing. `60.86` between "don't run the fold" and "oh— you just compacted" is you watching the seam, not a new request. … I would not have generated "he is watching compact fire" from the 11-section list."*
+
+The seam rows refine this reading [observed]: the 60.86 s is a compaction attempt running for 60.84 s and ending as Joseph's message goes in. The reading of the *situation* holds (a seam in progress), but the delta column alone mis-assigns the time to him. Rows marking the seam carry information the deltas cannot.
 
 Its constraint on any future fold [derived]: *"Flattening* your *gaps would be the rhythm defect again, just in the log."*
 
@@ -358,8 +368,20 @@ The interpretation originated before the seam; the summary carried it across as 
 - **09-01 12:10 MDT.** Theory §8 is committed, inside an unrelated project-heat commit (`e59a28a`).
 - **09-21.** `summary-replay/`, `handoff.md`, and `spike-01/watch_estate.py` are committed as *"Add some context saliency reply work (unneeded really) and updated dag."* The record doesn't say what "unneeded" refers to.
   - `watch_estate.py` is the founding dialog's "deliberately-unhypothesized instrument": a real estate transcript as input, with probes on dormant-but-binding corrections. `spike-01/out/watch/` exists (created 08-29 23:35) and is empty. No results are recorded anywhere.
-- **The fork.** The `static_shell.rs` sanitizer and the `shell_state.rs` note are uncommitted.
-- **The live binary.** `~/.local/bin/grok-compaction-direct` points at the fork's `xai-grok-pager`, built 2026-08-31 17:12 MDT. Joseph (09-24): *"I've been using ~/src-ext/grok-build-compaction-fork/ exclusively for grok work."* So every grok session since then runs the tier 0–2 + P10 templates and the NUL sanitizer.
+- **The fork (09-24).** `compaction-design-theory` is rebased onto upstream `f0e3be11` (09-23) and carries six commits:
+  - the test import;
+  - tiers 0–1;
+  - tier 2;
+  - P10;
+  - no silent middle-cuts;
+  - the static-shell marker fix.
+  The pre-rebase history is kept as `compaction-design-theory-pre-rebase-2026-09-24`, and the NUL-sanitizer patch sits unapplied as `stash@{0}`.
+  - **Test results.**
+    - On the fork only: `xai-grok-compaction` 140/140 and `xai-chat-state` 391/391.
+    - Shell `compact`: the rebased fork and upstream-plus-the-one-line-test-import behave identically, 217/217 each with a 32 MB test stack.
+  - **Upstream's own test problems.** Under the default stack, `auth_retry_budget_tests::parked_turn_past_compact_threshold_does_not_auto_compact` overflows and aborts the run. `compaction_paths_note_survives_second_compaction_and_filters_missing_files` flakes under parallel runs (1 of 2) and passes alone.
+  - Upstream's compaction changes, and the root cause of the `(eval):23` diagnostic, are in `notes/grok-build-upstream-compaction-2026-09-24.md`.
+- **The live binary.** `~/.local/bin/grok-compaction-direct` points at the fork's `xai-grok-pager`. As of 2026-09-24 14:40 MDT that is the rebased build, `grok 1.0.41 (f3b60c67aa31)`: upstream 1.0.41 plus the fork. It is live for new sessions only; `--resume` keeps the running process. The earlier builds are kept beside it as `xai-grok-pager.bak-2026-08-31` and `.bak-2026-09-24-prerebase`. From 08-31 17:12 until then, it was the 08-31 build. Joseph (09-24): *"I've been using ~/src-ext/grok-build-compaction-fork/ exclusively for grok work."* So every grok session since then runs the tier 0–2 + P10 templates. The `(eval):23` diagnostic persists through the 08-31 build: it appears in the tool results of the 09-01 project-heat session (`01a05e79`, launched from the fork), because that build's NUL sanitizer doesn't touch the actual cause.
 - **No compactions since.** The most recent compaction under `~/.grok/sessions/*/*/compaction_requests/` is the project-heat second compact at 09-01 02:21 UTC.
 
 ---
@@ -390,7 +412,7 @@ The two arms, as I read them [mine]:
 - **Settling.** In three instances, and a milder fourth, the characteristic failure is an open search or an unverified interpretation arriving as settled fact. In CwS it has a section to live in: "Key Technical Concepts", "Optional Next Step." In SwC, the same claim appears at the point in the timeline where it was still a hypothesis, followed by whatever came next. I'd expect SwC to settle less, because a claim placed in time carries its epistemic state with it. That is the independent reader's "keeps the order of discovery."
 - **Standing law and the atopical class.** These are the real counterweight. Retrieval can't find them (the lazy-differential envelope) and summarizers drop them (Governance Decay). In SwC a constraint stated at turn 12 sits at turn 12, and a successor has to read that far to hold it. CwS makes pinning trivial. A hybrid is imaginable: SwC with constraints restated in a short pinned block, each carrying its timeline address. The record contains no such design. The independent reader's critique (the log "doesn't extract standing law") and generation 1's reply ("a third artifact, not a better brief") are the only positions stated.
 - **Narrative intactness.** Joseph's reason for favoring SwC matches the strongest reader testimony in the record: "your corrections survive as speech, not as intent-labels", and "the walk" vs "the moral". These are self-reports, n = 2 readers.
-- **Seams.** SwC needs compaction events as rows in the timeline. `transcript.py` currently emits nothing for `auto_compact_started` or `auto_compact_completed`: they fall through to `continue`. The generation-aware fold needs the same boundary.
+- **Seams.** SwC needs compaction events as rows in the timeline. `transcript.py` emits them as `meta | compact` rows: started (percentage, tokens), cancelled (reason), checkpoint (file), and completed (tokens before → after, seconds). Each row is numbered by completed compaction, which is the boundary the generation-aware fold needs. On `01a05886` they correct one inherited reading of the delta column (Part I, generation 1).
 
 **Material available for an experiment** [observed; how to use it is open]:
 - **Six frozen compaction payloads** (Part IV): four under the new template and two baselines. `replay.py` can re-submit any of them with a rewritten instruction. Each draw costs about 450k input tokens. `handoff.md` records Joseph's standing preference not to fire replays unless he asks.
@@ -408,7 +430,9 @@ The two arms, as I read them [mine]:
 - Sources: theory §8, Joseph's *"the* order *is meaningful"*, and `transcript.py`.
 - The only tests are three uncontrolled readings: the project-heat successor, and generations 1 and 2 of the collaboration session. All three favor the ordered log over the digest. All three readers are grok-4.6 and knew Joseph wanted an answer.
 
-**Time deltas carry something: [J, "maybe even"]; built.** The only evidence is one agent's report that the column sorts *kinds* of turn: tool bursts, the human reading and typing, the human watching a seam. Nothing separates the effect of the deltas from the effect of order alone.
+**Time deltas carry something: [J, "maybe even"]; built.** The only positive evidence is one agent's report that the column sorts *kinds* of turn: tool bursts, the human reading and typing, the human watching a seam. Nothing separates the effect of the deltas from the effect of order alone.
+
+One of those readings is partly wrong. The seam rows show the "watching the seam" gap was a compaction attempt running and being cancelled [observed]. Deltas without event rows can assign machine time to the human.
 
 **Elision marks what isn't known: stated [J + derived] and built.**
 - The 150-character `…` view and windowed `lim=NN` reads.
@@ -427,10 +451,9 @@ The two arms, as I read them [mine]:
 - Missing: effort-so-far as a handoff dimension in its own right — what has been tried, how often, at what cost — as distinct from what was done.
 
 **The `transcript.py` view shows some things and not others** [observed, from the code]:
-- It shows: dialog, tools, commits, and the `meta` rows.
+- It shows: dialog, tools, commits, and the `meta` rows (timestamp, cwd, directory and file aliases, compaction seams).
 - It does **not** show:
   - The "known well" set. That set is tracked and written to the jsonl on change only; the `.txt` never shows it.
-  - Compaction seams.
   - Agent thinking. `agent_thought_chunk` is dropped. For grok these are only summaries; for a provider that returns reasoning in cleartext, whether to include it is an open design question [open]. The founding dialog's interiority-erasure framing bears on it directly.
 - `-vv` parses but currently behaves like `-v`.
 
@@ -486,11 +509,11 @@ The two arms, as I read them [mine]:
 | Live, seam-timed "read these whole" instruction | observed | Worked once (project-heat second seam); the same content as a Known Holes line failed once |
 | Planted act-instruction through the template | J | Worked once; outranked a live cue |
 | Commit-envelope fold | J | Built, **parked** pending discussion |
-| Generation-aware tool fold | J | Designed, **not built**. Needs seam rows `transcript.py` doesn't yet emit. Generation count for `01a05886`: 3 |
+| Generation-aware tool fold | J | Designed, **not built**. The seam rows it needs as boundaries are emitted (`meta | compact`, numbered). Generation count for `01a05886`: 3 |
 | Error fold | J + derived | Kinds sorted; only the pollution kind stripped |
 | Carrying how Joseph corrects | J | Stated as critical. Survives as the walk in the log; one self-report that the walk transfers where the moral doesn't |
 | `watch_estate.py` unhypothesized watch | founding dialog | Code committed; **no output recorded** |
-| NUL sanitizer for the grok-build shell snapshot | side-path | Uncommitted in the fork; the rebuilt binary is live |
+| `(eval):23: unmatched '` in grok-build shell calls | side-path | Root cause: the `\x01` capture marker collides with zsh-vi-mode's literal Ctrl-A, truncating the snapshot. Fixed in the fork (text markers, first-to-last slice), with a regression test plus a live test against the real rc. The NUL sanitizer rested on a wrong diagnosis and is stashed |
 
 ---
 
@@ -526,7 +549,7 @@ The two pre-fork compacts are the only baseline material. Joseph's first read of
 - The stretch after that compact in the collaboration session, and all of the project-heat session, exist only in the live `updates.jsonl` files, under:
   - `~/.grok/sessions/%2FUsers%2Fjosephwecker-v2%2Fsrc-ext%2Fgrok-build-compaction-fork/01a05886-d530-7173-8870-4117bcc4e748/`
   - `~/.grok/sessions/%2FUsers%2Fjosephwecker-v2/01a0533d-9ff3-7e11-adf4-00fffc4cd0f2/`
-- From `summary-replay/`, `python3 transcript.py <updates.jsonl> -v -o <name>.jsonl` writes the view as a sibling `<name>.txt`. It doesn't mark compaction seams.
+- From `summary-replay/`, `python3 transcript.py <updates.jsonl> -v -o <name>.jsonl` writes the view as a sibling `<name>.txt`, with compaction seams as `meta | compact` rows.
 - `COMPACTION-DESIGN-THEORY-2026-08-29.md`, including §8.
 - `REFLECTIONS-2026-08-28.md`, with its addendum.
 - The six summaries above.
