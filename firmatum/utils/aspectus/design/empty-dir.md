@@ -21,13 +21,13 @@ A directory that holds nothing says so: `[empty]`, in the marks, on its own line
 | gitignored (`⊘`) | `⊘` in the far-left cell | Never read (the repo disclaimed it). Emptiness is unknown, and claiming it would be a guess. |
 | unreadable | `[denied]` / `[unreadable: io]` | Never fully read. A readdir that failed partway is not an empty one. |
 | cycle / other filesystem | `[cycle]` / `[other fs]` | Not read here. |
-| holds only furniture the map **hides** (`.git/`, `.archive/`) | `[has: git]`, `[has: archive ≈1f]` | It holds things. The has-spot is the presence claim. |
+| holds only furniture the map **hides** (`.git/`, `.archive/`) | `[has: git]`, `[has: archive 1f]` | It holds things. The has-spot is the presence claim. |
 | holds only gitignored files | `[ignored×N]` | It holds things. The typed remainder says so. |
 | holds only names the map **omits** (`.DS_Store`) | `[dot-only]` (since 2026-10-03) | It holds things. Joseph's rule: any dir whose names are all `.`-prefixed gets its own status — [[dot-only\|Dot-only directory]]. |
 
 ## Interplay
 
-- **Censuses are unchanged.** An empty directory folded into its parent's census is still a `dir` with zero files (the `≈0f` noise stays suppressed, per [[dir-census|Dir census]]). The mark is a fact of the directory's *own* line. A census does not grow an "empty" bucket.
+- **Censuses are unchanged.** An empty directory folded into its parent's census is still a `dir` with zero files (the `0f` noise stays suppressed, per [[dir-census|Dir census]]). The mark is a fact of the directory's *own* line. A census does not grow an "empty" bucket.
 - **Mass is unchanged:** zero files, zero lines, so the `lines` cell stays blank.
 - `--show-all` does not change anything here, because emptiness is decided before any filtering.
 

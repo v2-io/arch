@@ -24,7 +24,7 @@ The hallway testers caught `≈` doing two jobs: rounding an *exact* count for t
 
 - `≥` — a floor (walk bound, denied, mount stop, name cap): unchanged.
 - `~` — **estimated**: some lines under this aggregate were inferred from size (constant 64 B/line) because the read budget ran out. Walk-relative by nature; the mark now confesses it. The constant is calibrated against measured estate trees (close audit 2026-08-14; the first-shipped 32 overestimated prose 2–3×): asf ≈100 B/line, vivarium ≈110, firmatum ≈66, memorata ≈58 — md-press-unwrapped markdown runs ≈110–125, dense code ≈40–60; 64 lands exact on the mixed trees and the `~` register owns the residual. Recalibrate here when the estate's texture shifts.
-- `≈` — exact count, grouped for the eye. Stable across flags for the same tree.
+- ~~`≈` — exact count, grouped for the eye.~~ **Retired 2026-10-03** (Joseph ratified hallway-2026-08-22 #1): an exact count carries **no mark**, scaled or not (`61.2K`). A mark now always means "not exact": `~` is an estimate, `≥` a floor. Exact totals stay stable across flags for the same tree. [[grid-cleanup|Grid cleanup]] §The count cell, *The marks*.
 
 Two stabilizers landed with it: the estimator's bytes-per-line is a constant (the old look-observed ratio made a dir's total depend on what else the walk read first), and each depth-cutoff subtree gets a deterministic *share* of the read budget in the parallel deep phase, so `--inspect git` spending reads inside `.git` no longer starves a sibling's total.
 

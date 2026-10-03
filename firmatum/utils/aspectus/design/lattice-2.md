@@ -168,7 +168,7 @@
 
 | stat | fact | derived-from | default position | default display | sort | width | formats |
 | --- |---|---|---|---|---|---|---|
-| ↬ | count-marks | the walk/read/bounds state of the set an aggregate describes | in-cell (`m` slot of every count cell) | always | — | 1 | `≈` exact-grouped · `≥` floor · `~` estimated |
+| ✓ | count-marks | the walk/read/bounds state of the set an aggregate describes | in-cell (`m` slot of every count cell) | always | — | 1 | `≥` floor · `~` estimated · blank = exact, scaled or not (`≈` retired 2026-10-03, Joseph) |
 | ✓ | denied | readdir/stat EACCES/EPERM | near-right marks | always | — | 8 | `[denied]`\* (the word beats any glyph — both witnesses) / `[unreadable: io]` |
 | ✓ | walk-bound | the stat budget ran out here | near-right marks (and header) | always | — | 12 | `[walk bound]` |
 | ✓ | cycle / other-fs | `(dev,ino)` seen on this path / mount boundary | near-right marks | always | — | 7–10 | `[cycle]` / `[other fs]` |
@@ -182,7 +182,7 @@
 
 | stat | fact | derived-from | default position | default display | sort | width | formats |
 | --- |---|---|---|---|---|---|---|
-| ↬ | has | the furniture map: a **glob-matched name** claims kind words (`git`, `rust`, `agents`, `build`, `archive` …); hidden dirs add a readdir-only file count (`archive ≈127f`); `git` subsumes the ignore-file words (code rule) | near-right `[has: …]` → sub-row | on | — | var | words\* / two-letter tags (candidate) / kind-glyph-block (rejected by both witnesses) |
+| ↬ | has | the furniture map: a **glob-matched name** claims kind words (`git`, `rust`, `agents`, `build`, `archive` …); hidden dirs add a readdir-only file count (`archive 127f`); `git` subsumes the ignore-file words (code rule) | near-right `[has: …]` → sub-row | on | — | var | words\* / two-letter tags (candidate) / kind-glyph-block (rejected by both witnesses) |
 | ↬ | facet: git | the `.git` plugin — **verified**: remote (local config), branch, short HEAD, dirty count (one porcelain subprocess) | near-right `[git: …]` → sub-row | on | — | var | `remote<host/path> br<x> @sha dirty N` |
 | ↬ | facet: github | the `.github` plugin — verified: workflow count | near-right `[github: …]` | on | — | var | `N workflows` |
 | ✓ | furniture (fate) | the map's **hide / omit / mark** verdict on a name — not a rendered fact; it decides child-slot vs parent-state | — | — | — | — | — (`--show-all` / `--inspect KIND` restore) |

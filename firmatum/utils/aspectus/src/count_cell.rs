@@ -15,9 +15,10 @@
 //! None` and/or `show_unit = false`. The slots stay (a space), so a `3.3P`
 //! under `bytes` sits where `3.3PB` would beside a glyph.
 //!
-//! Marks: `≥` floor, `~` estimated, `≈` exact-but-grouped (the formatter
-//! applies `≈` itself when an exact value scales), blank when exact and
-//! ungrouped. Callers never drop a mark they earned.
+//! Marks: `≥` floor, `~` estimated, blank when exact — scaled or not. A
+//! mark always means "not exact" (Joseph, 2026-10-03, retiring the `≈`
+//! exact-grouped mark four cold readers took as "approximately"). Callers
+//! never drop a mark they earned.
 
 /// What the number counts (col 1). Blank when a heading names it.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -67,7 +68,7 @@ impl Unit {
     }
 }
 
-/// Honesty mark (col 3). `Exact` becomes `≈` when the formatter scales.
+/// Honesty mark (col 3). `Exact` is blank, scaled or not.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Mark {
     Exact,
@@ -120,20 +121,15 @@ pub fn count_cell(
         c[11] = unit.glyph();
     }
 
+    c[2] = match mark {
+        Mark::Floor => '\u{2265}', // ≥
+        Mark::Estimated => '~',
+        Mark::Exact => ' ',
+    };
     if value < SCALE_AT {
         place_exact(&mut c, value);
-        c[2] = match mark {
-            Mark::Floor => '\u{2265}', // ≥
-            Mark::Estimated => '~',
-            Mark::Exact => ' ',
-        };
     } else {
         let (int_part, frac, scale_idx) = scale(value, unit.base());
-        c[2] = match mark {
-            Mark::Floor => '\u{2265}',
-            Mark::Estimated => '~',
-            Mark::Exact => '\u{2248}', // ≈ — grouped by scaling
-        };
         place_scaled(&mut c, int_part, frac, scale_idx);
     }
     c.iter().collect()
@@ -206,7 +202,7 @@ fn scale(n: u64, base: f64) -> (u64, u8, usize) {
 
 /// The count cell squeezed for inline prose (a has-word, a bracket): the
 /// same digits, mark, scale, and unit, without the field's padding —
-/// `≈15.0GB`, `≥8.1GB`, `2·428B`, `512B`. The `.` anchor only earns its
+/// `15.0GB`, `≥8.1GB`, `2·428B`, `512B`. The `.` anchor only earns its
 /// place in an aligned column, so it drops when no fraction follows.
 /// Provisional: the has-block's form waits on the subgroup-subject form
 /// (design/grid-cleanup.md); this exists so bytes can ride it meanwhile.
@@ -285,18 +281,18 @@ mod tests {
     #[test]
     fn scaled_three_sig_digits() {
         // 190.0K, 14.3G, 1.0M, 3.3P — and 61.2K / 2.4M from the specimens.
-        // Exact + scaled ⇒ ≈ occupies col 3; T/· stay blank (mantissa < 1000).
+        // Exact + scaled: col 3 blank (2026-10-03, ≈ retired); T/· blank (mantissa < 1000).
         assert_cell(
             &count_cell(190_000, Mark::Exact, None, Unit::Count, false),
-            "  ≈  190.0K ",
+            "     190.0K ",
         );
         assert_cell(
             &count_cell(1_000_000, Mark::Exact, None, Unit::Count, false),
-            "  ≈    1.0M ",
+            "       1.0M ",
         );
         assert_cell(
             &count_cell(61_200, Mark::Exact, Some(Subject::Files), Unit::Lines, true),
-            "● ≈   61.2K𝓁",
+            "●     61.2K𝓁",
         );
         assert_cell(
             &count_cell(
@@ -312,26 +308,26 @@ mod tests {
         let gib = (14.3_f64 * 1024.0 * 1024.0 * 1024.0).round() as u64;
         assert_cell(
             &count_cell(gib, Mark::Exact, Some(Subject::Both), Unit::Bytes, true),
-            "▣ ≈   14.3GB",
+            "▣     14.3GB",
         );
-        // 3.3 PiB = 3.3 × 1024⁵. Exact+scaled ⇒ ≈ even under a heading;
+        // 3.3 PiB = 3.3 × 1024⁵. Exact+scaled is unmarked (2026-10-03), heading or not;
         // the design specimen omitted the mark to show g-blanking.
         let pib = (3.3 * 1024.0_f64.powi(5)).round() as u64;
         assert_cell(
             &count_cell(pib, Mark::Exact, None, Unit::Bytes, true),
-            "  ≈    3.3PB",
+            "       3.3PB",
         );
         assert_cell(
             &count_cell(pib, Mark::Exact, None, Unit::Bytes, false),
-            "  ≈    3.3P ",
+            "       3.3P ",
         );
         assert_cell(
             &count_cell(10_000, Mark::Exact, None, Unit::Count, false),
-            "  ≈   10.0K ",
+            "      10.0K ",
         );
         assert_cell(
             &count_cell(999_950, Mark::Exact, None, Unit::Count, false),
-            "  ≈    1.0M ",
+            "       1.0M ",
         );
     }
 
@@ -355,13 +351,15 @@ mod tests {
                 .nth(2),
             Some('~')
         );
-        // Scaling groups an exact value; floor/estimate keep their face.
+        // 2026-10-03: scaling never marks an exact value (≈ retired — a
+        // mark always means "not exact"); floor/estimate keep their face.
         assert_eq!(
             count_cell(61_200, Mark::Exact, None, Unit::Lines, false)
                 .chars()
                 .nth(2),
-            Some('\u{2248}')
+            Some(' ')
         );
+        assert!(!count_cell(61_200, Mark::Exact, None, Unit::Lines, false).contains('\u{2248}'));
         assert_eq!(
             count_cell(61_200, Mark::Floor, None, Unit::Lines, false)
                 .chars()
@@ -409,11 +407,11 @@ mod tests {
             &count_cell(2048, Mark::Exact, None, Unit::Bytes, true),
             "   2·048.  B",
         );
-        // 80 MiB = 80 × 1024² — scaled, so Exact wears ≈.
+        // 80 MiB = 80 × 1024² — scaled, still unmarked (2026-10-03).
         let mib = 80u64 << 20;
         assert_cell(
             &count_cell(mib, Mark::Exact, None, Unit::Bytes, false),
-            "  ≈   80.0M ",
+            "      80.0M ",
         );
     }
 
@@ -423,7 +421,7 @@ mod tests {
         assert_eq!(compact(2_428, Mark::Exact, Unit::Bytes), "2\u{b7}428B");
         assert_eq!(
             compact(15 * 1024 * 1024 * 1024, Mark::Exact, Unit::Bytes),
-            "\u{2248}15.0GB"
+            "15.0GB"
         );
         assert_eq!(
             compact(8 * 1024 * 1024 * 1024, Mark::Floor, Unit::Bytes),

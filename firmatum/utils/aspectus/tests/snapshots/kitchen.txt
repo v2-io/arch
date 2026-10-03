@@ -3,7 +3,7 @@ columns.heat = off (env)
 <ROOT>/
                       lines     perms
 ├── deep/
-│   └── one/            11.            [dir×2 ≈5f]
+│   └── one/            11.            [dir×2 5f]
 ├── src/
 │   ├── blob.bin                       binary
 │   ├── lib.rs           2.

@@ -62,7 +62,8 @@ fn hidden_dir_mass_rides_the_has_spot() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     assert!(
-        o.contains("archive ≈8f"),
+        // 2026-10-03 ≈-retirement slice: exact counts are unmarked.
+        o.contains("archive 8f"),
         "hidden mass folds into the has-facet: {o}"
     );
     assert!(!o.contains(".archive/"), "still not a child: {o}");
@@ -124,7 +125,7 @@ fn version_carries_build_stamp() {
 }
 
 /// Past the read budget, line totals are *estimates* and say so with `~`
-/// (not `≈`, which now means exact-but-grouped) — and a big visible file's
+/// (`≈` is retired: exact counts are unmarked, 2026-10-03) — and a big visible file's
 /// per-file count is honestly absent instead of slurping gigabytes.
 #[test]
 fn estimates_marked_distinctly_and_big_visible_files_degrade() {
@@ -142,7 +143,7 @@ fn estimates_marked_distinctly_and_big_visible_files_degrade() {
     assert!(sub.contains('~'), "estimate marked ~: {sub}");
     assert!(
         !sub.contains("≈"),
-        "≈ is reserved for exact counts now: {sub}"
+        "≈ is retired from the look: {sub}"
     );
     let big = o.lines().find(|l| l.contains("big.md")).unwrap();
     assert!(
@@ -150,13 +151,16 @@ fn estimates_marked_distinctly_and_big_visible_files_degrade() {
             .any(|w| w.chars().all(|c| c.is_ascii_digit())),
         "per-file count absent past the budget: {big}"
     );
-    // With budget, the same totals are exact and wear ≈.
+    // With budget, the same totals are exact — and since 2026-10-03
+    // exact is unmarked even when scaled (2026-10-03 ≈-retirement slice: exact counts are unmarked).
     let (_, o2, _) = run(&dir, &xdg, &[], &["--depth", "1"]);
     let sub2 = o2.lines().find(|l| l.contains("sub/")).unwrap();
-    // 2026-08-22 count-cell slice: 20,000 lines → ≈ 20.0K in the lines column.
     assert!(
-        sub2.contains('\u{2248}') && sub2.contains("20.0K"),
-        "exact count, grouped: {sub2}"
+        sub2.contains("20.0K")
+            && !sub2.contains('~')
+            && !sub2.contains('\u{2265}')
+            && !sub2.contains('\u{2248}'),
+        "exact count, scaled, unmarked: {sub2}"
     );
     assert!(
         !sub2.contains("≈20k lines"),

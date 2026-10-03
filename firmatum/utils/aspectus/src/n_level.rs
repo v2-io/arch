@@ -116,9 +116,10 @@ impl Census {
             let mass = match self.dir_files {
                 // An empty container's zero adds nothing the name lacks.
                 // File counts are never budget-estimated (only lines are),
-                // so the figure earns ≥ or ≈, never ~.
+                // so the figure is exact (unmarked) or a floor (≥), never ~
+                // (≈ retired 2026-10-03: a mark always means "not exact").
                 Some(m) if m.files > 0 || m.bounded => {
-                    let mark = if m.bounded { "≥" } else { "≈" };
+                    let mark = if m.bounded { "≥" } else { "" };
                     format!(" {mark}{}f", m.files)
                 }
                 _ => String::new(),
@@ -183,7 +184,7 @@ pub struct Node {
     /// record; the deep phase turns it into `has_counts`.
     pub hidden_dirs: Vec<(String, String)>,
     /// Weight of hidden furniture per claiming kind. Presence survives
-    /// hiding — `[has: archive ≈127f, …]` (design/furniture.md leaning,
+    /// hiding — `[has: archive 127f, …]` (design/furniture.md leaning,
     /// 2026-08-14); bytes ride the same walk since 2026-10-03
     /// (design/ignored-bytes.md).
     pub has_counts: Vec<(String, Body)>,
@@ -316,7 +317,7 @@ impl WalkBudget {
 }
 
 /// The reads the look may spend on file content (line counting). Past the
-/// budget a file's lines are estimated (mass, `≈`) or absent (per-file
+/// budget a file's lines are estimated (mass, `~`) or absent (per-file
 /// column) — the honest degraded form; the glance never silently slows.
 #[derive(Debug)]
 pub struct ReadMeter {
@@ -854,7 +855,7 @@ fn deep_mass_body(
         }
         // Ignored bodies stay out of mass (mass's own promise). Under
         // --show-all restored bodies join it — show-all means show all
-        // (implemented leaning; design Open notes the ≈-mark question).
+        // (implemented leaning; design Open notes the mark question).
         if !ctx.view.show_all
             && ctx.ignore.active()
             && ctx.ignore.is_ignored(path, &e.name, e.is_dir)
@@ -1694,7 +1695,7 @@ fn weigh(path: &Path, one_fs: bool) -> Body {
 
 /// The body phase (was the hidden-count phase): every body the look
 /// declines to open gets weighed so presence carries magnitude — hidden
-/// furniture (`[has: build ≥17643f ≈15.0GB]`, design/furniture.md +
+/// furniture (`[has: build ≥17643f 15.0GB]`, design/furniture.md +
 /// design/ignored-bytes.md) and gitignored dirs (bytes on the `⊘` line).
 /// Bounded-parallel like the other post-passes; one thread per body.
 pub fn hidden_phase(node: &mut Node, abs: &Path, one_fs: bool) {

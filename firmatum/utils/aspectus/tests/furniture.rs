@@ -73,9 +73,10 @@ fn well_known_names_fold_to_parent_state() {
     assert!(!o.contains("__pycache__"), "{o}");
     assert!(!o.contains(".claude"), "{o}");
     // Hidden dirs now carry their magnitude on the kind word (presence
-    // survives hiding, 2026-08-14): `agents ≈1f`, `build ≈2f`.
+    // survives hiding, 2026-08-14): `agents 1f`, `build 2f`
+    // (2026-10-03 ≈-retirement slice: exact counts are unmarked).
     assert!(
-        o.contains("[has: agents ≈") && o.contains("build ≈") && o.contains("python]"),
+        o.contains("[has: agents 1f") && o.contains("build 2f") && o.contains("python]"),
         "kind spot with hidden magnitudes: {o}"
     );
     assert!(
@@ -108,7 +109,8 @@ fn hidden_names_do_not_join_censuses() {
         !root.contains("3 dir"),
         "hidden dirs joined the picture: {o}"
     );
-    assert!(o.contains("[has: agents ≈") && o.contains("python]"), "{o}");
+    // 2026-10-03 ≈-retirement slice: exact counts are unmarked.
+    assert!(o.contains("[has: agents 1f") && o.contains("python]"), "{o}");
 }
 
 #[test]

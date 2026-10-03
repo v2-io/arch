@@ -15,6 +15,10 @@
 //! `dangling`) that used to set the stop; they now spill to `╰ -> target`
 //! sub-rows and those looks narrow by ~20 cells. leaf-census and git-repo
 //! have no links and did not move.
+//! Re-blessed 2026-10-03: `≈` retired (exact counts are unmarked, scaled
+//! or not; Joseph ratified hallway-2026-08-22 #1). One line per golden
+//! moved, and every move is only the `≈` disappearing (`[one/ ≈5f]` →
+//! `[one/ 5f]`, `build ≈1f` → `build 1f`), checked mechanically.
 //!
 //! These fixtures exercise the whole row grammar at once —
 //! furniture, facets, dir census, leaf census, symlinks (one broken), a

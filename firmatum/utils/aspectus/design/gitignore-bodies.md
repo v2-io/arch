@@ -54,7 +54,7 @@ In-process matcher + index parser, no subprocess on the walk path; agrees-with-`
 
 - **Mark and remainder spelling** — shipped `⊘` (U+2298) and `ignored×N`, one constant each, provisional; Joseph ratifies.
 - **Global `core.excludesFile`:** **shipped honoring it** (repo config → user config → XDG default), the recorded leaning — the look agrees with the user's git; the per-user-state tension stands for ratification.
-- **Under `--show-all`, restored bodies join mass** — shipped the leaning (show-all means *show all*); the two-looks-disagree-on-a-number `≈`-mark question is still open.
+- **Under `--show-all`, restored bodies join mass** — shipped the leaning (show-all means *show all*); the two-looks-disagree-on-a-number mark question is still open (since 2026-10-03 a mark means "not exact", so the question is whether a show-all total wears one at all).
 - Whether an ignored dir's line may carry a *cheap* census (one readdir of its top level only) instead of nothing — **not taken**: it walks into what the repo disclaimed. Still open if wanted.
 - *(2026-10-03)* An ignored dir's line now carries its body's **bytes** (Joseph-decided; [[ignored-bytes|Ignored-dir bytes]]). That body is weighed, names and sizes only, under its own 20k-name cap, never opened, never on the `--walk` budget (subfeature 9 holds), and never in mass (§1 holds).
 

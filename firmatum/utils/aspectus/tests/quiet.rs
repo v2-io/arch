@@ -179,7 +179,7 @@ fn size_whale_speaks() {
     backdate_all(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    // 2026-08-22 count-cell slice: 80 MiB → ≈ 80.0M (always one fraction
+    // 2026-08-22 count-cell slice: 80 MiB → 80.0M (unmarked since 2026-10-03; always one fraction
     // digit when scaled); 2048 B is exact `2·048.`, so the old `2.0K`
     // silence check still holds.
     assert!(line_of(&o, "whale.md").contains("80.0M"), "{o}");

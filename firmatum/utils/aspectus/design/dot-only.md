@@ -13,17 +13,17 @@ A directory whose every name starts with `.` says `[dot-only]`. Nothing ordinary
   - `[only .*]` (a glob, which agents read fluently) was the runner-up. It was not chosen because a glob inside a mark invites being read as a pattern to apply.
 - **Place:** near-right with the marks, right after where `[empty]` would sit. The two are exclusive by construction: `[empty]` needs zero names, `[dot-only]` at least one.
 - **Display:** always, not quietable (existence information, the same register as `[empty]`).
-- **Coexists with everything the line already says.** `[has: archive ≈1f]  [dot-only]`, `[.gitkeep]  [dot-only]`, `[.integrated/ ≈13f]  [dot-only]`. The has-spot or census says *what* is there; the mark says that nothing *else* is.
+- **Coexists with everything the line already says.** `[has: archive 1f]  [dot-only]`, `[.gitkeep]  [dot-only]`, `[.integrated/ 13f]  [dot-only]`. The has-spot or census says *what* is there; the mark says that nothing *else* is.
 - **Every directory line:** an expanded level, a depth cutoff, a symlinked dir (the target's names), and the root's facts line.
 - **Not claimed** where the look did not read the directory (`⊘` ignored, `[denied]`, `[unreadable: io]`, `[cycle]`, `[other fs]`), for the same reason as `[empty]`: the mark would be a guess.
 - **JSON:** `"dot_only": true`, present-when-true, additive within schema 1. It does not set `truncated`.
 
 ## Specimens (dogfood, 2026-10-03)
 
-- `~/src --depth 2`: `audits/ ~3·872. … [.integrated/ ≈13f]  [dot-only]`. The whole of that dir's content sits behind one dot-name, which no earlier look said plainly.
+- `~/src --depth 2`: `audits/ ~3·872. … [.integrated/ 13f]  [dot-only]`. The whole of that dir's content sits behind one dot-name, which no earlier look said plainly.
 - `~/src --depth 2`: `def/ … [.gitkeep]  [dot-only]`, `findings/ … [.gitkeep]  [dot-only]`.
 - `~/src/arch --depth 4`: two `src/ … [.gitkeep]  [dot-only]`.
-- Fixture: `dsonly/ [dot-only]` (only `.DS_Store`, which the map omits, so it was bare before) and `arch-only/ [has: archive ≈1f]  [dot-only]`.
+- Fixture: `dsonly/ [dot-only]` (only `.DS_Store`, which the map omits, so it was bare before) and `arch-only/ [has: archive 1f]  [dot-only]`.
 
 ## Subfeatures
 

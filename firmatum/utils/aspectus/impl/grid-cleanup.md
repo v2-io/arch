@@ -156,3 +156,46 @@ Suite: 314 tests green (302 + 11 lib (4 density + 7 SIGNA) + 1 score-path integr
 
 - **Lattice-2 spells the target `→ target`** (U+2192). The binary has always shipped `-> target`. I kept `->` and touched only the position cell of that lattice row. Which one is law is Joseph's call.
 - A leaf-census row (`[+ dir×3 ≈63f · md×7 · …]`) can be wider than the stop. It has no cells, so nothing misaligns, but it does sit in the name position and can run into the column zone visually.
+
+## Step 8 landed — `≈` retired: exact is unmarked (2026-10-03)
+
+**Decision** (Joseph, ratifying hallway-2026-08-22 #1, [[../audit/inbox-2026-10-03|verbatim]]): exact counts carry **no mark**, scaled or not. `~` is an estimate and `≥` a floor, so a mark always means "not exact". His trailing-`+`-on-floors idea was considered and not adopted (the coordinator's call, reasons in the inbox and in design/grid-cleanup.md §The count cell, *The marks*).
+
+**Every `≈` the code emitted meant "exact", checked source by source before changing anything:**
+
+- `count_cell` turned `Mark::Exact` into `≈` once a value scaled.
+- The census dir bucket's deep file count (`dir×3 ≈120f`): mass never estimates file counts, only lines; `Count::Est` adds lines and nothing else.
+- The has-word hidden file count (`archive ≈127f`) and its bytes (a readdir count and a `st_size` sum).
+
+Estimates were already `~` (`Mark::Estimated` on `mass.est`). **No estimate was wearing `≈`** in code.
+
+**Changes**
+
+- **`src/count_cell.rs`:** one mark match for scaled and unscaled alike; `Exact` is blank. `compact()` follows, so has-word bytes are bare (`git 654.2MB`). Unit tests re-expected, with a dated comment, plus an explicit "never `≈`" assertion.
+- **`src/n_level.rs`** (`Census::render`) and **`src/ready.rs`** (`has_block`): `≈Nf` → `Nf`, `≥Nf` kept.
+- **Help:** the marks sentence now reads "A mark always means not exact: ~ is this walk's estimate, ≥ a floor (the truth is at least this); no mark means exact, scaled or not." Census and git-word examples are updated.
+- **`facts.rs`:** `count-marks` formats `≥ floor · ~ estimated · blank exact (scaled or not)`, stat `↬` → `✓` (lattice-2 likewise).
+- **Comments citing the old forms** in `focus.rs`, `main.rs`, `n_level.rs`, `ready.rs` are updated. `dir×9 ≈1.4Kf` was never a real form: census file counts are not scaled. It now reads `1412f`.
+- **JSON:** unchanged, verified byte-identical on asf and grok-build (`--depth 3`, modulo time/version). It never carried `≈`; exactness lives in `estimated` / `bounded` flags.
+
+**Tests**
+
+- 15 assertions re-expected, each with a dated comment.
+- Two would have gone **vacuous** and were restated so they still guard their claim:
+  - `mass::walk_bound_makes_mass_a_floor`: from `!contains("≈20f")` to "every `20f` printed is a `≥` floor".
+  - `hardening::estimates_marked_distinctly…`: the with-budget half now asserts `20.0K` with no `~`, `≥`, or `≈`.
+- Goldens re-blessed with a dated comment. One line moved per golden, and every move is only the `≈` disappearing (checked mechanically).
+- Suite: 336 green.
+
+**Dogfood** (release vs installed v0.1.22). Changed lines per look: arch 69, asf 30, `~/src --depth 1` 35, vivarium 23, grok 78. aat and this crate are byte-identical.
+
+- Every changed line is exactly a `≈` removal (cell `≈` → space, census/has `≈` → deleted), checked mechanically across all seven looks.
+- **No `≈` remains** in any of them.
+- One exception, arch's `empirica/` `~ 536.9K` → `~ 537.2K`, is live-tree drift: the installed binary alone moves 540.0K → 540.2K on consecutive runs.
+
+**Surfaced, not folded (different meanings of `≈` in the designs):**
+
+- `design/cache.md` proposed marking a cached deep mass `≈` "when the walk was bounded". That is a staleness claim, and the wrong glyph for a bound even under the old law. It is annotated there as an open decision. Reusing the now-free `≈` would revive the `≈`/`~` confusion just retired.
+- `design/aspect-lattice.md` (superseded lattice 1) reads `≈` as "cached, may drift". It is archaeology and left as is.
+- `design/gitignore-bodies.md`'s show-all "`≈`-mark question" is reworded: the open is now whether a show-all total wears any mark.
+- Historical specimens (audit quotes, Joseph's 08-14 mocks in vertical-info, the 08-15 as-shipped table, the mass sketch) are left verbatim as history. Law statements and current-form specimens are updated (grid-cleanup, mass, dir-census, lattice-2, furniture, ignored-bytes, dot-only, empty-dir, focus, leaf-census, linecount, defaults, outline Mass row).

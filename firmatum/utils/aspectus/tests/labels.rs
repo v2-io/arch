@@ -81,7 +81,8 @@ fn cutoff_dirs_still_claim_their_kinds() {
     let proj = o.lines().find(|l| l.contains("proj/")).unwrap();
     // The hidden target/'s magnitude rides its kind word (2026-08-14).
     assert!(
-        proj.contains("[has: build ≈") && proj.contains("rust]"),
+        // 2026-10-03 ≈-retirement slice: exact counts are unmarked.
+        proj.contains("[has: build ") && proj.contains("f, ") && proj.contains("rust]"),
         "{o}"
     );
     assert!(

@@ -154,7 +154,9 @@ fn mass_excludes_ignored_bodies() {
         // lines column; the word "lines" is the heading.
         assert!(look.contains("4."), "un-ignored lines only: {look}");
         assert!(!look.contains("≈4 lines"), "old mass tail retired: {look}");
-        assert!(look.contains("≈1f"), "junk/'s 20 files stay out: {look}");
+        // 2026-10-03 ≈-retirement slice: exact counts are unmarked (`1f`, was `≈1f`).
+        assert!(look.contains(" 1f"), "junk/'s 20 files stay out: {look}");
+        assert!(!look.contains("21f"), "{look}");
     }
     assert!(a.contains("ignored×1"), "the cut is typed: {a}");
 }

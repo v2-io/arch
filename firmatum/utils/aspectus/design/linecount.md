@@ -8,7 +8,7 @@ Lattice cells this row implements (line-count row): column `Y`, default **ON**, 
 - **What is non-binary:** the config suffix-map that already drives filekind (lattice: *"kind from a config suffix-map, not magic"*). A suffix the map calls text counts; a suffix it calls binary omits. Unknown suffixes: see Open.
 - **What is a line:** `physical*` = newline-terminated lines as `wc -l` would say, plus a final unterminated line counts as one (the reader's units, not the byte's). `non-blank` excludes whitespace-only lines. `signa` waits on [[phenom-format|phenom-format]].
 - **Obtain is a read.** This is the first fact whose cost is file *content*, not stat. Cache key is `ino+mtime+size` — but the [[cache|Cache]] row is not built yet, and this design works **uncached first**: correct, honest, merely slower. Nothing here may depend on a cache existing.
-- **Feeds mass.** The deep aggregate (`≈61k lines`) is [[mass|Mass]]'s headline number; this row supplies the per-file fact and the per-file honesty (binary excluded from line totals there too).
+- **Feeds mass.** The deep aggregate (`61.2K` in the `lines` column) is [[mass|Mass]]'s headline number; this row supplies the per-file fact and the per-file honesty (binary excluded from line totals there too).
 
 ## Birthtime rider
 

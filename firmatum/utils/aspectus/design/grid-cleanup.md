@@ -81,10 +81,10 @@ Name-column tenants are mutually exclusive: **Name(+decorators) | Glob-Template 
 |---|---|---|---|---|---|
 | 1 | name (+ decorators `/`, `-> target`, `[broken]`) | line | **name-col** | `name`, `name/`, `name -> target` | decided |
 | 1b | glob-template | line (one listee for many) | **name-col** | `output-[001-047].bak` + a count cell `● 44.  𝓃` (was `(44 files)`) — where the cell sits (decoration vs first near-right) ⏳ | decided form; place ⏳ |
-| 2 | leaf census (vertical-summary) | census | **name-col** (a summary standing where a name stands) | `+` then subject cells: `+ □ 2. 𝓃  ● ≈ 59. 𝓃  ⏳md 27` (was `[+ dir×2 ≈59f · md×27]`) | ⏳ subgroup form; `+` kept |
-| 3 | dir census | census | near-right: **census column** ⇒ sub-row when long | subject cells: `□ 3. 𝓃  ● ≈ 120. 𝓃  ⏳md 31  ⏳ignored 3` (was `[dir×3 ≈120f · md×31]`); one-name forms (`[thing.dat]`, `[furniture/ …]`) keep the name | ⏳ subgroup form; delimiter (`⟨ ⟩` candidate) ⏳ |
-| 4 | mass lines | deep-agg | **far-right `lines`** (heading names subject+unit ⇒ `g`,`u` blank) | `≈ 61.2K` / `~ 5.0M` / `≥ 434.0K` (was `≈61k lines` in the tail) | decided (Joseph's inbox) |
-| 5 | mass files | deep-agg | inside census (`● ≈ 120. 𝓃`) / inside has (⏳) | count cell | decided form; has-form ⏳ |
+| 2 | leaf census (vertical-summary) | census | **name-col** (a summary standing where a name stands) | `+` then subject cells: `+ □ 2. 𝓃  ● 59. 𝓃  ⏳md 27` (was `[+ dir×2 ≈59f · md×27]`) | ⏳ subgroup form; `+` kept |
+| 3 | dir census | census | near-right: **census column** ⇒ sub-row when long | subject cells: `□ 3. 𝓃  ● 120. 𝓃  ⏳md 31  ⏳ignored 3` (was `[dir×3 ≈120f · md×31]`); one-name forms (`[thing.dat]`, `[furniture/ …]`) keep the name | ⏳ subgroup form; delimiter (`⟨ ⟩` candidate) ⏳ |
+| 4 | mass lines | deep-agg | **far-right `lines`** (heading names subject+unit ⇒ `g`,`u` blank) | `61.2K` / `~ 5.0M` / `≥ 434.0K` (was `≈61k lines` in the tail) | decided (Joseph's inbox); exact carries no mark (2026-10-03) |
+| 5 | mass files | deep-agg | inside census (`● 120. 𝓃`) / inside has (⏳) | count cell | decided form; has-form ⏳ |
 | 6 | line-count (file) | line | far-right `lines` | `816.` (bare cell under heading; `1·099.` exact below 10K) | decided |
 | 7 | heat · age | line | far-right, two sub-columns | `0.44 · 8.7h ago`; unscored-git line: **dangling `·` still to decide** | open (glyph) |
 | 8 | mtime | line | far-right | `2.2h ago` / iso / epoch | unchanged |
@@ -130,7 +130,7 @@ col  1   2   3   4   5   6-8   9    10   11   12
 
 g  subject glyph: ● files · □ dirs · ▣ files+dirs · blank when a column heading names the subject
 ␠  always a space
-m  qualifier mark: ≈ (exact, grouped for the eye) · ≥ (floor) · ~ (estimated) · blank (exact)
+m  qualifier mark: ≥ (floor) · ~ (estimated) · blank (exact — scaled or not; decided 2026-10-03, see §The marks)
 T  thousands digit, or blank
 ·  U+00B7 middot as thousands separator when T is present, else blank
 NNN hundreds..ones, right-aligned, blank-padded (spaces, not dots — a token-reader sees dot-fill as content)
@@ -147,18 +147,21 @@ Laws:
 - The **`·` filler as dotted leaders** is *not* the default (agents read fill as content); it may become `format.count = dotted` for human TTY callers — an overlay, same law as color.
 - **`≡` for lines is retired** from the subject slot (its former home) — lines is a unit and lives at col 12. **Unit letters decided: `𝓁` (U+1D4C1) lines, `𝓉` (U+1D4C9) tokens** — mathematical-script *l* and *t*: the reader's own letter, costumed just enough not to look like `1` or a scale letter. Path to the decision, kept because it is a cross-substrate read: `≡`, `λ`/`τ` (Joseph), `ℓ`/`τ` (coordinator's lean — BMP, safe fonts) were floated; Grok read `ℓ` as *litre* ("kilolamberts" surfaced in its thinking) and `𝓁` as *lines* in a beat — *"the costume is doing the work of not looking like 1"* — and Joseph's terminal renders the script pair cleanest. Cost carried knowingly: both are outside the BMP (4-byte UTF-8, ~2 tokens each), the vocabulary's first non-BMP glyphs — the ones to watch in a fallback-font terminal; width-1 verified on Joseph's terminal, agents don't render.
 - **Tokens** is the agent's unit ("what would this cost me to read") — model-dependent, therefore an estimate (`~`) by nature; deferred: likely a bytes-per-token prior per kind first, later a cached tokenizer and per-substrate history. Rides the read budget and cache like lines.
+- **The marks — a mark always means "not exact"** (Joseph, 2026-10-03, ratifying hallway-2026-08-22 #1: *"I agree. Ratify please."*). `≥` is a floor: the walk, a cap, a denial, or a mount stopped short, and the truth is at least this. `~` is an estimate: some of the value was inferred, today lines from size past the read budget, and tokens by nature. **Blank is exact.** That includes a scaled value: `61.2K` is the exact count, rounded to three significant digits *for the eye*, and scaling alone never earns a mark. *Why:* four independent cold readers took `≈` as "approximately", so a value that was exact read as a guess, and the three-mark vocabulary didn't stick. With two marks, both meaning "not exact", the cell's blank mark slot is itself the claim of exactness. `≈` is gone from the look entirely, so it is free, and kept apart from `~` (glyphs.md's confusables family `≈ ~ ∼ ≃ ≅`).
+  - *Not adopted:* Joseph's trailing `+` on floors (`≥ 5.8GB+`, to say a floor may be a large understatement). It was the coordinator's call, recorded in [[../audit/inbox-2026-10-03|the inbox]]: both 08-22 cold readers read `≥` correctly, `+` restates "at least" at the cost of a cell, and neither glyph conveys the *size* of the slack, which is the real gap. Revisit with a slack-conveying form if a specimen shows a `≥` floor read as near-exact.
+  - *A scaled value's rounding:* `61.2K` stands for any exact count in `[61,150, 61,250)`. The look claims the count is exact and shows it to three significant digits. JSON carries the integer.
 - Specimens (spaces shown as `␠` only where the eye needs them):
 
 ```
 ●   1·099.  𝓃       files, exact count
 □  ≥9·021.  B       dirs, at least 9,021 bytes
-▣  ≈   14.3GB       files+dirs, ≈14.3 GiB
-●  ≈   61.2K𝓁       files, ≈61,200 lines
+▣      14.3GB       files+dirs, exactly 14.3 GiB to three significant digits
+●      61.2K𝓁       files, 61,200 lines (exact, shown to three digits)
 ●  ~    2.4M𝓉       files, ~2.4M tokens (estimated)
         3.3PB       under a heading naming the subject (𝓃/B/𝓁/𝓉 still shows unless the heading names the unit too)
 ```
 
-**Landed 2026-08-22 (step 3) — two things for Joseph's eyes:** (a) *small exact totals carry no mark* — the inbox mock showed `≈101`/`≈681` for ungrouped dir totals, but the cell law says `≈` means "exact, grouped for the eye," so an ungrouped exact total is blank-marked (`681.`); the mock predates the law — ratify or reverse. (b) *`.`-always is loud on small numbers* (`1.` `2.` `7.`) — the dots align, which was the point; if it grates in use, the alternative is "dot only when there is a fraction or thousands," at the cost of the anchor column. Also landed: a scaled exact value wears `≈` even under a heading (`≈  80.0M`), since scaling *is* grouping.
+**Landed 2026-08-22 (step 3) — two things for Joseph's eyes:** (a) *small exact totals carry no mark* — the inbox mock showed `≈101`/`≈681` for ungrouped dir totals, but the cell law says `≈` means "exact, grouped for the eye," so an ungrouped exact total is blank-marked (`681.`); the mock predates the law — ratify or reverse. (b) *`.`-always is loud on small numbers* (`1.` `2.` `7.`) — the dots align, which was the point; if it grates in use, the alternative is "dot only when there is a fraction or thousands," at the cost of the anchor column. ~~Also landed: a scaled exact value wears `≈` even under a heading (`≈  80.0M`), since scaling *is* grouping.~~ *(2026-10-03: `≈` retired; a scaled exact value is bare, `80.0M`. Item (a)'s blank mark on small exact totals stands, and is now the whole rule.)*
 
 **Not decided here:** how a *subgroup* subject (suffix bucket `md`, kind `archive`, a glob pattern, `dirty`) is written before its cell — the census/facet forms wait on that. Consequences already implied: `(44 files)`, `dirty<4>`, `≈127f`, `md×31` all migrate into this grammar once the subgroup form is chosen.
 
@@ -182,7 +185,7 @@ What it adds beyond the testimony above, folded into the law: (a) a **confusable
 
 | pack | values | candidate family (BMP, semantic) |
 |---|---|---|
-| **honesty marks** | exact-grouped / estimated / floor / excluded / denied / cut | `≈ ~ ≥ ⊘` (shipped) + one each for denied and walk-bound (today words: `[denied]`, `[walk bound]`) |
+| **honesty marks** | estimated / floor / excluded / denied / cut (exact is unmarked since 2026-10-03) | `~ ≥ ⊘` (shipped; `≈` retired 2026-10-03) + one each for denied and walk-bound (today words: `[denied]`, `[walk bound]`) |
 | **aliveness grade** | heat quantized to ~4 grades | graded stars or filled shapes: `✭ ✫ ★` / `○ ◔ ◑ ●` (SIGNA's density idea applied to magnitude, not time) |
 | **git letter** | modified / added / untracked / renamed / conflict | letters are already the universal glyph (`M A ? R U`) — keep letters; a glyph pack would lose the reader's prior |
 | **kind class** | dir / file / link / mount / special | `/` and `->` already carry dir/link as decoration; a class glyph is likely redundant — draft only if the has-block wants a compact form |
@@ -191,7 +194,7 @@ What it adds beyond the testimony above, folded into the law: (a) a **confusable
 
 **Decided packs (Joseph, 2026-08-15):**
 
-- **Unit/subject glyphs** — see §The count cell above (`● □ ▣` subjects; `𝓃 B 𝓁 𝓉` units; `≈ ≥ ~` marks). Consequence for the aliveness pack: `●` is taken, so a heat/aliveness grade cannot use the circle fill-family — density bars (`░▒▓█` / `▁▃▅█`) are the candidate; `○ ◔ ◑ ●` is tucked away for later (file types or sizes, Joseph).
+- **Unit/subject glyphs** — see §The count cell above (`● □ ▣` subjects; `𝓃 B 𝓁 𝓉` units; `≥ ~` marks — `≈` retired 2026-10-03). Consequence for the aliveness pack: `●` is taken, so a heat/aliveness grade cannot use the circle fill-family — density bars (`░▒▓█` / `▁▃▅█`) are the candidate; `○ ◔ ◑ ●` is tucked away for later (file types or sizes, Joseph).
 
 - **git status — one cell.** Values: `⊘` gitignored · `M` modified · `A` added · `⁇` untracked · `R` renamed · `U` unmerged · `D` deleted (`C` copied / `T` typechange kept available so the pack is porcelain-complete). **Blank when clean** (quiet law: the letter's presence is the message). When index and worktree differ, the worktree state shows — dirty is the glance question. One cell, not the porcelain `XY` pair: a block has ~8–10 cells in all and the second would be blank most of the time. `⁇` (U+2047) over `?`: it is porcelain's own doubled `??` in one cell — louder for humans, and (Grok, same day) *"it is the ? I already have, just louder, and it stops me from stealing U for untracked."* `⊘` stays the ignored glyph — Grok reads it as clearly "ignore" where `∅` reads as "empty" — and it moves *into* this slot, so gitignored is marked once (retire the separate marks-column `⊘`; JSON `gitignored: true` unchanged). Human/terminal legibility is a criterion here alongside agent cold-reading — Joseph is the sensor for it. `∅` stays free (a future empty-dir mark must not use it either way, to keep the pair apart).
 
@@ -249,6 +252,6 @@ New facts. Glyph vocabulary for the glyph-block (shorthand's open). SIGNA. Per-k
 
 ## Open — from the 2026-08-22 cold reads (`audit/hallway-2026-08-22.md`)
 
-- **#1 The `≈` mark** — fourth independent arrival that the exact-grouped mark reads as "approximately" and the three marks don't stick. *Why open:* the glyphs are decided (2026-08-15) and a learned glyph is an interface; reversing costs every reader who learned it, keeping costs every reader who hasn't. Proposal: exact-grouped carries **no mark** (`61.2K`), `~` estimate, `≥` floor — a mark then always means "not exact." Joseph.
+- ~~**#1 The `≈` mark**~~ — **Resolved 2026-10-03** (Joseph ratified the proposal): exact carries no mark; `~` estimate, `≥` floor. See §The count cell, *The marks*.
 - **#3 `⊘`** read as "denied / blocked / not for you" by both readers — the git-status pack's first cold-read test, failed on this glyph. *Why open:* decided pack; the rest of it (`M A ⁇ R U D`) passed. Candidates: a heading for the far-left column; a different ignored glyph. Joseph.
 - **#6 The far-left cell is cramped** (`M├──` read as a compound glyph) and unheaded. *Why open:* layout — a separating cell costs one column on every row; a one-glyph heading costs nothing but must be ratified vocabulary. Joseph.

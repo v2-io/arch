@@ -37,7 +37,7 @@ Three inbox entries land here; together they decide the shape this row's design 
 │   │   ├── reflections-coord-2026-08-10.md        25  0.00 · 4.1d ago
 ```
 
-(This supersedes [[mass|Mass]]'s shipped call "the subtree's text lines follow the census" — the deep line total is the `lines` fact's deep-agg office and sits in that column, marks `≈`/`~`/`≥` kept.)
+(This supersedes [[mass|Mass]]'s shipped call "the subtree's text lines follow the census" — the deep line total is the `lines` fact's deep-agg office and sits in that column, marks `≈`/`~`/`≥` kept. *2026-10-03: `≈` retired; exact is unmarked, `~`/`≥` kept — [[grid-cleanup|Grid cleanup]] §The count cell.*)
 
 **2. Wrap a line's description so columns line up; `--lines` is a logical count.** Joseph, seeing symlink targets shove the whole far-right block:
 

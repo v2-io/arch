@@ -24,23 +24,23 @@ A body the look declines to open still says how big it is. That covers a gitigno
 
 ## Where it shows
 
-**A `⊘` line: in the far-right `bytes` column**, as a count cell (`≈    2.9M`, `≥  892.0M`).
+**A `⊘` line: in the far-right `bytes` column**, as a count cell (`     2.9M`, `≥  892.0M`).
 
 - It speaks whenever the column exists, which it does under the quiet default. It is existence information, like mass at a cutoff, not a surprise.
 - `format.size = bytes` gives the raw integer (`3050000`, `≥…` when a floor).
 - *Call:* `columns.size = off` silences it. The caller's explicit ask wins, as `lines` off silences mass. The `⊘` still says the dir is there.
 
-**A hidden furniture dir: on its has-word, after the file count**, e.g. `[has: build ≥17643f ≥3.9GB, git, rust]`, or `agents ≥12150f ≈2.8GB`.
+**A hidden furniture dir: on its has-word, after the file count**, e.g. `[has: build ≥17643f ≥3.9GB, git, rust]`, or `agents ≥12150f 2.8GB`.
 
 - *Call, form:* the has-block's internal form waits on the undecided subgroup-subject form ([[grid-cleanup|grid-cleanup]] §The count cell, "Not decided here"). Meanwhile bytes ride in the count cell squeezed for prose (`count_cell::compact`): the same mark, digits, scale, and unit, without the padding, and no `.` when no fraction follows. This moves with the has-block when that form lands.
-- *Call, quiet threshold:* a has-word's bytes speak at **≥ 1 MiB, or whenever they are a floor**. Below that, a body answers no disk question (`agents ≈1f 6·010B`, `build ≈3f ≈69.1KB`) and only lengthens the widest near-right part, the first candidate to spill (grid-cleanup §Decisions). `⊘` lines always speak, because their bytes sit in an aligned cell that costs no inline width.
+- *Call, quiet threshold:* a has-word's bytes speak at **≥ 1 MiB, or whenever they are a floor**. Below that, a body answers no disk question (`agents 1f 6·010B`, `build 3f 69.1KB`) and only lengthens the widest near-right part, the first candidate to spill (grid-cleanup §Decisions). `⊘` lines always speak, because their bytes sit in an aligned cell that costs no inline width.
 - Several hidden dirs claiming one kind on one line sum, as their file counts already did. Hardlinks are deduplicated within one body, not across sibling bodies.
 
-**`.git`: on the `git` has-word, bytes only** (`[has: agents, archive ≈2f, git ≈654.2MB]`). Joseph, 2026-10-03, asked whether `.git` should be weighed too: *"yes, IMO."*
+**`.git`: on the `git` has-word, bytes only** (`[has: agents, archive 2f, git 654.2MB]`). Joseph, 2026-10-03, asked whether `.git` should be weighed too: *"yes, IMO."*
 
 - *Call, place:* the has-word, not the `[git: …]` facet. The facet is git's own verified state (remote, branch, HEAD, dirty), phrased by its plugin. A filesystem measurement inside it would blur that claim. The has-word is where every other hidden body says its size, so the form, the 1 MiB threshold, and the `≥` rule stay one law.
-- *Call, bytes only:* an object store's file count measures nothing (packs fold thousands of objects into a few files), so the `git` word never carries `≈Nf`. JSON still has `files`.
-- **Submodules:** a submodule's `.git` is a gitlink *file*, which is not weighed. Its objects live in the superproject's `.git/modules/`, so the superproject's figure carries them: arch's `≈654.2MB` includes 634M of `modules/` (`du`), and asf and vivarium show the bare word. The look states each store once, where it actually is.
+- *Call, bytes only:* an object store's file count measures nothing (packs fold thousands of objects into a few files), so the `git` word never carries an `Nf` count. JSON still has `files`.
+- **Submodules:** a submodule's `.git` is a gitlink *file*, which is not weighed. Its objects live in the superproject's `.git/modules/`, so the superproject's figure carries them: arch's `654.2MB` includes 634M of `modules/` (`du`), and asf and vivarium show the bare word. The look states each store once, where it actually is.
 - The object store never joins mass or any count, consistent with design/furniture.md's *"`.git`'s object store is not the repo's working weight"*. It is weighed as a disk answer, not as comprehension mass.
 
 **JSON:**

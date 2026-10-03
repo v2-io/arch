@@ -67,7 +67,8 @@ fn unexpanded_dir_carries_deep_weight() {
     let line = o.lines().find(|l| l.contains("top/")).expect(&o);
     // One dir among the children → name form; its deep files = 2 (below
     // mid/), direct one.md in the suffix bucket; subtree lines = 6.
-    assert!(line.contains("mid/ ≈2f"), "container with deep files: {o}");
+    // 2026-10-03 ≈-retirement slice: exact counts are unmarked (`mid/ 2f`).
+    assert!(line.contains("mid/ 2f"), "container with deep files: {o}");
     assert!(line.contains("md×1"), "direct file bucket: {o}");
     // 2026-08-22 count-cell slice: mass lines moved to the `lines` column.
     // 6 is exact and ungrouped (below 10,000) so the mark is blank, not ≈.
@@ -90,8 +91,9 @@ fn furniture_does_not_count() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let line = o.lines().find(|l| l.contains("crate/")).expect(&o);
+    // 2026-10-03 ≈-retirement slice: exact counts are unmarked (`1f`).
     assert!(
-        line.contains("≈1f"),
+        line.contains(" 1f"),
         "target/'s debris is not the crate's mass: {o}"
     );
     assert!(!line.contains("31"), "{o}");
@@ -112,8 +114,10 @@ fn walk_bound_makes_mass_a_floor() {
     let (c, o, e) = run(&dir, &xdg, &["--depth", "2", "--walk", "2"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("[walk bound]"), "{o}");
+    // 2026-10-03 ≈-retirement slice: exact counts are unmarked, so the old `!contains("≈20f")` would pass vacuously.
+    // Restated: any `20f` the look prints must be a `≥` floor.
     assert!(
-        !o.contains("≈20f"),
+        o.match_indices("20f").all(|(i, _)| o[..i].ends_with('\u{2265}')),
         "cut mass must not claim exactness: {o}"
     );
 }
@@ -132,7 +136,7 @@ fn binary_only_subtree_claims_no_lines() {
 }
 
 /// Past the read budget, deep line totals are estimated and marked `~`
-/// (walk-relative estimate; `≈` now means exact-but-grouped — mass-mark
+/// (walk-relative estimate; `≈` retired 2026-10-03, exact is unmarked — mass-mark
 /// distinction, 2026-08-14) — never silence and never a stall.
 #[test]
 fn read_budget_estimates_marked() {

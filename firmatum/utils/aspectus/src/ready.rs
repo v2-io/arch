@@ -45,7 +45,7 @@ pub enum Position {
     /// score cluster when `format.heat = score`).
     FarRight,
     /// A mark *inside* another fact's cell (lattice-2's own ninth word):
-    /// the honesty marks `≈ ≥ ~` live in a count cell's `m` slot.
+    /// the honesty marks `≥ ~` live in a count cell's `m` slot (blank = exact).
     InCell,
     /// Renders nothing of its own — it is consumed by other facts
     /// (filetype feeds census buckets and the kind word) or it is a weight
@@ -218,7 +218,7 @@ fn glob_count(n: &Node) -> Option<Ready> {
     ))
 }
 
-/// An unexpanded dir's own children, by subject (`[dir×3 ≈120f · md×31]`).
+/// An unexpanded dir's own children, by subject (`[dir×3 120f · md×31]`).
 fn dir_census(n: &Node) -> Option<Ready> {
     let c = n.leftover.as_ref()?;
     let text = c.render();
@@ -250,7 +250,7 @@ fn facets(n: &Node) -> Vec<Ready> {
 }
 
 /// The contents claim: what the furniture map says this place holds. A
-/// hidden dir's magnitude rides its word (`archive ≈127f`) so presence
+/// hidden dir's magnitude rides its word (`archive 127f`) so presence
 /// survives hiding.
 fn has_block(n: &Node) -> Option<Ready> {
     if n.kinds.is_empty() {
@@ -271,7 +271,8 @@ fn has_block(n: &Node) -> Option<Ready> {
                 }
             }
             Some((_, b)) if b.files > 0 => {
-                let mark = if b.files_bounded { "≥" } else { "≈" };
+                // Exact is unmarked; ≥ a floor (≈ retired 2026-10-03).
+                let mark = if b.files_bounded { "≥" } else { "" };
                 // Bytes ride beside the file count when they could answer
                 // "why is this huge" — at ≥ 1 MiB, or whenever they are a
                 // floor (design/ignored-bytes.md §Hidden furniture: both the
@@ -284,7 +285,7 @@ fn has_block(n: &Node) -> Option<Ready> {
                 }
             }
             // A has-count of zero files is a claim with no content
-            // (`agents ≈0f`); the kind word stays, the count does not.
+            // (`agents 0f`); the kind word stays, the count does not.
             // JSON keeps the underlying number.
             _ => k.clone(),
         })
@@ -302,7 +303,7 @@ fn has_block(n: &Node) -> Option<Ready> {
 /// near-right part (design/ignored-bytes.md — a call).
 const HAS_BYTES_SPEAK_AT: u64 = 1 << 20;
 
-/// A body's byte total, squeezed for the has-block (`≈15.0GB`).
+/// A body's byte total, squeezed for the has-block (`15.0GB`).
 fn body_bytes_compact(b: &crate::n_level::Body) -> String {
     let mark = if b.bytes_bounded {
         Mark::Floor

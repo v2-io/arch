@@ -527,7 +527,7 @@ pub const FACTS: &[Fact] = &[
     ),
     // ── Honesty marks (facts about the look, loud by default) ───────────
     f(
-        Wants,
+        Built,
         "count-marks",
         "walk/read/bounds state of the set",
         InCell,
@@ -536,7 +536,7 @@ pub const FACTS: &[Fact] = &[
         None,
         "1",
         None,
-        "≈ exact-grouped · ≥ floor · ~ estimated",
+        "≥ floor · ~ estimated · blank exact (scaled or not)",
         true,
     ),
     f(

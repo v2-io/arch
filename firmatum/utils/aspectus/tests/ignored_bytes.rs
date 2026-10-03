@@ -156,7 +156,8 @@ fn hidden_furniture_has_word_bytes() {
     fs::write(dir.join("target/debug/small"), "x").unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("build \u{2248}2f \u{2248}2.0MB"), "{o}");
+    // 2026-10-03 ≈-retirement slice: exact counts are unmarked.
+    assert!(o.contains("build 2f 2.0MB"), "{o}");
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("\"kind\":\"build\",\"files\":2,\"bytes\":2097153"), "{o}");
@@ -164,7 +165,7 @@ fn hidden_furniture_has_word_bytes() {
     fs::remove_file(dir.join("target/debug/big")).unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("build \u{2248}1f,") || o.contains("build \u{2248}1f]"), "{o}");
+    assert!(o.contains("build 1f,") || o.contains("build 1f]"), "{o}");
     assert!(!o.contains("1B"), "a tiny body's bytes stay quiet: {o}");
 }
 
@@ -195,8 +196,9 @@ fn git_store_weighed_bytes_only() {
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
     let has = o.lines().find(|l| l.contains("[has: git")).expect(&o);
-    // Exactly `git ≈3.0MB` — no `≈Nf` file count between word and bytes.
-    assert!(has.contains("[has: git \u{2248}3.0MB]"), "bytes only on the git word: {o}");
+    // Exactly `git 3.0MB` — no `Nf` file count between word and bytes
+    // (2026-10-03 ≈-retirement slice: exact counts are unmarked).
+    assert!(has.contains("[has: git 3.0MB]"), "bytes only on the git word: {o}");
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
     assert_eq!(c, 0, "{e}");
     assert!(o.contains("{\"kind\":\"git\",\"files\":"), "{o}");

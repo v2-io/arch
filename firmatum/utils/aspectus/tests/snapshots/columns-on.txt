@@ -3,7 +3,7 @@ columns.heat = off (env) · columns.mtime = on (user-home) · columns.permission
 <ROOT>/
                       lines     perms      bytes          mtime
 ├── deep/                         755                1600000000
-│   └── one/            11.       755                1600000000  [dir×2 ≈5f]
+│   └── one/            11.       755                1600000000  [dir×2 5f]
 ├── src/                          755                1600000000
 │   ├── blob.bin                  644         6.     1600000000  binary
 │   ├── lib.rs           2.       644        28.     1600000000

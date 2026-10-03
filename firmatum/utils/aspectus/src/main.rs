@@ -178,14 +178,15 @@ fn help_page() -> String {
          suffix (the `[kinds]` table; legacy key `kinds`: `SUFFIX:text|binary`,\n\
          `!SUFFIX` to drop) \u{2192} sniff. Census buckets stay by suffix unless\n\
          `format.census = minor|major`. An unexpanded directory\n\
-         carries a census of what it held — [dir\u{d7}3 \u{2248}120f \u{b7} md\u{d7}31] — with\n\
+         carries a census of what it held — [dir\u{d7}3 120f \u{b7} md\u{d7}31] — with\n\
          subdirectories as containers whose deep file-count (mass) leads,\n\
-         and the subtree's text lines in the `lines` column (\u{2248}  61.2K /\n\
+         and the subtree's text lines in the `lines` column (61.2K /\n\
          ~   5.0M / \u{2265} 434.0K): a glance calibrates how much has not been\n\
          seen. Below 10,000 the value is exact (`1\u{b7}099.`); at and above,\n\
-         three significant digits and a scale letter. \u{2248} is an exact count\n\
-         grouped for the eye; ~ is this walk's estimate; \u{2265} marks a floor;\n\
-         a single concealed name shows the name. The look reads file\n\
+         three significant digits and a scale letter. A mark always means\n\
+         not exact: ~ is this walk's estimate, \u{2265} a floor (the truth is at\n\
+         least this); no mark means exact, scaled or not. A census\n\
+         that would conceal a single name shows the name. The look reads file\n\
          content only up to a budget (config `reads`, bytes); past it, deep\n\
          line totals are estimated from sizes and marked ~ (this walk's\n\
          estimate, not a property of the directory) and per-file counts\n\
@@ -282,7 +283,7 @@ fn help_page() -> String {
          Hidden names are not counted as children; the has-spot is what\n\
          says they are here, with how many files a hidden dir holds and,\n\
          from 1 MiB up, how big it is ([has: build \u{2265}17643f \u{2265}3.9GB]);\n\
-         the git word carries its object store's size alone (git \u{2248}654.2MB).\n\
+         the git word carries its object store's size alone (git 654.2MB).\n\
          The map is glob-based and extendable from config\n\
          (the `[furniture]` table in `aspectus config defaults`; legacy key\n\
          `furniture`: `PATTERN[:KIND[:hide|omit|mark]]`, comma-separated;\n\
@@ -922,7 +923,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     // cutoff subtrees, then git facets (porcelain per repo).
     aspectus::n_level::deep_phase(&mut tree, &abs, &mut ctx);
     // After the deep phase, so a folded sibling arrives at the remainder
-    // carrying its real mass (`dir×9 ≈1.4Kf`) rather than a bare count —
+    // carrying its real mass (`dir×9 1412f`) rather than a bare count —
     // the difference between compressing the context and cutting it.
     if focus.is_some() {
         aspectus::focus::fold_asides(&mut tree);

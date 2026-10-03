@@ -13,7 +13,7 @@
 //!    the places they want deep; counting from the root would make the ask
 //!    unexpressible).
 //! 2. **Unselected siblings fold**, at each connective level, into one
-//!    typed leaf-census remainder (`[+ dir×9 ≈1.4Kf · md×27]`) — present,
+//!    typed leaf-census remainder (`[+ dir×9 1412f · md×27]`) — present,
 //!    typed, one line. Never dropped: the fold is a compression, and the
 //!    census is what keeps it from being a lie. (Joseph 2026-08-22: fold
 //!    by default; a future `-q` would drop the remainders — not built.)
@@ -108,7 +108,7 @@ pub fn drop_nested(sel: &mut Vec<PathBuf>) -> Vec<PathBuf> {
 
 /// Fold the unselected siblings of every connective level into that
 /// level's remainder census. Runs after the deep phase, so a folded
-/// directory contributes its real mass (`dir×9 ≈1.4Kf`) rather than a
+/// directory contributes its real mass (`dir×9 1412f`) rather than a
 /// bare name-count — the whole point of folding rather than cutting.
 pub fn fold_asides(node: &mut crate::n_level::Node) {
     for c in &mut node.children {
