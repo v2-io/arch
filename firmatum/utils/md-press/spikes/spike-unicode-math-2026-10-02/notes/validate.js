@@ -1,3 +1,6 @@
+// Usage: npm install katex mathjax-full (anywhere), then
+//   NODE_PATH=<that dir>/node_modules node notes/validate.js < spans.jsonl
+// Without NODE_PATH node fails to find the modules; check stderr, not just an empty stdout.
 // Read JSON lines {id, tex} on stdin; render each with KaTeX (strict) and MathJax (TeX->MathML);
 // print JSON lines for failures: {id, tex, katex, mathjax}
 const katex = require('katex');

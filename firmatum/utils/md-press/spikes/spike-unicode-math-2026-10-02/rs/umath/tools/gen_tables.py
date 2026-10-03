@@ -13,6 +13,7 @@ Run from the spike root:  python3 rs/umath/tools/gen_tables.py
 import importlib.util
 import json
 import sys
+sys.dont_write_bytecode = True  # never write __pycache__ under py/ (read-only for this crate)
 import unicodedata
 
 spec = importlib.util.spec_from_file_location('umath_v3', 'py/frozen/umath_v3.py')

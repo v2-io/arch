@@ -1,13 +1,14 @@
 # umath: Rust port of the deterministic Unicode-math converter
 
-A pure-Rust port of `py/frozen/umath_v6.py` (sha1 `a8f1dcf5…`), the primary
-target. The same crate also reproduces `umath_v5.py` (`39ee2679…`),
-`umath_v4.py` (`a9080099…`) and `umath_v3.py` (`eb5faf14…`), selected per call. The library has no dependencies; `serde_json` is used only by
+A pure-Rust port of `py/frozen/umath_v7.py` (sha1 `99eb92dc…`), the primary
+target. The same crate also reproduces `umath_v6.py` (`a8f1dcf5…`),
+`umath_v5.py` (`39ee2679…`), `umath_v4.py` (`a9080099…`) and `umath_v3.py`
+(`eb5faf14…`), selected per call. The library has no dependencies; `serde_json` is used only by
 the JSONL bin.
 
 ```rust
-let (text, spans) = umath::convert(input)?;   // v6
-umath::convert_ver(input, umath::Ver::V5)?;    // or convert_v5 / convert_v4 / convert_v3
+let (text, spans) = umath::convert(input)?;   // v7
+umath::convert_ver(input, umath::Ver::V6)?;    // or convert_v6 / convert_v5 / convert_v4 / convert_v3
 // spans: Vec<Span { start, end, latex: Option<String>, conf }>
 // start/end are CHAR offsets into `input`; latex None = a candidate it declined
 ```
@@ -15,23 +16,26 @@ umath::convert_ver(input, umath::Ver::V5)?;    // or convert_v5 / convert_v4 / c
 ## Result
 
 **0 differences between Rust and the Python reference, for each of v3, v4,
-v5 and v6, on every input set below.** A "difference" is any mismatch in output
+v5, v6 and v7, on every input set below.** A "difference" is any mismatch in output
 text, in the span list (start, end, LaTeX, confidence; declined candidates
 included), or in whether the call raised. A site absent from both sides'
 `--changed-only` output was unchanged and span-free on both.
 
-| input set | inputs | v6 changed or spanned | differences (v3 / v4 / v5 / v6) |
+| input set | inputs | v7 changed or spanned | differences (v3 / v4 / v5 / v6 / v7) |
 |---|---|---|---|
-| gold items (`all-items`, `C-items`, `D-items`) | 1,390 | 1,192 | 0 / 0 / 0 / 0 |
-| estate prose sites (`sites.jsonl`, `display: false`) | 1,293,042 | 16,943 | 0 / 0 / 0 / 0 |
-| math-free external sites (`mathfree-sites.jsonl`) | 2,473,218 | 72 | 0 / 0 / 0 / 0 |
-| fuzz, seed 1 (`tools/fuzz_inputs.py`) | 264,773 | 88,373 | 0 / 0 / 0 / 0 |
-| fuzz, seed 2 | 564,773 | 199,870 | 0 / 0 / 0 / 0 |
-| deep-nesting probes (depth 100–10,000; v6 adds `⋃` chains) | 35 / 36 | — | 0 (v5) / 0 (v6) |
+| gold items (`all-items`, `C-items`, `D-items`) | 1,390 | 1,190 | 0 / 0 / 0 / 0 / 0 |
+| estate prose sites (`sites.jsonl`, `display: false`) | 1,293,042 | 16,910 | 0 / 0 / 0 / 0 / 0 |
+| math-free external sites (`mathfree-sites.jsonl`) | 2,473,218 | 72 | 0 / 0 / 0 / 0 / 0 |
+| fuzz, seed 1 (`tools/fuzz_inputs.py`) | 264,773 | 88,251 | 0 / 0 / 0 / 0 / 0 |
+| fuzz, seed 2 | 564,773 | 199,519 | 0 / 0 / 0 / 0 / 0 |
+| deep-nesting probes (depth 100–10,000; v6/v7 add `⋃` chains) | 35 / 36 | — | 0 (v5) / 0 (v6) / 0 (v7) |
 
-v6 differs from v5 on 1 gold item, 1 estate site, 0 math-free sites, and
-1,813 / 4,474 fuzz inputs (in both languages). The fuzz is dense in exactly
-what v6 fixed: 𝟊, `†`/`*` followed by a letter superscript, and `⋃`.
+Version deltas, in output text, the same in both languages:
+- v6 against v5: 1 gold item, 1 estate site, 0 math-free sites, and 1,813 /
+  4,474 fuzz inputs. The fuzz is dense in exactly what v6 fixed: 𝟊,
+  `†`/`*` followed by a letter superscript, and `⋃`.
+- v7 against v6: 3 gold items, 43 estate sites (39 distinct bodies), 0
+  math-free sites, and 138 / 393 fuzz records.
 
 The corpus alone doesn't exercise everything, so the fuzz sets add three
 families: random strings over the converter's special alphabet; mutations of
@@ -39,11 +43,11 @@ real math-bearing estate sites; and every BMP codepoint plus every
 math-alphanumeric dropped into math contexts, which tests the generated
 Unicode tables character by character. The reference raises on 295 to 775 of
 the fuzz inputs per version (v3–v5), always `KeyError` on 𝟊 (bug 1 below).
-Rust returns `Err` on exactly the same inputs. v6 raises on none.
+Rust returns `Err` on exactly the same inputs. v6 and v7 raise on none.
 
 **Idempotence** (relevant to md-press `--check` after a write): re-converting
-v6's own output changes 0 of 16,943 estate outputs and 0 of 199,870 fuzz
-outputs (v5: also 0 and 0). v3 is not idempotent: 134 of 16,978 estate outputs change on a second
+v7's own output changes 0 of 16,910 estate outputs and 0 of 199,519 fuzz
+outputs (v6 and v5: also 0 and 0). v3 is not idempotent: 134 of 16,978 estate outputs change on a second
 pass. v4's fixed-point wrapper is the reason for the difference.
 
 **Timing** (1,293,042 estate sites, Apple M4 Max):
@@ -55,7 +59,10 @@ pass. v4's fixed-point wrapper is the reason for the difference.
 | Python v6, 12 processes | 23.7 s | 279 s |
 | Python v5, 1 process | 214 s | 213 s |
 
-About 8.5 µs per site in Rust, roughly 20× less CPU than Python. The reference
+About 8.5 µs per site in Rust, roughly 20× less CPU than Python. v7 runs at
+the same speed as v6: on a shared machine at load average 46, both took
+13.0–13.3 s on 1 thread, and the absolute figures above are from an unloaded
+run. The reference
 has superlinear paths on very long lines; the port does not (see deviations
 below). The longest estate site, 318k chars, is included in the timings above.
 
@@ -64,9 +71,9 @@ below). The longest estate site, 318k chars, is included in the timings above.
 ```sh
 cd rs/umath && cargo build --release && cargo test --release
 # JSONL in {"id","text"} -> JSONL out {"id","out"} (in input order)
-target/release/umath [--v3|--v4|--v5|--v6] [--spans] [--changed-only] [--threads N] < in.jsonl   # default v6
+target/release/umath [--v3|--v4|--v5|--v6|--v7] [--spans] [--changed-only] [--threads N] < in.jsonl   # default v7
 # full differential, from the spike root (needs data/bulk/ and data/gold/):
-sh rs/umath/tools/differential.sh v6 v5 v4 v3
+sh rs/umath/tools/differential.sh v7 v6 v5 v4 v3
 ```
 
 - `tools/make_inputs.py` builds the corpus inputs into `scratch/`.
@@ -110,7 +117,8 @@ except where ASCII-exact. Regenerate only together with a new reference; the
 tables pin the measured behavior.
 
 **Versions in one crate.** v6 changes the OPS table (`⋃`, `⋂`), and the
-lexer consults OPS deep inside. Rather than thread a version parameter
+lexer consults OPS deep inside; v7 adds rules inside span growth and
+rendering. Rather than thread a version parameter
 through every function, `run()` sets a thread-local `Ver` (next to the
 recursion counter), and the few version-dependent points read it. Each is
 commented with the version that introduced it.
@@ -155,6 +163,16 @@ quoted-mention rule needs a real closing quote; and `⋃`/`⋂` are
 `\bigcup`/`\bigcap` prefix operators. 4 and the rest of 5 remain in v6 and
 don't change outputs. The port reproduces each version as frozen, bugs
 included. `tests/reference.rs` pins the bugs on v5 and the fixes on v6.
+
+v7 then fixed a bug class found by an independent verifier:
+- a glued hyphen before an operator-name word is a word compound, not a minus
+  (`$n$-dim` was `$n - \dim$`, `γ-sign` was `\gamma - \operatorname{sign}`);
+- grow-left stops at `func-` compounds (`log-det/λ`, `arg-max`);
+- `\text{near}-\text{boundary}` renders as one `\text{near-boundary}`;
+- a `$` inside inline code makes the whole site abstain, because md-press's
+  `edit_pairs` does not mask code.
+
+The port reproduces v7 exactly, and `tests/reference.rs` pins these changes.
 Examples below are v5 outputs; 1–4 hold for v3 as well.
 
 1. **𝟊 (U+1D7CA, MATHEMATICAL BOLD CAPITAL DIGAMMA) raises `KeyError`.**
@@ -207,8 +225,9 @@ Examples below are v5 outputs; 1–4 hold for v3 as well.
 The integration plan already argues gates and trigger scope; I agree with it
 and won't repeat it. What the port showed me in addition:
 
-- **Integrate v6** (`umath::convert`). It is the version these numbers are
-  for, it raises on nothing in any set here, and it is idempotent.
+- **Integrate v7** (`umath::convert`). It raises on nothing in any set here
+  and is idempotent. (The held-out scores were measured on earlier versions, D on v3/v4; the
+  coordinator reports v7 departs from v6 on 3 of 1,390 gold items.)
 - **Call it on the whole site body, not on md-press's pieces.** In
   `promote_site`, take `split_structure`'s body, call `umath::convert(body)`,
   and reattach `pre`/`suf`. Skip `split_at_prose_separators`/`split_sentences`
@@ -221,7 +240,7 @@ and won't repeat it. What the port showed me in addition:
   `normalize_paren_math` runs first, those checks see different text than was
   measured. Pass the raw body; md-press's own normalize becomes redundant on
   this path.
-- **`Err` means leave the text unchanged and flag it.** In v6 only
+- **`Err` means leave the text unchanged and flag it.** In v6 and v7 only
   adversarial nesting (about 500+ levels) produces one.
 - **Offsets are chars.** md-press indexes bytes; convert via `char_indices`
   if the spans are used (the output text alone needs nothing).
@@ -232,6 +251,6 @@ and won't repeat it. What the port showed me in addition:
 - **Speed is no longer a reason for the trigger.** The whole estate converts
   in 1.4 s on 12 threads. Whether to keep the trigger is purely a scope and
   precision decision, which the plan's (a)–(c) sequencing addresses.
-- **Keep the differential as the regression test.** Any v7 should go through
+- **Keep the differential as the regression test.** Any v8 should go through
   `tools/differential.sh` plus the fuzz before its numbers are cited for the
   Rust side.

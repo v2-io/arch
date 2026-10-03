@@ -126,7 +126,7 @@ def math_atoms(src, path='', font=None):
             if f == 'mu' and t in (r'\text', r'\textrm', r'\mbox', r'\textnormal', r'\textit'):
                 for ch in arg:
                     if not ch.isspace():
-                        out.append((ch, path, 'mt'))
+                        out.append((ch, path, 'mu'))
             else:
                 out += math_atoms(arg, path, f)
             continue
@@ -238,36 +238,13 @@ def normalize_atoms(atoms):
 LETTERISH = lambda g: len(g) == 1 and g.isalpha()
 
 
-STRICT_SLASH = False
-
-
 def font_relation(fs, fg, glyph):
-    """How the system's font for an atom relates to the gold's.
-
-    Scorer v2 (after de-novo feedback 1, F2): a hyphen and a minus are no longer
-    the same atom — prose `-` and `-` inside `\\text{}` are hyphens, `-` in math
-    mode is a minus; a Greek letter left in prose and the same letter typeset
-    are distinguished (over/under); with STRICT_SLASH, a `/` in prose vs `/` in
-    math (division) is a difference too."""
-    if fs == fg:
-        return 'same'
-    if glyph == '-' or (STRICT_SLASH and glyph == '/'):
-        hy_s, hy_g = fs in ('tx', 'mt'), fg in ('tx', 'mt')
-        if hy_s == hy_g:
-            return 'same'
-        if fs == 'tx':
-            return 'under'   # left as written where gold has a minus: incomplete, not wrong
-        return 'wrong'       # a hyphen made into a minus (or the reverse inside math)
-    fs = 'mu' if fs == 'mt' else fs
-    fg = 'mu' if fg == 'mt' else fg
+    """How the system's font for an atom relates to the gold's."""
     if fs == fg:
         return 'same'
     S = {fs, fg}
     if not LETTERISH(glyph):
         return 'same'          # digits, punctuation, operators: font not meaningful
-    greek = '\u0370' <= glyph <= '\u03ff'
-    if greek and S == {'tx', 'mu'}:
-        return 'over' if fg == 'tx' else 'under'   # Φ(fight) typeset as $\Phi$: a name over-typeset
     if S <= {'tx', 'mu'}:
         return 'same'          # upright either way
     if S <= {'mi', 'mu'} or glyph == 'E' and 'bb' in S and S <= {'bb', 'mi', 'mu', 'tx'}:

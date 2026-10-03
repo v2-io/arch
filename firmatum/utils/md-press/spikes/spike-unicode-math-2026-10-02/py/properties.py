@@ -9,7 +9,7 @@ math-free corpus, and random fuzz. Claims checked:
 """
 import json, random, sys, collections, re
 sys.path.insert(0, 'py/frozen'); sys.path.insert(0, 'py')
-import umath_v6 as m
+import umath_v7 as m
 import score
 from multiprocessing import Pool
 
@@ -49,7 +49,7 @@ def fuzz(n, seed):
 
 if __name__ == '__main__':
     texts = []
-    for f in ('data/bulk/conv-v6.jsonl',):
+    for f in ('data/bulk/conv-v7.jsonl',):
         for l in open(f):
             texts.append(json.loads(l)['body'])
     for l in open('data/bulk/mathfree-sites.jsonl'):

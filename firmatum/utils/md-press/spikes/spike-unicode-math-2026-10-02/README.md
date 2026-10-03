@@ -7,89 +7,131 @@ md-press's math pass asks a local LLM (llama3.2:3b) to wrap Unicode math in pros
 ## What happened, in brief
 
 - **The converter.** I built a deterministic converter: a lexer, a span finder (seed-and-grow, in the family of Unicode TN28 §5), a small sub/superscript grammar, and LaTeX emission under house rules.
-- **The yardstick.** Its outputs were scored against blind gold: 1,390 items in four sets, each item labeled twice, independently, by 20 Opus labeler agents; no converter produced any label.
-- **The scoring.** The scorer has an "effectively equivalent" class at Joseph's suggestion. It compares what a reader sees (glyph, script position, font), not the LaTeX bytes.
-- **Three fresh rounds after freezing.** Three times the converter was frozen and then scored once on a fresh labeled set: B after v1, C after v2, D after v3 and v4.
+- **The yardstick.** Its outputs were scored against blind gold: 1,390 items in four sets, each item labeled twice, independently, by 20 Opus labeler agents. No converter produced any label.
+- **The scoring.** The scorer has an "effectively equivalent" class at Joseph's suggestion. It compares what a reader sees (glyph, script position, font), not the LaTeX bytes. After the independent verification (`de-novo-feedback-1.md`), the scorer (v2) also tells a word hyphen from a minus, and a Greek name left in prose from a typeset one. Every number below uses scorer v2.
+- **Held-out sets, and how clean each one is.** Only **D** is clean: v3 was frozen before D was selected, and v4 before any D label or labeler report existed. C and B were labeled, and their labelers' reports read, *while* the converter was still being developed. Those reports named items and classes, so the C untriggered row is not a held-out number, and B's is softer than "fresh" (`de-novo-response-1.md` §F1).
 - **Data and drills.** Following Joseph's suggestion, the estate's own 50k LaTeX-bearing lines became round-trip data. 600 lines were rewritten by Sonnet, Opus and Haiku in their natural Unicode dialect. Precision drills ran over 2.47M math-free sites and 200k fuzz strings, and every emitted span was validated in KaTeX and MathJax.
-- **A Rust port** was delegated, with a differential test against the Python reference (`rs/umath/`, `rs/umath/PORT.md`). It shows 0 differences for v3 through v6 over gold, the estate, math-free text and 830k fuzz strings; v6 is its default. It also found five bugs in my reference, and v6 fixes four of them. I checked parity independently on all 1,390 gold items: 0 differences.
+- **A Rust port** was delegated, with a differential test against the Python reference (`rs/umath/`, `rs/umath/PORT.md`). It shows 0 differences for v3 through v7 over gold, the estate, math-free text and 830k fuzz strings, and v7 is its default. It also found five bugs in my reference, four of which v6 fixes. I checked v7 parity independently on all 1,390 gold items: 0 differences.
 
 **Answer:**
-- **On the text md-press already sends to the model, the converter beats the model.** It does about twice the useful work. Its per-write error rate is at or below llama's after md-press's gates, though above the 30B model's. It needs no model and is idempotent. Every span it writes over the estate and gold renders in KaTeX and MathJax, and the Rust port runs all 1.29M estate prose sites in 11 s on one thread.
-- **The residue it gets wrong** is mostly not a language-understanding problem. It is convention: labels glyph-identical to variables (`W₂`, `H_D3`, `E³`), log fields (`t=5`), glyph-as-content tables, and mention-vs-use. Labelers resolved those cases by reading information outside the line. A line-level LLM would lack that information too.
-- **Taking the converter beyond md-press's current trigger is not safe as-is.** About 1 in 5 of its changes there is wrong.
+- **On the text md-press already sends to the model, the converter does far more of the job than the model, at about the same error rate per edit.** On held-out D lines it gets 84.5–85.0% of lines exactly or equivalently right; llama3.2, run the way md-press runs it, gets 37.5%.
+  - Per line it changes, it is wrong or over-converts 4.8–5.3% of the time, against llama's 3.8%. The counts are small: 9–10 lines against 3.
+  - Because it edits 2.3× as many lines, it makes about three times as many wrong edits in absolute terms: 9 against 3 per 200 lines.
+  - In exchange it gets about 95 more lines right than llama.
+  - It needs no model and is idempotent. Every span it writes over the estate and the gold sets renders in KaTeX and MathJax. The Rust port runs all 1.29M estate prose sites in 11 s on one thread.
+- **About half of what it still gets wrong needs knowledge outside the line**: project conventions such as labels glyph-identical to variables (`W₂`, `H_D3`, `E³`). The other half is decidable from the line itself and is converter work, not a reason for a language model: a log field beside a timestamp, a unit after a noun, a sentence *about* `n_past` lacking LaTeX.
+- **Taking the converter beyond md-press's current trigger is not safe as-is.** About 1 in 5 of its changes there is wrong. Untriggered sites with Unicode script characters are the worst of these (31% on D).
 
 ## Results
 
-Verdicts, from best to worst: **exact**; **equivalent** (renders the same up to spacing, braces, punctuation font and `\text`-vs-italic subscripts; see `py/atoms.py`); **degraded** (some of what gold typesets is left as written: safe, incomplete); **over** (a Greek letter or symbol typeset that gold left alone); **wrong** (anything else). Each item is scored against whichever labeler it matches better. Full tables, including exact-only counts, are in `results.md`, regenerated by `py/results.py`. The labeled sets:
+Verdicts, from best to worst:
+- **exact.**
+- **equivalent:** renders the same up to spacing, braces and `\text`-vs-italic subscripts (see `py/atoms.py`).
+- **degraded:** some of what gold typesets is left as written. This is incomplete, and usually safe. But about 9 of D's 21 degraded lines are formulas left half-converted, in mixed fonts, not formulas left whole.
+- **over:** a symbol or Greek name typeset that gold left alone.
+- **wrong:** anything else, including a word hyphen turned into a minus.
+
+Each item is scored against whichever labeler it matches better. `results.md` also shows scoring against the *worse* labeler, a strict reading of merged slash lists, and the pre-feedback scorer. All tables are regenerated by `py/results.py`. The labeled sets:
 - **A** (240): the coordinator's sample of pieces. Used for development.
-- **B** (300): fresh pieces. Held out for v1, then used for development.
-- **C** (450): held out for v2.
-- **D** (400): held out for v3 and v4. Labeled after both were frozen.
+- **B** (300): fresh pieces, labeled while v1 was in development. Labeler reports naming some B items were read before v1 froze. After v1, used for development.
+- **C** (450): labeled, and its reports read, before v2 froze. C's untriggered row is not held out (one rule, prompted by a file the reports also named, moved 11 of its items).
+- **D** (400): selected with frozen v3. v4 froze before any D label existed. **The only clean held-out set.** v7 was built after D was seen.
 
-**Held-out, on the unit md-press would use (whole triggered prose lines):**
+**Held-out D, whole triggered prose lines (n = 200), scorer v2:**
 
-| set | converter | n | exact | exact+equivalent | wrong+over |
+| system | exact | exact+equivalent | wrong+over | lines changed | wrong+over among changed |
 |---|---|---|---|---|---|
-| D lines | v4 (frozen before D was labeled) | 200 | 62% | **86.0%** | **3.5%** |
-| D lines | v3 (frozen before D was labeled) | 200 | 62% | 85.5% | 3.5% |
-| C lines | v2 (frozen before C was looked at) | 100 | 63% | 83.0% | 3.0% |
-| C pieces | v2 | 150 | 62% | 82.7% | 5.3% |
-| B pieces | v1 (frozen before B was run) | 300 | 64% | 84.7% | 3.7% |
-| D lines | leave everything as written | 200 | 8% | 12.0% | 0% |
+| leave as written | 8% | 11.0% | 0% | 0 | — |
+| llama3.2:3b via md-press's own pieces and gates | 28% | 37.5% | 1.5% | 80 | 3.8% |
+| converter v4 (frozen before D) | 62% | **84.5%** | **5.0%** | 187 | 5.3% |
+| converter v7 (after D was seen) | 62% | 85.0% | 4.5% | 186 | 4.8% |
 
-The ceiling for comparison: one labeler scored against the other is 96.5% equivalent-or-better on D lines. The converter is scored against either labeler, which is the more lenient reading.
+Readings of the same v4 outputs that bracket the uncertainty:
 
-**Against the models**, on the pieces md-press actually sends them (Muse, the 30B model, was only run on A; set A was later used to develop the converter):
+| reading | exact+equivalent | wrong+over |
+|---|---|---|
+| scored against the worse labeler | 82.5% | 6.0% |
+| merged `α/β` slash lists counted wrong (canon prefers separate spans 15:1) | 82.0% | 7.5% |
+| scorer v1, before the feedback (what this README used to report) | 86.0% | 3.5% |
 
-| set | system | exact+equivalent | pieces changed | wrong+over among changed |
-|---|---|---|---|---|
-| B | llama3.2:3b, as md-press writes it after its gates | 45.3% | 122 | 4.9% |
-| B | converter v1 (B was held out for v1) | 84.7% | 279 | 3.9% |
-| A | llama3.2:3b, after gates | 40.8% | 83 | 4.8% |
-| A | Muse Glimmer 30B, after gates | 62.9% | 138 | 2.9% |
-| A | converter v4 (tuned on A) | 92.1% | 222 | 0.9% |
+The labelers themselves agree with each other on 96.0% of D lines under scorer v2 (equivalent or better).
 
-**Scope expansion (untriggered sites), held out on D:** of 150 untriggered sites v3 changes, v4 gets 71.3% exact-or-equivalent and 20.0% wrong+over. Of 50 untriggered sites with `_ ^ = < >` or Unicode scripts that it leaves alone, gold also leaves all 50 alone. The misses are almost all labels and non-math notations; see below.
+**Earlier sets** (scorer v2; less clean, see above):
 
-**Other measurements** (frozen v4–v6 unless noted):
-- **Validity of what it writes.** 4,837 distinct spans over the estate and gold items (v6) validated with KaTeX (strict) and MathJax: 0 invalid.
-  - The built-in gates are `tex_ok` (structure) and, from v6, `commands_known` (every `\command` is one it can emit or one already in the input).
-  - Before v6 the converter *could* emit an undefined control sequence on adversarial input: `Ξ*^T` → `\Xi^{\astT}`. The port's fuzz found it; the estate never triggered it (§15, §26).
-- **Properties on real text** (v5, and v6 again). Over 920,674 sites (16,146 changed): 0 violations of shape (output = input with regions replaced), verbatim (code, links, URLs, existing math content), idempotence or validity, and 0 crashes.
-- **Properties on fuzz** (v6). 200k adversarial strings, now including the port's finds (𝟊, †, ᵀ, `*^T`, ⋃): 1 violation, the same checker artifact as v5's 2. An unclosed `](` protects the rest of the string, and the checker's regex masking mis-pairs a `$` inside it; inspected (§24). No crashes, no invalid spans. v4 had 10, of which 8 were real bugs with malformed input (interleaved code/`$` delimiters, link-text brackets); fixed in v5.
-- **Math-free text.** 2.47M sites from 13 external doc repos: 72 sites changed, in 15 distinct regions. Reading all 15: 11 are defensible math (`O(1)` ×57, `n = 40`, `y=0`, `K >= 3`, `c*`). 4 are wrong or doubtful: a benchmark name `τ²-bench`, a directory name `c_src`, a code identifier `n_compactions`, and the glyph mentioned in "rendered as ∞".
-- **Agent-written Unicode dialect.** 579 aligned lines written by Sonnet, Opus and Haiku from known LaTeX (21 Haiku lines dropped as misaligned): 71.2% exact-or-equivalent and 3% wrong, scored leniently because the rewrites dropped information like `\mathcal`. The 25% degraded is mostly bare single letters with no Unicode signal.
-- **md-press's current gates on the converter's output** (A+B, an earlier version of the converter): 90 of 540 refused. 77 of those were exact or equivalent to gold, and the gates passed 2 of its 4 wrong outputs (§11).
-- **The LLM as a fallback** where the converter changes nothing adds no correct conversions on A or B, and adds 1–2 wrong ones (§20).
-- **A learned bare-letter forest** (49k labeled letters from the estate's LaTeX, grouped CV AUC 0.98) changes little on real pieces. At p≥0.9 it gains 2 items on B and costs 1 on A (a new wrong). At p≥0.7 it gains 6 on B and adds 11 wrong across A+B. Measured and left out (§13).
-- **Speed.** The Rust port runs 1.29M estate prose sites in 11.2 s on one thread (about 8.5 µs/site) and 1.4 s on 12. The Python reference takes 214 s single-threaded; its 8,630 triggered sites take 9.8 s (1.1 ms/site). llama3.2's median was 0.58 s per call, about 1.4 h for those sites cold.
+| set | system | exact+equivalent | wrong+over | changed | wrong+over among changed |
+|---|---|---|---|---|---|
+| C lines | v2 | 83.0% | 3.0% | 92 | 3.3% |
+| C pieces | v2 | 82.0% | 6.0% | 139 | 6.5% |
+| B pieces | v1 | 84.0% | 3.7% | 279 | 3.9% |
+| B pieces | llama3.2:3b after gates | 43.7% | 2.3% | 122 | 5.7% |
+| A pieces | Muse Glimmer 30B after gates | 60.4% | 2.1% | 138 | 3.6% |
+| A pieces | v4 (tuned on A) | 92.1% | 0.8% | 222 | 0.9% |
+
+**Scope expansion (untriggered sites), held-out D:**
+- **What it changes.** Of the 150 untriggered sites v3 changes, v4 gets 71.3% exact-or-equivalent and 20.0% wrong+over. Against the worse labeler, 26%. The 36 of those sites that carry Unicode script characters (`W₂`, `E³`, `m²`) are 31% wrong+over; the other 114 are 17%.
+- **What it leaves alone.** Of 50 untriggered sites with `_ ^ = < >` or Unicode scripts that it leaves alone, gold also leaves all 50 alone.
+- **How much of its work this is.** Estate-wide, v7 changes 7,813 triggered sites and 8,290 untriggered ones, so untriggered sites are about half of what it would change.
+
+**Other measurements** (v6/v7 unless noted):
+- **Validity of what it writes.** v7: 4,820 distinct spans over the estate and gold items, validated in KaTeX (strict) and MathJax, 0 invalid. v6: 4,837, also 0 invalid, but that was verified only on re-check after the feedback (§27); the first v6 run had silently failed.
+  - The built-in gates are `tex_ok` (structure) and, from v6, `commands_known`.
+  - Before v6, adversarial input could make it emit an undefined control sequence: `Ξ*^T` → `\Xi^{\astT}`. The port's fuzz found it (§26).
+- **Word hyphens.** v4–v6 turned a hyphen before an operator name into a minus at 25 estate sites (`$n$-dim` → `$n - \dim$`, `γ-sign`, `ΔMAE-cos`). The pre-feedback scorer couldn't see this. v7 leaves 0 (§27).
+- **Shape, as md-press checks it.** The spike's property checker masks inline code; md-press's own `edit_pairs` doesn't. v6 had 3 estate sites (`$` inside inline code) that md-press would reject. v7 abstains on such sites: 0.
+- **Properties on real text** (v7). Over 920,642 sites (16,114 changed): 0 violations of shape, verbatim (code, links, URLs, existing math content), idempotence or validity, and 0 crashes.
+- **Properties on fuzz** (v7). 200k adversarial strings: 1 violation, a checker artifact on inspection (§24). No crashes, no invalid spans.
+- **Math-free text.** Over 2.47M sites from 13 external doc repos, 72 sites changed, in 15 distinct regions.
+  - 11 are defensible math (`O(1)` ×57, `n = 40`, `y=0`, `K >= 3`, `c*`).
+  - 4 are wrong or doubtful: `τ²-bench`, `c_src`, `n_compactions`, and the glyph mentioned in "rendered as ∞".
+- **Agent-written Unicode dialect** (v6, scorer v1, lenient). 579 aligned lines: 71.2% exact-or-equivalent, 3% wrong.
+- **md-press's current gates on the converter's output.**
+  - The verifier's run on v6's 7,826 changed triggered estate sites: 22% refused.
+  - Reading 30 of the refused at random: about 25 are good conversions, about 5 are real catches (§27).
+  - So the gates over-refuse for this converter, but they do catch errors the pre-feedback scorer missed.
+- **The LLM as a fallback** where the converter changes nothing (A, B; today's prompt) adds no correct conversions and 1–2 wrong ones (§20).
+- **A learned bare-letter forest** was measured and left out (§13).
+- **Speed.** The Rust port runs 1.29M estate prose sites in 11.2 s on one thread and 1.4 s on 12. Python takes 214 s single-threaded. llama3.2's median was 0.58 s per call, about 1.4 h for the 8.6k triggered sites cold.
 
 ## Where the hard boundary is
 
-The converter's remaining errors on held-out data, read one by one (C §16, D §21), fall into these classes (the parse-limit examples come from all sets):
-- **Labels that are glyph-identical to variables:**
-  - asf's regime names `W₀/W₁/W₂` (canon writes them as Unicode prose);
-  - causal-language's hypothesis IDs `H_D3`;
-  - class labels `S₁`;
-  - footnote markers `E³`, `X⁸`.
-- **Genre:** session listings (`t=5`), units (`kg/m³`), run metadata.
-- **Mention vs use:** glyph tables, a sentence *about* `𝒜`, a sentence saying `n_past` lacks LaTeX.
-- **Flattened scripts from PDF pastes** (`θl`, `eθl′`).
-- **A few genuine parse limits:** `η²p` (APA partial eta squared), integral limits, an operator meaning "and".
+I read all 30 wrong or over verdicts on D's untriggered sites against both labelers' notes (§21; recounted after the feedback):
+- **Needs knowledge outside the line (about 16):**
+  - asf's regime names `W₂`/`W₁ᶜ` (6);
+  - causal-language's hypothesis IDs `H_D1`/`H_D3` (6);
+  - a class label `S₁` (1);
+  - footnote markers `E³`/`X⁸` alone in a table cell (2);
+  - a code-chart cell (1).
+- **Decidable from the line (about 11):**
+  - `t=45` beside a timestamp (4);
+  - units after a noun (2);
+  - a sentence saying `n_past` lacks LaTeX, a quoted code comment, a terminal diff (3);
+  - run metadata (1);
+  - "the W axis" (1).
+- **Other (about 3):** `⟹` between case labels, `\(…\)`, a flattened paste.
 
-Labelers settled the first three classes by reading the canon, the paper source, or the rest of the table: information outside the line. That makes the boundary *convention knowledge*, not language understanding. A per-project lexicon can carry it, and mining asf's format-gated canon finds exactly {W₀, W₁}. But it has to be curated. Mined across the whole estate, the same statistic also flags lazy unconverted math (`β_0`, `ϵ`), because the estate is itself the population md-press is treating. In projects that never write LaTeX (where H_D3 lives) there is no usage evidence at all, so those labels have to be declared.
+The first group is convention knowledge. A per-project lexicon can carry it: mining asf's format-gated canon finds exactly {W₀, W₁}. Mined across the whole estate, though, the same statistic also flags lazy unconverted math (`β_0`, `ϵ`), and in projects that never write LaTeX (where `H_D3` lives) there is no usage evidence at all. So these labels have to be declared or curated.
+
+The second group is in-line evidence the converter doesn't yet use. That is a case for more converter rules, or for a model prompted for exactly the converter's residue (not yet tried). It isn't a case for the model on everything.
+
+## For the independent verifier
+
+Round 1 is `de-novo-feedback-1.md`, with my response in `de-novo-response-1.md`. The claims I'd still most want re-derived:
+1. The held-out D numbers under scorer v2, and the bracketing readings above.
+2. That v7's hyphen fix doesn't over-correct: a genuine subtraction of an operator name glued with no space and no argument (`x-max`).
+3. Rust/Python parity for v7 (the porting agent reports 0 differences; I spot-checked the gold items).
 
 ## What's where
 
-- `README.md`: this file. `debrief.md` is for Joseph. `proposed-integration-plan.md` is for whoever wires this in. `results.md` has every table.
+- `README.md`: this file. `debrief.md` is for Joseph. `proposed-integration-plan.md` is for whoever wires this in. `results.md` has every table. `de-novo-feedback-1.md` is the independent verification; `de-novo-response-1.md` is my response to it.
 - `notes/LOG.md`: the chronological lab notebook, the provenance for every number above (§-references point here).
-- `py/umath.py`: the converter (same as `py/frozen/umath_v6.py`). The frozen versions are `py/frozen/umath_v{1..6}.py` (sha1 `0a2afaf1`, `19be3815`, `eb5faf14`, `a9080099`, `39ee2679`, `a8f1dcf5`).
+- `py/umath.py`: the converter (same as `py/frozen/umath_v7.py`). The frozen versions are `py/frozen/umath_v{1..7}.py` (sha1 `0a2afaf1`, `19be3815`, `eb5faf14`, `a9080099`, `39ee2679`, `a8f1dcf5`, `99eb92dc`).
   - v5 = v4 plus two guards against malformed input (§24).
   - v6 = v5 plus fixes for four bugs the Rust port found (§26).
-  - v5's output is byte-identical to v4's on all 1,390 gold items; v6 differs from v5 on one (DU073), with identical verdicts. So every v4 number below is also v5's and v6's.
-- **Scoring:** `py/score.py` (span alignment, a port of md-press's `edit_pairs`) and `py/atoms.py` (the visual-atom equivalence ladder).
-- **Evaluation:** `py/evaluate.py` (sets A, B), `py/evaluate_c.py` (`--set C|D`), `py/agent_synth_eval.py`, `py/synth_eval.py` (estate LaTeX reversed by `py/reverse.py`).
-- **Drills:** `py/drill.py` (math-free), `py/properties.py` (shape, verbatim, idempotence, validity, fuzz), `py/collect_spans.py` plus the KaTeX/MathJax validator. The validator lives in the session scratchpad; its source is reproduced in `notes/validate.js`.
+  - v7 = v6 plus the verifier's word-hyphen class and abstaining when a `$` sits inside inline code (§27).
+  - v5's output is byte-identical to v4's on all 1,390 gold items. v6 differs from v5 on 1 of them, with identical verdicts. v7 differs from v6 on 3 gold items and 39 estate sites.
+- **Scoring:** `py/score.py` (span alignment, a port of md-press's `edit_pairs`) and `py/atoms.py` (the visual-atom equivalence ladder, scorer v2). `py/atoms_v1.py` is the pre-feedback scorer, kept so the old numbers can be reproduced.
+- **Evaluation:** `py/evaluate.py` (sets A, B), `py/evaluate_c.py` (`--set C|D`; `--write` to update the tracked `verdicts.json`), `py/llama_D_lines.py` (llama3.2:3b on D lines through md-press's own pieces and gates → `data/llama-D-lines.jsonl`), `py/agent_synth_eval.py`, `py/synth_eval.py` (estate LaTeX reversed by `py/reverse.py`).
+- **Drills:** `py/drill.py` (math-free), `py/properties.py` (shape, verbatim, idempotence, validity, fuzz), `py/collect_spans.py` plus the KaTeX/MathJax validator. The validator is `notes/validate.js`; it needs `NODE_PATH` pointing at an install of `katex` and `mathjax-full`, as its header says.
 - **Side experiments:** `py/letters.py` and `py/withletters.py` (the bare-letter forest, left out); `py/lexicon.py` (house-label mining → `data/house-labels-asf-canon.json`).
 - **Gold** (`data/gold/`):
   - sets A+B: `tasks/`, `pass1/`, `pass2/`, `all-items.json` and the labeler brief `BRIEF.md`;
@@ -108,30 +150,21 @@ Labelers settled the first three classes by reading the canon, the paper source,
 cd rs/probe && cargo build --release && cd ../..
 ./rs/probe/target/release/sites < data/estate-md-files.txt > data/bulk/sites.jsonl
 python3 py/evaluate.py A && python3 py/evaluate.py B
-python3 py/evaluate_c.py --set D umath_v3 umath_v4
-python3 py/results.py            # rewrites results.md
-python3 py/properties.py          # needs data/bulk/conv-v6.jsonl from: python3 py/run_sites.py v6
-sh rs/umath/tools/differential.sh v6 v5 v4 v3   # Rust vs Python, after building rs/umath
+python3 py/evaluate_c.py --set D umath_v4 umath_v7
+python3 py/results.py            # rewrites results.md (needs data/llama-D-lines.jsonl)
+python3 py/properties.py          # needs data/bulk/conv-v7.jsonl from: python3 py/run_sites.py v7
+sh rs/umath/tools/differential.sh v7 v6 v5 v4 v3   # Rust vs Python, after building rs/umath
 ```
 
-The probe links md-press's *working tree* (with the coordinator's uncommitted 2026-10-02 changes), so `trig` reflects today's trigger.
-
-## For the independent verifier: the claims I'd most want re-derived
-
-These are the claims I'm least able to check myself: the scorer is mine, and the spiker's goal-state reaches into it.
-1. **The held-out D numbers** (`python3 py/evaluate_c.py --set D umath_v4`). A stricter scorer than `py/atoms.py` would move items from "equivalent" to "wrong". The exact-only column (62% on D lines) is the floor of that reading. Re-scoring a sample of D's "equivalent" verdicts by eye would test the ladder.
-2. **"Labelers were blind."** Their briefs are `data/gold/BRIEF.md`, `data/gold/C/BRIEF.md` and `data/gold/D/BRIEF.md`. The batch-0 A+B contamination is documented in §5. The LOG records the labeler findings I acted on. Their full final reports exist only in this session's transcript; their per-item reasoning is in the `note` field of every gold record.
-3. **Shape and verbatim safety by construction** (`py/properties.py`). The checker and the converter share some of my assumptions about markdown masking. An independent shape check against md-press's own `edit_pairs`/`edits_confined` (through `rs/probe` `judge`, which runs md-press's real gates) would be stronger.
-4. **"The residue is convention, not language."** This rests on my reading of the C and D errors (§16, §21) and on labeler notes. A verifier reading those same items cold might classify them differently.
-5. **The comparison with the models** (B: llama after gates vs v1). Those are different systems on the same items, scored by the same scorer; llama's outputs came from md-press's own gates via `judge`.
+The probe links md-press's *working tree*, so `trig` and the `judge` gates reflect whatever that tree held when the probe was built. The tree has changed since (the YAML fix, the single-`*` gate fix, other sessions' edits). Before integration, rebuild the probe and re-run `judge` and `trig` against the tree that will ship.
 
 ## Honest incompleteness
 
 - **Untriggered-site precision** (about 20% wrong on D) is the open edge. The plan proposes keeping the converter to triggered sites first.
 - **Recall on bare ASCII variables** (`Here U is…`) is deliberately low; letters need textual evidence. This is a policy choice for Joseph.
-- **The equivalence ladder is my construction.** The exact-only columns in `results.md` show how much it matters.
-- **The scorer's normalizations** (φ as `\phi`/`\varphi`, `\Sigma` vs `\sum`, `E` vs `𝔼`) are folded as "style". A stricter reader may disagree.
-- **The labelers did not converge on the hardest conventions.** Ranges `0.1-0.4`, relations with one-word operands, statistics like `N=40`, Greek used as a label: the two passes split on these, and scoring against either passes both. Labeler-vs-labeler agreement is 95.0% on D and 92.4% on C.
+- **The equivalence ladder is my construction, and it has already had one blind spot** (word hyphen vs minus; fixed in scorer v2). Its remaining folds are deliberate, and a stricter reader may disagree: φ as `\phi`/`\varphi`, `\Sigma` vs `\sum`, `E` vs `𝔼`, prose text vs upright operator names, and merged slash lists (`results.md` shows the strict reading).
+- **The labelers did not converge on the hardest conventions.** Ranges `0.1-0.4`, relations with one-word operands, statistics like `N=40`, Greek used as a label: the two passes split on these, and scoring against either passes both. Labeler-vs-labeler agreement under scorer v2 is 94.8% on D (96.0% on D lines) and 91.6% on C.
 - **Set A+B labels in batch 0** may be partly contaminated: a shared-scratchpad collision let one pass-2 labeler see pass-1 output after deciding (§5). Later rounds used per-agent scratch directories.
 - **1 fuzz property violation remains** (§24, §26). It's a checker artifact on inspection, but no independent checker has confirmed that. The port's independent fuzz (830k strings, Python and Rust agreeing exactly) found the four v5 bugs fixed in v6.
-- **Set C informed v3**, so v3's C numbers are not held-out. D is the held-out set for v3 and v4.
+- **Only D is clean held-out**, and only for v3/v4. v5–v7 were built after D was seen, and v7 after the verifier read D. Their D numbers are not held out. The reported improvement from v4 to v7 on D (one line) is within noise in any case.
+- **The llama comparison on D** is my reproduction of the verifier's run: 37.5% vs the verifier's 38.0%. The gates came from the probe binary as built during the spike.

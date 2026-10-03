@@ -1,5 +1,5 @@
 //! Spot checks against outputs of the Python reference (computed with
-//! py/frozen/umath_v6.py, umath_v5.py and umath_v3.py). The real evidence is the full
+//! py/frozen/umath_v7.py, umath_v6.py, umath_v5.py and umath_v3.py). The real evidence is the full
 //! differential (tools/differential.sh); these keep `cargo test` meaningful.
 //! The v5 tests pin *reference bugs* on purpose (see PORT.md): the port
 //! reproduces each version exactly so its measurements transfer; v6 fixed
@@ -10,6 +10,10 @@ fn v5(t: &str) -> String {
 }
 
 fn v6(t: &str) -> String {
+    umath::convert_v6(t).unwrap().0
+}
+
+fn v7(t: &str) -> String {
     umath::convert(t).unwrap().0
 }
 
@@ -66,6 +70,29 @@ fn v6_fixes() {
     assert_eq!(v6("⋃_i A_i = X"), r"$\bigcup_iA_i = X$");
     // an author's own command inside a merged existing span is allowed
     assert_eq!(v6(r"$\foo{x}$ and η = 1"), r"$\foo{x}$ and $\eta = 1$");
+}
+
+// ---- v7 changes (hyphen compounds, `$` in inline code)
+
+#[test]
+fn v7_changes() {
+    assert_eq!(v6("an $n$-dim space"), r"an $n - \dim$ space");
+    assert_eq!(v7("an $n$-dim space"), "an $n$-dim space");
+    assert_eq!(v6("the γ-sign flip"), r"the $\gamma - \operatorname{sign}$ flip");
+    assert_eq!(v7("the γ-sign flip"), r"the $\gamma$-sign flip");
+    assert_eq!(v7("Δ(near-boundary − elsewhere)"), r"$\Delta(\text{near-boundary} - \text{elsewhere})$");
+    assert_eq!(v6("set `$HOME` and η = 1"), r"set `$HOME` and $\eta = 1$");
+    assert_eq!(v7("set `$HOME` and η = 1"), "set `$HOME` and η = 1");
+    assert_eq!(v7("1-exp(-x) for x ≥ 0"), r"1-exp(-x) for $x \geq 0$");
+    // as frozen: the compound is split at the math boundary (see PORT.md)
+    assert_eq!(v7("log-det/λ grows"), r"log-$\det/\lambda$ grows");
+}
+
+#[test]
+fn v7_matches_v6_on_ordinary_text() {
+    for t in ["Let ‖δ‖ ≤ R and M_τ⁺ hold", "κ_processing scales as O(n²)", "Ξ*^T = 1", "⋃_i A_i = X"] {
+        assert_eq!(v7(t), v6(t));
+    }
 }
 
 // ---- reference bugs in v3-v5, reproduced deliberately

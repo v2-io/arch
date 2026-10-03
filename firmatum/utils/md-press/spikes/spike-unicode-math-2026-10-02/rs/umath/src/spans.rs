@@ -93,6 +93,24 @@ impl<'a> FS<'a> {
         self.toks[self.us[u].a].sp
     }
 
+    /// v7: an operator name glued after a hyphen and not applied/scripted.
+    fn hyphen_compound_func(&self, j2: usize) -> bool {
+        let u2 = &self.us[j2];
+        if !(u2.kind == K::Term && u2.tm().m == M::Func && u2.tm().base == Base::Word) {
+            return false;
+        }
+        if self.toks[u2.a].sp {
+            return false;
+        }
+        if let Some(nx) = self.toks.get(u2.b)
+            && matches!(nx.kind, K::Open | K::Us | K::Caret | K::Sub | K::Sup)
+            && !nx.sp
+        {
+            return false;
+        }
+        true
+    }
+
     fn label_number(&self, j: usize) -> bool {
         let mut k = j as isize - 1;
         while k >= 0 && self.us[k as usize].kind == K::Ws {
@@ -654,6 +672,9 @@ pub fn find_spans(us: Vec<Unit>, toks: &[Tok], symbols: &[char]) -> (Vec<Unit>, 
                         if j2 < n && f.us[j2].mis(&[M::Word, M::Ident, M::Label]) {
                             break;
                         }
+                        if crate::ver() >= crate::Ver::V7 && j2 < n && f.hyphen_compound_func(j2) {
+                            break; // v7: `$n$-dim`, `γ-sign`: a word hyphen, not a minus
+                        }
                         if j2 < n && f.us[j2].kind == K::Ws {
                             break;
                         }
@@ -761,6 +782,13 @@ pub fn find_spans(us: Vec<Unit>, toks: &[Tok], symbols: &[char]) -> (Vec<Unit>, 
                         let j0 = j as isize - 1;
                         if j0 >= 0 && f.us[j0 as usize].mis(&[M::Word, M::Ident, M::Label]) {
                             break;
+                        }
+                        if crate::ver() >= crate::Ver::V7
+                            && j0 >= 0
+                            && f.us[j0 as usize].mis(&[M::Func])
+                            && !(j0 > 0 && matches!(f.us[j0 as usize - 1].kind, K::Op | K::Open))
+                        {
+                            break; // v7: `log-det/λ`, `arg-max`: an operator-name compound
                         }
                         if j0 >= 1
                             && f.us[j0 as usize].mis(&[M::Letter])

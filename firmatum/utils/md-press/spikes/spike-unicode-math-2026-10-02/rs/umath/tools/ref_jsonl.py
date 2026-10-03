@@ -6,6 +6,7 @@ same JSONL contract as the Rust bin (`umath`).
 import importlib.util
 import json
 import sys
+sys.dont_write_bytecode = True  # never write __pycache__ under py/ (read-only for this crate)
 from multiprocessing import Pool
 
 ARGS = sys.argv[1:]

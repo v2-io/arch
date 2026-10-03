@@ -1,7 +1,7 @@
 //! JSON lines in (`{"id": …, "text": "…"}`), JSON lines out (`{"id": …, "out": "…"}`),
 //! in input order.
 //!
-//!   umath [--v3|--v4|--v5|--v6]  (default: v6) [--spans] [--changed-only] [--threads N] < in.jsonl > out.jsonl
+//!   umath [--v3|--v4|--v5|--v6|--v7]  (default: v7) [--spans] [--changed-only] [--threads N] < in.jsonl > out.jsonl
 //!
 //! --spans         also emit "spans": [[start, end, latex|null, conf], …] (char offsets)
 //! --changed-only  emit only records whose text changed or that have spans
@@ -12,7 +12,7 @@ use serde_json::{Value, json};
 use std::io::{BufRead, Write};
 
 fn main() {
-    let mut ver = umath::Ver::V6;
+    let mut ver = umath::Ver::V7;
     let (mut spans, mut changed_only) = (false, false);
     let mut threads = std::thread::available_parallelism().map_or(1, |n| n.get());
     let mut args = std::env::args().skip(1);
@@ -22,11 +22,12 @@ fn main() {
             "--v4" => ver = umath::Ver::V4,
             "--v5" => ver = umath::Ver::V5,
             "--v6" => ver = umath::Ver::V6,
+            "--v7" => ver = umath::Ver::V7,
             "--spans" => spans = true,
             "--changed-only" => changed_only = true,
             "--threads" => threads = args.next().and_then(|x| x.parse().ok()).expect("--threads N"),
             _ => {
-                eprintln!("usage: umath [--v3|--v4|--v5|--v6] [--spans] [--changed-only] [--threads N] < in.jsonl");
+                eprintln!("usage: umath [--v3|--v4|--v5|--v6|--v7] [--spans] [--changed-only] [--threads N] < in.jsonl");
                 std::process::exit(2);
             }
         }

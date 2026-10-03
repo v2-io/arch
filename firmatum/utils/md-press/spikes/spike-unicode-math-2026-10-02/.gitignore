@@ -1,5 +1,5 @@
 # regenerable bulk (recipes in py/ and rs/probe; see README)
 data/bulk/
 rs/probe/target/
-py/__pycache__/
+__pycache__/
 data/letters-rf.pkl

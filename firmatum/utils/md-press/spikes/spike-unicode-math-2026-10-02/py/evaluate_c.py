@@ -1,5 +1,5 @@
 """Held-out evaluation on set C or D (by item kind), frozen converters only.
-usage: python3 py/evaluate_c.py [--set D] umath_v3 umath_v4 ..."""
+usage: python3 py/evaluate_c.py [--set D] [--write] umath_v3 umath_v4 ..."""
 import json, glob, sys, collections, importlib.util
 sys.path.insert(0, 'py')
 import atoms
@@ -30,6 +30,9 @@ def best(out, golds):
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+    WRITE = '--write' in args
+    if WRITE:
+        args.remove('--write')
     if '--set' in args:
         SET = args[args.index('--set') + 1]; del args[args.index('--set'):args.index('--set') + 2]
     items, P = gold()
@@ -52,4 +55,5 @@ if __name__ == '__main__':
             if not n:
                 continue
             print(f"  {k:17} n={n:3} " + ' '.join(f'{x} {c[x]:3}' for x in LADDER) + f"   ok {(c['exact'] + c['equivalent'])/n:.1%}  wrong+over {(c['wrong'] + c['over'])/n:.1%}")
-    json.dump(res, open(f'data/gold/{SET}/verdicts.json', 'w'), indent=0)
+    if WRITE:   # opt-in: a verifier running this shouldn't silently rewrite tracked files
+        json.dump(res, open(f'data/gold/{SET}/verdicts.json', 'w'), indent=0)

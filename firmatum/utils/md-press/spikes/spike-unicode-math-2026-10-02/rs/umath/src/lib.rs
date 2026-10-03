@@ -1,7 +1,7 @@
 //! Deterministic Unicode-math -> `$LaTeX$` converter for md-press prose.
 //!
 //! A behavior-identical Rust port of the spike's measured Python reference
-//! (`py/frozen/umath_v6.py`; `convert_v5` / `convert_v4` / `convert_v3`
+//! (`py/frozen/umath_v7.py`; `convert_v6` … `convert_v3` / `convert_ver`
 //! reproduce the earlier frozen versions). Read
 //! PORT.md before changing anything: the measurements transfer only while
 //! the behavior does, and the differential harness in `tools/` is how that
@@ -38,6 +38,7 @@ pub enum Ver {
     V4,
     V5,
     V6,
+    V7,
 }
 
 /// One converted (or abstained-on) region. Offsets are in chars of the text
@@ -85,7 +86,7 @@ const RECURSION_LIMIT: usize = 1000;
 thread_local! {
     /// The frozen version being reproduced by the current `run` (some tables,
     /// e.g. OPS, differ by version and are consulted deep in the lexer).
-    static VER: std::cell::Cell<Ver> = const { std::cell::Cell::new(Ver::V6) };
+    static VER: std::cell::Cell<Ver> = const { std::cell::Cell::new(Ver::V7) };
     static DEPTH: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
     static BLOWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
 }
@@ -138,14 +139,19 @@ fn run_inner(text: &str, ver: Ver) -> Result<(String, Vec<Span>), Error> {
     let s: Vec<char> = text.chars().collect();
     let (out, spans) = match ver {
         Ver::V3 => convert::convert_once(&s, Ver::V3)?,
-        Ver::V4 | Ver::V5 | Ver::V6 => convert::convert_fixpoint(&s, ver)?,
+        Ver::V4 | Ver::V5 | Ver::V6 | Ver::V7 => convert::convert_fixpoint(&s, ver)?,
     };
     Ok((out.into_iter().collect(), spans))
 }
 
-/// `convert(text)` of the latest frozen reference (umath_v6): (converted
+/// `convert(text)` of the latest frozen reference (umath_v7): (converted
 /// text, spans).
 pub fn convert(text: &str) -> Result<(String, Vec<Span>), Error> {
+    run(text, Ver::V7)
+}
+
+/// umath_v6 `convert(text)`.
+pub fn convert_v6(text: &str) -> Result<(String, Vec<Span>), Error> {
     run(text, Ver::V6)
 }
 

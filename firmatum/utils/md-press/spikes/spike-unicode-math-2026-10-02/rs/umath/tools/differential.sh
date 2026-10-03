@@ -5,7 +5,7 @@
 set -e
 S=rs/umath/scratch
 B=rs/umath/target/release/umath
-VERS=${*:-v5}
+VERS=${*:-v7}
 mkdir -p $S
 cargo build --release --manifest-path rs/umath/Cargo.toml 2>&1 | tail -1
 [ -f $S/gold.jsonl ] || python3 rs/umath/tools/make_inputs.py

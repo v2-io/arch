@@ -23,6 +23,26 @@ fn render_span(us: &[Unit], toks: &[Tok], a: usize, b: usize) -> Result<Option<S
         }
         if u.kind == K::Term {
             let t = u.tm();
+            // v7: `near-boundary` stays one \text word
+            if crate::ver() >= Ver::V7
+                && t.m == M::Word
+                && parts.len() >= 2
+                && parts[parts.len() - 1] == "-"
+                && parts[parts.len() - 2].starts_with(r"\text{")
+                && parts[parts.len() - 2].ends_with('}')
+                && kk > a + 1
+                && us[kk - 1].kind == K::Hyph
+                && !toks[us[kk - 1].a].sp
+                && !toks[u.a].sp
+            {
+                parts.pop();
+                let last = parts.last_mut().unwrap();
+                last.pop();
+                last.push('-');
+                last.push_str(&u.text);
+                last.push('}');
+                continue;
+            }
             if t.m == M::Word
                 && let Some(last) = parts.last_mut()
                 && last.starts_with(r"\text{")
@@ -404,7 +424,7 @@ fn interior_is_math(s: &[char], ver: Ver) -> Result<bool, Error> {
     }
     let glyph = |c: char| match ver {
         Ver::V3 => op(c).is_some() || greek(c).is_some(),
-        Ver::V4 | Ver::V5 | Ver::V6 => MP_GLYPHS.contains(c) || greek(c).is_some(),
+        Ver::V4 | Ver::V5 | Ver::V6 | Ver::V7 => MP_GLYPHS.contains(c) || greek(c).is_some(),
     };
     if s.iter().any(|&c| glyph(c)) {
         return Ok(true);
@@ -597,6 +617,12 @@ fn commands_known(lat: &str, source: &[char]) -> bool {
     true
 }
 
+/// v7: a `$` inside an inline-code protected range (md-press's `edit_pairs`
+/// does not mask code, so a new span on this site would misalign there).
+fn dollar_in_code(s: &[char]) -> bool {
+    protected_ranges(s).iter().any(|&(a, b, k)| k == lex::PKind::Code && s[a..b].contains(&'$'))
+}
+
 /// v5: unmatched backticks, or a backtick inside a `$…$` range.
 fn code_math_interleave(s: &[char]) -> bool {
     let mut covered = vec![false; s.len()];
@@ -640,7 +666,7 @@ pub fn convert_once(s: &[char], ver: Ver) -> Result<(Vec<char>, Vec<Span>), Erro
     if s.iter().any(|&c| ('\u{2500}'..='\u{257f}').contains(&c)) {
         return Ok((s.to_vec(), vec![]));
     }
-    if ver >= Ver::V4 && (currency(s) || dollar_hazard(s, ver)? || (ver >= Ver::V5 && code_math_interleave(s))) {
+    if ver >= Ver::V4 && (currency(s) || dollar_hazard(s, ver)? || (ver >= Ver::V5 && code_math_interleave(s)) || (ver >= Ver::V7 && dollar_in_code(s))) {
         return Ok((s.to_vec(), vec![]));
     }
     let norm = normalize_paren_math(s, ver)?;
