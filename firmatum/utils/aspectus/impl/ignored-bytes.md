@@ -65,3 +65,21 @@ Cap alternatives measured on arch: 100k → 1.13 s, 250k → 2.43 s, 1M → 2.56
 - `.git` is still unweighed.
 - The single-line-for-huge-masses idea.
 - A kind-bearing omit row would be weighed.
+
+## `.git` weighed (2026-10-03, same day; Joseph: "yes, IMO")
+
+- **`src/furniture.rs`:** `speaks_for_itself` is now `github` only, so `.git` dirs join `hidden_dirs` and the body phase weighs them. Gitlink *files* (submodules, linked worktrees) are not dirs and are not weighed.
+- **`src/ready.rs`:** the `git` has-word speaks bytes only (`git ≈654.2MB`), with the same 1 MiB / floor rule and no `≈Nf`.
+- **Help + `facts.rs`:** say so.
+- **Test:** `ignored_bytes::git_store_weighed_bytes_only` (a bare word under 1 MiB; `[has: git ≈3.0MB]` above; JSON `hidden[]` kind `git`). Suite 336 green. No golden moved: the git-repo fixture's store is under 1 MiB.
+- **Dogfood:** `~/src --depth 1` changed 21 lines, all git words gaining bytes. Checked against `du`:
+
+  | Store | Look says | `du` says | Note |
+  |---|---|---|---|
+  | arch | `≈654.2MB` | 664M | Includes `modules/` at 634M, the submodules' stores. |
+  | grok-build | `≈55.4MB` | 56M | |
+  | limen | `≈56.5MB` | 57M | |
+
+  arch and grok changed 1 line each. aat, asf, vivarium, and this crate are byte-identical. asf and vivarium are submodules, so their word stays bare.
+- **Cost** (warm, best of 3): arch 0.53 → 0.58 s; `~/src`, asf, this crate, grok, and vivarium unchanged to the hundredth.
+- **Calls:** has-word over facet; bytes only. Reasons are in the design §`.git`. The huge-mass-own-line Open now carries Joseph's verbatim reason it stays open; nothing was built for it.

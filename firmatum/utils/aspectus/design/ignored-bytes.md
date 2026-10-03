@@ -11,7 +11,7 @@ A body the look declines to open still says how big it is. That covers a gitigno
 
 ## The law
 
-- **One weighing, two kinds of body.** Each unopened body (a `⊘` dir, or a hidden furniture dir other than `.git`/`.github`, whose facets speak for them) gets one walk. That is readdir for the tree plus one `lstat` per non-directory entry for its size.
+- **One weighing, three kinds of body.** Each unopened body (a `⊘` dir, a hidden furniture dir, or `.git` since the same day; `.github` alone stays unweighed, a handful of workflow files its facet already counts) gets one walk. That is readdir for the tree plus one `lstat` per non-directory entry for its size.
 - **What "bytes" means:** Σ `st_size` (the apparent size, the same number the `bytes` fact is for a file) over every non-directory entry in the body. Hardlinked inodes count once per body (cargo's `deps/` hardlinks its binaries; counting them twice would double a `target/`). Symlinks weigh their own inode and are never followed. Directories add nothing. The walk stays on the body's filesystem unless `--no-one-fs`.
   - *Call:* apparent size rather than allocated blocks (`du`). The `bytes` column already means `st_size` for files, and one column must not mean two things. The two agree closely on build trees; sparse, compressed, or cloned files read larger here than in `du`.
 - **Bounded, and never silently.** One body visits at most **20,000 names**. Past that, or on an unreadable entry or a mount, both figures are floors (`≥`).
@@ -36,6 +36,13 @@ A body the look declines to open still says how big it is. That covers a gitigno
 - *Call, quiet threshold:* a has-word's bytes speak at **≥ 1 MiB, or whenever they are a floor**. Below that, a body answers no disk question (`agents ≈1f 6·010B`, `build ≈3f ≈69.1KB`) and only lengthens the widest near-right part, the first candidate to spill (grid-cleanup §Decisions). `⊘` lines always speak, because their bytes sit in an aligned cell that costs no inline width.
 - Several hidden dirs claiming one kind on one line sum, as their file counts already did. Hardlinks are deduplicated within one body, not across sibling bodies.
 
+**`.git`: on the `git` has-word, bytes only** (`[has: agents, archive ≈2f, git ≈654.2MB]`). Joseph, 2026-10-03, asked whether `.git` should be weighed too: *"yes, IMO."*
+
+- *Call, place:* the has-word, not the `[git: …]` facet. The facet is git's own verified state (remote, branch, HEAD, dirty), phrased by its plugin. A filesystem measurement inside it would blur that claim. The has-word is where every other hidden body says its size, so the form, the 1 MiB threshold, and the `≥` rule stay one law.
+- *Call, bytes only:* an object store's file count measures nothing (packs fold thousands of objects into a few files), so the `git` word never carries `≈Nf`. JSON still has `files`.
+- **Submodules:** a submodule's `.git` is a gitlink *file*, which is not weighed. Its objects live in the superproject's `.git/modules/`, so the superproject's figure carries them: arch's `≈654.2MB` includes 634M of `modules/` (`du`), and asf and vivarium show the bare word. The look states each store once, where it actually is.
+- The object store never joins mass or any count, consistent with design/furniture.md's *"`.git`'s object store is not the repo's working weight"*. It is weighed as a disk answer, not as comprehension mass.
+
 **JSON:**
 
 - `hidden[]` entries gain `bytes` and `bytes_bounded` (`bounded` stays the file count's floor, as before).
@@ -56,6 +63,7 @@ A body the look declines to open still says how big it is. That covers a gitigno
 | 7 | Has-word | ≥ 1 MiB speaks; a tiny body keeps its count only. | `hidden_furniture_has_word_bytes` |
 | 8 | Floors | The name cap floors both figures, never silently. | `body_tests::cap_floors_bytes_and_files` |
 | 9 | Help | Help says ignored dirs say how big they are, and that has-words carry bytes from 1 MiB up. | `help_teaches_ignored_bytes` |
+| 10 | `.git` | The `git` word carries the store's bytes from 1 MiB up, bytes only; a small store stays bare; JSON `hidden[]` has it. | `git_store_weighed_bytes_only` |
 
 ## Open
 
@@ -63,8 +71,8 @@ A body the look declines to open still says how big it is. That covers a gitigno
   - (a) `getattrlistbulk` on macOS: names and sizes per directory read, not per name. Zero-dependency means hand-declared FFI.
   - (b) The [[cache|Cache]] row: a body's weight keyed and reused.
   - (c) Extrapolate past the cap from the visited names' mean, marked `~`. That is an estimate where today there is a floor, and a byte distribution as skewed as a `target/`'s (tiny fingerprints, GB `.rlib`s) makes it a poor one.
-- **`.git` is not weighed** (its facet speaks; *"`.git`'s object store is not the repo's working weight"*, design/furniture.md). A multi-GB `.git` is a real answer to a disk question. Whether the git facet should carry its object store's size is Joseph's call.
-- **"Very large hidden masses may earn a single line"** (design/furniture.md, unratified). A 32G `target/` now says its size on a has-word. Whether that size should promote it to its own `⊘`-like line is still Joseph's.
+- ~~**`.git` is not weighed**~~ **Resolved 2026-10-03** (Joseph: *"yes, IMO"*). Weighed onto the `git` has-word; see §`.git` above.
+- **"Very large hidden masses may earn a single line"** (design/furniture.md, unratified). A 32G `target/` now says its size on a has-word. Asked whether that should promote it to its own line, Joseph (2026-10-03) left it open, and this is why: *"unclear still, because aspectus only cares about mass as a secondary factor. Semantic heat is usually more important and a good reason for byte-mass to remain hidden in many circumstances..."* Nothing is built for it. *Why open:* byte-mass is secondary to semantic heat; promoting a body to a line by size alone would let the secondary fact claim the primary position.
 - **The 1 MiB has-word threshold** is a constant, not a quiet law. A statistical form (relative to the look's visible bytes) waits on dir byte totals.
 - **Kindless hidden names are not weighed.** Weighing follows the has-word, so a hidden dir whose map row claims no kind has nowhere to say its size. The only shipped row like that is `.DS_Store = ":omit"` (*not listed, not mentioned*), which is a file. A user-config row that omits a *dir* with a kind would be weighed onto that kind's word. That is consistent with the has-block already naming the kind, but it is not what "not mentioned" promises.
 

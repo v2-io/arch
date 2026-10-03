@@ -281,7 +281,9 @@ fn help_page() -> String {
          claim about contents, exactly what the evidence supports.\n\
          Hidden names are not counted as children; the has-spot is what\n\
          says they are here, with how many files a hidden dir holds and,\n\
-         from 1 MiB up, how big it is ([has: build \u{2265}17643f \u{2265}3.9GB]). The map is glob-based and extendable from config\n\
+         from 1 MiB up, how big it is ([has: build \u{2265}17643f \u{2265}3.9GB]);\n\
+         the git word carries its object store's size alone (git \u{2248}654.2MB).\n\
+         The map is glob-based and extendable from config\n\
          (the `[furniture]` table in `aspectus config defaults`; legacy key\n\
          `furniture`: `PATTERN[:KIND[:hide|omit|mark]]`, comma-separated;\n\
          `!PATTERN` or `\"PATTERN\" = \"!\"` drops a default row).\n\

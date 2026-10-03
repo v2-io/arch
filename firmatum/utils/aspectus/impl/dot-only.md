@@ -16,7 +16,7 @@ Landed per [[../design/dot-only|design]]. A directory whose every readdir name s
 
 **Calls made**
 
-- The spelling `[dot-only]` (proposed; reasons and the runner-up `[only .*]` are in the design).
+- The spelling `[dot-only]` (proposed at landing; ratified by Joseph the same day, *"(I'm happy with 'dot-only', fwiw)"*; the runner-up `[only .*]` is in the design).
 - Kept beside a one-name census even where redundant (`[.gitkeep]  [dot-only]`; design Open).
 - Mark order: after `[empty]`'s slot, last among the marks.
 - `design/empty-dir.md`'s `.DS_Store` Open is closed by this row (struck through with the resolution), and its "not `[empty]`" table row now points here.

@@ -178,3 +178,26 @@ fn help_teaches_ignored_bytes() {
     let h = String::from_utf8_lossy(&out.stdout);
     assert!(h.contains("how big"), "{h}");
 }
+
+/// `.git` is weighed (Joseph, 2026-10-03: "yes, IMO") onto the `git`
+/// has-word, bytes only — never a file count — from 1 MiB up; a small
+/// store keeps the bare word. JSON carries it in `hidden[]`.
+#[test]
+fn git_store_weighed_bytes_only() {
+    let (dir, xdg) = fresh("git");
+    git_init(&dir);
+    fs::write(dir.join("a.md"), "x\n").unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains("[has: git]"), "a small store stays the bare word: {o}");
+    // Stand-in for a grown object store.
+    fs::write(dir.join(".git/objects/pack-standin"), vec![0u8; 3 * 1024 * 1024]).unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    let has = o.lines().find(|l| l.contains("[has: git")).expect(&o);
+    // Exactly `git ≈3.0MB` — no `≈Nf` file count between word and bytes.
+    assert!(has.contains("[has: git \u{2248}3.0MB]"), "bytes only on the git word: {o}");
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1", "--format", "json"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains("{\"kind\":\"git\",\"files\":"), "{o}");
+}

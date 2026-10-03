@@ -647,7 +647,7 @@ pub const FACTS: &[Fact] = &[
     f(
         Wants,
         "has",
-        "the furniture map's kind words + hidden files (+ bytes ≥ 1 MiB)",
+        "the furniture map's kind words + hidden files (+ bytes ≥ 1 MiB; .git: bytes only)",
         NearRight,
         Line,
         On,

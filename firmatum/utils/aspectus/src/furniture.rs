@@ -204,11 +204,14 @@ pub struct Reading {
     pub hidden_dirs: Vec<(String, String)>,
 }
 
-/// Kinds whose presence is already spoken by a specialized facet — their
-/// hidden mass would be noise (`.git`'s object store is not the repo's
-/// working weight).
+/// Kinds whose presence is already spoken by a specialized facet and whose
+/// body is not weighed. `.git` left this set 2026-10-03 (Joseph: weigh it,
+/// "yes, IMO") — its object store is not the repo's *working* weight, so it
+/// never joins mass or a file count, but it is a real answer to a disk
+/// question (design/ignored-bytes.md §`.git`). `.github` stays: a handful
+/// of workflow files.
 fn speaks_for_itself(kind: &str) -> bool {
-    kind == "git" || kind == "github"
+    kind == "github"
 }
 
 /// Fold a directory's names through the map. Returns the reading; the

@@ -260,6 +260,16 @@ fn has_block(n: &Node) -> Option<Ready> {
         .kinds
         .iter()
         .map(|k| match n.has_counts.iter().find(|(hk, _)| hk == k) {
+            // `.git` speaks bytes only: an object store's file count is no
+            // measure of anything (packs fold thousands of objects into a
+            // few files) — design/ignored-bytes.md §`.git` (a call).
+            Some((_, b)) if k == "git" => {
+                if b.bytes >= HAS_BYTES_SPEAK_AT || b.bytes_bounded {
+                    format!("{k} {}", body_bytes_compact(b))
+                } else {
+                    k.clone()
+                }
+            }
             Some((_, b)) if b.files > 0 => {
                 let mark = if b.files_bounded { "≥" } else { "≈" };
                 // Bytes ride beside the file count when they could answer

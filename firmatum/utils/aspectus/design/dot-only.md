@@ -7,7 +7,7 @@ A directory whose every name starts with `.` says `[dot-only]`. Nothing ordinary
 ## The law
 
 - **Truth condition:** readdir finished, yielded at least one name, and every name starts with `.`. Like `[empty]`, the test runs on the raw names before the furniture map, ignore rules, or show-all filter anything. The child's kind does not matter (dir, file, symlink, special), per Joseph's rule.
-- **Spelling — a proposal (Joseph ratifies; "empty-ish" was his placeholder):** `[dot-only]`.
+- **Spelling — decided (Joseph, 2026-10-03: *"(I'm happy with 'dot-only', fwiw)"*; "empty-ish" was his placeholder):** `[dot-only]`.
   - It is a word, following the `[denied]` and `[empty]` precedent, and it states the rule rather than a judgment.
   - "empty-ish" asks the reader to guess what the -ish covers. "hidden" collides with furniture's *hide* fate, which is a different mechanism.
   - `[only .*]` (a glob, which agents read fluently) was the runner-up. It was not chosen because a glob inside a mark invites being read as a pattern to apply.
@@ -38,7 +38,7 @@ A directory whose every name starts with `.` says `[dot-only]`. Nothing ordinary
 ## Open
 
 - **Redundant beside a one-name census.** `[.gitkeep]  [dot-only]` says the same thing twice: the census already shows the lone name is dotted. Kept, because the rule is literal and a uniform mark is scannable down a column in a way a census's first character is not. If it grates, the narrow exception would be "omit the mark when a one-name census already shows it". *Why open:* this is aesthetic, and Joseph's.
-- **Spelling** — above. *Why open:* vocabulary is Joseph's to ratify.
+- ~~**Spelling**~~ — ratified 2026-10-03 (above).
 
 ## Foundations
 

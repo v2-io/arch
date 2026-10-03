@@ -106,7 +106,12 @@ fn usual_is_silent() {
     backdate_all(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(!o.contains("644"), "usual mode silent: {o}");
+    // 2026-10-03: scoped to the tree rows (the temp-dir path can contain
+    // "644" — same latent flake as majority_normalizes_exec).
+    assert!(
+        !o.lines().filter(|l| l.contains(".md")).any(|l| l.contains("644")),
+        "usual mode silent: {o}"
+    );
     assert!(!o.contains("binary") && !o.contains("text"), "{o}");
     assert_eq!(o.matches('Z').count(), 1, "only the stamp is a time: {o}");
     assert!(!o.contains("10B"), "usual size silent: {o}");
@@ -139,8 +144,11 @@ fn majority_normalizes_exec() {
     backdate_all(&dir);
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
+    // 2026-10-03: scoped to the tree rows. The whole output carries the
+    // temp-dir path (pid + nanos), which contains "755" often enough to
+    // flake this assertion (seen once in a full run, never in isolation).
     assert!(
-        !o.contains("755"),
+        !o.lines().filter(|l| l.contains("run")).any(|l| l.contains("755")),
         "sibling-usual bin dir stays silent: {o}"
     );
 }
