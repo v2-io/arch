@@ -91,7 +91,7 @@ fn live_model_end_to_end() {
     }
     let model = std::env::var("MD_PRESS_MODEL").unwrap_or_else(|_| "llama3.2:3b".into());
     let line = "Under mismatch ‖δ‖ ≤ R the update M_t stays bounded, and α > 0 holds.";
-    match math::promote_line(&model, line) {
+    match math::promote_line(&math::Model::new(model), line) {
         math::MathOutcome::Converted(l) => {
             assert!(!math::needs_math_pass(&l), "residual math in: {l}");
             assert!(math::preserves_prose(line, &l));
@@ -102,6 +102,7 @@ fn live_model_end_to_end() {
             eprintln!("model flagged: {why}");
         }
         math::MathOutcome::Unchanged => panic!("detector should have fired"),
+        math::MathOutcome::Unavailable(_) => panic!("MD_PRESS_OLLAMA=1 but the model is unavailable"),
     }
 }
 

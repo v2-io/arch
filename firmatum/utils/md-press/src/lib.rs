@@ -177,6 +177,37 @@ fn is_standalone_math(content: &str) -> bool {
         && !s[1..s.len() - 1].contains('$')
 }
 
+/// A continuation line that looks like a table row (`| a | b |`). CommonMark
+/// sees paragraph text whenever the would-be header row is not a table
+/// header — most often because something was glued in front of it
+/// (`**Related Work:** | concern | prior art |`, found in asf's FINDINGS.md).
+/// Joining the rows renders identically and buries the author's evident
+/// table under one long line, so the break stays, like `looks_like_definition`.
+fn looks_like_table_row(content: &str) -> bool {
+    let s = content.trim();
+    s.len() > 1 && s.starts_with('|') && s[1..].contains('|')
+}
+
+/// `$$` delimiters counted outside inline code spans.
+fn display_delims(content: &str) -> usize {
+    let mut n = 0;
+    let mut in_code = false;
+    let b = content.as_bytes();
+    let mut i = 0;
+    while i < b.len() {
+        match b[i] {
+            b'`' => in_code = !in_code,
+            b'$' if !in_code && b.get(i + 1) == Some(&b'$') => {
+                n += 1;
+                i += 1;
+            }
+            _ => {}
+        }
+        i += 1;
+    }
+    n
+}
+
 /// Strip a continuation line's container prefix: leading whitespace, then up
 /// to `quote_depth` `>` markers (each optionally followed by one space),
 /// then remaining indentation. What's left is the prose content.
@@ -263,6 +294,14 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
 
     // line index -> the paragraph it continues (if it is a continuation)
     let lines: Vec<&str> = input.split_inclusive('\n').collect();
+    // Frontmatter after leading HTML comments is frontmatter by intent, but
+    // CommonMark only recognizes it at byte 0, so the parse sees a thematic
+    // break and paragraph text — and joining it folded each YAML key into the
+    // previous key's `# …` comment (verisectorium's mining copies carry a
+    // provenance comment above their frontmatter; found by the 2026-10-02
+    // unicode-math spike). Render-equal, so only declaration can protect it.
+    let opaque = late_frontmatter(&lines);
+    paras.retain(|p| opaque.is_none_or(|(a, b)| p.end < a || p.start > b));
     let bare_lines: Vec<&str> = lines.iter().map(|l| split_eol(l).0).collect();
     let fstats = clf.map(|_| classify::file_stats(&bare_lines));
     let mut notes: Vec<Note> = Vec::new();
@@ -271,7 +310,13 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
     let mut sites: Vec<MathSite> = Vec::new();
     let mut joined_until: usize = 0; // 1-based line already consumed through
 
-    fn site_for(prose: &ProseMap, line_no: usize) -> MathSite {
+    let site_for = |prose: &ProseMap, line_no: usize| -> MathSite {
+        if opaque.is_some_and(|(a, b)| line_no >= a && line_no <= b) {
+            return MathSite::None;
+        }
+        site_for_prose(prose, line_no)
+    };
+    fn site_for_prose(prose: &ProseMap, line_no: usize) -> MathSite {
         if let Some(c) = prose.cells.get(&line_no) {
             let mut c = c.clone();
             c.sort_unstable();
@@ -305,6 +350,14 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
         let mut run_first = true;
         let mut acc = String::new();
         let mut acc_eol = "\n";
+        // Display math (`$$`) keeps its own lines: FORMAT requires the
+        // delimiters on their own lines, and joining a single-line
+        // `$$…$$` into the prose around it turns a display block into
+        // inline text in GitHub and Obsidian (FEEDBACK-2026-08-22 §1). A
+        // multi-line block's interior is not prose either; its breaks stay.
+        let mut in_display = false;
+        let mut keep_after_display = false;
+        let mut prev_table_row = false;
         for idx in para.start - 1..para.end {
             let (content, eol) = split_eol(lines[idx]);
             let stripped_probe = strip_continuation_prefix(content, para.quote_depth);
@@ -313,7 +366,26 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
             // math line that follows (house pseudo-display form) — the
             // break is authorial, not a wrap.
             let after_colon_math = acc.trim_end().ends_with(':') && stripped_probe.starts_with('$');
-            let own_line = looks_like_definition(stripped_probe) || solo || after_colon_math;
+            let t = stripped_probe.trim_end_matches([' ', '\t']);
+            let delims = display_delims(t);
+            let display_break = in_display || keep_after_display || t.starts_with("$$");
+            if in_display {
+                in_display = delims % 2 == 0;
+                keep_after_display = !in_display;
+            } else if t.starts_with("$$") {
+                in_display = delims % 2 == 1;
+                keep_after_display = in_display || t.ends_with("$$");
+            } else {
+                keep_after_display = false;
+            }
+            let table_row = looks_like_table_row(stripped_probe);
+            let table_break = table_row || prev_table_row;
+            prev_table_row = table_row;
+            let own_line = looks_like_definition(stripped_probe)
+                || solo
+                || after_colon_math
+                || display_break
+                || table_break;
             if !run_first && own_line {
                 // intent-preserving break: flush the run before this line
                 emit!(&acc);
@@ -398,7 +470,11 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
                 acc.clear();
                 run_first = true;
             } else if is_para_last {
-                let t = acc.trim_end().to_string();
+                // ASCII-only trim: `str::trim_end` also eats U+00A0, which
+                // is paragraph *content* in CommonMark — a scraped
+                // `    \u{a0}` line after a hard break was deleted this way
+                // and the render gate refused the file (FEEDBACK-2026-08-12 §3).
+                let t = acc.trim_end_matches([' ', '\t']).to_string();
                 emit!(&t);
                 emit!(acc_eol);
                 sites.push(MathSite::Whole);
@@ -411,6 +487,39 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
         sites.push(site_for(&prose, l + 1));
     }
     Classified { output: out, gate_output: gate, notes, math_sites: sites }
+}
+
+/// 1-based inclusive line range of a YAML frontmatter block that is preceded
+/// only by blank lines and HTML comments: a `---` line, then a `key:` line,
+/// through the closing `---` or `...`. `None` when the file doesn't open
+/// that way (true byte-0 frontmatter is the parser's own concern).
+fn late_frontmatter(lines: &[&str]) -> Option<(usize, usize)> {
+    let mut i = 0;
+    let mut saw_comment = false;
+    while i < lines.len() {
+        let t = lines[i].trim();
+        if t.is_empty() {
+            i += 1;
+        } else if t.starts_with("<!--") {
+            saw_comment = true;
+            while i < lines.len() && !lines[i].contains("-->") {
+                i += 1;
+            }
+            i += 1;
+        } else {
+            break;
+        }
+    }
+    let opens = lines.get(i)?.trim_end() == "---";
+    let keyed = lines.get(i + 1).is_some_and(|l| {
+        let k: String = l.chars().take_while(|c| c.is_alphanumeric() || *c == '_' || *c == '-').collect();
+        !k.is_empty() && l[k.len()..].starts_with(':')
+    });
+    if !(saw_comment && opens && keyed) {
+        return None;
+    }
+    let close = (i + 1..lines.len()).find(|&j| matches!(lines[j].trim_end(), "---" | "..."))?;
+    Some((i + 1, close + 1))
 }
 
 fn split_eol(raw: &str) -> (&str, &str) {
