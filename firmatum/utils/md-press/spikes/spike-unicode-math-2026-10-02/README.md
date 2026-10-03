@@ -60,7 +60,7 @@ The ceiling for comparison: one labeler scored against the other is 96.5% equiva
 - **md-press's current gates on the converter's output** (A+B, an earlier version of the converter): 90 of 540 refused. 77 of those were exact or equivalent to gold, and the gates passed 2 of its 4 wrong outputs (§11).
 - **The LLM as a fallback** where the converter changes nothing adds no correct conversions on A or B, and adds 1–2 wrong ones (§20).
 - **A learned bare-letter forest** (49k labeled letters from the estate's LaTeX, grouped CV AUC 0.98) changes little on real pieces. At p≥0.9 it gains 2 items on B and costs 1 on A (a new wrong). At p≥0.7 it gains 6 on B and adds 11 wrong across A+B. Measured and left out (§13).
-- **Speed.** Python reference: all 1.33M estate prose sites in ~16 s with 12 processes. Rust: see `rs/umath/PORT.md`.
+- **Speed.** Python reference, single thread: the 8,630 triggered estate sites in 9.8 s (1.1 ms/site). llama3.2's median was 0.58 s per call, about 1.4 h for the same sites cold. All 1.33M estate prose sites take ~16 s with 12 processes. Rust: see `rs/umath/PORT.md`.
 
 ## Where the hard boundary is
 

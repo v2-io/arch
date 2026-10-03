@@ -5,7 +5,7 @@
 - *Held out, on set B:* 84.7% of pieces exactly or equivalently right, against 45.3% for llama as md-press writes it after its gates.
 - *Error per write:* 3.9% of the pieces it changes are wrong or over-converted, against llama's 4.9%. It changes 279 pieces where llama changes 122.
 - *Muse Glimmer 30B* sits between them, on set A: 62.9% right, 2.9% of its writes wrong.
-- *On whole prose lines,* the unit md-press would actually feed it, the frozen v4 scores 86.0% / 3.5% on 200 lines labeled after it was frozen.
+- *On whole prose lines,* the unit md-press would actually feed it, the frozen v4 scores 86.0% right and 3.5% wrong or over-converted, on 200 lines labeled after it was frozen. The recommended v5 adds two malformed-input guards and gives byte-identical output on every gold item.
 
 It needs no model, it's a pure function of the text, it is idempotent (iterated to a fixed point), and KaTeX and MathJax both render all 4,838 distinct spans it emits over the estate and the gold sets. So `--check` stops depending on ollama.
 
@@ -26,13 +26,14 @@ Three policy calls the labelers split on, which I left conservative:
 - statistics like `N=40`, `p<.05` (converted only when a relation ties a letter to a value);
 - ranges inside relations (`ε ≈ 0.1-0.4`, emitted as `0.1\text{–}0.4`).
 
-## What your three suggestions bought
+## What your suggestions bought
 
 - **The "effectively-equivalent" class.** On the first dev run, 47 pieces scored "wrong". Many were spellings any reader would accept: `$\alpha/\beta$` vs `$\alpha$/$\beta$`, `\sqrt h`, `S_{id}` vs `S_{\text{id}}`. The scorer now compares visual atoms (glyph, script position, font) and separates *degraded* (left partly as written, safe) from *wrong* (prose italicized, structure changed). Every table also carries exact-only counts, so the class's effect stays visible.
 - **The corpus as data.**
   - *Reversal.* 50,348 estate lines already carry `$…$`. Reversing them to Unicode surfaced real gaps.
   - *Agents' own dialect.* Having Sonnet, Opus and Haiku rewrite 600 of them in the dialect they'd naturally use found gaps my own reverse map never produced: `∑_i`, `∇_θ`, `η^(k)*`, `Ṙ_min,i`, `δ_critical,k²`.
   - *Validity.* One of those produced `\eta^{(k)}^\ast`, which doesn't render. Validating every emitted span in KaTeX and MathJax then found 32 invalid spans of several classes (double scripts, `\sqrt` with no argument, a transcript swallowed as a bra-ket), and the converter now carries a structural TeX check and abstains rather than write a span that won't render.
+- **Symbols seen in `$…$` as evidence (your `i'` example).** A bare letter, or a primed letter like `x'`, becomes math only on evidence: an operator ties it to math, or the same letter is an operand in this text's existing `$…$` or in spans the converter found. So `i'` converts beside `$i' = i + 1$` and stays prose in `rock 'n' roll`. On the dev sets (A+B, 540 items) it adds 10 correct items and 1 new wrong one; switching it off gives 477 exact-or-equivalent against 487 with it. The same evidence across a whole file is the obvious next step; md-press has the file.
 - **Math-free text.** Over 2.47M sites from 13 external doc repos it changes 72 sites. Of the 15 distinct regions, 4 are wrong or doubtful: `τ²-bench`, `c_src`, `n_compactions`, and a sentence mentioning ∞.
   - *Bugs it caught on the way:* currency `$`, inline `<script>` JS, `200k` as a product.
   - *Property check.* A test over 920k real sites (shape, verbatim, idempotence, validity) caught 829 non-idempotent outputs in v3, where a partial first pass gets merged by a second. v4 iterates to a fixed point; real text now shows 0 violations.
