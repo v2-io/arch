@@ -183,3 +183,7 @@ Usage statistics as a remedy (measured, not assumed): including ASCII subscripte
 | D lines (held-out) | det v4 | 187 | 3.7% | |
 | D untriggered (held-out) | det v4 | 150 | 20.0% | |
 On held-out triggered text, det's per-write error rate (~4%, D lines 3.7%, B v1 3.9%) is at or below llama-after-gates (4.9% on B) and above Muse-after-gates (2.9%, on A); it writes ~2.3× as many pieces as llama and ~1.6× Muse.
+
+## 23. Whole lines vs md-press's pieces, measured (`rs/probe` bin `pieces_of` uses md-press's own splitters)
+D lines (n=200, held-out v4): whole-line 86.0% ok / 3.5% wrong+over / 21 degraded; piecewise 84.5% / 3.0% / 25. C lines (n=100): 84.0% / 3.0% vs 83.0% / 3.0%. 128 of the 200 D lines are split into more than one piece by md-press. Whole lines win DL007, DL128, DL149, DL104 (expressions kept intact) and lose DL076 (a style tie broken the other way) and DL034 (`e^(β × tooling_time)`: whole-line emits `\beta` inside an unattachable script group; piecewise abstained). The labelers' finding (the splitter cuts expressions) is real, but for this converter its net effect is about +1–1.5 points, not a ceiling. I had written it more strongly in the plan before measuring; corrected.
+v4 on the agent-written dialect (lenient scoring; 21 Haiku lines dropped as misaligned with their gold): Sonnet 72.3% ok / 2% wrong, Opus 69.3% / 4%, Haiku 70.5% / 6%; all 579: 71.2% / 3% wrong / 25% degraded.

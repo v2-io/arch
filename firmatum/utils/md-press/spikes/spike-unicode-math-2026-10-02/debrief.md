@@ -46,7 +46,7 @@ Three policy calls the labelers split on, which I left conservative:
 ## Incidental findings in md-press
 
 - **Unwrap joins frontmatter.** YAML frontmatter that follows an HTML comment is parsed as a setext heading and joined, and it passes the render check. Two labelers found it independently (`verisectorium/.../tools-are-observation-infrastructure.md`).
-- **The splitter cuts expressions.** `split_at_prose_separators` cuts real expressions apart (`κ×A/tempo`, `0.02 ≤ |CUBE| ≤ 0.10`, `1/√α`), which caps any converter fed pieces. Whole lines avoid it.
+- **The splitter cuts expressions.** `split_at_prose_separators` cuts real expressions apart (`κ×A/tempo`, `0.02 ≤ |CUBE| ≤ 0.10`, `1/√α`). For this converter the measured cost is small: on D, whole lines score 86.0% against 84.5% fed piecewise through md-press's own splitters.
 - **Wrong conversions pass today's gates.** On B, four of llama's wrong conversions pass all of them, including `operands_survive`: `ρ/R` → `\rho/\rho_R`, `T` → `\mathcal{T}`, a swallowed `?`, and a raw combining hat left in math.
 - **The gates refuse good output.** Run over an earlier version of the converter's output on A+B, they refuse 77 correct conversions out of 540 while passing half its errors. They were tuned to LLM failure modes.
 

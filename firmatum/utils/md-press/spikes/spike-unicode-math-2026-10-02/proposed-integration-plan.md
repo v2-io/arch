@@ -17,7 +17,7 @@ The interface is `convert(text) -> (text', spans)`, applied to one prose site wi
 
 1. **Replace the model call, not the site machinery.** md-press's parse-sited design is right and the converter assumes it: whole paragraph/heading lines and table cells, with `split_structure` removing and reattaching the prefix verbatim. Keep `promote_site` and the cell handling. Inside it, call the converter on the whole site body instead of `promote_text` per piece.
 
-2. **Don't split sites into pieces for the converter.** `split_at_prose_separators` and `split_sentences` existed for the LLM's cost and safety. They also cut real expressions in half: independent labelers found about 9 of 135 pieces per batch cut mid-expression, including `κ×A/tempo`, `0.02 ≤ |CUBE| ≤ 0.10`, `1/√α` and `R_test = Σ(w_i × coverage_i) / Σ(w_i)`. The converter makes the weak-glyph role decision itself, as part of span finding, so it doesn't need the pre-split. On whole lines (sets CL and DL) it scored as well as on pieces, or better.
+2. **Feed whole sites; the piece splitting is optional for this converter.** `split_at_prose_separators` and `split_sentences` existed for the LLM's cost and safety, and they do cut real expressions in half. Independent labelers found about 9 of 135 pieces per batch cut mid-expression: `κ×A/tempo`, `0.02 ≤ |CUBE| ≤ 0.10`, `1/√α`, `R_test = Σ(w_i × coverage_i) / Σ(w_i)`. The converter makes the weak-glyph role decision itself, so it doesn't need the pre-split. The measured effect, though, is small. On held-out D lines (n=200), whole-line conversion gets 86.0% exact-or-equivalent and 3.5% wrong+over; the same lines through md-press's splitter, piece by piece, get 84.5% and 3.0%. On C lines: 84.0% / 3.0% vs 83.0% / 3.0%. Whole lines win 4 items and lose 2 on D (`notes/LOG.md` §23). I'd still feed whole sites, because it is simpler and keeps expressions intact, but that's a mild preference, not a measured necessity.
 
 3. **Gates: give it its own invariants, and don't run it through the LLM gates as they stand.** Run through today's gates, 90 of 540 converter outputs on A+B were refused; 77 of those were exact or equivalent to gold. Meanwhile the gates passed 2 of the converter's 4 wrong outputs. Those gates were built for LLM failure modes; they don't know `₀`→`0`, `\text{word}`, `\succeq`, and so on. The converter's own checks are structural:
    - the alignment self-check (the output is the input with regions replaced; the same idea as `edit_pairs`);
@@ -57,7 +57,7 @@ The interface is `convert(text) -> (text', spans)`, applied to one prose site wi
   - a raw combining hat left inside math (`p̂_k`)
   
   The data is in `data/llama-B-judged.jsonl`.
-- **The splitter cutting expressions** (item 2) is a converter-independent ceiling on today's pipeline.
+- **The splitter cutting expressions** (item 2) is a hard limit for the pieces it cuts: no converter can recover a span across the cut. The measured net cost for this converter is about 1–1.5 points.
 - **Currency `$` beside a trigger glyph** (`≤$1M`) is a pairing hazard for any converter, including today's model path. The converter refuses any site with a `$` followed by a digit.
 
 ## Do-not-inherit (framings that may be mine, not the evidence's)

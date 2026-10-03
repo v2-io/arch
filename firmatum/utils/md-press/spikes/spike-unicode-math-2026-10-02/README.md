@@ -9,7 +9,7 @@ md-press's math pass asks a local LLM (llama3.2:3b) to wrap Unicode math in pros
 - **The converter.** I built a deterministic converter: a lexer, a span finder (seed-and-grow, in the family of Unicode TN28 §5), a small sub/superscript grammar, and LaTeX emission under house rules.
 - **The yardstick.** Its outputs were scored against blind gold: 1,390 items in four sets, each item labeled twice, independently, by 20 Opus labeler agents; no converter produced any label.
 - **The scoring.** The scorer has an "effectively equivalent" class at Joseph's suggestion. It compares what a reader sees (glyph, script position, font), not the LaTeX bytes.
-- **Two fresh rounds after freezing.** Each time the converter was frozen, a fresh labeled set was scored once.
+- **Three fresh rounds after freezing.** Three times the converter was frozen and then scored once on a fresh labeled set: B after v1, C after v2, D after v3 and v4.
 - **Data and drills.** Following Joseph's suggestion, the estate's own 50k LaTeX-bearing lines became round-trip data. 600 lines were rewritten by Sonnet, Opus and Haiku in their natural Unicode dialect. Precision drills ran over 2.47M math-free sites and 200k fuzz strings, and every emitted span was validated in KaTeX and MathJax.
 - **A Rust port** with a differential test against the Python reference was delegated (`rs/umath/`, `rs/umath/PORT.md`).
 
@@ -56,15 +56,15 @@ The ceiling for comparison: one labeler scored against the other is 96.5% equiva
 - **Properties on real text.** Over 920,682 sites (16,154 changed): 0 violations of shape (output = input with regions replaced), verbatim (code, links, URLs, existing math content), idempotence or validity, and 0 crashes.
 - **Properties on fuzz.** 200k adversarial strings: 10 violations (0.005%), all involving unmatched backticks or `$` in link destinations, where the checker's masking and the converter's differ; not resolved (§19).
 - **Math-free text.** 2.47M sites from 13 external doc repos: 72 sites changed, in 15 distinct regions. Reading all 15: 11 are defensible math (`O(1)` ×57, `n = 40`, `y=0`, `K >= 3`, `c*`). 4 are wrong or doubtful: a benchmark name `τ²-bench`, a directory name `c_src`, a code identifier `n_compactions`, and the glyph mentioned in "rendered as ∞".
-- **Agent-written Unicode dialect.** 579 aligned lines written by Sonnet, Opus and Haiku from known LaTeX: 70.6% exact-or-equivalent and 4% wrong, scored leniently because the rewrites dropped information like `\mathcal`. The 25% degraded is mostly bare single letters with no Unicode signal.
-- **md-press's current gates on the converter's output** (A+B): 90 of 540 refused. 77 of those were exact or equivalent to gold, and the gates passed 2 of its 4 wrong outputs (§11).
+- **Agent-written Unicode dialect.** 579 aligned lines written by Sonnet, Opus and Haiku from known LaTeX (21 Haiku lines dropped as misaligned): 71.2% exact-or-equivalent and 3% wrong, scored leniently because the rewrites dropped information like `\mathcal`. The 25% degraded is mostly bare single letters with no Unicode signal.
+- **md-press's current gates on the converter's output** (A+B, an earlier version of the converter): 90 of 540 refused. 77 of those were exact or equivalent to gold, and the gates passed 2 of its 4 wrong outputs (§11).
 - **The LLM as a fallback** where the converter changes nothing adds no correct conversions on A or B, and adds 1–2 wrong ones (§20).
 - **A learned bare-letter forest** (49k labeled letters from the estate's LaTeX, grouped CV AUC 0.98) changes little on real pieces. At p≥0.9 it gains 2 items on B and costs 1 on A (a new wrong). At p≥0.7 it gains 6 on B and adds 11 wrong across A+B. Measured and left out (§13).
 - **Speed.** Python reference: all 1.33M estate prose sites in ~16 s with 12 processes. Rust: see `rs/umath/PORT.md`.
 
 ## Where the hard boundary is
 
-The converter's remaining errors on held-out data, read one by one (C §16, D §21), fall into these classes:
+The converter's remaining errors on held-out data, read one by one (C §16, D §21), fall into these classes (the parse-limit examples come from all sets):
 - **Labels that are glyph-identical to variables:**
   - asf's regime names `W₀/W₁/W₂` (canon writes them as Unicode prose);
   - causal-language's hypothesis IDs `H_D3`;
