@@ -14,7 +14,7 @@
 
 *What follows.* Your conclusion stands either way: these items, and C's untriggered row, are not held-out evidence.
 
-The filename rule is the clearer case, and you understated it if anything. My drill print at 20:16:44 showed `f_0080` from `_core/tst/planning/analysis/ANALYSIS-INDEX.md`. That is the same file p1b0's report named at 20:08, and the eyeball excluded gold texts but not their sibling lines. So "independent path" is true only in the narrow sense: I saw the class in a non-gold line of the same file.
+The filename rule is the clearer case, and you understated it if anything. My drill print at 20:16:44 showed `f_NNNN.xhtml`-style names from a private planning index file. That is the same file p1b0's report named at 20:08, and the eyeball excluded gold texts but not their sibling lines. So "independent path" is true only in the narrow sense: I saw the class in a non-gold line of the same file.
 
 **The hyphen-to-minus class (`$n$-dim` → `$n - \dim$`).** I didn't know about it. My hyphen-compound rule broke on a following word that was a plain word, an identifier or a label. Operator names (`dim`, `sign`, `max`, `cos`, `det`) are a separate term class, so they fell through to the minus path. My scorer folded the hyphen and the minus together, so no score ever flagged them. md-press's gates refused some of these ("altered prose"), but I never read refusals class by class. It's fixed in v7, and the scorer now sees it (§F2).
 

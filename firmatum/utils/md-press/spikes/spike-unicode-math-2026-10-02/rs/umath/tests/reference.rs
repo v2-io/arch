@@ -32,7 +32,7 @@ fn leaves_alone() {
     for t in [
         "plain prose with no math at all.",
         "W₀/W₁/W₂ regimes",
-        "$5 / MTok · Output pricing: $25",
+        "$5 / unit · fee: $25",
     ] {
         assert_eq!(v5(t), t);
     }

@@ -82,7 +82,7 @@ The labelers themselves agree with each other on 96.0% of D lines under scorer v
 - **Properties on fuzz** (v7). 200k adversarial strings: 1 violation, a checker artifact on inspection (§24). No crashes, no invalid spans.
 - **Math-free text.** Over 2.47M sites from 13 external doc repos, 72 sites changed, in 15 distinct regions.
   - 11 are defensible math (`O(1)` ×57, `n = 40`, `y=0`, `K >= 3`, `c*`).
-  - 4 are wrong or doubtful: `τ²-bench`, `c_src`, `n_compactions`, and the glyph mentioned in "rendered as ∞".
+  - 4 are wrong or doubtful: a benchmark name with a superscript, a directory name, a snake_case code identifier, and the glyph mentioned in "rendered as ∞".
 - **Agent-written Unicode dialect** (v6, scorer v1, lenient). 579 aligned lines: 71.2% exact-or-equivalent, 3% wrong.
 - **md-press's current gates on the converter's output.**
   - The verifier's run on v6's 7,826 changed triggered estate sites: 22% refused.
@@ -119,6 +119,28 @@ Round 1 is `de-novo-feedback-1.md`, with my response in `de-novo-response-1.md`.
 1. The held-out D numbers under scorer v2, and the bracketing readings above.
 2. That v7's hyphen fix doesn't over-correct: a genuine subtraction of an operator name glued with no space and no argument (`x-max`).
 3. Rust/Python parity for v7 (the porting agent reports 0 differences; I spot-checked the gold items).
+
+## Local-only data (from 2026-10-03)
+
+At Joseph's request, text that came from non-public repos stays out of git from now on. "Non-public" means private or local-only repos, plus anything under no known repo root or under an external clone. Every data file below mixes public sources (asf, logos, vivarium, udon, …) with non-public ones (`_core/tst`, `_core/sapientia`, `causal-language`, `AISI-responses`, `aat-refactored`, `memorata`, …). These files are now gitignored and untracked. They still exist on disk in the original working copy, and git history before this commit still contains them, since there was no history rewrite.
+
+| path | what it is | why it's local-only |
+|---|---|---|
+| `inputs/pieces.jsonl`, `sample.json`, `prop-*.jsonl`, `judged-*.jsonl` | the coordinator's 8,027 estate pieces and the two models' outputs on 240 of them | about 30% of pieces come from non-public files |
+| `data/dev-pool.json` | dev pieces drawn from `pieces.jsonl` | same source |
+| `data/gold/*-items.json`, `data/gold/{,C/,D/}tasks/`, `pass1/`, `pass2/` | the 1,390 gold item texts and both labelers' golds | 23% (A+B), 39% (C) and 42% (D) of items come from non-public files; golds are those texts with `$…$` added |
+| `data/gold/{C,D}/scratch-*/` | the labelers' working scripts | they embed item texts and golds |
+| `data/llama-*.jsonl` | llama3.2 outputs on sets B and D | outputs on mixed-source items |
+| `data/synth-agent/tasks/`, `out/`, `scratch-*/`, `eval-det.json` | estate LaTeX lines and the agents' Unicode rewrites | about a third come from non-public files; a rewrite of private text counts as private |
+| `data/estate-md-files.txt`, `data/mathfree-files.txt` | file lists for the drills | lists of paths only, but they name non-public files. A borderline call; I untracked them |
+
+**Still tracked and why:**
+- **Aggregates and IDs.** `results.md`, the `verdicts.json` files (item ID → verdict) and `data/house-labels-asf-canon.json` (mined from asf canon only, which is public).
+- **Briefs and code.** The labeler briefs, and all code: the frozen converters, the scorer and the Rust port.
+- **Prose files.** The README, debrief, plan, LOG, `de-novo-*` and `PORT.md`. In these, quotations that came only from non-public sources were replaced with descriptions on 2026-10-03. They were found by scanning every backtick or quoted snippet of 6+ characters against the estate's text. Short generic fragments that also occur in public files (`t=5`, `O(1)`) were kept. Repo and file names are still mentioned where they matter for an argument.
+- **Code comments, a known exception.** Comments in `py/umath.py` and the frozen `py/frozen/umath_v*.py` still carry a few identifier-sized examples from non-public files (`f_NNNN.xhtml`-style file names from a private planning index; `N - a timestamp`, from an external documentation clone). I left these alone: editing a frozen file would change the hash every measurement cites.
+
+**For a cold reader without the local data:** every script that reads these files fails until they're regenerated. `rs/probe` `sites` over the estate rebuilds `data/bulk/`. The gold sets themselves can't be regenerated; they were produced by labeler agents. The tables in `results.md` and the LOG are the record of what they measured.
 
 ## What's where
 

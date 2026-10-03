@@ -3,3 +3,30 @@ data/bulk/
 rs/probe/target/
 __pycache__/
 data/letters-rf.pkl
+
+# Local-only: text drawn from non-public repos (Joseph, 2026-10-03; see README §Local-only data).
+# Item texts, labels, model outputs and file lists that mix public and private sources.
+inputs/pieces.jsonl
+inputs/sample.json
+inputs/prop-*.jsonl
+inputs/judged-*.jsonl
+data/dev-pool.json
+data/estate-md-files.txt
+data/mathfree-files.txt
+data/gold/*-items.json
+data/gold/tasks/
+data/gold/pass1/
+data/gold/pass2/
+data/gold/C/tasks/
+data/gold/C/pass1/
+data/gold/C/pass2/
+data/gold/C/scratch-*/
+data/gold/D/tasks/
+data/gold/D/pass1/
+data/gold/D/pass2/
+data/gold/D/scratch-*/
+data/llama-*.jsonl
+data/synth-agent/tasks/
+data/synth-agent/out/
+data/synth-agent/scratch-*/
+data/synth-agent/eval-det.json

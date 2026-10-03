@@ -29,7 +29,7 @@ Plan: (i) extract prose lines with `$…$` from asf (and elsewhere) through md-p
 
 ## 4. Labeler reports (p1b1, p1b2, p2b1, p2b2 done) — incidental findings, high value
 
-- **md-press's piece splitting cuts live math** (independently found by 3 labelers): `split_at_prose_separators` splits at weak glyphs judged prose when a neighbour is a word: A122 source `κ×A/tempo/persistence` (cut at ×), A130 `0.02 ≤ |CUBE| ≤ 0.10` (CUBE judged prose), A224 `1/√2` cut to `1/`, B252 `Σ(users(s) × criticality(s))`, A221 `−0.332°·sin(8ψ)`, A056 `1/α vs 1/√α`, A203, A096, A179, B053, B158/B269, A199. ⇒ Any converter fed pieces is capped. **Reframe candidate:** a deterministic converter is cheap, so it can take the whole prose site (line/cell) and the weak-glyph role decision becomes part of span detection, the same problem rather than a pre-split.
+- **md-press's piece splitting cuts live math** (independently found by 3 labelers): `split_at_prose_separators` splits at weak glyphs judged prose when a neighbour is a word: A122 source `κ×A/tempo/persistence` (cut at ×), A130 `0.02 ≤ |CUBE| ≤ 0.10` (CUBE judged prose), A224 `1/√2` cut to `1/`, B252 (a sum over a product of two function applications), A221 `−0.332°·sin(8ψ)`, A056 `1/α vs 1/√α`, A203, A096, A179, B053, B158/B269, A199. ⇒ Any converter fed pieces is capped. **Reframe candidate:** a deterministic converter is cheap, so it can take the whole prose site (line/cell) and the weak-glyph role decision becomes part of span detection, the same problem rather than a pre-split.
 - **Existing `$…$` adjacent to new math** (`$k$ ≈ 0.5`): merge into one span is the right answer and md-press's gate already allows merging (pre-existing content survives inside a wider span). Labelers split on whether it's producible.
 - **Currency `$`** on the same site (B078 `≤$1M`): any new span pairs with it. Hazard class for any converter and for md-press's balance gate.
 - **Stray code fence after frontmatter** flips fence pairing (B245, B252; ~108 of 961 files in `_core/tst/planning/analysis/`) → ASCII-laid-out formulas parsed as prose and unwrapped. Unwrap-stage issue, not math.
@@ -60,9 +60,9 @@ Dev A after fixes so far (tuned on A — no longer an unbiased estimate): det ex
 
 ## 8. Precision drills
 
-**Estate, all 1.33M prose sites** (probe `rs/probe` → `sites.jsonl`; 8,638 triggered by md-press's own detector): converter changes 19.3k sites, 12.8k of them untriggered. Untriggered changes are mostly real math the trigger misses (`W₁` Unicode subscripts aren't in the trigger at all; `n_past`, `M_t`, `O(n²)`, `R²`, `10⁻⁶`), plus real false positives found: numeric-only spans (`Elixir ≥ $1.6$`), `|---|` table rules as abs-value, transcript truncations (`import p...sor`), log fields `t=9`.
+**Estate, all 1.33M prose sites** (probe `rs/probe` → `sites.jsonl`; 8,638 triggered by md-press's own detector): converter changes 19.3k sites, 12.8k of them untriggered. Untriggered changes are mostly real math the trigger misses (`W₁` Unicode subscripts aren't in the trigger at all; `n_past`, `M_t`, `O(n²)`, `R²`, `10⁻⁶`), plus real false positives found: numeric-only spans (a version requirement `≥ $1.6$`), `|---|` table rules as abs-value, transcript truncations (`import p...sor`), log fields `t=9`.
 
-**External math-free markdown** (13 `_ref` repos: anthropic SDKs, codex, gemini-cli, ink, obsidian-help/linter, pachyderm, claude-docs…; 5,143 files, 2.47M sites): 471 changed. Three bug classes: (1) **currency `$`** — `$5 / MTok · Output pricing: $25` reads as an existing math span; (2) **inline `<script>` JS** in a docs page — `f=3*!!a,g=4,h=e+g+f`; (3) **number+unit** `>=200k` → `$200k$`.
+**External math-free markdown** (13 `_ref` repos: anthropic SDKs, codex, gemini-cli, ink, obsidian-help/linter, pachyderm, claude-docs…; 5,143 files, 2.47M sites): 471 changed. Three bug classes: (1) **currency `$`** — a line of dollar prices reads as an existing math span; (2) **inline `<script>` JS** in a docs page — minified inline JS; (3) **number+unit** `>=` before a number with a unit suffix → `$200k$`.
 
 ## 9. HELD-OUT RESULT — v1 frozen (py/frozen/umath_v1.py, sha1 0a2afaf1…) run once on set B
 
@@ -77,7 +77,7 @@ From here on B is *seen*: any later change is tuned on A+B and needs a fresh set
 
 B v1 errors (9 wrong, 2 over), read in full:
 - **3 of 9 wrong are one speculative heuristic of mine**: `x_t+1` → `x_{t+1}` (subscript absorbs a glued `+`/`-` and a short token). On B it produced `U_M/(U_{M+U}_o)` (B122, B133, B208) and `\Sigma_{t-as}` (B180, the hyphen variant). It came from *my idea* of agent Unicode, never from data — exactly the brief's warning. Removed: render literally.
-- `kg/m³` → `kg/$m^3$` (unit with superscript); `0₃ₓ₃` (ₓ = ×); PDF-flattened `eθl′`, `D X ∪ S`; pseudo-formula `Σ(sprint=1 to t/2weeks)`; fragment `e^(-γ` (splitter cut); `[ε]` in a Unicode code chart.
+- `kg/m³` → `kg/$m^3$` (unit with superscript); `0₃ₓ₃` (ₓ = ×); PDF-flattened `eθl′`, `D X ∪ S`; pseudo-formula a pseudo-formula with words inside `Σ(…)`; fragment `e^(-γ` (splitter cut); `[ε]` in a Unicode code chart.
 
 ## 10. Joseph's data idea, realized: estate LaTeX → Unicode round trip
 
@@ -132,9 +132,9 @@ C wrong/over for v2 (35 items), read in full and sorted by cause:
 - PDF-flattened scripts (`θl`, `eθl′`, `D X ∪ S`): 3
 - project label conventions (asf writes the W₀/W₁/W₂ regime labels as Unicode prose hundreds of times and reserves `$W_2$` for Wasserstein): 4; footnote marker `E¹`: 1; product name `μTOSCA`: 1 (over)
 - session-listing fields `t=5`: 4
-- letter glued to an existing span the author deliberately kept upright (`H$_\kappa$`, `(P$^{\Diamond}$)`): 3; label after `Appendix` (`Appendix E`): 1
+- letter glued to an existing span the author deliberately kept upright (`H$_\kappa$`, a roman label with a math superscript): 3; label after `Appendix` (`Appendix E`): 1
 - `\(…\)` delimiters (md-press normalizes these *before* the model today, so this wouldn't arise in the pipeline): 2; markdown-escaped LaTeX export: 1
-- converter errors proper: `$\hat\kappa$-is-a-$do(G)$` → `$a - do(G)$` (article in a hyphen chain), `Casella, G.` (an initial), `M_τ⁺` (sign superscript belongs to the subscript), `η²p` (APA partial eta squared): 4–5
+- converter errors proper: a hyphen chain of the form `$x$-is-a-$f(G)$` came out as a subtraction (article in a hyphen chain), `Casella, G.` (an initial), `M_τ⁺` (sign superscript belongs to the subscript), `η²p` (APA partial eta squared): 4–5
 **Incidental md-press bug (two C labelers, independently, verified by one with `md-press - | diff`):** a file whose YAML frontmatter follows an HTML comment gets the frontmatter parsed as a setext-heading paragraph and joined (CL058, `verisectorium/.../tools-are-observation-infrastructure.md`). Render-equal, so the gate can't see it.
 
 ## 17. v3 = post-C fixes (C-informed; no fresh held-out number exists for v3)
@@ -185,7 +185,7 @@ Usage statistics as a remedy (measured, not assumed): including ASCII subscripte
 On held-out triggered text, det's per-write error rate (~4%, D lines 3.7%, B v1 3.9%) is at or below llama-after-gates (4.9% on B) and above Muse-after-gates (2.9%, on A); it writes ~2.3× as many pieces as llama and ~1.6× Muse.
 
 ## 23. Whole lines vs md-press's pieces, measured (`rs/probe` bin `pieces_of` uses md-press's own splitters)
-D lines (n=200, held-out v4): whole-line 86.0% ok / 3.5% wrong+over / 21 degraded; piecewise 84.5% / 3.0% / 25. C lines (n=100): 84.0% / 3.0% vs 83.0% / 3.0%. 128 of the 200 D lines are split into more than one piece by md-press. Whole lines win DL007, DL128, DL149, DL104 (expressions kept intact) and lose DL076 (a style tie broken the other way) and DL034 (`e^(β × tooling_time)`: whole-line emits `\beta` inside an unattachable script group; piecewise abstained). The labelers' finding (the splitter cuts expressions) is real, but for this converter its net effect is about +1–1.5 points, not a ceiling. I had written it more strongly in the plan before measuring; corrected.
+D lines (n=200, held-out v4): whole-line 86.0% ok / 3.5% wrong+over / 21 degraded; piecewise 84.5% / 3.0% / 25. C lines (n=100): 84.0% / 3.0% vs 83.0% / 3.0%. 128 of the 200 D lines are split into more than one piece by md-press. Whole lines win DL007, DL128, DL149, DL104 (expressions kept intact) and lose DL076 (a style tie broken the other way) and DL034 (an exponent `e^(…)` with a word variable inside: whole-line emits `\beta` inside an unattachable script group; piecewise abstained). The labelers' finding (the splitter cuts expressions) is real, but for this converter its net effect is about +1–1.5 points, not a ceiling. I had written it more strongly in the plan before measuring; corrected.
 v4 on the agent-written dialect (lenient scoring; 21 Haiku lines dropped as misaligned with their gold): Sonnet 72.3% ok / 2% wrong, Opus 69.3% / 4%, Haiku 70.5% / 6%; all 579: 71.2% / 3% wrong / 25% degraded.
 
 ## 24. v5: the last fuzz violations were real (malformed-input) bugs
@@ -209,7 +209,11 @@ Response: `de-novo-response-1.md`. Changes made by replacement:
 - **A failure of my own, found while redoing this:** the v6 validity claim ("4,837 spans, 0 invalid") came from a run where `node notes/validate.js` couldn't find `katex`. The error went to a stderr I had redirected to /dev/null, the invalid-spans file was empty, and I read that as 0 failures. Re-run properly: 4,837 checked, 0 invalid, so the claim was true but unverified when written. `notes/validate.js` now documents `NODE_PATH`.
 - **llama on D lines, reproduced** (`py/llama_D_lines.py`): 37.5% exact-or-equivalent, 1.5% wrong+over, 80 lines changed, 3.8% among changed (verifier: 38.0%). Converter v4 under scorer v2: 84.5% / 5.0%, 187 changed, 5.3% among changed. Per-edit rates are level within noise; absolute wrong edits are 10 vs 3.
 - **D lines, readings of v4:** scorer v1 86.0/3.5; scorer v2 84.5/5.0; worse labeler 82.5/6.0; strict slash 82.0/7.5. Labeler-vs-labeler agreement under v2: D lines 96.0%, D 94.8%, C 91.6%, A+B 98.1%.
-- **Held-out status corrected.** Only D is clean, and only for v3/v4. The C untriggered row is not held out: the filename rule arrived via my drill (`f_0080`, `ANALYSIS-INDEX.md`, 20:16:44) *and* p1b0's report naming the same file (20:08), and it moved 11 C items. B is softer than "fresh" (reports quoting B items were read before v1 froze).
+- **Held-out status corrected.** Only D is clean, and only for v3/v4. The C untriggered row is not held out: the filename rule arrived via my drill (`f_NNNN.xhtml`-style names, one private index file, 20:16:44) *and* p1b0's report naming the same file (20:08), and it moved 11 C items. B is softer than "fresh" (reports quoting B items were read before v1 froze).
 - `py/evaluate_c.py` no longer rewrites tracked `verdicts.json` unless `--write` is given.
 - Port mirrored v7: 0 differences for v3–v7 on every set; my gold spot check against umath_v7.py: 0 differences.
 - Port agent note: v7 turns `log-det/λ` into `log-$\det/\lambda$`, splitting the compound at the math boundary. Better than v6's minus, but not the intended whole-compound result; recorded in the plan. Also removed 10 accidentally tracked `__pycache__` files from the spike (gitignore now covers `__pycache__/` everywhere).
+
+## 28. Local-only data (Joseph, 2026-10-03)
+Text from non-public repos is kept out of git from now on, with no history rewrite. The coordinator's prefix lists define "non-public": 31 private and 17 local-only repos, plus anything under no root or under an external clone. Every per-record data file mixes public and non-public sources: pieces 30.7% non-public, gold A+B 23%, C 39%, D 42%, synth-agent tasks 34%. All of them, the labelers' scratch scripts (which embed item texts) and the two drill file lists were gitignored and `git rm --cached`; README §Local-only data lists them. Prose docs: a scan of backtick and quoted snippets (6+ characters) against all estate site text found the snippets that occur only in non-public files, and these were replaced with descriptions. `rs/umath/tests/reference.rs` lost its one external-doc string (`cargo test` still passes, 11 tests). Frozen converter comments were left unedited, to keep the cited hashes.
+Correction: in §27 and in my report I said I had untracked 10 `__pycache__` files. That was false. `git rm --cached` followed by `git commit -- <dir>` re-commits the working-tree files under the pathspec, so they stayed tracked. They are untracked in this commit, staged first and committed without a pathspec.

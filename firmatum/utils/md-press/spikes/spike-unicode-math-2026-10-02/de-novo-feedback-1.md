@@ -1,5 +1,7 @@
 # De novo feedback 1: the unicode-math spike
 
+*[2026-10-03, spiker: a few short quotations from non-public sources were replaced with short descriptions, at Joseph's request; see README §Local-only data. Nothing else was changed.]*
+
 *Independent critical pass, 2026-10-02, by an agent that had no part in the spike. Scope was open. I read `README.md`, `debrief.md`, `proposed-integration-plan.md`, `results.md`, `notes/LOG.md`, all four labeler briefs, `py/atoms.py`, `py/evaluate_c.py`, the v1→v2 converter diff, the md-press gate code in `src/math.rs`, and both SOPs (`spikes.sop.md`, `audit-routing-instructions.md`). I also read the session transcripts of the spiker and of the 20 labelers. I re-ran the scoring and ran four experiments of my own, described under each finding. I did not read `umath.py` line by line, audit the Rust source, re-run `properties.py` or the KaTeX/MathJax validator, or re-check the agent-dialect, lexicon, or forest numbers.*
 
 ## Summary
@@ -33,11 +35,11 @@ The README says: "Three times the converter was frozen and then scored once on a
 
 - **D is clean in substance.** v3 was frozen before D was even selected (D was selected with v3). v4 was frozen 25 seconds before the first D label file existed, and 54 seconds before the first D report arrived. The transcript shows the `cp … umath_v4.py` call at 20:37:02. I found no way information from D labels could have reached v4. But "labeled after both were frozen" is false: labeling ran from 20:30 to 20:39, and v4 was built during it. "Frozen before any D label or report existed" is what's true, and it's enough.
 - **C is not clean for the untriggered items.** All six C reports were in the spiker's context 8–12 minutes before the v2 freeze. They name items and classes:
-  - p1b0: "Filenames take up 5 of the 150 items (`f_0011.xhtml` and similar, all from one `ANALYSIS-INDEX.md`)", and "CU033 is a glyph-perception survey";
+  - p1b0: "Filenames take up 5 of the 150 items (`f_NNNN.xhtml` and similar, all from one one private index file)", and "CU033 is a glyph-perception survey";
   - p2b1 and p1b1: "`3 <= 0?` is a step in a code trace";
   - p1b2 and p2b2: CL058 YAML; and more.
 
-  LOG §12 records the spiker's decision not to act on C-specific content. The v1→v2 diff, though, adds a filename rule at 20:17:31 (`mness = 'broken'  # f_0080.xhtml: a file name`), eight minutes after the report naming that class. The transcript shows an independent path to it as well: an estate drill printed `f_0148.xhtml` at 20:16:44. So the cause is ambiguous, but the effect isn't.
+  LOG §12 records the spiker's decision not to act on C-specific content. The v1→v2 diff, though, adds a filename rule at 20:17:31 (`mness = 'broken'  # f_NNNN.xhtml: a file name`), eight minutes after the report naming that class. The transcript shows an independent path to it as well: an estate drill printed `f_NNNN.xhtml` at 20:16:44. So the cause is ambiguous, but the effect isn't.
 
   Re-scoring v1 and v2 on C, the untriggered "changed" items go from 31 wrong + 4 over to 19 wrong + 1 over. Of the 15 untriggered items that moved from error to correct:
   - 11 are `f_0xxx.xhtml` filenames from that one file;
@@ -120,7 +122,7 @@ From the README: "Labelers resolved those cases by reading information outside t
 - **Decidable from the line itself (about 11):**
   - `t=45` beside a timestamp `11-14 12:41` (4);
   - units: "drainage area (m²)", "m/s, kg/m³" (2);
-  - mention vs use: "line 434 uses n_past without LaTeX" (DU030), a quoted code comment (DU092), a terminal diff `+-` (DU056);
+  - mention vs use: a sentence saying a variable lacks LaTeX (DU030), a quoted code comment (DU092), a terminal diff `+-` (DU056);
   - run metadata `o(640,5376)` (DU093);
   - "the W axis" (DU136).
 - **Other:** `⟹` between case labels, `\(…\)`, a flattened paste.
@@ -151,7 +153,7 @@ Also, "Those sites are most of what it changes estate-wide (16k sites vs 8.6k tr
   | refused: "invented math content" | 342 |
   | refused: `edits_confined` | 296 |
   | refused: residual math | 115 |
-- **Most refusals look wrong, but not all.** I read a random 30 of the refusals. About 25 look like over-refusals of good conversions: `±ρ`, `π*`, `λ ≈ 0.02/year`, `n≥3, k=2`. About 5 catch dubious output:
+- **Most refusals look wrong, but not all.** I read a random 30 of the refusals. About 25 look like over-refusals of good conversions: `±ρ`, `π*`, a rate with a unit, `n≥3, k=2`. About 5 catch dubious output:
   - flattened PDF subscripts (`ℳθ,ϕ` → `\mathcal{M}\theta,\phi`);
   - APA statistics fragmented inconsistently;
   - the hyphen-operator class from F2;
