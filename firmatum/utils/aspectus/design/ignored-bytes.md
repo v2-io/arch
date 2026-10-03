@@ -67,7 +67,7 @@ A body the look declines to open still says how big it is. That covers a gitigno
 
 ## Open
 
-- **Floors on big build trees read 2–5× under the truth** (numbers above). Ways to raise the cap without the cost, none taken here:
+- **Floors on big build trees read 2–5× under the truth** (numbers above). Joseph, 2026-10-03: *"don't raise 20k cap for now"* — the honest `≥` floor stands. Ways to raise the cap without the cost, if it is revisited:
   - (a) `getattrlistbulk` on macOS: names and sizes per directory read, not per name. Zero-dependency means hand-declared FFI.
   - (b) The [[cache|Cache]] row: a body's weight keyed and reused.
   - (c) Extrapolate past the cap from the visited names' mean, marked `~`. That is an estimate where today there is a floor, and a byte distribution as skewed as a `target/`'s (tiny fingerprints, GB `.rlib`s) makes it a poor one.

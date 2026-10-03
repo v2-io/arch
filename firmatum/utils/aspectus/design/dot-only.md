@@ -37,7 +37,7 @@ A directory whose every name starts with `.` says `[dot-only]`. Nothing ordinary
 
 ## Open
 
-- **Redundant beside a one-name census.** `[.gitkeep]  [dot-only]` says the same thing twice: the census already shows the lone name is dotted. Kept, because the rule is literal and a uniform mark is scannable down a column in a way a census's first character is not. If it grates, the narrow exception would be "omit the mark when a one-name census already shows it". *Why open:* this is aesthetic, and Joseph's.
+- ~~**Redundant beside a one-name census.**~~ **Decided 2026-10-03** (Joseph: *"dot-only: show"*): `[.gitkeep]  [dot-only]` keeps both. The mark stays uniform down the column even where the census already shows the lone dotted name.
 - ~~**Spelling**~~ — ratified 2026-10-03 (above).
 
 ## Foundations
