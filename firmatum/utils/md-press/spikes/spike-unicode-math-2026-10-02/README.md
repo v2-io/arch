@@ -51,10 +51,10 @@ The ceiling for comparison: one labeler scored against the other is 96.5% equiva
 
 **Scope expansion (untriggered sites), held out on D:** of 150 untriggered sites v3 changes, v4 gets 71.3% exact-or-equivalent and 20.0% wrong+over. Of 50 untriggered sites with `_ ^ = < >` or Unicode scripts that it leaves alone, gold also leaves all 50 alone. The misses are almost all labels and non-math notations; see below.
 
-**Other measurements** (all against frozen v4 unless noted):
+**Other measurements** (frozen v4/v5 unless noted):
 - **Every span it writes renders.** 4,838 distinct spans over the estate and gold items validated with KaTeX (strict) and MathJax: 0 invalid. `tex_ok` is its built-in gate (`notes/LOG.md` §15).
-- **Properties on real text.** Over 920,682 sites (16,154 changed): 0 violations of shape (output = input with regions replaced), verbatim (code, links, URLs, existing math content), idempotence or validity, and 0 crashes.
-- **Properties on fuzz.** 200k adversarial strings: 10 violations (0.005%), all involving unmatched backticks or `$` in link destinations, where the checker's masking and the converter's differ; not resolved (§19).
+- **Properties on real text** (v5). Over 920,674 sites (16,146 changed): 0 violations of shape (output = input with regions replaced), verbatim (code, links, URLs, existing math content), idempotence or validity, and 0 crashes.
+- **Properties on fuzz** (v5). 200k adversarial strings: 2 violations. Both are checker artifacts: an unclosed `](` protects the rest of the string, and the checker's regex masking mis-pairs a `$` inside it; inspected (§24). v4 had 10, of which 8 were real bugs with malformed input (interleaved code/`$` delimiters, link-text brackets); fixed in v5.
 - **Math-free text.** 2.47M sites from 13 external doc repos: 72 sites changed, in 15 distinct regions. Reading all 15: 11 are defensible math (`O(1)` ×57, `n = 40`, `y=0`, `K >= 3`, `c*`). 4 are wrong or doubtful: a benchmark name `τ²-bench`, a directory name `c_src`, a code identifier `n_compactions`, and the glyph mentioned in "rendered as ∞".
 - **Agent-written Unicode dialect.** 579 aligned lines written by Sonnet, Opus and Haiku from known LaTeX (21 Haiku lines dropped as misaligned): 71.2% exact-or-equivalent and 3% wrong, scored leniently because the rewrites dropped information like `\mathcal`. The 25% degraded is mostly bare single letters with no Unicode signal.
 - **md-press's current gates on the converter's output** (A+B, an earlier version of the converter): 90 of 540 refused. 77 of those were exact or equivalent to gold, and the gates passed 2 of its 4 wrong outputs (§11).
@@ -81,7 +81,7 @@ Labelers settled the first three classes by reading the canon, the paper source,
 
 - `README.md`: this file. `debrief.md` is for Joseph. `proposed-integration-plan.md` is for whoever wires this in. `results.md` has every table.
 - `notes/LOG.md`: the chronological lab notebook, the provenance for every number above (§-references point here).
-- `py/umath.py`: the converter (same as `py/frozen/umath_v4.py`). The frozen versions are `py/frozen/umath_v{1..4}.py` (sha1 `0a2afaf1`, `19be3815`, `eb5faf14`, `a9080099`).
+- `py/umath.py`: the converter (same as `py/frozen/umath_v5.py`). The frozen versions are `py/frozen/umath_v{1..5}.py` (sha1 `0a2afaf1`, `19be3815`, `eb5faf14`, `a9080099`, `39ee2679`). v5 = v4 plus two guards against malformed input; its output is byte-identical to v4's on all 1,390 gold items, so every v4 number below is also v5's (§24).
 - **Scoring:** `py/score.py` (span alignment, a port of md-press's `edit_pairs`) and `py/atoms.py` (the visual-atom equivalence ladder).
 - **Evaluation:** `py/evaluate.py` (sets A, B), `py/evaluate_c.py` (`--set C|D`), `py/agent_synth_eval.py`, `py/synth_eval.py` (estate LaTeX reversed by `py/reverse.py`).
 - **Drills:** `py/drill.py` (math-free), `py/properties.py` (shape, verbatim, idempotence, validity, fuzz), `py/collect_spans.py` plus the KaTeX/MathJax validator. The validator lives in the session scratchpad; its source is reproduced in `notes/validate.js`.
@@ -105,7 +105,7 @@ cd rs/probe && cargo build --release && cd ../..
 python3 py/evaluate.py A && python3 py/evaluate.py B
 python3 py/evaluate_c.py --set D umath_v3 umath_v4
 python3 py/results.py            # rewrites results.md
-python3 py/properties.py          # needs data/bulk/conv-v4.jsonl from: python3 py/run_sites.py v4
+python3 py/properties.py          # needs data/bulk/conv-v5.jsonl from: python3 py/run_sites.py v5
 ```
 
 The probe links md-press's *working tree* (with the coordinator's uncommitted 2026-10-02 changes), so `trig` reflects today's trigger.
@@ -118,5 +118,5 @@ The probe links md-press's *working tree* (with the coordinator's uncommitted 20
 - **The scorer's normalizations** (φ as `\phi`/`\varphi`, `\Sigma` vs `\sum`, `E` vs `𝔼`) are folded as "style". A stricter reader may disagree.
 - **The labelers did not converge on the hardest conventions.** Ranges `0.1-0.4`, relations with one-word operands, statistics like `N=40`, Greek used as a label: the two passes split on these, and scoring against either passes both. Labeler-vs-labeler agreement is 95.0% on D and 92.4% on C.
 - **Set A+B labels in batch 0** may be partly contaminated: a shared-scratchpad collision let one pass-2 labeler see pass-1 output after deciding (§5). Later rounds used per-agent scratch directories.
-- **10 fuzz property violations remain unresolved** (§19).
+- **2 fuzz property violations remain** (§24); both are checker artifacts on inspection, but no independent checker has confirmed that.
 - **Set C informed v3**, so v3's C numbers are not held-out. D is the held-out set for v3 and v4.

@@ -4,12 +4,13 @@
 
 ## What would be integrated
 
-A pure-Rust port of `py/frozen/umath_v4.py`, which is the measured converter plus robustness fixes. A Rust port of v3 is at `rs/umath/` (see `rs/umath/PORT.md`, written by the porting agent). The v3→v4 delta is small and listed in `notes/LOG.md` §19:
+A pure-Rust port of `py/frozen/umath_v5.py`: the measured converter plus robustness fixes. v5's output is byte-identical to v4's on all 1,390 gold items. A Rust port of v3 is at `rs/umath/` (see `rs/umath/PORT.md`, written by the porting agent). The v3→v5 deltas are small and listed in `notes/LOG.md` §19 and §24:
 - the public `convert` iterates to a fixed point, and leaves the text as written if no fixed point is reached;
 - a final self-check requires that the output is the input with only some regions replaced;
 - hazards are checked before any rewrite;
 - the `\(…\)` glyph set is exactly md-press's;
-- `$$` inside running text and an invalid existing span both count as hazards.
+- `$$` inside running text and an invalid existing span both count as hazards;
+- (v5) a site whose code and `$` delimiters interleave is left alone, and no span may contain the brackets of `[text](dest)` link text.
 
 The interface is `convert(text) -> (text', spans)`, applied to one prose site with its markdown structure already split off. That is exactly what `split_structure` produces in `src/math.rs`.
 
@@ -44,6 +45,22 @@ The interface is `convert(text) -> (text', spans)`, applied to one prose site wi
    - session listings.
    
    Labelers in every round flagged these as files md-press arguably shouldn't touch. This is the same declared-not-inferred principle md-press already applies to transcripts.
+
+## Next converter improvements (informed by D, so unmeasured; a fresh labeled set is needed to score them)
+
+On D, v4's errors and misses are mostly not converter bugs. The ones a converter rule could address:
+- **Untriggered precision** (DU, 20% wrong+over):
+  - a declared or canon-mined label list per project (asf: W₀/W₁/W₂ regimes and `W₁ᶜ`-style variants; causal-language: `H_D1`, `H_D3`, …);
+  - "single capital + superscript digit alone in a table cell" as a footnote marker (`E³`, `X⁸`);
+  - SI unit expressions (`m/s`, `kg/m³`, `m²` with no adjacent math) left as written;
+  - `key=N` fields in log-shaped lines (a timestamp or a code-span ID earlier on the line) left as written.
+- **Recall on lines** (D's 21 degraded):
+  - `~` as `\sim` between math operands (`a_t ~ π(·)`);
+  - precomposed macron or dot letters before `/` or an operator (`ā/(1-β)`);
+  - `dV/dt` with no Unicode signal;
+  - ASCII single-letter variables (`O, A, h`, `x`, `k`, `E[size]`), which is the policy question in the do-not-inherit list;
+  - pseudo-formulas with word operands (`failed_systems(t) = {…}`, `impact(t) = Σ(…)`), which labelers typeset with `	ext{}`. Whether md-press should is a style question, and `_` inside `	ext{}` collides with the house `_`→`-` rule.
+- **The emphasis collision in `deterministic-π* scope*`** (DL190): the `*` closes an italic in the source. Converting `π*` → `$\pi^\ast$` would repair the emphasis (both labelers did), but the converter's emphasis pairing currently reads that `*` as emphasis.
 
 ## Incidental md-press findings (independent of this converter)
 
