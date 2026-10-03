@@ -154,3 +154,32 @@ v3 failed it: 829 idempotence violations on real text (a partial first pass `P$(
 **v4** = v3 + public `convert` iterated to a fixed point (≤4 passes, else leave as written) + a final self-check (output must align as input-with-regions-replaced, else leave as written) + hazards checked before any rewrite + md-press's exact paren glyph set + inline `$$` and invalid existing spans as hazards.
 v4 result: **real text (920,682 sites, 16,154 changed): 0 violations of any property, 0 crashes.** Fuzz: 10 of 200,000 (0.005%) remain, each with an unmatched backtick or a `$` inside a link destination — places where the checker's own masking and the converter's `protected_ranges` disagree; not resolved.
 v4 scores: A+B 487/540 (90.2%); C 389/450 (86.4%, C-informed).
+
+## 20. LLM as fallback: measured, adds nothing here
+Policy "det v4; if det leaves the piece unchanged and the model's proposal passed md-press's gates, take the model's": A with llama 221 → 220 ok (+2 wrong+over), B with llama 266 → 266 (no change), A with Muse 221 → 221 (+1 wrong+over). What det leaves alone is mostly what the models can't do safely either (or what the gates block). Caveat: today's prompt and gates; a model prompted for exactly det's residue was not tried.
+
+## 21. HELD-OUT RESULT — set D (labels gathered after v3 and v4 were frozen)
+Labelers equivalent-or-better with each other: 380/400 (95.0%).
+| kind | n | leave-as-written ok | v3 ok | v3 wrong+over | v4 ok | v4 wrong+over |
+|---|---|---|---|---|---|---|
+| whole triggered lines (DL) | 200 | 12.0% | 85.5% | 3.5% | 86.0% | 3.5% |
+| untriggered, v3 changes it (DU) | 150 | 24.7% | 72.0% | 19.3% | 71.3% | 20.0% |
+| untriggered, v3 leaves it (DN) | 50 | 100% | 100% | 0% | 100% | 0% |
+⇒ On the sites md-press's trigger already selects, whole lines: ~86% exact-or-equivalent, ~3.5% wrong+over. On untriggered sites, roughly one in five of the converter's changes is wrong per the labelers: scope expansion is not safe as-is. From here D is seen.
+D wrong/over for v4 (37), by cause. Untriggered (30): **labels that are glyph-identical to variables**: W₂ (5), W₁ᶜ (1), S₁ (1), H_D1/H_D3 (6), "the W axis" (1); session-listing fields `t=N` (4); footnote markers in tables `E³`, `X⁸` (2); a Unicode chart cell (1); units `m/s`, `kg/m³`, `m²` (2); mention or verbatim (quoted code comment, a sentence *about* n_past lacking LaTeX, a terminal diff, run metadata `o(640,5376)`) (4); `\(…\)` with `\|` inside (1); a flattened-subscript summary (1); `⟹` between case labels (1). Lines (7): `M_τ⁺` where the labelers chose `M_\tau^+` against canon's 390× `M_{\tau^+}`; glyph mention `(𝒜) → $\mathcal{A}$`; glyph table cell; `μTOSCA`; `κ≈18–25×` range+multiplier; `(Hκ)` = the paper's `(H$_\kappa$)`; `v = v × e^(…)` split.
+**The hard boundary, as measured:** the residue is overwhelmingly *convention* (what this project or document means by a glyph string identical to a variable), plus genre (log fields, tables of glyphs, footnote markers), plus mention-vs-use. Labelers resolved most of it by reading the paper source, the canon, or the rest of the table: information outside the line. A line-level language model faces the same missing information.
+Usage statistics as a remedy (measured, not assumed): including ASCII subscripted tokens, estate-wide mining flags {W₀, β_exp, β_0, ϵ, n_testing}. It does *not* flag n_past (I predicted it would, wrongly: there's enough `$n_{\text{past}}$` usage), and it doesn't flag H_D3 either, because the causal-language files never write LaTeX, so they carry no usage evidence. Labels in LaTeX-free projects need to be declared.
+
+## 22. Precision of writes (wrong+over among the pieces a system changed)
+| set | system | changed | wrong+over among changed | exact+equiv among changed |
+|---|---|---|---|---|
+| A | llama (post-gate) | 83 | 4.8% | 89.2% |
+| A | Muse (post-gate) | 138 | 2.9% | 92.0% |
+| A (tuned) | det v4 | 222 | 0.9% | 92.8% |
+| B (held-out for v1) | llama (post-gate) | 122 | 4.9% | 86.9% |
+| B (held-out for v1) | det v1 | 279 | 3.9% | 84.6% |
+| B (tuned) | det v4 | 276 | 1.1% | 89.1% |
+| C pieces (v4 C-informed) | det v4 | 139 | 5.8% | |
+| D lines (held-out) | det v4 | 187 | 3.7% | |
+| D untriggered (held-out) | det v4 | 150 | 20.0% | |
+On held-out triggered text, det's per-write error rate (~4%, D lines 3.7%, B v1 3.9%) is at or below llama-after-gates (4.9% on B) and above Muse-after-gates (2.9%, on A); it writes ~2.3× as many pieces as llama and ~1.6× Muse.
