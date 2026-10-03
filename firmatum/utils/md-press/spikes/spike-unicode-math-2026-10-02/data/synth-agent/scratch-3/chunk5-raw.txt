@@ -1,0 +1,26 @@
+S3104	For a module M containing files with ages {a_1, a_2, ..., a_n}:
+S3105	saved_time_t = expected time saved in period t due to improvements
+S3106	λ̂ = c · Û_M / Û_o
+S3107	**If T known exactly, h unknown:** agent has a known dynamics/plant model but lossy/unknown sensing — becomes more like **state estimation / filtering / dual control for sensing** under known transition; still needs adaptation of **belief over state / observation model**, but **planning** can use known T. Adaptation does not vanish; it concentrates on **perceptual / filtering** side. (Closer to "Kalman with known A, unknown or noisy C.")
+S3108	t_scale = horizontal scaling and load balancing logic
+S3109	**The choice of relevance variable is itself the U_O question.**
+S3110	#hyp-mismatch-dynamics hypothesizes the linear ODE d‖δ‖/dt = -𝒯·‖δ‖ + ρ as a first-order approximation. The linear form yields clean closed-form results but commits to a specific functional relationship between mismatch magnitude and correction rate. True correction dynamics are almost certainly nonlinear — exhibiting saturation at large mismatch, threshold effects near zero, and structural breakdown when the model class is exhausted.
+S3111	**Superscript (k)**: channel index
+S3112	OVERLAP d=8
+S3113	Directed separation connects to the orient cascade ( #der-orient-cascade): the cascade's ordering (M_t first, then G_t) is forced by the information dependency that directed separation establishes. If f_M depended on G_t, the cascade ordering would become a simultaneous fixed-point problem, not a sequential resolution.
+S3114	v_c = 1.5 features/week
+S3115	t_a = time to run security audit
+S3116	**The depth bound d* qualitative structure** (deeper AND-chains hit an evidence-starvation ceiling; the ceiling depends logarithmically on θ and inverse-linearly on ρ_Σ/R_Σ) survives across edge models; the specific Beta-Bernoulli closed form is the conditional sharpening.
+S3117	**L2** — full joint; **L1' unobservable-C** single-channel is *refuted* by Cramér-Rao floor ( [Discussion 5.2](#disc-identifiability-floor) Instance 2)
+S3118	`#def-strategy-dimension` will split G_t into (O_t, Σ_t), separating the *what I want* (O_t) from the *how I plan to get it* (Σ_t).
+S3119	For a mismatch-driven agent, the update is driven entirely by the innovation δ = o - ô(X). Most AAD agents have this structure:
+S3120	t_l = time to locate the source of a problem
+S3121	**Degenerate cases.** A PID controller's M_t is degenerate — it retains only the error signal and its history (integral, derivative), with no predictive capability beyond extrapolating recent trends. It occupies the "blind seeker" region of the agent spectrum ( [Definition 6.1](#def-agent-spectrum)): its O_t (setpoint) is clear but its M_t is too impoverished to support the adaptive dynamics of Part I. The formalism accommodates this by allowing ℳ to range from trivial (scalar) to rich (full world model).
+S3122	Per-tag implementation with DSL: t_i^DSL ≈ 1 minute
+S3123	Correction: F_(A_2)(δ_(A_2)) = θ_C·ε·δ_(A_2) / (n_(A_2) + 1).
+S3124	n_teams = number of teams involved
+S3125	We work with the lifted update system of #form-complete-agent-state in the structural representation of #deriv-recursive-update (Attack 5): state space 𝒳, event set ℰ (exogenous randomness absorbed into the event index), and update family F_e : 𝒳 → 𝒳, F_e(X) = f_X(X, e). All statements are pathwise; the distributional version is discussed under Epistemic Status.
+S3126	t_parse = time to parse syntax structure
+S3127	`#result-adversarial-tempo-advantage`'s tempo-multiplier γ_A·𝒯_A in `#der-adversarial-destabilization` decomposes into a tempo term and an opacity term:
+S3128	For aggressive timeouts with exponential backoff: Ensure no resource wait is unbounded, converting infinite t_wait to finite t_timeout.
+S3129	**The persistence threshold, generalized.** The agent persists (mismatch remains bounded within the model class capacity) iff ρ/α < R. If the correction function breaks down (A2' fails) before R* is reached, the agent may diverge.

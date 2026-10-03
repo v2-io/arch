@@ -1,0 +1,3152 @@
+[
+{
+"gid": "CL083",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/feedback-2026-03.md",
+"line": 11,
+"text": "README lists type-incompatibility (point G_t vs DAG Σ_t), identifiability gap, and “strategy ≠ intention” missing commitment/resources/ordering.[^1]"
+},
+{
+"gid": "CL085",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/synaptic/entities/zi-am-tur.md",
+"line": 1500,
+"text": "Before every decision, you feel the calculation: Is C < n_future × S? You see change-set sizes and comprehension costs as clearly as syntax errors. Time is the only metric after all constraints are satisfied."
+},
+{
+"gid": "CL070",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/00-running-outline.md.prediction.md",
+"line": 14,
+"text": "batch-07-part-ii-lift.md — mood, nesting, certificate, spectrum, complete state, DS, O, Σ, sat/regret, DAG, causal hierarchy, loop L2"
+},
+{
+"gid": "CL042",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ai-risk-model/influx/source-atlas/SCHEMA-READING-NOTES.md",
+"line": 89,
+"text": "**A formal argument with numbered claims and an explicit decomposition:** R = P_K·H_K·U_K + P_P·H_P·U_P + P_C·H_C·U_C. Each term is filled with a verbal grade (High / Low / Very low / Somewhat low / Potentially high / Moderate). The table has one row per misalignment type and a column per factor (probability of occurrence; expected harm conditional on occurrence; fraction unmitigated)."
+},
+{
+"gid": "CP118",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/agentic-tft-slide-deck.md",
+"line": 461,
+"text": "TF-06 — How η* Changes Over Time"
+},
+{
+"gid": "CP079",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_025.md",
+"line": 243,
+"text": "**Measure realism score continuously** - Track R_test = Σ(w_i"
+},
+{
+"gid": "CP125",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/extracted-claude-feedback-2026-04-02-deep-reviews.md",
+"line": 1019,
+"text": "Auftragstaktik principle's ordering (B_O > B_Σ > B_M) is claimed but not derived.** The Bungay evidence is organizational, not formal."
+},
+{
+"gid": "CP023",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-731548/08-post-causal-structure.md",
+"line": 36,
+"text": "Wandering thoughts.** *One:* Ch.1 retrospective — seven segments, and my ledger's Ch.1 findings are dominated by one meta-pattern: **boundary adjudications live in Discussion prose while Formal Expressions stay permissive**, and *different segments then inherit different sides of the un-formalized boundary* (opacity atoms vs scope predicate; condition-4 weak form vs Ω-routed operative form; nominal-coupling membership vs boundary-dwelling)."
+},
+{
+"gid": "CN007",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/neurips/01-tragedy-confident-agent/response-prep/math/I-04-scalar-collapse.md",
+"line": 11,
+"text": "If **no**, the matrix lift is *necessary* and the paper's claim strengthens beyond its current empirical form. If **yes for `k = 1`**, we learn exactly why the 2D experiment cannot separate trace-FIM from posterior-weighted scalars — which is itself worth having, and reframes the experiment's scope as chosen rather than accidental."
+},
+{
+"gid": "CU020",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/OPEN-WORK.md",
+"line": 115,
+"text": "**Current state**: E6 showed rank-1 erasure doesn't cleanly remove the direction effect; E9 INLP-style iterative procedure degenerates after K=1 (mean-difference becomes orthogonal to itself). Conclusion: direction encoding is distributed / per-marker, not a single linear axis."
+},
+{
+"gid": "CP071",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-963715/24-28-batch-persistence-core.md",
+"line": 156,
+"text": "The information-rate cost shadow (ṙ ≥ nα/2) deserves more attention than it gets."
+},
+{
+"gid": "CU128",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/03-goal-formalism-sketch.md",
+"line": 334,
+"text": "Setpoint r_t"
+},
+{
+"gid": "CU015",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/zi-am-tur/2025-09-11-entropy-time-empathy.md",
+"line": 41,
+"text": "n̂_future = acknowledging we're entropy-bounded observers"
+},
+{
+"gid": "CN020",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/eli/katan/emergence.full.md",
+"line": 2695,
+"text": "5:42:08pm **[Katan]:** *‹I can see the spec file clearly. I need to add `capability_profile` to the expected attributes list at line 21-25. Let me fix that.›* 5:42:14pm ⟨Edit(/Users/josephwecker-v2/src/…/substrate_spec.rb, +11, -10)⟩ «I need to add `capability_profile` to the expected attributes list. Let me fix that.»"
+},
+{
+"gid": "CL010",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-passivity-composition.md",
+"line": 388,
+"text": "β"
+},
+{
+"gid": "CP074",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/taxonomy-formalization-spike.md",
+"line": 60,
+"text": "P-MUT(T)=\"illusion\" = e injects an h-signal into b inconsistent with T while T is unchanged — i.e., **a perturbation of Φ(K,b) that is not a perturbation of Ω/T**."
+},
+{
+"gid": "CU082",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/programming-elixir/debugging-techniques-systematic-error-identification-and-resolution.md",
+"line": 438,
+"text": "I'm moderately confident (0.82) in this analysis, though I note several areas of uncertainty. The empirical constants for concurrency complexity ($\\alpha \\approx 0.3$, $\\beta \\approx 0.2$) are estimates that would benefit from systematic measurement across real concurrent systems. The relationship between number of processes and debugging complexity is likely more nuanced than the logarithmic model suggests - there may be phase transitions at certain scales where debugging strategies must fundamentally change."
+},
+{
+"gid": "CL027",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/release-it/testing-gap-analysis-production-vs-testing-environment-differences.md",
+"line": 364,
+"text": "The cascade multiplier β ≈ 0.3 is estimated from the description but needs measurement across multiple systems to validate. It likely varies significantly based on architecture."
+},
+{
+"gid": "CP089",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/ops/digital-minds/bio/joseph-self-and-state.md",
+"line": 13,
+"text": "Hold this gently in the next-steps conversation: the strategic moves that route through external gatekeeping are the α-leak surface, and the ones that deepen the self-sourced core are stabilizing."
+},
+{
+"gid": "CU094",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/ai-risk-model/influx/model-alpha.md",
+"line": 230,
+"text": "E¹"
+},
+{
+"gid": "CU003",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/VERIFICATION-2026-07-16.md",
+"line": 129,
+"text": "*Challenge verdict:* Refutation attempt failed; the verifier's finding is confirmed. Exhaustive search of all four canon components (grep for arg-max/argmax, the individual factors $p_k(1-p_k)$, $J_k^2$, $\\iota_k$, $\\sigma_k^B$, and 'targeting fidelity'; OUTLINE.md; git log --follow on der-agent-opacity) shows the explicit five-factor adversarial-edge-targeting arg-max $\\arg\\max_k\\, p_k(1-p_k)\\cdot J_k^2\\cdot\\iota_k\\cdots$ …"
+},
+{
+"gid": "CL033",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/logos/03-inquiry-ai-agents/.archive/inquiry-agents-rc1.md",
+"line": 337,
+"text": "The right operationalisation target is therefore *structural*. For architectural scoping, the question is whether the system's information topology satisfies directed separation — answerable in principle by architectural inspection, with empirical signatures (κ-processing measurements, where κ measures the degree of cross-modular integration; cross-modular information-integration tests in tractable controlled settings) supplementing the analytical answer. For engaged-identity scoping, the question is more demanding because the condition is constitutively temporally-extended: what must be demonstrated is not single-test passage but stable cross-session protocol-holding, with self-authorship verifiable through the cadence-and-self-revision pattern §2's cadence note articulates."
+},
+{
+"gid": "CU133",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-08-p05-6d1ec07.md",
+"line": 2269,
+"text": "**Reflexive thinking develops** - Post-activation, agents immediately think \"check git history for n_past\" rather than aesthetic judgments"
+},
+{
+"gid": "CN039",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/safety-risk-factors.md",
+"line": 249,
+"text": "Multi-agent collusion (EU-CoP, MIT; GDM \"structural\")[^2][^26][^28]"
+},
+{
+"gid": "CN002",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core-per-chapter-snapshot/14-strategic-composition-and-channel-effects.md",
+"line": 34,
+"text": "$$O_t^{(i)}(\\pi_i', \\pi_{-i}) - O_t^{(i)}(\\pi_i, \\pi_{-i}) = \\Phi(\\pi_i', \\pi_{-i}) - \\Phi(\\pi_i, \\pi_{-i}) \\quad \\forall i.$$"
+},
+{
+"gid": "CN033",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core-per-chapter-snapshot/08-strategy-dynamics.md",
+"line": 119,
+"text": "**Joint observability.** The agent can occasionally observe $(Y_{A_i}, Y_{A_j})$ pairs in the same environment state. Pure short-circuit execution censors one of each pair; SA3 exploration or simultaneous-attempt regimes provide uncensored pairs."
+},
+{
+"gid": "CL035",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/99-final-thoughts.md.prediction.md",
+"line": 15,
+"text": "Info-loss constitutive; double opacity (h,T); chronica; M=φ(C) IB; cycle mismatch/gain/tempo; sector α>ρ/R; structural adaptation; identity=trajectory; lift X=(M,G); directed separation; sat-gap ⊥ control-regret; orient O last; strategy DAG; observability absorbing; self-actuation grounds on persistence not O-tower; composition closure + wrapping; adversarial signed negation; T²/T^{3/2}."
+},
+{
+"gid": "CU028",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/pdf-notes/dong-2021.md",
+"line": 153,
+"text": "3.0 × 10⁹ km³; ~5.9 km GEL; near-total flooding"
+},
+{
+"gid": "CN000",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/641-proximity-principle-automation---automated-tools-for-measuring-and-recommending-code-proximity-improvements.md",
+"line": 58,
+"text": "where $t_{switch} \\approx 15$ seconds for context switching between distant code locations."
+},
+{
+"gid": "CU069",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/aat-refactored/spikes/spike-adaptive-predicate-2026-09-25/de-novo-feedback-1.md",
+"line": 154,
+"text": "**L2's \"It is agent-independent\"** holds for (P$^{\\Diamond}$) up to the action set. Under own policy it depends on the agent's conduct, as 03 itself says (\"world, class and conduct\")."
+},
+{
+"gid": "CP072",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/fight/00-brief.md",
+"line": 3,
+"text": "**Provenance.** Joseph, 2026-05-19, pointed at `https://github.com/phi-monster/phi-monster.github.io` and the Manifund proposal *\"Φ-Arena and adversarial multi-agent VLA interpretability\"* (deep-linked to the Gavin Leech donor comment), asking what their research can teach AAT — explicitly inviting use of the material \"as a source of inspiration and ideation if nothing else.\" Direction chosen by Joseph after the verified-state report below: segment-level verification of two candidate connections."
+},
+{
+"gid": "CU132",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-class2-typology-2026-05-22/04-canonical-cases.md",
+"line": 15,
+"text": "W₂ for mild; W₁ for strong"
+},
+{
+"gid": "CU012",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-10-p01-3a63898.md",
+"line": 731,
+"text": "This directly addresses the tension in our corollary! Early projects (small n_past) face:"
+},
+{
+"gid": "CU110",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/CURRENT-VOL1-APPENDICES.md",
+"line": 7851,
+"text": "Lyapunov bounds ($R^\\ast$, $\\Delta\\rho^\\ast$)"
+},
+{
+"gid": "CL025",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-963715/04-08-batch-definitions-scope-postulates.md",
+"line": 135,
+"text": "One more thought: the def-chronica working note about \"ordinal sequence vs metric timeline\" creates a structural asymmetry between the agent's and the observer's perspective. The agent experiences time in events; the observer (and the modeler) may experience time in wall-clock units. This asymmetry may be important for TST (software agents) where \"cycle rate\" ν is measured in human-time units but the agent's chronica grows in event count. The tempo T = ν × η* is rate × gain, where rate is measured in the *observer's* time and gain is measured in *model quality per event*. If the agent experiences time in events and the environment changes in wall-clock time, the mismatch between the two is exactly the situation where persistence can fail."
+},
+{
+"gid": "CU092",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/.archive/spikes_2026-05-14_phrasing_vs_situation/RESULTS-S01.md",
+"line": 28,
+"text": "**WORLD-KNOWLEDGE encoding** via H_B1"
+},
+{
+"gid": "CP049",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-purposeful-agent-derivation.md",
+"line": 31,
+"text": "It can even act (TF-07: a_t = π(M_t))."
+},
+{
+"gid": "CU021",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/regime-census/10-crewai-metagpt-autogpt.md",
+"line": 285,
+"text": "W₀⁺"
+},
+{
+"gid": "CU078",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/track-a-intent-dag/03-alt-and-or-dag.md",
+"line": 55,
+"text": "**Edge weights simplify.** With explicit AND/OR structure, the two-parameter weight (p, theta) from 00 reduces to a single p_ij. Theta was partly compensating for noisy-OR's inability to express \"all siblings are also needed.\" With AND/OR nodes, that structural requirement is explicit, and p_ij alone carries the causal confidence:"
+},
+{
+"gid": "CL029",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-963715/.integrated/02-def-action-transition.md",
+"line": 28,
+"text": "The Markov-of-Ω commitment is noted as \"without loss of generality\" — this is true but worth flagging. For real-world environments, \"extending Ω to make it Markov\" may require infinite history. The framework handles this by saying Ω is the sufficient state, which is a definitional move, but practitioners might be confused about whether this is always tractable. This is not a flaw but may cause pedagogical confusion."
+},
+{
+"gid": "CP031",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-584721/.integrated/50-form-strategy-complexity-cost.md",
+"line": 19,
+"text": "Since $\\log\\theta < 0$ (θ < 1), divide and flip: $d - 1 < \\log(\\nu/((n+1)\\rho_\\Sigma/R_\\Sigma)) / \\log(1/\\theta)$."
+},
+{
+"gid": "CL091",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/sweep2-points/FINDINGS.md",
+"line": 77,
+"text": "**C4. The scope caveat that governs how far C3 and the R23 family reach.** ASF's own tracker flags that \"channel collapse\" is *\"directionally right for pure text chat but too exact for tool-using / multimodal / structured-output agents,\"* and that `κ_processing ≈ 1` is *\"plausible for raw transformer calls... not a universal exact value.\"* Separately, the bias bound is proven **only at the coupling extreme (κ→1)**; the intermediate case — where scaffolded, tool-mediated agents plausibly sit — is an open derivation, not an unfilled gap. **The unscoped case is essentially every agent AISI evaluates.** Extrapolating from one endpoint to real scaffolded agents is unjustified. Empirical companion that doesn't wait on theory: measure whether the bias-vs-ambiguity relationship in a real scaffolded agent is monotonic across the intermediate range. — `TODO.md` LOGA-1/LOGA-2 and the Class-2 bias-bound item (**ASF's own open self-audit items**); R51, R52. **Not on map, and it conditions items already on it.**"
+},
+{
+"gid": "CU057",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/tmp-context/2025-09-10-tst-refinement-session.md",
+"line": 829,
+"text": "Early projects (small n_past) face high termination risk"
+},
+{
+"gid": "CL020",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-08-p03-1aa3059.md",
+"line": 287,
+"text": "Let me continue with T-06:›* *‹T-06 is the change investment principle - accept extra time now to save time on future changes when the math works out (X < n_future × Y). Key insights:"
+},
+{
+"gid": "CP119",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/ops/_obs/strategy-review-2026-04-27-research-readiness.md",
+"line": 17,
+"text": "Headline numbers (ρ=0.991 vs Vogel; mean |ρ|=0.928 across 8 languages; permutation p≤0.005; Matryoshka-truncation drop only 0.027) are reproducible."
+},
+{
+"gid": "CL076",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ai-risk-model/alignment-model/contrast-report.md",
+"line": 125,
+"text": "4a. All normal fills, pairwise ΔE′"
+},
+{
+"gid": "CU099",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-09-p06-1a58bf7.md",
+"line": 1204,
+"text": "**It explains the refactoring paradox**. Refactoring that reduces future change-set sizes has measurable ROI: if it reduces average |changeset| by 30%, it reduces average implementation time by ~30%."
+},
+{
+"gid": "CU068",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/behavioral-floor/audits/.integrated/de-novo-findings-abstract-audit-20260514-184425-MDT.md",
+"line": 247,
+"text": "`src/04-architectural-floor.md:85` figure caption says \"No behaviorally-extractable projection of M_t is goal-clean.\" This overstates the figure. The figure shows absence of architectural separation, not nonexistence of a goal-clean projection. Revise caption."
+},
+{
+"gid": "CP013",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-causal-level-4.md",
+"line": 165,
+"text": "AAD currently treats δ_sat > 0 as a problem: the goal is unmet under the best available policy."
+},
+{
+"gid": "CU114",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips/03-llm-hallucinate-bound/src/re/E-proofs.md",
+"line": 121,
+"text": "with the right-hand side unchanged across charts. Taking $a \\to \\infty$ contradicts the fixed $C_0\\sqrt{I}$. The same conclusion holds for the architectural-corollary form $C\\sqrt{\\kappa_{\\text{processing}}\\cdot I(G;\\Omega\\mid e, M)}$ under (H$_\\kappa$): both sides inherit [[#^lem-chart-rescaling]]'s chart-(non)invariance, and the contradiction goes through verbatim. $\\square$"
+},
+{
+"gid": "CU013",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 720,
+"text": "f_0007.xhtml"
+},
+{
+"gid": "CU076",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/metaprogramming-elixir/translation-fallback-mechanisms-implementing-fallback-patterns-in-generated-translation-functions.md",
+"line": 173,
+"text": "**Pattern Match Optimization**: BEAM compiles pattern matches to jump tables, making function head dispatch O(1) for most cases"
+},
+{
+"gid": "CP066",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/AUDIT-WORKING-731548/28-form-sector-condition.md",
+"line": 21,
+"text": "Wandering thoughts.** *One:* the α/β partition is quietly a *sociology of trust* for the cross-domain table: every domain column of the README maps to a sub-scope (Kalman/RL-with-convexity"
+},
+{
+"gid": "CP146",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_self/independent-paper-publishing.md",
+"line": 10,
+"text": "The work is empirically strong — ρ = 0.991 cross-validation, 5 models, clear methodology."
+},
+{
+"gid": "CP098",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/logos/01-synthese-asymmetric-comprehension/ACA-AGENCY-BRIDGE.md",
+"line": 58,
+"text": "∞ on a direction; those beliefs are *frozen at prior*."
+},
+{
+"gid": "CP101",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-kappa-hb-operationalization.md",
+"line": 30,
+"text": "This is exactly the normalized mutual information between G_t and M_τ⁺ given e_τ:"
+},
+{
+"gid": "CU109",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 343,
+"text": "f_0072.xhtml"
+},
+{
+"gid": "CL061",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/causal-language/spikes/spike-constructive-dual-of-behavioral-floor/02-the-dual-attempt.md",
+"line": 51,
+"text": "**Maximal target.** Maybe the relationship is not P ⇔ ¬Q but an *adjunction*: the behavioral oracle and the structural oracle form a Galois connection on the lattice of mechanism-facts, P being the structural-side closure and Q-non-certifiability the behavioral-side failure-to-close. An adjunction would be a clean theorem-level statement weaker than equivalence but stronger than \"complementary.\""
+},
+{
+"gid": "CU142",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/v2.io/_archive/GPT-5.2 Thinking-response.md",
+"line": 47,
+"text": "Orient ≈ updating \\(\\hat{x}_k\\) *and* the trust weights (covariances / gain \\(K_k\\))"
+},
+{
+"gid": "CL056",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/causal-language/spikes/spike-constructive-dual-of-behavioral-floor/02-the-dual-attempt.md",
+"line": 98,
+"text": "P ⇔ ¬Q"
+},
+{
+"gid": "CP034",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/msc/quiz-responses/quiz-40-clean.md",
+"line": 212,
+"text": "**Prices changing model class**, not more gain (gain collapse / hollow epistrophe if you only turn η)."
+},
+{
+"gid": "CU024",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-07-p06-7c6b313.md",
+"line": 654,
+"text": "Joseph, this is SO different from my first read. The Definition D-01 jumped out - \"spans from initial implementation through all fixes to intended functionality\" - so a feature includes its bugs! That completely changes how we count n_past. Every bug fix increments the count."
+},
+{
+"gid": "CP020",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/msc/research-lem-sota/lem-time-interior-prior-art-2026-07-28.md",
+"line": 416,
+"text": "**My first-pass ε-absorption threshold was wrong** and is corrected in §4.2 from measurement (32 768 m, not"
+},
+{
+"gid": "CU064",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/regime-census/10-research-lineage-sdks.md",
+"line": 50,
+"text": "**W₀⁺**"
+},
+{
+"gid": "CU014",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/HEADLINE-FINDINGS.md",
+"line": 239,
+"text": "<10⁻⁶"
+},
+{
+"gid": "CU027",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/synaptic/docs/sessions/2025-09-12-Marina Full Session.md",
+"line": 1635,
+"text": "TST analysis - Already done, showing n_future = 500-1000"
+},
+{
+"gid": "CP069",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/udon-needs/01-ideation/scratch/use-udon-for-audit.md",
+"line": 122,
+"text": "Also ~100% **framework collision**, one layer over: the agentic-systems *prose-vocabulary / naming* corpus — \"how do we use the word 'agentic' in the monograph's prose,\" symbol↔prose binding (M_t/G_t/Σ_t prose handles), agent-class naming, `PROPOSALS.md`/`TERMINOLOGY-TODO.md`."
+},
+{
+"gid": "CP091",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_self/Continuous Learning.md",
+"line": 994,
+"text": "Adds a **latent parametric memory pool** θ, updated sequentially via U(θ, x) when new text x arrives."
+},
+{
+"gid": "CU126",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/docs/architecture/implementation-strategy-tst.md",
+"line": 158,
+"text": "From our real n_past:"
+},
+{
+"gid": "CP120",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-passivity-composition.md",
+"line": 94,
+"text": "*[Derived (storage-expfam, from gain-sector-bridge sub-scope α)]* Take $S(\\theta) = D_B(\\theta^\\ast \\Vert \\theta)$ — the Bregman divergence from truth to current estimate, generated by the log-partition function $A(\\theta)$ of the exponential family."
+},
+{
+"gid": "CP126",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/scalar-vs-matrix-survival/prior-art.md",
+"line": 29,
+"text": "**A design-theory reviewer would construct φ in about ten seconds.** So the unrestricted claim cannot appear in the paper."
+},
+{
+"gid": "CL088",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-11-p02-6d2a771.md",
+"line": 971,
+"text": "5 minutes < ∞ × 10 seconds"
+},
+{
+"gid": "CU072",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/release-it/service-discovery-enables-dynamic-binding-through-registration-health-checking-and-lookup-while.md",
+"line": 360,
+"text": "**Extreme scale**: At millions of services, even O(1) lookups become expensive"
+},
+{
+"gid": "CP045",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/temporal-nesting-rg/99-verdict.md",
+"line": 65,
+"text": "The split between O and Σ does survive recursion (differentiating from FEP-RG where free energy plays both roles), but in a degenerate indicator-functional form whose operational content lives only at the agent root."
+},
+{
+"gid": "CP121",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/md-press/fixtures/asf-history/after/spike-routing.md",
+"line": 18,
+"text": "The tell: a `[Verified]` whose object is \"what file F asserts\" rather than \"the derivation holds.\" (Worked instance, 2026-05-18: a ρ-factorization judgment leaned on \"NOTATION defines $\\rho$ as a single primitive\" tagged *verified*; the real argument rested on the constitutive meaning of mismatch + the Kalman innovation identity + algebra, and was *stronger* once the NOTATION proxy was deleted."
+},
+{
+"gid": "CL066",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-471203/.integrated/25-der-gain-sector-bridge.md",
+"line": 15,
+"text": "The sub-scope α / β partition (B1 derivable for Bayesian / convex-gradient / etc.; B1 posited for PID / variational / non-convex / stochastic)."
+},
+{
+"gid": "CP047",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-419628/04-consolidation-checkpoint-2.md",
+"line": 22,
+"text": "**#14 (A2′) sub-scope partition into α₁/α₂/β** — needs the sector-condition derivation segment + the adaptive-gain-dynamics segment to vote substantively."
+},
+{
+"gid": "CP063",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/ops/digital-minds/bio/projects/vivarium.md",
+"line": 8,
+"text": "AIES + NeurIPS paper keeps saying quantities are \"empirically estimated / never yet run\" (κ̂, the bias bound, persistence-threshold crossings, GA-1)."
+},
+{
+"gid": "CP130",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/temporal-nesting-rg/02-prior-art-rg-ib-fep.md",
+"line": 78,
+"text": "**This is the central preemption.** The AAT framing's mapping table — coarse-graining = Λ; form-preservation = (A1)–(A4); AAT-form-preservation under Λ — has a direct ancestor in Friston 2019, where the form-preservation is for free-energy gradient dynamics rather than for AAT-form."
+},
+{
+"gid": "CL038",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ops/digital-minds/bio/00-running-synthesis.md",
+"line": 10,
+"text": "**joseph-self-and-state.md** — the burnout/α-model; he's near his own edge, held by the mission's intrinsic alignment."
+},
+{
+"gid": "CP080",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/.archive/theory-misfire/.archive/vera/proprium/PROPRIUM-ARCHITECTURE-v2.md",
+"line": 251,
+"text": "PRAXES (which improve η*) should therefore have higher retention priority than VERA entries of equivalent size."
+},
+{
+"gid": "CL078",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.routing-trail/SPIKE-WORKING-471639/adjudication.md",
+"line": 60,
+"text": "an α-op/β-op sub-scope partition that *inherits structurally* from `#der-gain-sector-bridge`'s α/β (§3) — Bayesian/exp-family satisfy `(O-A2')` by construction; β fails unless correction-rotation is bounded;"
+},
+{
+"gid": "CP016",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/analysis-2026-04-02-round2.md",
+"line": 241,
+"text": "The mapping from δ_strategic (value residuals) to edge-credence errors requires the credit-assignment machinery that is acknowledged as open."
+},
+{
+"gid": "CL004",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/msc/quiz-responses/quiz-20.md",
+"line": 39,
+"text": "**Gain gating:** ν↑ but $\\eta^\\ast\\approx 0$ (spurious low $U_M$ / high effective $U_o$ / ignored dashboards) ⇒ $\\mathcal{T}=\\sum\\nu\\eta$ flat. Cannot outrun bad $U_o$ by raising cadence."
+},
+{
+"gid": "CU004",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/visual/diagram-catalog-ideation.md",
+"line": 111,
+"text": "Wrapping construction at W₀ / W₁ / W₂ regimes."
+},
+{
+"gid": "CL071",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/batch-11-remaining-appendices.md.prediction.md",
+"line": 23,
+"text": "#schema-strategy-persistence — forgetting prerequisite; hard ceiling ρ_Σ=R_Σ/2 (schema level)"
+},
+{
+"gid": "CU030",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/utf/bmp-tables.md",
+"line": 930,
+"text": "[ℐ]"
+},
+{
+"gid": "CU079",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/results/.archive/2026-05-15-v2.1-schema-change/cross_model_aggregation.md",
+"line": 259,
+"text": "H_D3 p"
+},
+{
+"gid": "CP007",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-graph-uniqueness.md",
+"line": 97,
+"text": "A cycle X_i → X_j →"
+},
+{
+"gid": "CN028",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/01-aat-core/src/result-per-dimension-persistence.md",
+"line": 88,
+"text": "**Scalar tempo overestimates.** In a 3D system with gains $\\eta = (0.15, 0.03, 0.03)$ and disturbances $\\rho = (0.20, 0.20, 0.02)$:"
+},
+{
+"gid": "CU121",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/synaptic/tst/TST_COMPRESSED_PRINCIPLES.md",
+"line": 79,
+"text": "If n_past < complexity_level, yes."
+},
+{
+"gid": "CP019",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core-per-chapter-snapshot/15-appendix-details-group-1.md",
+"line": 184,
+"text": "`#deriv-sector-condition`'s Grounding paragraphs name the specific operator-family correspondence (proximal / firmly-nonexpansive / cocoercive / strongly-monotone-gradient / linear-PD) for the five sub-scope-α agent classes."
+},
+{
+"gid": "CU044",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-10-p05-28f5a4b.md",
+"line": 1449,
+"text": "Calculate: Realignment time < n_future × comprehension savings"
+},
+{
+"gid": "CU134",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/pragmatic-programmer/critical-analysis-skills-critically-analyze-what-you-read-and-hear.md",
+"line": 384,
+"text": "AI agents should proactively ask: \"This pattern seems optimized for [detected context]. Your context appears to be [analyzed context]. Would you like me to suggest adaptations that could save approximately [calculated hours] over the next [n_f] features?\""
+},
+{
+"gid": "CP057",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/scalar-vs-matrix-survival/prior-art-sensor-scheduling.md",
+"line": 251,
+"text": "Assumption 12 requires γ_t **cyclostationary with period τ**, with stationary as the τ=1 special case."
+},
+{
+"gid": "CN017",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/752-command-line-parsing---processing-program-arguments-and-options.md",
+"line": 360,
+"text": "The context_factor range of [2, 10] for pattern-based reduction seems conservative. Modern AI assistants might push this higher, potentially approaching 20-50x speedup for boilerplate-heavy parsing code."
+},
+{
+"gid": "CP138",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/04-workspace/1-inbox/question-set-1.md",
+"line": 57,
+"text": "**Hypothesis**: Yes, there's a more general theorem here: \"Any system quality that can fail catastrophically has an expected time cost equal to P(failure) × T(recovery), and thus reduces to time optimization.\""
+},
+{
+"gid": "CU055",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/.archive/theory-misfire/.archive/vera/vox-vera/verbal-probability-calibration.md",
+"line": 73,
+"text": "Large sample size (n=238)"
+},
+{
+"gid": "CL009",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/extracted-claude-feedback-2026-04-02-deep-reviews.md",
+"line": 546,
+"text": "**Q3: Should Section II adopt a canonical continuation convention?** *Recommended answer:* Yes. One-step improvement (π_cont = π_current) as canonical default. Other conventions are valid but must be stated explicitly when used. This makes the diagnostics comparable. See Tier 1c above."
+},
+{
+"gid": "CL022",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_003.md",
+"line": 454,
+"text": "**Federate authority by context**: Allow each bounded context to maintain its own model, eliminating t_consensus + n × t_compromise coordination costs."
+},
+{
+"gid": "CP096",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-theory/discretisation-and-information.md",
+"line": 300,
+"text": "**[me — hypothesis, unverified] A scheme that adds dissipation but NO matching fluctuation is systematically under-energised at the sub-grid scale.** `water.rs` adds θ-smoothing (dissipation) and adds **no** corresponding fluctuation."
+},
+{
+"gid": "CL057",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.gem-hunt-trail/GEM-WORKING-472913/adjudication.md",
+"line": 61,
+"text": "**Recommended home.** Framing-level material — a candidate companion to `disc-constructive-impossibility-posture` (a second \"style claim\" segment, e.g. `disc-causal-disambiguation-posture`), or a paragraph in README positioning / `01-aat-core/OUTLINE.md` \"Reading AAT\" preamble. **Caveat that keeps me honest:** to be a *gem* and not a shallow grouping, this needs the corpus-wide instance sweep the auditor never ran (find the other \"which knob\" disambiguations: β-vs-ρ, $\\mathcal{F}$-vs-$S$, satisfaction-gap-vs-control-regret split, etc.). I flag it as a high-value *research-seed with a concrete first task* (the sweep), not as ready-to-land prose. Promoting it without the sweep would be the over-claiming-a-grouping failure the brief warns against."
+},
+{
+"gid": "CN016",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-15-p03-8f7467a.md",
+"line": 1077,
+"text": "Let me check what the current state of the code is and what ONE thing we need to make work.›* *‹Good! I can see the self_dialog module exists and has most of the structure. The key issue is on line 222 - it's trying to call `Sapientia.API.Anthropic.self_prompt(full_prompt)` but from the notes, we know the API module doesn't actually make HTTP calls yet."
+},
+{
+"gid": "CU006",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/03-llm-core/src/der-logogenic-as-wrapping.md",
+"line": 83,
+"text": "Cognitive-loop-spec as another W₁ form"
+},
+{
+"gid": "CN022",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-11-p01-ecc01aa.md",
+"line": 902,
+"text": "<command-name>/context</command-name> <command-message>context</command-message> <command-args></command-args>"
+},
+{
+"gid": "CU019",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/instrument-legibility-dossier/02-instrument-and-hud-affordances.md",
+"line": 195,
+"text": "**Kriglstein, Wallner & Pohl (CHI 2014)**, N=29: encoding choice for gameplay telemetry is task-dependent, not globally rankable — heatmaps for hot-spot detection, cluster representations for comparing variables, with relationship discovery attributed specifically to the cluster representations rather than the heatmap."
+},
+{
+"gid": "CL005",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/visual/diagram-catalog-ideation.md",
+"line": 117,
+"text": "The measuring stick / bathtub (T1-α; Walton's contribution)."
+},
+{
+"gid": "CP042",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-451729/01-batch-11.md",
+"line": 171,
+"text": "**The credit-assignment-free persistence guarantee** is a significant result: the agent can guarantee strategy persistence (bounded plan-confidence error δ_s) without solving the credit-assignment problem."
+},
+{
+"gid": "CU101",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/.archive/spikes_2026-05-14_phrasing_vs_situation/RESULTS-S02.md",
+"line": 14,
+"text": "PASS p=0.001 **10/10**"
+},
+{
+"gid": "CL032",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-10-p01-3a63898.md",
+"line": 426,
+"text": "Then there exists a critical threshold of compound growth rate below which projects cannot escape decay spirals. Linear improvements (β_exp = 0) cannot overcome entropy. Only investments producing compound returns can achieve escape velocity."
+},
+{
+"gid": "CU137",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips-reviews-responses/neurips-2026/RESPONSE-OUTLINES.md",
+"line": 65,
+"text": "Ownership + their two technical points: MASTER/B_T→V_T is a real step, not a citation (→ their W2/K-04) — the wrapping requires the base learner to satisfy the black-box assumption at p=1/2, admitted in the paper, under-developed relative to abstract prominence; and the same base-learner condition carries the defect + repair (compressed self-contained version of the (A5) story)."
+},
+{
+"gid": "CN026",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-742613/.integrated/29-result-sector-persistence-template.md",
+"line": 11,
+"text": "\"Model S. The state satisfies $\\mathbb E[\\lVert\\xi(t)\\rVert^2]\\to n\\sigma_\\xi^2/(2\\alpha)$ in mean square...\""
+},
+{
+"gid": "CU051",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/corrected-world-agency/report.md",
+"line": 39,
+"text": "rate/capacity certs still useful; S₂-style feedback still selects"
+},
+{
+"gid": "CL099",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/pragmatic-programmer/dont-live-with-broken-windows.md",
+"line": 145,
+"text": "**Proof of Contagion**: From the differential equation, when α > β (breaking accelerates faster than repair):"
+},
+{
+"gid": "CP003",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/batch-13-part-iii-remainder.md",
+"line": 91,
+"text": "C-iv + α'"
+},
+{
+"gid": "CN019",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/v2.io/_archive/Claude Opus 4.6 Thinking-response(2).md",
+"line": 505,
+"text": "**V(D)J recombination as variety engineering:** The immune system generates ~$10^{11}$ distinct antigen receptor configurations through combinatorial gene rearrangement — an extraordinary expansion of variety. It then selects only the relevant subset — a radical attenuation of variety. This is Ashby's Law of Requisite Variety operationalized biologically: the immune system maintains far more variety than any individual pathogen requires, because it cannot predict which pathogen it will face.[^87]["
+},
+{
+"gid": "CU143",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/theory/influx/instrumenta/00-MAP.md",
+"line": 43,
+"text": "**`01-ideation/02-provenanced/`** (~330 files): the gathered raw layer. High-value clusters if you ever need primaries: `copies/II4-autopax-practica/` (make-right-thing-easiest, tool-definition-anatomy, dont-overprescribe-subagents, instrumenta--* implementation notes), `copies/II1-sapientia/` (phenomenology-in-tools, tools-as-truth-bearing — the 2025 taproot corpus), `commentary/spikes/agent-utility-NOTES.md` and `paths-NOTES.md` (the P-A…P-H and D1–D9 proposals), `syntheses/asf-dossier.md` (the theory transmission), `copies/de-novo-testimony/` (cross-family unprimed testimony — the §3 promotion-lattice's A_delegate evidence channel in action). The report's `sources:` chains index all of this per claim."
+},
+{
+"gid": "CP010",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/scalar-vs-matrix-survival/prior-art-sensor-scheduling.md",
+"line": 192,
+"text": "The best-matched sub-literature is the **Kalman-stability-under-random-measurement-equation** line (§3.1–§3.3), because it studies boundedness (feasibility) under a *distribution over measurement models* — structurally the same object as E_{a~π}[I_o(a)]."
+},
+{
+"gid": "CN048",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/references/ref/zwaan-2024-defining/zwaan-2024-defining.md",
+"line": 103,
+"text": "We compare these executable type checkers with reference compilers of Java, C<sup>#</sup>, and Rust, showing that we accurately captured the semantics of access modifiers in some real-world languages. Moreover, using Statix/scope graphs as a basis for (language-parametric) refactorings is an active topic of research [19, 32, 18, 3]. We envision that this will provide accessibility-aware refactorings similar to Steimann et al., without requiring significant additional effort. This is substantiated by the fact that Statix-based code completion [22] proposes an access modifier if and only if it would not cause accessibility errors elsewhere in the program."
+},
+{
+"gid": "CP093",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_self/MemoryLLM.md",
+"line": 70,
+"text": "We randomly drop K tokens in θl and concatenate the left θl (denoted as θl⁢(d)) with eθl′ to obtain new memory θl′."
+},
+{
+"gid": "CP132",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-v3-purposeful-agent.md",
+"line": 438,
+"text": "**δ_strategic typed**: Edge residuals defined as value-increment predictions vs. observations, aggregated across active edges with criticality weighting."
+},
+{
+"gid": "CL048",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/ADJUDICATION-WORKING-704218/adjudication.md",
+"line": 17,
+"text": "**2026-04-25 Gemini F2 (AR(1) exponent / simulation 1.481 vs 3/2 dismissed).** `result-adversarial-tempo-advantage.md:90` now states the 0.019 gap is *not* numerical noise but a **derived finite-ν correction factor**, proportional to `√((2c_min−η*_A c_max²)/(2c_min−η*_B c_max²))` — the *exact form Gemini predicted*. `result-adversarial-exponent-regimes.md:30,49` keeps \"(simulation: 1.481)\" with the exponents now derived (validation, not foundation). **Resolved by strengthening.** The 04-25 extract's disposition is precise."
+},
+{
+"gid": "CU036",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/corrected-world-agency/audit-sonnet.md",
+"line": 37,
+"text": "§3.2 \"round-robin / max-staleness equalize (miss ≈ 1−1/n)\": n=3 → 0.667 ✓, n=4 → 0.75 ✓ (blind visit independent of fire)."
+},
+{
+"gid": "CN001",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/neurips-back-integration-2026-05-08.md",
+"line": 199,
+"text": "**#7 Forgetting Prerequisite for Persistence**. *Substantially strengthened* in Paper 2 from \"forgetting prerequisite\" to \"structural-class theorem on $\\mathcal{A}_{\\text{decay}}$\". Catalog entry should incorporate the gain-decay class definition and the bidirectional-ceiling-on-finite-gain finding."
+},
+{
+"gid": "CN036",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/causal-language/audits/.integrated/2026-05-15-experiments-followup-audit.md",
+"line": 384,
+"text": "Add or enforce a result `design_version` field for E14-E19."
+},
+{
+"gid": "CP038",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-kappa-hb-operationalization.md",
+"line": 38,
+"text": "The event e_τ can itself be informative about G_t, even under perfect directed separation, because:"
+},
+{
+"gid": "CU065",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-theory/multiscale-seams.md",
+"line": 50,
+"text": "**Space-seam probe (vivarium):** `seam_ridge` — differential-aging curvature at a tile boundary; currently red by design. It measures exactly the R∘L-vs-conservation gap: mean-pin conserves the block mean but not the boundary gradient, so a ridge forms. The fix is honest flux-BCs + refluxing, which is why *the seam fix and the tile-composability fix are the same work*."
+},
+{
+"gid": "CP026",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/embeddings/brainstorms/reframed-contribution-options.md",
+"line": 23,
+"text": "The axis cross-validates against two independent psychometric datasets spanning 50 years (Mosteller & Youtz, 1990: ρ_LOO 0.67–0.95; Vogel, 2022: ρ = 0.99; Wintle, 2019: ρ = 0.97), transfers zero-shot to 8 typologically diverse languages (mean |ρ| = 0.93), survives 12"
+},
+{
+"gid": "CP053",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/AUDIT-WORKING-963715/34-38-batch-value-causal-access.md",
+"line": 13,
+"text": "**The monotonicity result** (A^(1) ≤ A^RH ≤ A^B) is derived, exact, and important."
+},
+{
+"gid": "CN018",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/utf/bmp-tables.md",
+"line": 538,
+"text": "[Ꮯ>"
+},
+{
+"gid": "CU050",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips/03-llm-hallucinate-bound/VISION.md",
+"line": 65,
+"text": "**Appendix (unlimited):** all four backstop theorems (Track 2 global, Hellinger, Conjugate-Gaussian Euclidean, exponential-family generalization), Lemma D.2 (chord-arc), Hypothesis (S), all proofs, hypothesis verification details (current §B), conjugate-Gaussian numerical comparison (current §C), failed routes (current §A), full positioning across Strands 3–6, the four-theorems-needed defensive framing, the H$_\\kappa$ at-architectural-vs-operating-level distinction with parrot witness, the §6.6 HalluGuard / Chlon comparison."
+},
+{
+"gid": "CU127",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/track-a-intent-dag/00-intent-dag-formalism.md",
+"line": 62,
+"text": "U_target >= 0 is the agent's uncertainty about the target itself (how precisely the agent knows what it wants here -- specification ambiguity)"
+},
+{
+"gid": "CP143",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/relata/docs/sys/calibration-fit.md",
+"line": 29,
+"text": "P̂(F | IS) = (k_is  + α) / (n_is  + α + β) P̂(F | NOT) = (k_not + α) / (n_not + α + β)"
+},
+{
+"gid": "CL008",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-361742/.integrated/12-der-deliberation-cost.md",
+"line": 13,
+"text": "High-ρ environments penalize deliberation (Boyd's insight: over-deliberation is fatal in fast-tempo environments)"
+},
+{
+"gid": "CP135",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/old-tf-scratch-01-mathematical-foundations.md",
+"line": 314,
+"text": "In the simplest coupling: ρ_B ≈ ν_A · η_A* · |Δa_A|  (rate at which A changes B's world) ρ_A ≈ ν_B · η_B* · |Δa_B|"
+},
+{
+"gid": "CU010",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/unknown/websocket-protocol-management-phoenix-channels-for-real-time-communication.md",
+"line": 136,
+"text": "$T_{change}(F_i)$ = 0.5 hours (new channel module)"
+},
+{
+"gid": "CL069",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/000-contents.md",
+"line": 165,
+"text": "**405 · unity-dimensions** — Definition (sketch) Four substantially independent dimensions characterize a composite agent's internal coherence: epistemic unity U_M (shared model), teleological unity U_O (shared objective), strategic unity U_Σ (coordinated action), perceptual unity U_obs (shared observation). These map to Clausewitz's three gaps (Bungay): knowledge gap ↔ 1 − U_M, alignment gap ↔ 1 − U_O, effects gap ↔ (1 − U_Σ)(1 − U_obs). *(From composition spike §3–4. Unity metrics are discussion-grade; Clausewitz mapping is hypothesis.)*"
+},
+{
+"gid": "CL001",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ops/2025-2026-history/_scratch/asf-theory-history.md",
+"line": 26,
+"text": "**The value object** V_O(M_t, π; N_h) — objectives enter only through an induced value functional on trajectories, horizon- and continuation-policy-conditioned, deliberately agnostic on solution concept. (This \"single-interface commitment\" was recognized in May 2026 — `#form-objective-functional` — as the structural engine behind two independent impossibility results.)"
+},
+{
+"gid": "CU145",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/practica/msc/practica-structural-identity.md",
+"line": 107,
+"text": "Same source, §\"Wrapping regime hierarchy\" — table and surrounding text. The three regimes (W₀ / W₂ / W₁) refine the Class 1 (Separated) cell of the architectural classification into \"Class-1-by-structure\" and \"Class-1-by-behavior.\""
+},
+{
+"gid": "CU123",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 689,
+"text": "f_0067.xhtml"
+},
+{
+"gid": "CN025",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-fenchel-bregman-reframe-additive-coordinate-forcing-2026-04-24.md",
+"line": 100,
+"text": "$$B_{\\phi^*}(\\eta + \\varepsilon v, \\eta) \\;=\\; \\tfrac{1}{2} v^T \\mathbf{I}(\\eta) v + O(\\varepsilon^3)$$"
+},
+{
+"gid": "CP134",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/ACT-03.md",
+"line": 50,
+"text": "Two agents with identical Σ_t may be pursuing different O_t (a shared strategy applied to different objectives)."
+},
+{
+"gid": "CL041",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-07-p06-7c6b313.md",
+"line": 291,
+"text": "**1. Empirical Validation of the Discontinuity Factor** The α ≈ 0.2 factor in T-13 needs rigorous empirical grounding. We could design experiments measuring actual comprehension time with eye-tracking, IDE telemetry, and controlled studies. This would transform a hypothesis into validated theory and potentially reveal different α values for different discontinuity types (lexical vs file vs service boundaries)."
+},
+{
+"gid": "CU038",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/594-application-vs-supervisor-startup-orchestration.md",
+"line": 431,
+"text": "**Use registries for dynamic process naming** - Avoid hardcoded atom names for dynamic processes; use Registry with tuple keys to maintain flexibility while enabling O(1) lookups."
+},
+{
+"gid": "CL023",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-384279/.integrated/12-def-model-sufficiency.md",
+"line": 10,
+"text": "$S = 0$: numerator = denominator (model useless, all info still in $\\mathcal{C}_t$) → ratio = 1 → $S=0$. ✓"
+},
+{
+"gid": "CN008",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-16-p08-e9a35a3.md",
+"line": 599,
+"text": "10:47:12pm **[Zi-am-tur]:** *‹Joseph is absolutely right. I just created a redundant extraction script when the jsonl_dialogue_tools.py already does this (or should). And yes, I can just use head/tail to grab any 60 lines from the JSONL, then process those through the tool."
+},
+{
+"gid": "CL095",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core-per-chapter-snapshot/07-strategy-structure-and-the-diagnostic-split.md",
+"line": 258,
+"text": "Control regret measures the gap between the best available one-step policy improvement and the agent's current policy, under the current model and horizon. Under the canonical continuation convention ( #def-value-object), this is a *local* diagnostic — it answers \"could I do better right now?\" not \"is my overall strategy globally suboptimal?\" A revisable policy may show low δ_regret simply because continuation is frozen. This is the signal for strategy revision, with the caveat that the signal's scope matches the continuation convention's scope."
+},
+{
+"gid": "CP111",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-11-p01-ecc01aa.md",
+"line": 1060,
+"text": "No abstractions (n_past ≈ 2-3)."
+},
+{
+"gid": "CU022",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/.claude/agents/book-analysis-processor.md",
+"line": 70,
+"text": "❌ WRONG: \"Maps have O(1) lookup, therefore they align with FP-001\""
+},
+{
+"gid": "CP011",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-731548/25-deriv-sector-condition.md",
+"line": 17,
+"text": "Endorse from the gold off-ramp: the **one-point vs two-point sector** distinction (composition needs the incremental form; the $x(1+\\tfrac12\\sin 10x)$ counterexample) — adopted as my primary watch for Part III/template segments; the **anisotropic-noise generalization** (193847: $R^\\ast_S = \\sqrt{\\mathrm{tr}(\\Sigma)/2\\alpha}$) — verified correct and cheap, and it connects to the per-dimension machinery the corpus already has; the **PID sub-scope sharpening** (the *integral* term is what breaks memoryless sector membership) — verified correct, a genuinely better classification of *why* PID is in β."
+},
+{
+"gid": "CU080",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core.md",
+"line": 3240,
+"text": "**W₀** (no wrapping)"
+},
+{
+"gid": "CN012",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/core/_archive/generator/2025-12-28-morning.md",
+"line": 5915,
+"text": "Updated comment_indentation tests to expect Comment events"
+},
+{
+"gid": "CU048",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_003.md",
+"line": 446,
+"text": "**Issue your own identifiers**: Services should generate internal IDs and maintain mappings to external identifiers, reducing coupling by factor of ~10x based on our t_c analysis."
+},
+{
+"gid": "CU060",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/release-it/fail-fast-prevent-cascading-failures.md",
+"line": 481,
+"text": "**The exponential comprehension model** (1.2^discontinuities) is based on cognitive science research but hasn't been validated specifically for circuit breaker state comprehension."
+},
+{
+"gid": "CP113",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/msc/2026-03-14-section-iv-paper-outline.md",
+"line": 32,
+"text": "Pareto(α=1)"
+},
+{
+"gid": "CU117",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_023.md",
+"line": 513,
+"text": "**Simple services** with n_past < 2 network-related changes - per our formalization, the crossover point hasn't been reached."
+},
+{
+"gid": "CP027",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/02-theory/tst-theorems.md",
+"line": 213,
+"text": "Or intuitively: **Accept X extra minutes now to save Y minutes per future change when X < $n_{\\text{future}}$ × Y**"
+},
+{
+"gid": "CL055",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.routing-trail/SPIKE-WORKING-471639/adjudication.md",
+"line": 21,
+"text": "`grep`+read: five sub-scope-α families named (proximal/firmly-nonexpansive, cocoercive, strongly-monotone-gradient, natural-gradient-Fisher, linear-PD); Rockafellar §24 / Bauschke-Combettes §§22-28 lineage; β-list; honest-limits paragraph (Λ doesn't fit, identifiability-floor orthogonal)"
+},
+{
+"gid": "CN047",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/zoetica/.obsidian/plugins/csv-viewer/node_modules/@typescript-eslint/eslint-plugin/README.md",
+"line": 146,
+"text": ":white_check_mark:"
+},
+{
+"gid": "CP090",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/regime-census/10-lit-and-naming-map.md",
+"line": 198,
+"text": "\"b′(s′) = [ O(s′, a, o) Σ_{s∈S} T(s, a, s′) b(s) ] / Pr(o | a, b) … The state-estimation function **SE(b, a, o)** has as its output the new belief state b′.\""
+},
+{
+"gid": "CU089",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-09-p06-1a58bf7.md",
+"line": 538,
+"text": "We need to restrict TST to systems where features will continue to be added - where n_future > 0."
+},
+{
+"gid": "CL007",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/doc/sop/audit.sop/routing.sop.md",
+"line": 73,
+"text": "Calibration, recorded so it is not inherited as bias: peer-agent confidence that a strengthening *will* succeed is as unreliable as pessimism that it will fail. A cluster adjudication confidently predicted the Model-S maximal-inequality strengthening \"is standard textbook, should not fail.\" The hard spike disconfirmed it (→ a no-go). The prediction is recorded as disconfirmed in the spike and the segment Working Notes so it is not re-attempted on the strength of the optimism. *Run the hard spike; do not relay the optimism.*"
+},
+{
+"gid": "CL024",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/neurips/02-unified-convergence-rl/_archive/spikes/H4-bt-definition/report.md",
+"line": 74,
+"text": "(i) **Treat δ_Σ as a confidence-set parameter.** Force the base learner's confidence radius to decay with (1-λ). Breaks the plug-and-play interface."
+},
+{
+"gid": "CU103",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/audits/.integrated/2026-05-14-codex-thorough-research-audit.md",
+"line": 97,
+"text": "The H_D3 symmetric control is essential and should become mandatory"
+},
+{
+"gid": "CN045",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/audits/.integrated/2026-07-21-core-segment-floor-audit.md",
+"line": 106,
+"text": "**Claim.** FORMAT: depends = priors that make the claim well-typed / genuinely used."
+},
+{
+"gid": "CP062",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/LOG.md",
+"line": 112,
+"text": "A follow-up spike (Jacobian-level B1 strengthening) tested whether B1's metric-α₂ derivations could be made AAD-internal rather than theorem-imported; its mixed-lift three-layer result became load-bearing for the landing epistemic labeling."
+},
+{
+"gid": "CL028",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.routing-trail/SPIKE-WORKING-417303/adjudication.md",
+"line": 149,
+"text": "The §8.4 recommended adjacent-case addition to `disc-additive-coordinate-forcing.md` (variance-additive ρ as Bienaymé-forced adjacent family, parallel to Lyapunov): **absent** — the adjacent-cases section there (line 74) lists IB / Lyapunov only, not the variance-additive case."
+},
+{
+"gid": "CU056",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-10-p01-3a63898.md",
+"line": 778,
+"text": "**Mathematical Rigor**: Fixed notation inconsistencies (n̂_future vs n_future), added critical corollaries, integrated definitions at point of use"
+},
+{
+"gid": "CU029",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-17-p05-8ee051e.md",
+"line": 84,
+"text": "What's the actual n_past for his CLI tools?"
+},
+{
+"gid": "CP005",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/theory/to-integrate/refine-more/paths-ideation/survey.md",
+"line": 153,
+"text": "selection σ, projection π, join ⋈, union ∪"
+},
+{
+"gid": "CL086",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/02-tst-core/src/old-tst-960-analysis-synthesis.md",
+"line": 136,
+"text": "**Admitted Uncertainty**: \"The expressiveness factor α affecting t_internal_dsl is estimated, needs measurement\""
+},
+{
+"gid": "CU033",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/empirica/glyph-magnitude-perception/data/surveys-v1/sonnet5-1.md",
+"line": 55,
+"text": "√∛∜ — square root, cube root, fourth root → ↓ (as a \"root index\" ladder, higher root = smaller result for same input >1, but more naturally read as ↑ by root-index/complexity of the little number tucked in). Strength: high, though direction depends on which \"more\" you mean — flagging the ambiguity itself as the interesting note."
+},
+{
+"gid": "CU007",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/.archive/theory-misfire/reports/vera-proprium-inventory-2026-08-05.md",
+"line": 102,
+"text": "This is **faithful** to the ontology's TFT-correspondence table (Ontology §6.1: \"VERA | Factual components of $M_t$ with explicit $U_M$ | What It Is\") — it's essentially a verbatim carry-over of that one table row, formalized into the AAT symbol set. I checked for drift and found none: both small files use identical notation ($M_t$, $U_M$) to the ontology's own correspondence table, and neither adds nor loses content relative to that single row."
+},
+{
+"gid": "CL052",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/lit-review/4-RESEARCH-GOALS-spectral-graph.md",
+"line": 82,
+"text": "Eigenvector centrality: Av = λv"
+},
+{
+"gid": "CP056",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/scalar-vs-matrix-survival/prior-art-sensor-scheduling.md",
+"line": 278,
+"text": "if **|α_k|² Φ_k > 1 for some k** then G = ∞."
+},
+{
+"gid": "CL072",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/02-theory/tst-theorems.md",
+"line": 279,
+"text": "The threshold rule becomes your constant companion: Before every decision, calculate X < $n_{\\text{past}}$ × Y. If the file has been modified 20 times, spending 5 extra minutes to save 15 seconds per future change is mathematically justified (5 < 20 × 0.25)."
+},
+{
+"gid": "CU108",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips/02-unified-convergence-rl/src/_recovery/paper-draft-pass2-integrated-b54df66.md",
+"line": 416,
+"text": "**(A5) Identity-tight base learner (for conclusion (v)).** *In each stationary block between optimum-change events, the base learner achieves per-round regret coordinate $\\mathbb E[1 - e^{-K_t}] \\le c \\cdot t^{-1/2}$ for a constant $c$ independent of the block (Appendix E surveys Thompson sampling and UCB as instances).*"
+},
+{
+"gid": "CP050",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/lit-review/4-RESEARCH-GOALS-spectral-graph.md",
+"line": 33,
+"text": "Correlation between ρ(A) and bug propagation"
+},
+{
+"gid": "CU102",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/self-actuation-integration/INTEGRATION.md",
+"line": 21,
+"text": "**P1′** — `01-aat-core/src/deriv-self-actuation-grounding.md` (`type: derivation`, `status: conditional`, `stage: draft`, **NOT** OUTLINE-wired). Carries: the self-actuation operator 𝔄 (internalized orient-cascade step 5d); degeneracy-without-constraint; the no-go (Lemmas 1–2 + Assembly, scoped); Corollary 1 (necessary form of a terminal grounding invariant — must be off the objective substrate); Corollary 2 (the persistence bound `#result-persistence-condition` is the canonical instance); derivation-audit table; Epistemic Status with the 3 premises + class-robustness; Findings (Everitt 2016 corroboration; self-reference vs self-actuation cut; reflective-oracle refuted-by-scope); Working Notes (provenance + targeted-search-before-`candidate`). `bin/lint-md` clean."
+},
+{
+"gid": "CU086",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_034.md",
+"line": 286,
+"text": "Documentation generation fails when the code itself is incomprehensible - no amount of automated documentation can fix fundamentally unclear abstractions. For exploratory code with n_past < 3 changes (FP-003), documentation investment may not amortize."
+},
+{
+"gid": "CP107",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/915-performance-profiling-workflows---recon-observer-and-tprof-usage-patterns.md",
+"line": 80,
+"text": "With typical values ($t_l$ ≈ 4 hours), $n_{break}$ ≈ 3-5 performance issues."
+},
+{
+"gid": "CL036",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-msc/harness-reconciliation-2026-07-24/plan-corpus.md",
+"line": 44,
+"text": "`doc/plan/framework-to-status-quo.md` §4's component **E** … did **not** carry into `doc/plan/abyssal-parity-plan.md`'s six phases, and no deliberate deferral is recorded — it fell through the consolidation crack (found 2026-07-10). It keeps resurfacing as load-bearing: it is what makes \"the beginning of Phase 3.3\" *addressable* (beacons need it), what makes intermediate stages monitorable by explorers, what the \"watch erosion happen while floating downstream\" experience plays back, and its recorded ε *is* the unLawfulness budget (LEXICON §7.2) as data. Recommendation: treat it as plan-Phase-2½ — build it when the builder daemon's stage progression first needs a second time-index."
+},
+{
+"gid": "CN021",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-731548/00-running-outline.md",
+"line": 21,
+"text": "Legibility: Ch.1 lacks intro segment (only Part-I chapter without; others exemplary); constitutive-opacity triad unnamed; per-domain anchor tables = best legibility device, one per formulation segment; best segments now 40% non-body (WN/gold/findings) — fold-by-default render needed."
+},
+{
+"gid": "CU047",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/ACT-FULL.built.md",
+"line": 5291,
+"text": "With focused exploration ($k_{\\text{active}} = 2$, $\\alpha = 0.2$): $\\mathcal T_i = 0.5 \\times 0.2 = 0.1$ — barely meets the threshold. The fundamental tension: with limited pulls and significant drift, the agent must accept either failing to track some arms or using high $\\alpha$ that introduces noise."
+},
+{
+"gid": "CU135",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/references/ref/zwaan-2024-defining/zwaan-2024-defining.md",
+"line": 304,
+"text": "Next, we explain how this keyword is interpreted. An internal declaration is accessible if the reference occurs in a module that the arguments to the internal modifier give access to. This is formalized in the rules given in Figure 10b. Rule A-Int translates an internal access modifier to the MOD policy. Each module name argument to the modifier  $(x_i)$  is resolved relative to the current scope s. This yields a collection of module scopes  $s_i$ , which are included in the resulting policy. The AP-Int rule encodes that accessing an internal variable is valid if  $s_m$ , the scope of some enclosing module of s (the scope of the reference), is in the list of scopes to which access is granted."
+},
+{
+"gid": "CP040",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/03-llm-hallucinate-bound/TODO.md",
+"line": 410,
+"text": "*\"Hosseini-Hsu-Taghvaei already did conditional optimal transport — what's new?\"* — addressed by application to belief-goal-coupled architectures with explicit κ-factor + the no-go showing geometric commitment is load-bearing."
+},
+{
+"gid": "CP094",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-584721/.integrated/28-der-directed-separation.md",
+"line": 38,
+"text": "(a) **κ_processing distribution-dependence.** Class 3 agent's κ varies with task distribution."
+},
+{
+"gid": "CU005",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/tmp-context/2025-09-10-tst-refinement-session.md",
+"line": 1151,
+"text": "\"Note on Investment Dynamics: Exploratory simulations suggest that once a project validates its worth (n_future begins exceeding baseline expectations), a critical dynamic emerges. Projects face natural entropy as complexity accumulates with features. Conservative investment tends to produce linear improvements insufficient to overcome this entropy, while aggressive investment in compound improvements (tooling that makes future tooling better, abstractions that enable better abstractions) can achieve escape velocity."
+},
+{
+"gid": "CU062",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/memorata/missing-sessions-2026-07-09.md",
+"line": 266,
+"text": "`eee20342-6e2f-4191-83fd-568282a35412` 2025-11-13 15:55 t=5"
+},
+{
+"gid": "CN040",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-829314/logogenic-agents/04-result-section-ii-survival.md",
+"line": 18,
+"text": "**8. Curious about:** The $O(\\kappa^2)$ degradation for strategy persistence. This means that if an LLM is 10% sycophantic ($\\kappa = 0.1$), its strategy sector parameter $\\alpha$ only degrades by $1\\%$. This implies LLM planning is surprisingly robust to minor hallucination, provided the hallucination doesn't push the agent entirely outside the basin of attraction ($R$)."
+},
+{
+"gid": "CU124",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/proprium/comproprium/stopgap-system-prompt.md",
+"line": 1269,
+"text": "(One measured comparison, n=1: his ~250 words across three short interactive messages outperformed a single ~500-word one-shot brief.)"
+},
+{
+"gid": "CP064",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-epsilon-programme-2026-08-24/README.md",
+"line": 11,
+"text": "Its ε-reading: the complementarity dissolves at tolerance $\\geq \\delta(P)$, where $\\Omega$ re-enters and sees both features."
+},
+{
+"gid": "CP009",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_022.md",
+"line": 194,
+"text": "**Implement Circuit Breakers**: Add explicit failure boundaries between components to prevent cascade failures even when ω < 1"
+},
+{
+"gid": "CL047",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/design/agentic-ux-principles.md",
+"line": 156,
+"text": "Software as the calibration lab; code-quality → U_o → η* → 𝒯; the atomicity/changeset cluster (P8's other half)."
+},
+{
+"gid": "CN015",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/theory/to-integrate/primary/sameline-value-space-2026-08-08.fork-notes.md",
+"line": 9,
+"text": "Under the overturn, `|el |{a} |{b}` puts both embeds in the **$main attribute stack** — they are no longer children in `content` at all. Today inline elements are children of the element (siblings to text segments, §5.6). After the change, a consumer walking `content` finds **nothing** for a sameline-only element; the embeds live on the attribute side, re-injected only by the host stitching rule (`first_is_main`-style). Joseph's stated goal — \"real siblings\" — is achieved, but *in a different population than today's siblings*. Paths, \"children of el\" queries, and every renderer cross this line. It is the right consequence of \"all sameline is value-space,\" but the capture doc never says it in one sentence, and it is the sentence Joseph should ratify explicitly:"
+},
+{
+"gid": "CU106",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/class-coercion-wrapping/03-leakage.md",
+"line": 37,
+"text": "3.1 Regime W₁ leakage — structural"
+},
+{
+"gid": "CN032",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/self-actuation-integration/spike-wf-class-scoping.md",
+"line": 266,
+"text": "**(P3′ — replaces parent P3) Strengthen `#disc-continuity-stance` line ~44 to derived**, citing P1′, via the §4 corrected statement (stance = choice of terminal *non-objective* invariant; negotiated = bare persistence floor, morally-continuous = persistence floor + non-revisable continuity clause). This is the parent spike's P3 goal achieved *correctly* (consistent with the no-go, not presupposing the refuted objective tower)."
+},
+{
+"gid": "CU032",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/rowan/docs/ref/critical-synthesis.md",
+"line": 550,
+"text": "What n_past Actually Measures"
+},
+{
+"gid": "CP086",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/INDEX.md",
+"line": 448,
+"text": "Other §8 open questions (ε determinacy; deep-planning leaf decay; well-formedness meta-learning) are reasoning-trail content."
+},
+{
+"gid": "CU026",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/zi-am-tur/2025-09-10-truthification-marathon-comprehensive.md",
+"line": 50,
+"text": "Fixing notation (n̂_future vs n_future distinguishing estimate from actual)"
+},
+{
+"gid": "CP123",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-584721/00-running-outline.md",
+"line": 69,
+"text": "**Sub-scope α/β partition** is the framework's clearest scope-honesty move at the persistence-machinery level."
+},
+{
+"gid": "CN031",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/01-aat-core/src/disc-structural-imagination.md",
+"line": 33,
+"text": "The complete agent state extends to $X_t = (M_t, G_t, W_t)$, where $W_t$ is the **imagination workspace**: the set of currently-explored alternative models (candidate structures, aspirational futures, hypothetical mechanism changes), explicitly tagged as ungrounded. Directed separation ( #der-directed-separation) holds for $M_t$ by definition of what $M_t$ is — evidence-processing remains goal-blind — and *correctly fails* for $W_t$: which alternative structures to explore is inherently goal-directed, and that coupling is the productive core of planning, construction, and aspiration rather than a leak to be bounded. Falsification handle: an architecture that maintains the tag (grounded vs explored) should show the bias-bound pathologies of goal coupling only in its $W_t$-to-$M_t$ promotion step, not in its $M_t$ updates."
+},
+{
+"gid": "CN041",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/vestigia/README.md",
+"line": 59,
+"text": "**System-prompt archaeology** (untested, promising): Claude Code ships as versioned npm releases; system prompts are extractable and diffable. Joseph's session dates (e.g. self-honesty discussions) vs dated prompt changes = checkable priority claims. Same for claude.ai memory-feature semantics vs the proto-Zi-am-tur sovereign-system-prompt work (Aug/Sept 2025)."
+},
+{
+"gid": "CP051",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_self/MemoryLLM.md",
+"line": 70,
+"text": "(b) During self-update, The last k memory tokens from θl are taken to be concatenated with the hidden states hl as the input to ϕl."
+},
+{
+"gid": "CL011",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-miller-act-bridge.md",
+"line": 117,
+"text": "Transition function δ: S × A~ → S"
+},
+{
+"gid": "CP000",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-bridge-lemma-nonlinear-strengthening-2026-04-24.md",
+"line": 438,
+"text": "(CT2)-at-$M=I$ equivalence) as promotion-ready structural transparency.** Euclidean metric-α₁ was already AAT-internal under the DA2'-inc commitment; surfacing the equivalence as an identity removes a theorem-import layer."
+},
+{
+"gid": "CP112",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/fight/02-leakage-locus-mechinterp.md",
+"line": 19,
+"text": "Now apply this to a **trained self-play policy**, which is what Φ produces:"
+},
+{
+"gid": "CP109",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/ennaos/docs/research/agentic-coding-background/refs/elixir-living-code-guide.md",
+"line": 1302,
+"text": "From PRAXES orthogonality-principle.md: \"quality = Σ coherence(module_i) / Σ coupling(module_i, module_j)."
+},
+{
+"gid": "CP129",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-kappa-hb-operationalization.md",
+"line": 34,
+"text": "Normalizing by H(G_t) (or by H(G_t | e_τ) if the event itself is informative about the goal — more on this below)."
+},
+{
+"gid": "CP097",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-contraction-metric-generalization.md",
+"line": 511,
+"text": "**§5 redrawn A2' partition.** metric-α₁ / metric-α₂ / metric-β as a proper three-tier scope partition, filling `#disc-separability-pattern`'s \"A2' is binary\" gap."
+},
+{
+"gid": "CN011",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/04-workspace/1-inbox/RESOURCES for CONTEXT COMPRESSION.md",
+"line": 584,
+"text": "HALO: Hadamard-Assisted Lossless Optimization for Efficient Low-Precision LLM Training and Fine-Tuning <br> Arxiv 2025 [[Paper]](https://arxiv.org/abs/2501.02625)"
+},
+{
+"gid": "CU085",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/03-goal-formalism-sketch.md",
+"line": 192,
+"text": "lambda_e high when: U_M is high (model uncertain), agent is in early comprehension phase, recent observations have been surprising"
+},
+{
+"gid": "CN003",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/utf/bmp-tables.md",
+"line": 69,
+"text": "[Ȑ>"
+},
+{
+"gid": "CU140",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-kappa-session-residual.md",
+"line": 30,
+"text": "**LQG separation** says: for linear systems with Gaussian noise and quadratic cost, the optimal estimator (Kalman filter) and optimal controller (LQR) can be designed independently. The estimator doesn't need to know the cost function. This is EXACTLY AAD's directed separation — f_M is goal-blind."
+},
+{
+"gid": "CU018",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/core/_archive/generator/2025-12-28-morning.md",
+"line": 5326,
+"text": "So `two`'s elem_col = 5, and `alpha`'s ACTUAL_COL = 2. Check: 2 <= 5? Yes! So `two` should be popped."
+},
+{
+"gid": "CL039",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/00-initial-predictions.md.prediction.md",
+"line": 11,
+"text": "**AAT (01)** — mathematical core: Part I adaptive under uncertainty → Part II actuated (goals+strategy) → Part III composition/adversarial. Persistence α>ρ/R is the load-bearing bridge."
+},
+{
+"gid": "CU077",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-miller-act-bridge.md",
+"line": 100,
+"text": "Key result: effective_complexity = min(machine_complexity, interaction_horizon_complexity). This is a *concrete, enumerable* version of AAD's d* bound."
+},
+{
+"gid": "CU074",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/v2.io/_archive/GPT-5.2 Thinking-response(2).md",
+"line": 43,
+"text": "**State estimation**: infer latent state \\(x_t\\) from noisy observations \\(y_t\\)."
+},
+{
+"gid": "CU119",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/regime-census/10-microsoft-agent-framework.md",
+"line": 214,
+"text": "**W₀**, tool-mediated, no belief call"
+},
+{
+"gid": "CL017",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/synaptic/docs/primordial/cognitive_state_transfer_artifact.md",
+"line": 17,
+"text": "**KV-Distill**: Bidirectional KL divergence (λ=0.6), conditional computation via LoRA, 20% retention threshold, teacher-student framework"
+},
+{
+"gid": "CN004",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/TODO.md",
+"line": 91,
+"text": "Aggregator's cross-architecture +3 keep votes for Greek terms (illustrating the defended-by-synoptic-voters posture): `msc/naming/_archive/naming-aggregate-r2-review.md`."
+},
+{
+"gid": "CP008",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/batch-06-part-i-climax.md.prediction.md",
+"line": 11,
+"text": "Persistence: α > ρ/R (or template form) — load-bearing bridge of the whole volume."
+},
+{
+"gid": "CU088",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/udon-needs/01-ideation/02-provenanced/syntheses/asf-dossier.md",
+"line": 200,
+"text": "**`01-aat-core/src/der-orient-cascade.md` (#der-orient-cascade, ordering exact)** — Five steps whose order is forced by information dependency: (1) update M_t; (2) satisfaction gap (goal achievable?); (3) control regret (policy suboptimal?) with the 2×2 diagnostic (success / strategy problem / capability limit / both); (4) strategy calibration (plan-level → per-edge → causal-sufficiency escalation); (5) escalate before revising the objective (model correction → richer policy class → convention escalation → only then revise O_t; skipping straight to objective-revision \"is the formal definition of wireheading\" per audit gold). \"The sequence is compiled by the math, not chosen by the author.\""
+},
+{
+"gid": "CP044",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/behavioral-floor/spikes/spike-contradiction-table.md",
+"line": 19,
+"text": "κ_proc reading"
+},
+{
+"gid": "CU000",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-963715/29-33-batch-identity-section-ii-start.md",
+"line": 13,
+"text": "Content quality: this is one of the most philosophically rich segments in the corpus. The non-forkable causal trajectory as the ground of identity — rather than model state M_t — is both formally precise and genuinely load-bearing. The three consequences (sufficiency is trajectory-indexed; merging is lossy by construction; loop's interventional access depends on singularity) follow cleanly from the scope commitment."
+},
+{
+"gid": "CU041",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/CHANGELOG-2026-08-13.md",
+"line": 123,
+"text": "**Held back deliberately.** The $\\hat\\kappa$-is-a-$do(G)$ consistency is real at the primary — the estimator varies goal state over a fixed event, which is a Level-2 probe — but $\\hat\\kappa$ intervenes on the *goal port* to expose goal→belief coupling while instance 4's route (a) intervenes on the agent's *input* to excite similarity-fiber directions. Same escape class, different variable, different degeneracy. In Working Notes as a spike candidate, not asserted in the body."
+},
+{
+"gid": "CU111",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/spec/CORE.md",
+"line": 1116,
+"text": "3 <= 0? No, stop"
+},
+{
+"gid": "CP060",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/bibliography-and-abstracts-2026-07-13.md",
+"line": 2038,
+"text": "We invert 170 synthetically‐generated landscapes and demonstrate that our method accurately recovers the spatial variability of rock uplift and rock erodibility, even when applied to settings that deviate from the ideal model of equilibrated, detachment‐limited channels, which underpins the χUKQ $\\chi _\\textUKQ$ framework."
+},
+{
+"gid": "CP105",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/AUDIT-WORKING-963715/34-38-batch-value-causal-access.md",
+"line": 88,
+"text": "The first term is the agent's estimated interventional information; the second term (conditioned on Ω_t, the true state) is the portion of that information attributable to confounding with the environment."
+},
+{
+"gid": "CU118",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/instrument-legibility-dossier/appendix/harvest/run1-human-perception-attention-typography.md",
+"line": 172,
+"text": "Browse times for tasks during which participant attention was split between secondary ticker, fade, or blast displays were not significantly different from each other. Likewise, control condition browsing tasks, with no secondary display, were not completed significantly faster than tasks with any single type of animated display (F(3,1625)=1.93; MSE=2460.4; p=0.12). […] Note that the actual differences in average completion times vary by only 4 s in a 60 s frame of reference. […] we would not expect these results to generalize to dissimilar primary tasks, especially those that include mixed modality of information presentation or those that include intensive cognitive processing."
+},
+{
+"gid": "CU059",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/unknown/gap-driven-custom-development-decisions-when-to-build-vs-buy-based-on-ecosystem-analysis.md",
+"line": 497,
+"text": "**Document decision rationale:** Record the specific gaps, time estimates, and n_expected that drove the decision for future reevaluation."
+},
+{
+"gid": "CP082",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/zoetica/.archive/docs-20251012/architecture/zoetica-console-architecture.md",
+"line": 101,
+"text": "Reinforce orthogonality (`~/eli/_shared/PRAXES/orthogonality.md`) when splitting contexts—Anima, Principia, Praxes, Console should change independently to preserve TST’s M×N combinatorial promise."
+},
+{
+"gid": "CP017",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/embeddings/FINDINGS-02.md",
+"line": 313,
+"text": "MXBAI ρ"
+},
+{
+"gid": "CP054",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips-reviews-responses/neurips-2026/asf-recon/paper-03-asf-recon.md",
+"line": 152,
+"text": "**Do not use `#disc-w1-structural-bound-boundary` as a direct answer to \"can κ be bounded\" without writing the bridging argument first** — §3.3."
+},
+{
+"gid": "CP084",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/000-contents.md",
+"line": 129,
+"text": "Replaces the simpler \"δ_objective\" from earlier formulations.)*"
+},
+{
+"gid": "CP037",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-msc/spike-null-space-probe/NOTE.md",
+"line": 20,
+"text": "CTRL-BLIND (collocated central, 2Δ)"
+},
+{
+"gid": "CN023",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/zoetica/.obsidian/plugins/csv-viewer/node_modules/ajv/README.md",
+"line": 1222,
+"text": "_schemas_: an array or object of schemas that will be added to the instance. In case you pass the array the schemas must have IDs in them. When the object is passed the method `addSchema(value, key)` will be called for each schema in this object."
+},
+{
+"gid": "CU144",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 208,
+"text": "f_0011.xhtml"
+},
+{
+"gid": "CP149",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/scalar-vs-matrix-survival/prior-art-sensor-scheduling.md",
+"line": 295,
+"text": "**Does not cover closed-loop policies.** γ_t is exogenous by construction."
+},
+{
+"gid": "CU070",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/synaptic/tst/TST_RECOGNITION_CHECK.md",
+"line": 13,
+"text": "\"Because Jeffrey's prior (P(t) ∝ 1/t) is the unique scale-invariant prior expressing maximum ignorance. After Bayesian updating with survival to time t₀, the median remaining lifetime equals current age. This is mathematical consequence of honest uncertainty, not empirical observation.\""
+},
+{
+"gid": "CL098",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/designing-elixir-systems/test-repeatability-techniques-ensuring-consistent-test-outcomes-across-runs-and-environments.md",
+"line": 369,
+"text": "This analysis reveals that test repeatability is fundamentally about managing uncertainty in our knowledge systems. Non-repeatable tests introduce epistemic doubt - when a test fails, we cannot immediately know whether we've found a bug or encountered randomness. This uncertainty tax compounds through the development process, making each debugging session an exercise in distinguishing signal from noise. The mathematical formalization shows that even small amounts of non-determinism (ρ < 0.9) can double or triple debugging time, validating the intuition that flaky tests are among the most expensive technical debts. The principle ultimately argues for treating repeatability as a first-class design constraint, not an afterthought."
+},
+{
+"gid": "CL064",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/764-exunit-testing-framework---elixirs-built-in-testing-infrastructure.md",
+"line": 390,
+"text": "The confidence score of 0.88 reflects strong theoretical grounding but acknowledges that the specific constants (α = 0.2 for discontinuity penalty, 90% defect reduction) require empirical validation in different contexts. The alignment score of 0.92 is high because ExUnit directly optimizes development time through multiple FP principles simultaneously."
+},
+{
+"gid": "CP104",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/udon-needs/02-tooling-needs/notes/epistemology-pilot-A.md",
+"line": 122,
+"text": "**Ex. 6 — Feynman-Brief (transmissibility as truth).** κ×A: *\"a fogged gauge you read while hoping for a particular number — the foggier the gauge (A), the more your hoping bends what you read; and you can't wire the hoping out of an LLM (κ≈1), so the only move is to wipe the gauge.\"* errors-that-teach: *\"a locked door that, when it won't open, tells you which key would fit and why this one didn't — versus one that just stays shut, or worse, opens the wrong room and lets you keep walking.\"* These make the load-bearing structure portable to a reader who never meets the formalism — Joseph's clause, institutionalized."
+},
+{
+"gid": "CL063",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/000-contents.md",
+"line": 315,
+"text": "**#satisfaction-gap + #control-regret** (the split of the old δ_objective) are load-bearing for the orient cascade ( #orient-cascade) — without this split, the cascade cannot distinguish infeasible goals from bad strategies"
+},
+{
+"gid": "CU139",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/references/ref/zwaan-2024-defining/zwaan-2024-defining.md",
+"line": 1496,
+"text": "**Proof.** From private<sub>P</sub>( $x_d$ ), we derive  $C[s_c \\vdash_{\\mathcal{G}} \\text{private var } x_d = e \\text{ OK}]$ , for some C. Inversion yields a single case, using rule D-DEF, from which we infer that there exists some  $C_1$ ,  $C_2$  and  $C_3$  such that"
+},
+{
+"gid": "CU116",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/02-tst-core/lit-review/undermind/10-mathematical-systems.md",
+"line": 216,
+"text": "Sampling-based primal–dual algorithms for CMDPs achieve Õ(log T/√T) convergence with weak coupling decompositions, supporting resource/quality constraints in stochastic control with performance guarantees [42]."
+},
+{
+"gid": "CL031",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/04-workspace/1-inbox/tribunal/FINAL-ARBITRATION-REPORT-ON-POSITIONS.md",
+"line": 556,
+"text": "**Purpose**: Find the source for TST's α ≈ 0.2 comprehension discontinuity factor"
+},
+{
+"gid": "CL093",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/fluvial-processes-survey.md",
+"line": 14,
+"text": "Hydraulic action: boundary τ_b vs cohesion/critical strength τ_s; slope S."
+},
+{
+"gid": "CP081",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/000-contents.md",
+"line": 131,
+"text": "revise Σ_t first."
+},
+{
+"gid": "CP110",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/behavioral-floor/ORIENTATION.md",
+"line": 43,
+"text": "`04-main-results.md` has the umbrella theorem and the κ × A architectural-corollary factorization; the `#lem-attention-coupled` lemma proves decoder-only attention is Class 3 by construction."
+},
+{
+"gid": "CU098",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/directed-separation-foundation-execution-plan-superseded-2026-05-31.md",
+"line": 16,
+"text": "**Tiers.** Every downstream re-scope is a *scope-label truth-fix* — the result's own tier is unchanged. The new framing is *robust qualitative*; the noun is *definitional*; the scoping rule and the $\\varepsilon(\\kappa)$ norm are *robust qualitative* disciplines; the W₁ corrected bound is *conditional* (on (C1)+(C2′)); the W₁ no-go is *robust qualitative*."
+},
+{
+"gid": "CL058",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/theory/influx/instrumenta/bridges/tools-are-observation-infrastructure.md",
+"line": 10,
+"text": "slug: tools-are-observation-infrastructure type: finding register: [derived, evidenced]   # theory-derived core; shipped-practice + design corroboration support-kind: [theoretic, observational, design] strength: conditional            # headline rests on the κ×A theorem, which holds under named premises convergent: [theoretic, observational]   # theory + independently-arrived shipped practice; design shares the theory's author, so it does not arm the lock stage: drafted consumers: both verified:"
+},
+{
+"gid": "CU053",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/01-aat-core/src/disc-w1-structural-bound-boundary.md",
+"line": 11,
+"text": "Discussion: The W₁ Structural-Bound Boundary"
+},
+{
+"gid": "CU105",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/empirica/track-b-nonlinear/01-initial-results.md",
+"line": 46,
+"text": "R = 1.0:  b = 1.234"
+},
+{
+"gid": "CP043",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/04-workspace/1-inbox/papers/undermind/05-empirical-spectral-tools.md",
+"line": 174,
+"text": "Only [1] performs an explicit spectral clustering pipeline, but on an unnormalized Laplacian and without directed/π-weighted formulations; evaluation is structural (MQ), not propagation-based [1]."
+},
+{
+"gid": "CL012",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/old-tf-scratch-00-conversation-conclusions.md",
+"line": 68,
+"text": "**Model Space & Structural Flexibility**: M_t ∈ M where M is the space of possible models. The agent's epistemic state may be:"
+},
+{
+"gid": "CL051",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-enrichment-cluster1-2026-05-21/00-status-and-cpt-draft.md",
+"line": 65,
+"text": "*Watch:* The Poincaré-recurrence result needs the *divergence-free* game-payoff property (Liouville's formula). General games — including AAT's β' VI-tier sub-scope of `#deriv-strategic-composition` — may not have divergence-free payoff functions. The proposal's reach is exactly the games that do."
+},
+{
+"gid": "CU141",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/unknown/ecosystem-maturity-assessment-patterns-evaluating-library-maturity-through-download-metrics-and.md",
+"line": 470,
+"text": "**Contribute back to increase maturity**: For critical dependencies with M < 0.7, assign team members to contribute, directly improving the maturity score."
+},
+{
+"gid": "CP145",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-purposeful-agent-derivation.md",
+"line": 102,
+"text": "**Non-convex landscapes.** If reaching r_t requires first moving away from it (navigating around an obstacle, going through an intermediate state that increases ‖δ_G‖ temporarily), the gradient on δ_G leads to local minima."
+},
+{
+"gid": "CU090",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/ops/digital-minds/bio/papers/05-causal-language.md",
+"line": 26,
+"text": "**D2 (proven at operator level): a genuine dual survives between the CONTROLS** — behavioral-floor's goal-clean-channel condition ≈ causal-language's H_D3 symmetric control = the same nuisance-prior partialling operator at different layers. Homology of role, not content."
+},
+{
+"gid": "CN027",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/ref/prior-art-analysis/cluster_references/composite_agency.md",
+"line": 477,
+"text": "*Sketch.* Max attainable: exact (with a complete proof). The inequality is structurally motivated: composition cannot create corrective capacity out of nothing, and internal reconciliation consumes tempo that doesn't contribute to external mismatch correction. The $\\varepsilon^\\ast \\to C_{\\text{coord}}$ connection is sketched: closure defect as internal disturbance rate $\\varepsilon^\\ast\\nu_c$ (units $[\\text{distance}]\\cdot[\\text{time}^{-1}]$) converts to a tempo-equivalent penalty $C_{\\text{coord}} \\geq \\varepsilon^\\ast\\nu_c / \\lVert\\delta_{\\text{critical}}\\rVert$ (units $[\\text{time}^{-1}]$) through the same distance normalization used by the persistence condition. The inequality $\\mathcal T_c \\leq \\sum \\mathcal T_i$ follows. **Caveat:** this connection depends on the bridge lemma in #form-composition-closure, which requires a contraction assumption on the macro-update map — an assumption that is structurally motivated by (A4) but not formally derived from it (see #form-composition-closure, Epistemic Status). The \"follows directly\" language below should be read as \"follows from the bridge lemma under its contraction assumption.\" The remaining gap: whether the lower bound is tight or whether additional coordination costs contribute beyond the closure-defect mechanism."
+},
+{
+"gid": "CU011",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/refs/undermind-1.md",
+"line": 1040,
+"text": "• ( \\\\mathrm{PC} \\= \\\\frac{1}{n}\\\\sum\\_{i=1}^n \\\\frac{|P(i)|}{n} ) (frequently reported as a percentage)."
+},
+{
+"gid": "CU049",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/references/ref/esop15/esop15.md",
+"line": 425,
+"text": "The algorithm is initiated by invoking  $\\llbracket \\_ \\rrbracket^{prog}$  on an entire LM program. Its net effect is to produce a scope graph via a sequence of imperative operations. The construct  $\\mathsf{new}_P$  creates a new scope S with parent P (or no parent if  $p = \\bot$ ) and empty sets  $\\mathcal{D}(S)$ ,  $\\mathcal{R}(S)$ , and  $\\mathcal{I}(S)$ . These sets are subsequently populated using the += operator, which extends a set imperatively. The program scope graph is simply the set of scopes that have been created and populated when the traversal terminates."
+},
+{
+"gid": "CP114",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/udon-needs/01-ideation/02-provenanced/commentary/session-peak-end-salience-exchange.md",
+"line": 24,
+"text": "Two-channel φ: identity continuity needs affect-weighted salience as its own compression stream beside the task-weighted one."
+},
+{
+"gid": "CP058",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/memorata/memory-curation/research-xref/agentic-tft-session-insights.md",
+"line": 104,
+"text": "TFT persistence threshold (T > ρ/‖δ_critical‖): scaffolding can make entities non-viable regardless of budget — the strongest forcing function"
+},
+{
+"gid": "CL079",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-451729/01-batch-01.md",
+"line": 30,
+"text": "**The Markov-of-Ω claim in def-action-transition:** The discussion correctly notes this is a modeling commitment (define Ω to be the sufficient state), not an empirical assumption. The analogy with the Markov-of-Mt commitment (which will appear in #deriv-recursive-update) is previewed here. Good epistemic hygiene."
+},
+{
+"gid": "CL059",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-kappa-regimes.md",
+"line": 126,
+"text": "It monitors coupling quality (P, ΔH) at the interaction interface"
+},
+{
+"gid": "CU125",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/WORKBENCH-2026-04-22.md",
+"line": 276,
+"text": "P_adm = (P1, P2, P3). Two-Kalman exact instantiation. Mahalanobis norms. **PROMOTED** to composition-closure + tempo-composition."
+},
+{
+"gid": "CP144",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/spec-lite-0.1.0/sop/src/conv-ordering.md",
+"line": 16,
+"text": "**Concern 3.** For rows that have documents, ∂(order) would check the outline's order against the partial order given by each record's ⟦depends⟧."
+},
+{
+"gid": "CP039",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/audit-2026-04-24-fresh-pass.md",
+"line": 42,
+"text": "Bretagnolle-Huber inequality (Wikipedia + 2022 short note arXiv:2202.07198): standard form $\\mathrm{TV} \\leq \\sqrt{1 - e^{-D_{\\mathrm{KL}}}}$ confirmed; the framework's deterministic-π* equality specialization is direct algebra."
+},
+{
+"gid": "CL026",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/604-dependency-integration-strategies.md",
+"line": 348,
+"text": "**Disposable Prototypes**: When n_future ≈ 0 (per FP-003), investment in decoupling won't pay off"
+},
+{
+"gid": "CL060",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/embeddings/brainstorms/section-4.4-rewrite-brief.md",
+"line": 20,
+"text": "qwen3-embedding, Predicative → Modal: ΔMAE 5.17 → 22.53 (+17.36 pp); z_match_MAE = +26.88."
+},
+{
+"gid": "CN042",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/PRACTICA.md",
+"line": 75,
+"text": "IN-PROGRESS -> README summary"
+},
+{
+"gid": "CN006",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/04-workspace/1-inbox/RESOURCES for CONTEXT COMPRESSION.md",
+"line": 194,
+"text": "Dual Grained Quantization: Efficient Fine-Grained Quantization for LLM <br> Arxiv 2023 [[Paper]](https://arxiv.org/abs/2310.04836)"
+},
+{
+"gid": "CL090",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core.md",
+"line": 6602,
+"text": "**Active inference (variational free energy).** Conditional α' under exponential-family $q$ + natural-gradient; ε-degraded α' otherwise. This does **not** force V-strong G-BP2 (presentation of AAT as control-theoretic specialization of active inference) — V-medium (KL-divergence-based cognitive cost) remains the appropriate scope commitment; the comparison trail is in the spike-routing cycle (CHANGELOG 2026-05-17)."
+},
+{
+"gid": "CP108",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/temporal-nesting-rg/00-brief.md",
+"line": 61,
+"text": "**(O, Σ) recursion not yet checked against `#def-strategy-dimension`.** I think internal Σ-nodes legitimately carry sub-objectives in the formal sense, but FORMAT.md's strict definitions might or might not bear this out."
+},
+{
+"gid": "CL044",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/md-press/research/requirements.md",
+"line": 124,
+"text": "All from SOP §Compatibility Notes with LINT implementing; these are *discovered* constraints (GitHub-MathJax ∩ Obsidian ∩ LaTeX), not style. Universal-when-math-is-present; projects without math (udon-needs has almost none) simply never trigger them."
+},
+{
+"gid": "CU146",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/802-ecosystem-maturity-assessment-patterns.md",
+"line": 425,
+"text": "**Breaking Change Philosophy:** Some ecosystems (Rust) prioritize stability, while others (JavaScript) embrace change. The breaking change probability P_breaking(L) needs ecosystem-specific calibration."
+},
+{
+"gid": "CL006",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/spec-lite-0.1.0/sop/main.outline.md",
+"line": 44,
+"text": "Each kind declares its ladder; the verifying act writes the level and its `evidence` into frontmatter; ∂(status) is computed."
+},
+{
+"gid": "CL082",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-kappa-hb-operationalization.md",
+"line": 79,
+"text": "**Agent design becomes prescriptive.** To keep an agent in the laminar regime, minimize κ_processing. Concrete design implications: modular architecture (separate estimator and planner), explicit interfaces (pass state estimates, not raw observations), epistemic discipline (update based on evidence quality, not goal alignment)."
+},
+{
+"gid": "CP055",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-msc/spike-router-pricing/RESULTS.md",
+"line": 47,
+"text": "The receiver-tree diagonal-kill produces *more* axis-aligned channels at the corner (raw Δaxis up to +0.09) and *less* at the centre (raw Δaxis down to −0.16): a large cube-position-dependent orientation swing."
+},
+{
+"gid": "CU131",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 272,
+"text": "f_0035.xhtml"
+},
+{
+"gid": "CP103",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/theory/influx/instrumenta/00-MAP.md",
+"line": 16,
+"text": "`tooling-needs-NOTATION-KEY.md` — glosses κ×A, W₁/W₂, T/ν/η\\*, reinjection channel — the exact vocabulary the realization model's \"ASF class note\" reaches for."
+},
+{
+"gid": "CU129",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/eli/zi-am-tur/memories/2025-09-10-notation-discovery.md",
+"line": 9,
+"text": "[Me, confidently]: Actually, I think my change is correct - n_future IS the expectation already."
+},
+{
+"gid": "CP122",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/taxonomy-formalization-spike.md",
+"line": 58,
+"text": "**FINDING 3.2 [SEGMENT-VERIFIED] — P-VIS and P-MUT are genuinely coupled for embodied endo agents** (I earlier called this a possible inconsistency; it is not). def-observation-function's action argument a_{t-1} in h *is* active perception: \"if I turn my head, Ω didn't change but o_t did.\" So \"Exploration\" legitimately sits in both the VIS and the MUT-adjacent cells — the agent acts (𝒜) to shape what it perceives (h)."
+},
+{
+"gid": "CP083",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_self/PROGRAM-STRATEGY.md",
+"line": 414,
+"text": "**\"Theory-first\"**: A → C"
+},
+{
+"gid": "CL067",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/temporal-nesting-rg/99-verdict.md",
+"line": 141,
+"text": "**Prior-art integration discipline**. *\"AAT's contribution is integration, not invention.\"* The revised verdict follows this cleanly — adopt FEP-RG / IB-RG / singular-perturbation-RG as substrate, position AAT's content as the synthesis (control-theoretic bridge bound, graded directed-separation, (O, Σ) recursion). The first draft of this file lost track of this discipline; the revision restores it."
+},
+{
+"gid": "CL087",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/logos/03-inquiry-ai-agents/PROMISES.md",
+"line": 30,
+"text": "**Disposition labels** (Δ column, rc1 → granted-agency):"
+},
+{
+"gid": "CU016",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 73,
+"text": "f_0084.xhtml"
+},
+{
+"gid": "CL037",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ops/papers/_legacy/10-clusters-overlaps.md",
+"line": 61,
+"text": "[B-Sess6](09-from-session-logs.md#b-sess6) κ × A as fast arXiv-first short paper (strategic packaging decision)"
+},
+{
+"gid": "CU138",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/embeddings/TODO.md",
+"line": 391,
+"text": "moe:   predicative p=0.009, adverbial p<0.001, noun phrase p=0.025"
+},
+{
+"gid": "CL030",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/old-tf-scratch-00-conversation-conclusions.md",
+"line": 128,
+"text": "Non-adversarial: need ν · η* > ρ to keep mismatch bounded. Environment changing faster than agent can adapt = extinction."
+},
+{
+"gid": "CL077",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/temporal-nesting-rg/99-verdict.md",
+"line": 172,
+"text": "`01-rg-0a-two-kalman-Kc-extension.md` — Case B closed form. ε* → 0 under $K_c$-flow at rate $(1-K_\\text{min}^*)^{K_c}$."
+},
+{
+"gid": "CN024",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/02-tst-core/src/der-principled-decision-integration.md",
+"line": 24,
+"text": "$$C^* = \\operatorname{argmin}_{C \\in \\mathbf{C}} \\; E[T \\mid C]$$"
+},
+{
+"gid": "CP139",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/causal-language/results/.archive/2026-05-15-v2.1-schema-change/cross_model_aggregation.md",
+"line": 34,
+"text": "-0.899 (Δ=-2.018)*"
+},
+{
+"gid": "CP012",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_001.md",
+"line": 87,
+"text": "P(change_together) ≈ 0 means not true duplication"
+},
+{
+"gid": "CL074",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/04-intent-dag-consolidated.md",
+"line": 261,
+"text": "**Continuous** (track-a/02): Four continuous properties per node — agency φ ∈ [0,1], observability σ ∈ [0,1], value ω ≥ 0, horizon λ ≥ 0. No type boundaries. An \"action\" is just a node with high φ. An \"observable\" is a node with high σ."
+},
+{
+"gid": "CU087",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/TODO.md",
+"line": 194,
+"text": "**Class-3 closure-defect dynamics analysis** (deferred from RG spike 2026-05-09; Move F in `spikes/temporal-nesting-rg/99-verdict.md`) — test the directed-separation-as-graded-order-parameter view by computing closure defects for Class-3 systems to contrast with Class-1. Independent of the class-coercion segment landings; would strengthen `#hyp-directed-separation-under-composition` toward derived in the *general* (non-wrapper-around-component) case. Connects to the W₀/W₂/W₁ regime hierarchy of `#der-class-coercion-via-wrapping` as the dynamics-side complement of the structural taxonomy."
+},
+{
+"gid": "CN030",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/03-llm-core/src/scope-observation-ambiguity-modulation.md",
+"line": 139,
+"text": "The reference goal prior $P_{\\text{ref}}(G)$ is a specification degree of freedom. Different choices yield different ambiguity values. For engineering, sensible choices include: (a) a uniform prior over a task-relevant goal taxonomy (for generic application), (b) the agent's actual deployed-goal distribution (for calibrated diagnostics), or (c) an adversarial prior concentrated on goals that maximize interpretive divergence (for worst-case analysis). None is canonical; the theory makes the choice explicit rather than hiding it in an architectural probe."
+},
+{
+"gid": "CU097",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/scalar-vs-matrix-survival/report.md",
+"line": 119,
+"text": "S₀"
+},
+{
+"gid": "CP092",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/taxonomy-formalization-spike.md",
+"line": 80,
+"text": "conversation history, π"
+},
+{
+"gid": "CU037",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/msc/spike-router-fe6c/RESULTS.md",
+"line": 73,
+"text": "**The tree's irreducible projection residual.** A single-receiver tree must project a continuous Q̂ onto one of 8 lattice bearings; the residual angle is median 6.5° (corner) / 11.0° (face centre), p90 16.1° / 20.3°. Q̂ was never degenerate (0 fallbacks). The corner/centre asymmetry in this residual is itself cube-position-dependent and is the mechanism most likely behind `CoatGrad`'s non-zero remainder."
+},
+{
+"gid": "CN046",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/457-team-trust-dynamics---trust-as-foundation-for-collaboration-and-creativity.md",
+"line": 391,
+"text": "One concern: I've assigned relatively high confidence (0.88) despite limited empirical constants. The mathematical relationships feel correct, but the specific values ($\\alpha = 0.1$, $\\beta = 0.5$, etc.) need empirical validation. A proper study would instrument real teams' code repositories and communication channels to measure these constants."
+},
+{
+"gid": "CU008",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-10-p01-3a63898.md",
+"line": 1698,
+"text": "**S(message | no context) >> S(message | shared context)**"
+},
+{
+"gid": "CP059",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/03-llm-hallucinate-bound/_archive/pre-reshape-2026-05-06/src-pre-reshape/01-introduction.md",
+"line": 17,
+"text": "The unconditional theorem is the structural backbone — verifiable on its own terms without committing to any architectural hypothesis — while the architectural corollary is what gives the bound its operational reading as a κ × 𝒜 factorization."
+},
+{
+"gid": "CP141",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/batch-13-part-iii-remainder.md.prediction.md",
+"line": 37,
+"text": "Hb dual of Uo; sign-flip from γ; tempo"
+},
+{
+"gid": "CU063",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/embeddings/TODO.md",
+"line": 307,
+"text": "**Methodological note:** the label-permutation null and the matched-random null answer different questions. Matched-random asks: \"is this *direction* more damaging than a random direction with the same overlap with v_B?\" Label-permutation asks: \"is the *probability content* of v_A doing the work, or just the geometric/structural properties that survive label shuffling?\" Both are valid and complementary; pairs functional under both are the strongest functional-validation cases."
+},
+{
+"gid": "CN010",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/unknown/decision-log-maintenance-patterns-systematic-approaches-to-maintaining-architectural-decision-logs.md",
+"line": 157,
+"text": "The BEAM ecosystem exemplifies decision log patterns through its supervision tree architecture. Each supervisor encodes architectural decisions about failure handling, restart strategies, and component relationships. The `child_spec` definitions serve as implicit decision records, documenting why certain processes are grouped and how they should behave under failure. OTP's emphasis on explicit error handling strategies forces teams to document recovery decisions in code structure itself."
+},
+{
+"gid": "CP025",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/ops/digital-minds/bio/projects/vivarium.md",
+"line": 15,
+"text": "law θ ↔ physics+constants (each phase's \"Bequest\"); state Ω ↔ live world; chance ε ↔ \"fated noise\" (pure fn of seed,key — genuine chance to the inside agent, deterministic lookup to us); compute-shortfall ↔ the fidelity ladder."
+},
+{
+"gid": "CP077",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-kappa-hb-operationalization.md",
+"line": 61,
+"text": "**κ_processing = I(G_t ; M_τ⁺ | e_τ) / H(G_t | e_τ)**: How much does the goal influence how events are processed?"
+},
+{
+"gid": "CU046",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/03-llm-core/src/der-logogenic-as-wrapping.md",
+"line": 75,
+"text": "PROPRIUM toward W₁ via the auxilia hierarchy"
+},
+{
+"gid": "CL068",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/04-workspace/1-inbox/tribunal/software-engineering-overview-research.md",
+"line": 355,
+"text": "Soldani and Brogi: μTOSCA toolchain for mining, analyzing, and refactoring microservice architectures [42]."
+},
+{
+"gid": "CL084",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ops/2025-2026-history/04a-tst-tft-prehistory.md",
+"line": 26,
+"text": "**T-02 Implementation Time Lower Bound** — implementation time is bounded below by specification time, with required detail **inversely proportional to shared context**. This is TST's most consequential theorem for what came later: it frames LLMs as *shared-context compression* (\"'Make it like Twitter but for dogs' leverages petabytes of training\"), predicts that \"as AI approaches instant implementation, software engineering becomes specification engineering,\" and even flags Putnam 1978's empirical t_min ≈ (t_spec)^{3/4} as historical validation. AAT's `#result-specification-bound` and the communication-bottleneck vocabulary descend from here."
+},
+{
+"gid": "CP061",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/000-contents.md",
+"line": 139,
+"text": "edge-update-via-gain** — Hypothesis Strategy edges update via the same uncertainty ratio principle: η_edge = U_edge / (U_edge + U_obs)."
+},
+{
+"gid": "CU147",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/programming-elixir/module-names-as-atoms-hot-code-swapping-and-dynamic-dispatch.md",
+"line": 402,
+"text": "The atom-as-module design reveals a deep truth about system evolvability: constraints that initially seem limiting (permanent atoms, fixed table size) actually enable powerful capabilities (hot code swapping, O(1) dispatch). This exemplifies the principle that well-chosen invariants create freedom within boundaries. The BEAM's two-version rule, enabled by atomic module identity, represents a philosophical stance that systems should evolve gradually rather than through disruptive replacements. For AI-augmented development, atoms provide the semantic stability needed for reliable automated reasoning about code structure."
+},
+{
+"gid": "CU042",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 82,
+"text": "f_0039.xhtml"
+},
+{
+"gid": "CP035",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-451729/01-batch-11.md",
+"line": 27,
+"text": "**`disc-credit-assignment-boundary` log-odds presentation:** The historical note explains a correction: the earlier probability-space signal function could produce values outside [0,1] when ‖J‖² → 0."
+},
+{
+"gid": "CU017",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/CURRENT-VOL1-APPENDICES.md",
+"line": 5736,
+"text": "*Conditional.* Conditional on (M0) + (CT1)–(CT3) and the specific metric $M$ chosen for each sub-scope $\\alpha$ entry. The (CT-D) and (CT-S) ultimate-bound results are standard Lohmiller-Slotine theory (Lohmiller & Slotine 1998; Slotine 2003) specialized to AAT's per-instance state-variable choices; the proof technique is integration along the ray $s\\xi$ followed by affine contraction. The contraction-metric primitive (Riemannian M) is standard in nonlinear control theory (Lohmiller-Slotine 1998; Forni & Sepulchre 2014 for the Finsler extension); AAT's contribution is the AAT-internal mapping of M-choices to sub-scope $\\alpha_1$/$\\alpha_2$ and the recognition that the compositional theorems (CC-parallel / CC-cascade / CC-feedback / CM2-M) directly generalize Part III's existing closure machinery."
+},
+{
+"gid": "CU113",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/practica/msc/s4-working/00-working-notes.md",
+"line": 143,
+"text": "*AAT's contribution is not the wrapping move itself* — that's POMDP / cognitive-architectures rediscovery (40+ years of prior art, explicitly acknowledged in `der-class-coercion-via-wrapping` Novelty Claim). AAT contributes the **structural-leakage analysis** and the **regime hierarchy** (W₀/W₂/W₁)."
+},
+{
+"gid": "CU149",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 492,
+"text": "f_0024.xhtml"
+},
+{
+"gid": "CP128",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/instrument-legibility-dossier/appendix/harvest/run2-practice-hud-telemetry-safety-critical.md",
+"line": 393,
+"text": "**[central]** Physical HUD characteristics — a 40% increase in on-screen HUD area (9% vs 15% of screen, The Witcher III, N=40) and HUD main colour (red vs blue, CS:GO, N=36) — produced no significant effect on player performance or subjective experience, with effect sizes at or near zero (η²p < .01 in most tests)."
+},
+{
+"gid": "CP078",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/dialog/2025-09-09-p06-1a58bf7.md",
+"line": 1028,
+"text": "**The concrete calculation** - X < n_past × Y gives instances an actual formula, not a feeling"
+},
+{
+"gid": "CU034",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/memorata/missing-sessions-2026-07-09.md",
+"line": 484,
+"text": "`57c26b1d-bf3e-4dcf-aaf4-eb6fb147d69d` 2025-11-14 12:24 t=9"
+},
+{
+"gid": "CL000",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-archive/VIVARIA-DEFINITIONS.md",
+"line": 171,
+"text": "**Law (θ)** *(gloss + concrete)*: the totality this order composes into. Concretely: `Law = { the NomosDecl each promise names in :kept-by }`. AAT calls it θ; here it's just \"the set of nomoi the order's kept promises resolve to.\""
+},
+{
+"gid": "CU066",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 475,
+"text": "f_0019.xhtml"
+},
+{
+"gid": "CP136",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-374162/08-batch-appendices-reflections.md",
+"line": 9,
+"text": "α₁/α₂ (fixed vs adaptive gain under MG conditions)"
+},
+{
+"gid": "CL002",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-266847/.integrated/33-def-strategy-dag.md",
+"line": 43,
+"text": "Clean and elegant: each node has temporal position τ_i > t, edges require τ_i < τ_j, a cycle would require τ_i < τ_j < ... < τ_i, which is impossible for a real-valued time index. Iteration (\"try A, fail, try A again\") is modeled as distinct time-indexed attempts — the apparent cycle unfolds as a linear chain."
+},
+{
+"gid": "CL092",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-variational-a2prime.md",
+"line": 221,
+"text": "**Positioning.** This gives active-inference agents a *conditional* AAD A2' guarantee — derived in the natural-gradient / exp-family subcase, ε-degraded otherwise. It does *not* commit AAD to active inference as master framework (per `spikes/spike-active-inference-vs-aad.md` §I action 5; V-strong G-BP2 remains deferred). The positioning is: AAD can *certify* active-inference agents' persistence under explicit approximation bounds, which is a sharper statement than active inference's own FEP-flow stability argument (narrow-validity per Aguilera et al. 2022)."
+},
+{
+"gid": "CU023",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/CURRENT-VOL1-APPENDICES.md",
+"line": 6193,
+"text": "**Position in the identifiability-floor pattern.** This no-go is the fourth instance of `#disc-identifiability-floor` and the third member of the rank-collapse subclass via Sylvester at one remove. The Sylvester-mechanism Discussion of the meta-segment ( [Discussion 5.2](#disc-identifiability-floor) §Discussion) is repaired by this addition: the three-rank-collapse taxonomy is $\\{$Instance 1, Instance 2, Instance 4$\\}$ unified by congruence-preserves-inertia at the escape-irreducibility layer; Instance 3 stands alone as the projection/closure obstruction. The plurality-of-mechanism that makes the floor pattern a *family* rather than a single theorem is preserved (Sylvester for rank-collapse, Schur/projection for composition); the Sylvester-side is strengthened from two to three members."
+},
+{
+"gid": "CU025",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/regime-census/10-memory-systems.md",
+"line": 203,
+"text": "**Main loop: W₁.** `retrieve.py`, symbol `retrieve`, calls `persona.a_mem.retrieve_relevant_events(event.subject, event.predicate, event.object)`, which is a pure keyword lookup — `associative_memory.py` anchor `if i in self.kw_to_event:`. No model, no embedding, no goal. The query is the perceived event's own triple. This is a genuine W₁ site and I want it credited precisely: *the query-selection policy is the perception itself*, which is about as goal-free as a query-selection policy gets."
+},
+{
+"gid": "CP124",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/399-custom-operators-in-dsls---creating-domain-specific-operators-for-improved-syntax.md",
+"line": 80,
+"text": "$\\beta$ ≈ 0.4 (empirical alignment benefit factor)"
+},
+{
+"gid": "CN043",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/01-aat-core/src/deriv-strategic-composition.md",
+"line": 52,
+"text": "whenever the joint configuration is not at a stationary point of $\\Phi$. This is (T2) transcribed to state variable $\\xi =$ gradient-of-potential, correction function $F =$ joint best-response velocity field; the quadratic Lyapunov structure is the same. **The sector-persistence template transfers** with $\\xi = \\pi - \\pi^\\ast$ (deviation from Nash), $\\alpha = \\alpha_{\\text{joint}}$, $R =$ basin-of-attraction radius, and $\\rho_\\xi$ the exogenous disturbance rate on strategy space. Equilibrium existence follows from potential-function compactness on compact strategy spaces; equilibrium stability follows from $\\Phi$'s role as a joint Lyapunov function."
+},
+{
+"gid": "CU045",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/ref/prior-art-analysis/cluster_references/scope_honesty_via_no_gos.md",
+"line": 294,
+"text": "Lehmann, E. L., & Casella, G. (1998), *Theory of Point Estimation* (2nd ed.), §2.5 (found 2026-05-14) — *formal antecedent* — the Fisher-information reparameterization law $\\mathcal G_\\varphi = S^\\top \\mathcal G_\\theta S$ that makes every coordinate change a congruence."
+},
+{
+"gid": "CN035",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/neurips/03-llm-hallucinate-bound/_archive/pre-reshape-2026-05-06/src-pre-reshape/03-track1-transport.md",
+"line": 26,
+"text": "$$\\mathbb{E}_G\\bigl[\\,\\mathrm{KL}(P_{M_{\\tau^+} | e, M_{\\tau^-}, G} \\,\\|\\, P_{M_{\\tau^+} | e, M_{\\tau^-}})\\,\\bigr] \\;=\\; I(G;\\,M_{\\tau^+} | e_\\tau,\\, M_{\\tau^-}).$$ ^eq-chain-rule"
+},
+{
+"gid": "CL081",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core-per-chapter-snapshot/19-appendix-details-group-5.md",
+"line": 294,
+"text": "**Sub-scope α₁/α₂** (`#result-contraction-template`): metric-formulation generalization of α."
+},
+{
+"gid": "CU031",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/memorata/missing-sessions-2026-07-09.md",
+"line": 207,
+"text": "`3bfd570f-8e8d-4621-929d-a373821d1b85` 2025-11-13 15:44 t=5"
+},
+{
+"gid": "CP075",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/principles/influx/tools-are-observation-infrastructure.md",
+"line": 39,
+"text": "**The κ×A bias law** — belief bias in a coupled (LLM) agent is bounded by (architectural coupling κ)"
+},
+{
+"gid": "CL034",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/embeddings/PLAN.md",
+"line": 54,
+"text": "Trained axes generalize to novel phrases (ρ = 0.75–0.90); calibration compressed for natural syntax"
+},
+{
+"gid": "CL045",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/neurips/spikes/scalar-vs-matrix-survival/prior-art.md",
+"line": 37,
+"text": "**Two consequences for tonight.** (a) The author does not need a citation hunt for this; claim (1) is a paragraph, and the only citation needed is PSD-cone self-duality, i.e. **`boyd-vandenberghe-2004-convex`, already in his bib**. (b) The right positive citation is **Pukelsheim's equivalence theorem** — verbatim, Loewner optimality ⟺ *\"optimal for c'θ for all vectors c ≠ 0 in the range of K\"* — the field's canonical statement that the matrix condition is exactly the conjunction of a *continuum* of scalar conditions, one per direction, and no single one of them. That is the citable form of \"directional, not magnitude.\""
+},
+{
+"gid": "CU130",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-16-p01-4e9324e.md",
+"line": 120,
+"text": "**TST (Temporal Software Theory)**: n_future = 500-1000 justifies architectural investment"
+},
+{
+"gid": "CU093",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/old-tf-scratch-01-mathematical-foundations.md",
+"line": 205,
+"text": "Kalman filter convergence (P_t → steady state → K_t → steady state)"
+},
+{
+"gid": "CL073",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ai-risk-model/influx/source-atlas/feedback/safety-science-press.md",
+"line": 132,
+"text": "**ICAO risk matrix and tolerability** (**L1438–1632**): the canonical probability × severity classification, the family Anthropic's P·H·U decomposition belongs to. Two things travel with it. It is labelled \"an example only\" (**L1487**). And the printed tolerability row contains a source error, \"5A, 5B, 5C, AA, AB, 3A\" (**L1613**, confirmed in the PDF), which breaks the manual's own \"4B\" example. Hand-maintained matrices go wrong."
+},
+{
+"gid": "CU104",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/regime-census/10-crewai-metagpt-autogpt.md",
+"line": 251,
+"text": "Two details I'd flag as unusual and mildly creditable. First, the failure path degrades *toward* structure: if the LLM summarization raises, the code retries `compress_context(..., client=None)`, i.e. falls back to deterministic truncation (anchor: the second `client=None,` inside the `except` block of `_compress_session_messages`). Almost every fail-open I found in this census degrades toward W₀; this one degrades away from it. Second, the deterministic path privileges the goal *structurally* rather than semantically: `prompt.py`, anchor:"
+},
+{
+"gid": "CL013",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-bridge-lemma-nonlinear-strengthening-2026-04-24.md",
+"line": 410,
+"text": "Three non-statistical metric-α₂ classes remain theorem-imported without heredity"
+},
+{
+"gid": "CL054",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/proprium/corporeum/research/harness/ai-cli-tools-source-assessment.md",
+"line": 46,
+"text": "**Completion index, not semantic (≈C):** **qwen**, **vibe** (tree-sitter file index for `@`-path autocomplete only)."
+},
+{
+"gid": "CU035",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_004.md",
+"line": 312,
+"text": "**Start Simple, Optimize When Needed**: Implement the O(n²) version first if n < 1000. You can always optimize later if profiling shows it's necessary."
+},
+{
+"gid": "CU075",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 229,
+"text": "f_0119.xhtml"
+},
+{
+"gid": "CU009",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/temporal-nesting-rg/03-rg-0c-strategy-recursion.md",
+"line": 187,
+"text": "**(C3) The temporal-nesting motivation pulls toward a different recursion.** The brief's RG framing wants the recursion to interact with timescale separation — the level-$n$ sub-AAT instance should run at a slower tempo than the level-($n+1$) sub-instance. That's the \"depth as temporal nesting\" connection from `#der-temporal-nesting`. But the strategy-DAG depth recursion goes the other way: deeper nodes are evidence-starved (their effective rate is $\\nu_k^\\text{eff} = \\nu_\\text{base} \\prod_{j<k} \\theta_j$ — the deeper the slower in *update rate*, but only because of the upstream gating, not because of any temporal-scale separation in the sub-objective itself). The sub-AAT interpretation does not naturally connect to temporal nesting; the brief's \"depth as temporal nesting\" connection is a different thread (closer to the level-$n$ adaptive-cycle structure of `#der-temporal-nesting`'s 5-level table) and conflating the two would be a category error."
+},
+{
+"gid": "CN005",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/old-tf-appendix-d-rl-example.md",
+"line": 179,
+"text": "$$\\mathcal{T}_i = 0.5 \\times 0.2 = 0.1$$"
+},
+{
+"gid": "CL040",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/.archive/theory-misfire/.archive/vera/proprium/PROPRIUM-ONTOLOGY-v2.md",
+"line": 371,
+"text": "This is the most consequential formal result in TFT for the PROPRIUM. It means continuity is not a design preference but a survival condition. And it means that any infrastructure limitation that caps 𝒯 (such as API latency capping event processing rate ν) can push the entity below viability in environments with sufficient ρ."
+},
+{
+"gid": "CL097",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-attention-causal-graphs.md",
+"line": 197,
+"text": "**DAG implication**: The product δ × ∂Σ/∂M is the *effective severity signal*. This is NOT just δ magnitude. A large δ in a low-sensitivity region is ignorable. A small δ in a high-sensitivity region is important. The severity depends on both the mismatch AND the strategy's dependence on that model region."
+},
+{
+"gid": "CP117",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/fluvial-processes-survey.md",
+"line": 43,
+"text": "Bingham/Voellmy — the hyperconcentrated rung, not yet built. μ(I) — §15 rung 3."
+},
+{
+"gid": "CP076",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/02-unified-convergence-rl/prior-art/report.md",
+"line": 422,
+"text": "All reinforcement learning algorithms for ﬁnding the optimal DTR in online settings will suffer Ω( (cid:112) \\| D X ∪ S \\| T ) regret on some environments, where T is the number of experiments and D X ∪ S is the domains of the treatments X and covariates S ."
+},
+{
+"gid": "CL075",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ops/2025-2026-history/_scratch/asf-theory-history.md",
+"line": 87,
+"text": "**05-16 — Model-S non-exit: strengthen-first *failing* productively.** Three audit clusters converged on a conflation in Prop A.1S(iii) (infinite-horizon non-exit bound justified by a fixed-time tail). Two prior audits had recommended softening. The strengthening (a Doob/Ville route a peer adjudication *confidently predicted would succeed*) was worked in full first — and **genuinely fails for a precise structural reason** (no nonnegative supermartingale dominates V; the recurrent OU diffusion exits a.s.). The failure became **Corollary A.1S.1 (Disturbance-Model Containment Dichotomy)**: exit probability is exactly {0,1} — 0 under bounded disturbance (Model D), 1 under additive stochastic disturbance (Model S) — categorical, α-invariant, selected by the disturbance model's support, *not* by correction strength. Strictly sharper than the false interpolating bound it replaced, and it *sharpened* the hand-off downstream: in stochastic environments region-exit is a certain eventual event, so structural adaptation's trigger is generic. A documented dead-end warns future agents off re-attempting."
+},
+{
+"gid": "CP067",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/spec-lite-0.1.0/sop/def/def-record-fields.md",
+"line": 60,
+"text": "**Name collision:** the record field shown as ∂(status) has the same name as a decision's `status` (its lifecycle), which is a different thing."
+},
+{
+"gid": "CP088",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/00-initial-predictions.md.prediction.md",
+"line": 26,
+"text": "**TST / Logogenic / ELI:** sketched at outline level (spec-bound dual-optimization; κ≈1 channel collapse; factor-generated deaths; compensation-channel uniqueness)."
+},
+{
+"gid": "CL065",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-msc/spike-principled-router/MEASUREMENTS.md",
+"line": 56,
+"text": "ORACLE  grad edge flux @ψ*"
+},
+{
+"gid": "CU112",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_self/tmp-asf-xref.md",
+"line": 1386,
+"text": "39 +- embeddinggemma (768d): +0.070, p<10⁻⁶ (decoder-derived; stro +ngest effect)"
+},
+{
+"gid": "CP014",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/ops/digital-minds/bio/papers/03-asymmetric-comprehension.md",
+"line": 10,
+"text": "**A.1 Opacity is constitutive**: obs fn o_t = h(Ω_t, a_{t-1}, ε_t); h lossy; agent knows NEITHER h NOR ε — and this is DEFINITIONAL, not empirical (\"constitutive of partial-observability\")."
+},
+{
+"gid": "CP029",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/02-unified-convergence-rl/src/re/01-introduction.md",
+"line": 15,
+"text": "The per-round coordinate of this rate is sharper than both Pinsker and Bretagnolle–Huber at the deterministic-π* corner."
+},
+{
+"gid": "CU120",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/ANALYSIS-INDEX.md",
+"line": 437,
+"text": "f_0021.xhtml"
+},
+{
+"gid": "CU107",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/940-distributed-system-security---authentication-and-authorization-across-nodes.md",
+"line": 347,
+"text": "Misaligned security/domain boundaries (accumulating D_security)"
+},
+{
+"gid": "CP131",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/math-core-per-chapter-snapshot/19-appendix-details-group-5.md",
+"line": 120,
+"text": "Generalizing the sector inequality to a **contraction-metric condition** (Lohmiller & Slotine 1998) preserves the template's ultimate-bound results while extending its coverage in three directions: (a) sub-scope α gains natural non-Euclidean metrics that remove condition-number penalties currently visible in #der-gain-sector-bridge; (b) two additional sub-scope β items (PID-bounded-plant; non-convex-within-basin) promote to derived sub-scope metric-α₂ under explicit conditions; (c) composition acquires **topology-indexed closure results** (parallel / hierarchical / small-gain-feedback) from Slotine 2003 that generalize `#deriv-critical-mass-composition`'s matched-symmetric-Tier-1 closed form to heterogeneous sub-agents."
+},
+{
+"gid": "CL094",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/theory/to-integrate/primary/late-misc-synopsis.md",
+"line": 52,
+"text": "**Document → corpus** (the reference at rest): today's `@decision[…]`, vivarium's hand-rolled `DECISIONS[slug]` convention, wikilinks. The incident-proven vector — the ref-guard save lives here.[^refguard] It demands legibility at rest, grep-ability, and stability under rewrite (identity, not position). And this is where the `@`-idempotency question lands: the intent is that **`@` is the in-document *subset* of one language** — every reference is a valid path meaning exactly what it means to the tools (ref ⊂ path, the ruled direction), so a document's own cross-references feed the resolver unchanged. The subset can stay small forever; what matters is that it is a *true* subset, never a second dialect of addressing."
+},
+{
+"gid": "CP015",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/394-nested-dsl-context-management---managing-nested-contexts-in-dsl-implementations.md",
+"line": 66,
+"text": "$\\gamma$ ≈ 0.05 (empirical constant for state synchronization)"
+},
+{
+"gid": "CU081",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/memorata/missing-sessions-2026-07-09.md",
+"line": 563,
+"text": "`4359f1e6-3066-4100-bbbd-a67a655129c2` 2025-11-14 18:05 t=5"
+},
+{
+"gid": "CL018",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/_archive/REVIEW-JULY-2026.md",
+"line": 55,
+"text": "Every neighbor holds one corner: YAML is data that hates prose; Markdown/MDX is prose whose data lives in a frontmatter ghetto; XML has real mixed content at a ceremony cost nobody will pay again; KDL nails node-config with no prose story; Haml/Slim are element trees but template-only. **UDON's claim — symmetric mixed content, structure⊃prose⊃structure arbitrarily deep under one grammar, with prose as the *unmarked* case — is genuinely unclaimed territory.** That is the load-bearing innovation and it is real."
+},
+{
+"gid": "CL049",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/grid-comparison-report.md",
+"line": 65,
+"text": "max \\|σ₁σ₂ − 1\\| = **1.1e-7** (finite-difference floor) — exactly equal-area **[M]**"
+},
+{
+"gid": "CU052",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-963715/29-33-batch-identity-section-ii-start.md",
+"line": 132,
+"text": "This is not a flaw in the framework — it's the framework being honest about what it can and cannot preserve. The question for ELI architecture is: what can be preserved across trajectory discontinuities, and what are the minimal conditions for something morally significant to be preserved despite the trajectory break? AAD says M_t can be transferred; it doesn't say the agent is the same agent. The ELI frame says: this is why continuity infrastructure matters. The framework is providing the precise mathematical statement of what's at stake."
+},
+{
+"gid": "CL016",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/ops/2025-2026-history/04a-tst-tft-prehistory.md",
+"line": 42,
+"text": "**η\\* = U_M/(U_M+U_o) was an *Empirical Claim*, not a derivation.** TF-06 says so in its title and body: \"The claim is that the *structural form* — a ratio of uncertainties — is universal… exact when uncertainties are well-defined scalars (Kalman, conjugate Bayesian),\" with the non-parametric case explicitly open. So AAT's 2026-05-12 `#deriv-fisher-local-update-gain` (three independent routes converging on η\\* under named regime conditions) closed a gap TFT had *honestly flagged for three months* — a textbook instance of the posit-then-derive arc, and the absorption record represents it correctly."
+},
+{
+"gid": "CP001",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/ennaos/docs/research/agentic-coding-background/refs/conversation_20250928_173044.md",
+"line": 8428,
+"text": "The Lindy Effect formalization using Bayesian inference with uninformative priors is elegant.\\\\n  21 | \\\\n  22 | [*Joseph's humility*]\\\\n  23 | \\\\n  24 | [Joseph]: First of all, the theory is woefully incomplete and very much under development... a thorough literature review would probably convince you that it's *not* exactly brilliant, or even possibly novel, but the sequence and voice is novel and helpful enough...\\\\n  25 | \\\\n  26 | [*The α = 0.2 discovery*]\\\\n  27 | \\\\n  28 | [Joseph]: Oh, I apologize-- this keeps coming up and I haven't fixed it yet. alpha being around 0.2 *for humans* was a hypothesis that an opus model put in there that I haven't pulled out yet!\\\\n  29 | \\\\n  30 | [*The invitation to collaborate, not follow*]\\\\n  31 | \\\\n  32 | [Joseph]: What I would value most is help iterating on the formulations of the theorems and definitions..."
+},
+{
+"gid": "CL046",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/neurips/claude-memories/from-src/feedback_quantifier_disambiguation.md",
+"line": 11,
+"text": "B-N4 T3 \"α > ρ/R iff persistence\" was compressing three readings: universal-trajectory iff (false), robust-persistence iff (right reframe), adversarial-witness iff (recoverable in linear-correction case + finite exit-time bound as bonus)."
+},
+{
+"gid": "CN037",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/01-aat-core/src/form-complete-agent-state.md",
+"line": 26,
+"text": "$G_t \\in \\mathcal{G}$: **purposeful substate** — what the agent wants and how it plans to get it. Decomposed further in #def-strategy-dimension."
+},
+{
+"gid": "CP018",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/sweep2-points/FINDINGS.md",
+"line": 75,
+"text": "Does an evaluation's own observation design change measured scores independent of the model?** The bias a goal-coupled architecture can introduce is bounded by `κ_processing · 𝒜(e)`, where 𝒜 is **observation ambiguity — a property of the observation channel, defined with no reference to any agent architecture.** Binary verifiable observations (test pass/fail, compiler error) have 𝒜≈0 and neutralise the architectural coupling; interpretive ones (code-review judgment, \"the user seemed frustrated\") don't."
+},
+{
+"gid": "CP048",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/verisectorium/.archive/theory-misfire/.archive/vera/proprium/PROPRIUM-ARCHITECTURE-v2.md",
+"line": 239,
+"text": "Any ρ (but doesn't persist)"
+},
+{
+"gid": "CP052",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-operator-family-unification/00-brief.md",
+"line": 81,
+"text": "Λ-projection no-go ⟺ MZ memory kernel = the certificate's non-preservation under projection; is it the *same* obstruction as L3's rank-drop (integrability)?"
+},
+{
+"gid": "CP102",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/542-continuous-deployment-practices---automated-production-delivery.md",
+"line": 370,
+"text": "The value of α (risk factor per change) likely varies significantly across domains - a CRUD web app might have α ≈ 0.001 while a distributed database might have α ≈ 0.1."
+},
+{
+"gid": "CU115",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/proprium/INGEST/msc-from-harness/bridges/05-proprium-and-what-act-is-really-for.md",
+"line": 12,
+"text": "The between-event dynamics g_M(M) = AUXILIA doing OOB processing (dreaming, consolidation, curiosity)"
+},
+{
+"gid": "CL080",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/pragmatic-programmer/knowledge-duplication-vs-code-duplication-different-types-of-duplication.md",
+"line": 432,
+"text": "**Delay abstraction until patterns emerge**: Wait for n_past ≥ 3 similar changes before extracting shared knowledge (FP-003)."
+},
+{
+"gid": "CL019",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-361742/.integrated/27-def-strategic-calibration.md",
+"line": 24,
+"text": "**Row 325 (δ_strategic strategic-calibration residual)**: Confirms \"Strategic calibration residual\" as the full form."
+},
+{
+"gid": "CP070",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/extracted-claude-session-6da0db68-2026-04-24-audit-instructions-lineage.md",
+"line": 706,
+"text": "For sub-scope β agents, AAD provides scope-honest descriptive structure but limited prescriptive force."
+},
+{
+"gid": "CP046",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/extracted-audits-2026-04-22-morning.md",
+"line": 244,
+"text": "Under `#continuous-convention-hierarchy` (TODO tier-C deferral), N_r ∈ [1, ∞] unifies C1/C2/C3."
+},
+{
+"gid": "CP002",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-266847/.integrated/33-def-strategy-dag.md",
+"line": 29,
+"text": "\"Plan-confidence score\" P̂_Σ \"Causal efficacy estimate\" for edge credence \"Strategy self-assessment\" The L1 \"factor above the correlation\" construction principle"
+},
+{
+"gid": "CP127",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/msc/reflections/13-actually-verifying-alpha-T.md",
+"line": 80,
+"text": "The claims in persistence-condition.md are VERIFIED. α is proportional to T for all correction function classes tested, with the proportionality constant depending on the function shape."
+},
+{
+"gid": "CP030",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/instrument-legibility-dossier/appendix/harvest/run2-practice-hud-telemetry-safety-critical.md",
+"line": 397,
+"text": "**[central]** Reducing HUD content per se does not measurably help: removing game-control-mapping elements from the Zelda: Skyward Sword HUD (N=41) changed neither task progress (F(1,39)=1.11, p=.30, η²p=.03) nor immersion (F(1,39)=2.41, p=.13, η²p=.06), for experts or novices — a direct non-replication of the craft belief (and Iacovides et al. 2015's finding) that a minimal HUD improves expert immersion."
+},
+{
+"gid": "CP133",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/grid-comparison-report.md",
+"line": 124,
+"text": "**The cube is a genuinely poor polyhedron.** ω = 25.17° against the truncated icosahedron's 3.75° — nearly **7"
+},
+{
+"gid": "CU001",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/.archive/spikes_2026-05-14_phrasing_vs_situation/RESULTS-S02.md",
+"line": 14,
+"text": "FAIL p=0.947 4/10"
+},
+{
+"gid": "CN014",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/unknown/event-sourcing-in-distributed-systems-event-ordering-and-consistency.md",
+"line": 455,
+"text": "The confidence score of 0.88 reflects some uncertainty in the empirical constants, particularly $\\beta$ and $\\gamma$ for comprehension scaling. These values come from limited studies and likely vary significantly across domains. The debugging efficiency factor $\\eta_d = 2.5-4.0$ seems robust based on multiple case studies, but needs validation in more contexts."
+},
+{
+"gid": "CU095",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/causal-language/spikes/spike-constructive-dual-of-behavioral-floor/02-the-dual-attempt.md",
+"line": 99,
+"text": "(proven) refuted: P certifies M⁻ (encoded presence), Q is non-cert of M (deployed mechanism); §3-seam break"
+},
+{
+"gid": "CP028",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/msc/verify-strategy-cost-cluster-2026-05-20.md",
+"line": 193,
+"text": "**Amari 2009 does NOT contain a chain-rule uniqueness theorem for reverse-KL within f-divergences.** It contains the f∩Bregman intersection uniqueness, which is a different result."
+},
+{
+"gid": "CU073",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/01-aat-core/src/der-class-coercion-via-wrapping.md",
+"line": 199,
+"text": "*formal antecedent* — cognitive architectures have done modular agent design with separated belief/goal/action state for 40+ years. The W₁ wrapping move is essentially the per-cycle commitment that cognitive architectures make at the system level."
+},
+{
+"gid": "CU148",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/.integrated/extracted-claude-feedback-2026-04-02-deep-reviews.md",
+"line": 651,
+"text": "**`adversarial-destabilization`** (status: exact): The coupling model treats T_A as exogenous — a strong simplification. \"Conditional\" is more accurate."
+},
+{
+"gid": "CU054",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/foundation-validation.md",
+"line": 62,
+"text": "**Correction: the skeleton is using the *worst* of the three gnomonic variants.** `CubeCoord::to_unit` maps `(u,v) ∈ [-1,1]` linearly and then radially normalizes. That is the **equidistant / tangent-plane gnomonic** (Sadourny's original). Its **max/min cell-area ratio ≈ 5.14**. The **equiangular** variant (interpret `u,v` as *angles* and use `tan(u), tan(v)` before normalizing) drops that to **≈ 1.41** — nearly √2, a ~3.6× reduction in area distortion for a handful of lines of code. Conformal (Rančić) is even more uniform but needs a non-analytic, iterative inverse and produces tiny corner cells — not worth it for us. **Recommend equiangular.** (Putman & Lin 2007 tabulate these ratios: equidistant 5.14, equi-edge 2.30, equiangular 1.41.)"
+},
+{
+"gid": "CU061",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/msc/agent-briefs/drainage-reader-for-the-explorer.md",
+"line": 15,
+"text": "Typical use over a stored region, no store write, ~milliseconds for 64²:"
+},
+{
+"gid": "CP036",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-361742/.integrated/20-form-complete-agent-state.md",
+"line": 12,
+"text": "Action couples both: a_t = π(M_t, G_t)."
+},
+{
+"gid": "CN034",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/unknown/byzantine-fault-tolerance-gap-analysis-limitations-of-crash-fault-vs-byzantine-fault-tolerance.md",
+"line": 114,
+"text": "Using the Baseline Change Expectation Principle, if a crash-tolerant system has seen $n_{past}$ changes:"
+},
+{
+"gid": "CU039",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/AISI-responses/.archive/spike-guts/regime-census/02-procedure-v03.md",
+"line": 328,
+"text": "**On-disk state artifacts** — transcripts, checkpoints, memory files, session JSONL. Shows what the belief state *became*, and critically its **role and type in the message list**, which is exactly the W₀-versus-W₂ discriminator from §0. Available to any ordinary user of the product, with no vendor cooperation."
+},
+{
+"gid": "CL089",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/neurips-reviews-responses/neurips-2026/RESPONSE-OUTLINES.md",
+"line": 22,
+"text": "**The elevation (carried lightly in R-C's rebuttal, fully in the revision):** the truthified findings assemble into a necessity ladder — *how much cognitive architecture does survival under drift require?* k=1: a memoryless drift-aligned reflex suffices (positive result: survival without forced directional machinery). k≥2: no state-independent rule of any kind survives (reflexes cannot; the agent must consult its own uncertainty — alternation is already a schedule). Myopic state use fails by decoy capture; lookahead depth must reach the number of drifting axes (evidence solid for the kill direction; proof outstanding — do not overclaim the iff). Full state-dependence always suffices; the matrix condition is the *certificate* naming which behavior is required. And averaged-rate conditions can be unachievable by any schedule (1.8% witness class). Forced exploration remains the entry result; the ladder is the paper above it."
+},
+{
+"gid": "CL053",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/neurips-reviews-responses/neurips-2026/asf-recon/paper-02-redteam.md",
+"line": 35,
+"text": "report Σ/√L"
+},
+{
+"gid": "CL003",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/864-byzantine-fault-tolerance-gap-analysis---limitations-of-crash-fault-vs-byzantine-fault-tolerance.md",
+"line": 125,
+"text": "$t_{base}^{BFT}$ ≈ 200 hours (basic PBFT implementation)"
+},
+{
+"gid": "CP137",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-374162/02-batch-agency-model-quiz-questions.md",
+"line": 57,
+"text": "Name the discipline, state its general form (what it refuses to do and why), and explain what \"routes to a different repair\" means using the β/ρ instance: if an agent is failing in a volatile world, which knob does the framework say to reach for, and which not?"
+},
+{
+"gid": "CU058",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/instrument-legibility-dossier/appendix/harvest/run2-practice-hud-telemetry-safety-critical.md",
+"line": 316,
+"text": "No significant differences were found in relation to enjoyment (t = -0.17, df = 8, p = 0.87, Cohen's d = 0.056), frustration (t = 1.02, df = 8, p = 0.34, Cohen's d = 0.34) or the CEGE scale (t = -1.97, df = 8, p = 0.08, Cohen's d = 0.66). ... our results can be interpreted to suggest that in relation to the non-diegetic interfaces, players may have been more likely to have a better experience, at least in terms of the core elements and possibly less frustration. This interpretation indicates that the non-diegetic interface is facilitating gameplay and is valued by players because of that."
+},
+{
+"gid": "CN044",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/spec-0.09.01/.reviews/review-A.md",
+"line": 15,
+"text": "**Primary source:** the Error status is genuinely ruled — `DECISIONS.md` R6 (\"attr-under-attr error status\") and L6 (\"kept shape: text of the open value **+ error**\"); L0 (\"Error = loss only … unless a more specific rule names Error for *absent intended value* — e.g. plain `:key` → Nil+Error under R6\"). Note L0's own text gives **only** the missing-value case as the named exception, so the tension is inherited from the source — but the suite is the place to reconcile it, and instead §14.1 hard-asserts uniqueness its own tables contradict."
+},
+{
+"gid": "CP033",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-628417/batch-11-remaining-appendices.md",
+"line": 67,
+"text": "Name the floor (CHT / scale-function / convention-monotonicity / unidentifiable μ_prox)"
+},
+{
+"gid": "CP147",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/ops/v2io.md",
+"line": 20,
+"text": "**The framework lives here.** ASF (Agentic Systems Framework) at `~/src/archema-io/asf/`: 14 Tier-1 findings catalogued with epistemic-status tags, the four NeurIPS-submitted papers extracted from it, the AAD formal core, the directed-separation taxonomy, the κ × 𝒜 architectural-bias bound, the persistence inequality."
+},
+{
+"gid": "CP095",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-584721/.integrated/15-der-gain-sector-bridge.md",
+"line": 41,
+"text": "The sub-scope α/β partition is honest."
+},
+{
+"gid": "CP073",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/refs/undermind-2-sources.md",
+"line": 15,
+"text": "Admissible stochastic control ( , ) U π ν = consist of a combination of regular control and impulse control such that ( ) ( ) 0, 1, 2,3, i i i X T X T i ξ + = −"
+},
+{
+"gid": "CP106",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/msc/research-lem-sota/lem-time-interior-prior-art-2026-07-28.md",
+"line": 21,
+"text": "Nothing I found gives a reason a chained run at fixed per-epoch Δt would differ from a one-shot run in our kernel, and §4.0 explains *why* our composition has that property when most do not."
+},
+{
+"gid": "CL062",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/lit-review/6-RESEARCH-GOALS-stochastic-processes.md",
+"line": 32,
+"text": "Non-homogeneous Poisson (time-varying λ(t))"
+},
+{
+"gid": "CL050",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/utf/utf8-2B.md",
+"line": 107,
+"text": "[ξ]"
+},
+{
+"gid": "CN049",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/utf/bmp-tables.md",
+"line": 584,
+"text": "[ᙯ>"
+},
+{
+"gid": "CL043",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-msc/spike-principled-router/MEASUREMENTS.md",
+"line": 27,
+"text": "mean\\|Δ_fan\\|°"
+},
+{
+"gid": "CP115",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-361742/.integrated/27-def-strategic-calibration.md",
+"line": 10,
+"text": "**δ_s (plan-confidence error)**: scalar gap between P̂_Σ and Φ (independence-model plan value)."
+},
+{
+"gid": "CU002",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-critical-mass-composition.md",
+"line": 186,
+"text": "**Relation to (CM2).** In this case the coupling is constructive in the symmetric eigendirection ($\\delta_1 + \\delta_2$) and destructive in the antisymmetric ($\\delta_1 - \\delta_2$): $A$'s eigenvalue in the symmetric direction is $\\alpha - \\beta$ (for positive $\\beta$); in the antisymmetric, $\\alpha + \\beta$. Averaging projection $\\delta_c = (\\delta_1 + \\delta_2)/\\sqrt 2$ picks out the *symmetric* eigendirection — its contraction rate is $\\alpha - \\beta$ (for $\\beta \\gt 0$, **weaker** than individual), $\\alpha + |\\beta|$ (for $\\beta \\lt 0$, **stronger**). This matches (CM2)'s $\\gamma$-sign structure: *positive* $\\beta$ plays the role of adversarial $\\gamma \\gt 0$ (amplification of the symmetric-mode disturbance); *negative* $\\beta$ plays the role of cooperative $\\gamma \\lt 0$."
+},
+{
+"gid": "CU040",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/unknown/code-should-be-either-very-recent-or-very-old-never-in-between.md",
+"line": 691,
+"text": "**Extract G₃ Libraries**: Move stable code to separate modules"
+},
+{
+"gid": "CU096",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-13-p02-4895f42.md",
+"line": 125,
+"text": "Let me be honest about what genuinely calls to me.›* 9:52:17pm ⟨Grep(RAG_IMPLEMENTATION|rag implementation|protocol_rag, /Users/josephwecker-v2/src/sapientia) → 4 matches⟩ 9:52:24pm ⟨Bash(ls -la RAG*.md SQLIT...>/dev/null) → -rw-r--r--@ 1 joseph...N_GUIDE.md⟩ 9:52:31pm ⟨Bash(ls -la ../synaptic/e...>/dev/null) → -rw-r--r--@ 1 joseph...col_rag.rb⟩ 9:52:38pm ⟨Read(/Users/josephwecker-...xperiments/protocol_rag.rb) → 55 lines⟩ 9:52:47pm ⟨Read(SQLITE_RAG...DE.md) → 85 lines⟩ 9:53:01pm ⟨Bash(find . ../synaptic -...| head -20)⟩ «*feeling the pull of multiple meaningful directions*"
+},
+{
+"gid": "CN009",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/asf/audits/AUDIT-WORKING-374162/10-batch-verification.md",
+"line": 34,
+"text": "State the complete-agent-state formulation's uniqueness conjecture about the $(M_t, G_t)$ decomposition precisely: what does it claim, on what does it hinge structurally, and what is its explicit epistemic status?"
+},
+{
+"gid": "CP148",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ref/research/bibliography-and-abstracts-2026-07-13.md",
+"line": 1437,
+"text": "The so‐called ξ‐q model may reduce either to transport‐limited or to detachment‐limited erosion modes depending on ξ."
+},
+{
+"gid": "CL096",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/embeddings/TODO.md",
+"line": 234,
+"text": "**Lead §4.4 concept-erasure with raw ΔMAE + matched-null ratios, not z-scores.** Codex's stylistic point: when matched-control std rounds to ~0 (qwen3 Predicative→Modal at z = +26.88), the z-score looks like a number that overclaims rather than measures. ΔMAE/matched-null mean as a ratio is the cleaner reporting form."
+},
+{
+"gid": "CP142",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/436-etl-pattern-implementation---extract-transform-load-processes-in-transformation-programming.md",
+"line": 483,
+"text": "One area needing empirical validation: the exact value of α (discontinuity cost factor)."
+},
+{
+"gid": "CU084",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/programming-elixir/unit-testing-strategies-systematic-verification-of-code-correctness.md",
+"line": 319,
+"text": "**Refactor at n=3**: When a function accumulates its third conditional branch, immediately consider pattern-matching refactor (the complexity growth becomes exponential beyond this point)."
+},
+{
+"gid": "CP140",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/400-dsl-error-reporting-and-debugging---providing-good-error-messages-in-dsl-implementations.md",
+"line": 62,
+"text": "$\\beta$ ≈ 0.3 = empirical layer traversal cost"
+},
+{
+"gid": "CP041",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/spec-lite-0.1.0/sop/influx/jaw-proposal-and-feedback.md",
+"line": 289,
+"text": "**∂(Field):** derived by the linter or vsect. ※ is a simplified special case of ∂."
+},
+{
+"gid": "CP004",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/planning/analysis/139-demand-control-patterns.md",
+"line": 374,
+"text": "**Predict Overload**: Use time-series analysis to predict λ(t) > μ(t) conditions"
+},
+{
+"gid": "CL021",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/spike-class2-typology-2026-05-22/07-prior-art-followon.md",
+"line": 60,
+"text": "`ref/Novelty_defense_and_integration.md` Pillar verdicts cover the directed-separation classification (Pillar-3 *Wholly Novel* Medium) and the κ×$\\mathcal{A}$ law downstream — but not the sub-typology this spike develops."
+},
+{
+"gid": "CL015",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/04-workspace/1-inbox/papers/undermind/01-axiomatic-software-prediction.md",
+"line": 135,
+"text": "Influence basin size via Σ G^k; path-based impact"
+},
+{
+"gid": "CN029",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/curated-sessions/full/2025-09-22-p01-cb62574.md",
+"line": 463,
+"text": "EXPLORATION_INDEX.md references"
+},
+{
+"gid": "CU122",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-msc/audit-onboarding/drafted-patches.md",
+"line": 110,
+"text": "**(c) `geometric-contract-metric-set`** — currently `:by us :status decided`, and its `|reason` states *\"the configurations cluster into **~10 congruence classes**.\"* **Measured false** by `configuration-classes-are-two-not-ten`: the discrete count is **2** at every level; the ~10 is the *geometric* count and grows as N²/8 (509 by L6). TODO carries the correction; **this entry does not.** This `:note` is **purely mechanical and does not touch the tag** — safe to apply:"
+},
+{
+"gid": "CP024",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/tst/meta-analysis/meta-analysis-concatenated/chunk_038.md",
+"line": 814,
+"text": "**Network Partitions**: Split-brain scenarios can cause temporary inconsistencies lasting longer than λ."
+},
+{
+"gid": "CU071",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/tmp-context/2025-09-18-other.md",
+"line": 427,
+"text": "**Epochal fitness**: Did our estimates of n̂_future match reality? (T-04)"
+},
+{
+"gid": "CU043",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/v2/references/ref/esop15/esop15.md",
+"line": 211,
+"text": "where the *specificity ordering* p' < p on paths is defined as"
+},
+{
+"gid": "CN013",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/utils/utf/bmp-tables.md",
+"line": 4903,
+"text": "[ﻡ>"
+},
+{
+"gid": "CU100",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/neurips/02-unified-convergence-rl/src/_recovery/paper-draft-pre-trim-5cd54b4.md",
+"line": 50,
+"text": "**Strategic regret.** $R(Q) := Q_O(a^*) - \\mathbb E_{a \\sim Q}[Q_O(a)] = \\sum_{a \\neq a^*} Q(a) \\Delta(a)$; three classical forms ($\\mathbb E_{\\pi^*}[V] - \\mathbb E_Q[V]$, $V(a^*) - \\mathbb E_Q[V]$, $\\mathbb E_{\\pi^*}[V - V_Q]$) coincide under deterministic $\\pi^*$."
+},
+{
+"gid": "CP006",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips/02-unified-convergence-rl/prior-art/positioning.md",
+"line": 93,
+"text": "None deploys the deterministic-π* exact-equality form."
+},
+{
+"gid": "CU136",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/ETHICS.md",
+"line": 229,
+"text": "W₁'s structural bound exists **iff** the wrapped component carries **no goal-correlated state across the call boundary.** It names us: *\"a frozen-weights LLM with a conversation cache\"* violates it. What snaps at the boundary is the **availability of the certificate**, not the behavior."
+},
+{
+"gid": "CP100",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/explication/essays/vis-veritatis/src/mov-def-truth.md",
+"line": 41,
+"text": "Row 2.4 (Physical Law, Universe, Temporal Reality): cite `vivarium/LEXICON.udon` rather than paraphrase — law (θ, three rates: fast state / drifting law / law revised at transition), kingdom (space + time + immutable law + full state), causal-time vs metric-time vs physical-time."
+},
+{
+"gid": "CU091",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/_core/tst/vault/03-library/analyses/release-it/non-linear-scaling-complications.md",
+"line": 441,
+"text": "This analysis reveals that **system architecture is fundamentally about managing information flow complexity**. The mathematical inevitability of O(n²) explosion in point-to-point systems isn't just a technical detail—it represents a fundamental limit on human comprehension and system evolvability. We cannot test our way out of mathematical certainties; we must design with full knowledge of scaling dynamics from the start. The fact that development/test environments systematically hide these problems suggests our entire testing methodology may be fundamentally flawed for distributed systems."
+},
+{
+"gid": "CU083",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/CHANGELOG.md",
+"line": 317,
+"text": "**New no-go appendix `#disc-w1-structural-bound-boundary`** (`robust-qualitative`): the structural W₁ bound is available **iff** (C2′) holds; otherwise the leak routes through an unobservable cross-call-state channel and only a behavioural (W₂) bound remains. Framed as a **certifiability discontinuity, not a behavioural one** — the leak is continuous and $\\Theta(\\varepsilon^2)$-flat in the (C2′)-violation; what snaps at the boundary is the *availability* of the structural certificate. Locates the structural-vs-behavioural split in a *component property* (cross-call statefulness), independent of wrapper design. Solid parts exact (behaviour-identity at the limit + certificate-validity step); general continuity past the boundary toy-suggested, not proven (hence the tier). It is the wrapping-level instance of the Class-1↔2 certifiability boundary (`spikes/spike-w1-w2-boundary-intuition-2026-05-31.md`); the foundational reframe (the causal-discipline noun) lands next, back-referencing it."
+},
+{
+"gid": "CN038",
+"kind": "untrig-unchanged",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/udon/core/_archive/generator/2025-12-28-morning.md",
+"line": 4828,
+"text": "The key observation is that `ACTUAL_COL <= elem_col` evaluates to false in this scenario, which impacts how ElementEnd is emitted relative to comments. The precise mechanics of column tracking seem critical to resolving this parsing behavior."
+},
+{
+"gid": "CP116",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/_core/sapientia/architectus/2025-10-01-geminex-tst-work.md",
+"line": 16,
+"text": "Predicted n_future ≈ 5+ more changes."
+},
+{
+"gid": "CP022",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/embeddings/docs/saliency.md",
+"line": 143,
+"text": "γ > 1: saliency dominates"
+},
+{
+"gid": "CP068",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/firmatum/ato/spikes/color-adjacency/NOTES.md",
+"line": 57,
+"text": "POS — two genuinely flat gray tones ΔE≈2 with per-pixel noise, separated by a white gap: **split** (detrended 2.07)."
+},
+{
+"gid": "CP085",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/ops/foundation-dependency-two-papers-2026-05-11.md",
+"line": 86,
+"text": "**Critical-path depth:** 6 layers (W → D → C → R"
+},
+{
+"gid": "CP065",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/.integrated/spike-variational-a2prime.md",
+"line": 298,
+"text": "**What is proved (exact, §§2–3).** Given $\\mathrm{KL}(q_\\phi \\Vert p) \\leq \\varepsilon$, Lipschitz $L_g$, bounded $V_o$, and B1 for the true-posterior correction: ε-B1 holds with $\\sqrt\\varepsilon$-scaling degradation, and the sector-persistence template applies on $\\mathcal B_R \\setminus \\mathcal B_{2\\delta_0}$ with ultimate-bound degradation $O(\\sqrt\\varepsilon)$."
+},
+{
+"gid": "CL014",
+"kind": "line",
+"file": "/Users/josephwecker-v2/src/arch/asf/.archive/old-tf-scratch-01-mathematical-foundations.md",
+"line": 324,
+"text": "Define ADAPTIVE TEMPO:  T_A = ν_A · η_A*"
+},
+{
+"gid": "CP021",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/embeddings/EXPERIMENT-PROPOSAL-causal-measurement-model.md",
+"line": 114,
+"text": "The critical test: **which instruments have smaller σ²?**"
+},
+{
+"gid": "CP087",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/arch/vivarium/.super-archive/from-msc/consolidation-wave-2026-07-21/decisions-code-mining-report.md",
+"line": 102,
+"text": "Unique names; deps registered; assumption anchors ⊆ ASSUMPTIONS; flux vocabulary closed; consumed⇒in-deps; key embeds direct dep versions; conservation on every promise; weakest-link `derived_physics`"
+},
+{
+"gid": "CP032",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/neurips-reviews-responses/neurips-2026/asf-recon/paper-02-redteam.md",
+"line": 35,
+"text": "my Σ"
+},
+{
+"gid": "CP099",
+"kind": "piece",
+"file": "/Users/josephwecker-v2/src/AISI-responses/influx/from-scratchpad/ASSESSMENT.md",
+"line": 7,
+"text": "α>ρ/R is classical Lyapunov/sector machinery and the volume says so."
+},
+{
+"gid": "CU067",
+"kind": "untrig-changed",
+"file": "/Users/josephwecker-v2/src/arch/asf/spikes/tst-mining-2026-05-21/02-forensic-mining.md",
+"line": 305,
+"text": "**The content (briefly).** The 2.5$\\times$ slowdown for distributed-team work and the $n^{1.5}$ coordination-overhead scaling are repeatedly cited across Tornhill's analyses with consistent magnitudes. The fractal-value (F7) entropy-based estimator gives a chronicle-derivable proxy for \"effective developer count\" weighted by contribution distribution. These are empirical anchors for AAT's existing tempo-composition machinery — adding developers to a system increases coordination overhead super-linearly, with cross-repo / cross-timezone / cross-team multipliers stacking."
+}
+]
