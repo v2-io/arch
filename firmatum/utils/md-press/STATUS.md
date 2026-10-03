@@ -2,6 +2,22 @@
 
 *Updated 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
 
+## Where it stands (2026-10-03)
+
+- **Committed, not installed.** The math pass is on by default and was made safe to run unasked; output is quieter; the FEEDBACK files' defects and those found along the way are fixed (`2d9b9ac`; details in the next section). The `md-press` on PATH is still the pre-2026-10-02 build: `cargo install --path .` makes the new one live everywhere, and asf's `md-press --check` gate then includes math.
+- **Two spikes in `spikes/`:**
+  - `spike-math-model-comparison-2026-10-02/`, set aside. Muse Glimmer 30B beat llama3.2:3b as the model behind the math pass (138 vs 88 conversions of 240, 1 vs 5 wrong ones accepted), at ~6× the time per call.
+  - `spike-unicode-math-2026-10-02/`, a deterministic Unicode-math → LaTeX converter (Python reference, matching Rust port, latest v7). It was independently verified (`de-novo-feedback-1.md`) and corrected (`de-novo-response-1.md`). On 200 held-out lines through md-press's own splitter and gates: converter 84.5% right, 5.3% of its 187 changed lines wrong; llama3.2 37.5% right, 3.8% of its 80 wrong. The labels it is scored against were written by AI agents (Opus), not people. v7 itself has no clean held-out score yet; its integration plan is `proposed-integration-plan.md` there.
+- **Text from non-public repos is local-only** (Joseph, 2026-10-03, going forward): both spikes keep it in gitignored files, and each README lists what is local and why. md-press's older committed data (`fixtures/`, `model/`) was checked: public or synthetic.
+- **Open, for Joseph:**
+  - whether the converter replaces the LLM in the math pass, and for which sites (the spike recommends only those today's trigger selects);
+  - the policy for bare ASCII variables (`x`, `M_t` with no Unicode);
+  - how house labels that look like math (asf's W₀/W₁, `H_D3`) get declared;
+  - what replaces the model-era gates once no model proposes;
+  - when to install.
+  - Still unbuilt: the lint-md render-compat checks (FEEDBACK-08-22 §2).
+- **Commissioned 2026-10-03:** a survey of publicly downloadable markdown corpora for training and testing, landing at `research/markdown-corpora-2026-10-03.md`.
+
 ## Math on by default, and what that required (2026-10-02)
 
 Joseph asked for the math pass on by default and the tool a little quieter. Turning it on surfaced that the pass was not safe to run unasked, so the default flip came with a rework; the order below is the order of the evidence.
