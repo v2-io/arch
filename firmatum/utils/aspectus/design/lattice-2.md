@@ -173,7 +173,7 @@
 | ✓ | walk-bound | the stat budget ran out here | near-right marks (and header) | always | — | 12 | `[walk bound]` |
 | ✓ | cycle / other-fs | `(dev,ino)` seen on this path / mount boundary | near-right marks | always | — | 7–10 | `[cycle]` / `[other fs]` |
 | ↬ | ignored-remainder | gitignored files at an expanded level | near-right (or a census bucket) | always | — | cc | `ignored` subject + count cell (subgroup form open) |
-| ⇥ | empty-dir | readdir = ∅ | near-right marks | always — *open* | — | var | `[empty]`? (not `∅` — kept apart from `⊘`) |
+| ✓ | empty-dir | readdir yielded no names, before any filter ([[empty-dir\|Empty directory]]) | near-right marks | always | — | 7 | `[empty]`\* (decided 2026-10-03; not `∅` — kept apart from `⊘`) |
 
 ## Claims about a place — the cluster to refound next (kept at the bottom on purpose)
 
@@ -197,4 +197,4 @@
 
 ## Open on this table (Joseph)
 
-- readme-title: after-name vs near-right. focus-match: mark and place. files/dirs: own far-right columns or census-only. mtime at far-left compact. The empty-dir mark. The subgroup-subject form (which decides how dir-census / leaf-census / ignored / has-masses are written). The claims cluster's refounding — next.
+- readme-title: after-name vs near-right. focus-match: mark and place. files/dirs: own far-right columns or census-only. mtime at far-left compact. ~~The empty-dir mark~~ (decided 2026-10-03 — `[empty]`, [[empty-dir|Empty directory]]). The subgroup-subject form (which decides how dir-census / leaf-census / ignored / has-masses are written). The claims cluster's refounding — next.

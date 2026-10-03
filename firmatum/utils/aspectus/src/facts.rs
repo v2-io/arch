@@ -618,17 +618,17 @@ pub const FACTS: &[Fact] = &[
         true,
     ),
     f(
-        Deferred,
+        Built,
         "empty-dir",
-        "readdir = ∅",
+        "readdir yielded no names (before any filter)",
         NearRight,
         Mark,
         Always,
         None,
-        "var",
+        "7",
         None,
-        "spelling open (not ∅)",
-        false,
+        "[empty]*",
+        true,
     ),
     // ── Claims about a place (the cluster to refound next) ──────────────
     f(

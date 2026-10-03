@@ -310,6 +310,12 @@ fn look_marks(n: &Node) -> Vec<Ready> {
     if n.cut {
         parts.push(mark("walk-bound", "[walk bound]"));
     }
+    // Readdir yielded nothing: the one directory shape that used to render
+    // bare, indistinguishable from folded (design/empty-dir.md). A word,
+    // as [denied] is — never ∅, kept apart from the ⊘ ignored glyph.
+    if n.empty {
+        parts.push(mark("empty-dir", "[empty]"));
+    }
     parts
 }
 

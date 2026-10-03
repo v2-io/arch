@@ -130,6 +130,11 @@ pub struct Node {
     pub cut: bool,
     /// An entry mid-iteration errored; this dir's listing may be missing names.
     pub iter_err: bool,
+    /// The dir's readdir finished and yielded no names at all — `[empty]`
+    /// (design/empty-dir.md). Decided before furniture/ignore/show-all
+    /// filtering; never set on a dir this look did not read (ignored,
+    /// denied, cycle, other fs).
+    pub empty: bool,
     /// Kinds claimed on this line's gathering spot: `[has: git, rust, …]`.
     pub kinds: Vec<String>,
     /// Hidden furniture dirs here, as (claiming kind, name) — walk-time
@@ -1208,12 +1213,16 @@ fn gather_dir(
     let title = ctx
         .titles
         .and_then(|set| readme_title(path, &entries, &name, set));
+    // Emptiness is the raw readdir's verdict, before the furniture map,
+    // the ignore rules, or show-all filter anything (design/empty-dir.md).
+    let empty = entries.is_empty() && !iter_err;
     let mut node = gather_dir_inner(
         path, name, remain, walk, ctx, mtime, link, mass_dup, iter_err, entries,
     );
     ctx.ignore.exit_dir(entered);
     if let Ok(n) = &mut node {
         n.title = title;
+        n.empty = empty;
     }
     node
 }

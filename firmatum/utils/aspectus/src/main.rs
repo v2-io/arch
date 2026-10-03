@@ -282,8 +282,9 @@ fn help_page() -> String {
          The look never lies by omission: an unexpanded directory carries a\n\
          census, a walk-bound cut keeps the full name count and says\n\
          [walk bound], a count that hides an unreadable place is marked \u{2265},\n\
-         and a directory it could not read says [denied] rather than\n\
-         printing as empty.\n\
+         a directory it could not read says [denied] rather than\n\
+         printing as empty, and a directory that holds nothing at all\n\
+         says [empty] (bare would read as folded).\n\
          \n\
          Quiet facts appear only when they surprise. Size speaks on a\n\
          magnitude outlier among its siblings; mtime when recent (within a\n\
