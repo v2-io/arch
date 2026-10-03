@@ -9,7 +9,7 @@ math-free corpus, and random fuzz. Claims checked:
 """
 import json, random, sys, collections, re
 sys.path.insert(0, 'py/frozen'); sys.path.insert(0, 'py')
-import umath_v5 as m
+import umath_v6 as m
 import score
 from multiprocessing import Pool
 
@@ -41,7 +41,7 @@ def check(text):
             return ('valid', lat, text[:200])
     return ('ok',)
 
-GLYPHS = list('αβγδεηθκλμνπρστφχψωΓΔΘΛΣΦΨΩ‖|≤≥≠≈→←↔⇒∈∉⊂⊆∪∩∞∂∇∑∏√±×·−+-=<>/*^_{}()[]⟨⟩$`\\.,;:!?\'"’“”—–…²³¹⁰₀₁₂ᵢⁿᵀ𝒜𝒯ℝ𝔼ℓ%#&@ ') + ['  ', ' x ', ' the ', ' a ', ' I ', 'M_t', '**', '[[w]]', '](http://x.y/(1))', '`code`', '$x$', '$$', 'η*', 'x\'', 'café', 'ô', 'W₁', 'H$_\\kappa$', '\\(x\\)', '10x', 'e.g.', 'p. 3', 'O(n)', 'kg/m³', 'μs']
+GLYPHS = list('αβγδεηθκλμνπρστφχψωΓΔΘΛΣΦΨΩ‖|≤≥≠≈→←↔⇒∈∉⊂⊆∪∩∞∂∇∑∏√±×·−+-=<>/*^_{}()[]⟨⟩$`\\.,;:!?\'"’“”—–…²³¹⁰₀₁₂ᵢⁿᵀ𝒜𝒯ℝ𝔼ℓ%#&@ ') + ['  ', ' x ', ' the ', ' a ', ' I ', 'M_t', '**', '[[w]]', '](http://x.y/(1))', '`code`', '$x$', '$$', 'η*', 'x\'', 'café', 'ô', 'W₁', 'H$_\\kappa$', '\\(x\\)', '10x', 'e.g.', 'p. 3', 'O(n)', 'kg/m³', 'μs', '𝟊', '†', 'ᵀ', 'ⁱ', '*^T', '⋃', '"κ_t']
 
 def fuzz(n, seed):
     rng = random.Random(seed)
@@ -49,7 +49,7 @@ def fuzz(n, seed):
 
 if __name__ == '__main__':
     texts = []
-    for f in ('data/bulk/conv-v5.jsonl',):
+    for f in ('data/bulk/conv-v6.jsonl',):
         for l in open(f):
             texts.append(json.loads(l)['body'])
     for l in open('data/bulk/mathfree-sites.jsonl'):

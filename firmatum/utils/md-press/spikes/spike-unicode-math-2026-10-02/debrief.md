@@ -1,13 +1,13 @@
 # Debrief for Joseph: the deterministic math converter
 
-**The converter.** A deterministic converter (`py/umath.py`; Rust port in `rs/umath/`, see `PORT.md` there) does md-press's math job better than llama3.2 on the text md-press sends it today.
+**The converter.** A deterministic converter does md-press's math job better than llama3.2 on the text md-press sends it today. The Python reference is `py/umath.py`. A delegated pure-Rust port in `rs/umath/` matches it with 0 differences over 4.6M inputs, and runs the 1.29M estate prose sites in 11 s on one thread.
 
 - *Held out, on set B:* 84.7% of pieces exactly or equivalently right, against 45.3% for llama as md-press writes it after its gates.
 - *Error per write:* 3.9% of the pieces it changes are wrong or over-converted, against llama's 4.9%. It changes 279 pieces where llama changes 122.
 - *Muse Glimmer 30B* sits between them, on set A: 62.9% right, 2.9% of its writes wrong.
 - *On whole prose lines,* the unit md-press would actually feed it, the frozen v4 scores 86.0% right and 3.5% wrong or over-converted, on 200 lines labeled after it was frozen. The recommended v5 adds two malformed-input guards and gives byte-identical output on every gold item.
 
-It needs no model, it's a pure function of the text, it is idempotent (iterated to a fixed point), and KaTeX and MathJax both render all 4,838 distinct spans it emits over the estate and the gold sets. So `--check` stops depending on ollama.
+It needs no model, it's a pure function of the text, and it is idempotent (iterated to a fixed point). KaTeX and MathJax both render all 4,837 distinct spans it emits over the estate and the gold sets. The port's fuzz found two adversarial inputs that made it emit undefined commands (`Ξ*^T` → `\Xi^{\astT}`) and one that crashed it (𝟊). v6 fixes both and adds a known-commands gate. So `--check` stops depending on ollama.
 
 **Recommendation.** Replace the model on the sites md-press already triggers on. Don't widen the scope yet. On untriggered sites roughly one in five of its changes is wrong (D: 20.0% of 150).
 
@@ -46,7 +46,7 @@ Three policy calls the labelers split on, which I left conservative:
 
 ## Incidental findings in md-press
 
-- **Unwrap joins frontmatter.** YAML frontmatter that follows an HTML comment is parsed as a setext heading and joined, and it passes the render check. Two labelers found it independently (`verisectorium/.../tools-are-observation-infrastructure.md`).
+- **Unwrap joins frontmatter.** YAML frontmatter that follows an HTML comment is joined like prose, so YAML keys end up inside the preceding key's `#` comment. It passes the render check. Two labelers found it independently, and I reproduced it on today's build (`firmatum/verisectorium/.../tools-are-observation-infrastructure.md`).
 - **The splitter cuts expressions.** `split_at_prose_separators` cuts real expressions apart (`κ×A/tempo`, `0.02 ≤ |CUBE| ≤ 0.10`, `1/√α`). For this converter the measured cost is small: on D, whole lines score 86.0% against 84.5% fed piecewise through md-press's own splitters.
 - **Wrong conversions pass today's gates.** On B, four of llama's wrong conversions pass all of them, including `operands_survive`: `ρ/R` → `\rho/\rho_R`, `T` → `\mathcal{T}`, a swallowed `?`, and a raw combining hat left in math.
 - **The gates refuse good output.** Run over an earlier version of the converter's output on A+B, they refuse 77 correct conversions out of 540 while passing half its errors. They were tuned to LLM failure modes.
