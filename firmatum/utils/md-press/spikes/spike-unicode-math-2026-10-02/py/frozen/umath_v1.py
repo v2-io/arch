@@ -295,7 +295,7 @@ def lex(s: str):
         if (c.isascii() and c.isalnum()) and (i == 0 or not (s[i - 1].isalnum() or s[i - 1] == '_')):
             m = SNAKE.match(s, i)
             if m:
-                toks.append(Tok('word', m.group(), i, m.end(), 'ident'))   # ephemeral_5m_input_tokens
+                toks.append(Tok('word', m.group(), i, m.end(), 'ident'))   # some_long_snake_identifier
                 i = m.end()
                 continue
         if c.isascii() and c.isalpha() and toks and toks[-1].kind == 'num' and toks[-1].b == i:
@@ -859,7 +859,7 @@ def find_spans(us, toks, symbols=frozenset()):
         if u.kind == 'term' and u.term.mathness == 'letter' and toks[u.a].text in ('a', 'I') and u.b - u.a == 1:
             k3, _ = nxt(j, +1)
             if k3 is not None and us[k3].kind == 'term' and us[k3].term.mathness in ('word', 'label', 'ident'):
-                return None   # `N - a timestamp`: the article (TN28 §5.1)
+                return None   # `N - a date`: the article (TN28 §5.1)
         if u.kind == 'term' and u.term.mathness in OPERAND_OK:
             e = j + 1
             # function application / tuple glued: f(x)
@@ -1461,7 +1461,7 @@ def convert(s: str, min_conf: float = 0.0, debug=False, symbols=None, use_symbol
     if any(0x2500 <= ord(c) <= 0x257F for c in s):
         return s, []   # box-drawing table: glyphs are layout, not math
     if CURRENCY.search(s) or dollar_hazard(s):
-        return s, []   # `$5 / MTok … $25`, `$X/mo`: a literal `$` pairs with any new `$`
+        return s, []   # `$5 / unit … $25`, `$Y/day`: a literal `$` pairs with any new `$`
     if CODEISH.search(s) or s.count(';') >= 3 and sum(s.count(c) for c in '{}=') >= 6:
         return s, []   # inline script / code in prose position
     toks = mark_emphasis(lex(s))

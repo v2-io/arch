@@ -138,7 +138,7 @@ At Joseph's request, text that came from non-public repos stays out of git from 
 - **Aggregates and IDs.** `results.md`, the `verdicts.json` files (item ID → verdict) and `data/house-labels-asf-canon.json` (mined from asf canon only, which is public).
 - **Briefs and code.** The labeler briefs, and all code: the frozen converters, the scorer and the Rust port.
 - **Prose files.** The README, debrief, plan, LOG, `de-novo-*` and `PORT.md`. In these, quotations that came only from non-public sources were replaced with descriptions on 2026-10-03. They were found by scanning every backtick or quoted snippet of 6+ characters against the estate's text. Short generic fragments that also occur in public files (`t=5`, `O(1)`) were kept. Repo and file names are still mentioned where they matter for an argument.
-- **Code comments, a known exception.** Comments in `py/umath.py` and the frozen `py/frozen/umath_v*.py` still carry a few identifier-sized examples from non-public files (`f_NNNN.xhtml`-style file names from a private planning index; `N - a timestamp`, from an external documentation clone). I left these alone: editing a frozen file would change the hash every measurement cites.
+- **Code comments.** Comments in `py/umath.py` and the frozen `py/frozen/umath_v*.py` used to carry a few identifier-sized examples from non-public files. They were replaced with synthetic equivalents on 2026-10-03, and the frozen files were re-hashed. The change was to comments only: `py/check_comment_only.py` shows identical code tokens and ASTs, so every measurement still stands (§29).
 
 **For a cold reader without the local data:** every script that reads these files fails until they're regenerated. `rs/probe` `sites` over the estate rebuilds `data/bulk/`. The gold sets themselves can't be regenerated; they were produced by labeler agents. The tables in `results.md` and the LOG are the record of what they measured.
 
@@ -146,7 +146,9 @@ At Joseph's request, text that came from non-public repos stays out of git from 
 
 - `README.md`: this file. `debrief.md` is for Joseph. `proposed-integration-plan.md` is for whoever wires this in. `results.md` has every table. `de-novo-feedback-1.md` is the independent verification; `de-novo-response-1.md` is my response to it.
 - `notes/LOG.md`: the chronological lab notebook, the provenance for every number above (§-references point here).
-- `py/umath.py`: the converter (same as `py/frozen/umath_v7.py`). The frozen versions are `py/frozen/umath_v{1..7}.py` (sha1 `0a2afaf1`, `19be3815`, `eb5faf14`, `a9080099`, `39ee2679`, `a8f1dcf5`, `99eb92dc`).
+- `py/umath.py`: the converter (same as `py/frozen/umath_v7.py`). The frozen versions are `py/frozen/umath_v{1..7}.py` (sha1 `640d7bc1`, `3a87e36b`, `b63113d3`, `d6a6b4fc`, `12dfd65e`, `d7ad5797`, `f40c0d4a`).
+  - These hashes date from 2026-10-03. Before that, the files hashed to `0a2afaf1`, `19be3815`, `eb5faf14`, `a9080099`, `39ee2679`, `a8f1dcf5` and `99eb92dc`. Those are the hashes cited in the LOG and in older documents.
+  - The change between them only replaced examples from non-public sources in *comments* (§29). `py/check_comment_only.py` shows that the code tokens and parsed ASTs are identical. So every measurement made under the old hashes stands for the new ones.
   - v5 = v4 plus two guards against malformed input (§24).
   - v6 = v5 plus fixes for four bugs the Rust port found (§26).
   - v7 = v6 plus the verifier's word-hyphen class and abstaining when a `$` sits inside inline code (§27).

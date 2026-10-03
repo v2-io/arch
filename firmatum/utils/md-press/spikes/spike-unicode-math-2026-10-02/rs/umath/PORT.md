@@ -1,9 +1,11 @@
 # umath: Rust port of the deterministic Unicode-math converter
 
-A pure-Rust port of `py/frozen/umath_v7.py` (sha1 `99eb92dc…`), the primary
-target. The same crate also reproduces `umath_v6.py` (`a8f1dcf5…`),
-`umath_v5.py` (`39ee2679…`), `umath_v4.py` (`a9080099…`) and `umath_v3.py`
-(`eb5faf14…`), selected per call. The library has no dependencies; `serde_json` is used only by
+A pure-Rust port of `py/frozen/umath_v7.py` (sha1 `f40c0d4a…`), the primary
+target. The same crate also reproduces `umath_v6.py` (`d7ad5797…`),
+`umath_v5.py` (`12dfd65e…`), `umath_v4.py` (`d6a6b4fc…`) and `umath_v3.py`
+(`b63113d3…`), selected per call.
+
+*Hashes updated on 2026-10-03 by the spiker. The frozen Python files had examples from non-public sources scrubbed from their comments only (spike `notes/LOG.md` §29; `py/check_comment_only.py`: identical code tokens and ASTs). The earlier hashes were `99eb92dc` (v7), `a8f1dcf5` (v6), `39ee2679` (v5), `a9080099` (v4) and `eb5faf14` (v3). Every differential result below was measured against those, and it holds unchanged.* The library has no dependencies; `serde_json` is used only by
 the JSONL bin.
 
 ```rust

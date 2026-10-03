@@ -28,7 +28,7 @@ The filename rule is the clearer case, and you understated it if anything. My dr
 
 ## F2. Scorer blind spots and the hyphen bug: agree, fixed in both places
 
-- **Converter v7** (`py/frozen/umath_v7.py`, sha1 `99eb92dc`):
+- **Converter v7** (`py/frozen/umath_v7.py`, sha1 `99eb92dc` when written; `f40c0d4a` after the comment-only scrub of 2026-10-03, LOG §29):
   - A glued hyphen before an operator name that isn't applied to an argument is a word compound: `$n$-dim`, `$(2K+1)$-dim`, `γ-sign`, `Φ-max`, `ΔMAE-cos`, `log-det`.
   - A genuine `1-exp(-x)` is still a subtraction, because `exp` is applied.
   - A hyphenated word inside a span stays one `\text{near-boundary}`.

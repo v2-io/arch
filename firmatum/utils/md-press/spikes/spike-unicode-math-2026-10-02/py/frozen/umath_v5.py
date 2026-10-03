@@ -290,7 +290,7 @@ def lex(s: str):
             continue
         if c.isdigit() and c.isascii() and (i == 0 or not (s[i - 1].isalnum() or s[i - 1] == '_')) and SNAKE.match(s, i):
             m = SNAKE.match(s, i)
-            toks.append(Tok('word', m.group(), i, m.end(), 'ident'))   # 83k_continued_pretraining
+            toks.append(Tok('word', m.group(), i, m.end(), 'ident'))   # 12k_example_identifier
             i = m.end()
             continue
         if c.isdigit() and c.isascii():
@@ -301,7 +301,7 @@ def lex(s: str):
         if (c.isascii() and c.isalnum()) and (i == 0 or not (s[i - 1].isalnum() or s[i - 1] == '_')):
             m = SNAKE.match(s, i)
             if m:
-                toks.append(Tok('word', m.group(), i, m.end(), 'ident'))   # ephemeral_5m_input_tokens
+                toks.append(Tok('word', m.group(), i, m.end(), 'ident'))   # some_long_snake_identifier
                 i = m.end()
                 continue
         if c.isascii() and c.isalpha() and toks and toks[-1].kind == 'num' and toks[-1].b == i:
@@ -774,7 +774,7 @@ def parse_term(toks, k, allow_group=False):
         mness = 'strong' if '^' in lat else 'num'
     if end + 1 < len(toks) and _glued(toks, end) and toks[end].kind == 'punct' and toks[end].text == '.' and \
             _glued(toks, end + 1) and toks[end + 1].kind == 'word' and toks[end + 1].text.islower():
-        mness = 'broken'   # `f_0080.xhtml`: a file name
+        mness = 'broken'   # `f_0001.html`: a file name
     if end < len(toks) and _glued(toks, end) and toks[end].kind in ('us', 'caret'):
         mness = 'broken'   # `t_{macro_cost}` we could not read: leave the whole token alone
     return Term(k if base not in ('norm', 'abs', 'group') else t.a and k, end, base, mness, lat, conf, why)
@@ -795,7 +795,7 @@ def render_tokens(ts, allow_ws=True):
             k = term.b
             continue
         if term is not None and term.mathness == 'word':
-            # δ_(critical,k), t_{runtime}; r_{one-for-one} stays one hyphenated word
+            # δ_(critical,k), t_{total}; r_{one-for-one} stays one hyphenated word
             w = ts[k].text
             k = term.b
             while k + 1 < len(ts) and ts[k].kind == 'hyph' and not ts[k].sp_before and ts[k + 1].kind == 'word' \
@@ -957,10 +957,10 @@ def find_spans(us, toks, symbols=frozenset()):
         if u.kind == 'term' and u.term.mathness == 'letter' and toks[u.a].text in ('a', 'I') and u.b - u.a == 1:
             k3, _ = nxt(j, +1)
             if k3 is not None and us[k3].kind == 'term' and us[k3].term.mathness in ('word', 'label', 'ident'):
-                return None   # `N - a timestamp`: the article (TN28 §5.1)
+                return None   # `N - a date`: the article (TN28 §5.1)
         if u.kind == 'term' and u.term.mathness == 'num' and j + 1 < n and us[j + 1].kind == 'term' and \
                 toks[us[j + 1].a].cls == 'unit' and not toks[us[j + 1].a].sp_before:
-            return None   # `t/2weeks`: 2weeks is a quantity
+            return None   # `t/3days`: 3days is a quantity
         if u.kind == 'term' and u.term.mathness in OPERAND_OK:
             e = j + 1
             # function application / tuple glued: f(x)
@@ -1382,7 +1382,7 @@ def find_spans(us, toks, symbols=frozenset()):
                           break
                       if j0 >= 1 and us[j0].kind == 'term' and us[j0].term.mathness == 'letter' and \
                               us[j0 - 1].kind == 'hyph' and not toks[us[j0 - 1].a].sp_before:
-                          break   # `is-a-$do(G)$`: a hyphenated phrase
+                          break   # `is-a-$f(x)$`: a hyphenated phrase
                       if j0 < 0 or us[j0].kind in ('ws', 'open'):
                           a = j   # unary minus
                           break
@@ -1946,7 +1946,7 @@ def convert_once(s: str, min_conf: float = 0.0, debug=False, symbols=None, use_s
         out, info = convert_once(s, min_conf, debug, symbols, use_symbols)
         return out, info
     if CURRENCY.search(s) or dollar_hazard(s):
-        return s, []   # `$5 / MTok … $25`, `$X/mo`: a literal `$` pairs with any new `$`
+        return s, []   # `$5 / unit … $25`, `$Y/day`: a literal `$` pairs with any new `$`
     if CODEISH.search(s) or s.count(';') >= 3 and sum(s.count(c) for c in '{}=') >= 6:
         return s, []   # inline script / code in prose position
     global LINKB
@@ -1983,9 +1983,9 @@ def convert_once(s: str, min_conf: float = 0.0, debug=False, symbols=None, use_s
         if any(start <= q < end for q in LINKB):
             lat = None   # `[≠](…)`: a span may not swallow link-text brackets
         if FLATTENED.search(s[start:end]):
-            lat = None   # `eθl′`: scripts lost to PDF extraction; unknowable which
+            lat = None   # `aθk′`: scripts lost to PDF extraction; unknowable which
         if start > 0 and s[start - 1] in '([{' and _unmatched_open(s, start - 1) and not s[end:].strip(' .,;'):
-            lat = None   # `e^(-γ`: a fragment cut out of a larger expression
+            lat = None   # `e^(-λ`: a fragment cut out of a larger expression
         if start > 0 and s[start - 1] in '"“`' and s[end:end + 1] in '"”`':
             lat = None   # "O(√h)": a quoted string is a mention, not math
         if s[end:end + 1] in ('^', '_') or start > 0 and s[start - 1] in ('^', '_'):
