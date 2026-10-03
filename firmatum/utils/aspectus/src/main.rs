@@ -226,7 +226,10 @@ fn help_page() -> String {
          Inside a git work tree, gitignored contents stay out of the look\n\
          and out of every aggregate -- the repo already declared them not\n\
          the project -- while presence still shows: an ignored directory\n\
-         keeps its line, dimmed on a TTY, unexpanded and unweighed; ignored\n\
+         keeps its line, dimmed on a TTY, unexpanded and outside every\n\
+         aggregate, but still says how big it is: its body's bytes sit in\n\
+         the bytes column on its own line (\u{2265} when weighing stopped at\n\
+         20,000 names; hardlinks once; never on the --walk budget). Ignored\n\
          files appear only as a typed remainder (ignored\u{d7}3). The rules\n\
          are git's own -- nested .gitignore files, negations, info/exclude,\n\
          the global core.excludesFile -- and a tracked file matching an\n\
@@ -277,7 +280,8 @@ fn help_page() -> String {
          (target/, __pycache__, …) folds into the [has: …] spot — a\n\
          claim about contents, exactly what the evidence supports.\n\
          Hidden names are not counted as children; the has-spot is what\n\
-         says they are here. The map is glob-based and extendable from config\n\
+         says they are here, with how many files a hidden dir holds and,\n\
+         from 1 MiB up, how big it is ([has: build \u{2265}17643f \u{2265}3.9GB]). The map is glob-based and extendable from config\n\
          (the `[furniture]` table in `aspectus config defaults`; legacy key\n\
          `furniture`: `PATTERN[:KIND[:hide|omit|mark]]`, comma-separated;\n\
          `!PATTERN` or `\"PATTERN\" = \"!\"` drops a default row).\n\
@@ -918,7 +922,7 @@ fn show(args: ShowArgs) -> Result<(), ShowErr> {
     if focus.is_some() {
         aspectus::focus::fold_asides(&mut tree);
     }
-    aspectus::n_level::hidden_phase(&mut tree, &abs);
+    aspectus::n_level::hidden_phase(&mut tree, &abs, one_fs);
     aspectus::git::annotate(&mut tree, &abs);
     if cols.heat
         || cols.intro_sha

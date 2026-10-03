@@ -253,7 +253,7 @@ pub const FACTS: &[Fact] = &[
     f(
         Built,
         "bytes",
-        "file: st_size; dir: Σ descendants (unbuilt)",
+        "file: st_size; ⊘ dir: its unopened body (always speaks); other dirs: Σ descendants (unbuilt)",
         FarRight,
         Line,
         Quiet,
@@ -634,7 +634,7 @@ pub const FACTS: &[Fact] = &[
     f(
         Wants,
         "has",
-        "the furniture map's kind words + hidden mass",
+        "the furniture map's kind words + hidden files (+ bytes ≥ 1 MiB)",
         NearRight,
         Line,
         On,

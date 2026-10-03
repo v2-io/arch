@@ -28,6 +28,37 @@ impl Mass {
     }
 }
 
+/// The weight of a body the look does not open (design/ignored-bytes.md):
+/// a gitignored directory (`⊘`) or a hidden furniture dir (`target/`).
+/// One readdir walk plus one lstat per non-directory, under its own name
+/// cap — never the `--walk` budget, never mass. `files` keeps the old
+/// hidden-count semantics (readdir type hints; symlinks and specials are
+/// not files and floor the count); `bytes` is Σ `st_size` of every
+/// non-directory entry, hardlinked inodes once, symlinks not followed.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Body {
+    pub files: u64,
+    pub bytes: u64,
+    /// The file count is a floor (`≥`).
+    pub files_bounded: bool,
+    /// The byte total is a floor (`≥`): cap, unreadable, or a mount.
+    pub bytes_bounded: bool,
+}
+
+impl Body {
+    fn absorb(&mut self, o: Body) {
+        self.files += o.files;
+        self.bytes += o.bytes;
+        self.files_bounded |= o.files_bounded;
+        self.bytes_bounded |= o.bytes_bounded;
+    }
+
+    fn floor(&mut self) {
+        self.files_bounded = true;
+        self.bytes_bounded = true;
+    }
+}
+
 /// Census, reworked form (design/dir-census.md, 2026-08-14): no total,
 /// `kind×N` buckets, dirs separated as containers with mass prevalent,
 /// `·` separators, `+` only in the leaf (unlisted-siblings) form. All
@@ -135,15 +166,22 @@ pub struct Node {
     /// filtering; never set on a dir this look did not read (ignored,
     /// denied, cycle, other fs).
     pub empty: bool,
+    /// A presence-only node: a gitignored dir the walk did not open
+    /// (`stat_only`). Its body is weighed by the body phase, never read
+    /// into the look (design/ignored-bytes.md).
+    pub unread: bool,
+    /// The weight of this unread body — bytes on the `⊘` line.
+    pub body: Option<Body>,
     /// Kinds claimed on this line's gathering spot: `[has: git, rust, …]`.
     pub kinds: Vec<String>,
     /// Hidden furniture dirs here, as (claiming kind, name) — walk-time
     /// record; the deep phase turns it into `has_counts`.
     pub hidden_dirs: Vec<(String, String)>,
-    /// Deep file-count of hidden furniture per kind: (kind, files,
-    /// bounded). Presence survives hiding — `[has: archive ≈127f, …]`
-    /// (design/furniture.md leaning, implemented 2026-08-14).
-    pub has_counts: Vec<(String, u64, bool)>,
+    /// Weight of hidden furniture per claiming kind. Presence survives
+    /// hiding — `[has: archive ≈127f, …]` (design/furniture.md leaning,
+    /// 2026-08-14); bytes ride the same walk since 2026-10-03
+    /// (design/ignored-bytes.md).
+    pub has_counts: Vec<(String, Body)>,
     /// Specialized-furniture facets, already phrased (`git: br<main> @…`).
     pub facets: Vec<String>,
     /// Modification time, seconds since the epoch (symlinks: the target's).
@@ -1082,6 +1120,7 @@ fn stat_only(path: &Path, name: String, grain: crate::filetype::CensusGrain) -> 
         name,
         is_dir: true,
         ignored: true,
+        unread: true,
         mtime,
         mode,
         uid,
@@ -1559,61 +1598,123 @@ pub fn deep_phase(node: &mut Node, abs: &Path, ctx: &mut LookCtx) {
     mass_up(node);
 }
 
-/// Names visited per hidden furniture dir before its count floors (`≥`).
-const HIDDEN_COUNT_CAP: u64 = 20_000;
+/// Names one unopened body may visit before its figures floor (`≥`).
+/// Per body, not per look; separate from `--walk` (ignored dirs still
+/// cost the walk nothing) and from mass's name cap.
+const BODY_NAME_CAP: u64 = 20_000;
 
-/// Deep file-count by readdir type-hints alone — no stats, cheap even for
-/// a big `target/`. Symlinks are left uncounted and floor the figure.
-fn count_names(path: &Path, cap: &mut u64, bounded: &mut bool) -> u64 {
+/// Weigh one unopened body: readdir type hints for the walk, one lstat
+/// per non-directory for its size (directories add none), hardlinked
+/// inodes once per body, symlinks never followed, never off the body's
+/// own filesystem when `one_fs`.
+fn weigh_body(
+    path: &Path,
+    dev: Option<u64>,
+    cap: &mut u64,
+    seen: &mut HashSet<(u64, u64)>,
+    b: &mut Body,
+) {
     let Ok(rd) = fs::read_dir(path) else {
-        *bounded = true;
-        return 0;
+        b.floor();
+        return;
     };
-    let mut files = 0;
     for ent in rd {
         let Ok(ent) = ent else {
-            *bounded = true;
+            b.floor();
             continue;
         };
         if *cap == 0 {
-            *bounded = true;
-            return files;
+            b.floor();
+            return;
         }
         *cap -= 1;
-        match ent.file_type() {
-            Ok(t) if t.is_dir() => files += count_names(&ent.path(), cap, bounded),
-            Ok(t) if t.is_file() => files += 1,
-            _ => *bounded = true,
+        let Ok(ft) = ent.file_type() else {
+            b.floor();
+            continue;
+        };
+        if ft.is_dir() {
+            if let Some(d) = dev {
+                match ent.metadata() {
+                    Ok(m) if m.dev() == d => {}
+                    // A mount (or an unstattable dir): not weighed here.
+                    _ => {
+                        b.floor();
+                        continue;
+                    }
+                }
+            }
+            weigh_body(&ent.path(), dev, cap, seen, b);
+            continue;
+        }
+        if ft.is_file() {
+            b.files += 1;
+        } else {
+            // A symlink or special is not a file: the count floors (the
+            // hidden count's rule since 2026-08-14). Its own inode's
+            // size still weighs; the target is never followed.
+            b.files_bounded = true;
+        }
+        match ent.metadata() {
+            Ok(m) => {
+                if m.nlink() > 1 && !seen.insert((m.dev(), m.ino())) {
+                    continue; // a hardlink already weighed (cargo's deps/)
+                }
+                b.bytes += m.len();
+            }
+            Err(_) => b.bytes_bounded = true,
         }
     }
-    files
 }
 
-/// Presence survives hiding (design/furniture.md, three testimonies
-/// 2026-08-14): every hidden furniture dir gets a deep file-count so the
-/// has-spot can say `archive ≈127f` — magnitude without a child slot.
-/// Bounded-parallel like the other post-passes.
-pub fn hidden_phase(node: &mut Node, abs: &Path) {
+fn weigh(path: &Path, one_fs: bool) -> Body {
+    let mut b = Body::default();
+    let dev = if one_fs {
+        match fs::metadata(path) {
+            Ok(m) => Some(m.dev()),
+            Err(_) => {
+                b.floor();
+                return b;
+            }
+        }
+    } else {
+        None
+    };
+    let mut cap = BODY_NAME_CAP;
+    let mut seen = HashSet::new();
+    weigh_body(path, dev, &mut cap, &mut seen, &mut b);
+    b
+}
+
+/// The body phase (was the hidden-count phase): every body the look
+/// declines to open gets weighed so presence carries magnitude — hidden
+/// furniture (`[has: build ≥17643f ≈15.0GB]`, design/furniture.md +
+/// design/ignored-bytes.md) and gitignored dirs (bytes on the `⊘` line).
+/// Bounded-parallel like the other post-passes; one thread per body.
+pub fn hidden_phase(node: &mut Node, abs: &Path, one_fs: bool) {
     fn collect(n: &Node, abs: &Path, out: &mut Vec<std::path::PathBuf>) {
         for (_, name) in &n.hidden_dirs {
             out.push(abs.join(name));
+        }
+        if n.unread {
+            out.push(abs.to_path_buf());
         }
         for c in &n.children {
             collect(c, &abs.join(&c.name), out);
         }
     }
-    fn assign(n: &mut Node, results: &[(u64, bool)], idx: &mut usize) {
+    fn assign(n: &mut Node, results: &[Body], idx: &mut usize) {
         if !n.hidden_dirs.is_empty() {
-            let mut per: std::collections::BTreeMap<String, (u64, bool)> =
+            let mut per: std::collections::BTreeMap<String, Body> =
                 std::collections::BTreeMap::new();
             for (kind, _) in &n.hidden_dirs {
-                let (files, bounded) = results[*idx];
+                per.entry(kind.clone()).or_default().absorb(results[*idx]);
                 *idx += 1;
-                let e = per.entry(kind.clone()).or_insert((0, false));
-                e.0 += files;
-                e.1 |= bounded;
             }
-            n.has_counts = per.into_iter().map(|(k, (f, b))| (k, f, b)).collect();
+            n.has_counts = per.into_iter().collect();
+        }
+        if n.unread {
+            n.body = Some(results[*idx]);
+            *idx += 1;
         }
         for c in &mut n.children {
             assign(c, results, idx);
@@ -1624,7 +1725,7 @@ pub fn hidden_phase(node: &mut Node, abs: &Path) {
     if paths.is_empty() {
         return;
     }
-    let results: Vec<(u64, bool)> = std::thread::scope(|s| {
+    let results: Vec<Body> = std::thread::scope(|s| {
         let paths = &paths;
         let threads = POOL_THREADS.min(paths.len());
         let handles: Vec<_> = (0..threads)
@@ -1635,18 +1736,15 @@ pub fn hidden_phase(node: &mut Node, abs: &Path) {
                         if i % threads != t {
                             continue;
                         }
-                        let mut cap = HIDDEN_COUNT_CAP;
-                        let mut bounded = false;
-                        let files = count_names(p, &mut cap, &mut bounded);
-                        out.push((i, (files, bounded)));
+                        out.push((i, weigh(p, one_fs)));
                     }
                     out
                 })
             })
             .collect();
-        let mut results = vec![(0, false); paths.len()];
+        let mut results = vec![Body::default(); paths.len()];
         for h in handles {
-            for (i, r) in h.join().expect("hidden-count worker") {
+            for (i, r) in h.join().expect("body worker") {
                 results[i] = r;
             }
         }
@@ -1866,5 +1964,56 @@ pub fn apply_budget(
     ));
     for (c, s) in node.children.iter_mut().zip(shares) {
         apply_budget(c, s, order, explain);
+    }
+}
+
+#[cfg(test)]
+mod body_tests {
+    use super::*;
+
+    fn tmp(tag: &str) -> std::path::PathBuf {
+        let d = std::env::temp_dir().join(format!(
+            "aspectus-body-{tag}-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&d).unwrap();
+        d
+    }
+
+    /// The name cap floors both figures (`≥`), never silently.
+    #[test]
+    fn cap_floors_bytes_and_files() {
+        let d = tmp("cap");
+        for i in 0..5 {
+            fs::write(d.join(format!("f{i}")), vec![0u8; 100]).unwrap();
+        }
+        let mut b = Body::default();
+        let mut cap = 3;
+        weigh_body(&d, None, &mut cap, &mut HashSet::new(), &mut b);
+        assert!(b.files_bounded && b.bytes_bounded, "{b:?}");
+        assert_eq!(b.files, 3);
+        assert_eq!(b.bytes, 300);
+        let full = weigh(&d, true);
+        assert_eq!((full.files, full.bytes), (5, 500));
+        assert!(!full.files_bounded && !full.bytes_bounded, "{full:?}");
+    }
+
+    /// Hardlinks weigh once; a symlink weighs its own inode, never its
+    /// target, and floors only the file count.
+    #[test]
+    fn hardlinks_once_symlinks_unfollowed() {
+        let d = tmp("links");
+        fs::write(d.join("big"), vec![0u8; 10_000]).unwrap();
+        fs::hard_link(d.join("big"), d.join("big2")).unwrap();
+        std::os::unix::fs::symlink(d.join("big"), d.join("ln")).unwrap();
+        let b = weigh(&d, true);
+        let link_len = fs::symlink_metadata(d.join("ln")).unwrap().len();
+        assert_eq!(b.bytes, 10_000 + link_len, "{b:?}");
+        assert_eq!(b.files, 2);
+        assert!(b.files_bounded && !b.bytes_bounded, "{b:?}");
     }
 }

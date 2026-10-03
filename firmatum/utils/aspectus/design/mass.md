@@ -32,6 +32,7 @@ Two stabilizers landed with it: the estimator's bytes-per-line is a constant (th
 
 - **What counts as weight:** descendant file count first; total lines of non-binary files when [[linecount|Line counts]] exist; maybe bytes. Which of these prints, and when (always on dirs at a cutoff? quiet when small?), is lattice work — `size`'s "which number" nuance applies.
 - **Honesty under bounds:** mass wants a deep walk; the [[walk-bound|walk bound]] refuses one. A mass computed under a bound prints `≥`; an unbounded mass is exact until the tree changes. This is the row where [[cache|Cache]] pays first — deep mass is the expensive derived fact that makes revisits cheap.
+- **Unopened bodies' bytes do not count either** (2026-10-03): a `⊘` dir's or hidden furniture's byte total is a fact of its own line or has-word ([[ignored-bytes|Ignored-dir bytes]]), never an aggregate's.
 - **Furniture does not count:** `target/`'s 10k build objects are not the mass of a crate. Mass counts what an agent could be expected to comprehend; hidden/omitted furniture and gitignored bodies stay out (or print separately), else every Rust crate looks like a mountain of `.fingerprint`.
 - **Not quietable at cutoffs.** Like [[denied|Denied]], mass at an unexpanded dir is existence-information, governed by [[summarization|Summarization]]'s law, not by Quiet.
 

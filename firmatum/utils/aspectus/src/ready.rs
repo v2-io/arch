@@ -259,10 +259,19 @@ fn has_block(n: &Node) -> Option<Ready> {
     let words: Vec<String> = n
         .kinds
         .iter()
-        .map(|k| match n.has_counts.iter().find(|(hk, _, _)| hk == k) {
-            Some((_, files, bounded)) if *files > 0 => {
-                let mark = if *bounded { "≥" } else { "≈" };
-                format!("{k} {mark}{files}f")
+        .map(|k| match n.has_counts.iter().find(|(hk, _)| hk == k) {
+            Some((_, b)) if b.files > 0 => {
+                let mark = if b.files_bounded { "≥" } else { "≈" };
+                // Bytes ride beside the file count when they could answer
+                // "why is this huge" — at ≥ 1 MiB, or whenever they are a
+                // floor (design/ignored-bytes.md §Hidden furniture: both the
+                // form and the threshold are calls; the has-block's form
+                // waits on the subgroup-subject form and moves with it).
+                if b.bytes >= HAS_BYTES_SPEAK_AT || b.bytes_bounded {
+                    format!("{k} {mark}{}f {}", b.files, body_bytes_compact(b))
+                } else {
+                    format!("{k} {mark}{}f", b.files)
+                }
             }
             // A has-count of zero files is a claim with no content
             // (`agents ≈0f`); the kind word stays, the count does not.
@@ -276,6 +285,21 @@ fn has_block(n: &Node) -> Option<Ready> {
         Office::Line,
         format!("[has: {}]", words.join(", ")),
     ))
+}
+
+/// A hidden body's bytes speak on its has-word from here up (1 MiB). Below
+/// it a body answers no disk question and only lengthens the widest
+/// near-right part (design/ignored-bytes.md — a call).
+const HAS_BYTES_SPEAK_AT: u64 = 1 << 20;
+
+/// A body's byte total, squeezed for the has-block (`≈15.0GB`).
+fn body_bytes_compact(b: &crate::n_level::Body) -> String {
+    let mark = if b.bytes_bounded {
+        Mark::Floor
+    } else {
+        Mark::Exact
+    };
+    crate::count_cell::compact(b.bytes, mark, Unit::Bytes)
 }
 
 /// The gitignored glyph — now the far-left git-status cell (design/
@@ -514,14 +538,18 @@ fn far_right_inner(n: &Node, cols: &Cols, under_heading: bool) -> Vec<Ready> {
         );
     }
     if cols.size.claims_column() {
-        push(
-            "bytes",
-            quiet(
+        // An unopened `⊘` dir's body speaks its bytes on its own line
+        // whenever the column exists — existence information, like mass at
+        // a cutoff, not a surprise (design/ignored-bytes.md).
+        let text = match (n.unread, n.body) {
+            (true, Some(b)) => fmt_body_size(&b, cols.size_fmt, under_heading),
+            _ => quiet(
                 cols.size,
                 n.q.size,
                 n.size.map(|s| fmt_size(s, cols.size_fmt, under_heading)),
             ),
-        );
+        };
+        push("bytes", text);
     }
     if cols.mtime.claims_column() {
         // The age column / score-cluster already carries this line's mtime;
@@ -620,6 +648,26 @@ fn fmt_size(n: u64, f: SizeFmt, under_heading: bool) -> String {
         // count". A 12-cell exact form cannot hold values ≥ 10,000 without
         // scaling, so this spelling stays the escape hatch.
         SizeFmt::Bytes => n.to_string(),
+    }
+}
+
+/// An unopened body's bytes in the `bytes` column: the count cell with
+/// `≥` when the walk was cut; `format.size = bytes` is the raw integer,
+/// still prefixed `≥` when it is a floor.
+fn fmt_body_size(b: &crate::n_level::Body, f: SizeFmt, under_heading: bool) -> String {
+    match f {
+        SizeFmt::Human => {
+            let mark = if b.bytes_bounded {
+                Mark::Floor
+            } else {
+                Mark::Exact
+            };
+            count_cell(b.bytes, mark, None, Unit::Bytes, !under_heading)
+        }
+        SizeFmt::Bytes => {
+            let geq = if b.bytes_bounded { "\u{2265}" } else { "" };
+            format!("{geq}{}", b.bytes)
+        }
     }
 }
 

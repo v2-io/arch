@@ -229,14 +229,17 @@ fn node_obj(n: &Node) -> String {
     if !n.has_counts.is_empty() {
         o.key("hidden");
         o.buf.push('[');
-        for (i, (k, files, bounded)) in n.has_counts.iter().enumerate() {
+        for (i, (k, b)) in n.has_counts.iter().enumerate() {
             if i > 0 {
                 o.buf.push(',');
             }
             let mut h = Obj::new();
             h.str("kind", k);
-            h.raw("files", &files.to_string());
-            h.bool_true("bounded", *bounded);
+            h.raw("files", &b.files.to_string());
+            h.bool_true("bounded", b.files_bounded);
+            // Additive (schema 1): the body's bytes, its own floor flag.
+            h.raw("bytes", &b.bytes.to_string());
+            h.bool_true("bytes_bounded", b.bytes_bounded);
             o.buf.push_str(&h.done());
         }
         o.buf.push(']');
@@ -261,6 +264,16 @@ fn node_obj(n: &Node) -> String {
     // schema's shape).
     o.bool_true("matched", n.matched);
     o.bool_true("gitignored", n.ignored);
+    // An unopened ignored dir's weight (design/ignored-bytes.md): never
+    // part of `mass`, which stays the project's own.
+    if let Some(b) = &n.body {
+        let mut h = Obj::new();
+        h.raw("files", &b.files.to_string());
+        h.bool_true("bounded", b.files_bounded);
+        h.raw("bytes", &b.bytes.to_string());
+        h.bool_true("bytes_bounded", b.bytes_bounded);
+        o.raw("ignored_body", &h.done());
+    }
     if n.ignored_files > 0 {
         o.raw("ignored_files", &n.ignored_files.to_string());
     }
@@ -312,7 +325,11 @@ fn truncated(n: &Node) -> bool {
         // A hidden-furniture count that hit its cap is a `≥` floor like
         // any other (close audit 2026-08-14: the code missed what the
         // impl note already promised).
-        || n.has_counts.iter().any(|(_, _, bounded)| *bounded)
+        || n
+            .has_counts
+            .iter()
+            .any(|(_, b)| b.files_bounded || b.bytes_bounded)
+        || n.body.is_some_and(|b| b.files_bounded || b.bytes_bounded)
         || n.children.iter().any(truncated)
 }
 

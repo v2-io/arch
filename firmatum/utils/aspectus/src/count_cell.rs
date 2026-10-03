@@ -204,6 +204,22 @@ fn scale(n: u64, base: f64) -> (u64, u8, usize) {
     (tenths / 10, (tenths % 10) as u8, idx.saturating_sub(1))
 }
 
+/// The count cell squeezed for inline prose (a has-word, a bracket): the
+/// same digits, mark, scale, and unit, without the field's padding —
+/// `≈15.0GB`, `≥8.1GB`, `2·428B`, `512B`. The `.` anchor only earns its
+/// place in an aligned column, so it drops when no fraction follows.
+/// Provisional: the has-block's form waits on the subgroup-subject form
+/// (design/grid-cleanup.md); this exists so bytes can ride it meanwhile.
+pub fn compact(value: u64, mark: Mark, unit: Unit) -> String {
+    let cell = count_cell(value, mark, None, unit, true);
+    let squeezed: String = cell.chars().filter(|c| *c != ' ').collect();
+    let u = unit.glyph();
+    match squeezed.strip_suffix(&format!(".{u}")) {
+        Some(head) => format!("{head}{u}"),
+        None => squeezed,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -399,5 +415,20 @@ mod tests {
             &count_cell(mib, Mark::Exact, None, Unit::Bytes, false),
             "  ≈   80.0M ",
         );
+    }
+
+    #[test]
+    fn compact_squeezes_the_field() {
+        assert_eq!(compact(512, Mark::Exact, Unit::Bytes), "512B");
+        assert_eq!(compact(2_428, Mark::Exact, Unit::Bytes), "2\u{b7}428B");
+        assert_eq!(
+            compact(15 * 1024 * 1024 * 1024, Mark::Exact, Unit::Bytes),
+            "\u{2248}15.0GB"
+        );
+        assert_eq!(
+            compact(8 * 1024 * 1024 * 1024, Mark::Floor, Unit::Bytes),
+            "\u{2265}8.0GB"
+        );
+        assert_eq!(compact(0, Mark::Exact, Unit::Bytes), "0B");
     }
 }
