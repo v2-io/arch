@@ -11,7 +11,7 @@ md-press's math pass asks a local LLM (llama3.2:3b) to wrap Unicode math in pros
 - **The scoring.** The scorer has an "effectively equivalent" class at Joseph's suggestion. It compares what a reader sees (glyph, script position, font), not the LaTeX bytes.
 - **Three fresh rounds after freezing.** Three times the converter was frozen and then scored once on a fresh labeled set: B after v1, C after v2, D after v3 and v4.
 - **Data and drills.** Following Joseph's suggestion, the estate's own 50k LaTeX-bearing lines became round-trip data. 600 lines were rewritten by Sonnet, Opus and Haiku in their natural Unicode dialect. Precision drills ran over 2.47M math-free sites and 200k fuzz strings, and every emitted span was validated in KaTeX and MathJax.
-- **A Rust port** was delegated, with a differential test against the Python reference (`rs/umath/`, `rs/umath/PORT.md`). It shows 0 differences for v3/v4/v5 over gold, the estate, math-free text and 830k fuzz strings. It also found five bugs in my reference; v6 fixes four of them.
+- **A Rust port** was delegated, with a differential test against the Python reference (`rs/umath/`, `rs/umath/PORT.md`). It shows 0 differences for v3 through v6 over gold, the estate, math-free text and 830k fuzz strings; v6 is its default. It also found five bugs in my reference, and v6 fixes four of them. I checked parity independently on all 1,390 gold items: 0 differences.
 
 **Answer:**
 - **On the text md-press already sends to the model, the converter beats the model.** It does about twice the useful work. Its per-write error rate is at or below llama's after md-press's gates, though above the 30B model's. It needs no model and is idempotent. Every span it writes over the estate and gold renders in KaTeX and MathJax, and the Rust port runs all 1.29M estate prose sites in 11 s on one thread.
@@ -111,7 +111,7 @@ python3 py/evaluate.py A && python3 py/evaluate.py B
 python3 py/evaluate_c.py --set D umath_v3 umath_v4
 python3 py/results.py            # rewrites results.md
 python3 py/properties.py          # needs data/bulk/conv-v6.jsonl from: python3 py/run_sites.py v6
-sh rs/umath/tools/differential.sh v5 v6   # Rust vs Python, after building rs/umath
+sh rs/umath/tools/differential.sh v6 v5 v4 v3   # Rust vs Python, after building rs/umath
 ```
 
 The probe links md-press's *working tree* (with the coordinator's uncommitted 2026-10-02 changes), so `trig` reflects today's trigger.

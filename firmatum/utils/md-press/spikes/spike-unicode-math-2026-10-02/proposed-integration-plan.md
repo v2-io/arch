@@ -4,7 +4,7 @@
 
 ## What would be integrated
 
-The pure-Rust port in `rs/umath/` (see `rs/umath/PORT.md`, written by the porting agent): 0 differences from the Python reference for v3, v4 and v5. Mirroring v6 was in progress at the time of writing; check PORT.md for which version is primary. v6 is the measured converter plus robustness fixes. Its output equals v4's on 1,389 of the 1,390 gold items, with identical verdicts. The v3→v6 deltas are small and listed in `notes/LOG.md` §19, §24 and §26:
+The pure-Rust port in `rs/umath/` (see `rs/umath/PORT.md`, written by the porting agent): 0 differences from the Python reference for v3, v4, v5 and v6 over gold, estate, math-free and fuzz inputs. v6 is its default. v6 is the measured converter plus robustness fixes. Its output equals v4's on 1,389 of the 1,390 gold items, with identical verdicts. The v3→v6 deltas are small and listed in `notes/LOG.md` §19, §24 and §26:
 - the public `convert` iterates to a fixed point, and leaves the text as written if no fixed point is reached;
 - a final self-check requires that the output is the input with only some regions replaced;
 - hazards are checked before any rewrite;

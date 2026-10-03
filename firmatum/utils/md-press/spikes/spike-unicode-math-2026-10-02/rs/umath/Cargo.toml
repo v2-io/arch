@@ -1,0 +1,19 @@
+[package]
+name = "umath"
+version = "0.1.0"
+edition = "2024"
+description = "Deterministic Unicode-math -> $LaTeX$ converter: Rust port of py/frozen/umath_v3.py"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "umath"
+path = "src/bin/umath.rs"
+
+# serde_json is only for the JSONL bin; the library itself has no dependencies.
+[dependencies]
+serde_json = "1"
+
+[profile.release]
+debug = 1
