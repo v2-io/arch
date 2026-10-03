@@ -409,8 +409,78 @@ fn symlink_target_decorates_the_name() {
     std::os::unix::fs::symlink("gone.md", dir.join("dangling")).unwrap();
     let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("here -> real.md"), "{o}");
-    assert!(o.contains("dangling -> gone.md [broken]"), "{o}");
+    // 2026-10-03 name-stop slice: the stop is the widest *name* column
+    // (targets never count), so beside names this short both targets
+    // spill to an owned `╰` sub-row under their names
+    // (design/grid-cleanup.md §The name stop and the symlink spill).
+    let after = |name: &str| -> String {
+        let mut it = o.lines().skip_while(|l| !l.contains(name));
+        let row = it.next().unwrap_or_default().to_string();
+        format!("{row}\n{}", it.next().unwrap_or_default())
+    };
+    assert!(after("here").contains("\u{2570} -> real.md"), "{o}");
+    assert!(
+        after("dangling").contains("\u{2570} -> gone.md [broken]"),
+        "{o}"
+    );
+}
+
+/// The name stop is the widest name column in the look, uncapped (Joseph,
+/// 2026-10-03: "expand to the longest needed"): a 70-char name no longer
+/// shoves its own cells right of every other row's.
+#[test]
+fn long_name_widens_the_stop_instead_of_going_ragged() {
+    let (dir, xdg) = fresh("longname");
+    let long = format!("{}.md", "x".repeat(70));
+    fs::write(dir.join(&long), "a\nb\n").unwrap();
+    fs::write(dir.join("s.md"), "a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\n").unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    let long_row = o.lines().find(|l| l.contains(&long)).unwrap();
+    let short_row = o.lines().find(|l| l.contains("── s.md")).unwrap();
+    // The count cell's `.` anchor (the last `.` on the row) of `2.` and
+    // `11.` sits in one character column on both rows.
+    let anchor = |l: &str| {
+        let i = l.rfind('.').unwrap();
+        l[..i].chars().count()
+    };
+    assert_eq!(anchor(long_row), anchor(short_row), "{o}");
+}
+
+/// A symlink target that fits inside the stop the names earned stays
+/// inline; one that would cross it spills to a `╰` sub-row that carries no
+/// cells and costs no `--lines`; the cells of every row stay aligned.
+#[test]
+fn symlink_target_fits_or_spills() {
+    let (dir, xdg) = fresh("spill");
+    let long = format!("{}.md", "n".repeat(40));
+    fs::write(dir.join(&long), "a\n").unwrap();
+    fs::write(dir.join("t.md"), "a\nb\n").unwrap();
+    std::os::unix::fs::symlink("t.md", dir.join("short")).unwrap();
+    // Dangling on purpose: the spilled form must carry `[broken]` too.
+    let far = format!("{}t.md", "deep/".repeat(12));
+    std::os::unix::fs::symlink(&far, dir.join("far")).unwrap();
+    let (c, o, e) = run(&dir, &xdg, &[], &["--depth", "1"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(o.contains("short -> t.md"), "short target stays inline: {o}");
+    let lines: Vec<&str> = o.lines().collect();
+    let at = lines.iter().position(|l| l.contains("── far")).expect(&o);
+    assert!(!lines[at].contains("->"), "long target leaves the row: {o}");
+    assert!(
+        lines[at + 1].contains(&format!("\u{2570} -> {far}")),
+        "and lands on the sub-row below: {o}"
+    );
+    // The sub-row carries no cells: nothing after the target's own mark.
+    assert!(
+        lines[at + 1].ends_with(&format!("{far} [broken]")),
+        "{o}"
+    );
+    // Logical lines: a budget that exactly fits every node (stamp, drift
+    // line, root, headings, four children) folds nothing — the sub-row is
+    // not charged.
+    let (c, o2, e) = run(&dir, &xdg, &[], &["--depth", "1", "--lines", "8"]);
+    assert_eq!(c, 0, "{e}");
+    assert!(!o2.contains("[+"), "no node folded for the sub-row's sake: {o2}");
 }
 
 /// Heading tokens sit exactly over their columns (steward repro,

@@ -121,3 +121,38 @@ Not in this plan (undecided): subgroup-subject form · census delimiter · mass/
 - **mtime compact at far-left** still unbuilt (`(unbuilt: mtime, bytes)`).
 
 Suite: 314 tests green (302 + 11 lib (4 density + 7 SIGNA) + 1 score-path integration). Not committed, not `cargo install`.
+
+## Step 7 landed — the name stop, uncapped; the symlink spill (2026-10-03)
+
+**What the binary does now.** Everything right of the name starts at one stop: the widest name column (tree prefix + name + `/`) among rows that carry something right of the name, plus 2. There is no cap. The 48-cell `STOP_CAP` is gone, and with it the "a name past the cap goes ragged on its own line" carve-out. Symlink targets never count toward the stop. A target that fits inside it stays inline; one that would cross it moves to an owned sub-row below the name (`╰ -> target`, `╰ -> target [broken]`). The sub-row carries no cells and no color, pays the far-left block as blanks, and costs no `--lines`. The far-left block stays out of the computation because every grid row pays it equally. Design: [[../design/grid-cleanup|grid-cleanup]] §The name stop and the symlink spill, which carries the counts/doesn't-count table and the spill-when call.
+
+- **`src/columns.rs`:** `Row.cont` (the continuation rails, `{prefix}│   ` or `{prefix}    `, the same string the node's children get). `Row::name_col` replaces `name_width` (target excluded). `Row::spills(stop)` decides the spill. `paint` computes the stop without `.min(STOP_CAP)`, omits a spilled target from the primary row, and emits the sub-row right after it. `SUB_ROW_GUTTER = ╰` (U+2570). Header rows have an empty `cont` and never spill, because nothing is right of their names.
+- **Help:** the symlink paragraph says where a long target goes and that it is not counted against `--lines`.
+- **Tests:**
+  - New in `tests/columns.rs`: `long_name_widens_the_stop_instead_of_going_ragged` (a 70-char name, with the `.` anchors aligned) and `symlink_target_fits_or_spills` (short inline beside a long name, long spilled, sub-row cell-free). The latter also checks logical lines: `--lines 8` lists all four children where 7 folds one.
+  - Changed: `symlink_target_decorates_the_name` (columns), `target_shown_verbatim` / `broken_link_confesses` / `cycle_marks_and_terminates` (links_fs, via a `link_text` helper that reads either form), and `empty_child_says_so` (empty_dir). Each change carries a dated comment.
+  - Goldens re-blessed 2026-10-03, with a dated comment: kitchen, columns-on, and census (all on kitchen's tree, whose two links used to set the stop). leaf-census and git-repo did not move.
+  - Suite: 322 green.
+
+**Dogfood** (release vs installed v0.1.18, stamp dropped).
+
+| Look | Lines changed | Stop | Sub-rows | Notes |
+|---|---|---|---|---|
+| `~/src/aat-refactored --lines 300 --depth 4` (the inbox specimen) | 131/135 | 58 → 62 | — | The `cold-read` names and `PROPOSAL-…` (`419.`) sit in the column; widest line unchanged at 116. |
+| `~/src/arch/asf --lines 300 --depth 4` | 265/300 | `lines` heading at col 58 → 80 | 2 | `audit-routing-instructions.md`, `de-novo-audit-instructions.md` (targets `sop/audit.sop/…`). The root's `AGENTS.md -> doc/sop/agents.sop.md` etc. stay inline. Widest name: a 68-col `Prior_art_for_AAT_…csv`. |
+| `~/src/arch --lines 300 --depth 4` | 263/298 | `lines` heading at col 79 | 0 | |
+| `~/src/arch/vivarium --lines 200 --depth 3` | 175/199 | `lines` heading at col 104 | — | One 88-char reflection name sets it. That is the cost Joseph accepted, visible here at its largest. |
+| `~/src --lines 200 --depth 2` | 2 | — | 1 | `reviews/` → `╰ -> ../neurips-reviews-responses`. |
+| `~/src --depth 1`, this crate, grok-build | byte-identical | | | |
+| JSON (`asf --depth 3`) | byte-identical | | | Modulo time and version. |
+
+**Calls made**
+
+- **Spill-when** (approved by the coordinator; recorded as a call in the design): spill only when inline would cross the stop. The consequence, seen in the goldens, is that among short names even a short target spills (`here` beside `real.md`).
+- One sub-row, no wrapping at `/` (Joseph's mock wrapped; his words also allowed overflow).
+- Rows with nothing right of the name keep the target inline (nothing to shove).
+
+**Flagged, not acted on**
+
+- **Lattice-2 spells the target `→ target`** (U+2192). The binary has always shipped `-> target`. I kept `->` and touched only the position cell of that lattice row. Which one is law is Joseph's call.
+- A leaf-census row (`[+ dir×3 ≈63f · md×7 · …]`) can be wider than the stop. It has no cells, so nothing misaligns, but it does sit in the name position and can run into the column zone visually.

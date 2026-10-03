@@ -14,7 +14,9 @@
 //!    name-suffix · after-name · near-right · supplement · far-right (the
 //!    positions of design/lattice-2.md). Far-left takes heat (density,
 //!    two cells) then git-status (step 6); supplement has no tenants yet.
-//!    A node emits exactly one row today (sub-rows are a later slice).
+//!    A node emits one row, plus one owned sub-row when its symlink
+//!    target would push it past the stop (the first sub-row tenant,
+//!    2026-10-03; no cells, no `--lines` cost).
 //! 4. **Paint**: the only layer that knows about other rows — the computed
 //!    pseudo-tab-stop, per-column right edges, heading alignment, color.
 //!    Stops are pure functions of the look's content, never terminal width
@@ -198,7 +200,9 @@ struct Slots {
     name: String,
     /// Painted inside the name's color run (`/` on dirs).
     name_suffix: String,
-    /// `-> target`, uncolored, still part of the name column's width.
+    /// `-> target`, uncolored. Inline when it fits inside the stop the
+    /// names earned; otherwise paint moves it to an owned sub-row. Never
+    /// part of the stop computation.
     after_name: String,
     /// The typed near-right parts, in order — one string per part today,
     /// each one still its own ready-fact rather than a pre-joined blob.
@@ -273,6 +277,11 @@ struct Row {
     /// name columns instead of carrying values; painted dim, dropped when
     /// no value column below it exists, excluded from value widths.
     heading: bool,
+    /// The tree rails an owned sub-row stands on (the prefix this node's
+    /// children would get), so a spilled symlink target's `╰` lands at
+    /// the name column (design/grid-cleanup.md §The name stop). Empty on
+    /// header rows, which never spill.
+    cont: String,
 }
 
 impl Row {
@@ -282,18 +291,28 @@ impl Row {
             color_dir: false,
             dim: false,
             heading: false,
+            cont: String::new(),
         }
     }
 
-    /// The width of everything left of the tab-stop. Far-left is a look
-    /// prefix, not part of the name column — including it would steal from
-    /// STOP_CAP and shift everything right of the tree prefix.
-    fn name_width(&self) -> usize {
+    /// The name column proper: tree prefix + name + `/`. This is what the
+    /// stop is computed from. Far-left is a look-wide prefix every grid row
+    /// pays equally, and a symlink target either fits beside its name or
+    /// spills — neither widens the look (design/grid-cleanup.md §The name
+    /// stop).
+    fn name_col(&self) -> usize {
         let s = &self.slots;
-        s.level.chars().count()
-            + s.name.chars().count()
-            + s.name_suffix.chars().count()
-            + s.after_name.chars().count()
+        s.level.chars().count() + s.name.chars().count() + s.name_suffix.chars().count()
+    }
+
+    /// Does this row's symlink target move to an owned sub-row? Only when
+    /// keeping it inline would push the row past the stop; a row with
+    /// nothing right of its name has nothing to shove and keeps it inline
+    /// (the spill-when call, 2026-10-03).
+    fn spills(&self, stop: usize) -> bool {
+        !self.slots.after_name.is_empty()
+            && self.has_right()
+            && self.name_col() + self.slots.after_name.chars().count() + GAP > stop
     }
 
     fn cell(&self, i: usize) -> &str {
@@ -311,12 +330,17 @@ impl Row {
 }
 
 /// Non-name material lands at a computed pseudo-tab-stop: a pure function
-/// of the look's content (longest name column, capped), never terminal
-/// width (design/columns.md, alignment decided 2026-08-14). A name past
-/// the cap goes ragged on its own line only. Column cells are then aligned
-/// right-edge per column across the look.
-const STOP_CAP: usize = 48;
+/// of the look's content (design/columns.md, alignment decided 2026-08-14).
+/// The stop is the widest name column of any row that carries something
+/// right of its name, plus `GAP` — **uncapped** (Joseph, 2026-10-03:
+/// "expand to the longest needed … additional whitespace … is
+/// comparatively cheap"; the 48-cell cap and its ragged carve-out are
+/// retired). Column cells are then aligned right-edge per column.
 const GAP: usize = 2;
+
+/// The gutter glyph of an owned sub-row (Joseph's own mock, design/
+/// vertical-info.md §Steward asks 2).
+const SUB_ROW_GUTTER: &str = "\u{2570}";
 
 fn paint(
     mut rows: Vec<Row>,
@@ -361,10 +385,9 @@ fn paint(
     let stop = rows
         .iter()
         .filter(|r| r.has_right())
-        .map(|r| r.name_width() + GAP)
+        .map(|r| r.name_col() + GAP)
         .max()
-        .unwrap_or(0)
-        .min(STOP_CAP);
+        .unwrap_or(0);
     // A column exists only where a *value* row fills it; the headings line
     // never conjures a column (it teaches, it does not claim).
     let value_widths: Vec<usize> = (0..ncols)
@@ -418,9 +441,17 @@ fn paint(
             named
         };
         line.push_str(&painted);
-        line.push_str(&r.slots.after_name);
+        let spill = r.spills(stop);
+        if !spill {
+            line.push_str(&r.slots.after_name);
+        }
         if r.has_right() {
-            let w = r.name_width();
+            let w = if spill {
+                r.name_col()
+            } else {
+                r.name_col() + r.slots.after_name.chars().count()
+            };
+            // Every counted row fits by construction; GAP is the floor.
             let pad = if w + GAP <= stop { stop - w } else { GAP };
             line.push_str(&" ".repeat(pad));
             let mut first = true;
@@ -452,6 +483,21 @@ fn paint(
         // Alignment gaps for silent cells must not leave trailing bytes.
         out.push_str(line.trim_end());
         out.push('\n');
+        if spill {
+            // The owned sub-row: blank far-left block (it is a grid row),
+            // the node's continuation rails, the gutter, the target. No
+            // cells, no color, no budget (the allocator counts nodes).
+            let mut sub = String::new();
+            let fl: usize = r.slots.far_left.iter().map(|g| g.text.chars().count()).sum();
+            if fl > 0 {
+                sub.push_str(&" ".repeat(fl + gap));
+            }
+            sub.push_str(&r.cont);
+            sub.push_str(SUB_ROW_GUTTER);
+            sub.push_str(&r.slots.after_name);
+            out.push_str(sub.trim_end());
+            out.push('\n');
+        }
     }
     out
 }
@@ -488,6 +534,7 @@ fn heading_row(cols: &Cols, far_left_on: bool) -> Row {
         color_dir: false,
         dim: false,
         heading: true,
+        cont: String::new(),
     }
 }
 
@@ -640,18 +687,19 @@ fn emit(
     for (i, k) in kids.iter().enumerate() {
         let last = i + 1 == total;
         let branch = if last { "└── " } else { "├── " };
+        let next = if last {
+            format!("{prefix}    ")
+        } else {
+            format!("{prefix}│   ")
+        };
         out.push(Row {
             slots: Slots::of(k, cols, format!("{prefix}{branch}"), far_left_on),
             color_dir: k.is_dir,
             dim: k.ignored,
             heading: false,
+            cont: next.clone(),
         });
         if !k.children.is_empty() || k.omitted.is_some() {
-            let next = if last {
-                format!("{prefix}    ")
-            } else {
-                format!("{prefix}│   ")
-            };
             emit(
                 &k.children,
                 k.omitted.as_ref(),

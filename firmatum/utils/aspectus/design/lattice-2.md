@@ -82,7 +82,7 @@
 |      | block-special      | stat =                                | name-suffix                  | on                 | —         | 1                       | ?                              |
 |      | character-special  | stat =                                | name-suffix                  | on                 | —         | 1                       | ?                              |
 |      | socket             | stat =                                | name-suffix                  | on                 | —         | 1                       | ?                              |
-| ↬    | symlink-target     | lstat + readlink                      | after-name                   | on                 | —         | var                     | `→ `+target\* / `→ `+target+`[broken]`     |
+| ↬    | symlink-target     | lstat + readlink                      | after-name; spills to a `╰` sub-row when inline would cross the name stop ([[grid-cleanup\|grid-cleanup]] §The name stop, 2026-10-03) | on                 | —         | var                     | `→ `+target\* / `→ `+target+`[broken]`     |
 | ↬    | rename-from-target | git-status                            | after-name                   | on                 | —         | var                     | `← `+short-target |
 | ↬    | git-status         | git-status                            | far-left                     | on                 | git       | 1                       | {⊘ M A ⁇ R U D C T} |
 

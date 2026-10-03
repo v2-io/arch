@@ -98,7 +98,7 @@ Name-column tenants are mutually exclusive: **Name(+decorators) | Glob-Template 
 | 16 | kind word | line | near-right marks column | `binary` / `text` | unchanged |
 | 17 | *(merged into 1b)* | | | | |
 | 18 | README title | line | **decide**: decoration vs near-right | `"Rowan"` | open |
-| 19 | symlink target | line | decoration ⇒ **first to spill to a sub-row** | ` -> target`, ` -> target [broken]` | decided (inbox) |
+| 19 | symlink target | line | after-name; **spills to an owned sub-row when inline would cross the name stop** (§The name stop) | ` -> target`, ` -> target [broken]`; spilled: `╰ -> target` | decided (inbox 2026-08-14); spill-when landed 2026-10-03 |
 | 20 | git status | line | **glyph-block, one cell** | `⊘ M A ⁇ R U D` (`C T` available), blank when clean, worktree wins; **the separate `⊘` marks-column glyph retires** | decided |
 | 20b | ignored remainder | census / line | census cell / marks | `⏳ignored 3` as a subject cell (was `[ignored×3]`, `ignored×N`) | ⏳ |
 | 21 | denied | mark | near-right marks column | `[denied]`, `[unreadable: io]` — the word beats any glyph (both witnesses) | decided (word) |
@@ -201,10 +201,39 @@ What it adds beyond the testimony above, folded into the law: (a) a **confusable
 
 **Tests a pack must pass** before it ships: (1) an unprimed agent, shown the block cold, guesses ≥ half the values right; (2) the block survives `| cat`, JSON has fields not glyphs, and the no-color look is the primary; (3) tokenizer cost measured — a block should cost about as many tokens as it has glyphs; (4) taught in `--help` in one table, unchanged after.
 
+## The name stop and the symlink spill (decided 2026-10-03)
+
+**The stop.** Everything right of the name — far-right cells, then near-right parts — starts at one computed stop: the **widest name column of any row that carries something right of its name**, plus the two-cell gap. The name column is the tree prefix + name (or glob-template) + name-suffix (`/`). **There is no cap.** Joseph, 2026-10-03, on the inbox specimen (`10-form-information-bottleneck-cold-read.md  19.` shoved right of the `lines` column in `~/src/aat-refactored`): *"Yes, let's expand to the longest needed please. I think this will give quite a bit of benefit at the expense of additional whitespace which is comparatively cheap."* ([[../audit/inbox-2026-10-03|verbatim]]). This retires the 48-cell `STOP_CAP` and its "a name past the cap goes ragged on its own line only" carve-out (design/columns.md §Alignment, impl/columns.md); the alternative the coordinator offered — spill an overlong *name* to a sub-row — was not chosen.
+
+What counts toward the stop, and why:
+
+| Material | Counts? | Why |
+|---|---|---|
+| tree prefix, name / glob-template, `/` | yes | The name column proper. |
+| rows with nothing right of the name (expanded dirs with no cells, the leaf-census remainder row, the stamp/root lines) | no | Nothing on them can be misaligned; letting them widen the look would spend whitespace on no alignment. (Unchanged from before.) |
+| far-left block (heat density, git-status, gap) | no | A look-wide prefix that every grid row pays at the same width (step 5 §look-wide presence), so it shifts all rows equally and cannot misalign any. |
+| symlink target (` -> target`) | **no** | A target is not a name: counting it would make one long absolute target (`-> /Volumes/…`) set the width of every row. It fits beside its name or it spills (below). |
+
+**The symlink spill.** Joseph's 2026-08-14 ask ([[vertical-info|Vertical info]] §Steward asks 2, with his mock) decided that a line's description may wrap to **owned sub-rows** that carry no column cells, and that `--lines` counts **logical** lines. The symlink target was named the first tenant (row 19). This row lands that one tenant:
+
+```
+ ░   │   ├── audit-routing-instructions.md              409.      ◎◎◎◎◎○○○○○○
+     │   │   ╰ -> sop/audit.sop/routing.sop.md
+ ░   │   ├── AGENTS.md -> doc/sop/agents.sop.md         286.      ◎◎◎◎◎○○○○
+```
+
+- **When it spills — a call (coordinator-approved 2026-10-03; Joseph corrects on contact):** only when keeping the target inline would push the row past the stop. A target that fits inside the width its neighbors' names already set stays inline. Whether a given target fits depends on those neighbors, not on the target alone. In asf's root, among long names, `AGENTS.md -> doc/sop/agents.sop.md` fits. Beside `real.md` and `dangling`, even `here -> real.md` spills. No threshold is involved, and that is the point: the only width in the look is the one the names earned. *Why not "always":* a target that fits costs nothing inline, and a sub-row costs a line of height. *Why not "never":* an inline target that the stop ignores is exactly the shove Joseph's specimen objected to. *The cost knowingly paid:* a directory of short names shows its symlinks on two lines each.
+- **Rows with nothing right of the name keep the target inline** — there is no column to shove.
+- **Form:** the sub-row is the node's continuation prefix (the tree rails that would sit above its children), so the gutter lands exactly at the name column, then `╰`, then the target as the decoration spells it (`╰ -> target`, `╰ -> target [broken]`). The `╰` is Joseph's own gutter glyph from the mock. His mock also wrapped a long target at `/` across several sub-rows; **not done** here — he also said sub-lines *"can overflow into the columns without it messing up vertical flow too much"*, and one sub-row is the smaller interface. Wrapping stays available if a single line reads badly.
+- The sub-row pays the far-left block as blanks (it is a grid row), carries no cells, is never colored, and costs no `--lines` budget (the allocator counts nodes; sub-rows exist only in paint).
+- JSON is untouched (`link` was always its own field).
+
+Still open (unchanged): which *near-right* parts spill (`[git: …]`, `[has: …]`, censuses) and when — see below. This section answers it for the symlink target only.
+
 ## Decisions this row needs (Joseph)
 
 - The **place** for each row above marked **decide** (7 dangling `·`, 18 title, 19 target-as-spill) and confirmation of the proposed near-right sub-column order (title · kind-word · globify · census · marks · facets · has) — or a different order.
-- **Which near-right parts spill to sub-rows and when** — always (facets/has always below), or only past a look width — and the width knob (caller-stack key, never TTY).
+- **Which near-right parts spill to sub-rows and when** — always (facets/has always below), or only past a look width — and the width knob (caller-stack key, never TTY). *(The after-name symlink target is answered: §The name stop and the symlink spill; the sub-row machinery now exists for the next tenant.)*
 - Whether near-right sub-columns are **reserved-when-present-in-look** (padded, like far-right today) or claim width only on rows that have them.
 - The **far-right block ceiling** (four columns at `~/src` depth 2, six at `/tmp` — how many before quiet facts spill or drop).
 - Names: is *grid* the row's word (the fact×place grid), and do `place`/`office` become the inventory's two columns?

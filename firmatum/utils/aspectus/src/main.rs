@@ -216,6 +216,9 @@ fn help_page() -> String {
          \n\
          Symlinked directories are followed and recursed like real ones\n\
          (facts are the target's; `-> target` says how it got here). A\n\
+         target too long to sit beside its name without pushing the\n\
+         columns out of line prints on its own line below the name\n\
+         (`\u{2570} -> target`), not counted against --lines. A\n\
          cycle prints [cycle] instead of hanging. The walk stays on the\n\
          starting filesystem; a mount point shows [other fs] and stops\n\
          there unless --no-one-fs.\n\

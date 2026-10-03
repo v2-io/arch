@@ -48,6 +48,30 @@ fn run(dir: &Path, xdg: &Path, args: &[&str]) -> (i32, String, String) {
     )
 }
 
+/// The link's target as the look shows it — inline (`name -> target`) or,
+/// since the 2026-10-03 name-stop slice, on the owned `╰` sub-row directly
+/// below the name when inline would cross the name stop
+/// (design/grid-cleanup.md §The name stop and the symlink spill). Returns
+/// `name` + the target text, joined as the inline form would read.
+fn link_text(o: &str, name: &str) -> String {
+    let lines: Vec<&str> = o.lines().collect();
+    let i = lines
+        .iter()
+        .position(|l| l.contains(&format!("── {name}")))
+        .unwrap_or_else(|| panic!("no row for {name}: {o}"));
+    let row = lines[i];
+    if row.contains(" -> ") {
+        return row[row.find(name).unwrap()..].trim_end().to_string();
+    }
+    let sub = lines.get(i + 1).copied().unwrap_or_default();
+    let t = sub
+        .split_once("\u{2570}")
+        .map(|(_, t)| t)
+        .unwrap_or_else(|| panic!("no inline target and no sub-row for {name}: {o}"));
+    let head = row[row.find(name).unwrap()..].split("  ").next().unwrap();
+    format!("{head}{t}")
+}
+
 /// Subfeature 1: targets render as recorded, relative and absolute.
 #[test]
 fn target_shown_verbatim() {
@@ -57,9 +81,11 @@ fn target_shown_verbatim() {
     symlink(dir.join("real.md"), dir.join("abs-link")).unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("rel-link -> real.md"), "{o}");
+    // 2026-10-03 name-stop slice: inline or spilled, read via link_text.
+    assert!(link_text(&o, "rel-link").contains("rel-link -> real.md"), "{o}");
     assert!(
-        o.contains(&format!("abs-link -> {}", dir.join("real.md").display())),
+        link_text(&o, "abs-link")
+            .contains(&format!("abs-link -> {}", dir.join("real.md").display())),
         "{o}"
     );
 }
@@ -71,7 +97,11 @@ fn broken_link_confesses() {
     symlink("nowhere", dir.join("dangling")).unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "1"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("dangling -> nowhere [broken]"), "{o}");
+    // 2026-10-03 name-stop slice: inline or spilled, read via link_text.
+    assert!(
+        link_text(&o, "dangling").contains("dangling -> nowhere [broken]"),
+        "{o}"
+    );
 }
 
 /// Subfeature 3: a symlinked dir's children print, spending depth from the
@@ -113,7 +143,8 @@ fn cycle_marks_and_terminates() {
     symlink("..", dir.join("a/loop")).unwrap();
     let (c, o, e) = run(&dir, &xdg, &["--depth", "0"]);
     assert_eq!(c, 0, "{e}");
-    assert!(o.contains("loop/ -> .."), "{o}");
+    // 2026-10-03 name-stop slice: inline or spilled, read via link_text.
+    assert!(link_text(&o, "loop/").contains("loop/ -> .."), "{o}");
     assert!(o.contains("[cycle]"), "{o}");
 }
 

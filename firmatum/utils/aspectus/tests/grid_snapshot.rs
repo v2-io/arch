@@ -8,6 +8,13 @@
 //! Re-blessed 2026-08-23: heat-density + SIGNA + far-left-gap. Heat stays
 //! off (wall-clock ages would rot); the git-repo golden gains the gap
 //! (2 spaces) in front of git-status. Non-git goldens must not move.
+//! Re-blessed 2026-10-03: the name stop (design/grid-cleanup.md §The name
+//! stop and the symlink spill). The stop is the widest *name* column,
+//! uncapped; symlink targets no longer widen it. kitchen, columns-on, and
+//! census (kitchen's tree at --depth 1) carry two links (`readme-link`,
+//! `dangling`) that used to set the stop; they now spill to `╰ -> target`
+//! sub-rows and those looks narrow by ~20 cells. leaf-census and git-repo
+//! have no links and did not move.
 //!
 //! These fixtures exercise the whole row grammar at once —
 //! furniture, facets, dir census, leaf census, symlinks (one broken), a

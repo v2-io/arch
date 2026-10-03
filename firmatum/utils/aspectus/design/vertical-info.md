@@ -58,6 +58,6 @@ Three inbox entries land here; together they decide the shape this row's design 
 
 > Or, in other words, allow the wrapping of the file description so that columns properly line up. I would even go as far as to say don't worry about counting this as extra lines against the line count --lines, which can be essentially a logical count, instead of exact count. Because the secondary and tertiary lines (etc.) no longer need numbers in the columns after that, they can overflow into the columns without it messing up vertical flow too much.
 
-Decided by this ask: sub-lines exist; they carry no column cells; **`--lines` counts logical lines** (a node with sub-lines is one line of budget). Which material spills (symlink target, `[git: …]`, `[has: …]`, censuses?) and when (always, or only past a width) is the design work of this row.
+Decided by this ask: sub-lines exist; they carry no column cells; **`--lines` counts logical lines** (a node with sub-lines is one line of budget). Which material spills (symlink target, `[git: …]`, `[has: …]`, censuses?) and when (always, or only past a width) is the design work of this row. *(2026-10-03: the symlink target landed as the first tenant — spills when inline would cross the stop, one `╰ -> target` sub-row; [[grid-cleanup|Grid cleanup]] §The name stop and the symlink spill. The rest of the question stays here.)*
 
 **3.** The third inbox entry — the header names every non-default effective setting — is routed to [[overview-invariants|Overview invariants]].

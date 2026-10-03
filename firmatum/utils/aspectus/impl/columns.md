@@ -37,7 +37,8 @@ vivarium look's speaker was `DECISIONS.decision-log.udon  543K`, below
 the first screen). Pinned anyway by
 `quiet_column_without_speakers_has_no_heading`.
 
-Known ragged case, by design: a row whose name passes the tab-stop cap
-(`STOP_CAP`) shifts its cells right ("a name past the cap goes ragged on
-its own line only") — its `·` is off-grid. Revisit only if the cap law
-changes.
+~~Known ragged case, by design: a row whose name passes the tab-stop cap
+(`STOP_CAP`) shifts its cells right.~~ **Retired 2026-10-03:** the cap law
+changed (Joseph: "expand to the longest needed"). The stop is the widest
+name column, uncapped, and symlink targets fit or spill to a sub-row
+(impl/grid-cleanup.md §Step 7).

@@ -80,8 +80,11 @@ fn empty_child_says_so() {
     assert_eq!(c, 0, "{e}");
     assert!(line_of(&o, "hollow/").ends_with("[empty]"), "{o}");
     assert!(!line_of(&o, "full/").contains("[empty]"), "{o}");
-    let via = line_of(&o, "via");
-    assert!(via.contains("-> hollow") && via.ends_with("[empty]"), "{o}");
+    // 2026-10-03 name-stop slice: beside names this short the target
+    // spills to a `╰` sub-row under `via`; the mark stays on the node row.
+    let via = line_of(&o, "── via");
+    assert!(via.ends_with("[empty]"), "{o}");
+    assert!(o.contains("\u{2570} -> hollow"), "{o}");
 }
 
 /// Subfeature 2: at the depth cutoff an empty dir used to print bare (its

@@ -1,11 +1,13 @@
 columns.heat = off (env) · --depth 1 (flag)
 [has: rust]
 <ROOT>/
-                                         lines     perms
-├── deep/                                  11.            [one/ ≈5f]
-├── src/                                    3.            [rs×2 · bin×1]
-├── Cargo.toml                              2.
-├── README.md                               3.
-├── readme-link -> README.md                3.
-├── run.sh                                  2.       700
-└── dangling -> nowhere.md [broken]                  755
+                     lines     perms
+├── deep/              11.            [one/ ≈5f]
+├── src/                3.            [rs×2 · bin×1]
+├── Cargo.toml          2.
+├── README.md           3.
+├── readme-link         3.
+│   ╰ -> README.md
+├── run.sh              2.       700
+└── dangling                     755
+    ╰ -> nowhere.md [broken]
