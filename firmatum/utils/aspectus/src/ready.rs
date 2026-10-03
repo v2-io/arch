@@ -340,6 +340,11 @@ fn look_marks(n: &Node) -> Vec<Ready> {
     if n.empty {
         parts.push(mark("empty-dir", "[empty]"));
     }
+    // Every name readdir gave starts with `.` (design/dot-only.md): nothing
+    // ordinary lives here, whatever the has-spot says about what does.
+    if n.dot_only {
+        parts.push(mark("dot-only", "[dot-only]"));
+    }
     parts
 }
 

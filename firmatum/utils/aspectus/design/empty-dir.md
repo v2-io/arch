@@ -23,7 +23,7 @@ A directory that holds nothing says so: `[empty]`, in the marks, on its own line
 | cycle / other filesystem | `[cycle]` / `[other fs]` | Not read here. |
 | holds only furniture the map **hides** (`.git/`, `.archive/`) | `[has: git]`, `[has: archive ≈1f]` | It holds things. The has-spot is the presence claim. |
 | holds only gitignored files | `[ignored×N]` | It holds things. The typed remainder says so. |
-| holds only names the map **omits** (`.DS_Store`) | *bare* | See Open: the omit fate's contract is "not listed, not mentioned." |
+| holds only names the map **omits** (`.DS_Store`) | `[dot-only]` (since 2026-10-03) | It holds things. Joseph's rule: any dir whose names are all `.`-prefixed gets its own status — [[dot-only\|Dot-only directory]]. |
 
 ## Interplay
 
@@ -45,7 +45,7 @@ A directory that holds nothing says so: `[empty]`, in the marks, on its own line
 
 ## Open
 
-- **Omit-only directories render bare.** A directory holding only `.DS_Store` (fate `omit`: *not listed, not mentioned*) still renders bare, and that is the one remaining shape a cold reader can't tell from folded. It is common on macOS, in any empty dir Finder has opened. `[empty]` there would be false to `ls -a` and to `rmdir`, and this mark's only value is that it is true, so it is not claimed. Options, Joseph's call: (a) keep it bare and let help teach that a bare directory holds only omitted names; (b) a second word for the case (`[empty]` qualified, or naming the omitted count); (c) treat omit-only as empty *for the look* and say so in the help. *Why open:* the omit fate is Joseph's design, and its silence was deliberate.
+- ~~**Omit-only directories render bare.**~~ **Resolved 2026-10-03** (Joseph): *"any directory with *only* '.'-prefixed children … should get some other kind of status"* — broader than the omit case, by name not by fate. [[dot-only|Dot-only directory]] (`[dot-only]`).
 
 ## Foundations
 

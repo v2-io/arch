@@ -110,6 +110,7 @@ Name-column tenants are mutually exclusive: **Name(+decorators) | Glob-Template 
 | 27 | root facts line | look | header row 2, same grammar as a node row | cells + near-right, aligned with the tree | decided shape |
 | 28 | config drift | look | header row after the stamp | `depth = 3 (user-home)  --lines 200` (unbuilt) | decided (inbox), unbuilt |
 | — | *empty directory* | mark | marks column | `[empty]` — a word, the `[denied]` precedent; not `∅` (kept apart from `⊘`) — [[empty-dir\|Empty directory]] | decided (Joseph, 2026-10-03) |
+| — | *dot-only directory* | mark | marks column | `[dot-only]` — every readdir name `.`-prefixed; beside the has-spot/census — [[dot-only\|Dot-only directory]] | rule decided (Joseph, 2026-10-03); spelling proposed |
 | — | *tokens* | line / deep-agg | far-right `tokens` (later) | count cell, unit `𝓉`, `~` by nature | deferred |
 
 ## The count cell — Subject × Unit (decided with Joseph, 2026-08-15; only the nailed-down parts)

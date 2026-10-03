@@ -284,6 +284,7 @@ fn node_obj(n: &Node) -> String {
     o.bool_true("iter_err", n.iter_err);
     // A complete answer, not a cut — never feeds `truncated`.
     o.bool_true("empty", n.empty);
+    o.bool_true("dot_only", n.dot_only);
     // The dir census of an unexpanded directory, with the subtree's mass —
     // the same lines where the text look renders them.
     if let Some(c) = &n.leftover {

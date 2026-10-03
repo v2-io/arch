@@ -630,6 +630,19 @@ pub const FACTS: &[Fact] = &[
         "[empty]*",
         true,
     ),
+    f(
+        Built,
+        "dot-only",
+        "readdir yielded names, every one `.`-prefixed (before any filter)",
+        NearRight,
+        Mark,
+        Always,
+        None,
+        "10",
+        None,
+        "[dot-only]*",
+        true,
+    ),
     // ── Claims about a place (the cluster to refound next) ──────────────
     f(
         Wants,

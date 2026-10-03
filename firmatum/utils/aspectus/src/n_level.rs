@@ -166,6 +166,11 @@ pub struct Node {
     /// filtering; never set on a dir this look did not read (ignored,
     /// denied, cycle, other fs).
     pub empty: bool,
+    /// Readdir finished with at least one name and every name starts with
+    /// `.` — `[dot-only]` (design/dot-only.md; Joseph 2026-10-03: "any
+    /// directory with *only* '.'-prefixed children"). Raw readdir, before
+    /// any filter; coexists with whatever the line already says.
+    pub dot_only: bool,
     /// A presence-only node: a gitignored dir the walk did not open
     /// (`stat_only`). Its body is weighed by the body phase, never read
     /// into the look (design/ignored-bytes.md).
@@ -1255,6 +1260,7 @@ fn gather_dir(
     // Emptiness is the raw readdir's verdict, before the furniture map,
     // the ignore rules, or show-all filter anything (design/empty-dir.md).
     let empty = entries.is_empty() && !iter_err;
+    let dot_only = !entries.is_empty() && !iter_err && entries.iter().all(|e| e.name.starts_with('.'));
     let mut node = gather_dir_inner(
         path, name, remain, walk, ctx, mtime, link, mass_dup, iter_err, entries,
     );
@@ -1262,6 +1268,7 @@ fn gather_dir(
     if let Ok(n) = &mut node {
         n.title = title;
         n.empty = empty;
+        n.dot_only = dot_only;
     }
     node
 }

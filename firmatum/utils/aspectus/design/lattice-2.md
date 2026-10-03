@@ -174,6 +174,7 @@
 | ✓ | cycle / other-fs | `(dev,ino)` seen on this path / mount boundary | near-right marks | always | — | 7–10 | `[cycle]` / `[other fs]` |
 | ↬ | ignored-remainder | gitignored files at an expanded level | near-right (or a census bucket) | always | — | cc | `ignored` subject + count cell (subgroup form open) |
 | ✓ | empty-dir | readdir yielded no names, before any filter ([[empty-dir\|Empty directory]]) | near-right marks | always | — | 7 | `[empty]`\* (decided 2026-10-03; not `∅` — kept apart from `⊘`) |
+| ✓ | dot-only | readdir yielded names, every one `.`-prefixed, before any filter ([[dot-only\|Dot-only directory]]) | near-right marks | always | — | 10 | `[dot-only]`\* (rule Joseph's 2026-10-03; spelling proposed) |
 
 ## Claims about a place — the cluster to refound next (kept at the bottom on purpose)
 

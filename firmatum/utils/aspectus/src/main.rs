@@ -291,7 +291,10 @@ fn help_page() -> String {
          [walk bound], a count that hides an unreadable place is marked \u{2265},\n\
          a directory it could not read says [denied] rather than\n\
          printing as empty, and a directory that holds nothing at all\n\
-         says [empty] (bare would read as folded).\n\
+         says [empty] (bare would read as folded). A directory whose\n\
+         every name starts with `.` (only .DS_Store, .gitkeep, .git/,\n\
+         .archive/ ...) says [dot-only]: nothing ordinary lives there,\n\
+         even when the has-spot or census names what does.\n\
          \n\
          Quiet facts appear only when they surprise. Size speaks on a\n\
          magnitude outlier among its siblings; mtime when recent (within a\n\
