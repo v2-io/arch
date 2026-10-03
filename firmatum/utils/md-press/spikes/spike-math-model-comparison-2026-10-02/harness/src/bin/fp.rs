@@ -1,0 +1,1 @@
+fn main(){ let a=std::fs::read_to_string(std::env::args().nth(1).unwrap()).unwrap(); let r=md_press::format_plain(&a); println!("IN : {:?}\nOUT: {:?}\nFPin : {}\nFPout: {}", a, r.gate_output, md_press::render_fingerprint(&a), md_press::render_fingerprint(&r.gate_output)); }

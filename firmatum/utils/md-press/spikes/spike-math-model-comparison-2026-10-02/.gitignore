@@ -1,0 +1,4 @@
+census/*.tsv
+harness/target/
+# pieces from non-public repos (private or local-only), kept on this machine only
+data-local/

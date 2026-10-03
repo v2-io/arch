@@ -1,0 +1,15 @@
+[package]
+name = "math-model-comparison-harness"
+version = "0.1.0"
+edition = "2024"
+
+# links md-press's library by path, so every bin judges with the gates md-press
+# has at the time you build it
+[dependencies]
+md-press = { path = "../../.." }
+serde_json = "1"
+
+# detector census: one TSV row per prose site the math detector fires on
+[[bin]]
+name = "census"
+path = "src/census.rs"
