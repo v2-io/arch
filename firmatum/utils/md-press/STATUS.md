@@ -7,7 +7,7 @@
 *For Joseph or whoever resumes, cold. The work ran 2026-10-02 to 10-05 in one session; this section is its hand-off, and everything below it is the dated record.*
 
 **The tool.** In the repo, the math pass is on by default and safe to run unasked, the output is quieter, and both FEEDBACK files' defects and those found along the way are fixed (commit `2d9b9ac`, then the fixes noted below it; the full account is in *Math on by default*). Since 2026-10-05 md-press **only reports unless given `--fix`**, and every decision in the report carries a code that flips it (next section).
-- **Installed 2026-10-05** (`cargo install --path .`; before that, PATH held the 2026-08-06 build). The same day the instruction surfaces were updated to match: the global `~/.claude/CLAUDE.md` entry (in `memorata/claude/`), asf's `git-hygiene.sop.md` and `JOSEPH-TODO.md`, limen's `CLAUDE.md`, udon's `v2/theory/FORMAT.md`, the program `CLAUDE.md` and `firmatum/README.md`, two `.fmt-mdignore` comments, and one asf memory. Historical records (session logs, transcripts, archives, done TODO items) were left as written. **Not done:** vivarium's `core/src/detail-epistemics-toolchain.md` Working Notes still say "`fmt-md` … optional `--math`", and `bin/install`'s comment still says "fmt-md". Vivarium's orientation gate refuses commits without a prove, so these wait for the next agent that passes it.
+- **Installed 2026-10-05 as 0.2.0** (`md-press --version`; the crate had said 0.1.0 since August, so 0.2.0 marks report-by-default, `--fix` and the codes. `cargo install --path .`; before that, PATH held the 2026-08-06 build). The same day the instruction surfaces were updated to match: the global `~/.claude/CLAUDE.md` entry (in `memorata/claude/`), asf's `git-hygiene.sop.md` and `JOSEPH-TODO.md`, limen's `CLAUDE.md`, udon's `v2/theory/FORMAT.md`, the program `CLAUDE.md` and `firmatum/README.md`, two `.fmt-mdignore` comments, and one asf memory. Historical records (session logs, transcripts, archives, done TODO items) were left as written. **Not done:** vivarium's `core/src/detail-epistemics-toolchain.md` Working Notes still say "`fmt-md` … optional `--math`", and `bin/install`'s comment still says "fmt-md". Vivarium's orientation gate refuses commits without a prove, so these wait for the next agent that passes it.
 - **What installing changed:**
   - A bare `md-press FILE` stops writing. It reports and exits 1, which fails safe, but any habit or script that relied on it editing needs `--fix`. asf's gate already says `--check`, which still works.
   - asf's gate starts running the math pass, through ollama's `llama3.2:3b`. Without ollama, or with the model unreadable, it degrades to one warning. It also shares ollama with anything else on the machine; on 2026-10-03 an asf empirica campaign was driving `qwen3:4b`, and ollama here loads one model at a time.
@@ -39,9 +39,9 @@
   - Typed Unicode math is the scarcest category everywhere.
   - The survey's clones lived in a session scratchpad and are gone; re-fetch from the report.
 
-**The decisions waiting on Joseph,** in the order I'd suggest:
-1. **Does the converter replace the LLM in the math pass, and on which sites?** The spike and its verifier both say: only on the sites today's trigger selects, for now.
-2. **When to install** (decide with 1). With the converter, asf's `--check` becomes deterministic and needs no model.
+**The decisions waiting on Joseph,** in the order I'd suggest (installing is done: 0.2.0, 2026-10-05):
+1. **Does the converter replace the LLM in the math pass, and on which sites?** The spike and its verifier both say: only on the sites today's trigger selects, for now. With the converter, the report's math decisions become deterministic, need no model, and can offer refused proposals as opt-ins.
+2. **The classifier's undecided-middle default** — keep and mark (today) or join — once retraining measures organic precision per band (`model/RETRAIN-NEXT.md` step 4).
 3. **What replaces the model-era gates.** Run over the converter's output, they refuse 22%, mostly correct conversions, but also some real errors. The plan says replace them deliberately, not drop them.
 4. **Bare ASCII math** (`x`, `M_t`, `a^2` with no Unicode on the line): convert it, leave it, or convert only with nearby evidence. Today the converter converts little of it, on purpose.
 5. **Declaring house labels** (asf's W₀/W₁, `H_D3`, footnote-like `E³`): mined from canon (which recovers W₀ and W₁ exactly), a per-repo list, or something else. Repos that never write LaTeX offer nothing to mine.
@@ -49,7 +49,7 @@
 **Next work that needs no decision:**
 - A **clean held-out set for v7**, ideally drawn from the public corpora above (committable) and partly labeled by people.
 - **The lint-md render-compat checks** md-press still lacks (FEEDBACK-08-22 §2).
-- **Retraining the break classifier.** Its uncertain "joined" notes sit on a plateau at p≈0.40–0.47 that includes evidently wrong joins of enumerations (`(i) … \n (ii) …`); the audit fix-list items in `model/README.md` are still open.
+- **Retraining the break classifier.** Start at `model/RETRAIN-NEXT.md` (2026-10-05). In short: the uncertain decisions sit on two plateaus because the isotonic calibration is a step function. Raw forest scores of 0.433–0.567 all become p 0.714 (keep and mark, which changes rendering), and "confident" keeps start at a raw 0.573. The audit's fix-list items 2–5 are still open, and the organic false-positive measurement it called highest-value was never run. Since then, asf's wrap debt, the usage log's reviewed flips, and public hard-wrapped corpora have become available as data.
 - **`log-det/λ`** still converts as `log-$\det/\lambda$`.
 
 **Housekeeping and its state:**

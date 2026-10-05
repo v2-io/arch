@@ -38,6 +38,7 @@ md-press -q $(git ls-files '*.md')      # just the files that would change, e.g.
 md-press - < FILE.md                    # report on stdin (unguarded — see below)
 md-press --no-math FILE.md              # unwrap only: deterministic, no model
 md-press --math=MODEL FILE.md           # math with a different local model
+md-press --version                      # 0.2.0 and later report by default
 ```
 
 `--check` is still accepted and means the default. Exit codes: `0` nothing would change (report) or done (`--fix`); `1` the report found files that would change; `2` an error, a code that matches nothing, or a file left untouched by the safety check.

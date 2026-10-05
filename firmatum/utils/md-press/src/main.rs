@@ -40,6 +40,7 @@ usage: md-press [options] <file.md>...          report; write nothing
                     verbatim exclusions does not also disable this.
   --explain         Debug: print every consulted break with its calibrated
                     probability and named feature values on stderr.
+  -V, --version     Print the version (0.2.0: report by default, --fix, codes).
   -h, --help        Show this.
 
 THE REPORT. Per file that would change: first what md-press is confident
@@ -540,6 +541,10 @@ fn main() {
     }
     if args.iter().any(|a| a == "--help" || a == "-h") {
         usage(0);
+    }
+    if args.iter().any(|a| a == "--version" || a == "-V") {
+        println!("md-press {}", env!("CARGO_PKG_VERSION"));
+        return;
     }
     let opts = parse_args(&args);
     if opts.files.is_empty() {
