@@ -7,12 +7,11 @@
 *For Joseph or whoever resumes, cold. The work ran 2026-10-02 to 10-05 in one session; this section is its hand-off, and everything below it is the dated record.*
 
 **The tool.** In the repo, the math pass is on by default and safe to run unasked, the output is quieter, and both FEEDBACK files' defects and those found along the way are fixed (commit `2d9b9ac`, then the fixes noted below it; the full account is in *Math on by default*). Since 2026-10-05 md-press **only reports unless given `--fix`**, and every decision in the report carries a code that flips it (next section).
-- **Not installed.** The `md-press` on PATH is still the pre-2026-10-02 build. `cargo install --path .` makes the new one live everywhere.
-- **What installing changes:**
+- **Installed 2026-10-05** (`cargo install --path .`; before that, PATH held the 2026-08-06 build). The same day the instruction surfaces were updated to match: the global `~/.claude/CLAUDE.md` entry (in `memorata/claude/`), asf's `git-hygiene.sop.md` and `JOSEPH-TODO.md`, limen's `CLAUDE.md`, udon's `v2/theory/FORMAT.md`, the program `CLAUDE.md` and `firmatum/README.md`, two `.fmt-mdignore` comments, and one asf memory. Historical records (session logs, transcripts, archives, done TODO items) were left as written. **Not done:** vivarium's `core/src/detail-epistemics-toolchain.md` Working Notes still say "`fmt-md` … optional `--math`", and `bin/install`'s comment still says "fmt-md". Vivarium's orientation gate refuses commits without a prove, so these wait for the next agent that passes it.
+- **What installing changed:**
   - A bare `md-press FILE` stops writing. It reports and exits 1, which fails safe, but any habit or script that relied on it editing needs `--fix`. asf's gate already says `--check`, which still works.
   - asf's gate starts running the math pass, through ollama's `llama3.2:3b`. Without ollama, or with the model unreadable, it degrades to one warning. It also shares ollama with anything else on the machine; on 2026-10-03 an asf empirica campaign was driving `qwen3:4b`, and ollama here loads one model at a time.
   - **As of 2026-10-05, `llama3.2:3b`'s weights blob is again a symlink into the unmounted T7 drive.** The 10-02 re-pull had replaced it with a real file, and something has re-linked it since. The other three models checked (`qwen2.5:3b`, `gemma3:4b`, `qwen3:4b`) are the same; the remaining five weren't checked. So the math pass can't run here until the drive is mounted or the model re-pulled.
-- **Also stale once installed:** the global `~/.claude/CLAUDE.md` md-press entry (it says named files are edited in place, `--math` is off by default, and previews go through stdin).
 - **Proposal cache:** `~/.cache/md-press/math/`, which is always safe to delete.
 - **Tests:** `cargo test` runs offline: 50 tests, 22 of them regressions and 5 for plans and codes. `MD_PRESS_OLLAMA=1 cargo test live_model` adds the live-model test.
 
