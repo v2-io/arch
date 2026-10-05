@@ -36,18 +36,18 @@ cargo install --path firmatum/utils/aspectus
 # → ~/.cargo/bin/aspectus
 ```
 
-### [`utils/fmt-md/`](utils/fmt-md/)
+### [`utils/md-press/`](utils/md-press/)
 
-Markdown canonicalizer (Rust; house standards today; general engine). In-tree.
+Markdown canonicalizer (Rust; house standards today; general engine). In-tree. Named `fmt-md` until 2026-08-06; `fmt-md` on PATH is a deprecation shim. Since 2026-10-05 it reports by default and writes only with `--fix`. Start at [`utils/md-press/STATUS.md`](utils/md-press/STATUS.md).
 
 **Install (global):**
 
 ```sh
-cargo install --path firmatum/utils/fmt-md
-# → ~/.cargo/bin/fmt-md  (requires ~/.cargo/bin on PATH)
+cargo install --path firmatum/utils/md-press
+# → ~/.cargo/bin/md-press  (requires ~/.cargo/bin on PATH)
 ```
 
-Queued (not done): rename, public crate/repo readiness, re-intern as `firmatum/<newname>/` submodule and empty-or-repurpose `utils/` for internal migrators.
+Queued (not done): public crate/repo readiness, re-intern as `firmatum/md-press/` submodule and empty-or-repurpose `utils/` for internal migrators.
 
 ### [`utils/git-heat/`](utils/git-heat/)
 
@@ -105,7 +105,7 @@ Practica notes/docs (submodule `v2-io/practica`).
 ## Planned / tracked
 
 - **`mv-src-repo`** — general `~/src/` relocator (spec in [`../MIGRATION.md`](../MIGRATION.md) §5); after hand migrations are harvested.
-- **fmt-md** rename + public extraction + submodule re-intern (see above).
+- **md-press** public extraction + submodule re-intern (see above; the rename from fmt-md landed 2026-08-06).
 - **Harvest** cross-member `bin/` tools that belong in `firmatum/utils/`.
 - **`utils/descent`** — only after udon drops `tools/descent`.
 
