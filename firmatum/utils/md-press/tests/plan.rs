@@ -85,3 +85,54 @@ fn unknown_codes_match_nothing() {
     assert!(p.matched.is_empty());
     assert_eq!(p.output, plan(WRAPPED, &[], None).output);
 }
+
+fn greek(t: &str) -> String {
+    t.replace('η', "$\\eta$").replace('κ', "$\\kappa$").replace('ρ', "$\\rho$")
+}
+
+#[test]
+fn math_items_in_cells_lists_and_quotes_keep_their_structure() {
+    let model = Model::fake(greek);
+    let input = "| a | b |\n|---|---|\n| η up | κ down |\n\n- item with ρ\n\n> quoted η\n";
+    let p = plan(input, &[], Some(&model));
+    assert_eq!(
+        p.output,
+        "| a | b |\n|---|---|\n| $\\eta$ up | $\\kappa$ down |\n\n- item with $\\rho$\n\n> quoted $\\eta$\n"
+    );
+    // each item reports the line it is on in the file
+    let lines: Vec<usize> = p.items.iter().map(|i| i.line).collect();
+    assert_eq!(lines, vec![3, 3, 5, 7]);
+    // declining one cell's conversion leaves the other cell and the table intact
+    let kappa = code_where(&p, |d| matches!(d, Detail::Math { removed, .. } if removed == "κ"));
+    let q = plan(input, &[&kappa], Some(&model));
+    assert!(q.output.contains("| $\\eta$ up | κ down |\n"));
+    assert_eq!(q.output.matches('|').count(), input.matches('|').count());
+}
+
+#[test]
+fn a_math_code_survives_a_break_flip_elsewhere() {
+    let model = Model::fake(greek);
+    let input = "First line\nwraps here.\n\nThe gain η rises.\n";
+    let p = plan(input, &[], Some(&model));
+    let para = code_where(&p, |d| matches!(d, Detail::Para { .. }));
+    let eta = code_where(&p, |d| matches!(d, Detail::Math { .. }));
+    // flipping the join moves the math line down one output line; the math
+    // code still names the same decision
+    let q = plan(input, &[&para, &eta], Some(&model));
+    assert_eq!(q.matched.len(), 2);
+    assert_eq!(q.output, "First line  \nwraps here.\n\nThe gain η rises.\n");
+    let m = q.items.iter().find(|i| matches!(i.detail, Detail::Math { .. })).unwrap();
+    assert_eq!(m.line, 4, "math reported at its line in the file");
+}
+
+#[test]
+fn identical_math_on_two_lines_gets_two_codes() {
+    let model = Model::fake(greek);
+    let input = "Gain η.\n\nGain η.\n";
+    let p = plan(input, &[], Some(&model));
+    let codes: Vec<&str> = p.items.iter().map(|i| i.code.as_str()).collect();
+    assert_eq!(codes.len(), 2);
+    assert_ne!(codes[0], codes[1]);
+    let q = plan(input, &[codes[1]], Some(&model));
+    assert_eq!(q.output, "Gain $\\eta$.\n\nGain η.\n");
+}

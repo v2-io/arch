@@ -144,7 +144,9 @@ Exit codes: 0 = nothing would change (report), or done (--fix)
     if code == 0 {
         println!("{text}");
     } else {
-        eprintln!("{text}");
+        // on an error, just the usage lines: the full text buries the error
+        let short: String = text.lines().skip_while(|l| !l.starts_with("usage:")).take_while(|l| !l.is_empty()).collect::<Vec<_>>().join("\n");
+        eprintln!("{short}\n(md-press --help for everything)");
     }
     std::process::exit(code)
 }
@@ -203,6 +205,8 @@ fn parse_args(args: &[String]) -> Opts {
         }
         i += 1;
     }
+    let mut seen = std::collections::HashSet::new();
+    toggles.retain(|c| seen.insert(c.clone()));
     let has = |f: &str| flags.contains(&f);
     if has("--check") && has("--fix") {
         eprintln!("md-press: --check and --fix contradict each other (--check is the default)");
