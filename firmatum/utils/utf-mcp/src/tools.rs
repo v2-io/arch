@@ -84,7 +84,7 @@ detail=\"brief\": code point, glyph, name, category, block. \"standard\" (defaul
             "name": "search",
             "title": "Search character names",
             "description": format!(
-"Find characters whose Unicode {v} name, formal alias, informal alias, or emoji short name contains the words of `query` (all words must match; case-insensitive; hyphens split words as in names, so \"twenty-one\" matches TWENTY-ONE). mode \"prefix\" (default): each query word matches the start of a word in the name (\"circ dig\" finds CIRCLED DIGIT ONE); \"word\": whole words only; \"substring\": anywhere. Optional filters: `block` (block name or part of it), `script` (name or code, e.g. \"Latin\" / \"Latn\"), `category` (general category code or name, e.g. \"So\", \"Nd\", \"S\" for all symbols, \"Other_Symbol\"); an unknown filter value is an error, not an empty result. With han_definitions=true the query is also matched against Unihan English definitions of Han ideographs. Also matches named and emoji sequences, and reports blocks whose names match (use `range` or `blocks` to list them). Results are in code point order (exact name match first), up to `limit` (default 50, max {MAX_SEARCH_LIMIT}); the total match count is always reported."),
+"Find characters whose Unicode {v} name, formal alias, informal alias, or emoji short name contains the words of `query` (all words must match; case-insensitive; hyphens split words as in names, so \"twenty-one\" matches TWENTY-ONE). mode \"prefix\" (default): each query word matches the start of a word in the name (\"circ dig\" finds CIRCLED DIGIT ONE); \"word\": whole words only; \"substring\": anywhere. Optional filters: `block` (block name or part of it), `script` (name or code, e.g. \"Latin\" / \"Latn\"), `category` (general category code or name, e.g. \"So\", \"Nd\", \"S\" for all symbols, \"Other_Symbol\"); an unknown filter value is an error, not an empty result. With han_definitions=true the query is also matched against Unihan English definitions of Han ideographs. Also matches named and emoji sequences, and reports blocks whose names match (use `range` or `blocks` to list them). Results: exact name/alias matches first, then names containing the query as a verbatim phrase, then other matches, each in code point order, up to `limit` (default 50, max {MAX_SEARCH_LIMIT}); the total match count is always reported."),
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -218,9 +218,12 @@ fn parse_cp_entry(v: &Value) -> Result<Vec<u32>, String> {
             }
             toks.iter().map(|t| parse_cp(t)).collect()
         }
-        Value::Number(n) => Err(format!(
-            "{n} is a bare number, which is ambiguous (hex U+{n} or decimal?). Give code points as strings: \"U+{n}\" for hex, \"&#{n};\" for decimal"
-        )),
+        Value::Number(n) => match n.as_u64() {
+            Some(i) => Err(format!(
+                "{i} is a bare number, which is ambiguous (hex U+{i} or decimal?). Give code points as strings: \"U+{i}\" for hex, \"&#{i};\" for decimal"
+            )),
+            None => Err(format!("{n} is not a code point; give code points as strings such as \"U+2460\"")),
+        },
         o => Err(format!("{o} is not a code point")),
     }
 }
@@ -740,17 +743,34 @@ fn search(u: &Ucd, a: &Map<String, Value>) -> Result<Value, String> {
         true
     };
 
+    // Ranking: exact name/alias, then names containing the query verbatim as a
+    // phrase (so "twenty-one" puts ...TWENTY-ONE ahead of ...TWENTY-EIGHTH...ONE...),
+    // then the remaining matches; code point order within each tier.
     let mut exact: Vec<u32> = Vec::new();
+    let mut phrase: Vec<u32> = Vec::new();
     let mut hits: Vec<u32> = Vec::new();
+    // Hyphen and space count as the same separator for the phrase test.
+    let qphrase = qnorm.replace('-', " ");
+    let phrase_re = |l: &str| -> bool {
+        let l = l.replace('-', " ");
+        l.match_indices(qphrase.as_str()).any(|(i, _)| {
+            let before = l[..i].chars().next_back();
+            let after = l[i + qphrase.len()..].chars().next();
+            before.is_none_or(is_word_sep) && after.is_none_or(is_word_sep)
+        })
+    };
     for (cp, hay) in &u.search_rows {
         if text_matches(hay, &words, mode) && filter_ok(*cp) {
             if hay.split('\n').any(|l| l == qnorm) {
                 exact.push(*cp);
+            } else if words.len() > 1 && hay.split('\n').any(phrase_re) {
+                phrase.push(*cp);
             } else {
                 hits.push(*cp);
             }
         }
     }
+    exact.extend(phrase);
     if han_defs {
         let lw: Vec<String> = words.iter().map(|w| w.to_lowercase()).collect();
         for cp in u.han_with_definitions() {
@@ -1141,6 +1161,15 @@ mod tests {
         assert!(blocks(u, &args(json!({"query": "ab"}))).unwrap()["blocks"].as_array().unwrap().len() > 1);
         assert_eq!(blocks(u, &args(json!({"query": "U+00AB"}))).unwrap()["block"], "Latin-1 Supplement");
         // block-level notices
+        // verbatim phrase matches rank ahead of scattered-word matches
+        let v = search(u, &args(json!({"query": "twenty-one"}))).unwrap();
+        let names: Vec<&str> = v["characters"].as_array().unwrap().iter().map(|c| c["name"].as_str().unwrap()).collect();
+        let last_phrase = names.iter().rposition(|n| n.replace('-', " ").contains("TWENTY ONE")).unwrap();
+        let first_other = names.iter().position(|n| !n.replace('-', " ").contains("TWENTY ONE")).unwrap();
+        assert!(last_phrase < first_other, "{names:?}");
+        // non-integer numbers get a usable message
+        let v = identify(u, &args(json!({"codepoints": [2460.5]}))).unwrap();
+        assert!(!v["unresolved"][0]["error"].as_str().unwrap().contains("U+2460.5"));
         assert!(blocks(u, &args(json!({"query": "greek and coptic"}))).unwrap()["notes"][0].as_str().unwrap().starts_with("Casing relationships"));
         // positional notices are labelled, not presented as the character's own note
         let v = char_json(u, 0x050F, Detail::Standard);

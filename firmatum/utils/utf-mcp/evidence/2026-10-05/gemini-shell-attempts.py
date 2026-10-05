@@ -19,6 +19,8 @@ chr(0x336D) chr(0x336E) ..., i.e. chart neighbours without arithmetic).
 """
 import collections, glob, json, os, re, sys
 
+if len(sys.argv) != 2:
+    sys.exit(__doc__)
 root = sys.argv[1]
 NAME = re.compile(r'unicodedata\.(name|lookup)|\bname\(')
 ARITH = re.compile(r'chr\s*\(\s*(ord\s*\(|0x[0-9a-fA-F]+\s*[+-]|x\b|i\b|c\b|cp\b|o\b|n\b|code)|range\s*\(\s*(0x|ord\s*\()|ord\([^)]*\)\s*[+-]\s*\w|\bchr\(\s*\w+\s*[+-]')

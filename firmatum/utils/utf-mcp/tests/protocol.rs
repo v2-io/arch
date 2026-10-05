@@ -136,6 +136,7 @@ fn agy_hook_policy() {
     // a model-written ServerName does not unlock other tools
     assert_eq!(hook(r#"{"toolCall":{"name":"run_command","args":{"CommandLine":"ls","ServerName":"unicode_unicode"}}}"#)["decision"], "deny");
     assert_eq!(hook(r#"{"toolCall":{"name":"view_file","args":{"AbsolutePath":"/etc/passwd","server":"unicode_unicode"}}}"#)["decision"], "deny");
-    // overrides name only this server
-    assert_eq!(ok["permissionOverrides"].as_array().unwrap().len(), 2);
+    // the grant holds only the operator's server name; a crafted ToolName is denied
+    assert_eq!(ok["permissionOverrides"], json!(["mcp(unicode_unicode/*)"]));
+    assert_eq!(hook(r#"{"toolCall":{"name":"call_mcp_tool","args":{"ServerName":"unicode_unicode","ToolName":"x)/*, mcp(chrome_devtools"}}}"#)["decision"], "deny");
 }

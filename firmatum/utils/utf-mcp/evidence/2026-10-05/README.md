@@ -1,6 +1,6 @@
 # Evidence, 2026-10-05
 
-The files behind the "tested" claims in `../../README.md`, cut from the session scratchpad by `extract.py`. The scratchpad was temporary; the de novo verification (`../../de-novo-feedback-1.md` §9) found these claims untraceable without it. Call logs are verbatim. CLI streams and captured model requests are reduced to the tools offered, the calls made, their results (truncated) and the final text; full system prompts are left out.
+The files behind the "tested" claims in `../../README.md`, cut from the session scratchpad by `extract.py`. Unless marked *post-repair*, these record the first binary (commit `0420485`), before the repairs in `c869e66` tightened the schemas (`additionalProperties: false`, unknown keys refused). The repairs did not change any Unicode data (the verifier found the `dump` byte-identical), but they did change what clients see. The scratchpad was temporary; the de novo verification (`../../de-novo-feedback-1.md` §9) found these claims untraceable without it. Call logs are verbatim. CLI streams and captured model requests are reduced to the tools offered, the calls made, their results (truncated) and the final text; full system prompts are left out.
 
 | claim | files |
 |---|---|
@@ -16,4 +16,15 @@ The files behind the "tested" claims in `../../README.md`, cut from the session 
 | agy hook policy, offline | `call-logs/agy-hook-offline.jsonl` (the first, pre-repair policy; the current one is covered by `tests/protocol.rs`) |
 | Gemini's shell attempts in the study: 172 conversations, 149 names, 31 arithmetic (12 both) | `gemini-shell-attempts.py` (counting rule in its docstring; reads the study's harvested agy transcripts) |
 
-Not here: the Python and Perl cross-check outputs (reproducible with `checks/`), and the first grok live run's server log, which never existed because the server was never started (project config in an untrusted folder).
+## Post-repair
+
+| claim | evidence |
+|---|---|
+| claude: the repaired binary works live (four tools offered, `range` calls succeed) | Not copied here: the study's own log, `asf/empirica/glyph-sequence-perception/refactored/data/utf-mcp/calls.jsonl`, committed in the asf repo at `79875789`. Two Sonnet calls at 20:09–20:10 UTC under `gsp-…` tags, client `claude-code`, two successful `range` calls (`U+1FB78..U+1FB85`, `U+10105..U+1010A`). The "exactly four tools" part comes from the study's own `init` event, as relayed by the coordinator; I did not see it |
+| codex (gpt-5.5) and grok accept the tightened schemas | the verifier's second pass (`../../de-novo-feedback-2.md`, A3), against the fake endpoint |
+| `grok.sh` exec's grok: killing the script leaves no grok, tee or server process | run against a local socket that accepts and never replies, `kill -9` of the script after 6 s; before the kill the script's PID was grok itself, with `tee` and `utf-mcp` running; 2 s after it, none of the three remained. Process listing only, not kept as a file |
+| `grok-check.py`: exit 0 for inline arguments, 3 for `tool_input_file` and for the `file` form (warning record appended), 4 for an unreadable stream | `call-logs/grok-fake-post-repair-2-{inline,tool-input-file,file-form}.jsonl` (each run's server log, with the check's `harness_warning` record where it fired) |
+
+## Not here
+
+The Python and Perl cross-check outputs (reproducible with `checks/`), and the first grok live run's server log, which never existed because the server was never started (project config in an untrusted folder).

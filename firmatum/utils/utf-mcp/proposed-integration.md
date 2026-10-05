@@ -13,8 +13,10 @@ So code-chart order surfacing through the tools is expected in the reasoned pass
 | chart neighbours | any `range` call; `identify` on a code point or name that was not among the glyphs shown |
 | identification | `identify` whose `text` (or code points) are only the glyphs shown |
 | name search | `search` |
-| chart structure | `blocks`, or `identify` at `standard`/`full` (chart headings, `see_also`) |
+| chart structure | `blocks`; also `identify` at `standard`/`full` (chart headings, `see_also`) |
 | none | no calls |
+
+The rows overlap in practice. `standard` is `identify`'s default and includes chart headings and `see_also`, so nearly every `identify` call also carries chart structure unless the judge asks for `brief`. Tag what was *requested* (the `range`/`identify`/`search` arguments) separately from what was *returned* (the result text is also in the log), rather than reading the table as mutually exclusive labels. If the reasoned pass should keep chart headings out of identification, the adapter could tell the judge to use `brief`, or the server could take a per-run default-detail flag (not built).
 
 Outside the log: codex code-mode models can do code-point arithmetic in JavaScript (only in codex's rollout files), and grok runs carrying a `harness_warning` had a model point `use_tool` at a local file. I have not built the classifier; it is a short script over the log and the ledger's prompts, and I can write it if wanted.
 
@@ -32,7 +34,7 @@ None of the codex path has met a live model (quota exhausted until 2026-11-02). 
 
 **grok (`grok_call`).** The adapter's isolated `HOME` is the right base. Write `[mcp_servers.unicode]` into that home's `config.toml`, and replace the current all-tools-removed flags (`--tools todo_write --disallowed-tools …search_tool,use_tool…`) with `--tools search_tool,use_tool --allow 'mcp__unicode__*'`. Without `--allow`, headless grok in the isolated home cancels the call (observed); my reading is that the isolated home has the default permission mode. Joseph's own `~/.grok/config.toml` sets `permission_mode = "always-approve"`, which is why a non-isolated run needs no `--allow`, and why a non-isolated run with the wrong `--tools` gave a model a working shell.
 
-grok's `use_tool` can also be pointed at a local JSON file (`tool_input_file`), which grok reads and forwards as arguments. Neither `--deny Read` nor any `--sandbox` profile I tried stopped it. In practice a judge would have to guess paths, the server refuses unexpected keys, and the forwarded arguments always land in the log. `integrations/grok.sh` flags such runs (exit 3 plus a `harness_warning` record); an adapter could treat that the same way it treats Gemini's tool attempts.
+grok's `use_tool` can also be pointed at a local JSON file (`tool_input_file`), which grok reads and forwards as arguments. Neither `--deny Read` nor any `--sandbox` profile I tried stopped it. In practice a judge would have to guess paths, the server refuses unexpected keys, and the forwarded arguments always land in the log. `integrations/grok-check.py` flags such runs after the call (exit 3 plus a `harness_warning` record); an adapter could treat that the same way it treats Gemini's tool attempts. Keep grok itself as the process the harness times out and kills: `grok.sh` `exec`s grok for this reason, and the check runs as a separate step. If an adapter wraps grok in a shell pipeline, start it in its own session (`start_new_session=True`) and kill the process group on timeout, or an orphaned grok keeps spending quota and writing to the round's log.
 
 **agy (`agy_call`).** Workspace plugin plus hook, as in `integrations/agy.sh`, with `cwd` = the plugin's workspace. The blocker is in §3.
 

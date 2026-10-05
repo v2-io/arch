@@ -69,7 +69,10 @@ pub fn run(rest: &[String], mut lg: log::Log) {
     let (decision, reason) = if payload.is_null() {
         ("deny", "hook could not parse the tool call".to_string())
     } else if name == MCP_TOOL {
+        let plain = |t: &str| !t.is_empty() && t.len() <= 64 && t.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'_' || b == b'-');
         match &server {
+            // ToolName is model-written: refuse anything that is not a plain identifier.
+            Some(_) if tool_name.is_some_and(|t| !plain(t)) => ("deny", "MCP tool name is not a plain identifier".to_string()),
             Some(s) if servers.iter().any(|a| a == s) => ("allow", String::new()),
             Some(s) => ("deny", format!("MCP server {s:?} is not available in this session; only Unicode lookup tools are.")),
             None => ("deny", "MCP call without a server name".to_string()),
@@ -91,12 +94,10 @@ pub fn run(rest: &[String], mut lg: log::Log) {
     if decision == "allow" {
         out["allowTool"] = json!(true);
         if name == MCP_TOOL {
+            // Only the operator-given server name goes into the grant; nothing
+            // model-written is interpolated into a permission string.
             if let Some(s) = &server {
-                let mut grants = vec![format!("mcp({s}/*)")];
-                if let Some(t) = tool_name {
-                    grants.push(format!("mcp({s}/{t})"));
-                }
-                out["permissionOverrides"] = json!(grants);
+                out["permissionOverrides"] = json!([format!("mcp({s}/*)")]);
             }
         }
     }

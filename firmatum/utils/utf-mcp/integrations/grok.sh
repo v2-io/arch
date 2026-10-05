@@ -16,9 +16,15 @@
 # --deny Read rule and no --sandbox profile (read-only, workspace, strict) stopped
 # it (tested 2026-10-05 against the fake endpoint). utf-mcp refuses argument keys
 # outside its schema without echoing their values, which narrows what can come
-# back; this script also scans the stream after the run and, if any use_tool call
-# named a file, warns on stderr, appends a "harness_warning" record to the call
-# log, and exits 3.
+# back. To detect it, run integrations/grok-check.py on the run's workdir after
+# the call (exit 3 and a harness_warning log record if a use_tool call named a
+# file; exit 4 if the stream could not be read as grok's format).
+#
+# Process shape: this script exec's grok, so a harness timeout that kills the
+# script kills grok; the server and the tee then see EOF and exit. (A version
+# that ran grok as a child to scan afterwards left grok, tee and the server
+# running when the script was killed; found by the second verification.)
+# The stream is copied to WORKDIR/grok-stream.jsonl for the check.
 #
 # Verified: against a local fake model endpoint (calls reach the server only
 # with a matching --allow rule; rules for other names leave them cancelled), and
@@ -41,19 +47,8 @@ EOF
 summary
 cd "$WORK/cwd"
 MODEL_ARGS=(); [[ -n "$MODEL" ]] && MODEL_ARGS=(-m "$MODEL")
-set +e
-HOME="$H" "${GROK_BIN:-$HOME/.grok/bin/grok}" -p "$PROMPT" ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} \
+HOME="$H" exec "${GROK_BIN:-$HOME/.grok/bin/grok}" -p "$PROMPT" ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} \
   --tools search_tool,use_tool --allow 'mcp__unicode__*' \
   --no-subagents --disable-web-search --no-plan \
   --output-format streaming-json \
-  ${EXTRA[@]+"${EXTRA[@]}"} < /dev/null | tee "$WORK/grok-stream.jsonl"
-rc=${PIPESTATUS[0]}
-set -e
-# A use_tool call whose rawInput names a file (tool_input_file / file).
-if grep '"toolName":"use_tool"' "$WORK/grok-stream.jsonl" 2>/dev/null | grep -qE '"(tool_input_file|file)"[[:space:]]*:'; then
-  echo "utf-mcp[$CLI]: WARNING: a use_tool call named a local file (tool_input_file/file); see $WORK/grok-stream.jsonl" >&2
-  printf '{"ts":"%s","event":"harness_warning","tag":"%s","harness":"grok","warning":"use_tool named a local file (tool_input_file/file)","stream":"%s"}\n' \
-    "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)" "$TAG" "$WORK/grok-stream.jsonl" >> "$LOG"
-  exit 3
-fi
-exit "$rc"
+  ${EXTRA[@]+"${EXTRA[@]}"} < /dev/null > >(tee "$WORK/grok-stream.jsonl")
