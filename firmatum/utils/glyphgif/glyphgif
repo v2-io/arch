@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""glyphgif — animate a sequence of glyphs in the center of a reverse-video grid.
+
+    glyphgif '3|E=-='
+
+Draws a 5-column x 3-row grid of reverse-video cells and cycles the given glyphs in its
+center cell until ctrl-c. Keys while running:
+  +  (or =)  faster  (delay - step)
+  -          slower  (delay + step)
+
+Frames are grapheme clusters, so combining marks, variation selectors and
+ZWJ sequences stay attached to their base character.
+"""
+import argparse
+import os
+import select
+import shutil
+import sys
+import termios
+import time
+import tty
+import unicodedata
+
+try:
+    import regex
+
+    def frames_of(s):
+        return regex.findall(r"\X", s)
+except ImportError:  # stdlib fallback: attach combiners / VS / ZWJ-joined chars
+    def frames_of(s):
+        out = []
+        join_next = False
+        for ch in s:
+            attach = out and (
+                join_next
+                or unicodedata.combining(ch)
+                or "︀" <= ch <= "️"
+                or ch == "‍"
+            )
+            if attach:
+                out[-1] += ch
+            else:
+                out.append(ch)
+            join_next = ch == "‍"
+        return out
+
+
+def cells(frame):
+    """Terminal columns a frame occupies: 2 for wide/fullwidth or emoji-presentation, else 1."""
+    if "\ufe0f" in frame or "\u200d" in frame:
+        return 2
+    return 2 if any(unicodedata.east_asian_width(c) in "WF" for c in frame) else 1
+
+
+REV, RESET = "\x1b[7m", "\x1b[0m"
+
+
+def main():
+    ap = argparse.ArgumentParser(
+        description="Animate a sequence of glyphs in the center of a reverse-video grid.",
+        epilog="Keys: + (or =) faster, - slower, ctrl-c to quit.",
+    )
+    ap.add_argument("glyphs", help="the frames, e.g. '3|E=-='")
+    ap.add_argument("-d", "--delay", type=float, default=0.25,
+                    help="seconds between frames (default 0.25)")
+    ap.add_argument("-s", "--step", type=float, default=0.05,
+                    help="seconds added/removed per keypress (default 0.05)")
+    ap.add_argument("-c", "--cols", type=int, default=5,
+                    help="grid width in cells (default 5)")
+    ap.add_argument("-r", "--rows", type=int, default=3,
+                    help="grid height in cells (default 3)")
+    args = ap.parse_args()
+
+    frames = frames_of(args.glyphs)
+    if not frames:
+        ap.error("no glyphs given")
+    step = args.step
+    floor = min(step, args.delay)  # never reach zero
+    delay = max(args.delay, floor)
+    cols, rows = max(1, args.cols), max(1, args.rows)
+    mid = cols // 2
+    up = rows - rows // 2  # lines from just below the grid back up to the center row
+    left = max(0, (shutil.get_terminal_size().columns - cols) // 2)
+    home = f"\r\x1b[{left}C" if left else "\r"  # start of the grid on the current line
+
+    out = sys.stdout
+    fd = sys.stdin.fileno()
+    interactive = os.isatty(fd)
+    saved = termios.tcgetattr(fd) if interactive else None
+
+    out.write("\n\x1b[?25l")  # newline, hide cursor
+    for _ in range(rows):
+        out.write(home + REV + " " * cols + RESET + "\n")
+    out.write(f"\x1b[{up}A")  # park on the center row
+    out.flush()
+    try:
+        if interactive:
+            tty.setcbreak(fd)  # keys arrive immediately, no echo; ctrl-c still signals
+        i = 0
+        next_at = time.monotonic()
+        while True:
+            now = time.monotonic()
+            if now >= next_at:
+                f = frames[i % len(frames)]
+                right = max(0, cols - mid - cells(f))  # keep the row `cols` cells wide
+                out.write(home + REV + " " * mid + f + " " * right + RESET + "\x1b[K")
+                out.flush()
+                i += 1
+                next_at = now + delay
+            timeout = max(0.0, next_at - time.monotonic())
+            if interactive:
+                ready, _, _ = select.select([fd], [], [], timeout)
+                if ready:
+                    for key in os.read(fd, 32).decode(errors="ignore"):
+                        if key in "+=":
+                            delay = max(floor, round(delay - step, 6))
+                        elif key == "-":
+                            delay = round(delay + step, 6)
+                    next_at = min(next_at, time.monotonic() + delay)
+            else:
+                time.sleep(timeout)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if saved is not None:
+            termios.tcsetattr(fd, termios.TCSADRAIN, saved)
+        out.write(f"{RESET}\x1b[{up}B\r\x1b[?25h")  # below the grid, show cursor
+        out.flush()
+
+
+if __name__ == "__main__":
+    main()
