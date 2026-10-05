@@ -1,0 +1,80 @@
+[
+ {
+  "model": "grok-4.6",
+  "tools": [
+   "session_title"
+  ],
+  "items": [
+   "message",
+   "message"
+  ]
+ },
+ {
+  "model": "grok-4.6",
+  "tools": [
+   "search_tool",
+   "use_tool"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message",
+   "message",
+   "message"
+  ]
+ },
+ {
+  "model": "grok-4.6",
+  "tools": [
+   "search_tool",
+   "use_tool"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message",
+   "message",
+   "message",
+   "function_call",
+   "function_call_output"
+  ]
+ },
+ {
+  "model": "grok-4.6",
+  "tools": [
+   "search_tool",
+   "use_tool"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message",
+   "message",
+   "message",
+   "function_call",
+   "function_call_output",
+   "function_call",
+   "function_call_output"
+  ]
+ },
+ {
+  "model": "grok-4.6",
+  "tools": [
+   "search_tool",
+   "use_tool"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message",
+   "message",
+   "message",
+   "function_call",
+   "function_call_output",
+   "function_call",
+   "function_call_output",
+   "message",
+   "message"
+  ]
+ }
+]

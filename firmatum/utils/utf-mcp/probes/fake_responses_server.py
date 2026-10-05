@@ -11,7 +11,7 @@ model would see can be inspected), then streams a scripted reply:
                 while any remain
   afterwards:   a short text reply quoting the start of the last tool output
 
-    python3 tests/fake_responses_server.py --port 8765 --log /tmp/req.jsonl \
+    python3 probes/fake_responses_server.py --port 8765 --log /tmp/req.jsonl \
         --calls '[{"name":"tool_search","arguments":{"query":"unicode"}}]'
 
 For grok: GROK_CLI_CHAT_PROXY_BASE_URL=http://127.0.0.1:8765 grok -p ...

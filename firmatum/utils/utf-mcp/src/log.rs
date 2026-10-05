@@ -142,7 +142,15 @@ impl Log {
             self.emit("request", json!({"method": method, "ok": true}));
         } else {
             let p = params.to_string();
-            let p: Value = if p.len() > 4000 { json!(format!("{}…", &p[..p.floor_char_boundary(4000)])) } else { params.clone() };
+            let p: Value = if p.len() > 4000 {
+                let mut cut = 4000;
+                while !p.is_char_boundary(cut) {
+                    cut -= 1;
+                }
+                json!(format!("{}…", &p[..cut]))
+            } else {
+                params.clone()
+            };
             self.emit("request", json!({"method": method, "ok": false, "params": p}));
         }
     }

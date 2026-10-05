@@ -1,0 +1,23 @@
+{
+ "result": {
+  "conversation_id": "52bc37ea-d49f-41b5-a188-979ceacbf983",
+  "status": "SUCCESS",
+  "response": "",
+  "duration_seconds": 4.738988,
+  "num_turns": 1,
+  "usage": {
+   "input_tokens": 5930,
+   "output_tokens": 203,
+   "thinking_tokens": 136,
+   "cache_read_tokens": 8134,
+   "total_tokens": 6133
+  },
+  "denied_actions": [
+   {
+    "action": "mcp",
+    "display_name": "CallMcpTool"
+   }
+  ]
+ },
+ "stderr": "jetski: no output produced — a tool required the \"mcp\" permission that headless mode cannot prompt for, so it was auto-denied. Add an allow-rule under permissions.allow in settings.json (e.g. mcp(<target>)). Alternatively, re-run with --dangerously-skip-permissions to auto-approve all tools.\n"
+}

@@ -1,0 +1,90 @@
+[
+ {
+  "model": "gpt-5.5",
+  "tools": [
+   "list_mcp_resources",
+   "list_mcp_resource_templates",
+   "read_mcp_resource",
+   "request_user_input",
+   "apply_patch",
+   "tool_search"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message"
+  ]
+ },
+ {
+  "model": "gpt-5.5",
+  "tools": [
+   "list_mcp_resources",
+   "list_mcp_resource_templates",
+   "read_mcp_resource",
+   "request_user_input",
+   "apply_patch",
+   "tool_search"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message",
+   "tool_search_call",
+   "tool_search_output"
+  ]
+ },
+ {
+  "model": "gpt-5.5",
+  "tools": [
+   "list_mcp_resources",
+   "list_mcp_resource_templates",
+   "read_mcp_resource",
+   "request_user_input",
+   "apply_patch",
+   "tool_search"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message"
+  ]
+ },
+ {
+  "model": "gpt-5.5",
+  "tools": [
+   "list_mcp_resources",
+   "list_mcp_resource_templates",
+   "read_mcp_resource",
+   "request_user_input",
+   "apply_patch",
+   "tool_search"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message",
+   "tool_search_call",
+   "tool_search_output"
+  ]
+ },
+ {
+  "model": "gpt-5.5",
+  "tools": [
+   "list_mcp_resources",
+   "list_mcp_resource_templates",
+   "read_mcp_resource",
+   "request_user_input",
+   "apply_patch",
+   "tool_search"
+  ],
+  "items": [
+   "message",
+   "message",
+   "message",
+   "tool_search_call",
+   "tool_search_output",
+   "function_call",
+   "function_call_output"
+  ]
+ }
+]

@@ -1,0 +1,30 @@
+{
+ "init": {
+  "tools": [
+   "mcp__unicode__blocks",
+   "mcp__unicode__identify",
+   "mcp__unicode__range",
+   "mcp__unicode__search"
+  ],
+  "mcp_servers": [
+   {
+    "name": "unicode",
+    "status": "connected",
+    "source": "dynamic"
+   }
+  ],
+  "model": "no-such-model-zz",
+  "memory_paths": null,
+  "claude_code_version": "2.1.289"
+ },
+ "steps": [
+  {
+   "text": "There's an issue with the selected model (no-such-model-zz). It may not exist or you may not have access to it. Run --model to pick a different model."
+  }
+ ],
+ "result": {
+  "subtype": "success",
+  "num_turns": 1,
+  "is_error": true
+ }
+}

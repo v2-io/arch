@@ -95,6 +95,13 @@ fn oversized_line_is_refused_and_server_continues() {
 }
 
 #[test]
+fn empty_batch_is_an_error() {
+    let (r, _) = run(&["[]".to_string()], &["--no-log"]);
+    assert_eq!(r.len(), 1);
+    assert_eq!(r[0]["error"]["code"], -32600);
+}
+
+#[test]
 fn batch_requests() {
     let batch = json!([
         {"jsonrpc": "2.0", "id": 1, "method": "ping"},
@@ -126,4 +133,9 @@ fn agy_hook_policy() {
     assert_eq!(hook(r#"{"toolCall":{"name":"call_mcp_tool","args":{"ServerName":"other"}}}"#)["decision"], "deny");
     assert_eq!(hook("garbage")["decision"], "deny");
     assert_eq!(hook(r#"{"toolCall":{"name":"finish","args":{}}}"#)["decision"], "allow");
+    // a model-written ServerName does not unlock other tools
+    assert_eq!(hook(r#"{"toolCall":{"name":"run_command","args":{"CommandLine":"ls","ServerName":"unicode_unicode"}}}"#)["decision"], "deny");
+    assert_eq!(hook(r#"{"toolCall":{"name":"view_file","args":{"AbsolutePath":"/etc/passwd","server":"unicode_unicode"}}}"#)["decision"], "deny");
+    // overrides name only this server
+    assert_eq!(ok["permissionOverrides"].as_array().unwrap().len(), 2);
 }

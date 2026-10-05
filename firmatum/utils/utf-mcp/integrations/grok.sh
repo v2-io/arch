@@ -11,6 +11,15 @@
 # --tools "" and --tools none are ignored (full default tool set, shell
 # included); --disallowed-tools run_terminal_command did not remove the shell.
 #
+# File-read side channel: use_tool also accepts tool_input_file / file, and grok
+# then reads that local JSON file itself and sends its contents as arguments. No
+# --deny Read rule and no --sandbox profile (read-only, workspace, strict) stopped
+# it (tested 2026-10-05 against the fake endpoint). utf-mcp refuses argument keys
+# outside its schema without echoing their values, which narrows what can come
+# back; this script also scans the stream after the run and, if any use_tool call
+# named a file, warns on stderr, appends a "harness_warning" record to the call
+# log, and exits 3.
+#
 # Verified: against a local fake model endpoint (calls reach the server only
 # with a matching --allow rule; rules for other names leave them cancelled), and
 # live under the user-home variant (grok-4.7-build found and called the tools).
@@ -32,8 +41,19 @@ EOF
 summary
 cd "$WORK/cwd"
 MODEL_ARGS=(); [[ -n "$MODEL" ]] && MODEL_ARGS=(-m "$MODEL")
-HOME="$H" exec "${GROK_BIN:-$HOME/.grok/bin/grok}" -p "$PROMPT" ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} \
+set +e
+HOME="$H" "${GROK_BIN:-$HOME/.grok/bin/grok}" -p "$PROMPT" ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} \
   --tools search_tool,use_tool --allow 'mcp__unicode__*' \
   --no-subagents --disable-web-search --no-plan \
   --output-format streaming-json \
-  ${EXTRA[@]+"${EXTRA[@]}"} < /dev/null
+  ${EXTRA[@]+"${EXTRA[@]}"} < /dev/null | tee "$WORK/grok-stream.jsonl"
+rc=${PIPESTATUS[0]}
+set -e
+# A use_tool call whose rawInput names a file (tool_input_file / file).
+if grep '"toolName":"use_tool"' "$WORK/grok-stream.jsonl" 2>/dev/null | grep -qE '"(tool_input_file|file)"[[:space:]]*:'; then
+  echo "utf-mcp[$CLI]: WARNING: a use_tool call named a local file (tool_input_file/file); see $WORK/grok-stream.jsonl" >&2
+  printf '{"ts":"%s","event":"harness_warning","tag":"%s","harness":"grok","warning":"use_tool named a local file (tool_input_file/file)","stream":"%s"}\n' \
+    "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)" "$TAG" "$WORK/grok-stream.jsonl" >> "$LOG"
+  exit 3
+fi
+exit "$rc"

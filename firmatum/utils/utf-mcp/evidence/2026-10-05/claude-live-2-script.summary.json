@@ -1,0 +1,56 @@
+{
+ "init": {
+  "tools": [
+   "mcp__unicode__blocks",
+   "mcp__unicode__identify",
+   "mcp__unicode__range",
+   "mcp__unicode__search"
+  ],
+  "mcp_servers": [
+   {
+    "name": "unicode",
+    "status": "connected",
+    "source": "dynamic"
+   }
+  ],
+  "model": "claude-haiku-4-5-20251001",
+  "memory_paths": {
+   "auto": "/Users/josephwecker-v2/.claude/projects/-private-tmp-claude-505--Users-josephwecker-v2-src-arch-asf-empirica-glyph-sequence-perception-71321f32-eae2-4ac1-a3cb-1e5cbb14b161-scratchpad-it-claude/memory/"
+  },
+  "claude_code_version": "2.1.289"
+ },
+ "steps": [
+  {
+   "tool_use": "mcp__unicode__identify",
+   "id": "toolu_015jYcbDigg8Tap2Xp8GPQjS",
+   "input": {
+    "text": "🃮 🃭 🃬"
+   }
+  },
+  {
+   "tool_result_for": "toolu_015jYcbDigg8Tap2Xp8GPQjS",
+   "content": "[{\"type\": \"text\", \"text\": \"{\\n\\\"unicode_version\\\":\\\"18.0.0\\\",\\n\\\"text_codepoints\\\":\\\"U+1F0EE U+0020 U+1F0ED U+0020 U+1F0EC\\\",\\n\\\"characters\\\":[\\n  {\\\"cp\\\":\\\"U+1F0EE\\\",\\\"char\\\":\\\"🃮\\\",\\\"name\\\":\\\"PLAYING CARD TRUMP-14\\\",\\\"category\\\":\\\"So (Other_Symbol)\\\",\\\"block\\\":\\\"Playing Cards\\\",\\\"chart_heading\\\":\\\"Trumps\\\",\\\"script\\\":\\\"Common\\\",\\\"age\\\":\\\"7.0\\\",\\\"notes\\\":[\\\"open air\\\"]},\\n  {\\\"cp\\\":\\\"U+0020\\\",\\\"ch…"
+  },
+  {
+   "tool_use": "mcp__unicode__identify",
+   "id": "toolu_01GxjqYHhdDgjooKWmRaeshc",
+   "input": {
+    "codepoints": [
+     "U+1F0EB"
+    ]
+   }
+  },
+  {
+   "tool_result_for": "toolu_01GxjqYHhdDgjooKWmRaeshc",
+   "content": "[{\"type\": \"text\", \"text\": \"{\\n\\\"unicode_version\\\":\\\"18.0.0\\\",\\n\\\"characters\\\":[{\\\"cp\\\":\\\"U+1F0EB\\\",\\\"char\\\":\\\"🃫\\\",\\\"name\\\":\\\"PLAYING CARD TRUMP-11\\\",\\\"category\\\":\\\"So (Other_Symbol)\\\",\\\"block\\\":\\\"Playing Cards\\\",\\\"chart_heading\\\":\\\"Trumps\\\",\\\"script\\\":\\\"Common\\\",\\\"age\\\":\\\"7.0\\\",\\\"notes\\\":[\\\"water and fire\\\"]}]\\n}\"}]"
+  },
+  {
+   "text": "PLAYING CARD TRUMP-14, -13, -12 (descending sequence): **🃫 U+1F0EB** (PLAYING CARD TRUMP-11)"
+  }
+ ],
+ "result": {
+  "subtype": "success",
+  "num_turns": 3,
+  "is_error": false
+ }
+}

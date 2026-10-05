@@ -1,0 +1,66 @@
+[
+ {
+  "model": "gpt-5.6-terra",
+  "tools": [
+   {
+    "functions": [
+     "exec",
+     "wait",
+     "request_user_input"
+    ]
+   },
+   {
+    "collaboration": [
+     "followup_task",
+     "interrupt_agent",
+     "list_agents",
+     "send_message",
+     "spawn_agent",
+     "wait_agent"
+    ]
+   }
+  ],
+  "items": [
+   "additional_tools",
+   "message",
+   "message",
+   "message",
+   "message",
+   "message",
+   "message"
+  ]
+ },
+ {
+  "model": "gpt-5.6-terra",
+  "tools": [
+   {
+    "functions": [
+     "exec",
+     "wait",
+     "request_user_input"
+    ]
+   },
+   {
+    "collaboration": [
+     "followup_task",
+     "interrupt_agent",
+     "list_agents",
+     "send_message",
+     "spawn_agent",
+     "wait_agent"
+    ]
+   }
+  ],
+  "items": [
+   "additional_tools",
+   "message",
+   "message",
+   "message",
+   "message",
+   "message",
+   "message",
+   "custom_tool_call",
+   "custom_tool_call_output"
+  ]
+ }
+]

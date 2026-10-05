@@ -4,7 +4,8 @@
 # The working directory gets .agents/plugins/unicode/ holding the MCP server
 # (mcp_config.json) and a PreToolUse hook (hooks.json -> `utf-mcp agy-hook`) that
 # allows only this server's calls and agy's turn-control steps and denies every
-# other tool, logging each decision. Nothing under ~/.gemini is touched, and
+# other tool, logging each decision. The hook allows only agy's `call_mcp_tool`
+# step with ServerName unicode_unicode (plus agy's turn-control steps). Nothing under ~/.gemini is touched, and
 # HOME is not changed (doing so makes macOS offer to reset the keychain).
 #
 # STATUS (agy 1.2.17, 2026-10-05): the server starts and the model calls it,

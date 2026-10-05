@@ -1,23 +1,31 @@
 //! `utf-mcp agy-hook`: a PreToolUse hook for Antigravity CLI (`agy`) that lets a
 //! model use the Unicode MCP server and nothing else.
 //!
-//! agy print mode auto-denies MCP calls unless an allow-rule exists in the
-//! user's settings. A hook in a workspace plugin can decide instead, so the
-//! policy lives beside the server rather than in `~/.gemini`. agy pipes each
-//! pending tool call to the hook as JSON on stdin and reads a decision from
-//! stdout:
+//! agy pipes each pending tool call to the hook as JSON on stdin and reads a
+//! decision from stdout. This hook's policy:
 //!
-//!   MCP call to an allowed server  -> allow
-//!   agy's own turn-control steps   -> allow   (finish, notify_user, ...)
-//!   anything else                  -> deny, with a reason the model sees
+//!   `call_mcp_tool` whose ServerName is an allowed server -> allow
+//!   agy's own turn-control steps (finish, notify_user, ...) -> allow
+//!   any tool named with --allow-tool                       -> allow
+//!   anything else                                           -> deny, with a reason the model sees
 //!
-//! Every decision is written to the call log, so attempts to reach other tools
-//! (shell, file reads, web) are recorded next to the lookups.
+//! The allow decision keys on the tool's name first. ServerName is a model-written
+//! argument, so it is only consulted for agy's MCP tool, never as a pass for
+//! other tools that happen to carry it.
+//!
+//! What it does not do (observed with agy 1.2.17, 2026-10-05): an "allow" here
+//! does not satisfy print mode's separate MCP permission check; agy still
+//! auto-denies the call unless ~/.gemini/antigravity-cli/settings.json has an
+//! allow-rule. The hook's value is the deny side and the record: every decision
+//! goes to the call log, so attempts to reach other tools are recorded next to
+//! the lookups. Behaviour when the hook times out or fails to start is untested.
 
 use crate::log;
 use serde_json::{json, Value};
 use std::io::Read;
 
+/// agy's MCP tool (observed in agy's transcript as the step that carries ServerName/ToolName).
+const MCP_TOOL: &str = "call_mcp_tool";
 /// agy-internal steps that only steer the turn; denying them could break it.
 const CONTROL_TOOLS: &[&str] = &["finish", "notify_user", "task_boundary", "wait", "wait_5_seconds"];
 
@@ -60,11 +68,11 @@ pub fn run(rest: &[String], mut lg: log::Log) {
     let tool_name = ["ToolName", "toolName", "tool_name", "tool"].iter().find_map(|k| args.get(*k).and_then(Value::as_str));
     let (decision, reason) = if payload.is_null() {
         ("deny", "hook could not parse the tool call".to_string())
-    } else if let Some(s) = &server {
-        if servers.iter().any(|a| a == s) {
-            ("allow", String::new())
-        } else {
-            ("deny", format!("MCP server {s:?} is not available in this session; only Unicode lookup tools are."))
+    } else if name == MCP_TOOL {
+        match &server {
+            Some(s) if servers.iter().any(|a| a == s) => ("allow", String::new()),
+            Some(s) => ("deny", format!("MCP server {s:?} is not available in this session; only Unicode lookup tools are.")),
+            None => ("deny", "MCP call without a server name".to_string()),
         }
     } else if CONTROL_TOOLS.contains(&name.as_str()) || extra_tools.iter().any(|t| *t == name) {
         ("allow", String::new())
@@ -77,21 +85,19 @@ pub fn run(rest: &[String], mut lg: log::Log) {
     if !reason.is_empty() {
         out["reason"] = json!(reason);
     }
-    // In print mode an "allow" decision alone does not satisfy agy's separate
-    // permission check for MCP calls (observed 2026-10-05: still auto-denied).
-    // permissionOverrides are the hook contract's temporary grants; they are
-    // scoped to this server only.
+    // allowTool and permissionOverrides are the hook contract's grants. Neither made
+    // agy 1.2.17's print mode accept the MCP call (observed 2026-10-05); they are
+    // kept, scoped to this one server, in case a later agy honours them.
     if decision == "allow" {
         out["allowTool"] = json!(true);
-        if let Some(s) = &server {
-            let mut grants = vec![format!("mcp({s}/*)")];
-            if let Some(t) = tool_name {
-                grants.push(format!("mcp({s}/{t})"));
+        if name == MCP_TOOL {
+            if let Some(s) = &server {
+                let mut grants = vec![format!("mcp({s}/*)")];
+                if let Some(t) = tool_name {
+                    grants.push(format!("mcp({s}/{t})"));
+                }
+                out["permissionOverrides"] = json!(grants);
             }
-            if let Some((_, plain)) = s.split_once('_') {
-                grants.push(format!("mcp({plain}/*)"));
-            }
-            out["permissionOverrides"] = json!(grants);
         }
     }
     println!("{out}");

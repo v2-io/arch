@@ -29,8 +29,10 @@ USAGE
   utf-mcp query TOOL [JSON-ARGS]                                run one tool, print its result
   utf-mcp tools                                                 print the tool list (JSON)
   utf-mcp dump                                                  TSV of core properties of every code point
-  utf-mcp [--log ...] agy-hook [--allow-server NAME]...         agy PreToolUse hook: allow only the
-                                                                Unicode MCP server (see README)
+  utf-mcp [--log ...] agy-hook [--allow-server NAME]... [--allow-tool NAME]...
+                                                                agy PreToolUse hook: allow agy's MCP tool for the
+                                                                named servers (default unicode_unicode), agy's
+                                                                turn-control steps, and any --allow-tool; deny the rest
   utf-mcp --version | --help
 
 TOOLS  identify, range, search, blocks   (see README.md)
@@ -194,6 +196,7 @@ fn serve(mut log: log::Log) {
                     log.note(&format!("unparseable request: {e}"));
                     vec![error_reply(Value::Null, -32700, &format!("parse error: {e}"))]
                 }
+                Ok(Value::Array(batch)) if batch.is_empty() => vec![error_reply(Value::Null, -32600, "empty batch")],
                 Ok(Value::Array(batch)) => batch.into_iter().filter_map(|m| handle(&u, &mut log, m)).collect(),
                 Ok(m) => handle(&u, &mut log, m).into_iter().collect(),
             }

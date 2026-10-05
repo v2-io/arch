@@ -15,6 +15,13 @@ depends = ["fetch"]
 run = "cargo test --release"
 
 [tasks.crosscheck]
-description = "Compare every code point's core properties with Python's unicodedata (an older Unicode version)"
+description = "Compare every code point's core properties with Python's unicodedata and Node's ICU (older Unicode versions)"
 depends = ["build"]
-run = "target/release/utf-mcp dump > target/dump.tsv && python3 checks/crosscheck_unicodedata.py target/dump.tsv"
+# Homebrew's python3.14 carries Unicode 16.0; mise's python3 here is 3.11 / Unicode 14.0,
+# which still works (the check filters by age) but covers fewer code points.
+run = """
+target/release/utf-mcp dump > target/dump.tsv
+PY=/opt/homebrew/bin/python3.14; [ -x "$PY" ] || PY=python3
+"$PY" checks/crosscheck_unicodedata.py target/dump.tsv
+if command -v node >/dev/null; then node checks/crosscheck_icu.mjs target/dump.tsv; fi
+"""

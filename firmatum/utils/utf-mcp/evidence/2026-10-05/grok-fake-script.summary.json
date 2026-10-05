@@ -1,0 +1,62 @@
+{
+ "tools_offered": [
+  [
+   "search_tool",
+   "use_tool"
+  ],
+  [
+   "search_tool",
+   "use_tool",
+   "unicode__identify",
+   "unicode__range",
+   "unicode__search",
+   "unicode__blocks"
+  ]
+ ],
+ "calls": [
+  {
+   "id": "call_fake_0",
+   "tool": "search_tool",
+   "input": {
+    "query": "unicode identify"
+   }
+  },
+  {
+   "id": "call_fake_1",
+   "tool": "use_tool",
+   "input": {
+    "tool_name": "unicode__identify",
+    "tool_input": {
+     "text": "⑧",
+     "detail": "brief"
+    }
+   }
+  }
+ ],
+ "updates": [
+  {
+   "id": "call_fake_0",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [\\n    {\\n      \\\"server\\\": \\\"unicode\\\",\\n      \\\"tools\\\": [\\n        {\\n          \\\"tool_name\\\": \\\"unicode__identify\\\",\\n          \\\"description\\\": \\\"Look up Unicode characters (Unicode 18.0.0). Give glyphs as `text` (every code point in it is identified, in order of first appearance; named emoji/character sequences in it…"
+  },
+  {
+   "id": "call_fake_1",
+   "status": "completed",
+   "content": "{\"type\": \"MCP\", \"tool_name\": \"identify\", \"server_name\": \"unicode\", \"output\": {\"OkayOutput\": \"{\\n\\\"unicode_version\\\":\\\"18.0.0\\\",\\n\\\"text_codepoints\\\":\\\"U+2467\\\",\\n\\\"characters\\\":[{\\\"cp\\\":\\\"U+2467\\\",\\\"char\\\":\\\"⑧\\\",\\\"name\\\":\\\"CIRCLED DIGIT EIGHT\\\",\\\"category\\\":\\\"No\\\",\\\"block\\\":\\\"Enclosed Alphanumerics\\\",\\\"numeric\\\":\\\"8\\\"}]\\n}\"}}"
+  }
+ ],
+ "text": "tool said: {\n\"unicode_version\":\"18.0.0\",\n\"text_codepoints\":\"U+2467\",\n\"characters\":[{\"cp\":\"U+2467\",\"char\":\"⑧\",\"name\":\"CIRCLED DIGIT EIGHT\",\"category\":\"No\",\"block\":\"Enclosed Alphanumerics\",\"numeric\":\"8\"}]\n}",
+ "end": {
+  "stopReason": "end_turn",
+  "num_turns": 3,
+  "modelUsage": {
+   "grok-4.6": {
+    "inputTokens": 3,
+    "outputTokens": 3,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "modelCalls": 3
+   }
+  }
+ }
+}

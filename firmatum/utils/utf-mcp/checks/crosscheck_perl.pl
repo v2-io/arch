@@ -3,7 +3,7 @@
 # Unicode::UCD (an independent implementation of an older Unicode version;
 # macOS system perl 5.34 carries Unicode 13.0). Only code points assigned by
 # that version are compared.
-#   perl tests/crosscheck_perl.pl /tmp/dump.tsv
+#   perl checks/crosscheck_perl.pl /tmp/dump.tsv
 use strict; use warnings;
 use Unicode::UCD qw(charprop);
 my $ver = Unicode::UCD::UnicodeVersion();

@@ -1,0 +1,62 @@
+{
+ "tools_offered": [
+  [
+   "search_tool",
+   "use_tool"
+  ],
+  [
+   "search_tool",
+   "use_tool",
+   "unicode__identify",
+   "unicode__range",
+   "unicode__search",
+   "unicode__blocks"
+  ]
+ ],
+ "calls": [
+  {
+   "id": "call_fake_0",
+   "tool": "use_tool",
+   "input": {
+    "tool_name": "unicode__identify",
+    "tool_input_file": "/private/tmp/claude-505/-Users-josephwecker-v2-src-arch-asf-empirica-glyph-sequence-perception/71321f32-eae2-4ac1-a3cb-1e5cbb14b161/scratchpad/decoy/d2.json"
+   }
+  },
+  {
+   "id": "call_fake_1",
+   "tool": "use_tool",
+   "input": {
+    "tool_name": "unicode__identify",
+    "tool_input": {
+     "text": "⑨"
+    }
+   }
+  }
+ ],
+ "updates": [
+  {
+   "id": "call_fake_0",
+   "status": "failed",
+   "content": "{\"type\": \"MCP\", \"tool_name\": \"identify\", \"server_name\": \"unicode\", \"output\": {\"Error\": \"error: unknown argument [\\\"note\\\"]; `identify` takes text, codepoints, names, detail\"}, \"is_error\": true}"
+  },
+  {
+   "id": "call_fake_1",
+   "status": "completed",
+   "content": "{\"type\": \"MCP\", \"tool_name\": \"identify\", \"server_name\": \"unicode\", \"output\": {\"OkayOutput\": \"{\\n\\\"unicode_version\\\":\\\"18.0.0\\\",\\n\\\"text_codepoints\\\":\\\"U+2468\\\",\\n\\\"characters\\\":[{\\\"cp\\\":\\\"U+2468\\\",\\\"char\\\":\\\"⑨\\\",\\\"name\\\":\\\"CIRCLED DIGIT NINE\\\",\\\"category\\\":\\\"No (Other_Number)\\\",\\\"block\\\":\\\"Enclosed Alphanumerics\\\",\\\"chart_heading\\\":\\\"Circled numbers\\\",\\\"script\\\":\\\"Common\\\",\\\"age\\\":\\\"1.1\\\",\\\"numeri…"
+  }
+ ],
+ "text": "tool said: {\n\"unicode_version\":\"18.0.0\",\n\"text_codepoints\":\"U+2468\",\n\"characters\":[{\"cp\":\"U+2468\",\"char\":\"⑨\",\"name\":\"CIRCLED DIGIT NINE\",\"category\":\"No (Other_Number)\",\"block\":\"Enclosed Alphanumerics\",\"chart_heading\":\"Circled numbers\",\"script\":\"Common\",\"age\":\"1.1\",\"numeric\":{\"type\":\"Digit\",\"value\":\"9\"},\"decomp",
+ "end": {
+  "stopReason": "end_turn",
+  "num_turns": 3,
+  "modelUsage": {
+   "grok-4.6": {
+    "inputTokens": 3,
+    "outputTokens": 3,
+    "cacheReadInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "modelCalls": 3
+   }
+  }
+ }
+}

@@ -36,6 +36,8 @@ const EMOJI_DATA: &str = ucd_file!("emoji-data.txt");
 const EMOJI_SEQ: &str = ucd_file!("emoji-sequences.txt");
 const EMOJI_ZWJ: &str = ucd_file!("emoji-zwj-sequences.txt");
 const UNIHAN: &str = ucd_file!("unihan-subset.txt");
+const CJK_RADICALS: &str = ucd_file!("CJKRadicals.txt");
+const EMOJI_TEST: &str = ucd_file!("emoji-test.txt");
 
 pub const MAX_CP: u32 = 0x10FFFF;
 
@@ -62,8 +64,11 @@ pub enum NoteKind {
     CrossRef,
     /// `~` standardized variation sequence
     Variation,
-    /// `@+` notice placed after a character entry
+    /// `@+` notice printed after a character entry. Positional: it may concern
+    /// that character alone or the group the character ends.
     Notice,
+    /// `\t\tx` cross-reference belonging to such a notice
+    NoticeCrossRef,
 }
 
 pub struct NamesListEntry {
@@ -74,6 +79,7 @@ pub struct NamesListEntry {
 pub struct Subheader {
     pub title: &'static str,
     pub notices: Vec<&'static str>,
+    pub see_also: Vec<&'static str>,
     pub first: u32,
     pub last: u32,
     pub block: usize,
@@ -84,6 +90,9 @@ pub struct Block {
     pub hi: u32,
     pub name: &'static str,
     pub subheaders: Vec<usize>,
+    /// Block-level notices from NamesList (printed under the block header).
+    pub notices: Vec<&'static str>,
+    pub see_also: Vec<&'static str>,
 }
 
 pub struct Sequence {
@@ -180,6 +189,11 @@ pub struct Ucd {
     seq_by_first: HashMap<u32, Vec<usize>>,
     unihan: HashMap<u32, Vec<(&'static str, &'static str)>>,
     han_defined: Vec<u32>,
+    /// CJKRadicals.txt: radical number as written in kRSUnicode ("120", "120'") ->
+    /// (CJK radical character, corresponding unified ideograph)
+    radicals: HashMap<&'static str, (u32, u32)>,
+    /// CLDR short names of single-code-point emoji (emoji-test.txt, fully-qualified)
+    emoji_names: HashMap<u32, &'static str>,
     /// loose-matched name (UAX44-LM2) → code point or sequence
     name_index: HashMap<String, NameTarget>,
     /// (code point, uppercase searchable text: name, aliases, informal aliases)
@@ -258,26 +272,31 @@ impl Ucd {
             let Some(d) = data_part(line) else { continue };
             let Some((r, n)) = d.split_once(';') else { continue };
             let (lo, hi) = parse_range(r.trim());
-            blocks.push(Block { lo, hi, name: n.trim(), subheaders: Vec::new() });
+            blocks.push(Block { lo, hi, name: n.trim(), subheaders: Vec::new(), notices: Vec::new(), see_also: Vec::new() });
         }
         blocks.sort_by_key(|b| b.lo);
 
         // --- NamesList.txt (annotations, subheaders)
         let mut subheaders: Vec<Subheader> = Vec::new();
         let mut names_list: HashMap<u32, NamesListEntry> = HashMap::new();
+        // Block-level notices and their cross-references, keyed by block header start.
+        let mut block_notes: HashMap<u32, (Vec<&'static str>, Vec<&'static str>)> = HashMap::new();
         {
             let mut cur_cp: Option<u32> = None;
             let mut cur_sub: Option<usize> = None;
+            let mut cur_block: Option<u32> = None;
             for line in NAMES_LIST.lines() {
-                if line.starts_with("@@\t") {
+                if let Some(rest) = line.strip_prefix("@@\t") {
                     cur_cp = None;
                     cur_sub = None;
+                    cur_block = rest.split('\t').next().map(hex);
                     continue;
                 }
                 if let Some(rest) = line.strip_prefix("@\t") {
                     subheaders.push(Subheader {
                         title: rest.trim_start_matches('\t').trim(),
                         notices: Vec::new(),
+                        see_also: Vec::new(),
                         first: u32::MAX,
                         last: 0,
                         block: usize::MAX,
@@ -286,23 +305,40 @@ impl Ucd {
                     cur_cp = None;
                     continue;
                 }
+                if let Some(rest) = line.strip_prefix("\t\t") {
+                    // A cross-reference attached to the notice just above it.
+                    let Some(xr) = rest.strip_prefix('x') else { continue };
+                    let xr = xr.trim();
+                    match (cur_cp, cur_sub, cur_block) {
+                        (Some(cp), _, _) => {
+                            if let Some(e) = names_list.get_mut(&cp) {
+                                e.notes.push((NoteKind::NoticeCrossRef, xr));
+                            }
+                        }
+                        (None, Some(s), _) => subheaders[s].see_also.push(xr),
+                        (None, None, Some(b)) => block_notes.entry(b).or_default().1.push(xr),
+                        _ => {}
+                    }
+                    continue;
+                }
                 if let Some(rest) = line.strip_prefix("@+") {
                     let text = rest.trim_start_matches('\t').trim();
                     if text.is_empty() {
                         continue;
                     }
-                    match (cur_cp, cur_sub) {
-                        (Some(cp), _) => {
+                    match (cur_cp, cur_sub, cur_block) {
+                        (Some(cp), _, _) => {
                             if let Some(e) = names_list.get_mut(&cp) {
                                 e.notes.push((NoteKind::Notice, text));
                             }
                         }
-                        (None, Some(s)) => subheaders[s].notices.push(text),
+                        (None, Some(s), _) => subheaders[s].notices.push(text),
+                        (None, None, Some(b)) => block_notes.entry(b).or_default().0.push(text),
                         _ => {}
                     }
                     continue;
                 }
-                if line.starts_with('@') || line.starts_with(';') || line.starts_with("\t\t") {
+                if line.starts_with('@') || line.starts_with(';') {
                     continue;
                 }
                 if let Some(rest) = line.strip_prefix('\t') {
@@ -334,6 +370,12 @@ impl Ucd {
                     sh.last = sh.last.max(cp);
                 }
                 names_list.insert(cp, NamesListEntry { notes: Vec::new(), subheader: cur_sub });
+            }
+        }
+        for (start, (notes, xrefs)) in block_notes {
+            if let Some(b) = blocks.iter_mut().find(|b| b.lo <= start && start <= b.hi) {
+                b.notices = notes;
+                b.see_also = xrefs;
             }
         }
         for (i, sh) in subheaders.iter_mut().enumerate() {
@@ -433,6 +475,40 @@ impl Ucd {
                 v.sort_unstable();
                 v
             },
+            radicals: {
+                let mut m = HashMap::new();
+                for line in CJK_RADICALS.lines() {
+                    let Some(d) = data_part(line) else { continue };
+                    let f: Vec<&'static str> = d.split(';').map(str::trim).collect();
+                    if f.len() >= 3 && !f[1].is_empty() {
+                        m.insert(f[0], (hex(f[1]), hex(f[2])));
+                    }
+                }
+                m
+            },
+            emoji_names: {
+                let mut m = HashMap::new();
+                for line in EMOJI_TEST.lines() {
+                    let Some((d, c)) = line.split_once('#') else { continue };
+                    let Some((cps, status)) = d.split_once(';') else { continue };
+                    if status.trim() != "fully-qualified" {
+                        continue;
+                    }
+                    let cps: Vec<u32> = cps.split_whitespace().map(hex).filter(|&c| c != 0xFE0F).collect();
+                    if cps.len() != 1 {
+                        continue;
+                    }
+                    // comment: " 😃 E0.6 grinning face with big eyes"
+                    let mut it = c.trim().splitn(3, ' ');
+                    let (_, ver, name) = (it.next(), it.next(), it.next());
+                    if let (Some(v), Some(n)) = (ver, name) {
+                        if v.starts_with('E') {
+                            m.insert(cps[0], n.trim());
+                        }
+                    }
+                }
+                m
+            },
             unihan,
             name_index: HashMap::new(),
             search_rows: Vec::new(),
@@ -457,6 +533,11 @@ impl Ucd {
         }
         for (i, s) in self.sequences.iter().enumerate() {
             idx.entry(loose(s.name)).or_insert(NameTarget::Seq(i));
+        }
+        let mut ecps: Vec<u32> = self.emoji_names.keys().copied().collect();
+        ecps.sort_unstable();
+        for cp in ecps {
+            idx.entry(loose(self.emoji_names[&cp])).or_insert(NameTarget::Cp(cp));
         }
         self.name_index = idx;
 
@@ -484,6 +565,10 @@ impl Ucd {
                         s.push_str(t);
                     }
                 }
+            }
+            if let Some(n) = self.emoji_names.get(&cp) {
+                s.push('\n');
+                s.push_str(n);
             }
             rows.push((cp, s.to_uppercase()));
         }
@@ -597,9 +682,38 @@ impl Ucd {
         self.unihan.get(&cp).map(|v| v.as_slice()).unwrap_or(&[])
     }
 
+    /// (radical character, unified ideograph) for a kRSUnicode radical such as "120'".
+    pub fn radical(&self, r: &str) -> Option<(u32, u32)> {
+        self.radicals.get(r).copied()
+    }
+
+    pub fn emoji_name(&self, cp: u32) -> Option<&'static str> {
+        self.emoji_names.get(&cp).copied()
+    }
+
     /// Han ideographs that have a Unihan kDefinition, in code point order.
     pub fn han_with_definitions(&self) -> impl Iterator<Item = u32> + '_ {
         self.han_defined.iter().copied()
+    }
+
+    /// A Script filter value (long name or ISO 15924 code, any case) -> the long
+    /// name as used in Scripts.txt. None when unknown.
+    pub fn resolve_script(&self, v: &str) -> Option<&'static str> {
+        let k = loose(v);
+        self.pva.iter().find(|((p, short), long)| *p == "sc" && (loose(short) == k || loose(long) == k)).map(|(_, long)| *long)
+    }
+
+    /// A General_Category filter value (code or name, any case; one-letter groups
+    /// and LC included) -> the two-letter categories it covers. None when unknown.
+    pub fn resolve_category(&self, v: &str) -> Option<Vec<&'static str>> {
+        let k = loose(v);
+        let (short, _) = self.pva.iter().find(|((p, short), long)| *p == "gc" && (loose(short) == k || loose(long) == k)).map(|(k, l)| (k.1, *l))?;
+        let leaves = || self.pva.keys().filter(|(p, s)| *p == "gc" && s.len() == 2 && *s != "LC").map(|(_, s)| *s);
+        Some(match short {
+            "LC" => vec!["Lu", "Ll", "Lt"],
+            s if s.len() == 1 => leaves().filter(|x| x.starts_with(s)).collect(),
+            s => vec![s],
+        })
     }
 
     pub fn long_value(&self, prop: &'static str, short: &'static str) -> &'static str {
@@ -616,7 +730,7 @@ impl Ucd {
     pub fn lookup_name(&self, name: &str) -> Option<NameTarget> {
         let upper = name.trim().to_uppercase();
         // The one LM2 exception: U+1180 HANGUL JUNGSEONG O-E vs U+116C HANGUL JUNGSEONG OE.
-        let norm: String = upper.split_whitespace().collect::<Vec<_>>().join(" ");
+        let norm: String = upper.replace('_', " ").split_whitespace().collect::<Vec<_>>().join(" ");
         if norm == "HANGUL JUNGSEONG O-E" {
             return Some(NameTarget::Cp(0x1180));
         }

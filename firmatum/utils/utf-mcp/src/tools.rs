@@ -53,10 +53,11 @@ detail=\"brief\": code point, glyph, name, category, block. \"standard\" (defaul
                 "type": "object",
                 "properties": {
                     "text": {"type": "string", "description": "Glyphs to identify (any string; each distinct code point is reported)."},
-                    "codepoints": {"type": "array", "items": {"type": "string"}, "description": "Code points such as \"U+33F3\", \"0x1F0A1\", \"2460\" (bare strings of 2+ hex digits are hex), or single glyphs."},
+                    "codepoints": {"type": "array", "items": {"type": "string"}, "description": "Code points as strings: \"U+33F3\", \"0x1F0A1\", \"2460\" (bare digits are hex), \"&#9312;\" (decimal), or single glyphs. One string may hold several, separated by spaces or commas. Numbers (not strings) are refused as ambiguous."},
                     "names": {"type": "array", "items": {"type": "string"}, "description": "Exact Unicode character names or aliases, e.g. \"WHITE CIRCLE\", \"CJK UNIFIED IDEOGRAPH-4E00\"."},
                     "detail": {"type": "string", "enum": ["brief", "standard", "full"], "description": "Amount of information per character (default \"standard\")."}
-                }
+                },
+                "additionalProperties": false
             },
             "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
         },
@@ -74,7 +75,8 @@ detail=\"brief\": code point, glyph, name, category, block. \"standard\" (defaul
                     "start": {"type": "string", "description": "First code point (glyph or \"U+3358\")."},
                     "end": {"type": "string", "description": "Last code point, inclusive."},
                     "detail": {"type": "string", "enum": ["brief", "standard", "full"], "description": "Amount of information per character (default \"brief\")."}
-                }
+                },
+                "additionalProperties": false
             },
             "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
         },
@@ -82,7 +84,7 @@ detail=\"brief\": code point, glyph, name, category, block. \"standard\" (defaul
             "name": "search",
             "title": "Search character names",
             "description": format!(
-"Find characters whose Unicode {v} name, formal alias, or informal alias contains the words of `query` (all words must match; case-insensitive). mode \"prefix\" (default): each query word matches the start of a word in the name (\"circ dig\" finds CIRCLED DIGIT ONE); \"word\": whole words only; \"substring\": anywhere. Optional filters: `block` (block name or part of it), `script` (e.g. \"Latin\"), `category` (general category, e.g. \"So\", \"Nd\", or \"S\" for all symbols). With han_definitions=true the query is also matched against Unihan English definitions of Han ideographs. Also matches named and emoji sequences, and reports blocks whose names match (use `range` or `blocks` to list them). Results are in code point order (exact name match first), up to `limit` (default 50, max {MAX_SEARCH_LIMIT}); the total match count is always reported."),
+"Find characters whose Unicode {v} name, formal alias, informal alias, or emoji short name contains the words of `query` (all words must match; case-insensitive; hyphens split words as in names, so \"twenty-one\" matches TWENTY-ONE). mode \"prefix\" (default): each query word matches the start of a word in the name (\"circ dig\" finds CIRCLED DIGIT ONE); \"word\": whole words only; \"substring\": anywhere. Optional filters: `block` (block name or part of it), `script` (name or code, e.g. \"Latin\" / \"Latn\"), `category` (general category code or name, e.g. \"So\", \"Nd\", \"S\" for all symbols, \"Other_Symbol\"); an unknown filter value is an error, not an empty result. With han_definitions=true the query is also matched against Unihan English definitions of Han ideographs. Also matches named and emoji sequences, and reports blocks whose names match (use `range` or `blocks` to list them). Results are in code point order (exact name match first), up to `limit` (default 50, max {MAX_SEARCH_LIMIT}); the total match count is always reported."),
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -94,7 +96,8 @@ detail=\"brief\": code point, glyph, name, category, block. \"standard\" (defaul
                     "han_definitions": {"type": "boolean"},
                     "limit": {"type": "integer"}
                 },
-                "required": ["query"]
+                "required": ["query"],
+                "additionalProperties": false
             },
             "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
         },
@@ -102,12 +105,13 @@ detail=\"brief\": code point, glyph, name, category, block. \"standard\" (defaul
             "name": "blocks",
             "title": "Unicode blocks and chart headings",
             "description": format!(
-"Unicode {v} blocks. With no `query`: every block with its range. With `query` = a block name (or part of one), a glyph, or a code point: the matching block(s); when exactly one block matches, also its code-chart headings (the sub-groups the Unicode code charts divide the block into, each with its code point range and Unicode's notes) and how many of its code points are assigned."),
+"Unicode {v} blocks. With no `query`: every block with its range. With `query` = a block name (or part of one), a glyph, or a code point (block names are tried first; prefix \"U+\" to force a code point): the matching block(s); when exactly one block matches, also Unicode's notes on the block, its code-chart headings (the sub-groups the Unicode code charts divide the block into, each with its code point range and notes) and how many of its code points are assigned."),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "query": {"type": "string", "description": "Block name or part of one (\"enclosed\"), or a glyph, or a code point."}
-                }
+                },
+                "additionalProperties": false
             },
             "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
         }
@@ -116,7 +120,34 @@ detail=\"brief\": code point, glyph, name, category, block. \"standard\" (defaul
 
 pub fn call(u: &Ucd, name: &str, args: &Value) -> Option<Result<Value, String>> {
     let empty = Map::new();
+    // Some harnesses send `arguments` as a JSON-encoded string.
+    let decoded: Option<Value> = args.as_str().and_then(|s| serde_json::from_str(s).ok());
+    let args = decoded.as_ref().unwrap_or(args);
+    if !(args.is_object() || args.is_null()) {
+        return Some(Err(format!("`arguments` must be a JSON object, got {args}")));
+    }
     let a = args.as_object().unwrap_or(&empty);
+    let known: &[&str] = match name {
+        "identify" => &["text", "codepoints", "names", "detail"],
+        "range" => &["around", "before", "after", "start", "end", "detail"],
+        "search" => &["query", "mode", "block", "script", "category", "han_definitions", "limit"],
+        "blocks" => &["query"],
+        _ => return None,
+    };
+    // Unknown keys are refused, naming the keys but never echoing their values: an
+    // argument object that did not come from the model (grok's use_tool can load it
+    // from a local JSON file) then cannot have arbitrary contents echoed back.
+    let unknown: Vec<String> = a.keys().filter(|k| !known.contains(&k.as_str())).map(|k| k.chars().take(40).collect()).collect();
+    if !unknown.is_empty() {
+        let shown: Vec<&String> = unknown.iter().take(5).collect();
+        return Some(Err(format!(
+            "unknown argument{} {:?}{}; `{name}` takes {}",
+            if unknown.len() == 1 { "" } else { "s" },
+            shown,
+            if unknown.len() > 5 { format!(" and {} more", unknown.len() - 5) } else { String::new() },
+            known.join(", ")
+        )));
+    }
     Some(match name {
         "identify" => identify(u, a),
         "range" => range(u, a),
@@ -172,13 +203,24 @@ pub fn parse_cp(tok: &str) -> Result<u32, String> {
     Ok(n)
 }
 
-fn parse_cp_value(v: &Value) -> Result<u32, String> {
+/// One `codepoints` entry: a string holding one code point, or several
+/// separated by spaces or commas. JSON numbers are refused: 2460 could mean
+/// U+2460 or decimal 2460 (U+099C), and guessing silently gives a wrong character.
+fn parse_cp_entry(v: &Value) -> Result<Vec<u32>, String> {
     match v {
-        Value::String(s) => parse_cp(s),
-        Value::Number(n) => match n.as_u64() {
-            Some(x) if x <= MAX_CP as u64 => Ok(x as u32),
-            _ => Err(format!("{n} is not a code point (0..=1114111)")),
-        },
+        Value::String(s) => {
+            if s.chars().count() == 1 {
+                return parse_cp(s).map(|c| vec![c]);
+            }
+            let toks: Vec<&str> = s.split(|c: char| c.is_whitespace() || c == ',').filter(|t| !t.is_empty()).collect();
+            if toks.is_empty() {
+                return Err("empty code point".into());
+            }
+            toks.iter().map(|t| parse_cp(t)).collect()
+        }
+        Value::Number(n) => Err(format!(
+            "{n} is a bare number, which is ambiguous (hex U+{n} or decimal?). Give code points as strings: \"U+{n}\" for hex, \"&#{n};\" for decimal"
+        )),
         o => Err(format!("{o} is not a code point")),
     }
 }
@@ -351,9 +393,25 @@ pub fn char_json(u: &Ucd, cp: u32, detail: Detail) -> Value {
     if !informal.is_empty() {
         m.insert("informal_aliases".into(), json!(informal));
     }
-    let comments: Vec<&str> = notes.iter().filter(|(k, _)| matches!(k, NoteKind::Comment | NoteKind::Notice)).map(|(_, t)| *t).collect();
+    let comments = pick(|k| matches!(k, NoteKind::Comment));
     if !comments.is_empty() {
         m.insert("notes".into(), json!(comments));
+    }
+    // A notice printed after this character in the code charts. It may concern this
+    // character alone or the whole group the character ends; NamesList does not say which.
+    let following = pick(|k| matches!(k, NoteKind::Notice));
+    if !following.is_empty() {
+        let mut f = Map::new();
+        f.insert("text".into(), json!(following));
+        f.insert("scope".into(), json!("printed after this character in the code chart; may concern only it or the group it ends"));
+        let xr: Vec<String> = pick(|k| matches!(k, NoteKind::NoticeCrossRef)).iter().map(|t| cross_ref(u, t)).collect();
+        if !xr.is_empty() {
+            f.insert("see_also".into(), json!(xr));
+        }
+        m.insert("chart_notice_following".into(), Value::Object(f));
+    }
+    if let Some(e) = u.emoji_name(cp) {
+        m.insert("emoji_name".into(), json!(e));
     }
     let xrefs: Vec<String> = pick(|k| matches!(k, NoteKind::CrossRef)).iter().map(|t| cross_ref(u, t)).collect();
     if !xrefs.is_empty() {
@@ -415,22 +473,33 @@ pub fn char_json(u: &Ucd, cp: u32, detail: Detail) -> Value {
     Value::Object(m)
 }
 
-/// kRSUnicode "85.6" → "⽔ KANGXI RADICAL WATER (#85) + 6 strokes"
+/// kRSUnicode "85.6" → "⽔ KANGXI RADICAL WATER (#85) + 6 strokes";
+/// "120'.0" → "⺰ CJK RADICAL C-SIMPLIFIED SILK (#120, Chinese simplified form) + 0 strokes".
+/// Radical glyphs come from CJKRadicals.txt; forms per UAX #38 (' Chinese simplified,
+/// '' non-Chinese simplified, ''' second non-Chinese simplified).
 fn radical(u: &Ucd, rs: &str) -> Option<String> {
     let first = rs.split_whitespace().next()?;
     let (r, s) = first.split_once('.')?;
-    let simplified = r.ends_with('\'') || r.ends_with('"');
-    let n: u32 = r.trim_end_matches(['\'', '"']).parse().ok()?;
+    let primes = r.chars().rev().take_while(|&c| c == '\'').count();
+    let n: u32 = r.trim_end_matches('\'').parse().ok()?;
     if !(1..=214).contains(&n) {
         return None;
     }
-    let rc = 0x2F00 + n - 1;
-    Some(format!(
-        "{} {} (#{n}{}) + {s} strokes",
-        glyph(rc).unwrap_or_default(),
-        u.display_name(rc),
-        if simplified { ", simplified form" } else { "" }
-    ))
+    let form = match primes {
+        0 => "",
+        1 => ", Chinese simplified form",
+        2 => ", non-Chinese simplified form",
+        _ => ", second non-Chinese simplified form",
+    };
+    match u.radical(r) {
+        Some((rc, _)) => Some(format!("{} {} (#{n}{form}) + {s} strokes", glyph(rc).unwrap_or_default(), u.display_name(rc))),
+        // No glyph for this simplified form in CJKRadicals.txt: name the traditional
+        // radical and say which form, without showing the traditional glyph as if it were it.
+        None => {
+            let (trad, _) = u.radical(&n.to_string())?;
+            Some(format!("radical #{n} {}{form} (form not encoded as a radical character) + {s} strokes", u.display_name(trad)))
+        }
+    }
 }
 
 fn seq_json(u: &Ucd, i: usize) -> Value {
@@ -489,10 +558,12 @@ fn identify(u: &Ucd, a: &Map<String, Value>) -> Result<Value, String> {
         }
     }
     for v in cps_in {
-        match parse_cp_value(v) {
-            Ok(c) => {
-                if seen.insert(c) {
-                    order.push(c);
+        match parse_cp_entry(v) {
+            Ok(cs) => {
+                for c in cs {
+                    if seen.insert(c) {
+                        order.push(c);
+                    }
                 }
             }
             Err(e) => unresolved.push(json!({"input": v, "error": e})),
@@ -616,17 +687,37 @@ fn search(u: &Ucd, a: &Map<String, Value>) -> Result<Value, String> {
     }
     let limit = (get_uint(a, "limit")?.unwrap_or(50) as usize).clamp(1, MAX_SEARCH_LIMIT);
     let block_f = get_str(a, "block")?.map(ucd::loose);
-    let script_f = get_str(a, "script")?.map(|s| s.trim().to_lowercase());
-    let cat_f = get_str(a, "category")?.map(|s| s.trim().to_string());
+    if let Some(bf) = &block_f {
+        if !u.blocks.iter().any(|b| ucd::loose(b.name).contains(bf.as_str())) {
+            return Err(format!("no block name contains {:?} (the blocks tool lists them)", get_str(a, "block")?.unwrap_or("")));
+        }
+    }
+    let script_f: Option<&'static str> = match get_str(a, "script")? {
+        None => None,
+        Some(v) => Some(u.resolve_script(v).ok_or_else(|| {
+            format!("unknown script {v:?}: give a Unicode script name or code, e.g. \"Latin\" or \"Latn\", \"Han\" or \"Hani\"")
+        })?),
+    };
+    let cat_f: Option<Vec<&'static str>> = match get_str(a, "category")? {
+        None => None,
+        Some(v) => Some(u.resolve_category(v).ok_or_else(|| {
+            format!("unknown general category {v:?}: give a code such as \"So\", \"Nd\", \"S\" (all symbols), or a name such as \"Other_Symbol\"")
+        })?),
+    };
     let han_defs = matches!(a.get("han_definitions"), Some(Value::Bool(true)));
-    let words: Vec<String> = query.split_whitespace().map(|w| w.to_uppercase()).collect();
+    // Split the query exactly as names are split, so "twenty-one" matches TWENTY-ONE.
+    let words: Vec<String> = if mode == "substring" {
+        query.split_whitespace().map(|w| w.to_uppercase()).collect()
+    } else {
+        query.to_uppercase().split(is_word_sep).filter(|w| !w.is_empty()).map(String::from).collect()
+    };
     if words.is_empty() {
         return Err("`query` is empty".into());
     }
     if query.len() > 200 {
         return Err("`query` is longer than 200 bytes".into());
     }
-    let qnorm = words.join(" ");
+    let qnorm = query.split_whitespace().collect::<Vec<_>>().join(" ").to_uppercase();
 
     let filter_ok = |cp: u32| -> bool {
         if let Some(bf) = &block_f {
@@ -635,17 +726,14 @@ fn search(u: &Ucd, a: &Map<String, Value>) -> Result<Value, String> {
                 _ => return false,
             }
         }
-        if let Some(sf) = &script_f {
-            let s = u.script(cp);
-            let in_ext = u.script_extensions(cp).is_some_and(|v| v.iter().any(|x| x.to_lowercase() == *sf));
-            if s.to_lowercase() != *sf && !in_ext {
+        if let Some(sf) = script_f {
+            let in_ext = u.script_extensions(cp).is_some_and(|v| v.contains(&sf));
+            if u.script(cp) != sf && !in_ext {
                 return false;
             }
         }
         if let Some(cf) = &cat_f {
-            let gc = u.general_category(cp);
-            let long = u.long_value("gc", gc);
-            if !(gc.starts_with(cf.as_str()) || long.eq_ignore_ascii_case(cf)) {
+            if !cf.contains(&u.general_category(cp)) {
                 return false;
             }
         }
@@ -729,6 +817,15 @@ fn search(u: &Ucd, a: &Map<String, Value>) -> Result<Value, String> {
     out.insert("matches_total".into(), json!(total));
     out.insert("returned".into(), json!(rows.len()));
     out.insert("characters".into(), Value::Array(rows));
+    if total == 0 {
+        out.insert(
+            "note".into(),
+            json!(format!(
+                "No character name or alias contains all of: {}. Names use Unicode's own vocabulary, which may differ from the everyday word; try fewer or different words, mode \"substring\", the blocks tool, or identify on a glyph.",
+                words.join(", ")
+            )),
+        );
+    }
     if seq_total > 0 {
         out.insert("sequence_matches_total".into(), json!(seq_total));
         out.insert("sequences".into(), Value::Array(seq_rows));
@@ -770,20 +867,25 @@ fn blocks(u: &Ucd, a: &Map<String, Value>) -> Result<Value, String> {
         return Ok(json!({"unicode_version": UCD_VERSION, "count": all.len(), "blocks": all}));
     };
     let mut matches: Vec<usize> = Vec::new();
-    // A glyph or code point?
-    if let Ok(cp) = parse_cp(q) {
-        if let Some(i) = u.block_index(cp) {
-            matches.push(i);
-        } else if q.chars().count() == 1 || q.to_ascii_lowercase().starts_with("u+") {
-            return Ok(json!({"unicode_version": UCD_VERSION, "query": q, "blocks": [], "note": format!("{} is not in any block (No_Block)", cp_str(cp))}));
-        }
-    }
-    if matches.is_empty() {
+    let lower = q.to_ascii_lowercase();
+    let explicit_cp = q.chars().count() == 1 || ["u+", "0x", "\\u", "&#"].iter().any(|p| lower.starts_with(p));
+    // Block names are tried before bare hex, so "ab" or "cjk" are names, not U+00AB.
+    if !explicit_cp {
         let lq = ucd::loose(q);
         if let Some(i) = u.blocks.iter().position(|b| ucd::loose(b.name) == lq) {
             matches.push(i);
         } else {
             matches = (0..u.blocks.len()).filter(|&i| ucd::loose(u.blocks[i].name).contains(&lq)).collect();
+        }
+    }
+    if matches.is_empty() {
+        if let Ok(cp) = parse_cp(q) {
+            match u.block_index(cp) {
+                Some(i) => matches.push(i),
+                None => {
+                    return Ok(json!({"unicode_version": UCD_VERSION, "query": q, "blocks": [], "note": format!("{} is not in any block (No_Block)", cp_str(cp))}))
+                }
+            }
         }
     }
     if matches.len() != 1 {
@@ -809,17 +911,26 @@ fn blocks(u: &Ucd, a: &Map<String, Value>) -> Result<Value, String> {
             if !sh.notices.is_empty() {
                 m.insert("notes".into(), json!(sh.notices));
             }
+            if !sh.see_also.is_empty() {
+                m.insert("see_also".into(), json!(sh.see_also.iter().map(|t| cross_ref(u, t)).collect::<Vec<_>>()));
+            }
             Value::Object(m)
         })
         .collect();
-    Ok(json!({
-        "unicode_version": UCD_VERSION,
-        "block": b.name,
-        "range": format!("{}..{}", cp_str(b.lo), cp_str(b.hi)),
-        "size": b.hi - b.lo + 1,
-        "assigned_characters": assigned,
-        "chart_headings": headings,
-    }))
+    let mut out = Map::new();
+    out.insert("unicode_version".into(), json!(UCD_VERSION));
+    out.insert("block".into(), json!(b.name));
+    out.insert("range".into(), json!(format!("{}..{}", cp_str(b.lo), cp_str(b.hi))));
+    out.insert("size".into(), json!(b.hi - b.lo + 1));
+    out.insert("assigned_characters".into(), json!(assigned));
+    if !b.notices.is_empty() {
+        out.insert("notes".into(), json!(b.notices));
+    }
+    if !b.see_also.is_empty() {
+        out.insert("see_also".into(), json!(b.see_also.iter().map(|t| cross_ref(u, t)).collect::<Vec<_>>()));
+    }
+    out.insert("chart_headings".into(), Value::Array(headings));
+    Ok(Value::Object(out))
 }
 
 /// Render a tool result for the model: compact JSON, one array element per line.
@@ -997,5 +1108,50 @@ mod tests {
         assert!(v["count"].as_u64().unwrap() > 300);
         let v = blocks(u(), &args(json!({"query": "ᬋ"}))).unwrap();
         assert_eq!(v["block"], "Balinese");
+    }
+
+    #[test]
+    fn repairs_from_verification_1() {
+        let u = u();
+        // hyphenated query words split like names
+        let v = search(u, &args(json!({"query": "day twenty-one"}))).unwrap();
+        assert_eq!(v["characters"][0]["cp"], "U+33F4");
+        // filters: case-insensitive codes, script codes, groups; unknown values are errors
+        assert_eq!(search(u, &args(json!({"query": "digit three", "category": "nd", "script": "Bali"}))).unwrap()["matches_total"], 1);
+        assert!(search(u, &args(json!({"query": "a", "script": "Klingon"}))).is_err());
+        assert!(search(u, &args(json!({"query": "a", "category": "Q"}))).is_err());
+        assert!(search(u, &args(json!({"query": "a", "block": "no such block"}))).is_err());
+        assert_eq!(u.resolve_category("LC").unwrap(), vec!["Lu", "Ll", "Lt"]);
+        assert!(u.resolve_category("S").unwrap().contains(&"So"));
+        assert_eq!(u.resolve_script("latn"), Some("Latin"));
+        // empty results explain themselves
+        assert!(search(u, &args(json!({"query": "zzzqqq"}))).unwrap()["note"].is_string());
+        // numbers are refused; one string may hold several code points
+        let v = identify(u, &args(json!({"codepoints": [2460, "U+33F3 U+33F4", "U+1F0A1,U+1F0A2"]}))).unwrap();
+        assert_eq!(v["characters"].as_array().unwrap().len(), 4);
+        assert!(v["unresolved"][0]["error"].as_str().unwrap().contains("ambiguous"));
+        // arguments sent as a JSON-encoded string
+        let v = call(u, "identify", &json!("{\"text\":\"⑧\"}")).unwrap().unwrap();
+        assert_eq!(v["characters"][0]["cp"], "U+2467");
+        // unknown keys refused without echoing values
+        let e = call(u, "identify", &json!({"text": "x", "note": "SECRET"})).unwrap().unwrap_err();
+        assert!(e.contains("note") && !e.contains("SECRET"));
+        // block names before bare hex
+        assert_eq!(blocks(u, &args(json!({"query": "mahjong"}))).unwrap()["block"], "Mahjong Tiles");
+        assert!(blocks(u, &args(json!({"query": "ab"}))).unwrap()["blocks"].as_array().unwrap().len() > 1);
+        assert_eq!(blocks(u, &args(json!({"query": "U+00AB"}))).unwrap()["block"], "Latin-1 Supplement");
+        // block-level notices
+        assert!(blocks(u, &args(json!({"query": "greek and coptic"}))).unwrap()["notes"][0].as_str().unwrap().starts_with("Casing relationships"));
+        // positional notices are labelled, not presented as the character's own note
+        let v = char_json(u, 0x050F, Detail::Standard);
+        assert!(v["chart_notice_following"]["text"][0].as_str().unwrap().contains("Molodtsov"));
+        assert!(v.get("notes").is_none());
+        // simplified radicals show the simplified radical's glyph
+        let v = char_json(u, 0x7E9F, Detail::Standard);
+        assert!(v["han"]["radical"].as_str().unwrap().starts_with("⺰"), "{}", v["han"]["radical"]);
+        // LM2 with underscores; single-code-point CLDR emoji names
+        assert_eq!(u.lookup_name("hangul_jungseong_o-e"), Some(NameTarget::Cp(0x1180)));
+        assert_eq!(u.lookup_name("grinning face with big eyes"), Some(NameTarget::Cp(0x1F603)));
+        assert_eq!(char_json(u, 0x1F603, Detail::Standard)["emoji_name"], "grinning face with big eyes");
     }
 }

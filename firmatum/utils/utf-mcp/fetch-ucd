@@ -7,6 +7,9 @@
 #   ./fetch-ucd            # version 18.0.0 (the pinned default)
 #   ./fetch-ucd 18.0.0
 #
+# The committed checksums are trust-on-first-fetch: unicode.org publishes no
+# hashes, so they record what was downloaded on 2026-10-05, not a signed value.
+#
 # Moving to a new Unicode version: run with the new version and
 # UTF_MCP_ACCEPT_NEW=1, which records fresh checksums instead of verifying, then
 # change UCD_VERSION in src/ucd.rs and rebuild. Review the diff of the SUMS file.
@@ -29,12 +32,14 @@ FILES=(
   ucd/EastAsianWidth.txt
   ucd/PropertyValueAliases.txt
   ucd/NamedSequences.txt
+  ucd/CJKRadicals.txt
   ucd/extracted/DerivedName.txt
   ucd/extracted/DerivedNumericValues.txt
   ucd/extracted/DerivedNumericType.txt
   ucd/emoji/emoji-data.txt
   emoji/emoji-sequences.txt
   emoji/emoji-zwj-sequences.txt
+  emoji/emoji-test.txt
   ucd/Unihan.zip
 )
 
@@ -66,9 +71,20 @@ else
 fi
 
 # Unihan subset (deterministic: byte-sorted by code-point string, then field).
+# This derived file is what gets compiled in, so it has its own recorded checksum
+# (SHA256SUMS-<version>.derived): a different unzip/grep/sort that changed it would
+# otherwise change the binary silently.
 unzip -p "$DIR/Unihan.zip" \
   | grep -E $'^U\\+[0-9A-F]+\t('"$UNIHAN_FIELDS"$')\t' \
   | LC_ALL=C sort -t$'\t' -k1,1 -k2,2 \
   > "$DIR/unihan-subset.txt"
+DERIVED="$HERE/data/SHA256SUMS-$VERSION.derived"
+if [[ "${UTF_MCP_ACCEPT_NEW:-}" == 1 || ! -f "$DERIVED" ]]; then
+  (cd "$DIR" && shasum -a 256 unihan-subset.txt) > "$DERIVED"
+  echo "recorded derived checksum in $DERIVED" >&2
+else
+  (cd "$DIR" && shasum -a 256 -c --quiet "$DERIVED") \
+    || { echo "unihan-subset.txt differs from $DERIVED (different unzip/grep/sort?)" >&2; exit 1; }
+fi
 
 echo "UCD $VERSION ready in $DIR ($(wc -l < "$DIR/unihan-subset.txt" | tr -d ' ') Unihan rows)" >&2

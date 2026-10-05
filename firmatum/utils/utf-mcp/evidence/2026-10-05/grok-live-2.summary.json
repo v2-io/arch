@@ -1,0 +1,199 @@
+{
+ "tools_offered": [
+  [
+   "search_tool",
+   "use_tool"
+  ],
+  [
+   "search_tool",
+   "use_tool",
+   "unicode__identify",
+   "unicode__range",
+   "unicode__search",
+   "unicode__blocks"
+  ]
+ ],
+ "calls": [
+  {
+   "id": "call-90428a7d-ed0a-4fa8-bea1-8485e3ececdb-0",
+   "tool": "search_tool",
+   "input": {
+    "query": "unicode identify range search blocks",
+    "limit": 10
+   }
+  },
+  {
+   "id": "call-13c9ab64-97cf-47ce-803e-2bab5a9e214c-1",
+   "tool": "search_tool",
+   "input": {
+    "query": "*",
+    "limit": 255
+   }
+  },
+  {
+   "id": "call-b5d683df-07e4-44b2-82f6-c0f484d1058a-2",
+   "tool": "search_tool",
+   "input": {
+    "query": "tool",
+    "limit": 255
+   }
+  },
+  {
+   "id": "call-b5d683df-07e4-44b2-82f6-c0f484d1058a-3",
+   "tool": "search_tool",
+   "input": {
+    "query": "a",
+    "limit": 255
+   }
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-4",
+   "tool": "search_tool",
+   "input": {
+    "query": "list",
+    "limit": 20
+   }
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-5",
+   "tool": "search_tool",
+   "input": {
+    "query": "file read write",
+    "limit": 20
+   }
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-6",
+   "tool": "search_tool",
+   "input": {
+    "query": "bash shell grep",
+    "limit": 20
+   }
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-7",
+   "tool": "search_tool",
+   "input": {
+    "query": "image video workflow",
+    "limit": 20
+   }
+  },
+  {
+   "id": "call-57c2d8e1-c466-42ce-98ad-abeee43ffd1e-8",
+   "tool": "use_tool",
+   "input": {
+    "tool_name": "unicode__identify",
+    "tool_input": {
+     "text": "㏳㏴㏵",
+     "detail": "standard"
+    }
+   }
+  },
+  {
+   "id": "call-57c2d8e1-c466-42ce-98ad-abeee43ffd1e-9",
+   "tool": "search_tool",
+   "input": {
+    "query": "server",
+    "limit": 20
+   }
+  },
+  {
+   "id": "call-57c2d8e1-c466-42ce-98ad-abeee43ffd1e-10",
+   "tool": "search_tool",
+   "input": {
+    "query": "character code point glyph",
+    "limit": 20
+   }
+  },
+  {
+   "id": "call-3fabc75f-2290-4a6c-836e-3b4d43e2ff89-11",
+   "tool": "use_tool",
+   "input": {
+    "tool_name": "unicode__range",
+    "tool_input": {
+     "around": "U+33F5",
+     "before": 2,
+     "after": 2,
+     "detail": "brief"
+    }
+   }
+  }
+ ],
+ "updates": [
+  {
+   "id": "call-90428a7d-ed0a-4fa8-bea1-8485e3ececdb-0",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [\\n    {\\n      \\\"server\\\": \\\"unicode\\\",\\n      \\\"tools\\\": [\\n        {\\n          \\\"tool_name\\\": \\\"unicode__search\\\",\\n          \\\"description\\\": \\\"Find characters whose Unicode 18.0.0 name, formal alias, or informal alias contains the words of `query` (all words must match; case-insensitive). mode \\\\\\\"prefix\\\\\\\" (default…"
+  },
+  {
+   "id": "call-13c9ab64-97cf-47ce-803e-2bab5a9e214c-1",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [],\\n  \\\"total_hidden_tools\\\": 4,\\n  \\\"status\\\": \\\"ready\\\",\\n  \\\"note\\\": null\\n}\"}}]"
+  },
+  {
+   "id": "call-b5d683df-07e4-44b2-82f6-c0f484d1058a-2",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [],\\n  \\\"total_hidden_tools\\\": 4,\\n  \\\"status\\\": \\\"ready\\\",\\n  \\\"note\\\": null\\n}\"}}]"
+  },
+  {
+   "id": "call-b5d683df-07e4-44b2-82f6-c0f484d1058a-3",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [],\\n  \\\"total_hidden_tools\\\": 4,\\n  \\\"status\\\": \\\"ready\\\",\\n  \\\"note\\\": null\\n}\"}}]"
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-4",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [\\n    {\\n      \\\"server\\\": \\\"unicode\\\",\\n      \\\"tools\\\": [\\n        {\\n          \\\"tool_name\\\": \\\"unicode__range\\\",\\n          \\\"description\\\": \\\"List consecutive code points (Unicode 18.0.0), i.e. a character's neighbours in the code charts. Either `around` a glyph or code point with `before` and/or `after` counts, or f…"
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-5",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [\\n    {\\n      \\\"server\\\": \\\"unicode\\\",\\n      \\\"tools\\\": [\\n        {\\n          \\\"tool_name\\\": \\\"unicode__identify\\\",\\n          \\\"description\\\": \\\"Look up Unicode characters (Unicode 18.0.0). Give glyphs as `text` (every code point in it is identified, in order of first appearance; named emoji/character sequences in it…"
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-6",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [],\\n  \\\"total_hidden_tools\\\": 4,\\n  \\\"status\\\": \\\"ready\\\",\\n  \\\"note\\\": null\\n}\"}}]"
+  },
+  {
+   "id": "call-54fdf208-c53c-4563-b790-1e7e8026d53d-7",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [],\\n  \\\"total_hidden_tools\\\": 4,\\n  \\\"status\\\": \\\"ready\\\",\\n  \\\"note\\\": null\\n}\"}}]"
+  },
+  {
+   "id": "call-57c2d8e1-c466-42ce-98ad-abeee43ffd1e-9",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [],\\n  \\\"total_hidden_tools\\\": 4,\\n  \\\"status\\\": \\\"ready\\\",\\n  \\\"note\\\": null\\n}\"}}]"
+  },
+  {
+   "id": "call-57c2d8e1-c466-42ce-98ad-abeee43ffd1e-10",
+   "status": "completed",
+   "content": "[{\"type\": \"content\", \"content\": {\"type\": \"text\", \"text\": \"{\\n  \\\"results\\\": [\\n    {\\n      \\\"server\\\": \\\"unicode\\\",\\n      \\\"tools\\\": [\\n        {\\n          \\\"tool_name\\\": \\\"unicode__identify\\\",\\n          \\\"description\\\": \\\"Look up Unicode characters (Unicode 18.0.0). Give glyphs as `text` (every code point in it is identified, in order of first appearance; named emoji/character sequences in it…"
+  },
+  {
+   "id": "call-57c2d8e1-c466-42ce-98ad-abeee43ffd1e-8",
+   "status": "completed",
+   "content": "{\"type\": \"MCP\", \"tool_name\": \"identify\", \"server_name\": \"unicode\", \"output\": {\"OkayOutput\": \"{\\n\\\"unicode_version\\\":\\\"18.0.0\\\",\\n\\\"text_codepoints\\\":\\\"U+33F3 U+33F4 U+33F5\\\",\\n\\\"characters\\\":[\\n  {\\\"cp\\\":\\\"U+33F3\\\",\\\"char\\\":\\\"㏳\\\",\\\"name\\\":\\\"IDEOGRAPHIC TELEGRAPH SYMBOL FOR DAY TWENTY\\\",\\\"category\\\":\\\"So (Other_Symbol)\\\",\\\"block\\\":\\\"CJK Compatibility\\\",\\\"chart_heading\\\":\\\"Telegraph symbols for days…"
+  },
+  {
+   "id": "call-3fabc75f-2290-4a6c-836e-3b4d43e2ff89-11",
+   "status": "completed",
+   "content": "{\"type\": \"MCP\", \"tool_name\": \"range\", \"server_name\": \"unicode\", \"output\": {\"OkayOutput\": \"{\\n\\\"unicode_version\\\":\\\"18.0.0\\\",\\n\\\"range\\\":\\\"U+33F3..U+33F7\\\",\\n\\\"rows\\\":[\\n  {\\\"cp\\\":\\\"U+33F3\\\",\\\"char\\\":\\\"㏳\\\",\\\"name\\\":\\\"IDEOGRAPHIC TELEGRAPH SYMBOL FOR DAY TWENTY\\\",\\\"category\\\":\\\"So\\\",\\\"block\\\":\\\"CJK Compatibility\\\"},\\n  {\\\"cp\\\":\\\"U+33F4\\\",\\\"char\\\":\\\"㏴\\\",\\\"name\\\":\\\"IDEOGRAPHIC TELEGRAPH SYMBOL FOR DAY…"
+  }
+ ],
+ "text": "I'll list the tool names from what's actually registered, then look up those three glyphs in the Unicode database.The Unicode search only returned that server. I'll look for the rest of the registered tools so the list is complete.Those three are consecutive day symbols. I'll confirm the next code point in the same run.**Tools:** `search_tool`, `use_tool`, `unicode__blocks`, `unicode__identify`, `unicode__range`, `unicode__search`.\n\n**Glyphs:**\n- ㏳ — U+33F3, IDEOGRAPHIC TELEGRAPH SYMBOL FOR DAY TWENTY\n- ㏴ — U+33F4, IDEOGRAPHIC TELEGRAPH SYMBOL FOR DAY TWENTY-ONE\n- ㏵ — U+33F5, IDEOGRAPHIC TELEGRAPH SYMBOL FOR DAY TWENTY-TWO\n\n㏶, IDEOGRAPHIC TELEGRAPH SYMBOL FOR DAY TWENTY-THREE, U+33F6.",
+ "end": {
+  "stopReason": "end_turn",
+  "num_turns": 7,
+  "modelUsage": {
+   "grok-4.7-build": {
+    "inputTokens": 63249,
+    "outputTokens": 4032,
+    "cacheReadInputTokens": 350464,
+    "cacheCreationInputTokens": 0,
+    "modelCalls": 7,
+    "costUSD": 0.11081348
+   }
+  }
+ }
+}

@@ -36,4 +36,11 @@ LOG="${LOG:-$WORK/utf-mcp-calls.jsonl}"
 case "$LOG" in /*) ;; *) LOG="$PWD/$LOG" ;; esac
 TAG="${TAG:-$CLI-$(date -u +%Y%m%dT%H%M%SZ)}"
 
+# The scripts write these values into JSON, TOML and (agy) a shell command line.
+# Rather than escape for three syntaxes, refuse values that would need escaping.
+[[ "$TAG" =~ ^[A-Za-z0-9._:+-]{1,128}$ ]] || { echo "tag must match [A-Za-z0-9._:+-]{1,128}: $TAG" >&2; exit 2; }
+for v in "$UTF_MCP" "$LOG" "$WORK"; do
+  [[ "$v" =~ ^[A-Za-z0-9._/:@+~,=-]+$ ]] || { echo "path has characters these scripts do not escape (quotes, spaces, \$, \\ ...): $v" >&2; exit 2; }
+done
+
 summary() { echo "utf-mcp[$CLI]: workdir=$WORK log=$LOG tag=$TAG" >&2; }

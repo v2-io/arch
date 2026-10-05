@@ -5,7 +5,7 @@ DerivedAge (per utf-mcp) is <= Python's unidata_version are compared, so every
 difference is either a property Unicode changed after that version or a bug.
 
     target/release/utf-mcp dump > /tmp/dump.tsv
-    python3.14 tests/crosscheck_unicodedata.py /tmp/dump.tsv
+    /opt/homebrew/bin/python3.14 checks/crosscheck_unicodedata.py /tmp/dump.tsv
 
 Prints per-field mismatch counts and the first examples of each.
 """
@@ -49,7 +49,7 @@ def main(path):
             for k, (a, b) in checks.items():
                 if a != b:
                     mism[k].append((row["cp"], a, b))
-    print(f"compared {compared} code points assigned by Unicode {ud.unidata_version}")
+    print(f"compared {compared} code points designated by Unicode {ud.unidata_version}")
     if not mism:
         print("no mismatches")
     for k, v in sorted(mism.items()):
