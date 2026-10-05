@@ -1,22 +1,65 @@
 # md-press status
 
-*Updated 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
+*Updated 2026-10-05 (hand-off section); 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
 
-## Where it stands (2026-10-03)
+## Where it stands, and how to pick it back up (2026-10-05)
 
-- **Committed, not installed.** The math pass is on by default and was made safe to run unasked; output is quieter; the FEEDBACK files' defects and those found along the way are fixed (`2d9b9ac`; details in the next section). The `md-press` on PATH is still the pre-2026-10-02 build: `cargo install --path .` makes the new one live everywhere, and asf's `md-press --check` gate then includes math.
-- **Two spikes in `spikes/`:**
-  - `spike-math-model-comparison-2026-10-02/`, set aside. Muse Glimmer 30B beat llama3.2:3b as the model behind the math pass (138 vs 88 conversions of 240, 1 vs 5 wrong ones accepted), at ~6× the time per call.
-  - `spike-unicode-math-2026-10-02/`, a deterministic Unicode-math → LaTeX converter (Python reference, matching Rust port, latest v7). It was independently verified (`de-novo-feedback-1.md`) and corrected (`de-novo-response-1.md`). On 200 held-out lines through md-press's own splitter and gates: converter 84.5% right, 5.3% of its 187 changed lines wrong; llama3.2 37.5% right, 3.8% of its 80 wrong. The labels it is scored against were written by AI agents (Opus), not people. v7 itself has no clean held-out score yet; its integration plan is `proposed-integration-plan.md` there.
-- **Text from non-public repos is local-only** (Joseph, 2026-10-03, going forward): both spikes keep it in gitignored files, and each README lists what is local and why. md-press's older committed data (`fixtures/`, `model/`) was checked: public or synthetic.
-- **Open, for Joseph:**
-  - whether the converter replaces the LLM in the math pass, and for which sites (the spike recommends only those today's trigger selects);
-  - the policy for bare ASCII variables (`x`, `M_t` with no Unicode);
-  - how house labels that look like math (asf's W₀/W₁, `H_D3`) get declared;
-  - what replaces the model-era gates once no model proposes;
-  - when to install.
-  - Still unbuilt: the lint-md render-compat checks (FEEDBACK-08-22 §2).
-- **Commissioned 2026-10-03:** a survey of publicly downloadable markdown corpora for training and testing, landing at `research/markdown-corpora-2026-10-03.md`.
+*For Joseph or whoever resumes, cold. The work ran 2026-10-02 to 10-05 in one session; this section is its hand-off, and everything below it is the dated record.*
+
+**The tool.** In the repo, the math pass is on by default and safe to run unasked, the output is quieter, and both FEEDBACK files' defects and those found along the way are fixed (commit `2d9b9ac`, then the fixes noted below it; the full account is the next section).
+- **Not installed.** The `md-press` on PATH is still the pre-2026-10-02 build. `cargo install --path .` makes the new one live everywhere.
+- **What installing changes:** asf's `md-press --check` gate starts running the math pass, through ollama's `llama3.2:3b`. Without ollama it degrades to one warning. It also shares ollama with anything else on the machine; on 2026-10-03 an asf empirica campaign was driving `qwen3:4b`, and ollama here loads one model at a time.
+- **Also stale once installed:** the global `~/.claude/CLAUDE.md` describes `--math` as "Optional … (off by default)".
+- **Proposal cache:** `~/.cache/md-press/math/`, which is always safe to delete.
+- **Tests:** `cargo test` runs offline, 21 regression tests among them. `MD_PRESS_OLLAMA=1 cargo test live_model` adds the live-model test.
+
+**What the work found** (each with its own record):
+- **The LLM math pass was unsafe and mostly wasted.**
+  - Run live, llama3.2:3b silently unmade list items, dropped bold, un-nested items and stripped hard breaks, and every gate passed it. The rework closes this: the model sees only prose, and a proposal is kept only if every character outside its new `$…$` is the original's own and every operand it replaced survives into the span.
+  - Two thirds of would-be model calls (44,647 estate-wide) came only from `→` or `·` used as prose. Judging those glyphs by their operands cut the calls to 8,635.
+  - Details in the next section.
+- **Muse Glimmer 30B is a better model for this than llama3.2, but slower.** On 240 real pieces: 138 conversions with 1 minor slip, against 88 with 5 wrong ones accepted, at ~6× the time per call. Set aside in favor of the converter below. Record: `spikes/spike-math-model-comparison-2026-10-02/`.
+- **A deterministic converter does the job better than either model.** It finds where an expression starts and stops, then translates it, with no model at all. Record: `spikes/spike-unicode-math-2026-10-02/`.
+  - A Python reference, plus a Rust port that matches it on ~4.6M inputs; the latest version is v7.
+  - It was independently verified (`de-novo-feedback-1.md`) and the spiker answered every finding (`de-novo-response-1.md`).
+  - On 200 held-out lines through md-press's own splitter and gates: converter v4 (the version frozen before those lines were labeled) 84.5% right, 5.3% of its 187 changed lines wrong; llama3.2 37.5% right, 3.8% of its 80 changed lines wrong. So far more right, at about three times the wrong edits in absolute terms.
+  - The labels it is scored against were written by Opus agents, not people.
+  - About 1.3M estate sites run in ~11 s on one thread.
+  - v7 has no clean held-out score yet (every held-out line was seen while building it).
+  - Off the sites today's trigger selects, ~20% of its changes were wrong.
+  - Its remaining errors are mostly house convention: labels that look like variables, log fields like `t=45`, sentences *about* a symbol.
+  - Entry points: `README.md` (the cold reader's door), `debrief.md` (for Joseph), `proposed-integration-plan.md`.
+- **Data for the next round:** `research/markdown-corpora-2026-10-03.md`, with licenses verified where marked.
+  - The Stack Exchange dumps are the source of *human-typed* math: use `PostHistory.xml`, which keeps the raw markdown. cs.SE alone has ~3k posts with Unicode math and ~2k with bare `x_i`. CC BY-SA.
+  - Public-licensed LaTeX-in-markdown, usable for synthetic Unicode↔LaTeX pairs: PyMC (MIT), Rust RFCs (Apache-2.0), EIPs (CC0), Julia docs (MIT), Mathlib (Apache-2.0), d2l and QuantEcon (CC BY-SA).
+  - nLab is the densest and has wikilinks, but no license, so private use only.
+  - Rust RFCs (~178 of 649 files wrapped at 72–80 columns) is hard-wrapped prose for the unwrapper.
+  - Typed Unicode math is the scarcest category everywhere.
+  - The survey's clones lived in a session scratchpad and are gone; re-fetch from the report.
+
+**The decisions waiting on Joseph,** in the order I'd suggest:
+1. **Does the converter replace the LLM in the math pass, and on which sites?** The spike and its verifier both say: only on the sites today's trigger selects, for now.
+2. **When to install** (decide with 1). With the converter, asf's `--check` becomes deterministic and needs no model.
+3. **What replaces the model-era gates.** Run over the converter's output, they refuse 22%, mostly correct conversions, but also some real errors. The plan says replace them deliberately, not drop them.
+4. **Bare ASCII math** (`x`, `M_t`, `a^2` with no Unicode on the line): convert it, leave it, or convert only with nearby evidence. Today the converter converts little of it, on purpose.
+5. **Declaring house labels** (asf's W₀/W₁, `H_D3`, footnote-like `E³`): mined from canon (which recovers W₀ and W₁ exactly), a per-repo list, or something else. Repos that never write LaTeX offer nothing to mine.
+
+**Next work that needs no decision:**
+- A **clean held-out set for v7**, ideally drawn from the public corpora above (committable) and partly labeled by people.
+- **The lint-md render-compat checks** md-press still lacks (FEEDBACK-08-22 §2).
+- **Retraining the break classifier.** Its uncertain "joined" notes sit on a plateau at p≈0.40–0.47 that includes evidently wrong joins of enumerations (`(i) … \n (ii) …`); the audit fix-list items in `model/README.md` are still open.
+- **`log-det/λ`** still converts as `log-$\det/\lambda$`.
+
+**Housekeeping and its state:**
+- **Pushed:** the arch commits, `2d9b9ac` through `cd6dce6` (this hand-off's own commit is not). That includes the converter spike's first eight commits, which hold text from non-public repos: Joseph chose to keep such text out of git *going forward*, so it stays in that history.
+- **Local only:** both spikes now keep non-public text in gitignored files, each README listing what and why. The frozen converter files were scrubbed of non-public examples and re-hashed (comments only; every earlier measurement stands).
+- **Checked and clean:** md-press's older committed data (`fixtures/`, `model/`) is public or synthetic.
+
+**Done outside md-press in the same session:**
+- **zsh:** `setopt NO_EQUALS NO_NOMATCH` for every zsh, in `~/.config/zsh/env.zsh` via chezmoi (dotfiles commit `50ac45a`, not pushed; that repo is 3 ahead of origin). Agent tool shells used to fail on `echo =====` and on unquoted `--include=*.md` (466 and 569 failures across 194 transcripts).
+- **Claude Code feedback:** a draft about its zsh wrapper is queued locally, for Joseph to send with `/feedback`.
+- **Sidecar notes:** how the built-in "You should know" plugin works, toward Joseph's own plugin *sidecar*: `~/src/agent-core/plugins/sidecar/notes/`, uncommitted. It holds the extracted code and `extract.py`, every prompt (generated from its code), the plugin API types and examples for 2.1.288, and a README.
+- **ollama:** `llama3.2:3b` (md-press's model) was re-pulled onto the internal drive, replacing its symlink into the T7 drive. The T7's copy of that blob (`sha256-dde5aa3…`) is now unreferenced.
 
 ## Math on by default, and what that required (2026-10-02)
 
@@ -95,7 +138,7 @@ Known hole, documented rather than papered over: the guard reads the filename, s
 
 Still open from the assessment's recommendations: nothing in `udon-core` yet provides UDON-aware reflow, which remains the right home for the capability if it is ever wanted.
 
-## Where it stands
+## Where it stood (2026-07-22, founding session)
 
 Phases 0–2 of PLAN.md are substantively done: the crate exists, builds, and the **unwrap engine matches human ground truth everywhere the difference isn't (a) a rule scheduled for Phase 3 or (b) the historical "after" being itself defective.** `cargo test` is the proof surface:
 

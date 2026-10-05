@@ -11,7 +11,7 @@ Program-level tools that **firm, confirm, and establish** work across the estate
 ```text
 firmatum/
   utils/              # programme-internal / pre-public tools only
-    md-press/         # markdown canonicalizer (Rust; still listed as fmt-md in older notes)
+    md-press/         # markdown canonicalizer (Rust; fmt-md in older notes) — resume at md-press/STATUS.md
     aspectus/         # the look of a locus — budgeted tree snapshot (Rust)
     git-heat/         # git-heat — per-path commit-decay heatmap (inside one repo)
     repo-heat/        # repo-heat — per-repo commits/day EMA heatmap (across repos)

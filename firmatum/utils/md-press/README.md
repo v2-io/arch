@@ -1,8 +1,10 @@
 # md-press
 
-Canonicalizes markdown to the house standards used across `~/src/` — removes manual word-wrapping without touching anything else, and (optionally) promotes Unicode math to `$LaTeX$` that renders in GitHub, Obsidian, and LaTeX alike.
+Canonicalizes markdown to the house standards used across `~/src/` — removes manual word-wrapping without touching anything else, and promotes Unicode math to `$LaTeX$` that renders in GitHub, Obsidian, and LaTeX alike (on by default; `--no-math` skips it).
 
 It exists because the general-purpose formatters get this wrong in ways that cost more than they save: every one tested either normalizes *all* soft breaks (destroying deliberately-chunked prose), mangles tables, escapes wikilinks, reserializes YAML frontmatter (eating inline comments), or doesn't know `$…$` math exists. The research behind that verdict is in [`research/`](research/); the problem statement is [`PROBLEM.md`](PROBLEM.md), the design decisions [`PLAN.md`](PLAN.md), and current capability [`STATUS.md`](STATUS.md).
+
+**Where things stand:** start at [`STATUS.md`](STATUS.md) → *Where it stands, and how to pick it back up*. It covers what is built, whether it is installed, the decisions waiting, and the next work. Investigations, including the 2026-10-02 deterministic Unicode-math converter that may replace the model in the math pass, are indexed in [`spikes/`](spikes/README.md).
 
 ## Build and install
 
