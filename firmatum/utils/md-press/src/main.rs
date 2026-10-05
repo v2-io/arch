@@ -1,28 +1,38 @@
+use md_press::BreakAction;
+use md_press::plan::{Detail, Item, Plan, Tally, plan_file};
+use std::collections::HashMap;
 use std::io::Read;
 use std::path::PathBuf;
 
 fn usage(code: i32) -> ! {
     let text = r#"md-press — canonicalize markdown to house standards
 
-Named files are EDITED IN PLACE. Use --check for a dry run.
+By default md-press only REPORTS: what it would change in each file, and a
+short code for every decision, so any one of them can be flipped. Nothing is
+written unless you pass --fix.
 
-usage: md-press [options] <file.md>...    edit those files in place
-       md-press --check <file.md>...      dry run; write nothing
-       md-press [options] -               read stdin, write stdout
+usage: md-press [options] <file.md>...          report; write nothing
+       md-press --fix [options] <file.md>...    edit those files in place
+       md-press --fix --toggle CODES <file.md>  edit, with those decisions flipped
+       md-press [options] -                     report on stdin
+       md-press --fix [options] -               stdin to stdout, edited
 
-  --check           Dry run. Print the path of each file that would change,
-                    change nothing on disk, and exit 1 if there were any.
-                    With stdin (`--check -`) nothing is printed to stdout;
-                    the exit code answers.
+  --check           The default; accepted for scripts written before it was.
+  --fix             Write the changes. Without --toggle, every decision is
+                    taken at its default — the same plan the report shows.
+  --toggle CODES    Flip the decisions with these codes (comma- or
+                    space-separated; repeatable). With --fix the flipped plan
+                    is written; without it, the report shows the flipped plan.
   --no-math         Skip the math pass (see MATH below), e.g. for a fully
                     deterministic check, or where ollama is not installed.
   --math[=MODEL]    The math pass is on by default; this flag names a
                     different local model (default llama3.2:3b), or turns
                     the pass back on over MD_PRESS_MATH=off.
-  -q, --quiet       Don't list the uncertain line breaks (see BREAKS below);
-                    errors and one-line summaries still print.
-  -v, --verbose     List what the summaries count: each passage the math
-                    pass left as written and why, and each skipped file.
+  -q, --quiet       Report: list only the files that would change (exit code
+                    as usual). --fix: errors only.
+  -v, --verbose     Report: also list each line break inside joined
+                    paragraphs. Both modes: list what the summaries count.
+  --no-log          Don't add this run to the local usage log (see LOG).
   --force           Format even files excluded by a .md-pressignore.
   --allow-udon      Format .udon files too. Off by default, and the default
                     is the recommendation — see FOREIGN LANGUAGES below.
@@ -32,31 +42,49 @@ usage: md-press [options] <file.md>...    edit those files in place
                     probability and named feature values on stderr.
   -h, --help        Show this.
 
+THE REPORT. Per file that would change: first what md-press is confident
+about — paragraphs to join (one code per paragraph), breaks to keep and
+mark, math to convert, blank lines to add around $$ — then the decisions it
+is unsure about, each with the alternative a flip gives. Flipping a join
+keeps that break and ends the line with two spaces, so it renders as a line
+break and is never asked about again; flipping a keep joins the lines.
+Either way the file itself carries the decision. Flipping a math change
+puts the original text back, and that one is NOT remembered: the next run
+proposes it again. If you flip the same thing more than once and it looks
+like a bug rather than a judgment call, please report it (see the end of
+the report).
+
+CODES are derived from the file's exact contents, its path, this build of
+md-press, and the options that change the plan. They stop matching as soon
+as any of those change — a stale or mistyped code is an error, and nothing
+is written. So a code always means exactly what the report showed.
+
 Environment: MD_PRESS_MATH=off (or 0/no) disables the math pass for every
 call that doesn't pass --math; MD_PRESS_MATH=MODEL picks the model. Flags
 win over the environment. Model proposals are cached under
 $XDG_CACHE_HOME/md-press/math (default ~/.cache), keyed by model, prompt, and
-text, so re-runs and checks of text already seen are instant and repeatable;
-every safety check still re-runs on each use. MD_PRESS_CACHE=off disables
-it; deleting the directory is always safe.
+text, so re-runs and reports on text already seen are instant and
+repeatable; every safety check still re-runs on each use. MD_PRESS_CACHE=off
+disables it; deleting the directory is always safe.
 
-To preview the actual edits to one file, use stdin mode and your own diff:
+LOG: each run that reports or writes changes appends what it decided — the
+unsure decisions with their context, which codes were flipped, and counts —
+to $XDG_DATA_HOME/md-press/usage.jsonl (default ~/.local/share). It stays on
+this machine and exists to improve md-press: flips are labels for retraining
+the break classifier and for finding math bugs. --no-log or MD_PRESS_LOG=off
+skips it; deleting the file is always safe.
 
-    md-press - < FILE.md | diff FILE.md -
-
-STDIN MODE IS UNGUARDED, which matters most in exactly that preview use. There
-is no filename to read, so neither a .md-pressignore exclusion nor the .udon
-guard can be consulted; and when writing to stdout the render-equality gate is
-not run, because there is no write to refuse. So the pipeline above answers
-"what would the engine do to these bytes", not "what would md-press write to
-this file" — a file that file mode would skip comes back fully reformatted
-through stdin. When the question is whether a file would actually change, ask
-it directly with --check FILE, which runs the guards and the gate.
+STDIN IS UNGUARDED. There is no filename to read, so neither a
+.md-pressignore exclusion nor the .udon guard can be consulted (the
+render-equality gate below does run). So `md-press --fix - < FILE` answers
+"what would the engine do to these bytes", not "what would md-press write
+to this file" — a file that file mode would skip comes back reformatted. To
+see what would happen to a file, report on it by name.
 
 EXCLUSIONS: a .md-pressignore file (gitignore syntax) at or above a file marks
 it as not-for-formatting, and is honoured even when the file is named
 explicitly — because the realistic accident is an agent running
-`md-press $(find . -name '*.md')` over verbatim material. Use it for raw
+`md-press --fix $(find . -name '*.md')` over verbatim material. Use it for raw
 transcripts, provenanced copies, and frozen archaeology: reformatting those
 is render-equivalent and still wrong, and no automatic check can tell,
 because nothing about the rendered document changed.
@@ -71,27 +99,22 @@ every following :key into one attribute holding garbage; and !:lang: verbatim
 blocks are invisible to this tool's parser and get flattened. All three
 survive the render check, because a mangled UDON line renders as ordinary
 markdown text. --allow-udon proceeds anyway; --force deliberately does not, so
-overriding verbatim exclusions cannot quietly disable this too. Like the
-exclusions above, this guard is filename-keyed and therefore absent in stdin
-mode — see STDIN MODE IS UNGUARDED.
+overriding verbatim exclusions cannot quietly disable this too.
 
 WHAT IT CHANGES: each prose paragraph that is split across several lines
 becomes one long line — including paragraphs inside list items, blockquotes,
 and footnotes. Tables, code (fenced and inline), YAML frontmatter, math,
 wikilinks, HTML, and line breaks that carry meaning are left alone; so are
-display-math ($$) lines and lines that look like table rows.
-
-BREAKS: where a line break might be deliberate, a trained classifier decides.
-Confident calls are silent. Uncertain ones are listed per file, with the
-probability that the break was meant: "joined" lines can be re-separated by
-hand (end the first with two spaces to make the break permanent); "kept"
-breaks were marked with two trailing spaces, which you can delete and join.
+display-math ($$) lines and lines that look like table rows. Where a line
+break might be deliberate, a trained classifier decides, with the
+probability that the break was meant shown in the report.
 
 WHY UNWRAPPING IS SAFE: the source text changes, but the rendered document
 must not. Before writing any file, md-press re-parses its own output and
-compares the rendered result against the original. If they differ at all —
-which would mean a bug in md-press — that file is left exactly as it was and
-the problem is reported. Running md-press again on its output changes nothing.
+compares the rendered result against the original (setting aside the
+two-space marks it adds on purpose). If they differ at all — which would
+mean a bug in md-press — that file is left exactly as it was and the problem
+is reported. Running md-press again on its output changes nothing.
 
 MATH: Unicode/bare math in prose (η, ‖δ‖ ≤ R, M_t) is promoted to $LaTeX$
 using a local ollama model, and blank lines around $$ display math are
@@ -114,9 +137,10 @@ prose, restructure markdown, or invent mathematics. It is not strictly
 deterministic: the model runs at temperature 0, but a different model or
 version can propose differently.
 
-Exit codes: 0 = done (files written, or nothing needed changing)
-            1 = --check found files that would change
-            2 = an error, or a file was left untouched by the safety check"#;
+Exit codes: 0 = nothing would change (report), or done (--fix)
+            1 = the report found files that would change
+            2 = an error, a bad code, or a file left untouched by the
+                safety check"#;
     if code == 0 {
         println!("{text}");
     } else {
@@ -126,195 +150,272 @@ Exit codes: 0 = done (files written, or nothing needed changing)
 }
 
 const FLAGS: &[&str] = &[
-    "--check", "--force", "--allow-udon", "--no-classify", "--explain", "--math", "--no-math",
-    "-q", "--quiet", "-v", "--verbose",
+    "--check", "--fix", "--force", "--allow-udon", "--no-classify", "--explain", "--math",
+    "--no-math", "--no-log", "-q", "--quiet", "-v", "--verbose",
 ];
 
-fn is_known_flag(a: &str) -> bool {
-    FLAGS.contains(&a) || a.starts_with("--math=")
+struct Opts {
+    fix: bool,
+    model: Option<String>,
+    force: bool,
+    allow_udon: bool,
+    no_classify: bool,
+    explain: bool,
+    quiet: bool,
+    verbose: bool,
+    log: bool,
+    toggles: Vec<String>,
+    files: Vec<String>,
 }
 
-fn trunc(s: &str) -> String {
-    let t: String = s.chars().take(70).collect();
-    if t.len() < s.len() { format!("{t}…") } else { t }
-}
-
-/// Which model the math pass uses, if any: flags, then MD_PRESS_MATH, then
-/// the default (on).
-fn math_model(args: &[String]) -> Option<String> {
-    let flag = args.iter().rev().find_map(|a| match a.as_str() {
-        "--no-math" => Some(None),
-        "--math" => Some(Some(md_press::math::DEFAULT_MODEL.to_string())),
-        _ => a.strip_prefix("--math=").map(|m| Some(m.to_string())),
-    });
-    if let Some(choice) = flag {
-        return choice;
-    }
-    match std::env::var("MD_PRESS_MATH") {
-        Ok(v) if matches!(v.to_ascii_lowercase().as_str(), "off" | "0" | "no" | "false") => None,
-        Ok(v) if !v.trim().is_empty() && !matches!(v.to_ascii_lowercase().as_str(), "on" | "1" | "yes" | "true") => {
-            Some(v.trim().to_string())
-        }
-        _ => Some(md_press::math::DEFAULT_MODEL.to_string()),
-    }
-}
-
-/// Run-wide tallies behind the one-line summaries.
-#[derive(Default)]
-struct Tally {
-    math_refused: Vec<String>, // "path: line N[ cell M]: reason"
-    math_files: std::collections::BTreeSet<String>,
-    math_skipped: bool,
-    excluded: Vec<String>,
-    foreign: Vec<String>,
-    notes_printed: bool,
-}
-
-/// Apply the math pass (deterministic \(…\) normalization + LLM promotion +
-/// $$ blank lines) to already-unwrapped text, promoting only at the prose
-/// sites the parse identified — whole paragraph/heading lines, or table
-/// cells individually. Code, frontmatter, and HTML have no sites and are
-/// structurally out of reach, and so are the interiors of multi-line $$
-/// display blocks.
-fn math_pass(
-    input: &str,
-    sites: &[md_press::MathSite],
-    model: &md_press::math::Model,
-    ctx: &str,
-    tally: &mut Tally,
-) -> String {
-    use md_press::MathSite;
-    use md_press::math::promote_site;
-    let mut out_lines: Vec<String> = Vec::new();
-    let mut in_display = false;
-    // carry each line's own ending (LF or CRLF, or none on a final line)
-    // through untouched: `str::lines` drops `\r` and the final empty line
-    for (i, raw) in input.split_inclusive('\n').enumerate() {
-        let (line, eol) = match raw.strip_suffix("\r\n") {
-            Some(l) => (l, "\r\n"),
-            None => raw.strip_suffix('\n').map_or((raw, ""), |l| (l, "\n")),
-        };
-        let mut refused = |cell: Option<usize>, why: &str| {
-            let at = match cell {
-                Some(n) => format!("line {} cell {}", i + 1, n),
-                None => format!("line {}", i + 1),
+fn parse_args(args: &[String]) -> Opts {
+    let mut toggles = Vec::new();
+    let mut files = Vec::new();
+    let mut flags: Vec<&str> = Vec::new();
+    let mut math_flag: Option<Option<String>> = None;
+    let mut i = 0;
+    while i < args.len() {
+        let a = args[i].as_str();
+        if a == "--toggle" || a == "-t" {
+            let Some(v) = args.get(i + 1) else {
+                eprintln!("md-press: {a} needs codes");
+                usage(2);
             };
-            tally.math_refused.push(format!("{ctx}: {at}: {why}"));
-            tally.math_files.insert(ctx.to_string());
-        };
-        let site = sites.get(i).cloned().unwrap_or(MathSite::None);
-        // track multi-line $$ blocks: their interior lines are paragraph
-        // text to the parser but LaTeX to the reader
-        let t = line.trim_start_matches([' ', '\t', '>']).trim_end();
-        let delims = t.matches("$$").count();
-        let inside = in_display;
-        if site != MathSite::None {
-            if in_display {
-                in_display = delims % 2 == 0;
-            } else if t.starts_with("$$") && delims % 2 == 1 {
-                in_display = true;
-            }
-        } else {
-            in_display = false;
+            toggles.extend(split_codes(v));
+            i += 2;
+            continue;
         }
-        let new_line = match site {
-            MathSite::None => line.to_string(),
-            _ if inside => line.to_string(),
-            MathSite::Whole => {
-                let r = promote_site(model, line);
-                tally.math_skipped |= r.skipped;
-                for f in &r.flags {
-                    refused(None, f);
-                }
-                r.text
-            }
-            MathSite::Cells(ranges) => {
-                let mut s = String::with_capacity(line.len());
-                let mut cursor = 0;
-                for (n, &(a, b)) in ranges.iter().enumerate() {
-                    if a < cursor || b > line.len() || a > b {
-                        continue; // defensive: malformed range, leave bytes as-is
-                    }
-                    s.push_str(&line[cursor..a]);
-                    let cell = &line[a..b];
-                    // promote the trimmed interior; the cell's own padding is
-                    // table formatting and must survive untouched
-                    if cell.trim().is_empty() {
-                        // an empty cell is all padding; lead and trail would
-                        // both be the whole cell and double it every run
-                        s.push_str(cell);
-                        cursor = b;
-                        continue;
-                    }
-                    let lead = &cell[..cell.len() - cell.trim_start().len()];
-                    let trail = &cell[cell.trim_end().len()..];
-                    let r = promote_site(model, cell.trim());
-                    tally.math_skipped |= r.skipped;
-                    for f in &r.flags {
-                        refused(Some(n + 1), f);
-                    }
-                    let converted = format!("{lead}{}{trail}", r.text);
-                    // a proposal may never mint a new cell boundary
-                    if converted.matches('|').count() != cell.matches('|').count() {
-                        refused(Some(n + 1), "proposal changed table delimiters");
-                        s.push_str(cell);
-                    } else {
-                        s.push_str(&converted);
-                    }
-                    cursor = b;
-                }
-                s.push_str(&line[cursor..]);
-                s
-            }
-        };
-        out_lines.push(new_line + eol);
+        if let Some(v) = a.strip_prefix("--toggle=") {
+            toggles.extend(split_codes(v));
+        } else if a == "--no-math" {
+            math_flag = Some(None);
+        } else if a == "--math" {
+            math_flag = Some(Some(md_press::math::DEFAULT_MODEL.to_string()));
+        } else if let Some(m) = a.strip_prefix("--math=") {
+            math_flag = Some(Some(m.to_string()));
+        } else if FLAGS.contains(&a) {
+            flags.push(a);
+        } else if a.starts_with('-') && a != "-" {
+            eprintln!("md-press: unknown option '{a}'");
+            usage(2);
+        } else {
+            files.push(a.to_string());
+        }
+        i += 1;
     }
-    md_press::math::fix_display_math_blanks_at(&out_lines.concat(), Some(sites))
+    let has = |f: &str| flags.contains(&f);
+    if has("--check") && has("--fix") {
+        eprintln!("md-press: --check and --fix contradict each other (--check is the default)");
+        std::process::exit(2);
+    }
+    let model = match math_flag {
+        Some(choice) => choice,
+        None => match std::env::var("MD_PRESS_MATH") {
+            Ok(v) if off(&v) => None,
+            Ok(v) if !v.trim().is_empty() && !matches!(v.to_ascii_lowercase().as_str(), "on" | "1" | "yes" | "true") => {
+                Some(v.trim().to_string())
+            }
+            _ => Some(md_press::math::DEFAULT_MODEL.to_string()),
+        },
+    };
+    let log = !has("--no-log") && !std::env::var("MD_PRESS_LOG").is_ok_and(|v| off(&v));
+    Opts {
+        fix: has("--fix"),
+        model,
+        force: has("--force"),
+        allow_udon: has("--allow-udon"),
+        no_classify: has("--no-classify"),
+        explain: has("--explain"),
+        quiet: has("-q") || has("--quiet"),
+        verbose: has("-v") || has("--verbose"),
+        log,
+        toggles,
+        files,
+    }
 }
 
-fn print_notes(ctx: &str, notes: &[md_press::Note], tally: &mut Tally) {
-    if notes.is_empty() {
-        return;
-    }
-    tally.notes_printed = true;
-    let n = notes.len();
-    eprintln!(
-        "md-press: {ctx}: {n} uncertain line break{}:",
-        if n == 1 { "" } else { "s" }
-    );
-    for note in notes {
-        eprintln!(
-            "    {} p={:.2}  {} \\n {}",
-            if note.kept { "kept  " } else { "joined" },
-            note.p,
-            trunc(&note.line_a),
-            trunc(&note.line_b)
-        );
-    }
+fn off(v: &str) -> bool {
+    matches!(v.to_ascii_lowercase().as_str(), "off" | "0" | "no" | "false")
+}
+
+/// Codes as typed or pasted: separated by commas or spaces, brackets
+/// optional, case-insensitive, with Crockford's look-alikes folded.
+fn split_codes(v: &str) -> Vec<String> {
+    v.split(|c: char| c == ',' || c.is_whitespace())
+        .map(|c| {
+            c.trim_matches(|c| c == '[' || c == ']')
+                .to_ascii_lowercase()
+                .chars()
+                .map(|c| match c {
+                    'i' | 'l' => '1',
+                    'o' => '0',
+                    c => c,
+                })
+                .collect::<String>()
+        })
+        .filter(|c| !c.is_empty())
+        .collect()
+}
+
+// ---------------------------------------------------------------- run identity
+
+/// What one run's plans are a function of besides the file: this build of
+/// md-press (the executable's own bytes, which include the classifier) and
+/// the options that change a plan.
+fn run_identity(opts: &Opts) -> String {
+    let exe = std::env::current_exe().ok().and_then(|p| std::fs::read(p).ok()).unwrap_or_default();
+    let math = match &opts.model {
+        Some(m) => format!("math={m};prompt={:032x}", md_press::fnv128(&[md_press::math::instructions().as_bytes()])),
+        None => "math=off".into(),
+    };
+    format!("build={:032x};{math};classify={}", md_press::fnv128(&[&exe]), !opts.no_classify)
+}
+
+// ---------------------------------------------------------------- report
+
+fn tail(s: &str, n: usize) -> String {
+    let c: Vec<char> = s.chars().collect();
+    if c.len() <= n { s.to_string() } else { format!("…{}", c[c.len() - n..].iter().collect::<String>()) }
+}
+
+fn head(s: &str, n: usize) -> String {
+    let c: Vec<char> = s.chars().collect();
+    if c.len() <= n { s.to_string() } else { format!("{}…", c[..n].iter().collect::<String>()) }
 }
 
 fn plural(n: usize, one: &str, many: &str) -> String {
     format!("{n} {}", if n == 1 { one } else { many })
 }
 
-fn print_summaries(tally: &Tally, model: Option<&md_press::math::Model>, check: bool, verbose: bool) {
-    if tally.notes_printed {
-        eprintln!(
-            "md-press: p is how likely the break was meant. Undo a join: re-split and end the first line with two spaces. Undo a keep: delete its trailing two spaces and join."
-        );
+fn describe(it: &Item) -> String {
+    let lead = if it.flipped() { "FLIPPED: " } else { "" };
+    match &it.detail {
+        Detail::Para { first, last, joins, flipped } => {
+            let (a, b) = (&joins[0].1, &joins[joins.len() - 1].2);
+            if *flipped {
+                format!(
+                    "L{first}-{last}  {lead}keep and mark {} (not joined): \"{}\" … \"{}\"",
+                    plural(joins.len(), "break", "breaks"),
+                    head(a, 36),
+                    tail(b, 36)
+                )
+            } else {
+                format!("L{first}-{last}  join {}: \"{}\" … \"{}\"", plural(joins.len(), "break", "breaks"), head(a, 36), tail(b, 36))
+            }
+        }
+        Detail::Break { item } => {
+            let what = match item.action {
+                BreakAction::Join => "join",
+                BreakAction::Mark => "keep + mark",
+            };
+            let p = item.p.map(|p| format!("p {p:.2}")).unwrap_or_else(|| "by the parse".into());
+            let alt = if it.flipped() {
+                format!("{p}; default: {}", if item.default == BreakAction::Join { "join" } else { "keep + mark" })
+            } else if it.sure {
+                p
+            } else {
+                format!("{p}; flip: {}", if item.action == BreakAction::Join { "keep + mark" } else { "join" })
+            };
+            format!("L{}  {lead}{what} ({alt}): \"{}\" ⏎ \"{}\"", it.line, tail(&item.line_a, 40), head(&item.line_b, 40))
+        }
+        Detail::Math { before, removed, added, after, applied } => {
+            let verb = if *applied { "math" } else { "math, left as written" };
+            format!("L{}  {lead}{verb}: {before}«{removed}» → «{added}»{after}", it.line)
+        }
+        Detail::Blank { after, delim, applied } => format!(
+            "L{}  {lead}{} blank line {} {}",
+            it.line,
+            if *applied { "add" } else { "no" },
+            if *after { "after" } else { "before" },
+            head(delim, 40)
+        ),
     }
+}
+
+fn report(plan: &Plan, verbose: bool) {
+    let mut joins = 0;
+    let mut marks = 0;
+    let mut maths = 0;
+    let mut blanks = 0;
+    for it in &plan.items {
+        match &it.detail {
+            Detail::Para { joins: j, flipped, .. } => {
+                if *flipped {
+                    marks += j.len();
+                } else {
+                    joins += j.len();
+                }
+            }
+            Detail::Break { item } => match item.action {
+                BreakAction::Join => joins += 1,
+                BreakAction::Mark => marks += 1,
+            },
+            Detail::Math { applied, .. } => maths += *applied as usize,
+            Detail::Blank { applied, .. } => blanks += *applied as usize,
+        }
+    }
+    let mut parts = Vec::new();
+    if joins > 0 {
+        parts.push(format!("{} joined", plural(joins, "line break", "line breaks")));
+    }
+    if marks > 0 {
+        parts.push(format!("{} kept and marked", plural(marks, "break", "breaks")));
+    }
+    if maths > 0 {
+        parts.push(format!("{} converted to math", plural(maths, "passage", "passages")));
+    }
+    if blanks > 0 {
+        parts.push(format!("{} added around $$", plural(blanks, "blank line", "blank lines")));
+    }
+    let changes = plan.output != plan.input;
+    println!(
+        "{}: {}",
+        plan.ctx,
+        if changes { format!("would change — {}", parts.join(", ")) } else { "no change with these flips".into() }
+    );
+    let sure: Vec<&Item> = plan.items.iter().filter(|i| i.sure).collect();
+    let unsure: Vec<&Item> = plan.items.iter().filter(|i| !i.sure).collect();
+    if !sure.is_empty() {
+        println!("  confident:");
+        for it in sure {
+            println!("    [{}] {}", it.code, describe(it));
+            if verbose && let Detail::Para { joins, .. } = &it.detail {
+                for (l, a, b) in joins {
+                    println!("              L{l}  \"{}\" ⏎ \"{}\"", tail(a, 40), head(b, 40));
+                }
+            }
+        }
+    }
+    if !unsure.is_empty() {
+        println!("  unsure:");
+        for it in unsure {
+            println!("    [{}] {}", it.code, describe(it));
+        }
+    }
+}
+
+const FOOTER: &str = "\
+Each [code] flips one decision; a paragraph's confident joins flip together.
+  md-press --fix FILE…                     write the plan as shown
+  md-press --fix --toggle CODE,CODE FILE…  write it with those decisions flipped
+  md-press --toggle CODE FILE…             show the flipped plan first
+Codes match only this exact file content and md-press build. A flipped join
+keeps the break and marks it (two trailing spaces, so it renders as a line
+break), and the file remembers it. A flipped math change comes back on the
+next run. If you flip the same thing twice and it looks like a bug rather
+than a judgment call, please describe it in a dated FEEDBACK-*.md in";
+
+fn print_summaries(tally: &Tally, model: Option<&md_press::math::Model>, fix: bool, verbose: bool) {
     if let Some(m) = model
         && tally.math_skipped
     {
         let why = m.down_reason().unwrap_or_else(|| "model unavailable".into());
         eprintln!(
             "md-press: math pass skipped — {why}. Unwrapping ran as usual{}; --no-math silences this.",
-            if check { ", so --check did not cover math" } else { "" }
+            if fix { "" } else { ", so this report does not cover math" }
         );
     }
-    // In --check the refusals change nothing about the answer (those lines
-    // are left as written either way), so they are listed only on request.
-    if !tally.math_refused.is_empty() && (verbose || !check) {
+    if !tally.math_refused.is_empty() && (verbose || fix) {
         if verbose {
             eprintln!("md-press: math passages left as written (the model's proposal failed a check):");
             for r in &tally.math_refused {
@@ -345,14 +446,88 @@ fn print_summaries(tally: &Tally, model: Option<&md_press::math::Model>, check: 
             if !tally.foreign.is_empty() {
                 parts.push(format!("{} .udon (--allow-udon overrides)", tally.foreign.len()));
             }
-            eprintln!(
-                "md-press: skipped {}: {}; -v lists them.",
-                plural(skipped, "file", "files"),
-                parts.join(", ")
-            );
+            eprintln!("md-press: skipped {}: {}; -v lists them.", plural(skipped, "file", "files"), parts.join(", "));
         }
     }
 }
+
+// ---------------------------------------------------------------- log
+
+fn log_path() -> Option<PathBuf> {
+    let base = std::env::var_os("XDG_DATA_HOME")
+        .filter(|v| !v.is_empty())
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|h| PathBuf::from(h).join(".local/share")))?;
+    Some(base.join("md-press/usage.jsonl"))
+}
+
+/// One line per file that had decisions. What a later reader needs to use
+/// it as training data: every decision that wasn't a confident join, with
+/// its context, default, outcome, and whether it was flipped; counts for
+/// the confident joins. Failure to log never fails the run.
+fn log_run(plans: &[Plan], run_id: &str, fix: bool, given: &[String]) {
+    let Some(path) = log_path() else { return };
+    let ts = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
+    let mut lines = String::new();
+    for p in plans.iter().filter(|p| !p.items.is_empty()) {
+        let mut items = Vec::new();
+        let mut para_joins = 0usize;
+        let mut para_flips = 0usize;
+        for it in &p.items {
+            let flipped = it.flipped();
+            let v = match &it.detail {
+                Detail::Para { joins, flipped: f, .. } => {
+                    para_joins += joins.len();
+                    para_flips += *f as usize;
+                    if !*f {
+                        continue;
+                    }
+                    serde_json::json!({"kind": "para", "line": it.line, "joins": joins.iter().map(|(l, a, b)| serde_json::json!([l, a, b])).collect::<Vec<_>>(), "flipped": true})
+                }
+                Detail::Break { item } => serde_json::json!({
+                    "kind": "break", "line": it.line, "p": item.p, "sure": it.sure,
+                    "default": format!("{:?}", item.default), "final": format!("{:?}", item.action),
+                    "flipped": flipped, "a": item.line_a, "b": item.line_b,
+                    "features": item.features.iter().map(|(n, v)| (n.to_string(), serde_json::json!(v))).collect::<serde_json::Map<_, _>>(),
+                }),
+                Detail::Math { before, removed, added, after, applied } => serde_json::json!({
+                    "kind": "math", "line": it.line, "before": before, "removed": removed,
+                    "added": added, "after": after, "flipped": !applied,
+                }),
+                Detail::Blank { after, delim, applied } => serde_json::json!({
+                    "kind": "blank", "line": it.line, "after": after, "delim": delim, "flipped": !applied,
+                }),
+            };
+            items.push(v);
+        }
+        let rec = serde_json::json!({
+            "ts": ts,
+            "mode": if fix { "fix" } else { "report" },
+            "run": run_id,
+            "file": p.path.as_ref().map(|x| std::fs::canonicalize(x).unwrap_or_else(|_| x.clone()).display().to_string()).unwrap_or_else(|| p.ctx.clone()),
+            "sha": format!("{:032x}", md_press::fnv128(&[p.input.as_bytes()])),
+            "toggles_given": !given.is_empty(),
+            "toggles_used": p.matched,
+            "para_joins": para_joins,
+            "para_flips": para_flips,
+            "items": items,
+        });
+        lines.push_str(&rec.to_string());
+        lines.push('\n');
+    }
+    if lines.is_empty() {
+        return;
+    }
+    if let Some(dir) = path.parent() {
+        let _ = std::fs::create_dir_all(dir);
+    }
+    use std::io::Write;
+    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(&path) {
+        let _ = f.write_all(lines.as_bytes());
+    }
+}
+
+// ---------------------------------------------------------------- main
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -362,23 +537,13 @@ fn main() {
     if args.iter().any(|a| a == "--help" || a == "-h") {
         usage(0);
     }
-    if let Some(bad) = args
-        .iter()
-        .find(|a| a.starts_with('-') && a.as_str() != "-" && !is_known_flag(a))
-    {
-        eprintln!("md-press: unknown option '{bad}'");
+    let opts = parse_args(&args);
+    if opts.files.is_empty() {
+        eprintln!("md-press: no files named");
         usage(2);
     }
-    let check = args.iter().any(|a| a == "--check");
-    let model = math_model(&args).map(md_press::math::Model::new);
-    let force = args.iter().any(|a| a == "--force");
-    let allow_udon = args.iter().any(|a| a == "--allow-udon");
-    let no_classify = args.iter().any(|a| a == "--no-classify");
-    let explain = args.iter().any(|a| a == "--explain");
-    let quiet = args.iter().any(|a| a == "-q" || a == "--quiet");
-    let verbose = args.iter().any(|a| a == "-v" || a == "--verbose");
-    let files: Vec<&String> = args.iter().filter(|a| !is_known_flag(a)).collect();
-    let clf = if no_classify {
+    let model = opts.model.clone().map(md_press::math::Model::new);
+    let clf = if opts.no_classify {
         None
     } else {
         match md_press::classify::Classifier::load() {
@@ -389,116 +554,150 @@ fn main() {
             }
         }
     };
-
-    let run = |input: &str| -> md_press::Classified {
-        match &clf {
-            Some(c) => md_press::format_classified(input, c, explain),
-            None => md_press::format_plain(input),
-        }
-    };
+    let run_id = run_identity(&opts);
     let mut tally = Tally::default();
-    let render_ok = |input: &str, gate_variant: &str| {
-        gate_variant == input
-            || md_press::render_fingerprint(input) == md_press::render_fingerprint(gate_variant)
-    };
+    let mut plans: Vec<Plan> = Vec::new();
+    let mut errors = false;
+    let stdin = opts.files.len() == 1 && opts.files[0] == "-";
 
-    if files.len() == 1 && files[0] == "-" {
+    if stdin {
         let mut input = String::new();
-        std::io::stdin()
-            .read_to_string(&mut input)
-            .expect("read stdin");
-        let r = run(&input);
-        if check {
-            // a real check, not a formatted copy: guards still can't apply
-            // (no filename), but the render gate can, and stdout stays empty
-            if !render_ok(&input, &r.gate_output) {
-                eprintln!("md-press: (stdin): would be SKIPPED — result would change rendered document (bug or unsupported construct; please report)");
+        std::io::stdin().read_to_string(&mut input).expect("read stdin");
+        match plan_file("(stdin)", "-", input, &run_id, clf.as_ref(), model.as_ref(), &opts.toggles, opts.explain, &mut tally) {
+            Ok(p) => plans.push(p),
+            Err(e) => {
+                eprintln!("md-press: {e}");
                 std::process::exit(2);
             }
-        } else if !quiet {
-            print_notes("(stdin)", &r.notes, &mut tally);
         }
-        let mut out = r.output;
-        if let Some(m) = &model {
-            out = math_pass(&out, &r.math_sites, m, "(stdin)", &mut tally);
+    } else {
+        let mut excluder = md_press::exclude::Excluder::new();
+        for f in &opts.files {
+            let path = PathBuf::from(f);
+            if !opts.allow_udon
+                && let Some(lang) = md_press::exclude::foreign_language(&path)
+            {
+                tally.foreign.push(format!(
+                    "{}: skipped, .{lang} is not markdown — its line breaks carry meaning this tool has no model of",
+                    path.display()
+                ));
+                continue;
+            }
+            if !opts.force
+                && let Some(rule_file) = excluder.excluded(&path)
+            {
+                tally.excluded.push(format!("{}: skipped, excluded by {}", path.display(), rule_file.display()));
+                continue;
+            }
+            let input = match std::fs::read_to_string(&path) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("md-press: {}: {}", path.display(), e);
+                    errors = true;
+                    continue;
+                }
+            };
+            let key = std::fs::canonicalize(&path).unwrap_or_else(|_| path.clone()).display().to_string();
+            let ctx = path.display().to_string();
+            match plan_file(&ctx, &key, input, &run_id, clf.as_ref(), model.as_ref(), &opts.toggles, opts.explain, &mut tally) {
+                Ok(mut p) => {
+                    p.path = Some(path);
+                    plans.push(p);
+                }
+                Err(e) => {
+                    eprintln!("md-press: {e}");
+                    errors = true;
+                }
+            }
         }
-        print_summaries(&tally, model.as_ref(), check, verbose);
-        if check {
-            std::process::exit(if out != input { 1 } else { 0 });
+    }
+
+    // every given code must name exactly one decision, or nothing is written
+    let mut uses: HashMap<&str, usize> = HashMap::new();
+    for p in &plans {
+        for m in &p.matched {
+            *uses.entry(m.as_str()).or_default() += 1;
         }
-        print!("{out}");
-        return;
+    }
+    let unknown: Vec<&String> = opts.toggles.iter().filter(|c| !uses.contains_key(c.as_str())).collect();
+    let ambiguous: Vec<&String> = opts.toggles.iter().filter(|c| uses.get(c.as_str()).is_some_and(|&n| n > 1)).collect();
+    if !unknown.is_empty() || !ambiguous.is_empty() {
+        for c in unknown {
+            eprintln!(
+                "md-press: code '{c}' matches nothing in {} — mistyped, or the file, md-press, or the options changed since the report; run the report again",
+                if stdin { "the input" } else { "the files named" }
+            );
+        }
+        for c in ambiguous {
+            eprintln!("md-press: code '{c}' matches more than one decision; use the longer code the report shows for it, or name one file");
+        }
+        eprintln!("md-press: nothing written");
+        std::process::exit(2);
     }
 
     let mut would_change = false;
-    let mut errors = false;
-    let mut excluder = md_press::exclude::Excluder::new();
-    for f in files {
-        let path = PathBuf::from(f);
-        if !allow_udon
-            && let Some(lang) = md_press::exclude::foreign_language(&path)
-        {
-            tally.foreign.push(format!(
-                "{}: skipped, .{lang} is not markdown — its line breaks carry meaning this tool has no model of",
-                path.display()
-            ));
-            continue;
-        }
-        if !force
-            && let Some(rule_file) = excluder.excluded(&path)
-        {
-            tally.excluded.push(format!(
-                "{}: skipped, excluded by {}",
-                path.display(),
-                rule_file.display()
-            ));
-            continue;
-        }
-        let input = match std::fs::read_to_string(&path) {
-            Ok(s) => s,
-            Err(e) => {
-                eprintln!("md-press: {}: {}", path.display(), e);
-                errors = true;
+    if !opts.fix {
+        let mut any = false;
+        for p in &plans {
+            if p.output == p.input && p.items.iter().all(|i| !i.flipped()) {
                 continue;
             }
-        };
-        let r = run(&input);
-        // Built-in safety gate on the unwrap stage: render-equality before
-        // any write — compared against the gate variant, because classifier
-        // marker insertion deliberately changes rendering (its narrower
-        // guarantee: only add "  " at an existing break, or join at a soft
-        // break). The math pass likewise runs after with its own gates.
-        if !render_ok(&input, &r.gate_output) {
-            eprintln!(
-                "md-press: {}: SKIPPED — result would change rendered document (bug or unsupported construct; please report)",
-                path.display()
-            );
-            errors = true;
-            continue;
+            would_change |= p.output != p.input;
+            if opts.quiet {
+                if p.output != p.input {
+                    println!("{}", p.ctx);
+                }
+                continue;
+            }
+            if any {
+                println!();
+            }
+            any = true;
+            report(p, opts.verbose);
         }
-        let ctx = path.display().to_string();
-        if !check && !quiet {
-            print_notes(&ctx, &r.notes, &mut tally);
+        if any && !opts.quiet {
+            println!();
+            println!("{FOOTER}\n{}/", env!("CARGO_MANIFEST_DIR"));
         }
-        let output = match &model {
-            Some(m) => math_pass(&r.output, &r.math_sites, m, &ctx, &mut tally),
-            None => r.output,
-        };
-        if output == input {
-            continue;
+    } else if stdin {
+        print!("{}", plans[0].output);
+    } else {
+        let mut wrote = 0;
+        let mut unsure = 0;
+        for p in &plans {
+            if p.output == p.input {
+                continue;
+            }
+            unsure += p.items.iter().filter(|i| !i.sure && !i.flipped()).count();
+            let path = p.path.as_ref().unwrap();
+            match std::fs::write(path, &p.output) {
+                Ok(()) => wrote += 1,
+                Err(e) => {
+                    eprintln!("md-press: {}: {}", path.display(), e);
+                    errors = true;
+                }
+            }
         }
-        would_change = true;
-        if check {
-            println!("{}", path.display());
-        } else if let Err(e) = std::fs::write(&path, &output) {
-            eprintln!("md-press: {}: {}", path.display(), e);
-            errors = true;
+        if !opts.quiet && wrote > 0 {
+            let mut msg = format!("md-press: wrote {}", plural(wrote, "file", "files"));
+            if !opts.toggles.is_empty() {
+                msg.push_str(&format!(" with {} flipped", plural(opts.toggles.len(), "decision", "decisions")));
+            } else if unsure > 0 {
+                msg.push_str(&format!(
+                    "; {} taken at the default (run without --fix first to review them)",
+                    plural(unsure, "unsure decision", "unsure decisions")
+                ));
+            }
+            eprintln!("{msg}.");
         }
     }
-    print_summaries(&tally, model.as_ref(), check, verbose);
+    if opts.log {
+        log_run(&plans, &run_id, opts.fix, &opts.toggles);
+    }
+    print_summaries(&tally, model.as_ref(), opts.fix, opts.verbose);
     std::process::exit(if errors {
         2
-    } else if check && would_change {
+    } else if !opts.fix && would_change {
         1
     } else {
         0

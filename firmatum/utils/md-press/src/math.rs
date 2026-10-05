@@ -451,14 +451,9 @@ fn cache_path(model: &str, text: &str) -> Option<std::path::PathBuf> {
     let base = std::env::var_os("XDG_CACHE_HOME")
         .map(std::path::PathBuf::from)
         .or_else(|| std::env::var_os("HOME").map(|h| std::path::PathBuf::from(h).join(".cache")))?;
-    // FNV-1a, 128-bit: stable across Rust versions (unlike DefaultHasher)
-    let mut h: u128 = 0x6c62272e07bb014262b821756295c58d;
-    for part in [model, "\0", &instructions(), "\0", text] {
-        for &byte in part.as_bytes() {
-            h ^= byte as u128;
-            h = h.wrapping_mul(0x0000000001000000000000000000013B);
-        }
-    }
+    // the same bytes as before the helper existed ("\0" between parts), so
+    // existing cache entries stay valid
+    let h = crate::fnv128(&[model.as_bytes(), instructions().as_bytes(), text.as_bytes()]);
     let hex = format!("{h:032x}");
     Some(base.join("md-press/math").join(&hex[..2]).join(&hex[2..]))
 }
@@ -1305,6 +1300,10 @@ pub fn split_sentences(s: &str) -> Vec<(&str, bool)> {
 /// Result of promoting one prose site (a whole line or one table cell).
 pub struct SiteResult {
     pub text: String,
+    /// The site as `(original, result)` pieces whose concatenations are the
+    /// input and `text`. Each piece whose two sides differ is one decision a
+    /// caller can decline by putting the original back.
+    pub pieces: Vec<(String, String)>,
     /// per-chunk reasons a model proposal was refused (text left as written)
     pub flags: Vec<String>,
     /// the model was unavailable for at least one chunk that wanted it
@@ -1316,33 +1315,34 @@ pub struct SiteResult {
 /// gates independently.
 pub fn promote_site(model: &Model, text: &str) -> SiteResult {
     let (pre, body, suf) = split_structure(text);
-    let mut out = String::with_capacity(text.len() + 16);
-    out.push_str(pre);
     let mut flags = Vec::new();
     let mut skipped = false;
+    let mut done: Vec<(String, String)> = vec![(pre.to_string(), pre.to_string())];
     let pieces = split_at_prose_separators(body).into_iter().flat_map(|(p, sep)| {
         if sep { vec![(p, true)] } else { split_sentences(p) }
     });
     for (piece, is_sep) in pieces {
-        if is_sep {
-            out.push_str(piece);
-            continue;
-        }
-        match promote_text(model, piece) {
-            MathOutcome::Unchanged => out.push_str(piece),
-            MathOutcome::Converted(c) => out.push_str(&c),
-            MathOutcome::Flagged(why, det) => {
-                flags.push(why);
-                out.push_str(det.as_deref().unwrap_or(piece));
+        let result = if is_sep {
+            piece.to_string()
+        } else {
+            match promote_text(model, piece) {
+                MathOutcome::Unchanged => piece.to_string(),
+                MathOutcome::Converted(c) => c,
+                MathOutcome::Flagged(why, det) => {
+                    flags.push(why);
+                    det.unwrap_or_else(|| piece.to_string())
+                }
+                MathOutcome::Unavailable(det) => {
+                    skipped = true;
+                    det.unwrap_or_else(|| piece.to_string())
+                }
             }
-            MathOutcome::Unavailable(det) => {
-                skipped = true;
-                out.push_str(det.as_deref().unwrap_or(piece));
-            }
-        }
+        };
+        done.push((piece.to_string(), result));
     }
-    out.push_str(suf);
-    SiteResult { text: out, flags, skipped }
+    done.push((suf.to_string(), suf.to_string()));
+    let out = done.iter().map(|(_, r)| r.as_str()).collect();
+    SiteResult { text: out, pieces: done, flags, skipped }
 }
 
 /// Is this (trimmed) line blank, allowing for blockquote markers?
@@ -1371,6 +1371,38 @@ pub fn fix_display_math_blanks(input: &str) -> String {
 /// sites can be delimiters — `$$` inside indented code, HTML, or
 /// frontmatter is never touched.
 pub fn fix_display_math_blanks_at(input: &str, sites: Option<&[crate::MathSite]>) -> String {
+    fix_display_math_blanks_decided(input, sites, &|_| false).0
+}
+
+/// A blank line the display-math rule inserts beside a `$$` line.
+#[derive(Clone, Debug)]
+pub struct DisplayBlank {
+    /// 0-based index, in the input, of the `$$` line it sits beside.
+    pub line: usize,
+    /// After the line (true) or before it.
+    pub after: bool,
+    /// The `$$` line itself, trimmed.
+    pub delim: String,
+    /// Inserted in this run (false when the caller declined it).
+    pub applied: bool,
+}
+
+/// As `fix_display_math_blanks_at`, reporting each insertion and skipping
+/// those `decline` refuses.
+pub fn fix_display_math_blanks_decided(
+    input: &str,
+    sites: Option<&[crate::MathSite]>,
+    decline: &dyn Fn(&DisplayBlank) -> bool,
+) -> (String, Vec<DisplayBlank>) {
+    let mut blanks: Vec<DisplayBlank> = Vec::new();
+    let insert = |out: &mut Vec<String>, blanks: &mut Vec<DisplayBlank>, line: usize, after: bool, delim: &str, blank: String| {
+        let mut b = DisplayBlank { line, after, delim: delim.to_string(), applied: true };
+        b.applied = !decline(&b);
+        if b.applied {
+            out.push(blank);
+        }
+        blanks.push(b);
+    };
     // lines keep their own endings (LF/CRLF/none): rebuilding with `lines()`
     // + `join` dropped a trailing blank line per run and flattened CRLF
     let raw: Vec<&str> = input.split_inclusive('\n').collect();
@@ -1394,13 +1426,13 @@ pub fn fix_display_math_blanks_at(input: &str, sites: Option<&[crate::MathSite]>
         if !in_code && is_site && !in_display && (t_noquote == "$$" || one_line_block) {
             // opening delimiter (or a complete one-line $$…$$ block)
             if !out.last().is_none_or(|p| blankish(p.trim_end_matches(['\n', '\r']))) {
-                out.push(container_blank(l) + &nl);
+                insert(&mut out, &mut blanks, i, false, t_noquote, container_blank(l) + &nl);
             }
             out.push(raw[i].to_string());
             if t_noquote == "$$" {
                 in_display = true;
             } else if lines.get(i + 1).is_some_and(|n| !blankish(n)) {
-                out.push(container_blank(l) + &nl);
+                insert(&mut out, &mut blanks, i, true, t_noquote, container_blank(l) + &nl);
             }
             continue;
         }
@@ -1409,11 +1441,11 @@ pub fn fix_display_math_blanks_at(input: &str, sites: Option<&[crate::MathSite]>
             in_display = false;
             out.push(raw[i].to_string());
             if lines.get(i + 1).is_some_and(|n| !blankish(n)) {
-                out.push(container_blank(l) + &nl);
+                insert(&mut out, &mut blanks, i, true, t_noquote, container_blank(l) + &nl);
             }
             continue;
         }
         out.push(raw[i].to_string());
     }
-    out.concat()
+    (out.concat(), blanks)
 }

@@ -13,6 +13,7 @@ use comrak::{Arena, Options, parse_document};
 pub mod classify;
 pub mod exclude;
 pub mod math;
+pub mod plan;
 
 /// comrak options matching the corpus's construct inventory (requirements
 /// R1–R4): tables, math-dollars, wikilinks, footnotes, YAML frontmatter,
@@ -188,6 +189,21 @@ fn looks_like_table_row(content: &str) -> bool {
     s.len() > 1 && s.starts_with('|') && s[1..].contains('|')
 }
 
+/// An Obsidian callout / GitHub alert marker line (`[!note]`, `[!warn]-
+/// Title`). Text on that line is the callout's title, so the line after it —
+/// the body — must never be joined onto it: render-equal to CommonMark, and
+/// it silently turns the body into the title in Obsidian and unmakes the
+/// alert on GitHub. Found 2026-10-05 by the first decision report.
+fn is_callout_marker(content: &str) -> bool {
+    let Some(rest) = content.trim_start().strip_prefix("[!") else {
+        return false;
+    };
+    let Some(close) = rest.find(']') else {
+        return false;
+    };
+    close > 0 && rest[..close].chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+}
+
 /// `$$` delimiters counted outside inline code spans.
 fn display_delims(content: &str) -> usize {
     let mut n = 0;
@@ -224,25 +240,74 @@ fn strip_continuation_prefix(line: &str, quote_depth: usize) -> &str {
     rest
 }
 
-/// A classifier verdict the caller may want to tell the user about.
-pub struct Note {
-    pub kept: bool,      // true = kept + marked; false = joined
-    pub p: f64,          // calibrated P(phb)
-    pub line_a: String,  // the two sides of the break, for the stderr note
+/// What the unwrap stage does at a joinable line break.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BreakAction {
+    /// Join the two lines with a space (render-neutral).
+    Join,
+    /// Keep the break and end the first line with two spaces, so it renders
+    /// as a line break and is never asked about again.
+    Mark,
+}
+
+impl BreakAction {
+    pub fn flipped(self) -> Self {
+        match self {
+            BreakAction::Join => BreakAction::Mark,
+            BreakAction::Mark => BreakAction::Join,
+        }
+    }
+}
+
+/// One decision at a joinable break — every break the parse would let the
+/// engine join. Breaks the engine always preserves (hard breaks, definition
+/// lines, display math, …) are not decisions and do not appear.
+#[derive(Clone, Debug)]
+pub struct BreakItem {
+    /// 0-based index of the input line *after* the break.
+    pub line: usize,
+    /// 1-based first line of the paragraph the break is in.
+    pub para_start: usize,
+    pub default: BreakAction,
+    /// What this run did (the default, unless the caller flipped it).
+    pub action: BreakAction,
+    /// Calibrated P(the break was meant); `None` when the classifier was
+    /// not consulted (no classifier, or inside a blockquote).
+    pub p: Option<f64>,
+    /// The classifier's named feature values for this break (empty when it
+    /// was not consulted) — what a flip needs beside it to be a training label.
+    pub features: Vec<(&'static str, f64)>,
+    /// The two sides of the break, trimmed.
+    pub line_a: String,
     pub line_b: String,
+}
+
+impl BreakItem {
+    /// Was the default a confident one? Same bands the classifier design
+    /// ratified: joins below 0.15 and keeps at 0.85 or above are confident;
+    /// unconsulted joins are decided by the parse.
+    pub fn sure(&self) -> bool {
+        match (self.default, self.p) {
+            (_, None) => true,
+            (BreakAction::Join, Some(p)) => p < 0.15,
+            (BreakAction::Mark, Some(p)) => p >= 0.85,
+        }
+    }
 }
 
 /// Output of a classified format run: the final text (with any added `"  "`
 /// hard-break markers), a gate variant (identical but without the added
 /// markers — marker insertion deliberately changes rendering, so the
-/// render-equality gate must compare against this), and the mid-band notes.
+/// render-equality gate must compare against this), and every decision.
 pub struct Classified {
     pub output: String,
     pub gate_output: String,
-    pub notes: Vec<Note>,
+    pub breaks: Vec<BreakItem>,
     /// One `MathSite` per line of `output`, from the same parse that drove
     /// the join — the math pass promotes only at these sites.
     pub math_sites: Vec<MathSite>,
+    /// For each line of `output`, the 1-based input line it starts at.
+    pub origins: Vec<usize>,
 }
 
 /// Canonicalize: join every multi-line prose paragraph to one logical line.
@@ -265,14 +330,23 @@ pub fn format_plain(input: &str) -> Classified {
 /// Deterministic preserved-break categories still take precedence — the
 /// model only judges breaks the engine would otherwise join.
 pub fn format_classified(input: &str, clf: &classify::Classifier, explain: bool) -> Classified {
-    format_impl_x(input, Some(clf), explain)
+    format_with(input, Some(clf), explain, &Default::default())
 }
 
 fn format_impl(input: &str, clf: Option<&classify::Classifier>) -> Classified {
-    format_impl_x(input, clf, false)
+    format_with(input, clf, false, &Default::default())
 }
 
-fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool) -> Classified {
+/// The full unwrap stage, with the default action at each break in `flips`
+/// (0-based input line after the break) reversed: a flipped join keeps the
+/// break and marks it, a flipped keep joins. Deciding one break never
+/// changes how another is judged, so flipped runs differ only at the flips.
+pub fn format_with(
+    input: &str,
+    clf: Option<&classify::Classifier>,
+    explain: bool,
+    flips: &std::collections::HashSet<usize>,
+) -> Classified {
     let arena = Arena::new();
     let opts = options();
     let root = parse_document(&arena, input, &opts);
@@ -304,10 +378,11 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
     paras.retain(|p| opaque.is_none_or(|(a, b)| p.end < a || p.start > b));
     let bare_lines: Vec<&str> = lines.iter().map(|l| split_eol(l).0).collect();
     let fstats = clf.map(|_| classify::file_stats(&bare_lines));
-    let mut notes: Vec<Note> = Vec::new();
+    let mut breaks: Vec<BreakItem> = Vec::new();
     let mut out = String::with_capacity(input.len());
     let mut gate = String::with_capacity(input.len());
     let mut sites: Vec<MathSite> = Vec::new();
+    let mut origins: Vec<usize> = Vec::new();
     let mut joined_until: usize = 0; // 1-based line already consumed through
 
     let site_for = |prose: &ProseMap, line_no: usize| -> MathSite {
@@ -340,6 +415,15 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
         for l in joined_until..para.start - 1 {
             emit!(lines[l]);
             sites.push(site_for(&prose, l + 1));
+            origins.push(l + 1);
+        }
+        let mut run_start = para.start; // 1-based input line the run began at
+        // one output line ends: record where it came from
+        macro_rules! line_done {
+            () => {{
+                sites.push(MathSite::Whole);
+                origins.push(run_start);
+            }};
         }
         // Partition the paragraph's lines into runs terminated by hard
         // line breaks (which are semantic, R8, and stay). Each run joins
@@ -358,6 +442,7 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
         let mut in_display = false;
         let mut keep_after_display = false;
         let mut prev_table_row = false;
+        let mut prev_callout = false;
         for idx in para.start - 1..para.end {
             let (content, eol) = split_eol(lines[idx]);
             let stripped_probe = strip_continuation_prefix(content, para.quote_depth);
@@ -381,7 +466,10 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
             let table_row = looks_like_table_row(stripped_probe);
             let table_break = table_row || prev_table_row;
             prev_table_row = table_row;
+            let after_callout = prev_callout;
+            prev_callout = is_callout_marker(stripped_probe);
             let own_line = looks_like_definition(stripped_probe)
+                || after_callout
                 || solo
                 || after_colon_math
                 || display_break
@@ -390,62 +478,60 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
                 // intent-preserving break: flush the run before this line
                 emit!(&acc);
                 emit!(acc_eol);
-                sites.push(MathSite::Whole);
+                line_done!();
                 acc.clear();
                 run_first = true;
             }
-            // Classifier hook: about to JOIN this line into the run — the
-            // model may overrule with keep(+mark). Deterministic keeps above
-            // never reach here. Scope: plain paragraphs only (quote_depth 0),
+            // A decision: about to JOIN this line into the run. The
+            // classifier may overrule with keep(+mark), and the caller may
+            // flip either. Deterministic keeps above never reach here.
+            // Classifier scope: plain paragraphs only (quote_depth 0),
             // matching the training distribution.
             if !run_first {
-                if let (Some(c), Some(fs)) = (clf, fstats.as_ref()) {
-                    if para.quote_depth == 0 && idx > 0 {
-                        let p = if explain {
-                            let (p, feats) = c.explain(&bare_lines, para.start - 1, idx - 1, para.end, fs);
+                let (p, features) = match (clf, fstats.as_ref()) {
+                    (Some(c), Some(fs)) if para.quote_depth == 0 && idx > 0 => {
+                        let (p, feats) = c.explain(&bare_lines, para.start - 1, idx - 1, para.end, fs);
+                        if explain {
                             let fv: Vec<String> = feats.iter().map(|(n, v)| format!("{n}={v:.3}")).collect();
                             eprintln!("explain: p={p:.3} L{}..L{} {:?}/{:?}\n         {}",
                                 idx, idx + 1,
                                 bare_lines[idx - 1].chars().rev().take(28).collect::<String>().chars().rev().collect::<String>(),
                                 bare_lines[idx].chars().take(28).collect::<String>(),
                                 fv.join(" "));
-                            p
-                        } else {
-                            c.p_phb(&bare_lines, para.start - 1, idx - 1, para.end, fs)
-                        };
-                        if p >= 0.5 {
-                            // keep + write the marker nobody remembers
-                            let marked = !acc.ends_with("  ");
-                            out.push_str(&acc);
-                            if marked {
-                                out.push_str("  ");
-                            }
-                            out.push_str(acc_eol);
-                            gate.push_str(&acc);
-                            gate.push_str(acc_eol);
-                            sites.push(MathSite::Whole);
-                            if p < 0.85 {
-                                notes.push(Note {
-                                    kept: true,
-                                    p,
-                                    line_a: acc.clone(),
-                                    line_b: content.trim().to_string(),
-                                });
-                            }
-                            acc.clear();
-                            run_first = true;
-                        } else if p >= 0.15 {
-                            notes.push(Note {
-                                kept: false,
-                                p,
-                                line_a: split_eol(lines[idx - 1]).0.trim().to_string(),
-                                line_b: content.trim().to_string(),
-                            });
                         }
+                        (Some(p), feats)
                     }
+                    _ => (None, Vec::new()),
+                };
+                let default = if p.is_some_and(|p| p >= 0.5) { BreakAction::Mark } else { BreakAction::Join };
+                let action = if flips.contains(&idx) { default.flipped() } else { default };
+                breaks.push(BreakItem {
+                    line: idx,
+                    para_start: para.start,
+                    default,
+                    action,
+                    p,
+                    features,
+                    line_a: split_eol(lines[idx - 1]).0.trim().to_string(),
+                    line_b: content.trim().to_string(),
+                });
+                if action == BreakAction::Mark {
+                    // keep + write the marker nobody remembers
+                    let marked = !acc.ends_with("  ");
+                    out.push_str(&acc);
+                    if marked {
+                        out.push_str("  ");
+                    }
+                    out.push_str(acc_eol);
+                    gate.push_str(&acc);
+                    gate.push_str(acc_eol);
+                    line_done!();
+                    acc.clear();
+                    run_first = true;
                 }
             }
             if run_first {
+                run_start = idx + 1;
                 acc.push_str(content);
                 run_first = false;
             } else {
@@ -459,14 +545,14 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
             if solo && !is_para_last {
                 emit!(&acc);
                 emit!(acc_eol);
-                sites.push(MathSite::Whole);
+                line_done!();
                 acc.clear();
                 run_first = true;
             } else if has_hard_break(content) && !is_para_last {
                 // flush run, preserving the trailing break marker bytes
                 emit!(&acc);
                 emit!(acc_eol);
-                sites.push(MathSite::Whole);
+                line_done!();
                 acc.clear();
                 run_first = true;
             } else if is_para_last {
@@ -477,7 +563,7 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
                 let t = acc.trim_end_matches([' ', '\t']).to_string();
                 emit!(&t);
                 emit!(acc_eol);
-                sites.push(MathSite::Whole);
+                line_done!();
             }
         }
         joined_until = para.end;
@@ -485,8 +571,9 @@ fn format_impl_x(input: &str, clf: Option<&classify::Classifier>, explain: bool)
     for l in joined_until..lines.len() {
         emit!(lines[l]);
         sites.push(site_for(&prose, l + 1));
+        origins.push(l + 1);
     }
-    Classified { output: out, gate_output: gate, notes, math_sites: sites }
+    Classified { output: out, gate_output: gate, breaks, math_sites: sites, origins }
 }
 
 /// 1-based inclusive line range of a YAML frontmatter block that is preceded
@@ -570,4 +657,22 @@ pub fn render_fingerprint(md: &str) -> String {
         }
     }
     out
+}
+
+/// FNV-1a, 128-bit, over the parts with a NUL between each: stable across
+/// Rust versions and platforms (unlike `DefaultHasher`), which matters
+/// wherever a hash is shown to a person or stored.
+pub fn fnv128(parts: &[&[u8]]) -> u128 {
+    let mut h: u128 = 0x6c62272e07bb014262b821756295c58d;
+    for (k, part) in parts.iter().enumerate() {
+        if k > 0 {
+            h ^= 0;
+            h = h.wrapping_mul(0x0000000001000000000000000000013B);
+        }
+        for &byte in *part {
+            h ^= byte as u128;
+            h = h.wrapping_mul(0x0000000001000000000000000000013B);
+        }
+    }
+    h
 }

@@ -1,17 +1,20 @@
 # md-press status
 
-*Updated 2026-10-05 (hand-off section); 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
+*Updated 2026-10-05 (report by default, decision codes, usage log, callout fix; hand-off section); 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
 
 ## Where it stands, and how to pick it back up (2026-10-05)
 
 *For Joseph or whoever resumes, cold. The work ran 2026-10-02 to 10-05 in one session; this section is its hand-off, and everything below it is the dated record.*
 
-**The tool.** In the repo, the math pass is on by default and safe to run unasked, the output is quieter, and both FEEDBACK files' defects and those found along the way are fixed (commit `2d9b9ac`, then the fixes noted below it; the full account is the next section).
+**The tool.** In the repo, the math pass is on by default and safe to run unasked, the output is quieter, and both FEEDBACK files' defects and those found along the way are fixed (commit `2d9b9ac`, then the fixes noted below it; the full account is in *Math on by default*). Since 2026-10-05 md-press **only reports unless given `--fix`**, and every decision in the report carries a code that flips it (next section).
 - **Not installed.** The `md-press` on PATH is still the pre-2026-10-02 build. `cargo install --path .` makes the new one live everywhere.
-- **What installing changes:** asf's `md-press --check` gate starts running the math pass, through ollama's `llama3.2:3b`. Without ollama it degrades to one warning. It also shares ollama with anything else on the machine; on 2026-10-03 an asf empirica campaign was driving `qwen3:4b`, and ollama here loads one model at a time.
-- **Also stale once installed:** the global `~/.claude/CLAUDE.md` describes `--math` as "Optional … (off by default)".
+- **What installing changes:**
+  - A bare `md-press FILE` stops writing. It reports and exits 1, which fails safe, but any habit or script that relied on it editing needs `--fix`. asf's gate already says `--check`, which still works.
+  - asf's gate starts running the math pass, through ollama's `llama3.2:3b`. Without ollama, or with the model unreadable, it degrades to one warning. It also shares ollama with anything else on the machine; on 2026-10-03 an asf empirica campaign was driving `qwen3:4b`, and ollama here loads one model at a time.
+  - **As of 2026-10-05, `llama3.2:3b`'s weights blob is again a symlink into the unmounted T7 drive.** The 10-02 re-pull had replaced it with a real file, and something has re-linked it since. The other three models checked (`qwen2.5:3b`, `gemma3:4b`, `qwen3:4b`) are the same; the remaining five weren't checked. So the math pass can't run here until the drive is mounted or the model re-pulled.
+- **Also stale once installed:** the global `~/.claude/CLAUDE.md` md-press entry (it says named files are edited in place, `--math` is off by default, and previews go through stdin).
 - **Proposal cache:** `~/.cache/md-press/math/`, which is always safe to delete.
-- **Tests:** `cargo test` runs offline, 21 regression tests among them. `MD_PRESS_OLLAMA=1 cargo test live_model` adds the live-model test.
+- **Tests:** `cargo test` runs offline: 50 tests, 22 of them regressions and 5 for plans and codes. `MD_PRESS_OLLAMA=1 cargo test live_model` adds the live-model test.
 
 **What the work found** (each with its own record):
 - **The LLM math pass was unsafe and mostly wasted.**
@@ -60,6 +63,52 @@
 - **Claude Code feedback:** a draft about its zsh wrapper is queued locally, for Joseph to send with `/feedback`.
 - **Sidecar notes:** how the built-in "You should know" plugin works, toward Joseph's own plugin *sidecar*: `~/src/agent-core/plugins/sidecar/notes/`, uncommitted. It holds the extracted code and `extract.py`, every prompt (generated from its code), the plugin API types and examples for 2.1.288, and a README.
 - **ollama:** `llama3.2:3b` (md-press's model) was re-pulled onto the internal drive, replacing its symlink into the T7 drive. The T7's copy of that blob (`sha256-dde5aa3…`) is now unreferenced.
+
+## Report by default, with a code for every decision (2026-10-05)
+
+Joseph's design: `md-press FILE` reports and writes nothing; `--fix` writes. The report lists what md-press is confident about, then what it is unsure about, and gives each decision a code. `--fix --toggle CODES` writes the plan with those decisions flipped, and `--toggle` without `--fix` shows that plan first. He left the details to the implementing agent.
+
+**Decisions persist through the file, so nothing is remembered between runs** (Joseph's vote, and it turned out to be nearly free):
+- Flipping a join keeps the break and writes the two-space mark. A surviving mark was already a deterministic keep, so md-press never asks again.
+- Flipping a keep joins the lines, which leaves nothing to decide.
+- The one decision that does not persist is a declined math conversion: the next run proposes it again. The report says so, and asks for a `FEEDBACK-*.md` when a flip keeps recurring and looks like a bug. A recurring flip on a label that looks like a variable is the house-labels question (decision 5).
+
+**What is a decision.** Every joinable break, whether the classifier judged it or the parse decided it alone, every math piece the pass changed, and every blank line added around `$$`. A paragraph's confident joins share one code, since the realistic reason to flip them is "this block is a deliberate stack", and in that case all of them flip together. Confidence uses the ratified classifier bands: joins below p 0.15 and keeps at p 0.85 or above are confident; breaks the classifier never consulted (blockquotes, `--no-classify`) count as confident. Math pieces that passed every gate are listed as confident. Refused proposals are not yet offered as opt-ins; that waits for the deterministic converter, where the gates over-refuse (spike `proposed-integration-plan.md` §3).
+
+**Codes.** Five base-32 characters (Crockford's alphabet, look-alikes folded on input), extended to nine where two codes in one file would collide. Each comes from FNV-128 over the file's contents, its canonical path, the build (a hash of the executable's own bytes, since the crate version has said 0.1.0 since August), and the options that change a plan (math model, prompt hash, classifier on or off). Two pieces of identity:
+- A break's identity is its line number, which is safe because the seed includes the contents.
+- A math piece's is its original text, its proposal, and an occurrence count. That keeps a math code valid when a flipped join elsewhere moves lines, and makes it go stale if the model proposes something different on a cache miss.
+
+Every given code must match exactly one decision across all named files, or the run writes nothing and exits 2. The first draft took characters from FNV's low bits, and codes for neighbouring lines shared suffixes, because FNV barely mixes the last bytes into those bits. A splitmix64 finalizer fixed it.
+
+**The usage log** (Joseph's decision: stored locally, used only to improve the tool, with a flag to opt out). Each run that reports or writes changes appends one JSON line per file to `$XDG_DATA_HOME/md-press/usage.jsonl` (default `~/.local/share`). A line holds the file's absolute path and content hash, the run identity, mode, which codes were given and used, counts of confident joins, and every other decision with its context, default, outcome, and whether it was flipped. Breaks the classifier judged also carry its 14 feature values. Those are what make a flip on a reviewed run a training label: the two context lines alone can't reproduce the file-level features. `--no-log` / `MD_PRESS_LOG=off` skip it.
+
+**Structure.** Planning moved into `src/plan.rs` so tests can drive it with `math::Model::fake`. `format_with(input, clf, explain, flips)` is the unwrap stage with chosen breaks flipped. `Classified` now carries every `BreakItem` (replacing the mid-band `Note`s) and `origins`, the input line each output line starts at, so math items report lines in the file as it is. `promote_site` returns its pieces, and `fix_display_math_blanks_decided` reports and honours declines. Stdin reports by default too; `--fix -` filters to stdout, and the render gate now runs there.
+
+**Found by the first report: callout bodies were joined onto their marker line.** `> [!note]` followed by `> body…` became `> [!note] body…`. In Obsidian that makes the body the callout's title, and GitHub alerts need the marker alone on its line. It is render-equal to CommonMark, so the gate could not see it. On a scratch copy of asf, the pre-change engine would have done this at 70 places in 59 files. The break after a callout marker is now preserved, with a regression test. No damage was found already committed: asf's gate only ever ran `--check`, the three long titled callouts in AISI-responses and vivarium come from commits that weren't press runs, and udon (now `_older/udon`) has no callouts.
+
+**Verification.** All 50 offline tests pass. Over a `git archive` copy of asf (2,788 tracked `.md` files, `--no-math`, since no model is readable here):
+- The report took about 1 s, and 939 files would change, with 0 gate refusals.
+- After `--fix`, a second report is empty.
+- The default plan's output is byte-identical to the pre-change engine's everywhere except those 70 callout lines.
+
+The math-item path is covered only by tests with the fake model; it has not run against a live model.
+
+**The uncertain-break census that motivated "fewer notices"** (asf HEAD, `--no-math`, before this change): 1,744 uncertain breaks in 436 files, almost all on two plateaus.
+
+| | p | count |
+|---|---|---|
+| joined | 0.15–0.39 | 34 |
+| joined | 0.40–0.49 | 872 |
+| kept | 0.50–0.69 | 10 |
+| kept | 0.70–0.74 | 818 |
+| kept | 0.75–0.84 | 10 |
+
+- No threshold can thin that out: a cut keeps or drops a plateau whole.
+- The same construct lands on both sides. `N. **Author (Year).** *Title* ⏎ *Significance:* …` is kept at 0.71 in two files of `ref/prior-art-analysis/`, joined at 0.47 in another, and joined at 0.33 in a fourth.
+- In an eyeballed sample of 25 from each plateau (the agent's own reading, not labels), about half of the 0.71 keeps were sentence-per-line paragraphs, which the 2026-07-22 policy says should join. A keep changes rendering; a join does not.
+- So the lever is retraining the classifier (Joseph, 2026-10-05: "We probably also have enough data to shore up the random forest"). The default for that plateau should be decided by measuring the retrained model, not by moving the 0.5 band now.
+- The uncertain items are also a one-time cost per file: once pressed, a file has no joinable breaks left to judge.
 
 ## Math on by default, and what that required (2026-10-02)
 

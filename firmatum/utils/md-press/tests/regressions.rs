@@ -294,3 +294,23 @@ fn single_star_emphasis_may_not_be_dropped() {
     assert!(math::edits_confined(o, "the *gain $\\eta$* rises"));
     assert!(math::edits_confined("the optimum η* holds", "the optimum $\\eta^\\ast$ holds"));
 }
+
+/// Text on a callout's marker line is its title (Obsidian; GitHub alerts
+/// need the marker alone), so the body is never joined onto it — with or
+/// without a title already there. Render-equal to CommonMark, so only this
+/// rule protects it.
+#[test]
+fn callout_body_is_not_joined_onto_its_marker() {
+    for input in [
+        "> [!note]\n> **Refreshed.** The previous version\n> wrapped here.\n",
+        "> [!warn] Before launching an agent\n> READ: the brief\n> BRIEF: share intent.\n",
+        "> [!tip]- Folded\n> body text\n",
+    ] {
+        let out = press(input);
+        let first = input.lines().next().unwrap();
+        assert_eq!(out.lines().next().unwrap(), first, "{input:?} -> {out:?}");
+    }
+    // the body's own wraps still join
+    let out = press("> [!note]\n> one\n> two\n");
+    assert_eq!(out, "> [!note]\n> one two\n");
+}
