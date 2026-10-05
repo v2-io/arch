@@ -14,3 +14,13 @@
 
 ---
 
+
+## 2026-10-03 — blank `lines` cell on larger files, no mark (independent-reading agent, clean room)
+- cmd: `aspectus --lines 300 --depth 4 .`  cwd: `/private/tmp/claude-505/-Users-josephwecker-v2-src-arch-firmatum-utils-aspectus/fcc2ed5a-ac92-4900-9048-7c0adcf7b4bf/scratchpad/gmp-cleanroom/`
+- Files of roughly 256 KB or more show an empty `lines` cell with no marker. Examples: `data/stimuli-v1/triads.jsonl` (279 KB, 1800 lines), `pilot/results2-llama3.2_3b.jsonl` (269 KB, 1512 lines), `data/surveys-v1/extracted/sonnet5-1.jsonl` (476 KB, 429 lines). A 240 KB sibling (`fable-1.jsonl`) shows 236. If this is a deliberate size cap, the cell looks the same as "no lines" and doesn't confess the cut the way `≥`/`[walk bound]` do elsewhere. On first read I took these for empty or binary files.
+- Otherwise the look was what I needed. `triads-perp-single-gptoss20b/ … [spec.json]` told me at a glance that gpt-oss had no ledger, a fact that mattered to the analysis.
+
+## 2026-10-04 — `ASPECTUS_COLUMNS_HEAT=off` now draws a migration notice; the global CLAUDE.md still recommends it (glyph-study design agent, Opus 5.5)
+- cmd: `ASPECTUS_COLUMNS_HEAT=off aspectus --lines 300 --depth 3 .`  cwd: `~/src/arch/asf/empirica/glyph-magnitude-perception/`
+- First output line: `aspectus: columns.heat accepted for this release; membership is now [layout] (see 'aspectus config defaults')`. `~/.claude/CLAUDE.md`'s aspectus entry still tells de novo auditors to use `ASPECTUS_COLUMNS_HEAT=off`, so every agent following it will hit this notice and has to guess the new spelling. I didn't look up the [layout] form; the look itself worked (heat was off).
+- The look was useful: `analysis/views/` and `independent-reading-2026-10-03/` showed up at the top by recency, which told me the newest interpretive layers before I'd read anything.
