@@ -1,0 +1,20 @@
+# Tasks for utf-mcp. Rust comes from rustup (as for the sibling tools); mise is used only as a task runner here.
+
+[tasks.fetch]
+description = "Download the pinned Unicode data (18.0.0) and verify checksums"
+run = "./fetch-ucd"
+
+[tasks.build]
+description = "Build the release binary (needs the data from `fetch`)"
+depends = ["fetch"]
+run = "cargo build --release"
+
+[tasks.test]
+description = "Unit tests + stdio protocol tests"
+depends = ["fetch"]
+run = "cargo test --release"
+
+[tasks.crosscheck]
+description = "Compare every code point's core properties with Python's unicodedata (an older Unicode version)"
+depends = ["build"]
+run = "target/release/utf-mcp dump > target/dump.tsv && python3 checks/crosscheck_unicodedata.py target/dump.tsv"

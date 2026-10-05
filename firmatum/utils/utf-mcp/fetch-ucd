@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Fetch the pinned Unicode Character Database files that utf-mcp embeds at
+# compile time, verify them against data/SHA256SUMS-<version>, and extract the
+# Unihan subset the server uses. Idempotent: files already present and matching
+# their checksum are not re-downloaded.
+#
+#   ./fetch-ucd            # version 18.0.0 (the pinned default)
+#   ./fetch-ucd 18.0.0
+#
+# Moving to a new Unicode version: run with the new version and
+# UTF_MCP_ACCEPT_NEW=1, which records fresh checksums instead of verifying, then
+# change UCD_VERSION in src/ucd.rs and rebuild. Review the diff of the SUMS file.
+set -euo pipefail
+
+VERSION="${1:-18.0.0}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+DIR="$HERE/data/$VERSION"
+SUMS="$HERE/data/SHA256SUMS-$VERSION"
+BASE="https://www.unicode.org/Public/$VERSION"
+
+FILES=(
+  ucd/UnicodeData.txt
+  ucd/NameAliases.txt
+  ucd/NamesList.txt
+  ucd/Blocks.txt
+  ucd/Scripts.txt
+  ucd/ScriptExtensions.txt
+  ucd/DerivedAge.txt
+  ucd/EastAsianWidth.txt
+  ucd/PropertyValueAliases.txt
+  ucd/NamedSequences.txt
+  ucd/extracted/DerivedName.txt
+  ucd/extracted/DerivedNumericValues.txt
+  ucd/extracted/DerivedNumericType.txt
+  ucd/emoji/emoji-data.txt
+  emoji/emoji-sequences.txt
+  emoji/emoji-zwj-sequences.txt
+  ucd/Unihan.zip
+)
+
+# Unihan fields kept (the full database is ~40 MB; these are the ones a reader
+# of a glyph is likely to want: meaning, readings, stroke/radical, variants).
+UNIHAN_FIELDS='kDefinition|kMandarin|kCantonese|kJapanese|kJapaneseKun|kJapaneseOn|kKorean|kHangul|kVietnamese|kTotalStrokes|kRSUnicode|kSimplifiedVariant|kTraditionalVariant|kSemanticVariant|kCompatibilityVariant|kPrimaryNumeric|kAccountingNumeric|kOtherNumeric'
+
+mkdir -p "$DIR"
+
+have_sum() { [[ -f "$SUMS" ]] && grep -q "  $1\$" "$SUMS"; }
+check_one() { (cd "$DIR" && grep "  $1\$" "$SUMS" | shasum -a 256 -c --status -); }
+
+for f in "${FILES[@]}"; do
+  name="$(basename "$f")"
+  if [[ -f "$DIR/$name" ]] && have_sum "$name" && check_one "$name"; then
+    continue
+  fi
+  echo "fetching $BASE/$f" >&2
+  curl -fsS --retry 3 -m 120 -o "$DIR/$name.part" "$BASE/$f"
+  mv "$DIR/$name.part" "$DIR/$name"
+done
+
+if [[ "${UTF_MCP_ACCEPT_NEW:-}" == 1 ]]; then
+  (cd "$DIR" && shasum -a 256 *.txt Unihan.zip | grep -v ' unihan-subset.txt$' | sort -k2) > "$SUMS"
+  echo "recorded new checksums in $SUMS" >&2
+else
+  [[ -f "$SUMS" ]] || { echo "no $SUMS; run with UTF_MCP_ACCEPT_NEW=1 to record one" >&2; exit 1; }
+  (cd "$DIR" && shasum -a 256 -c --quiet "$SUMS")
+fi
+
+# Unihan subset (deterministic: byte-sorted by code-point string, then field).
+unzip -p "$DIR/Unihan.zip" \
+  | grep -E $'^U\\+[0-9A-F]+\t('"$UNIHAN_FIELDS"$')\t' \
+  | LC_ALL=C sort -t$'\t' -k1,1 -k2,2 \
+  > "$DIR/unihan-subset.txt"
+
+echo "UCD $VERSION ready in $DIR ($(wc -l < "$DIR/unihan-subset.txt" | tr -d ' ') Unihan rows)" >&2

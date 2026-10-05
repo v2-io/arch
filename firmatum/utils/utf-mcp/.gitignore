@@ -1,0 +1,3 @@
+/target
+# Unicode data is fetched and checksum-verified by ./fetch-ucd (checksums are committed).
+/data/*/
