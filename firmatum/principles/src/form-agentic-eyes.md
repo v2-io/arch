@@ -9,6 +9,8 @@ decided-by: supported
 
 # Formulation: the design of agentic eyes
 
+> **Collision (2026-10-10):** this atom treats non-TTY output as one machine audience. Joseph has since distinguished three: human-with-terminal, agentic and deterministic ([[norm-three-audiences]]). Where they disagree, that norm's steward words win, and this atom is due a rewrite.
+
 *The master design for agent-facing glance surfaces — the channels ↔ affordances ↔ concerns ↔ options picture. A foundation doc for every look-shaped tool in the suite (first consumer: aspectus; the principles generalize to any surface whose reader is a token-stream mind). Synthesized 2026-08-14 from the day's decided material; provenance per section; Joseph's framing: "a critical upgrade for the 'eyes' of agents, which, biologically speaking, is no small thing."*
 
 ## What a glance surface is
