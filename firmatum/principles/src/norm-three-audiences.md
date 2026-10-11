@@ -33,6 +33,11 @@ The occasion, measured on 2026-10-10 in `ai-risk-model`: `bin/source-search` def
 - Many glyph runs are recognised as sequences by minds of several families (`BEST.md`: block-element fills, circled and parenthesized letters, super- and subscript digits, and more).
 - **U+2581 `▁` isn't the bottom of the fill ramp for Gemini.** Both Gemini models leave it out of the ramp `▁▂▃▄▅▆▇█` (Gemini Flash in 81% of the triads holding it, Gemini Pro in 51%), while Claude and Grok order it in. The hypothesised mechanism is that SentencePiece delivers it as its word-boundary marker. This is a supported observation; the tokenizer itself hasn't been inspected (`OBSERVATIONS.md`, 2026-10-04). A ramp that has to read the same to every family should start at `▂`, or say what `▁` means.
 - Families sometimes split on what comes next, mostly by keeping a glyph's form against its meaning (`OBSERVATIONS.md`, 2026-10-06; seven cases).
+- **Quote-level marks read at a glance** (`spikes/quote-level-marks-2026-10-10/REPORT.md` in the same study, commit `4ee2b895`). `‹⟨…⟩›`, `«⟨…⟩»` and `«⟪…⟫»`, which ai-risk-model adopted for three levels of verification of a quoted source:
+  - Opus 5.5, Sonnet 5.5, Grok 4.6, Gemini 3.1 Pro and Gemini 3.8 Flash read and wrote them correctly on every item, inline and in lists, with and without a legend.
+  - Haiku 4.5 without thinking got 111 of 120 inline quotations right, every error reading a level downward.
+  - No small local model was usable, and there was no GPT data.
+  - A spot check, not a claim. It's still the first direct test of single against double guillemets and angle brackets for agents.
 
 ## Collisions
 
