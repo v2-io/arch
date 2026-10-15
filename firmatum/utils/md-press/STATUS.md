@@ -1,6 +1,6 @@
 # md-press status
 
-*Updated 2026-10-05 (report by default, decision codes, usage log, callout fix; hand-off section); 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
+*Updated 2026-10-15 (comrak from the v2-io fork); 2026-10-05 (report by default, decision codes, usage log, callout fix; hand-off section); 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
 
 ## Where it stands, and how to pick it back up (2026-10-05)
 
@@ -12,6 +12,7 @@
   - A bare `md-press FILE` stops writing. It reports and exits 1, which fails safe, but any habit or script that relied on it editing needs `--fix`. asf's gate already says `--check`, which still works.
   - asf's gate starts running the math pass, through ollama's `llama3.2:3b`. Without ollama, or with the model unreadable, it degrades to one warning. It also shares ollama with anything else on the machine; on 2026-10-03 an asf empirica campaign was driving `qwen3:4b`, and ollama here loads one model at a time.
   - **As of 2026-10-05, `llama3.2:3b`'s weights blob is again a symlink into the unmounted T7 drive.** The 10-02 re-pull had replaced it with a real file, and something has re-linked it since. The other three models checked (`qwen2.5:3b`, `gemma3:4b`, `qwen3:4b`) are the same; the remaining five weren't checked. So the math pass can't run here until the drive is mounted or the model re-pulled.
+- **comrak comes from the v2-io fork since 2026-10-15:** https://github.com/v2-io/comrak, branch `sourcepos-fixes`. That is upstream main (0.56) plus fixes to inline source positions; the fork's `V2IO-FORK.md` lists them, and the planned work on keeping reference links in the tree. The fixes were written by Claude, and comrak doesn't accept LLM-written code, so they stay in the fork. md-press needed no code changes (only `syn` moved in the lockfile, to 3.0.9). Its tests pass (53), and on the 36 asf-history fixtures and 12 udon spike files its reports are identical to the 0.54 build apart from the decision codes, which change with any rebuild. md-press reads only block-level positions, so the fixes don't change what it does today. Reinstalled the same day. Background: udon `v2/spikes/more-markdown/comrak-reference-links.md`.
 - **Proposal cache:** `~/.cache/md-press/math/`, which is always safe to delete.
 - **Tests:** `cargo test` runs offline: 50 tests, 22 of them regressions and 5 for plans and codes. `MD_PRESS_OLLAMA=1 cargo test live_model` adds the live-model test.
 
