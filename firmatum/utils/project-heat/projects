@@ -318,6 +318,13 @@ PSEUDO_KINDS = frozenset({"onramp"})
 GLYPH_RAMP = " ▁▂▃▄▅▆▇█"  # index = ceil(t*8), t in (0,1]
 GLYPH_WASH = "·"  # pre-birth
 GLYPH_STALE = " "  # stale (STALE_AFTER_DAYS+ idle), faded out
+# Color rendering: every day cell is one glyph, colored. A day with actual
+# changes (raw count > 0) is the full block; every other day (decay, onramp,
+# wash, zero, stale) is UPPER SEVEN EIGHTHS (U+1FB86, Symbols for Legacy
+# Computing), so a hairline at the bottom marks which cells are smoothing
+# rather than activity (Joseph, 2026-10-16).
+CELL_COMMIT = "█"
+CELL_PLAIN = "\U0001FB86"
 
 
 def ramp_glyph(t: float) -> str:
@@ -1936,9 +1943,9 @@ def ansi_fg(hex_color: str) -> str:
     return f"\x1b[38;2;{r};{g};{b}m"
 
 
-def ansi_block(hex_color: str) -> str:
+def ansi_block(hex_color: str, glyph: str = "█") -> str:
     r, g, b = hex_rgb(hex_color)
-    return f"\x1b[38;2;{r};{g};{b}m█"
+    return f"\x1b[38;2;{r};{g};{b}m{glyph}"
 
 
 HIGHLIGHT_RED = "#ff1a1a"
@@ -2547,6 +2554,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             print(name + "  " + "".join(cells))
             return
         named = style_name(name, level, dark=dark)
+        raw = counts.get(key, {})
         cells = [" "] * left_pad
         for slot in slots:
             if slot is None:
@@ -2557,7 +2565,8 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 hx = fills[iso]
             else:
                 hx = heat_hex(heat.get(iso, 0.0), maxc, invert=invert)
-            cells.append(ansi_block(hx))
+            glyph = CELL_COMMIT if int(raw.get(iso, 0)) > 0 else CELL_PLAIN
+            cells.append(ansi_block(hx, glyph))
         prefix = "\x1b[4m" if level >= HIGHLIGHT_UNDERLINE_AT else ""
         print(prefix + named + "  " + "".join(cells) + "\x1b[0m")
 
