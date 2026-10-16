@@ -320,11 +320,11 @@ GLYPH_WASH = "·"  # pre-birth
 GLYPH_STALE = " "  # stale (STALE_AFTER_DAYS+ idle), faded out
 # Color rendering: every day cell is one glyph, colored. A day with actual
 # changes (raw count > 0) is the full block; every other day (decay, onramp,
-# wash, zero, stale) is LEFT SEVEN EIGHTHS (U+2589), so a hairline gap on
-# its right marks which cells are smoothing rather than activity (Joseph,
-# 2026-10-16; tried UPPER SEVEN EIGHTHS U+1FB86 first).
+# wash, zero, stale) is LOWER HALF BLOCK (U+2584), so the half-height cell
+# marks smoothing rather than activity (Joseph, 2026-10-16; tried UPPER
+# SEVEN EIGHTHS U+1FB86 and LEFT SEVEN EIGHTHS U+2589 first).
 CELL_COMMIT = "█"
-CELL_PLAIN = "\u2589"
+CELL_PLAIN = "\u2584"
 
 
 def ramp_glyph(t: float) -> str:
