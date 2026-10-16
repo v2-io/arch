@@ -271,12 +271,25 @@ RECORD_KEY_ORDER = (
     "heatmap-head",
     "heatmap-span-oldest",
     "stat-kids",
+    "stat-head",
     "first-commit",
 )
 HEATMAP_FULL_WEEKS = 17
 HEATMAP_NAME_W = 29
-DIM_ZERO_MIN = 7  # tail (pre-birth) only
-DIM_HEAD_DAYS = 14
+# Default heat is a forward (causal) EWMA of the daily counts, half-life a
+# week, in commit units: v_d = c_d + r·v_{d-1}, r = 2^(-1/7) — the textbook
+# λ=1-r EWMA times 1/λ, so a lone commit still reads as 1 on its day and
+# halves each week after. Under SMOOTH_FLOOR it renders as zero (a single
+# commit glows one week). History is always fetched SMOOTH_WARMUP_DAYS past
+# the oldest shown day so the oldest edge isn't cold-started. The birth
+# onramp is the same filter time-reversed over the first ONRAMP_SOURCE_DAYS
+# of commits (work starts before the first commit, in proportion to how the
+# project opened). --strict shows raw counts with no onramp.
+SMOOTH_HALF_LIFE_DAYS = 7
+SMOOTH_CARRY = 0.5 ** (1.0 / SMOOTH_HALF_LIFE_DAYS)
+SMOOTH_FLOOR = 0.5
+SMOOTH_WARMUP_DAYS = 8 * SMOOTH_HALF_LIFE_DAYS  # residual carry 1/256
+ONRAMP_SOURCE_DAYS = SMOOTH_HALF_LIFE_DAYS
 # Pre-birth (right): wash → peak. Light is as specified; dark is RGB-invert.
 TAIL_WASH_LIGHT = "#e6e6f1"
 # After 4 weeks idle (past the cooldown), fade white-zero toward this
@@ -284,9 +297,10 @@ TAIL_WASH_LIGHT = "#e6e6f1"
 STALE_AFTER_DAYS = 28
 STALE_FADE_DAYS = 7
 STALE_LIGHT = "#eff1f5"
-# Week-stats pseudo-work: birth onramp + idle cooldown only.
-# 0-commit white, pre-birth wash, the birth marker, and stale fade do not count.
-PSEUDO_KINDS = frozenset({"onramp", "offramp"})
+# Week-stats pseudo-work: the birth onramp only. 0-commit days (including
+# the EWMA tail after a commit), pre-birth wash, the birth marker, and stale
+# fade do not count — a week-long tail would say "active" a month later.
+PSEUDO_KINDS = frozenset({"onramp"})
 
 # Agent/pipe rendering (no ANSI): same look, glyph encoding. Lower-eighths
 # carry the heat ramp — U+258N is N/8 fill by design, so the magnitude is
@@ -931,6 +945,26 @@ def containing_head_id(root: Path) -> str | None:
     return git_head_id(top) if top is not None else None
 
 
+def _head_sha(head_id: str | None) -> str | None:
+    tok = (head_id or "").split()[-1:] or [""]
+    sha = tok[0]
+    return sha if re.fullmatch(r"[0-9a-f]{40,64}", sha) else None
+
+
+def head_fast_forward(root: Path, old_id: str | None, new_id: str | None) -> bool:
+    """True iff the old cached HEAD is an ancestor of the new one.
+
+    Unknown shas (no cache yet, packed ref) count as not-fast-forward, so
+    the caller rebuilds — one git log over the window, only when HEAD moved."""
+    old, new = _head_sha(old_id), _head_sha(new_id)
+    if old is None or new is None:
+        return False
+    if old == new:
+        return True
+    code, _ = git_run(root, "merge-base", "--is-ancestor", old, new)
+    return code == 0
+
+
 _porcelain_cache: dict[str, list[str]] = {}
 
 
@@ -1457,7 +1491,30 @@ def pass1_detect(
             redo_git = True
         if (rec.get("git") or rec.get("subgit")) and not rec.get("last-commit-time"):
             redo_git = True
+        # A subgit has no HEAD of its own, so git_cache_stale never fires for
+        # it. Track the containing repo's HEAD instead: on a fast-forward,
+        # only the new commits can move last-commit, so one range-limited
+        # log answers it; anything else (rewrite, first sight) re-detects.
+        chead = containing_head_id(proj.path) if rec.get("subgit") else None
+        if chead and not redo_git and chead != rec.get("stat-head"):
+            old = rec.get("stat-head")
+            if head_fast_forward(proj.path, old, chead):
+                code, out = git_run(
+                    proj.path, "log", "-1", "--format=%ct",
+                    f"{_head_sha(old)}..{_head_sha(chead)}",
+                    "--", *git_pathspecs(kids),
+                )
+                if code == 0 and out.strip():
+                    ts = iso_utc(float(out.split()[0]))
+                    set_derived(rec, "last-commit-time", ts)
+                    if ts > str(rec.get("last-action-time") or ""):
+                        set_derived(rec, "last-action-time", ts)
+                set_derived(rec, "stat-head", chead)
+            else:
+                redo_git = True
         if redo_git:
+            if chead:
+                set_derived(rec, "stat-head", chead)
             n_git += 1
             info = detect_git(proj.path)
             for k, v in info.items():
@@ -1959,6 +2016,11 @@ def prune_days(days: dict, window: list[date]) -> dict[str, int]:
     return {k: int(v) for k, v in days.items() if k in keep and int(v) > 0}
 
 
+def prune_days_f(days: dict[str, float], window: list[date]) -> dict[str, float]:
+    keep = {d.isoformat() for d in window}
+    return {k: v for k, v in days.items() if k in keep and v > 0}
+
+
 def add_timestamps(days: dict[str, int], stamps: list[float]) -> None:
     for ts in stamps:
         key = local_day(ts).isoformat()
@@ -2028,7 +2090,7 @@ def macos_dark() -> bool:
     return r.returncode == 0 and "Dark" in (r.stdout or "")
 
 
-def scale_t(count: int, maxc: int) -> float:
+def scale_t(count: float, maxc: float) -> float:
     """log1p t in [0, 1] matching activity colors. 0 if no count/max."""
     if count <= 0 or maxc <= 0:
         return 0.0
@@ -2036,147 +2098,99 @@ def scale_t(count: int, maxc: int) -> float:
     return max(1.0 / (_INFERNO_N - 1), min(1.0, t))
 
 
-def idle_span_days(last_count: int, maxc: int) -> int:
-    """Head-fade length: 14 days at scale max, ~1–2 days for a couple of commits."""
-    t = scale_t(last_count, maxc)
-    if t <= 0:
-        return DIM_HEAD_DAYS
-    return max(1, int(round(DIM_HEAD_DAYS * t)))
+def birth_day(proj: "Project") -> date | None:
+    ts = parse_ts(proj.rec.get("first-commit"))
+    return local_day(ts) if ts is not None else None
 
 
-def dim_zero_fills(
+def smooth_days(
+    days: dict[str, int], span: list[date], birth: date | None = None
+) -> dict[str, float]:
+    """Forward EWMA (SMOOTH_* above) over the contiguous `span`, oldest first.
+
+    Onramp: days before `birth` (first commit) get the same filter run
+    backward over the first ONRAMP_SOURCE_DAYS of commits — the project's
+    opening, time-reversed. Days under SMOOTH_FLOOR are omitted (zero)."""
+    out: dict[str, float] = {}
+    v = 0.0
+    for d in sorted(span):
+        iso = d.isoformat()
+        v = v * SMOOTH_CARRY + int(days.get(iso, 0))
+        if v >= SMOOTH_FLOOR:
+            out[iso] = v
+    if birth is None or not span or not (min(span) <= birth <= max(span)):
+        return out
+    v = 0.0
+    for k in range(ONRAMP_SOURCE_DAYS - 1, -1, -1):
+        v = v * SMOOTH_CARRY + int(days.get((birth + timedelta(days=k)).isoformat(), 0))
+    d = birth - timedelta(days=1)
+    lo = min(span)
+    while d >= lo:
+        v *= SMOOTH_CARRY
+        if v < SMOOTH_FLOOR:
+            break
+        out[d.isoformat()] = v
+        d -= timedelta(days=1)
+    return out
+
+
+def cell_overrides(
     window: list[date],
     days: dict[str, int],
     first_ts: float | None,
     last_commit_ts: float | None = None,
     *,
     dark: bool,
-    maxc: int = 0,
-) -> tuple[dict[str, str], dict[str, str]]:
-    """iso → (hex, kind) for cells that shouldn't use activity inferno.
+    maxc: float = 0,
+    heat: dict[str, float] | None = None,
+    onramp: bool = True,
+) -> tuple[dict[str, str], dict[str, str], dict[str, float]]:
+    """Cells that don't simply show their heat: iso → hex, kind, and (for
+    onramp / birth) the heat-scale t so a glyph rendering shares the scale.
 
-    Head (newest / left): idle walks the heat scale from the last
-    non-zero day's t down to 0. After 4 weeks of inactivity the 5th
-    week fades that white-zero toward #eff1f5 (historical vs neglected).
-    Tail (oldest / right): wash #e6e6f1 except a 4-day onramp up the
-    heat scale to t=0.5. If first commit is after this window, the
-    whole panel is pre-birth wash, not activity-zero.
+    `days` is raw counts; `heat` is what cells otherwise show (EWMA, or the
+    raw counts under --strict). One rule per day:
 
-    Kinds: onramp / offramp count as week-stats pseudo-work.
-    wash / zero / birth / stale do not.
+      before first commit, no commits   onramp if it carries heat (the
+                                        time-reversed opening — see
+                                        smooth_days), else pre-birth wash
+      first-commit day with 0 count     birth marker, t=0.5 (not --strict)
+      > 4 weeks after last action       its heat color fading toward
+                                        #eff1f5 over the 5th week (stale:
+                                        defunct vs merely neglected)
 
-    Third return: iso → heat-scale t for the ramped kinds
-    (onramp / offramp / birth), so a glyph rendering can share the scale.
+    Kinds: onramp counts as week-stats pseudo-work; wash / birth / stale do not.
     """
+    if heat is None:
+        heat = {k: float(v) for k, v in days.items()}
     invert = not dark
     wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
-    mid = inferno_hex(0.5, invert=invert)
-    counts = [int(days.get(d.isoformat(), 0)) for d in window]
-    n = len(window)
+    stale = invert_hex(STALE_LIGHT) if dark else STALE_LIGHT
+    birth = local_day(first_ts) if first_ts is not None else None
+    last = local_day(last_commit_ts) if last_commit_ts is not None else None
     fills: dict[str, str] = {}
     kinds: dict[str, str] = {}
     tvals: dict[str, float] = {}
-    if n == 0:
-        return fills, kinds, tvals
-
-    def paint(iso: str, hx: str, kind: str, t: float | None = None) -> None:
-        fills[iso] = hx
-        kinds[iso] = kind
-        if t is not None:
-            tvals[iso] = t
-
-    i = 0
-    while i < n and counts[i] == 0:
-        i += 1
-    k = n - 1
-    while k >= 0 and counts[k] == 0:
-        k -= 1
-    suffix = n - 1 - k
-    all_zero = i + suffix >= n and i > 0
-
-    first_d = local_day(first_ts) if first_ts is not None else None
-    born_in_window = (
-        first_d is not None and window[-1] <= first_d <= window[0]
-    )
-    born_after_window = first_d is not None and first_d > window[0]
-
-    def head_ramp(prefix_len: int) -> None:
-        last_c = local_day(last_commit_ts) if last_commit_ts is not None else None
-        last_count = 0
-        if 0 <= prefix_len < n:
-            last_count = counts[prefix_len]
-        elif i < n:
-            last_count = counts[i]
-        t0 = scale_t(last_count, maxc)
-        span = idle_span_days(last_count, maxc)
-        zero = inferno_hex(0.0, invert=invert)
-        stale = invert_hex(STALE_LIGHT) if dark else STALE_LIGHT
-        for j in range(prefix_len):
-            d = window[j]
-            iso = d.isoformat()
-            if last_c is None:
-                paint(iso, zero, "zero")
-                continue
-            idle = (d - last_c).days
-            if idle < 1:
-                continue
-            if idle <= span:
-                progress = idle / span
-                t = t0 * (1.0 - progress)
-                paint(iso, inferno_hex(t, invert=invert), "offramp", t)
-            elif idle <= STALE_AFTER_DAYS:
-                paint(iso, zero, "zero")
+    for d in window:
+        iso = d.isoformat()
+        v = heat.get(iso, 0.0)
+        raw = int(days.get(iso, 0))
+        if birth is not None and d < birth and raw == 0:
+            if onramp and v > 0:
+                t = scale_t(v, maxc)
+                fills[iso], kinds[iso], tvals[iso] = (
+                    inferno_hex(t, invert=invert), "onramp", t
+                )
             else:
-                p = min(1.0, (idle - STALE_AFTER_DAYS) / STALE_FADE_DAYS)
-                paint(iso, mix_hex(zero, stale, p), "stale")
-
-    def paint_tail(start: int) -> None:
-        for j in range(start, n):
-            paint(window[j].isoformat(), wash, "wash")
-        if first_ts is None:
-            return
-        first_d = local_day(first_ts)
-        for ahead in range(1, 5):
-            d = first_d - timedelta(days=ahead)
-            iso = d.isoformat()
-            if iso in fills:
-                t = 0.5 * (5 - ahead) / 4.0
-                paint(iso, inferno_hex(t, invert=invert), "onramp", t)
-
-    def paint_birth() -> None:
-        if first_ts is None:
-            return
-        biso = local_day(first_ts).isoformat()
-        if days.get(biso, 0) == 0 and any(d.isoformat() == biso for d in window):
-            paint(biso, mid, "birth", 0.5)
-
-    if born_after_window:
-        paint_tail(0)
-        return fills, kinds, tvals
-
-    if all_zero:
-        if born_in_window and first_ts is not None:
-            first_d = local_day(first_ts)
-            j = 0
-            while j < n and window[j] > first_d:
-                j += 1
-            if j > 0:
-                head_ramp(j)
-            t = n - 1
-            while t >= 0 and window[t] < first_d:
-                t -= 1
-            if n - 1 - t >= DIM_ZERO_MIN:
-                paint_tail(t + 1)
-        elif i > 0:
-            head_ramp(i)
-        paint_birth()
-        return fills, kinds, tvals
-
-    if i > 0:
-        head_ramp(i)
-    if born_in_window and suffix >= DIM_ZERO_MIN:
-        paint_tail(k + 1)
-    paint_birth()
+                fills[iso], kinds[iso] = wash, "wash"
+        elif onramp and d == birth and raw == 0:
+            fills[iso], kinds[iso], tvals[iso] = (
+                inferno_hex(0.5, invert=invert), "birth", 0.5
+            )
+        elif last is not None and (d - last).days > STALE_AFTER_DAYS:
+            p = min(1.0, ((d - last).days - STALE_AFTER_DAYS) / STALE_FADE_DAYS)
+            fills[iso] = mix_hex(heat_hex(v, maxc, invert=invert), stale, p)
+            kinds[iso] = "stale"
     return fills, kinds, tvals
 
 
@@ -2188,33 +2202,34 @@ def heatmap_counts(
     refresh: bool,
     write: bool,
 ) -> dict[str, int]:
+    """Per-day change counts over `window` (cached in .practica); sets first-commit."""
     rec = proj.rec
     extra = rec.get("extra-noise") or []
     extra_s = [str(x) for x in extra] if isinstance(extra, list) else []
-    gitish = bool(rec.get("git") or rec.get("subgit"))
     kids = census_child_rels(proj, projects)
-    specs = git_pathspecs(kids)
+    span_iso = min(window).isoformat()
+    cached_span = str(rec.get("heatmap-span-oldest") or "")[:10]
+    span_short = (not cached_span) or cached_span > span_iso
+    cached = rec.get("heatmap-days") if isinstance(rec.get("heatmap-days"), dict) else {}
+    cached = {str(k): int(v) for k, v in cached.items() if str(k)}
     kids_changed = list(rec.get("heatmap-kids") or []) != kids
-    head = containing_head_id(proj.path) if gitish else None
-    head_changed = bool(gitish) and rec.get("heatmap-head") != head
 
-    if gitish and (refresh or kids_changed or not rec.get("first-commit")):
-        fts = git_first_commit_ts(proj.path, specs)
-        if fts is not None:
-            set_derived(rec, "first-commit", iso_utc(fts))
-    if not gitish:
+    def store(days: dict[str, int], head: str | None = None) -> None:
+        set_derived(rec, "heatmap-days", days)
+        set_derived(rec, "heatmap-as-of", iso_utc(datetime.now(tz=timezone.utc).timestamp()))
+        set_derived(rec, "heatmap-kids", kids)
+        set_derived(rec, "heatmap-span-oldest", span_iso)
+        if head is not None:
+            set_derived(rec, "heatmap-head", head)
+        if write:
+            save_practica(proj.path, rec)
+
+    if not (rec.get("git") or rec.get("subgit")):
         # No commit stream: file birth + mtime are the proxy for change-counts.
         # Active no-git rows are tiny; still reuse the day cache unless refresh
         # or the window grew past what the cache was pruned to (--double/--triple).
-        cached_ng = rec.get("heatmap-days") if isinstance(rec.get("heatmap-days"), dict) else {}
-        ng_span = min(window).isoformat()
-        ng_cached_span = str(rec.get("heatmap-span-oldest") or "")[:10]
-        ng_span_ok = bool(ng_cached_span) and ng_cached_span <= ng_span
-        if not refresh and rec.get("first-commit") and cached_ng and ng_span_ok:
-            return prune_days(
-                {str(k): int(v) for k, v in cached_ng.items() if str(k)},
-                window,
-            )
+        if not refresh and rec.get("first-commit") and cached and not span_short:
+            return prune_days(cached, window)
         events = file_event_times(proj.path, extra_s, kids, limit=None)
         days: dict[str, int] = {}
         if events:
@@ -2226,58 +2241,46 @@ def heatmap_counts(
             if fts is not None:
                 set_derived(rec, "first-commit", iso_utc(fts))
         days = prune_days(days, window)
-        now = datetime.now(tz=timezone.utc).timestamp()
-        set_derived(rec, "heatmap-days", days)
-        set_derived(rec, "heatmap-as-of", iso_utc(now))
-        set_derived(rec, "heatmap-kids", kids)
-        set_derived(rec, "heatmap-span-oldest", ng_span)
-        if write:
-            save_practica(proj.path, rec)
+        store(days)
         return days
 
-    cached = rec.get("heatmap-days") if isinstance(rec.get("heatmap-days"), dict) else {}
+    specs = git_pathspecs(kids)
+    head = containing_head_id(proj.path)
+    head_changed = rec.get("heatmap-head") != head
     as_of = parse_ts(rec.get("heatmap-as-of"))
-    oldest = min(window)
-    start_ts = datetime.combine(oldest, datetime.min.time()).timestamp()
-    span_iso = oldest.isoformat()
-    cached_span = str(rec.get("heatmap-span-oldest") or "")[:10]
-    span_short = (not cached_span) or cached_span > span_iso
-    need_log = refresh or as_of is None or kids_changed or head_changed or span_short
-    if not need_log:
+    # A HEAD that isn't a fast-forward of the cached one (history rewritten,
+    # repo re-initialized, branch switched) invalidates the cached days and
+    # first-commit — an incremental append would keep the old history's days.
+    rewritten = head_changed and not head_fast_forward(
+        proj.path, rec.get("heatmap-head"), head
+    )
+    rebuild = refresh or as_of is None or kids_changed or span_short or rewritten
+    if rebuild or not rec.get("first-commit"):
+        fts = git_first_commit_ts(proj.path, specs)
+        if fts is not None:
+            set_derived(rec, "first-commit", iso_utc(fts))
+    if not (rebuild or head_changed):
         # HEAD unchanged: reuse day counts. Skip git status — AISI-responses
         # alone is ~2s of lstat over a 300k-file work tree, and 44 statuses
         # were the whole warm-run cost. Dirty overlay still runs when HEAD
         # moves or on --refresh.
-        return prune_days(
-            {str(k): int(v) for k, v in cached.items() if str(k)},
-            window,
-        )
+        return prune_days(cached, window)
 
-    if refresh or as_of is None or kids_changed or span_short:
+    if rebuild:
         days = {}
-        after = start_ts - 1
+        after = datetime.combine(min(window), datetime.min.time()).timestamp() - 1
     else:
-        days = {str(k): int(v) for k, v in cached.items() if str(k)}
+        days = dict(cached)
         after = as_of
     stamps = git_commit_times_since(proj.path, after, specs)
     if stamps is not None:
         add_timestamps(days, stamps)
         days = prune_days(days, window)
-        now = datetime.now(tz=timezone.utc).timestamp()
-        set_derived(rec, "heatmap-days", days)
-        set_derived(rec, "heatmap-as-of", iso_utc(now))
-        set_derived(rec, "heatmap-kids", kids)
-        set_derived(rec, "heatmap-span-oldest", span_iso)
-        if head is not None:
-            set_derived(rec, "heatmap-head", head)
-        if write:
-            save_practica(proj.path, rec)
+        store(days, head)
     else:
         days = prune_days(days, window)
     display = dict(days)
-    add_timestamps(
-        display, exclusive_dirty_mtimes(proj.path, extra_s, kids)
-    )
+    add_timestamps(display, exclusive_dirty_mtimes(proj.path, extra_s, kids))
     return prune_days(display, window)
 
 
@@ -2341,8 +2344,8 @@ def week_stats_line(
     """`| 25·254 |` over each full week — space after the pipe, then
     nproj·ncontrib, then spaces until the next Sat/Sun pipe.
 
-    A project counts if it has any commits that week, or an onramp /
-    offramp fill (not 0-commit white, wash, birth, or stale).
+    A project counts if it has any commits that week, or onramp fill
+    (not the EWMA tail of 0-commit days, wash, birth, or stale).
     """
     cols = ["|" if s is None else " " for s in slots]
     for start, wdays in week_runs(slots):
@@ -2402,18 +2405,22 @@ def month_header(window: list[date], name_w: int, left_pad: int = 0) -> str:
     return " " * name_w + "  " + (" " * left_pad) + "".join(cols)
 
 
-def scale_bar(maxc: int, *, invert: bool = False) -> str:
+def scale_label(maxc: float, strict: bool) -> str:
+    if strict:
+        return f"0 → {int(maxc)}/day  (log)"
+    return f"0 → {maxc:.0f}  ({SMOOTH_HALF_LIFE_DAYS}d ½-life, log)"
+
+
+def scale_bar(label: str, *, invert: bool = False) -> str:
     last = SCALE_BAR_N - 1
     blocks = "".join(
         ansi_block(inferno_hex(i / last if last else 0.0, invert=invert))
         for i in range(SCALE_BAR_N)
     ) + "\x1b[0m"
-    label = f"0 → {maxc}/day  (log)"
     return f"{label:>{HEATMAP_NAME_W}}  {blocks}"
 
 
-def glyph_legend(maxc: int) -> str:
-    label = f"0 → {maxc}/day  (log)"
+def glyph_legend(label: str) -> str:
     return (
         f"{label:>{HEATMAP_NAME_W}}  "
         f"{GLYPH_RAMP[1:]}   {GLYPH_WASH} pre-birth   (zero/stale blank)"
@@ -2442,9 +2449,17 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
     active = [p for p in projects if p.rec.get("activity") == "active"]
     extra = 2 if getattr(args, "triple", False) else 1 if getattr(args, "double", False) else 0
     panels = heatmap_panels(extra)
-    fetch_window = [d for panel in panels for d in panel]
+    shown_days = [d for panel in panels for d in panel]
+    # Warmup is fetched in both modes so --strict and default share one cache span.
+    oldest_shown = min(shown_days)
+    fetch_window = shown_days + [
+        oldest_shown - timedelta(days=i) for i in range(1, SMOOTH_WARMUP_DAYS + 1)
+    ]
+    strict = bool(getattr(args, "strict", False))
     counts: dict[Path, dict[str, int]] = {}
-    maxc = 0
+    heats: dict[Path, dict[str, float]] = {}
+    maxc: float = 0
+    raw_max = 0
     for proj in active:
         days = heatmap_counts(
             proj,
@@ -2458,12 +2473,27 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         except OSError:
             key = proj.path
         counts[key] = days
-        if days:
-            maxc = max(maxc, max(days.values()))
+        heat = (
+            {k: float(v) for k, v in days.items()}
+            if strict
+            else smooth_days(days, fetch_window, birth_day(proj))
+        )
+        heats[key] = heat
+        shown_heat = prune_days_f(heat, shown_days)
+        if shown_heat:
+            maxc = max(maxc, max(shown_heat.values()))
+        shown_raw = prune_days(days, shown_days)
+        if shown_raw:
+            raw_max = max(raw_max, max(shown_raw.values()))
+    if strict:
+        maxc = raw_max
 
     mode = sort_mode_from_args(args)
     if args.format == "json":
-        return heatmap_json(active, counts, maxc, fetch_window, mode)
+        return heatmap_json(
+            active, counts, raw_max, shown_days, mode,
+            smoothed_max=None if strict else maxc,
+        )
     use_color = color_enabled(args.color)
     dark = macos_dark() if use_color else False
     invert = not dark
@@ -2484,7 +2514,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         left_pad: int,
     ) -> None:
         key = proj_key(proj)
-        days = counts.get(key, {})
+        heat = heats.get(key, {})
         level = highlight_level(proj.rec)
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
         if not use_color:
@@ -2499,12 +2529,10 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                     cells.append(GLYPH_WASH)
                 elif kind == "stale":
                     cells.append(GLYPH_STALE)
-                elif kind == "zero":
-                    cells.append(" ")
-                elif kind in ("onramp", "offramp", "birth"):
+                elif kind in ("onramp", "birth"):
                     cells.append(ramp_glyph(tvals.get(iso, 0.0)))
                 else:
-                    cells.append(ramp_glyph(scale_t(int(days.get(iso, 0)), maxc)))
+                    cells.append(ramp_glyph(scale_t(heat.get(iso, 0.0), maxc)))
             print(name + "  " + "".join(cells))
             return
         named = style_name(name, level, dark=dark)
@@ -2517,7 +2545,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             if iso in fills:
                 hx = fills[iso]
             else:
-                hx = heat_hex(int(days.get(iso, 0)), maxc, invert=invert)
+                hx = heat_hex(heat.get(iso, 0.0), maxc, invert=invert)
             cells.append(ansi_block(hx))
         prefix = "\x1b[4m" if level >= HIGHLIGHT_UNDERLINE_AT else ""
         print(prefix + named + "  " + "".join(cells) + "\x1b[0m")
@@ -2553,8 +2581,17 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             last_c = parse_ts(proj.rec.get("last-action-time")) or parse_ts(
                 proj.rec.get("last-commit-time")
             )
-            fills, kinds, tvals = dim_zero_fills(
-                window, days, first_ts, last_c, dark=dark, maxc=maxc
+            # Last action can't precede a counted day (guards a stale cache).
+            newest = max(counts.get(key, {}), default=None)
+            if newest is not None:
+                newest_ts = datetime.combine(
+                    date.fromisoformat(newest), datetime.min.time()
+                ).timestamp()
+                last_c = max(last_c or newest_ts, newest_ts)
+            fills, kinds, tvals = cell_overrides(
+                window, days, first_ts, last_c, dark=dark, maxc=maxc,
+                heat=prune_days_f(heats.get(key, {}), window),
+                onramp=not strict,
             )
             fills_by[key] = fills
             kinds_by[key] = kinds
@@ -2610,7 +2647,8 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         if i > 0:
             print("─" * rule_w)
         render_panel(panel, 0 if i == 0 else align, omit_unborn=i > 0)
-    print(scale_bar(maxc, invert=invert) if use_color else glyph_legend(maxc))
+    label = scale_label(maxc, strict)
+    print(scale_bar(label, invert=invert) if use_color else glyph_legend(label))
     return 0
 
 
@@ -2618,28 +2656,44 @@ def heatmap_json(
     active: list[Project],
     counts: dict[Path, dict[str, int]],
     maxc: int,
-    fetch_window: list[date],
+    shown_days: list[date],
     mode: str,
+    *,
+    smoothed_max: float | None = None,
 ) -> int:
     def key_of(p: Project) -> Path:
         try:
             return p.path.resolve()
         except OSError:
             return p.path
+    smoothing = None
+    scale = "log1p(count)/log1p(max-per-day)"
+    if smoothed_max is not None:
+        smoothing = {
+            "kind": "forward EWMA in commit units: v_d = c_d + r*v_{d-1}",
+            "half-life-days": SMOOTH_HALF_LIFE_DAYS,
+            "r": round(SMOOTH_CARRY, 6),
+            "floor": SMOOTH_FLOOR,
+            "onramp": "pre-first-commit days: same filter, time-reversed "
+            f"over the first {ONRAMP_SOURCE_DAYS} days",
+            "max": round(smoothed_max, 3),
+        }
+        scale = "log1p(v)/log1p(smoothing.max); days below are raw counts"
     payload = {
         "as-of": iso_utc(datetime.now(tz=timezone.utc).timestamp()),
         "window": {
-            "newest": max(fetch_window).isoformat(),
-            "oldest": min(fetch_window).isoformat(),
+            "newest": max(shown_days).isoformat(),
+            "oldest": min(shown_days).isoformat(),
         },
         "max-per-day": maxc,
-        "scale": "log1p(count)/log1p(max-per-day)",
+        "smoothing": smoothing,
+        "scale": scale,
         "projects": [
             {
                 "name": display_name(p),
                 "path": str(p.path),
                 "first-commit": p.rec.get("first-commit") or None,
-                "days": counts.get(key_of(p), {}),
+                "days": prune_days(counts.get(key_of(p), {}), shown_days),
             }
             for p in sort_projects(active, mode)
         ],
@@ -3267,9 +3321,14 @@ def build_parser() -> argparse.ArgumentParser:
             "-c change-date; -a alphabetical. -g combines with -c/-a as\n"
             "headings plus that order within each cdpath group.\n"
             "\n"
-            "Heatmap week stats read `| 25·254|` = distinct projects · total\n"
-            "commits that week. In a pipe (or --color=never) the heatmap is\n"
-            "glyphs: ▁▂▃▄▅▆▇█ heat (log), · pre-birth, blank zero/stale.\n"
+            "Heatmap heat is a forward EWMA of daily commits (half-life a week,\n"
+            "in commit units: a lone commit shows 1, then halves weekly); the\n"
+            "days before a project's first commit get an onramp — the same\n"
+            "filter run backward over its first week. --strict shows raw\n"
+            "counts only. Week stats read `| 25·254|` = projects with\n"
+            "commits (or the onramp) · total raw commits that week. In a pipe\n"
+            "(or --color=never) the heatmap is glyphs: ▁▂▃▄▅▆▇█ heat (log),\n"
+            "· pre-birth, blank zero/stale.\n"
             "\n"
             "examples:\n"
             "  projects -vc                   axes + paths, most recently touched first\n"
@@ -3323,6 +3382,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--triple",
         action="store_true",
         help="heatmap: stack two older 17-week bands (~a year)",
+    )
+    p.add_argument(
+        "--strict",
+        action="store_true",
+        help="heatmap: raw daily counts — no 7-day-half-life EWMA, no birth onramp",
     )
     p.add_argument(
         "-H",
