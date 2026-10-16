@@ -279,18 +279,24 @@ HEATMAP_NAME_W = 29
 # Default heat is a forward (causal) EWMA of the daily counts, half-life
 # SMOOTH_HALF_LIFE_DAYS, in commit units: v_d = c_d + r·v_{d-1},
 # r = 2^(-1/half-life) — the textbook λ=1-r EWMA times 1/λ, so a lone commit
-# still reads as 1 on its day and halves every half-life after. Under
-# SMOOTH_FLOOR it renders as zero (a single commit glows one half-life).
-# 7 days read as over-smoothed under the log color scale (Joseph, 2026-10-16). History is always fetched SMOOTH_WARMUP_DAYS past
-# the oldest shown day so the oldest edge isn't cold-started. The birth
-# onramp is the same filter time-reversed over the first ONRAMP_SOURCE_DAYS
-# of commits (work starts before the first commit, in proportion to how the
-# project opened). --strict shows raw counts with no onramp.
+# still reads as 1 on its day and halves every half-life after. 7 days read
+# as over-smoothed under the log color scale (Joseph, 2026-10-16).
+# The cell shows v − SMOOTH_FLOOR (zero below it): subtracting rather than
+# cutting lets a tail fade continuously to white instead of jumping from
+# t≈0.06 to zero, and still bounds how long a tail stays visible.
+# The birth onramp is the same filter time-reversed — run backward from the
+# first commits — but steeper, half-life ONRAMP_HALF_LIFE_DAYS (Joseph: the
+# forward rate made it too gentle). Work starts before the first commit, in
+# proportion to how the project opened.
+# History is fetched SMOOTH_WARMUP_DAYS past the oldest shown day so the
+# oldest edge isn't cold-started. --strict shows raw counts with no onramp.
 SMOOTH_HALF_LIFE_DAYS = 3
 SMOOTH_CARRY = 0.5 ** (1.0 / SMOOTH_HALF_LIFE_DAYS)
 SMOOTH_FLOOR = 0.5
 SMOOTH_WARMUP_DAYS = 8 * SMOOTH_HALF_LIFE_DAYS  # residual carry 1/256
-ONRAMP_SOURCE_DAYS = SMOOTH_HALF_LIFE_DAYS
+ONRAMP_HALF_LIFE_DAYS = SMOOTH_HALF_LIFE_DAYS / 3
+ONRAMP_CARRY = 0.5 ** (1.0 / ONRAMP_HALF_LIFE_DAYS)
+ONRAMP_SOURCE_DAYS = math.ceil(8 * ONRAMP_HALF_LIFE_DAYS)  # residual 1/256
 # Pre-birth (right): wash → peak. Light is as specified; dark is RGB-invert.
 TAIL_WASH_LIGHT = "#e6e6f1"
 # After 4 weeks idle (past the cooldown), fade white-zero toward this
@@ -2107,30 +2113,33 @@ def birth_day(proj: "Project") -> date | None:
 def smooth_days(
     days: dict[str, int], span: list[date], birth: date | None = None
 ) -> dict[str, float]:
-    """Forward EWMA (SMOOTH_* above) over the contiguous `span`, oldest first.
-
-    Onramp: days before `birth` (first commit) get the same filter run
-    backward over the first ONRAMP_SOURCE_DAYS of commits — the project's
-    opening, time-reversed. Days under SMOOTH_FLOOR are omitted (zero)."""
+    """Displayed heat (v − SMOOTH_FLOOR, positive only) over the contiguous
+    `span`: the forward EWMA, plus — before `birth` (first commit) — the
+    onramp, the same filter run backward from the opening commits at
+    ONRAMP_HALF_LIFE_DAYS."""
     out: dict[str, float] = {}
+
+    def keep(d: date, v: float) -> bool:
+        if v <= SMOOTH_FLOOR:
+            return False
+        out[d.isoformat()] = v - SMOOTH_FLOOR
+        return True
+
     v = 0.0
     for d in sorted(span):
-        iso = d.isoformat()
-        v = v * SMOOTH_CARRY + int(days.get(iso, 0))
-        if v >= SMOOTH_FLOOR:
-            out[iso] = v
+        v = v * SMOOTH_CARRY + int(days.get(d.isoformat(), 0))
+        keep(d, v)
     if birth is None or not span or not (min(span) <= birth <= max(span)):
         return out
     v = 0.0
     for k in range(ONRAMP_SOURCE_DAYS - 1, -1, -1):
-        v = v * SMOOTH_CARRY + int(days.get((birth + timedelta(days=k)).isoformat(), 0))
+        v = v * ONRAMP_CARRY + int(days.get((birth + timedelta(days=k)).isoformat(), 0))
     d = birth - timedelta(days=1)
     lo = min(span)
     while d >= lo:
-        v *= SMOOTH_CARRY
-        if v < SMOOTH_FLOOR:
+        v *= ONRAMP_CARRY
+        if not keep(d, v):
             break
-        out[d.isoformat()] = v
         d -= timedelta(days=1)
     return out
 
@@ -2675,11 +2684,13 @@ def heatmap_json(
             "half-life-days": SMOOTH_HALF_LIFE_DAYS,
             "r": round(SMOOTH_CARRY, 6),
             "floor": SMOOTH_FLOOR,
-            "onramp": "pre-first-commit days: same filter, time-reversed "
-            f"over the first {ONRAMP_SOURCE_DAYS} days",
+            "shown": "v - floor (zero at or below the floor)",
+            "onramp": "pre-first-commit days: the same filter run backward "
+            "from the opening commits",
+            "onramp-half-life-days": ONRAMP_HALF_LIFE_DAYS,
             "max": round(smoothed_max, 3),
         }
-        scale = "log1p(v)/log1p(smoothing.max); days below are raw counts"
+        scale = "log1p(shown)/log1p(smoothing.max); days below are raw counts"
     payload = {
         "as-of": iso_utc(datetime.now(tz=timezone.utc).timestamp()),
         "window": {
@@ -3322,13 +3333,14 @@ def build_parser() -> argparse.ArgumentParser:
             "-c change-date; -a alphabetical. -g combines with -c/-a as\n"
             "headings plus that order within each cdpath group.\n"
             "\n"
-            f"Heatmap heat is a forward EWMA of daily commits (half-life\n"
-            f"{SMOOTH_HALF_LIFE_DAYS} days, in commit units: a lone commit shows 1, then halves\n"
-            "each half-life); the days before a project's first commit get an\n"
-            f"onramp — the same filter run backward over its first {ONRAMP_SOURCE_DAYS} days.\n"
-            "--strict shows raw counts only. Week stats read `| 25·254|` =\n"
-            "projects with commits (or the onramp) · total raw commits that\n"
-            "week. In a pipe (or --color=never) the heatmap is glyphs:\n"
+            f"Heatmap heat is a forward EWMA of daily commits ({SMOOTH_HALF_LIFE_DAYS:g}d\n"
+            f"half-life, in commit units, shown minus {SMOOTH_FLOOR:g} so tails fade to\n"
+            "white). Days before a project's first commit get an onramp: the\n"
+            "same filter run backward from its opening commits, steeper\n"
+            f"({ONRAMP_HALF_LIFE_DAYS:g}d half-life). --strict shows raw counts only. Week\n"
+            "stats read `| 25·254|` = projects with commits (or the onramp) ·\n"
+            "total raw commits that week. In a pipe (or --color=never) the\n"
+            "heatmap is glyphs:\n"
             "▁▂▃▄▅▆▇█ heat (log), · pre-birth, blank zero/stale.\n"
             "\n"
             "examples:\n"
