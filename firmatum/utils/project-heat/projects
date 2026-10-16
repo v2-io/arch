@@ -276,16 +276,17 @@ RECORD_KEY_ORDER = (
 )
 HEATMAP_FULL_WEEKS = 17
 HEATMAP_NAME_W = 29
-# Default heat is a forward (causal) EWMA of the daily counts, half-life a
-# week, in commit units: v_d = c_d + r·v_{d-1}, r = 2^(-1/7) — the textbook
-# λ=1-r EWMA times 1/λ, so a lone commit still reads as 1 on its day and
-# halves each week after. Under SMOOTH_FLOOR it renders as zero (a single
-# commit glows one week). History is always fetched SMOOTH_WARMUP_DAYS past
+# Default heat is a forward (causal) EWMA of the daily counts, half-life
+# SMOOTH_HALF_LIFE_DAYS, in commit units: v_d = c_d + r·v_{d-1},
+# r = 2^(-1/half-life) — the textbook λ=1-r EWMA times 1/λ, so a lone commit
+# still reads as 1 on its day and halves every half-life after. Under
+# SMOOTH_FLOOR it renders as zero (a single commit glows one half-life).
+# 7 days read as over-smoothed under the log color scale (Joseph, 2026-10-16). History is always fetched SMOOTH_WARMUP_DAYS past
 # the oldest shown day so the oldest edge isn't cold-started. The birth
 # onramp is the same filter time-reversed over the first ONRAMP_SOURCE_DAYS
 # of commits (work starts before the first commit, in proportion to how the
 # project opened). --strict shows raw counts with no onramp.
-SMOOTH_HALF_LIFE_DAYS = 7
+SMOOTH_HALF_LIFE_DAYS = 3
 SMOOTH_CARRY = 0.5 ** (1.0 / SMOOTH_HALF_LIFE_DAYS)
 SMOOTH_FLOOR = 0.5
 SMOOTH_WARMUP_DAYS = 8 * SMOOTH_HALF_LIFE_DAYS  # residual carry 1/256
@@ -3321,14 +3322,14 @@ def build_parser() -> argparse.ArgumentParser:
             "-c change-date; -a alphabetical. -g combines with -c/-a as\n"
             "headings plus that order within each cdpath group.\n"
             "\n"
-            "Heatmap heat is a forward EWMA of daily commits (half-life a week,\n"
-            "in commit units: a lone commit shows 1, then halves weekly); the\n"
-            "days before a project's first commit get an onramp — the same\n"
-            "filter run backward over its first week. --strict shows raw\n"
-            "counts only. Week stats read `| 25·254|` = projects with\n"
-            "commits (or the onramp) · total raw commits that week. In a pipe\n"
-            "(or --color=never) the heatmap is glyphs: ▁▂▃▄▅▆▇█ heat (log),\n"
-            "· pre-birth, blank zero/stale.\n"
+            f"Heatmap heat is a forward EWMA of daily commits (half-life\n"
+            f"{SMOOTH_HALF_LIFE_DAYS} days, in commit units: a lone commit shows 1, then halves\n"
+            "each half-life); the days before a project's first commit get an\n"
+            f"onramp — the same filter run backward over its first {ONRAMP_SOURCE_DAYS} days.\n"
+            "--strict shows raw counts only. Week stats read `| 25·254|` =\n"
+            "projects with commits (or the onramp) · total raw commits that\n"
+            "week. In a pipe (or --color=never) the heatmap is glyphs:\n"
+            "▁▂▃▄▅▆▇█ heat (log), · pre-birth, blank zero/stale.\n"
             "\n"
             "examples:\n"
             "  projects -vc                   axes + paths, most recently touched first\n"
@@ -3386,7 +3387,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--strict",
         action="store_true",
-        help="heatmap: raw daily counts — no 7-day-half-life EWMA, no birth onramp",
+        help="heatmap: raw daily counts — no EWMA smoothing, no birth onramp",
     )
     p.add_argument(
         "-H",
