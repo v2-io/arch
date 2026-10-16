@@ -276,6 +276,10 @@ RECORD_KEY_ORDER = (
 )
 HEATMAP_FULL_WEEKS = 17
 HEATMAP_NAME_W = 29
+# Row numbers in the leftmost columns, restarting at 1 in each band (Joseph,
+# 2026-10-16); one space separates them from names that fill HEATMAP_NAME_W.
+ROW_NUM_W = 3
+GUTTER = " " * (ROW_NUM_W + 1)
 # Default heat is a forward (causal) EWMA of the daily counts, half-life
 # SMOOTH_HALF_LIFE_DAYS, in commit units: v_d = c_d + r·v_{d-1},
 # r = 2^(-1/half-life) — the textbook λ=1-r EWMA times 1/λ, so a lone commit
@@ -2589,9 +2593,11 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
         kinds: dict[str, str],
         tvals: dict[str, float],
         left_pad: int,
+        num: int,
     ) -> None:
         key = proj_key(proj)
         heat = heats.get(key, {})
+        numstr = f"{num:>{ROW_NUM_W}} "
         level = highlight_level(proj.rec)
         name = elide(display_name(proj)).rjust(HEATMAP_NAME_W)
         if not use_color:
@@ -2610,7 +2616,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                     cells.append(ramp_glyph(tvals.get(iso, 0.0)))
                 else:
                     cells.append(ramp_glyph(scale_t(heat.get(iso, 0.0), maxc)))
-            print(name + "  " + "".join(cells))
+            print(numstr + name + "  " + "".join(cells))
             return
         named = style_name(name, level, dark=dark)
         raw = counts.get(key, {})
@@ -2627,7 +2633,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             glyph = CELL_COMMIT if int(raw.get(iso, 0)) > 0 else CELL_PLAIN
             cells.append(ansi_block(hx, glyph))
         prefix = "\x1b[4m" if level >= HIGHLIGHT_UNDERLINE_AT else ""
-        print(prefix + named + "  " + "".join(cells) + "\x1b[0m")
+        print(numstr + prefix + named + "  " + "".join(cells) + "\x1b[0m")
 
     def render_panel(
         window: list[date], shown: list[Project], left_pad: int
@@ -2648,9 +2654,10 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             fills_by[key] = fills
             kinds_by[key] = kinds
             tvals_by[key] = tvals
-        print(month_header(window, HEATMAP_NAME_W, left_pad=left_pad))
+        print(GUTTER + month_header(window, HEATMAP_NAME_W, left_pad=left_pad))
         print(
-            week_stats_line(
+            GUTTER
+            + week_stats_line(
                 slots,
                 [
                     (
@@ -2663,6 +2670,7 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 left_pad=left_pad,
             )
         )
+        num = 0
         if args.group:
             by_parent: dict[Path, list[Project]] = {p: [] for p in parents}
             for proj in shown:
@@ -2679,28 +2687,30 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
                 first = False
                 for proj in group:
                     k = proj_key(proj)
+                    num += 1
                     emit_row(
                         proj, slots, fills_by.get(k, {}), kinds_by.get(k, {}),
-                        tvals_by.get(k, {}), left_pad,
+                        tvals_by.get(k, {}), left_pad, num,
                     )
             if not first:
                 print()
         else:
             for proj in sort_projects(shown, mode):
                 k = proj_key(proj)
+                num += 1
                 emit_row(
                     proj, slots, fills_by.get(k, {}), kinds_by.get(k, {}),
-                    tvals_by.get(k, {}), left_pad,
+                    tvals_by.get(k, {}), left_pad, num,
                 )
             print()
 
-    rule_w = HEATMAP_NAME_W + 2 + len(heatmap_slots(panels[0]))
+    rule_w = len(GUTTER) + HEATMAP_NAME_W + 2 + len(heatmap_slots(panels[0]))
     for i, (panel, rows) in enumerate(zip(panels, rows_by_band)):
         if i > 0:
             print("─" * rule_w)
         render_panel(panel, rows, 0 if i == 0 else align)
     label = scale_label(maxc, strict)
-    print(scale_bar(label, invert=invert) if use_color else glyph_legend(label))
+    print(GUTTER + (scale_bar(label, invert=invert) if use_color else glyph_legend(label)))
     return 0
 
 
