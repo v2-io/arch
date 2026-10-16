@@ -282,8 +282,8 @@ HEATMAP_NAME_W = 29
 # still reads as 1 on its day and halves every half-life after. 7 days read
 # as over-smoothed under the log color scale (Joseph, 2026-10-16).
 # The cell shows v − SMOOTH_FLOOR (zero below it): subtracting rather than
-# cutting lets a tail fade continuously to white instead of jumping from
-# t≈0.06 to zero, and still bounds how long a tail stays visible.
+# cutting lets the decay fade continuously to white instead of jumping from
+# t≈0.06 to zero, and still bounds how long the decay stays visible.
 # The birth onramp is the same filter time-reversed — run backward from the
 # first commits — but steeper, half-life ONRAMP_HALF_LIFE_DAYS (Joseph: the
 # forward rate made it too gentle). Work starts before the first commit, in
@@ -298,15 +298,16 @@ ONRAMP_HALF_LIFE_DAYS = SMOOTH_HALF_LIFE_DAYS / 3
 ONRAMP_CARRY = 0.5 ** (1.0 / ONRAMP_HALF_LIFE_DAYS)
 ONRAMP_SOURCE_DAYS = math.ceil(8 * ONRAMP_HALF_LIFE_DAYS)  # residual 1/256
 # Pre-birth (right): wash → peak. Light is as specified; dark is RGB-invert.
-TAIL_WASH_LIGHT = "#e6e6f1"
-# After 4 weeks idle (past the cooldown), fade white-zero toward this
-# off-white over the 5th week — defunct vs merely neglected.
-STALE_AFTER_DAYS = 28
+WASH_LIGHT = "#e6e6f1"
+# Stale: after 3 weeks without action, fade the cell toward this off-white
+# over the 4th week — defunct vs merely neglected. (4 weeks until the 3-day
+# EWMA decay made the fade-out gentle enough on its own; Joseph, 2026-10-16.)
+STALE_AFTER_DAYS = 21
 STALE_FADE_DAYS = 7
 STALE_LIGHT = "#eff1f5"
 # Week-stats pseudo-work: the birth onramp only. 0-commit days (including
-# the EWMA tail after a commit), pre-birth wash, the birth marker, and stale
-# fade do not count — a week-long tail would say "active" a month later.
+# the EWMA decay after a commit), pre-birth wash, the birth marker, and stale
+# fade do not count — a weeks-long decay would say "active" weeks later.
 PSEUDO_KINDS = frozenset({"onramp"})
 
 # Agent/pipe rendering (no ANSI): same look, glyph encoding. Lower-eighths
@@ -316,7 +317,7 @@ PSEUDO_KINDS = frozenset({"onramp"})
 # stale is dimmest of all (blank, like the near-background #eff1f5).
 GLYPH_RAMP = " ▁▂▃▄▅▆▇█"  # index = ceil(t*8), t in (0,1]
 GLYPH_WASH = "·"  # pre-birth
-GLYPH_STALE = " "  # 4+ weeks idle, faded out
+GLYPH_STALE = " "  # stale (STALE_AFTER_DAYS+ idle), faded out
 
 
 def ramp_glyph(t: float) -> str:
@@ -2165,8 +2166,8 @@ def cell_overrides(
                                         time-reversed opening — see
                                         smooth_days), else pre-birth wash
       first-commit day with 0 count     birth marker, t=0.5 (not --strict)
-      > 4 weeks after last action       its heat color fading toward
-                                        #eff1f5 over the 5th week (stale:
+      > 3 weeks after last action       its heat color fading toward
+                                        #eff1f5 over the 4th week (stale:
                                         defunct vs merely neglected)
 
     Kinds: onramp counts as week-stats pseudo-work; wash / birth / stale do not.
@@ -2174,7 +2175,7 @@ def cell_overrides(
     if heat is None:
         heat = {k: float(v) for k, v in days.items()}
     invert = not dark
-    wash = invert_hex(TAIL_WASH_LIGHT) if dark else TAIL_WASH_LIGHT
+    wash = invert_hex(WASH_LIGHT) if dark else WASH_LIGHT
     stale = invert_hex(STALE_LIGHT) if dark else STALE_LIGHT
     birth = local_day(first_ts) if first_ts is not None else None
     last = local_day(last_commit_ts) if last_commit_ts is not None else None
@@ -2355,7 +2356,7 @@ def week_stats_line(
     nproj·ncontrib, then spaces until the next Sat/Sun pipe.
 
     A project counts if it has any commits that week, or onramp fill
-    (not the EWMA tail of 0-commit days, wash, birth, or stale).
+    (not the EWMA decay over 0-commit days, wash, birth, or stale).
     """
     cols = ["|" if s is None else " " for s in slots]
     for start, wdays in week_runs(slots):
@@ -3334,7 +3335,7 @@ def build_parser() -> argparse.ArgumentParser:
             "headings plus that order within each cdpath group.\n"
             "\n"
             f"Heatmap heat is a forward EWMA of daily commits ({SMOOTH_HALF_LIFE_DAYS:g}d\n"
-            f"half-life, in commit units, shown minus {SMOOTH_FLOOR:g} so tails fade to\n"
+            f"half-life, in commit units, shown minus {SMOOTH_FLOOR:g} so the decay fades\n"
             "white). Days before a project's first commit get an onramp: the\n"
             "same filter run backward from its opening commits, steeper\n"
             f"({ONRAMP_HALF_LIFE_DAYS:g}d half-life). --strict shows raw counts only. Week\n"
