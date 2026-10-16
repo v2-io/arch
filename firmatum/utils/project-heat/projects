@@ -2537,23 +2537,26 @@ def cmd_heatmap(args: argparse.Namespace) -> int:
             return True
         return local_day(first_ts) <= window[0]
 
-    # Row membership, per band. Default: not stale as of today. --stale:
-    # also rows that went stale during the band (dropped only if already
-    # stale at its oldest day, i.e. stale across the whole band). --all:
-    # every active row (the pre-2026-10-16 default). Born-in-band always.
+    # Row membership, per band. Default ("recently active"): not stale as of
+    # today — in the current band only; older bands (--double/--triple) are
+    # about the past, so they always take the --stale rule (Joseph,
+    # 2026-10-16). --stale: also rows that went stale during the band
+    # (dropped only if already stale at its oldest day, i.e. stale across
+    # the whole band). --all: every active row (the pre-2026-10-16 default).
+    # Born-in-band always.
     today = panels[0][0]
     show_stale = bool(getattr(args, "stale", False))
     show_all = bool(getattr(args, "all", False))
 
-    def band_rows(window: list[date]) -> list[Project]:
+    def band_rows(window: list[date], current: bool) -> list[Project]:
         rows = [p for p in active if existed_in_window(p, window)]
         if show_all:
             return rows
-        if show_stale:
+        if show_stale or not current:
             return [p for p in rows if not stale_at(p, window[-1])]
         return [p for p in rows if not stale_at(p, today)]
 
-    rows_by_band = [band_rows(panel) for panel in panels]
+    rows_by_band = [band_rows(panel, i == 0) for i, panel in enumerate(panels)]
     # Scale over what is drawn: the rows each band shows, over that band's days.
     maxc: float = 0
     raw_max = 0
@@ -3350,7 +3353,8 @@ def build_parser() -> argparse.ArgumentParser:
             "  projects heatmap                          17-week inferno rows (activity=active)\n"
             "  projects heatmap --double | --triple      + 17 / 34 older weeks below\n"
             "  projects heatmap --stale | --all          + rows gone stale within each\n"
-            "                                            band | every active row\n"
+            "                                            band | every active row (older\n"
+            "                                            bands always include stale)\n"
             "  projects feedback <text…>                 report friction to the inbox\n"
             "  projects dag [--out BASE] [--no-svg]      census-edges.txt → BASE.dot (+BASE.svg)\n"
             "\n"
