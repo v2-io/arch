@@ -98,6 +98,9 @@ pub enum Cmd {
         /// A sentence or two of what was found, for the review record.
         #[arg(long)]
         note: Option<String>,
+        /// The records in the target's basis this check actually read (kind:slug, repeat or comma-separate). Declared: a change elsewhere in the basis is then "upstream changed, not read", not lapsed.
+        #[arg(long, value_delimiter = ',')]
+        read: Vec<String>,
     },
     /// Record an open question about the work.
     Ask {
@@ -144,10 +147,10 @@ pub enum Cmd {
         #[arg(long)]
         slug: Option<String>,
     },
-    /// Close an item: done (by which commit), moot, or superseded.
+    /// Close an item: done (by which commit), moot, superseded, or duplicate (--of the survivor).
     Close {
         item: String,
-        /// done | moot | superseded
+        /// done | moot | superseded | duplicate
         #[arg(long)]
         outcome: String,
         /// The commit that did the work (for `done`).
@@ -155,6 +158,9 @@ pub enum Cmd {
         by_commit: Option<String>,
         #[arg(long)]
         why: Option<String>,
+        /// For `duplicate`: the surviving item (item:slug).
+        #[arg(long)]
+        of: Option<String>,
     },
     /// Re-check an imported item against HEAD: holds (real and open), landed (say where), stale, superseded, duplicate (--of), or not-an-item.
     Recheck {
@@ -242,6 +248,14 @@ pub enum Cmd {
         /// The text was read at this git revision (for a target that has since gone).
         #[arg(long)]
         at: Option<String>,
+    },
+    /// Correct the record of an act without editing it: a correction event that names the original.
+    Annotate {
+        /// The event (id prefix) or review item ref (review:x#C1) being corrected.
+        event: String,
+        /// The correction, in a sentence.
+        #[arg(long)]
+        why: String,
     },
     /// Everything that can be checked. Exit 1 when there are items to act on.
     Check {

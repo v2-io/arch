@@ -44,7 +44,7 @@ pub fn run(cli: Cli) -> Result<i32> {
             let actor = actor(&actor_args, "adopter")?;
             revise(&store, record.as_deref(), actor, &answers, dry)
         }
-        Cmd::Take { path, check, act, line, criterion, committed, outcome, recheck, at, source, slug, note } => {
+        Cmd::Take { path, check, act, line, criterion, committed, outcome, recheck, at, source, slug, note, read } => {
             let actor = actor(&actor_args, "verifier")?;
             match (path, check) {
                 (Some(p), None) => take(&store, &p, actor, dry),
@@ -53,7 +53,7 @@ pub fn run(cli: Cli) -> Result<i32> {
                     let outcome = outcome.ok_or_else(|| anyhow!("--outcome: confirmed | broken | narrowed | inconclusive | failed-to-run"))?;
                     take_inline(
                         &store, &target, &act, &line, &criterion, &committed, &outcome, recheck.as_deref(),
-                        at.as_deref(), &source, slug.as_deref(), note.as_deref(), actor, dry,
+                        at.as_deref(), &source, slug.as_deref(), note.as_deref(), &read, actor, dry,
                     )
                 }
                 _ => bail!("give a review path, or --check <target> with --criterion and --outcome"),
@@ -71,9 +71,9 @@ pub fn run(cli: Cli) -> Result<i32> {
             let actor = actor(&actor_args, "author")?;
             note(&store, &text, &concerns, &owner, why.as_deref(), slug.as_deref(), actor, dry)
         }
-        Cmd::Close { item, outcome, by_commit, why } => {
+        Cmd::Close { item, outcome, by_commit, why, of } => {
             let actor = actor(&actor_args, "integrator")?;
-            close_item(&store, &item, &outcome, by_commit.as_deref(), why.as_deref(), actor, dry)
+            close_item(&store, &item, &outcome, by_commit.as_deref(), why.as_deref(), of.as_deref(), actor, dry)
         }
         Cmd::Recheck { item, outcome, why, owner, of, restate } => {
             let actor = actor(&actor_args, "rechecker")?;
@@ -112,6 +112,10 @@ pub fn run(cli: Cli) -> Result<i32> {
         Cmd::Refute { target, ground, by_item, at } => {
             let actor = actor(&actor_args, "verifier")?;
             refute(&store, &target, &ground, by_item.as_deref(), at.as_deref(), actor, dry)
+        }
+        Cmd::Annotate { event, why } => {
+            let actor = actor(&actor_args, "annotator")?;
+            annotate(&store, &event, &why, actor, dry)
         }
         Cmd::Check { strict } => check(&store, strict, json),
         Cmd::Gc => gc(&store, dry),
@@ -284,6 +288,14 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
             }
         } else if !rs.broken_by.is_empty() && rs.live() {
             broken.push((id.clone(), format!("broken: rests on refuted {}", rs.broken_by.join(", "))));
+        } else if rs.live() {
+            // a live record with a check that broke it, standing at the current text, is known broken
+            // whatever its author typed as status; a cold reader needs this on the first line
+            let standing: Vec<&Event> = rs.securing.iter().filter(|(e, v)| matches!(e.str("outcome"), Some("broken") | Some("narrowed")) && v.holds()).map(|(e, _)| e).collect();
+            if let Some(e) = standing.first() {
+                let typed = st.record(id).and_then(|r| r.frontmatter.get("status").and_then(|v| v.as_str())).map(|s| format!("; its author typed status: {s}")).unwrap_or_default();
+                broken.push((id.clone(), format!("a check {} it ({} by {}, {}){}{}", e.str("outcome").unwrap_or("broke"), e.str("from").unwrap_or(&short(&e.id)), e.actor.name, st.age_days(&e.at), if standing.len() > 1 { format!(" and {} more", standing.len() - 1) } else { String::new() }, typed)));
+            }
         }
     }
     // waiting
@@ -357,7 +369,7 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
     let kind_word = if domain_kinds.is_empty() { "no record kinds declared".to_string() } else { domain_kinds.join("+") };
     println!("{} · {} store · {} records · {} events · computed as of {}", store.kinds.name, kind_word, n_records, st.trail.events.len(), moment);
     println!();
-    println!("Known broken");
+    println!("Known broken (refuted, resting on a refutation, or a check broke it at this text)");
     if broken.is_empty() {
         println!("  (none recorded)");
     }
@@ -384,15 +396,27 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
     if !items_real.is_empty() {
         any = true;
         println!("  {:>4} items open (work owed, with owners) oldest {:<5} → vsect open", items_real.len(), oldest(items_real.iter().map(|i| i.opened.as_str()).collect()));
+        if store.kinds.owners_from.is_some() {
+            let kr = Regex::new(r"^[A-Z]\.\d+[a-z]?$").unwrap();
+            let unowned = items_real.iter().filter(|i| !kr.is_match(i.owner.trim())).count();
+            if unowned > 0 {
+                println!("  {:>4} of them name no KR as owner (work no key result covers; INTENT's to decide)", unowned);
+            }
+        }
     }
     if items_unchecked > 0 {
         any = true;
         println!("  {:>4} imported items not yet re-checked (tracker labels, not standing) → vsect open", items_unchecked);
     }
-    let pending = st.pending_confirms();
+    let pending_all = st.pending_confirms();
+    let (pending_unread, pending): (Vec<_>, Vec<_>) = pending_all.into_iter().partition(|p| !p.unread.is_empty() && p.unread.len() == p.checks.len());
     if !pending.is_empty() {
         any = true;
-        println!("  {:>4} rewordings awaiting a second mind  ({} checks lapsed) → vsect confirm", pending.len(), stale.len());
+        println!("  {:>4} rewordings awaiting a second mind  ({} checks lapsed) → vsect confirm", pending.len(), stale.iter().filter(|(_, _, w)| !w.starts_with("upstream changed, not read")).count());
+    }
+    if !pending_unread.is_empty() {
+        any = true;
+        println!("  {:>4} upstream changes no check read (lighter: confirm or let stand) → vsect confirm", pending_unread.len());
     }
     let ended = st.ended_checks();
     if !ended.is_empty() {
@@ -639,6 +663,18 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
             (state::basis_of(store, &st.scan, &tid), "current", r.own_version.clone())
         };
         let about = target.to_string();
+        // a check may declare the records in its basis it actually read (core §5.1 actor.read):
+        // a change elsewhere in the basis then gives the lighter "upstream changed, not read" state
+        let read_set: Vec<String> = item.fields.get("read").map(|r| r.split(',').map(|x| x.trim()).filter(|x| !x.is_empty()).map(|x| state::resolve_target(store, &target.kind, x)).collect()).unwrap_or_default();
+        for r in &read_set {
+            if !basis.iter().any(|b| &b.id == r) {
+                lines.push(format!("  {}: `read:` names {r}, which is not in the target's basis; a read set lists basis records only (ignored for that entry)", item.id));
+            }
+        }
+        let mut item_author = author.clone();
+        if !read_set.is_empty() {
+            item_author.read = read_set.iter().filter(|r| basis.iter().any(|b| &b.id == *r)).cloned().collect();
+        }
         match item.kind.as_str() {
             "check" => {
                 let act = item.fields.get("act").or(item.fields.get("check")).cloned().unwrap_or_else(|| "rederive".into());
@@ -648,7 +684,7 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
                     skipped += 1;
                     continue;
                 }
-                let mut ev = Event::new(store, &act, Some(&about), author.clone())
+                let mut ev = Event::new(store, &act, Some(&about), item_author.clone())
                     .with("from", yaml_str(&item_id))
                     .with("basis", state::basis_to_yaml(&basis))
                     .with("effective-version", yaml_str(&state::effective_version(&basis)))
@@ -738,7 +774,7 @@ fn first_sentence(s: &str) -> String {
 fn take_inline(
     store: &Store, target: &str, act: &str, line: &str, criterion: &str, committed: &str, outcome: &str,
     recheck: Option<&str>, at: Option<&str>, sources: &[String], slug: Option<&str>, note: Option<&str>,
-    actor: Actor, dry: bool,
+    read: &[String], actor: Actor, dry: bool,
 ) -> Result<i32> {
     let target_id = Id::parse(store, target)?;
     let ok_outcomes = ["confirmed", "broken", "narrowed", "inconclusive", "failed-to-run"];
@@ -778,6 +814,9 @@ fn take_inline(
     }
     if let Some(a) = at {
         body.push_str(&format!("- at: {a}\n"));
+    }
+    if !read.is_empty() {
+        body.push_str(&format!("- read: {}\n", read.join(", ")));
     }
     body.push('\n');
     if let Some(n) = note {
@@ -1171,7 +1210,7 @@ fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option
     Ok(EXIT_OK)
 }
 
-fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>, why: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
+fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>, why: Option<&str>, of: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
     let iid = Id::parse(store, item)?.record_id();
     let st = State::compute(store);
     let Some(it) = st.items_open.iter().find(|i| i.id == iid) else {
@@ -1183,7 +1222,7 @@ fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>,
     if it.unchecked {
         bail!("{iid} is imported and not yet re-checked; `vsect recheck {iid} --outcome landed|stale|not-an-item --why …` is how an unchecked item closes");
     }
-    let mut ev = Event::new(store, "close", Some(&iid), actor).with("outcome", yaml_str(outcome));
+    let mut ev = Event::new(store, "close", Some(&iid), actor.clone()).with("outcome", yaml_str(outcome));
     match outcome {
         "done" => {
             let Some(c) = by_commit else { bail!("--by-commit: the commit that did the work") };
@@ -1196,14 +1235,45 @@ fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>,
             let Some(w) = why else { bail!("--why: say why it is {outcome}") };
             ev = ev.with("reason", yaml_str(w));
         }
-        o => bail!("outcome `{o}` is not done, moot or superseded"),
+        "duplicate" => {
+            let Some(o) = of else { bail!("`duplicate` names the survivor: --of item:<slug>") };
+            let oid = Id::parse(store, o)?.record_id();
+            if oid == iid {
+                bail!("an item is not a duplicate of itself");
+            }
+            if !st.scan.records.contains_key(&oid) {
+                bail!("{oid} is not in the store");
+            }
+            let dup_of = |e: &Event| (e.act == "recheck" || e.act == "close") && e.str("outcome") == Some("duplicate");
+            if let Some(e) = st.trail.events.iter().find(|e| dup_of(e) && e.about.as_deref() == Some(oid.as_str())) {
+                bail!("{oid} is itself closed as a duplicate of {}; name the survivor, not a duplicate", e.str("of").unwrap_or("?"));
+            }
+            ev = ev.with("of", yaml_str(&oid));
+        }
+        o => bail!("outcome `{o}` is not done, moot, superseded or duplicate"),
     }
     if let Some(w) = why {
         ev = ev.with("reason", yaml_str(w));
     }
     event::write_event(store, &mut ev, dry)?;
-    println!("{iid} → {outcome}{}", if dry { " (dry run)" } else { "" });
+    if !dry {
+        mark_closed(store, &st.record(&iid).unwrap().rel, outcome, of, &actor)?;
+    }
+    println!("{iid} → {outcome}{}{}", of.map(|o| format!(" of {o}")).unwrap_or_default(), if dry { " (dry run)" } else { "" });
     Ok(EXIT_OK)
+}
+
+/// A closed item's file says so in its frontmatter, so a reader of the directory (or of the file)
+/// does not take it for open work. The event is the record; this line is the tree agreeing with it.
+fn mark_closed(store: &Store, rel: &str, outcome: &str, of: Option<&str>, actor: &Actor) -> Result<()> {
+    let path = store.root.join(rel);
+    let content = std::fs::read_to_string(&path)?;
+    let (fm, body) = record::split_frontmatter(&content);
+    let mut fm = fm.unwrap_or_default();
+    fm = fm.lines().filter(|l| !l.starts_with("closed:")).collect::<Vec<_>>().join("\n");
+    fm.push_str(&format!("\nclosed: {} {} by {}{}", event::now().get(..10).unwrap_or(""), outcome, yaml_quote(&actor.name), of.map(|o| format!(" of {o}")).unwrap_or_default()));
+    std::fs::write(&path, format!("---\n{}\n---\n{}", fm.trim(), body))?;
+    Ok(())
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -1273,6 +1343,10 @@ fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&s
         println!("{iid} → holds: a real open item now, owner {}{}; moved to {}", owner.unwrap_or(&it.owner), if restate.is_some() { ", restated" } else { "" }, to.strip_prefix(&store.root).unwrap_or(&to).display());
         println!("  (the file now belongs to md-press like any live record; the hook will say if it needs reformatting)");
     } else {
+        if !dry {
+            let r = st.record(&iid).unwrap();
+            mark_closed(store, &r.rel, outcome, of, &actor)?;
+        }
         println!("{iid} → {outcome}{}: closed. {why}", of.map(|o| format!(" of {o}")).unwrap_or_default());
     }
     Ok(EXIT_OK)
@@ -1450,6 +1524,15 @@ fn rebase_links(text: &str, from_dir: &str, to_dir: &str) -> String {
     .to_string()
 }
 
+/// `[text](target)` becomes `text (target)`: readable provenance, no doc-nav link to break.
+fn defuse_links(text: &str) -> String {
+    let re = Regex::new(r"\[([^\]]+)\]\(([^)\s]+)\)").unwrap();
+    re.replace_all(text, |c: &regex::Captures| {
+        let (t, target) = (&c[1], &c[2]);
+        if target.contains("://") || target.starts_with('#') { format!("[{t}]({target})") } else { format!("{t} ({target})") }
+    }).to_string()
+}
+
 fn bring_tracker(store: &Store, path: &str, unit: &str, level: usize, actor: Actor, dry: bool) -> Result<i32> {
     let abs = if std::path::Path::new(path).is_absolute() { std::path::PathBuf::from(path) } else { std::env::current_dir()?.join(path) };
     let rel = abs.canonicalize().unwrap_or(abs.clone()).strip_prefix(&store.root).map(|p| p.to_string_lossy().to_string()).map_err(|_| anyhow!("{path} is outside the store"))?;
@@ -1497,9 +1580,12 @@ fn bring_tracker(store: &Store, path: &str, unit: &str, level: usize, actor: Act
         }
         let tracker_dir = std::path::Path::new(&rel).parent().map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
         let to_dir = dir.strip_prefix(&store.root).map(|p| p.to_string_lossy().to_string()).unwrap_or_else(|_| "items/imported".into());
-        let title = rebase_links(&u.title, &tracker_dir, &to_dir);
-        let block = rebase_links(&u.block, &tracker_dir, &to_dir);
-        let body = format!("Imported verbatim (relative links rebased) from `{rel}` line {}, section *{}*. Not yet re-checked against HEAD: `vsect recheck item:{slug} --outcome holds|stale|landed|not-an-item --why …`.\n\n{}", u.line, u.section.replace('*', ""), block);
+        // links in copied tracker text are made inert (`text (path)`): the tracker will be deleted
+        // behind its last judged item, and a held item that still linked to it would break
+        // check-links; the path stays readable as provenance
+        let title = defuse_links(&rebase_links(&u.title, &tracker_dir, &to_dir));
+        let block = defuse_links(&rebase_links(&u.block, &tracker_dir, &to_dir));
+        let body = format!("Imported verbatim (relative links rebased and made inert) from `{rel}` line {}, section *{}*. Not yet re-checked against HEAD: `vsect recheck item:{slug} --outcome holds|stale|landed|not-an-item --why …`.\n\n{}", u.line, u.section.replace('*', ""), block);
         write_item_record(store, &dir, &slug, &fm, &title, &body, dry)?;
         n_new += 1;
         if n_new <= 6 || dry {
@@ -1692,7 +1778,7 @@ fn confirm_list(store: &Store) -> Result<i32> {
         println!("\n  {}  v:{} → v:{}   revised by {}", p.record, short(&p.from), short(&p.to), if revisers.is_empty() { "(no revise event)".to_string() } else { revisers.join(", ") });
         println!("    re-binds {} check(s) on: {}", p.checks.len(), targets.into_iter().collect::<Vec<_>>().join(", "));
         let refs: Vec<String> = p.checks.iter().map(|(eid, _)| st.trail.events.iter().find(|e| &e.id == eid).and_then(|e| e.str("from")).map(|s| s.to_string()).unwrap_or_else(|| short(eid))).collect();
-        println!("    checks: {}", refs.join(" "));
+        println!("    checks: {}{}", refs.join(" "), if p.unread.is_empty() { String::new() } else { format!("   ({} of them declared a read set that does not include this record)", p.unread.len()) });
         println!("    → vsect confirm {} --from {} --to {}   [--checks <ref,…> to judge a subset]", p.record, short(&p.from), short(&p.to));
     }
     Ok(EXIT_OK)
@@ -1797,6 +1883,26 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
         let still = after.pending_confirms().len();
         println!("{} rewording(s) still await a second mind.", still);
     }
+    Ok(EXIT_OK)
+}
+
+// ---------- annotate ----------
+
+/// Correct the record of an act without editing it: a `correct` event that names the original
+/// (core §5.1 `corrects:`). `why` shows the correction beside the event it corrects.
+fn annotate(store: &Store, event: &str, why: &str, actor: Actor, dry: bool) -> Result<i32> {
+    let trail = event::read_all(store);
+    let matches: Vec<&Event> = trail.events.iter().filter(|e| e.id.starts_with(event) || e.str("from") == Some(event)).collect();
+    let target = match matches.len() {
+        0 => bail!("no event starts `{event}` (or has that review item ref); `vsect why <kind:slug>` shows events with their ids"),
+        1 => matches[0],
+        n => bail!("`{event}` matches {n} events: {}", matches.iter().map(|e| format!("{} ({} on {})", short(&e.id), e.act, e.about.as_deref().unwrap_or("-"))).collect::<Vec<_>>().join(", ")),
+    };
+    let mut ev = Event::new(store, "correct", target.about.as_deref(), actor)
+        .with("corrects", yaml_str(&target.id))
+        .with("text", yaml_str(why));
+    let p = event::write_event(store, &mut ev, dry)?;
+    println!("{} correction of {} ({} on {}): {}{}", if dry { "Would record" } else { "Recorded" }, short(&target.id), target.act, target.about.as_deref().unwrap_or("-"), why, if dry { format!(" (would write {})", p.display()) } else { String::new() });
     Ok(EXIT_OK)
 }
 
@@ -2142,8 +2248,16 @@ fn read(store: &Store, id: &str, at: Option<&str>, bare: bool) -> Result<i32> {
     }
     for (ev, v) in &rs.securing {
         let who = format!("{}{}", ev.actor.name, ev.actor.role.as_deref().map(|r| format!(" as {r}")).unwrap_or_default());
-        let sym = if v.holds() { "✓" } else { "↻" };
-        marks.push(format!("{sym} {} {} by {who} on {} · {} · {}", ev.act, ev.str("outcome").unwrap_or(""), ev.at.get(..10).unwrap_or(""), ev.str("line").unwrap_or(""), v.word()));
+        let outcome = ev.str("outcome").unwrap_or("");
+        let broke = matches!(outcome, "broken" | "narrowed");
+        // a check that broke the statement is never a check-mark: if its basis still holds, the break stands at this text
+        let (sym, word) = match (broke, v.holds()) {
+            (true, true) => ("⚠", format!("the break stands at this text ({outcome})")),
+            (true, false) => ("⚠", format!("broke an earlier text; {}", v.word())),
+            (false, true) => ("✓", v.word()),
+            (false, false) => ("↻", v.word()),
+        };
+        marks.push(format!("{sym} {} {outcome} by {who} on {} · {} · {word}", ev.act, ev.at.get(..10).unwrap_or(""), ev.str("line").unwrap_or("")));
         if let Some(c) = ev.str("criterion") {
             if !c.is_empty() {
                 marks.push(format!("    criterion: {c}"));
@@ -2219,8 +2333,11 @@ fn why(store: &Store, id: &str) -> Result<i32> {
         if let Some(b) = ev.get("basis") {
             let n = b.as_mapping().map(|m| m.len()).unwrap_or(0);
             if n > 0 {
-                println!("      basis: {n} statement version(s) · event {}", short(&ev.id));
+                println!("      basis: {n} statement version(s) · event {}{}", short(&ev.id), if ev.actor.read.is_empty() { String::new() } else { format!(" · read set: {}", ev.actor.read.join(", ")) });
             }
+        }
+        for c in st.trail.events.iter().filter(|c| c.act == "correct" && c.str("corrects") == Some(&ev.id)) {
+            println!("      ↳ corrected {} by {}: {}", c.at.get(..10).unwrap_or(""), c.actor.name, c.str("text").unwrap_or(""));
         }
     }
     Ok(EXIT_OK)
@@ -2293,6 +2410,7 @@ Work      vsect revise [<kind:slug>]                 take in edits made outside 
           vsect confirm [<kind:slug>]                the second mind: confirm a rewording still says what was checked
           vsect refute <id> --ground kind:text        record a refutation, on evidence
           vsect findings --dispose <item> --as … --why …
+          vsect annotate <event-id|review:x#C1> --why \"…\"   correct the record of an act without editing it
           vsect check [--strict]                     everything that can be checked; exit 1 = act on it
 Store     vsect init --name … --steward … --decider …   found a store (no kinds)
           vsect kinds                                what the store declares
@@ -2337,6 +2455,9 @@ fn verb_help(v: &str) -> String {
 A review record carries typed items. Each `## C1 (check)` section has fields target, act, line, criterion,
 committed, outcome, recheck, and optionally `at: <git rev>` or `version: <own version>` for the text it read;
 then free text. Each `## F1 (finding)` has target (and optionally at/version), then the finding in words.
+A check may declare `- read: seg:a, seg:b` — the records in its basis it actually read; a change elsewhere
+in the basis then shows as \"upstream changed, not read by this check\" instead of lapsing it (the strict
+rule stays the default when nothing is declared). `--read seg:a,seg:b` does the same inline.
 A check whose outcome is broken or narrowed also opens a finding. Taking the same review twice adds nothing.
 If the text changed after the check, take says so and the check stays with the version it read.".into(),
         "revise" => "vsect revise [<kind:slug>] [--answer change=reworded|redefined] [--answer fate=retired|superseded:<id>]
@@ -2359,7 +2480,7 @@ any file in this version; `vsect check` reports the refuted statement as unmarke
         "note" | "close" | "recheck" | "bring" | "items" => "Items: work owed, with an owner, closed by the commit that did it.
 
 vsect note \"…\" [--concerns kind:slug]… [--owner who] [--why \"…\"]     opens items/<slug>.md
-vsect close item:<slug> --outcome done --by-commit <sha>   |  --outcome moot|superseded --why \"…\"
+vsect close item:<slug> --outcome done --by-commit <sha>   |  --outcome moot|superseded --why \"…\"  |  --outcome duplicate --of item:x
 vsect bring <tracker.md> --tracker --unit bullets|checkboxes|sections|rows [--level 3]
 vsect recheck item:<slug> --outcome holds|landed|stale|superseded|duplicate|not-an-item --why \"…\" [--owner who] [--of item:x] [--restate \"…\"]
 
@@ -2398,5 +2519,37 @@ Writes questions/<slug>.md and records the ask. Nothing reaches the steward with
         "open" => "vsect open [<kind:slug>] [--format json]\n\nEvery open item keyed by the statement it concerns: findings, questions, lapsed checks, unrecorded fates.".into(),
         "read" => "vsect read <kind:slug> [--at <version prefix>] [--bare]\n\nThe record with marks above it. --bare prints the statement text alone (no marks, no Working Notes).".into(),
         _ => format!("no help for `{v}` yet; `vsect help` lists the verbs"),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_change_past_character_160_is_visible() {
+        // the confirmer judged blind when the diff truncated paragraph-lines at 160 characters
+        let prefix: String = (0..60).map(|i| format!("word{i}")).collect::<Vec<_>>().join(" ");
+        let a = format!("{prefix} residual uncertainty remains at the end.\n");
+        let b = format!("{prefix} the world can still show it something at the end.\n");
+        assert!(prefix.len() > 160);
+        let d = line_diff(&a, &b);
+        assert!(d.contains("[-residual-]") && d.contains("{+world+}"), "the changed words must appear: {d}");
+        assert!(!d.contains("(the normalized texts are identical)"));
+    }
+
+    #[test]
+    fn identical_texts_say_so() {
+        assert!(line_diff("same\n", "same\n").contains("identical"));
+    }
+
+    #[test]
+    fn word_diff_folds_unchanged_stretches() {
+        let a = format!("{} X end", (0..40).map(|i| format!("w{i}")).collect::<Vec<_>>().join(" "));
+        let b = format!("{} Y end", (0..40).map(|i| format!("w{i}")).collect::<Vec<_>>().join(" "));
+        let d = word_diff(&a, &b);
+        assert!(d.contains("[-X-]") && d.contains("{+Y+}"));
+        assert!(d.contains("…"), "long unchanged stretches are folded");
+        assert!(!d.contains("w10 "), "words far from the change are not shown");
     }
 }

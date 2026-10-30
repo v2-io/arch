@@ -14,6 +14,9 @@ pub enum Verdict {
     StaleOwn,
     /// Something the statement rests on changed meaning since the check (which ids).
     StaleUpstream(Vec<String>),
+    /// Something in the basis changed, but the check declared what it read and read none of it.
+    /// Lighter than stale: visible, counted apart, still open to a confirmer's ending it.
+    StaleUpstreamUnread(Vec<String>),
     /// An edge that shapes the basis was added or removed.
     BasisChanged,
     /// A record in the basis is deleted or unreadable now.
@@ -26,12 +29,17 @@ impl Verdict {
             Verdict::Holds => "holds".into(),
             Verdict::StaleOwn => "stale: own text changed".into(),
             Verdict::StaleUpstream(ids) => format!("stale: upstream changed ({})", ids.join(", ")),
+            Verdict::StaleUpstreamUnread(ids) => format!("upstream changed, not read by this check ({})", ids.join(", ")),
             Verdict::BasisChanged => "stale: what it rests on was re-declared".into(),
             Verdict::CannotEvaluate(why) => format!("cannot evaluate: {why}"),
         }
     }
     pub fn holds(&self) -> bool {
         matches!(self, Verdict::Holds)
+    }
+    /// The lighter state: the check declared what it read, and nothing it read changed.
+    pub fn unread(&self) -> bool {
+        matches!(self, Verdict::StaleUpstreamUnread(_))
     }
 }
 
@@ -141,6 +149,8 @@ pub struct PendingConfirm {
     pub to: String,
     /// The securing events (id, their target) that would hold again if the pair were confirmed.
     pub checks: Vec<(String, String)>,
+    /// Checks on this pair that declared a read set which does not include the record (lighter).
+    pub unread: Vec<String>,
 }
 
 /// An entry in a check's basis as recorded on the event.
@@ -322,7 +332,7 @@ impl Equivalence {
     }
 }
 
-fn verdict(store: &Store, scan: &Scan, about: &str, recorded: &[BasisEntry], event_id: &str, eq: &Equivalence) -> Verdict {
+fn verdict(store: &Store, scan: &Scan, about: &str, recorded: &[BasisEntry], event_id: &str, eq: &Equivalence, read_set: &[String]) -> Verdict {
     let now = basis_of(store, scan, about);
     let rec_ids: BTreeSet<&str> = recorded.iter().map(|e| e.id.as_str()).collect();
     let now_ids: BTreeSet<&str> = now.iter().map(|e| e.id.as_str()).collect();
@@ -352,7 +362,13 @@ fn verdict(store: &Store, scan: &Scan, about: &str, recorded: &[BasisEntry], eve
     if own {
         Verdict::StaleOwn
     } else if !upstream.is_empty() {
-        Verdict::StaleUpstream(upstream)
+        // a check that declared its read set (core §5.1 `actor.read`) is lapsed strictly only by a
+        // change to something it read; a change elsewhere in the basis is the lighter state
+        if !read_set.is_empty() && !upstream.iter().any(|u| read_set.iter().any(|r| r == u || r.trim_start_matches('#') == u)) {
+            Verdict::StaleUpstreamUnread(upstream)
+        } else {
+            Verdict::StaleUpstream(upstream)
+        }
     } else {
         Verdict::Holds
     }
@@ -427,7 +443,7 @@ impl State {
             let Some(about) = &ev.about else { continue };
             let rid = record_of(about);
             let recorded = basis_from_yaml(ev.get("basis"));
-            let v = verdict(store, &scan, &rid, &recorded, &ev.id, &eq);
+            let v = verdict(store, &scan, &rid, &recorded, &ev.id, &eq, &ev.actor.read);
             records.entry(rid).or_default().securing.push((ev.clone(), v));
         }
         // planned targets: slugs the store declares as planned (e.g. OUTLINE `missing` rows)
@@ -649,9 +665,13 @@ impl State {
                 }
             }
         }
+        let read_sets: BTreeMap<String, Vec<String>> = self.trail.events.iter().map(|e| (e.id.clone(), e.actor.read.clone())).collect();
         by_pair
             .into_iter()
-            .map(|((record, from, to), checks)| PendingConfirm { record, from, to, checks })
+            .map(|((record, from, to), checks)| {
+                let unread = checks.iter().filter(|(eid, _)| read_sets.get(eid).map(|r| !r.is_empty() && !r.iter().any(|x| x == &record || x.trim_start_matches('#') == record)).unwrap_or(false)).map(|(eid, _)| eid.clone()).collect();
+                PendingConfirm { record, from, to, checks, unread }
+            })
             .collect()
     }
 
@@ -820,5 +840,50 @@ impl State {
             }
             Err(_) => "?".into(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn eq_with(scoped: &[(&str, &str, &str, &str)], refused_scoped: &[(&str, &str, &str, &str)], unconditional: &[(&str, &str, &str)]) -> Equivalence {
+        let mut eq = Equivalence::default();
+        for (ev, rec, a, b) in scoped {
+            eq.scoped.entry(ev.to_string()).or_default().push((rec.to_string(), a.to_string(), b.to_string()));
+        }
+        for (ev, rec, a, b) in refused_scoped {
+            eq.refused_scoped.entry(ev.to_string()).or_default().push((rec.to_string(), a.to_string(), b.to_string()));
+        }
+        for (rec, a, b) in unconditional {
+            eq.union(rec, a, b);
+        }
+        eq
+    }
+
+    #[test]
+    fn checks_scoping_binds_only_the_named_check() {
+        // a `for-checks` on check E1 re-binds E1 and nothing else on the same pair
+        let eq = eq_with(&[("E1", "seg:scope", "v1", "v2")], &[], &[]);
+        assert!(eq.scoped_covers("E1", "seg:scope", "v1", "v2"));
+        assert!(eq.scoped_covers("E1", "seg:scope", "v2", "v1"), "scope is symmetric in direction");
+        assert!(!eq.scoped_covers("E2", "seg:scope", "v1", "v2"), "an unnamed check stays pending");
+        assert!(!eq.same("seg:scope", "v1", "v2"), "a scoped confirmation is not an unconditional one");
+    }
+
+    #[test]
+    fn checks_scoping_ends_only_the_named_check() {
+        // a `not-equivalent --checks E1` ends E1 on the pair and leaves E2 to its own judgment
+        let eq = eq_with(&[("E2", "seg:scope", "v1", "v2")], &[("E1", "seg:scope", "v1", "v2")], &[]);
+        assert!(eq.refused_for("E1", "seg:scope", "v1", "v2"));
+        assert!(!eq.refused_for("E2", "seg:scope", "v1", "v2"));
+        assert!(eq.scoped_covers("E2", "seg:scope", "v1", "v2"));
+    }
+
+    #[test]
+    fn unconditional_confirmations_chain() {
+        let eq = eq_with(&[], &[], &[("seg:a", "v1", "v2"), ("seg:a", "v2", "v3")]);
+        assert!(eq.same("seg:a", "v1", "v3"), "a→b and b→c confirmed means a check that read a holds at c");
+        assert!(!eq.same("seg:b", "v1", "v3"), "equivalence is per record");
     }
 }
