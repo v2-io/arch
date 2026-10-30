@@ -485,7 +485,7 @@ fn revise(store: &Store, one: Option<&str>, actor: Actor, answers: &BTreeMap<Str
         if change == "reworded" {
             println!("      → recorded as your claim. The checks stay with v:{} until a different mind confirms (vsect confirm {}).", short(&p.from), p.record);
         } else {
-            println!("      → redefined: the checks on it and on everything that rests on it stop counting until redone.");
+            println!("      → redefined, as your claim. The checks that read v:{} wait until a second mind judges, per check, whether the change bears on what each checked (vsect confirm {} → equivalent / for-checks / not-equivalent).", short(&p.from), p.record);
         }
     }
     for (id, _) in deletions {
