@@ -146,6 +146,9 @@ pub enum Cmd {
         why: Option<String>,
         #[arg(long)]
         slug: Option<String>,
+        /// The roll-up item this one was split out of (item:slug), kept as provenance.
+        #[arg(long)]
+        from: Option<String>,
     },
     /// Close an item: done (by which commit), moot, superseded, or duplicate (--of the survivor).
     Close {
@@ -294,7 +297,13 @@ pub enum Cmd {
 fn main() -> ExitCode {
     let cli = Cli::parse();
     match verbs::run(cli) {
-        Ok(code) => ExitCode::from(code as u8),
+        Ok(code) => {
+            let written = event::drain_written();
+            if !written.is_empty() {
+                println!("Wrote {} path(s); commit them by path: {}", written.len(), written.join(" "));
+            }
+            ExitCode::from(code as u8)
+        }
         Err(e) => {
             eprintln!("vsect: {e:#}");
             ExitCode::from(2)

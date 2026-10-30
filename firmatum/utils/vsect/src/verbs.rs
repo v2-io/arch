@@ -67,9 +67,9 @@ pub fn run(cli: Cli) -> Result<i32> {
             let actor = actor(&actor_args, "decider")?;
             answer(&store, &question, &outcome, text.as_deref(), reopen_if.as_deref(), superseded_by.as_deref(), actor, dry)
         }
-        Cmd::Note { text, concerns, owner, why, slug } => {
+        Cmd::Note { text, concerns, owner, why, slug, from } => {
             let actor = actor(&actor_args, "author")?;
-            note(&store, &text, &concerns, &owner, why.as_deref(), slug.as_deref(), actor, dry)
+            note(&store, &text, &concerns, &owner, why.as_deref(), slug.as_deref(), from.as_deref(), actor, dry)
         }
         Cmd::Close { item, outcome, by_commit, why, of } => {
             let actor = actor(&actor_args, "integrator")?;
@@ -847,6 +847,7 @@ fn take_inline(
     } else {
         std::fs::create_dir_all(&dir)?;
         std::fs::write(&path, content)?;
+        event::note_written(store, &path);
         println!("Wrote {}", path.strip_prefix(&store.root).unwrap_or(&path).display());
     }
     if dry {
@@ -920,6 +921,7 @@ fn ask(store: &Store, text: &str, concerns: &[String], blocks: &[String], closer
     }
     std::fs::create_dir_all(&dir)?;
     std::fs::write(&path, &c)?;
+    event::note_written(store, &path);
     let rel = path.strip_prefix(&store.root).unwrap().to_string_lossy().to_string();
     let r = record::load_record(store, "question", &rel, &c)?;
     let qid = r.id.record_id();
@@ -1183,7 +1185,7 @@ fn refute(store: &Store, target: &str, ground: &str, by_item: Option<&str>, at: 
 
 // ---------- items: note / close / recheck / bring --tracker ----------
 
-fn write_item_record(_store: &Store, dir: &std::path::Path, slug: &str, fm_lines: &[String], title: &str, body: &str, dry: bool) -> Result<String> {
+fn write_item_record(store: &Store, dir: &std::path::Path, slug: &str, fm_lines: &[String], title: &str, body: &str, dry: bool) -> Result<String> {
     let path = dir.join(format!("{slug}.md"));
     if path.exists() {
         bail!("item:{slug} exists already");
@@ -1206,15 +1208,26 @@ fn write_item_record(_store: &Store, dir: &std::path::Path, slug: &str, fm_lines
     }
     std::fs::create_dir_all(dir)?;
     std::fs::write(&path, &c)?;
+    event::note_written(store, &path);
     // the file is the opening act: its frontmatter says who opened it, when, from where
     Ok(format!("item:{slug}"))
 }
 
-fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option<&str>, slug: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
+fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option<&str>, slug: Option<&str>, from: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
     for c in concerns {
         Id::parse(store, c)?;
     }
     store.check_owner(owner)?;
+    let from_id = match from {
+        Some(f) => {
+            let fid = Id::parse(store, f)?.record_id();
+            if !State::compute(store).scan.records.contains_key(&fid) {
+                bail!("{fid} is not in the store");
+            }
+            Some(fid)
+        }
+        None => None,
+    };
     let slug = slug.map(|s| s.to_string()).unwrap_or_else(|| slugify(text));
     if !record::slug_re().is_match(&slug) {
         bail!("slug `{slug}` must be lowercase kebab-case");
@@ -1222,6 +1235,9 @@ fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option
     let mut fm = vec![format!("owner: {}", yaml_quote(owner)), format!("opened: {}", event::now()), format!("opened-by: {}", yaml_quote(&actor.name))];
     if !concerns.is_empty() {
         fm.push(format!("concerns: [{}]", concerns.join(", ")));
+    }
+    if let Some(f) = &from_id {
+        fm.push(format!("from: {f}")); // split out of this item (a roll-up), so provenance stays computable
     }
     let iid = write_item_record(store, &store.builtin_dir("item"), &slug, &fm, text, why.unwrap_or(""), dry)?;
     println!("Recorded {iid}, owner {owner}.");
@@ -1291,6 +1307,7 @@ fn mark_closed(store: &Store, rel: &str, outcome: &str, of: Option<&str>, actor:
     fm = fm.lines().filter(|l| !l.starts_with("closed:")).collect::<Vec<_>>().join("\n");
     fm.push_str(&format!("\nclosed: {} {} by {}{}", event::now().get(..10).unwrap_or(""), outcome, yaml_quote(&actor.name), of.map(|o| format!(" of {o}")).unwrap_or_default()));
     std::fs::write(&path, format!("---\n{}\n---\n{}", fm.trim(), body))?;
+    event::note_written(store, &path);
     Ok(())
 }
 
@@ -1354,8 +1371,10 @@ fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&s
         let content = format!("---\n{}\n---\n{}", fm.trim(), body);
         if !dry {
             std::fs::write(&to, content)?;
+            event::note_written(store, &to);
             if from != to {
                 std::fs::remove_file(&from)?;
+                event::note_written(store, &from); // the deletion is a path to commit too
             }
         }
         println!("{iid} → holds: a real open item now, owner {}{}; moved to {}", owner.unwrap_or(&it.owner), if restate.is_some() { ", restated" } else { "" }, to.strip_prefix(&store.root).unwrap_or(&to).display());
@@ -2162,6 +2181,31 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
         }
     }
     let structural = items.len();
+    // event files in the working tree that git does not hold yet: a lane committed its review event
+    // and missed the findings `take` wrote under the segments' directories (2026-10-30)
+    if store.root.join(".git").exists() || store::git(&store.root, &["rev-parse", "--git-dir"]).is_ok() {
+        let untracked: Vec<String> = store::git(&store.root, &["status", "--porcelain", "--untracked-files=all", "--", ".vsect/events"]).map(|s| s.lines().filter(|l| l.starts_with("??")).filter_map(|l| l.get(3..).map(|p| p.trim().to_string())).collect()).unwrap_or_default();
+        if !untracked.is_empty() {
+            let mut by_actor: BTreeMap<String, usize> = BTreeMap::new();
+            for p in &untracked {
+                let who = std::fs::read_to_string(store.root.join(p)).ok().and_then(|t| serde_yaml::from_str::<Event>(&t).ok()).map(|e| e.actor.name).unwrap_or_else(|| "?".into());
+                *by_actor.entry(who).or_default() += 1;
+            }
+            notices.push(("events-uncommitted".into(), ".vsect/events".into(), format!("{} event file(s) not yet in git, by actor: {}", untracked.len(), by_actor.iter().map(|(a, n)| format!("{a} {n}")).collect::<Vec<_>>().join(" · "))));
+        }
+    }
+    // a duplicate whose survivor is itself closed non-duplicate resolves through a closed item
+    {
+        let dup_events: Vec<&Event> = st.trail.events.iter().filter(|e| (e.act == "recheck" || e.act == "close") && e.str("outcome") == Some("duplicate")).collect();
+        let closed_how: BTreeMap<String, String> = st.trail.events.iter().filter(|e| matches!(e.act.as_str(), "recheck" | "close") && e.str("outcome").map(|o| o != "holds" && o != "duplicate").unwrap_or(false)).filter_map(|e| e.about.clone().map(|a| (a, e.str("outcome").unwrap_or("").to_string()))).collect();
+        for e in dup_events {
+            if let (Some(about), Some(of)) = (e.about.as_deref(), e.str("of")) {
+                if let Some(how) = closed_how.get(of) {
+                    notices.push(("duplicate-of-closed".into(), about.to_string(), format!("closed as a duplicate of {of}, which is itself closed as {how}; if the two are the same work this is fine (say so with annotate), if not the item needs its own judgment")));
+                }
+            }
+        }
+    }
     for (id, why) in st.unreconciled() {
         notices.push(("gone-unrecorded".into(), id, why.into()));
     }
@@ -2497,7 +2541,7 @@ Records that a statement was shown false, on evidence, and lists what rests on i
 any file in this version; `vsect check` reports the refuted statement as unmarked until that exists.".into(),
         "note" | "close" | "recheck" | "bring" | "items" => "Items: work owed, with an owner, closed by the commit that did it.
 
-vsect note \"…\" [--concerns kind:slug]… [--owner who] [--why \"…\"]     opens items/<slug>.md
+vsect note \"…\" [--concerns kind:slug]… [--owner who] [--why \"…\"] [--from item:x]   opens items/<slug>.md (--from: the roll-up it was split from)
 vsect close item:<slug> --outcome done --by-commit <sha>   |  --outcome moot|superseded --why \"…\"  |  --outcome duplicate --of item:x
 vsect bring <tracker.md> --tracker --unit bullets|checkboxes|sections|rows [--level 3]
 vsect recheck item:<slug> --outcome holds|landed|stale|superseded|duplicate|not-an-item --why \"…\" [--owner who] [--of item:x] [--restate \"…\"]
@@ -2516,6 +2560,11 @@ question: `vsect ask` it before closing. Units: bullets = top-level bullets afte
 `##` (preambles are navigation); checkboxes = `- [ ]` lines anywhere; sections = headings of
 --level with their bodies; rows = table body rows (title = first non-date cell). Importing a file
 twice adds nothing.".into(),
+        "annotate" => "vsect annotate <event-id-prefix | review:x#C1> --why \"…\"
+
+Corrects the record of an act without editing it: a `correct` event that names the original (core §5.1
+`corrects:`), shown by `vsect why <kind:slug>` beside the event it corrects. `vsect why item:<slug>` lists a
+recheck event's id. Events are never edited; this is how a wrong fact in a --why gets set right.".into(),
         "confirm" => "vsect confirm                      what awaits a second mind: each record, the version its checks read → now
 vsect confirm <kind:slug> [--from v] [--to v] [--judgment equivalent|for-checks|not-equivalent] [--criterion \"…\"] [--checks review:x#C1,…]
 

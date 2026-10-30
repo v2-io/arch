@@ -96,6 +96,26 @@ impl Event {
     }
 }
 
+thread_local! {
+    /// Every file a verb wrote in this run, relative to the store root, so the verb can end by
+    /// naming them: "commit your own paths only" needs no guessing about where `take` puts a finding.
+    pub static WRITTEN: std::cell::RefCell<Vec<String>> = const { std::cell::RefCell::new(Vec::new()) };
+}
+
+pub fn note_written(store: &Store, path: &std::path::Path) {
+    let rel = path.strip_prefix(&store.root).map(|p| p.to_string_lossy().to_string()).unwrap_or_else(|_| path.display().to_string());
+    WRITTEN.with(|w| {
+        let mut w = w.borrow_mut();
+        if !w.contains(&rel) {
+            w.push(rel);
+        }
+    });
+}
+
+pub fn drain_written() -> Vec<String> {
+    WRITTEN.with(|w| std::mem::take(&mut *w.borrow_mut()))
+}
+
 pub fn write_event(store: &Store, ev: &mut Event, dry_run: bool) -> Result<PathBuf> {
     ev.id = compute_id(ev)?;
     let path = store.root.join(ev.rel_path());
@@ -110,6 +130,7 @@ pub fn write_event(store: &Store, ev: &mut Event, dry_run: bool) -> Result<PathB
     }
     let text = to_yaml(ev)?;
     std::fs::write(&path, text).with_context(|| format!("writing {}", path.display()))?;
+    note_written(store, &path);
     Ok(path)
 }
 
@@ -219,6 +240,7 @@ pub fn write_object(store: &Store, rel: &str, kind: &str, form: &str, text: &str
             std::fs::create_dir_all(parent)?;
         }
         std::fs::write(&path, canon)?;
+        note_written(store, &path);
     }
     Ok(version)
 }
