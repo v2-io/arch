@@ -677,14 +677,15 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
         }
         match item.kind.as_str() {
             "check" => {
-                let act = item.fields.get("act").or(item.fields.get("check")).cloned().unwrap_or_else(|| "rederive".into());
+                let act = normalize_act(item.fields.get("act").or(item.fields.get("check")).map(|s| s.as_str()).unwrap_or("rederive")).map_err(|e| anyhow!("{item_id}: {e}"))?;
                 let outcome = item.fields.get("outcome").ok_or_else(|| anyhow!("{item_id}: no `outcome:`"))?;
-                let dup = st.records.get(&tid).map(|s| s.securing.iter().any(|(e, _)| e.str("from") == Some(item_id.as_str()))).unwrap_or(false);
+                // idempotency keys on the review item, whatever act the event carries
+                let dup = st.trail.events.iter().any(|e| e.str("from") == Some(item_id.as_str()) && e.act != "place-finding");
                 if dup {
                     skipped += 1;
                     continue;
                 }
-                let mut ev = Event::new(store, &act, Some(&about), item_author.clone())
+                let mut ev = Event::new(store, act, Some(&about), item_author.clone())
                     .with("from", yaml_str(&item_id))
                     .with("basis", state::basis_to_yaml(&basis))
                     .with("effective-version", yaml_str(&state::effective_version(&basis)))
@@ -764,6 +765,22 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
     Ok(if act_on > 0 { EXIT_ITEMS } else { EXIT_OK })
 }
 
+/// The six securing acts (core §5.2), with the words verifiers actually write mapped onto them.
+/// An unknown word is refused with the list: an event under an unrecognized act is written but
+/// never counted as a check, and is re-added on every re-take (part-i-mismatch-lineage-check-1's
+/// `act: read`, 2026-10-30).
+pub fn normalize_act(word: &str) -> Result<&'static str> {
+    Ok(match word.trim().to_lowercase().as_str() {
+        "rederive" | "re-derive" | "rederived" | "re-derived" | "derive" => "rederive",
+        "instantiate" | "instance" | "instantiated" => "instantiate",
+        "run" | "ran" | "simulate" | "simulated" | "simulation" | "rerun" | "re-run" => "run",
+        "read-check" | "read" | "reread" | "re-read" | "compare" | "compared" => "read-check",
+        "assert" | "asserted" | "attest" => "assert",
+        "decline" | "declined" => "decline",
+        other => bail!("act `{other}` is not a securing act; one of rederive, instantiate, run, read-check, assert, decline (read/compare → read-check; simulate → run)"),
+    })
+}
+
 fn first_sentence(s: &str) -> String {
     let t = s.lines().find(|l| !l.trim().is_empty()).unwrap_or("").trim();
     let t: String = t.chars().take(240).collect();
@@ -777,6 +794,7 @@ fn take_inline(
     read: &[String], actor: Actor, dry: bool,
 ) -> Result<i32> {
     let target_id = Id::parse(store, target)?;
+    let act = normalize_act(act)?;
     let ok_outcomes = ["confirmed", "broken", "narrowed", "inconclusive", "failed-to-run"];
     if !ok_outcomes.contains(&outcome) {
         bail!("outcome `{outcome}` is not one of {}", ok_outcomes.join(", "));
@@ -2536,6 +2554,15 @@ mod tests {
         let d = line_diff(&a, &b);
         assert!(d.contains("[-residual-]") && d.contains("{+world+}"), "the changed words must appear: {d}");
         assert!(!d.contains("(the normalized texts are identical)"));
+    }
+
+    #[test]
+    fn verifier_words_map_onto_the_securing_acts() {
+        // `act: read` was written as its own act, never counted as a check, and re-added on every re-take
+        assert_eq!(normalize_act("read").unwrap(), "read-check");
+        assert_eq!(normalize_act("re-derived").unwrap(), "rederive");
+        assert_eq!(normalize_act("simulate").unwrap(), "run");
+        assert!(normalize_act("verify").is_err(), "an unknown word is refused, not recorded under its own name");
     }
 
     #[test]

@@ -374,7 +374,9 @@ fn verdict(store: &Store, scan: &Scan, about: &str, recorded: &[BasisEntry], eve
     }
 }
 
-const SECURING: &[&str] = &["rederive", "instantiate", "run", "read-check", "assert", "decline"];
+// `read` is accepted when reading the trail for the five events written under that word before
+// take normalized acts (2026-10-30); nothing writes it any more.
+const SECURING: &[&str] = &["rederive", "instantiate", "run", "read-check", "assert", "decline", "read"];
 const LIFECYCLE: &[&str] = &["mint", "revise", "retire", "supersede", "split", "merge", "rename"];
 
 impl State {
