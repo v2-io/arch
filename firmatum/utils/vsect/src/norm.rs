@@ -12,13 +12,42 @@
 //!    A line that opens a block (heading, list item, block quote, table row, horizontal rule)
 //!    starts a new paragraph, so lists and tables keep one item or row per line.
 //! 4. Blocks are joined with one blank line.
+//! 5. md-press's own markers, HTML comments opening `<!--md-press:` and closing at the next `-->`,
+//!    are removed first, wherever they occur. They record a formatting decision (a declined math
+//!    promotion), not anything the statement says, so they belong with the design's "markers are
+//!    not text" rule (core §1.9) and never change a version. (Added 2026-10-30, after every
+//!    version in the asf store was computed and before md-press wrote any marker: on every text
+//!    ever hashed the function is unchanged, which is why the rule ships under the same name.)
 //!
 //! Any change to math is a change. False staleness is preferred to undocumented equivalence.
+//! `vsect-norm/1` is reserved for the design's CommonMark normalizer.
+//!
+//! Known defect in the object format: the normalizer's name is written into the canonical object
+//! and so is part of every version hash. Renaming the normalizer therefore rehashes the whole
+//! store, which is why the name cannot be bumped for a rule that changes no existing value. The
+//! next object format should carry the name on events only.
 
 use sha2::{Digest, Sha256};
 use unicode_normalization::UnicodeNormalization;
 
 pub const NORMALIZER: &str = "vsect-norm/0";
+
+/// Remove md-press's markers (`<!--md-press:…-->`), which record formatting decisions, not text.
+fn strip_tool_markers(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut rest = text;
+    while let Some(i) = rest.find("<!--md-press:") {
+        out.push_str(&rest[..i]);
+        match rest[i..].find("-->") {
+            Some(j) => rest = &rest[i + j + 3..],
+            None => {
+                rest = "";
+            }
+        }
+    }
+    out.push_str(rest);
+    out
+}
 
 fn opens_block(line: &str) -> bool {
     let t = line.trim_start();
@@ -39,6 +68,7 @@ fn collapse(line: &str) -> String {
 }
 
 pub fn normalize(text: &str) -> String {
+    let text = strip_tool_markers(text);
     let text: String = text.nfc().collect();
     let text = text.replace("\r\n", "\n").replace('\r', "\n");
     let mut blocks: Vec<String> = vec![];
@@ -154,6 +184,18 @@ mod tests {
     fn fenced_kept() {
         let s = "p\n\n```\na   b\n  c\n```\n";
         assert!(normalize(s).contains("a   b\n  c"));
+    }
+
+    #[test]
+    fn md_press_markers_are_not_text() {
+        let a = "The gain is η here.<!--md-press:not-math:η--> Next.\n";
+        let b = "The gain is η here. Next.\n";
+        assert_eq!(normalize(a), normalize(b));
+        let c = "| cell η<!--md-press:not-math:η--><!--md-press:not-math:δ-->   |\n";
+        let d = "| cell η |\n";
+        assert_eq!(normalize(c), normalize(d));
+        // a marker inside display math would still be stripped; md-press never writes one there
+        assert_eq!(normalize("x\n"), "x\n");
     }
 
     #[test]
