@@ -105,7 +105,7 @@ pub fn claims_on(store: &Store, record: &str) -> Vec<Claim> {
 pub fn claim(store: &Store, record: &str, agent: &str, role: &str, intent: &str, kind: &str, ttl: chrono::Duration, alongside: bool) -> Result<(Claim, Vec<Claim>)> {
     let others: Vec<Claim> = claims_on(store, record).into_iter().filter(|c| c.agent != agent && !c.expired()).collect();
     if !others.is_empty() && !alongside {
-        let who: Vec<String> = others.iter().map(|c| format!("{} ({}, in {}, since {}): {}", c.agent, if c.kind.is_empty() { "?" } else { &c.kind }, short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent)).collect();
+        let who: Vec<String> = others.iter().map(|c| format!("{} ({}, in {}, since {}): {}", c.agent, if c.kind.is_empty() { "?" } else { &c.kind }, short_path(&c.worktree), local_hm(&c.since), c.intent)).collect();
         bail!("{record} is claimed by {}. Read their note; message them through your coordinator; or `--alongside` to record a visible co-intent (fine for recording findings, a collision for editing).", who.join("; "));
     }
     let now = chrono::Utc::now();
@@ -155,6 +155,20 @@ pub fn release(store: &Store, record: &str, agent: &str, force: Option<&str>) ->
         bail!("{record} is claimed by {} and not expired; only the holder releases it, or `--force --why \"…\"` with the reason printed", live.join(", "));
     }
     Ok(released)
+}
+
+/// A claim time for a reader at this machine: local clock with its offset, so "since 17:30-06:00"
+/// is judged against the reader's own clock, not a UTC stamp that reads six hours stale.
+pub fn local_hm(iso: &str) -> String {
+    chrono::DateTime::parse_from_rfc3339(iso)
+        .map(|t| t.with_timezone(&chrono::Local).format("%H:%M%:z").to_string())
+        .unwrap_or_else(|_| iso.to_string())
+}
+
+pub fn local_full(iso: &str) -> String {
+    chrono::DateTime::parse_from_rfc3339(iso)
+        .map(|t| t.with_timezone(&chrono::Local).format("%Y-%m-%d %H:%M%:z").to_string())
+        .unwrap_or_else(|_| iso.to_string())
 }
 
 pub fn short_path(p: &str) -> String {

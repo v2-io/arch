@@ -399,7 +399,7 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
         println!();
         println!("At work now ({} claim(s); a claim is a signal every worktree sees, not a record)", live_claims.len());
         for c in live_claims.iter().take(12) {
-            println!("  {}  {} ({}) in {} since {}: {}", c.record, c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent.chars().take(90).collect::<String>());
+            println!("  {}  {} ({}) in {} since {}: {}", c.record, c.agent, c.kind, intent::short_path(&c.worktree), intent::local_hm(&c.since), c.intent.chars().take(90).collect::<String>());
         }
         if live_claims.len() > 12 {
             println!("  … {} more → vsect intents", live_claims.len() - 12);
@@ -1077,7 +1077,7 @@ fn open(store: &Store, target: Option<&str>, json: bool) -> Result<i32> {
     }
     if let Some(f) = &filter {
         for c in intent::claims_on(store, f).into_iter().filter(|c| !c.expired()) {
-            println!("At work: {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent);
+            println!("At work: {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), intent::local_hm(&c.since), c.intent);
         }
     }
     if by_target.is_empty() && unchecked.is_empty() {
@@ -1986,9 +1986,9 @@ fn claim_verb(store: &Store, records: &[String], intent_text: &str, kind: &str, 
         }
         match intent::claim(store, &rid, &actor.name, actor.role.as_deref().unwrap_or(""), intent_text, kind, ttl_d, alongside) {
             Ok((c, others)) => {
-                println!("Claimed {rid} — {} ({}) in {} until {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.expires.get(..16).unwrap_or(&c.expires), c.intent);
+                println!("Claimed {rid} — {} ({}) in {} until {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), intent::local_full(&c.expires), c.intent);
                 for o in others {
-                    println!("  alongside {} ({}, since {}): {}", o.agent, o.kind, o.since.get(11..16).unwrap_or(&o.since), o.intent);
+                    println!("  alongside {} ({}, since {}): {}", o.agent, o.kind, intent::local_hm(&o.since), o.intent);
                 }
             }
             Err(e) => {
@@ -2033,13 +2033,13 @@ fn intents_verb(store: &Store, all: bool, json: bool) -> Result<i32> {
     }
     println!("{} live claim(s) — who is at work on what, visible from every worktree:", live.len());
     for c in &live {
-        println!("  {}  {} ({}{}) in {} · since {} · until {}", c.record, c.agent, c.kind, if c.alongside { ", alongside" } else { "" }, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.expires.get(11..16).unwrap_or(&c.expires));
+        println!("  {}  {} ({}{}) in {} · since {} · until {}", c.record, c.agent, c.kind, if c.alongside { ", alongside" } else { "" }, intent::short_path(&c.worktree), intent::local_hm(&c.since), intent::local_hm(&c.expires));
         println!("      {}", c.intent);
     }
     if all && !expired.is_empty() {
         println!("{} expired (anyone may `vsect release` them):", expired.len());
         for c in &expired {
-            println!("  {}  {} since {} — {}", c.record, c.agent, c.since.get(..16).unwrap_or(&c.since), c.intent);
+            println!("  {}  {} since {} — {}", c.record, c.agent, intent::local_full(&c.since), c.intent);
         }
     } else if !expired.is_empty() {
         println!("({} expired claim(s) not shown; --all lists them)", expired.len());
@@ -2061,7 +2061,7 @@ fn claimed_verb(store: &Store, paths: &[String], me: &str, json: bool) -> Result
         println!("{}", serde_json::to_string_pretty(&json!({"schema": "vsect-claimed/0", "hits": hits.iter().map(|(p, r, c)| json!({"path": p, "record": r, "claim": c})).collect::<Vec<_>>()}))?);
     } else {
         for (p, r, c) in &hits {
-            println!("{p}: {r} is claimed by {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent);
+            println!("{p}: {r} is claimed by {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), intent::local_hm(&c.since), c.intent);
         }
     }
     Ok(if hits.is_empty() { EXIT_OK } else { EXIT_ITEMS })
@@ -2523,7 +2523,7 @@ fn read(store: &Store, id: &str, at: Option<&str>, bare: bool) -> Result<i32> {
         }
     }
     for c in intent::claims_on(store, &rid).into_iter().filter(|c| !c.expired()) {
-        marks.push(format!("⟳ at work: {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent));
+        marks.push(format!("⟳ at work: {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), intent::local_hm(&c.since), c.intent));
     }
     let raised = st.trail.events.iter().filter(|e| e.act == "raise" && e.about.as_deref() == Some(&rid)).count();
     if raised > 0 {
