@@ -130,6 +130,58 @@ pub enum Cmd {
         #[arg(long)]
         superseded_by: Option<String>,
     },
+    /// Record work owed: an open item with an owner, closed by the commit that does it.
+    Note {
+        text: String,
+        /// Statements it concerns (kind:slug), repeatable.
+        #[arg(long)]
+        concerns: Vec<String>,
+        /// Who resolves it (a name or role).
+        #[arg(long, default_value = "anyone")]
+        owner: String,
+        #[arg(long)]
+        why: Option<String>,
+        #[arg(long)]
+        slug: Option<String>,
+    },
+    /// Close an item: done (by which commit), moot, or superseded.
+    Close {
+        item: String,
+        /// done | moot | superseded
+        #[arg(long)]
+        outcome: String,
+        /// The commit that did the work (for `done`).
+        #[arg(long)]
+        by_commit: Option<String>,
+        #[arg(long)]
+        why: Option<String>,
+    },
+    /// Re-check an imported item against HEAD: holds (it is real and open), stale, landed, or not-an-item.
+    Recheck {
+        item: String,
+        /// holds | stale | landed | not-an-item
+        #[arg(long)]
+        outcome: String,
+        /// What you checked and found, in a sentence.
+        #[arg(long)]
+        why: String,
+        /// Who resolves it, when it holds.
+        #[arg(long)]
+        owner: Option<String>,
+    },
+    /// Bring outside material in. `--tracker` imports a tracker file's items as unchecked items.
+    Bring {
+        path: String,
+        /// Import the file as a tracker of work items.
+        #[arg(long)]
+        tracker: bool,
+        /// The item unit in that file: bullets (top-level, after the first `##`) | checkboxes | sections | rows.
+        #[arg(long, default_value = "bullets")]
+        unit: String,
+        /// Heading level for `--unit sections`.
+        #[arg(long, default_value_t = 3)]
+        level: usize,
+    },
     /// What is open: findings and questions, keyed by the statement they concern, oldest first.
     Open {
         /// Only items about this statement (kind:slug).

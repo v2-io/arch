@@ -67,6 +67,25 @@ pub fn run(cli: Cli) -> Result<i32> {
             let actor = actor(&actor_args, "decider")?;
             answer(&store, &question, &outcome, text.as_deref(), reopen_if.as_deref(), superseded_by.as_deref(), actor, dry)
         }
+        Cmd::Note { text, concerns, owner, why, slug } => {
+            let actor = actor(&actor_args, "author")?;
+            note(&store, &text, &concerns, &owner, why.as_deref(), slug.as_deref(), actor, dry)
+        }
+        Cmd::Close { item, outcome, by_commit, why } => {
+            let actor = actor(&actor_args, "integrator")?;
+            close_item(&store, &item, &outcome, by_commit.as_deref(), why.as_deref(), actor, dry)
+        }
+        Cmd::Recheck { item, outcome, why, owner } => {
+            let actor = actor(&actor_args, "rechecker")?;
+            recheck(&store, &item, &outcome, &why, owner.as_deref(), actor, dry)
+        }
+        Cmd::Bring { path, tracker, unit, level } => {
+            if !tracker {
+                bail!("only `--tracker` import is built; `vsect bring <path> --tracker --unit bullets|checkboxes|sections|rows`");
+            }
+            let actor = actor(&actor_args, "importer")?;
+            bring_tracker(&store, &path, &unit, level, actor, dry)
+        }
         Cmd::Open { target } => open(&store, target.as_deref(), json),
         Cmd::Findings { dispose, r#as, why, answered, by_revision } => match (dispose, answered) {
             (Some(item), _) => {
@@ -347,6 +366,16 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
     if !other_q.is_empty() {
         any = true;
         println!("  {:>4} questions open                   oldest {:<5} → vsect open", other_q.len(), oldest(other_q.iter().map(|q| q.asked.as_str()).collect()));
+    }
+    let items_real: Vec<&state::Item> = st.items_open.iter().filter(|i| !i.unchecked).collect();
+    let items_unchecked = st.items_open.iter().filter(|i| i.unchecked).count();
+    if !items_real.is_empty() {
+        any = true;
+        println!("  {:>4} items open (work owed, with owners) oldest {:<5} → vsect open", items_real.len(), oldest(items_real.iter().map(|i| i.opened.as_str()).collect()));
+    }
+    if items_unchecked > 0 {
+        any = true;
+        println!("  {:>4} imported items not yet re-checked (tracker labels, not standing) → vsect open", items_unchecked);
     }
     let pending = st.pending_confirms();
     if !pending.is_empty() {
@@ -962,6 +991,21 @@ fn open(store: &Store, target: Option<&str>, json: bool) -> Result<i32> {
             }
         }
     }
+    let mut unchecked: Vec<&state::Item> = vec![];
+    for it in &st.items_open {
+        if it.unchecked {
+            if filter.is_none() || it.concerns.iter().any(|c| matches(c)) {
+                unchecked.push(it);
+            }
+            continue;
+        }
+        let targets: Vec<String> = if it.concerns.is_empty() { vec!["(the store)".into()] } else { it.concerns.clone() };
+        for t in targets {
+            if matches(&t) {
+                by_target.entry(t).or_default().push((it.opened.clone(), "item".into(), it.id.clone(), if it.owner.is_empty() { "anyone".into() } else { it.owner.clone() }, it.title.clone()));
+            }
+        }
+    }
     // lapsed checks and unrecorded fates are open work too
     for (id, ev, v) in st.lapsed() {
         if matches(&id) {
@@ -983,21 +1027,43 @@ fn open(store: &Store, target: Option<&str>, json: bool) -> Result<i32> {
     }
     if json {
         let out: Vec<_> = by_target.iter().flat_map(|(t, items)| items.iter().map(move |(at, kind, item, resolver, text)| json!({"target": t, "since": at, "kind": kind, "item": item, "resolver": resolver, "text": text}))).collect();
-        println!("{}", serde_json::to_string_pretty(&json!({"schema": "vsect-open/0", "items": out}))?);
+        let imp: Vec<_> = unchecked.iter().map(|it| json!({"item": it.id, "source": it.source, "section": it.section, "concerns": it.concerns, "title": it.title})).collect();
+        println!("{}", serde_json::to_string_pretty(&json!({"schema": "vsect-open/0", "items": out, "imported_unchecked": imp}))?);
         return Ok(EXIT_OK);
     }
-    if by_target.is_empty() {
+    if by_target.is_empty() && unchecked.is_empty() {
         println!("Nothing open{}.", filter.map(|f| format!(" about {f}")).unwrap_or_default());
         return Ok(EXIT_OK);
     }
     let total: usize = by_target.values().map(|v| v.len()).sum();
-    println!("{total} open item(s), by what they concern, oldest first (resolver in brackets):");
-    for (t, items) in &by_target {
-        println!("\n{t}");
-        for (at, kind, item, resolver, text) in items {
-            println!("  {:<4} {:<12} {item}  [{resolver}]", st.age_days(at), kind);
-            if !text.is_empty() {
-                println!("       {text}");
+    if total > 0 {
+        println!("{total} open item(s), by what they concern, oldest first (resolver in brackets):");
+        for (t, items) in &by_target {
+            println!("\n{t}");
+            for (at, kind, item, resolver, text) in items {
+                println!("  {:<4} {:<12} {item}  [{resolver}]", st.age_days(at), kind);
+                if !text.is_empty() {
+                    println!("       {text}");
+                }
+            }
+        }
+    }
+    if !unchecked.is_empty() {
+        println!("\n{} imported, not yet re-checked — the tracker's label, not the store's; a mind clears each against HEAD (vsect recheck <item> --outcome holds|stale|landed|not-an-item --why …):", unchecked.len());
+        let mut by_source: BTreeMap<String, Vec<&state::Item>> = BTreeMap::new();
+        for it in &unchecked {
+            let file = it.source.split(':').next().unwrap_or("").to_string();
+            by_source.entry(file).or_default().push(it);
+        }
+        for (file, its) in &by_source {
+            println!("\n  {file}  ({} items)", its.len());
+            let show = if filter.is_some() { its.len() } else { its.len().min(8) };
+            for it in its.iter().take(show) {
+                let line = it.source.split(':').nth(1).unwrap_or("?");
+                println!("    L{:<5} {}  {}{}", line, it.id, it.title.chars().take(90).collect::<String>(), if it.concerns.is_empty() { String::new() } else { format!("  ({})", it.concerns.join(", ")) });
+            }
+            if its.len() > show {
+                println!("    … {} more (vsect open --format json lists all)", its.len() - show);
             }
         }
     }
@@ -1103,6 +1169,358 @@ fn refute(store: &Store, target: &str, ground: &str, by_item: Option<&str>, at: 
     }
     if st.record(&rid).is_some() && st.rs(&rid).map(|s| s.superseded_by.is_none()).unwrap_or(true) {
         println!("  What replaces it? Revise the record and run `vsect revise`, or record its fate when it is deleted.");
+    }
+    Ok(EXIT_OK)
+}
+
+// ---------- items: note / close / recheck / bring --tracker ----------
+
+fn write_item_record(store: &Store, dir: &std::path::Path, slug: &str, fm_lines: &[String], title: &str, body: &str, actor: &Actor, act: &str, extra: Vec<(&str, Value)>, dry: bool) -> Result<String> {
+    let path = dir.join(format!("{slug}.md"));
+    if path.exists() {
+        bail!("item:{slug} exists already");
+    }
+    let mut c = String::from("---\nkind: item\n");
+    for l in fm_lines {
+        c.push_str(l);
+        c.push('\n');
+    }
+    c.push_str("---\n\n");
+    c.push_str(&format!("# {}\n", title.trim()));
+    if !body.trim().is_empty() {
+        c.push('\n');
+        c.push_str(body.trim_end());
+        c.push('\n');
+    }
+    if dry {
+        println!("would write {}:\n{c}", path.display());
+        return Ok(format!("item:{slug}"));
+    }
+    std::fs::create_dir_all(dir)?;
+    std::fs::write(&path, &c)?;
+    let rel = path.strip_prefix(&store.root).unwrap().to_string_lossy().to_string();
+    let r = record::load_record(store, "item", &rel, &c)?;
+    let iid = r.id.record_id();
+    event::write_object(store, "item", "", &r.text, dry)?;
+    let mut mint = Event::new(store, "mint", Some(&iid), actor.clone())
+        .with("own-version", yaml_str(&r.own_version))
+        .with("record", yaml_str(&rel))
+        .with("declarations", declarations(&r));
+    event::write_event(store, &mut mint, dry)?;
+    let mut ev = Event::new(store, act, Some(&iid), actor.clone());
+    for (k, v) in extra {
+        ev = ev.with(k, v);
+    }
+    event::write_event(store, &mut ev, dry)?;
+    Ok(iid)
+}
+
+fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option<&str>, slug: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
+    for c in concerns {
+        Id::parse(store, c)?;
+    }
+    let slug = slug.map(|s| s.to_string()).unwrap_or_else(|| slugify(text));
+    if !record::slug_re().is_match(&slug) {
+        bail!("slug `{slug}` must be lowercase kebab-case");
+    }
+    let mut fm = vec![format!("owner: {}", yaml_quote(owner)), format!("opened: {}", event::now()), format!("opened-by: {}", yaml_quote(&actor.name))];
+    if !concerns.is_empty() {
+        fm.push(format!("concerns: [{}]", concerns.join(", ")));
+    }
+    let iid = write_item_record(store, &store.builtin_dir("item"), &slug, &fm, text, why.unwrap_or(""), &actor, "note", vec![("owner", yaml_str(owner)), ("concerns", yaml_list(concerns))], dry)?;
+    println!("Recorded {iid}, owner {owner}.");
+    Ok(EXIT_OK)
+}
+
+fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>, why: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
+    let iid = Id::parse(store, item)?.record_id();
+    let st = State::compute(store);
+    let Some(it) = st.items_open.iter().find(|i| i.id == iid) else {
+        if st.scan.records.contains_key(&iid) {
+            bail!("{iid} is already closed (vsect why {iid})");
+        }
+        bail!("{iid} is not in the store");
+    };
+    if it.unchecked {
+        bail!("{iid} is imported and not yet re-checked; `vsect recheck {iid} --outcome landed|stale|not-an-item --why …` is how an unchecked item closes");
+    }
+    let mut ev = Event::new(store, "close", Some(&iid), actor).with("outcome", yaml_str(outcome));
+    match outcome {
+        "done" => {
+            let Some(c) = by_commit else { bail!("--by-commit: the commit that did the work") };
+            if store.root.join(".git").exists() && store::git(&store.root, &["cat-file", "-e", &format!("{c}^{{commit}}")]).is_err() {
+                bail!("{c} is not a commit in this repository");
+            }
+            ev = ev.with("by-commit", yaml_str(c));
+        }
+        "moot" | "superseded" => {
+            let Some(w) = why else { bail!("--why: say why it is {outcome}") };
+            ev = ev.with("reason", yaml_str(w));
+        }
+        o => bail!("outcome `{o}` is not done, moot or superseded"),
+    }
+    if let Some(w) = why {
+        ev = ev.with("reason", yaml_str(w));
+    }
+    if let Some(a) = st.rs(&iid).and_then(|s| s.atom.clone()) {
+        ev.atom = Some(a);
+    }
+    event::write_event(store, &mut ev, dry)?;
+    println!("{iid} → {outcome}{}", if dry { " (dry run)" } else { "" });
+    Ok(EXIT_OK)
+}
+
+fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
+    let iid = Id::parse(store, item)?.record_id();
+    let st = State::compute(store);
+    let Some(it) = st.items_open.iter().find(|i| i.id == iid) else { bail!("{iid} is not an open item") };
+    if !it.unchecked {
+        bail!("{iid} has already been re-checked, or was opened directly; close it with `vsect close`");
+    }
+    if !["holds", "stale", "landed", "not-an-item"].contains(&outcome) {
+        bail!("outcome `{outcome}` is not holds, stale, landed or not-an-item");
+    }
+    let r = st.record(&iid).unwrap();
+    let mut ev = Event::new(store, "recheck", Some(&iid), actor.clone())
+        .with("outcome", yaml_str(outcome))
+        .with("criterion", yaml_str(why))
+        .with("at-commit", yaml_str(&store.moment()));
+    if let Some(o) = owner {
+        ev = ev.with("owner", yaml_str(o));
+    }
+    if let Some(a) = st.rs(&iid).and_then(|s| s.atom.clone()) {
+        ev.atom = Some(a);
+    }
+    event::write_event(store, &mut ev, dry)?;
+    if outcome == "holds" {
+        // the item leaves items/imported/ for items/, and its frontmatter records the re-check
+        let from = store.root.join(&r.rel);
+        let to = store.builtin_dir("item").join(format!("{}.md", r.id.slug));
+        let (fm, body) = record::split_frontmatter(&std::fs::read_to_string(&from)?);
+        let mut fm = fm.unwrap_or_default();
+        fm.push_str(&format!("\nrechecked: {} by {}", event::now(), yaml_quote(&actor.name)));
+        if let Some(o) = owner {
+            fm = fm.lines().filter(|l| !l.starts_with("owner:")).collect::<Vec<_>>().join("\n");
+            fm.push_str(&format!("\nowner: {}", yaml_quote(o)));
+        }
+        let content = format!("---\n{}\n---\n{}", fm.trim(), body);
+        if !dry {
+            std::fs::write(&to, content)?;
+            if from != to {
+                std::fs::remove_file(&from)?;
+            }
+        }
+        println!("{iid} → holds: it is a real open item now, owner {}; moved to {}", owner.unwrap_or(&it.owner), to.strip_prefix(&store.root).unwrap_or(&to).display());
+        println!("  (the file now belongs to md-press like any live record; the hook will say if it needs reformatting)");
+    } else {
+        println!("{iid} → {outcome}: closed. {why}");
+    }
+    Ok(EXIT_OK)
+}
+
+struct TrackerUnit {
+    line: usize,
+    title: String,
+    block: String,
+    section: String,
+}
+
+fn heading_level(line: &str) -> Option<usize> {
+    let t = line.trim_start();
+    let n = t.chars().take_while(|&c| c == '#').count();
+    if n > 0 && t.chars().nth(n) == Some(' ') { Some(n) } else { None }
+}
+
+fn clean_title(s: &str) -> String {
+    let mut t = s.trim().to_string();
+    for p in ["- [ ] ", "- [x] ", "* [ ] ", "- ", "* ", "+ "] {
+        if let Some(r) = t.strip_prefix(p) {
+            t = r.to_string();
+            break;
+        }
+    }
+    t = t.replace("**", "");
+    let t: String = t.chars().take(160).collect();
+    t.trim().trim_end_matches(':').to_string()
+}
+
+fn tracker_units(text: &str, unit: &str, level: usize) -> Result<Vec<TrackerUnit>> {
+    let lines: Vec<&str> = text.lines().collect();
+    let mut units = vec![];
+    let mut section: Vec<(usize, String)> = vec![]; // heading chain
+    let section_str = |section: &Vec<(usize, String)>| section.iter().map(|(_, t)| t.clone()).collect::<Vec<_>>().join(" › ");
+    let mut seen_h2 = false;
+    let mut i = 0;
+    while i < lines.len() {
+        let line = lines[i];
+        if let Some(h) = heading_level(line) {
+            let title = line.trim_start().trim_start_matches('#').trim().to_string();
+            section.retain(|(l, _)| *l < h);
+            section.push((h, title.clone()));
+            if h == 2 {
+                seen_h2 = true;
+            }
+            if unit == "sections" && h == level {
+                let start = i;
+                let mut j = i + 1;
+                while j < lines.len() && !heading_level(lines[j]).map(|hl| hl <= level).unwrap_or(false) {
+                    j += 1;
+                }
+                let parent = section.iter().filter(|(l, _)| *l < h).map(|(_, t)| t.clone()).collect::<Vec<_>>().join(" › ");
+                units.push(TrackerUnit { line: start + 1, title: clean_title(&title), block: lines[start + 1..j].join("\n"), section: parent });
+                i = j;
+                continue;
+            }
+            i += 1;
+            continue;
+        }
+        let is_bullet = line.starts_with("- ") || line.starts_with("* ") || line.starts_with("+ ");
+        let is_box = line.trim_start().starts_with("- [ ]") || line.trim_start().starts_with("* [ ]");
+        let take = match unit {
+            "bullets" => is_bullet && seen_h2,
+            "checkboxes" => is_box,
+            "sections" => false, // handled at the heading
+            "rows" => line.starts_with('|') && !line.starts_with("|-") && !line.trim_start_matches('|').trim().starts_with("--") && !line.contains("---|") && i > 0 && lines[i - 1].starts_with('|') && !(i >= 1 && lines[i - 1].contains("---|") && i == 1),
+            _ => bail!("unit `{unit}` is not bullets, checkboxes, sections or rows"),
+        };
+        if !take {
+            i += 1;
+            continue;
+        }
+        if unit == "rows" {
+            // skip header and separator rows: a header is the first row of a table
+            let prev_is_sep = lines[i - 1].contains("---");
+            let first_of_table = i == 0 || !lines[i - 1].starts_with('|');
+            if first_of_table || line.contains("---|") {
+                i += 1;
+                continue;
+            }
+            let _ = prev_is_sep;
+            let cells: Vec<String> = line.trim().trim_matches('|').split('|').map(|c| c.trim().to_string()).collect();
+            let date_re = Regex::new(r"^\d{4}-\d{2}-\d{2}$").unwrap();
+            let title = cells.iter().find(|c| !c.is_empty() && !date_re.is_match(c)).cloned().unwrap_or_default();
+            units.push(TrackerUnit { line: i + 1, title: clean_title(&title), block: line.to_string(), section: section_str(&section) });
+            i += 1;
+            continue;
+        }
+        // a bullet or checkbox with its indented continuation
+        let start = i;
+        let indent = line.len() - line.trim_start().len();
+        let mut j = i + 1;
+        while j < lines.len() {
+            let l = lines[j];
+            if l.trim().is_empty() {
+                // a blank line ends the unit unless the next non-blank line is more indented
+                let next = lines.get(j + 1).copied().unwrap_or("");
+                if next.len() - next.trim_start().len() > indent && !next.trim().is_empty() {
+                    j += 1;
+                    continue;
+                }
+                break;
+            }
+            if l.len() - l.trim_start().len() <= indent {
+                break;
+            }
+            j += 1;
+        }
+        units.push(TrackerUnit { line: start + 1, title: clean_title(line), block: lines[start..j].join("\n"), section: section_str(&section) });
+        i = j;
+    }
+    Ok(units)
+}
+
+/// Rebase relative markdown links in text copied from `from_dir` into `to_dir` (both relative to
+/// the store root), so the copy's links still resolve. Absolute, anchor-only and URL links are left.
+fn rebase_links(text: &str, from_dir: &str, to_dir: &str) -> String {
+    let re = Regex::new(r"\]\(([^)\s]+)\)").unwrap();
+    let up = "../".repeat(to_dir.split('/').filter(|s| !s.is_empty()).count());
+    re.replace_all(text, |c: &regex::Captures| {
+        let target = &c[1];
+        if target.starts_with('#') || target.starts_with('/') || target.contains("://") || target.starts_with("mailto:") {
+            return format!("]({target})");
+        }
+        let (path, anchor) = match target.split_once('#') {
+            Some((p, a)) => (p.to_string(), format!("#{a}")),
+            None => (target.to_string(), String::new()),
+        };
+        // normalize from_dir/path
+        let mut parts: Vec<&str> = vec![];
+        for seg in from_dir.split('/').chain(path.split('/')) {
+            match seg {
+                "" | "." => {}
+                ".." => {
+                    parts.pop();
+                }
+                s => parts.push(s),
+            }
+        }
+        format!("]({up}{}{anchor})", parts.join("/"))
+    })
+    .to_string()
+}
+
+fn bring_tracker(store: &Store, path: &str, unit: &str, level: usize, actor: Actor, dry: bool) -> Result<i32> {
+    let abs = if std::path::Path::new(path).is_absolute() { std::path::PathBuf::from(path) } else { std::env::current_dir()?.join(path) };
+    let rel = abs.canonicalize().unwrap_or(abs.clone()).strip_prefix(&store.root).map(|p| p.to_string_lossy().to_string()).map_err(|_| anyhow!("{path} is outside the store"))?;
+    let text = std::fs::read_to_string(&abs).with_context(|| format!("reading {path}"))?;
+    let units = tracker_units(&text, unit, level)?;
+    if units.is_empty() {
+        println!("No {unit} found in {rel}; nothing imported.");
+        return Ok(EXIT_OK);
+    }
+    let st = State::compute(store);
+    let stem = rel.trim_end_matches(".md").replace('/', "-").to_lowercase();
+    let dir = store.builtin_dir("item").join("imported");
+    let slug_tok = Regex::new(r"(?:#|seg:|segment:)([a-z][a-z0-9]*(?:-[a-z0-9]+)+)").unwrap();
+    let mut n_new = 0;
+    let mut n_skip = 0;
+    let mut lines_out = vec![];
+    for u in &units {
+        if u.title.is_empty() {
+            continue;
+        }
+        let digest = norm::sha256_hex(format!("{rel}\n{}", u.block).as_bytes());
+        let slug = format!("{}-{}-{}", slugify(&stem), slugify(&u.title).chars().take(40).collect::<String>().trim_end_matches('-'), &digest[..4]);
+        let slug = slug.replace("--", "-");
+        if st.scan.records.contains_key(&format!("item:{slug}")) {
+            n_skip += 1;
+            continue;
+        }
+        let mut concerns: Vec<String> = vec![];
+        for c in slug_tok.captures_iter(&u.block) {
+            let id = format!("segment:{}", &c[1]);
+            if st.scan.records.contains_key(&id) && !concerns.contains(&id) {
+                concerns.push(id);
+            }
+        }
+        let mut fm = vec![
+            "provenance: imported".to_string(),
+            format!("source: {}", yaml_quote(&format!("{rel}:{}", u.line))),
+            format!("section: {}", yaml_quote(&u.section)),
+            "owner: \"\"".to_string(),
+            format!("opened: {}", event::now()),
+            format!("opened-by: {}", yaml_quote(&actor.name)),
+        ];
+        if !concerns.is_empty() {
+            fm.push(format!("concerns: [{}]", concerns.join(", ")));
+        }
+        let tracker_dir = std::path::Path::new(&rel).parent().map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
+        let to_dir = dir.strip_prefix(&store.root).map(|p| p.to_string_lossy().to_string()).unwrap_or_else(|_| "items/imported".into());
+        let title = rebase_links(&u.title, &tracker_dir, &to_dir);
+        let block = rebase_links(&u.block, &tracker_dir, &to_dir);
+        let body = format!("Imported verbatim (relative links rebased) from `{rel}` line {}, section *{}*. Not yet re-checked against HEAD: `vsect recheck item:{slug} --outcome holds|stale|landed|not-an-item --why …`.\n\n{}", u.line, u.section.replace('*', ""), block);
+        write_item_record(store, &dir, &slug, &fm, &title, &body, &actor, "import", vec![("source", yaml_str(&format!("{rel}:{}", u.line))), ("unit", yaml_str(unit)), ("concerns", yaml_list(&concerns))], dry)?;
+        n_new += 1;
+        if n_new <= 6 || dry {
+            lines_out.push(format!("  item:{slug}  ← {rel}:{}{}", u.line, if concerns.is_empty() { String::new() } else { format!("  ({})", concerns.join(", ")) }));
+        }
+    }
+    println!("{} {rel} as {unit}: {n_new} item(s) imported, unchecked{}", if dry { "Would bring" } else { "Brought" }, if n_skip > 0 { format!(", {n_skip} already present") } else { String::new() });
+    for l in lines_out {
+        println!("{l}");
+    }
+    if n_new > 6 && !dry {
+        println!("  … ({} more; `vsect open` lists them under *imported, not yet re-checked*)", n_new - 6);
     }
     Ok(EXIT_OK)
 }
@@ -1571,6 +1989,9 @@ Read      vsect read <kind:slug> [--at v] [--bare]   the record with marks: ✓ 
 Work      vsect revise [<kind:slug>]                 take in edits made outside vsect (mint / revise / fate of a deletion)
           vsect take <review.md>                     take in a review: checks become evidence, findings stay open
           vsect take --check <id> --criterion … --outcome …   record one check inline
+          vsect note \"…\" --concerns id --owner who  record work owed (an item); vsect close item:x --outcome done --by-commit sha
+          vsect bring <tracker.md> --tracker --unit bullets|checkboxes|sections|rows   import a tracker's items, unchecked
+          vsect recheck item:x --outcome holds|stale|landed|not-an-item --why \"…\"   clear an imported item against HEAD
           vsect ask \"…\" [--concerns id] [--closer …]  record an open question
           vsect answer <question:slug> --outcome …   close one
           vsect confirm [<kind:slug>]                the second mind: confirm a rewording still says what was checked
@@ -1639,7 +2060,23 @@ statements whose file carries no mark. Exit 1 when anything counted is present."
 
 Records that a statement was shown false, on evidence, and lists what rests on it. No mark is written into
 any file in this version; `vsect check` reports the refuted statement as unmarked until that exists.".into(),
-        "confirm" => "vsect confirm                       what awaits a second mind: each record, the version its checks read → now
+        "note" | "close" | "recheck" | "bring" | "items" => "Items: work owed, with an owner, closed by the commit that did it.
+
+vsect note \"…\" [--concerns kind:slug]… [--owner who] [--why \"…\"]     opens items/<slug>.md
+vsect close item:<slug> --outcome done --by-commit <sha>   |  --outcome moot|superseded --why \"…\"
+vsect bring <tracker.md> --tracker --unit bullets|checkboxes|sections|rows [--level 3]
+vsect recheck item:<slug> --outcome holds|stale|landed|not-an-item --why \"…\" [--owner who]
+
+`bring --tracker` imports a tracker's units as items under items/imported/, each with its source
+file and line, its section, and the segments it names. An imported item carries the tracker's
+label, not the store's: it is listed apart under \"imported, not yet re-checked\", cannot be closed
+with `close`, and clears only by `recheck`, which records what was checked against HEAD. `holds`
+makes it a real open item (the file moves to items/ and gains an owner); stale, landed and
+not-an-item close it with the reason. Units: bullets = top-level bullets after the file's first
+`##` (preambles are navigation); checkboxes = `- [ ]` lines anywhere; sections = headings of
+--level with their bodies; rows = table body rows (title = first non-date cell). Importing a file
+twice adds nothing.".into(),
+        "confirm" => "vsect confirm                      what awaits a second mind: each record, the version its checks read → now
 vsect confirm <kind:slug> [--from v] [--to v] [--judgment equivalent|for-checks|not-equivalent] [--criterion \"…\"]
 
 A check binds to the exact versions it read. When a statement in its basis is reworded, the check

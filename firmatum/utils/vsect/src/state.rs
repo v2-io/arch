@@ -56,6 +56,22 @@ pub struct Question {
     pub blocks: Vec<String>,
 }
 
+/// Work owed, with an owner, closed by the commit that did it. An imported item carries its
+/// tracker line and no authority until a mind re-checks it against HEAD.
+#[derive(Debug, Clone)]
+pub struct Item {
+    pub id: String,
+    pub title: String,
+    pub concerns: Vec<String>,
+    pub owner: String,
+    pub opened: String,
+    pub by: String,
+    pub source: String,
+    pub section: String,
+    /// true until a `recheck` with outcome `holds` (or for items opened with `note`)
+    pub unchecked: bool,
+}
+
 #[derive(Debug, Default, Clone)]
 pub struct RecordState {
     pub exists: bool,
@@ -108,6 +124,8 @@ pub struct State {
     pub findings_closed: usize,
     pub questions_open: Vec<Question>,
     pub questions_closed: usize,
+    pub items_open: Vec<Item>,
+    pub items_closed: usize,
     /// Reverse of every declared edge: target id -> (edge, source id)
     pub reverse: BTreeMap<String, Vec<(String, String)>>,
     /// Declared targets that resolve to no record: (source id, edge, target)
@@ -521,6 +539,57 @@ impl State {
             });
         }
         questions_open.sort_by(|a, b| a.asked.cmp(&b.asked));
+        // items: closed by a `close` event, or by a `recheck` whose outcome was not `holds`
+        let mut item_closed: BTreeSet<String> = BTreeSet::new();
+        let mut item_held: BTreeSet<String> = BTreeSet::new();
+        for ev in &trail.events {
+            let Some(about) = &ev.about else { continue };
+            match ev.act.as_str() {
+                "close" => {
+                    item_closed.insert(about.clone());
+                }
+                "recheck" => {
+                    if ev.str("outcome") == Some("holds") {
+                        item_held.insert(about.clone());
+                    } else {
+                        item_closed.insert(about.clone());
+                    }
+                }
+                _ => {}
+            }
+        }
+        let mut items_open = vec![];
+        let mut items_closed = 0;
+        for (id, r) in &scan.records {
+            if r.id.kind != "item" {
+                continue;
+            }
+            if item_closed.contains(id) {
+                items_closed += 1;
+                continue;
+            }
+            let fm = &r.frontmatter;
+            let s = |k: &str| fm.get(k).and_then(|v| v.as_str()).unwrap_or("").to_string();
+            let concerns = match fm.get("concerns") {
+                Some(Value::Sequence(v)) => v.iter().filter_map(|x| x.as_str().map(|s| s.to_string())).collect(),
+                Some(Value::String(s)) => vec![s.clone()],
+                _ => vec![],
+            };
+            let title = r.body.lines().find(|l| l.starts_with("# ")).map(|l| l[2..].trim().to_string()).unwrap_or_else(|| r.id.slug.clone());
+            let imported = s("provenance") == "imported";
+            items_open.push(Item {
+                id: id.clone(),
+                title,
+                concerns,
+                owner: s("owner"),
+                opened: s("opened"),
+                by: s("opened-by"),
+                source: s("source"),
+                section: s("section"),
+                unchecked: imported && !item_held.contains(id),
+            });
+        }
+        items_open.sort_by(|a, b| a.opened.cmp(&b.opened).then(a.id.cmp(&b.id)));
         State {
             scan,
             trail,
@@ -529,6 +598,8 @@ impl State {
             findings_closed,
             questions_open,
             questions_closed,
+            items_open,
+            items_closed,
             reverse,
             dangling,
             planned,

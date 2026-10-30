@@ -227,7 +227,12 @@ pub fn scan(store: &Store) -> Scan {
         if !store.kinds.kinds.contains_key(*b) {
             let dir = store.builtin_dir(b);
             if let Ok(rel) = dir.strip_prefix(&store.root).map(|p| p.to_string_lossy().to_string()) {
-                kinds.push((b.to_string(), vec![format!("{rel}/*.md")], vec![]));
+                let mut globs = vec![format!("{rel}/*.md")];
+                if *b == "item" {
+                    // imported items wait in their own directory until a mind re-checks them
+                    globs.push(format!("{rel}/imported/*.md"));
+                }
+                kinds.push((b.to_string(), globs, vec![]));
             }
         }
     }

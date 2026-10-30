@@ -137,7 +137,7 @@ impl Kinds {
 }
 
 /// Kinds vsect's own verbs write. They need no declaration.
-pub const BUILTIN_KINDS: &[&str] = &["question", "decision", "purpose", "review"];
+pub const BUILTIN_KINDS: &[&str] = &["question", "decision", "purpose", "review", "item"];
 
 pub struct Store {
     pub root: PathBuf,
@@ -194,6 +194,7 @@ impl Store {
         match kind {
             "review" => self.root.join("reviews"),
             "question" => self.root.join("questions"),
+            "item" => self.root.join("items"),
             "decision" => self.root.join("decisions"),
             "purpose" => self.root.join("purposes"),
             _ => self.root.join(kind),
