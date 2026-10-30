@@ -137,9 +137,12 @@ pub fn release(store: &Store, record: &str, agent: &str, force: Option<&str>) ->
         if mine || c.expired() || force.is_some() {
             let p = claim_path(store, record, &c.agent);
             let _ = std::fs::remove_file(&p);
-            // drop empty dirs
+            // drop the record's dir and the kind's dir when they are empty, so `ls` tells the truth
             if let Some(d) = p.parent() {
                 let _ = std::fs::remove_dir(d);
+                if let Some(k) = d.parent() {
+                    let _ = std::fs::remove_dir(k);
+                }
             }
             released.push(c);
         }
