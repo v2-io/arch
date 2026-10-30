@@ -102,11 +102,11 @@ pub fn run(cli: Cli) -> Result<i32> {
             }
             (None, None) => open(&store, None, json),
         },
-        Cmd::Confirm { record, from, to, judgment, criterion } => match record {
+        Cmd::Confirm { record, from, to, judgment, criterion, checks } => match record {
             None => confirm_list(&store),
             Some(r) => {
                 let actor = actor(&actor_args, "second-mind")?;
-                confirm(&store, &r, from.as_deref(), to.as_deref(), judgment.as_deref(), criterion.as_deref(), actor, &answers, dry)
+                confirm(&store, &r, from.as_deref(), to.as_deref(), judgment.as_deref(), criterion.as_deref(), &checks, actor, &answers, dry)
             }
         },
         Cmd::Refute { target, ground, by_item, at } => {
@@ -393,7 +393,13 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
     if !pending.is_empty() {
         any = true;
         println!("  {:>4} rewordings awaiting a second mind  ({} checks lapsed) → vsect confirm", pending.len(), stale.len());
-    } else if !stale.is_empty() {
+    }
+    let ended = st.ended_checks();
+    if !ended.is_empty() {
+        any = true;
+        println!("  {:>4} checks ended by a not-equivalent judgment (redo them) → vsect check --strict", ended.len());
+    }
+    if pending.is_empty() && ended.is_empty() && !stale.is_empty() {
         any = true;
         println!("  {:>4} checks lapsed, not curable by confirmation  → vsect check --strict", stale.len());
     }
@@ -1225,6 +1231,10 @@ fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&s
         if !st.scan.records.contains_key(&oid) {
             bail!("{oid} is not in the store");
         }
+        // no cycles: the survivor must not itself be closed as a duplicate (of anything)
+        if let Some(e) = st.trail.events.iter().find(|e| e.act == "recheck" && e.str("outcome") == Some("duplicate") && e.about.as_deref() == Some(oid.as_str())) {
+            bail!("{oid} is itself closed as a duplicate of {}; name the survivor, not a duplicate", e.str("of").unwrap_or("?"));
+        }
         ev = ev.with("of", yaml_str(&oid));
     } else if of.is_some() {
         bail!("--of belongs to `duplicate` only");
@@ -1577,13 +1587,15 @@ fn confirm_list(store: &Store) -> Result<i32> {
         let targets: BTreeSet<&str> = p.checks.iter().map(|(_, t)| t.as_str()).collect();
         println!("\n  {}  v:{} → v:{}   revised by {}", p.record, short(&p.from), short(&p.to), if revisers.is_empty() { "(no revise event)".to_string() } else { revisers.join(", ") });
         println!("    re-binds {} check(s) on: {}", p.checks.len(), targets.into_iter().collect::<Vec<_>>().join(", "));
-        println!("    → vsect confirm {} --from {} --to {}", p.record, short(&p.from), short(&p.to));
+        let refs: Vec<String> = p.checks.iter().map(|(eid, _)| st.trail.events.iter().find(|e| &e.id == eid).and_then(|e| e.str("from")).map(|s| s.to_string()).unwrap_or_else(|| short(eid))).collect();
+        println!("    checks: {}", refs.join(" "));
+        println!("    → vsect confirm {} --from {} --to {}   [--checks <ref,…> to judge a subset]", p.record, short(&p.from), short(&p.to));
     }
     Ok(EXIT_OK)
 }
 
 #[allow(clippy::too_many_arguments)]
-fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, judgment: Option<&str>, criterion: Option<&str>, actor: Actor, answers: &BTreeMap<String, String>, dry: bool) -> Result<i32> {
+fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, judgment: Option<&str>, criterion: Option<&str>, only_checks: &[String], actor: Actor, answers: &BTreeMap<String, String>, dry: bool) -> Result<i32> {
     let rid = Id::parse(store, record)?.record_id();
     let st = State::compute(store);
     let mut pending: Vec<_> = st.pending_confirms().into_iter().filter(|p| p.record == rid).collect();
@@ -1601,7 +1613,20 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
         return Ok(EXIT_OK);
     }
     let mut wrote = 0;
-    for p in pending {
+    for mut p in pending {
+        // --checks narrows the judgment to named securing events (by review item ref or event-id prefix)
+        if !only_checks.is_empty() {
+            let named = |eid: &str| -> bool {
+                let item_ref = st.trail.events.iter().find(|e| e.id == eid).and_then(|e| e.str("from")).unwrap_or("");
+                only_checks.iter().any(|c| eid.starts_with(c.trim()) || (!item_ref.is_empty() && item_ref == c.trim()))
+            };
+            let before = p.checks.len();
+            p.checks.retain(|(eid, _)| named(eid));
+            if p.checks.is_empty() {
+                println!("{}  v:{} → v:{}: none of the {} pending check(s) match --checks {:?}; skipped", p.record, short(&p.from), short(&p.to), before, only_checks);
+                continue;
+            }
+        }
         // the second mind is not the reviser
         let revisers = st.revisers_between(&p.record, &p.from, &p.to);
         if revisers.iter().any(|r| r == &actor.name) {
@@ -1629,17 +1654,21 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
                 None => return Ok(EXIT_NOT_RUN),
             },
         };
-        let (outcome, scope): (&str, Value) = match j.as_str() {
-            "equivalent" | "yes" => ("equivalent", yaml_str("unconditional")),
-            "for-checks" | "checked" => {
-                let mut m = serde_yaml::Mapping::new();
-                m.insert(yaml_str("for"), Value::Sequence(p.checks.iter().map(|(e, _)| yaml_str(e)).collect()));
-                ("equivalent", Value::Mapping(m))
-            }
-            "not-equivalent" | "no" => ("not-equivalent", yaml_str("unconditional")),
+        let scoped_list = || {
+            let mut m = serde_yaml::Mapping::new();
+            m.insert(yaml_str("for"), Value::Sequence(p.checks.iter().map(|(e, _)| yaml_str(e)).collect()));
+            Value::Mapping(m)
+        };
+        let narrowed = !only_checks.is_empty();
+        let (outcome, scope, is_scoped): (&str, Value, bool) = match j.as_str() {
+            "equivalent" | "yes" if narrowed => ("equivalent", scoped_list(), true), // "equivalent" for named checks is a scoped confirmation
+            "equivalent" | "yes" => ("equivalent", yaml_str("unconditional"), false),
+            "for-checks" | "checked" => ("equivalent", scoped_list(), true),
+            "not-equivalent" | "no" if narrowed => ("not-equivalent", scoped_list(), true),
+            "not-equivalent" | "no" => ("not-equivalent", yaml_str("unconditional"), false),
             other => bail!("`{other}` is not a judgment: equivalent, for-checks, or not-equivalent"),
         };
-        if j == "for-checks" && criterion.is_none() {
+        if is_scoped && outcome == "equivalent" && criterion.is_none() {
             bail!("a confirmation scoped to particular checks says what it compared: give --criterion");
         }
         let mut ev = Event::new(store, "confirm-rewording", Some(&p.record), actor.clone())
@@ -1652,10 +1681,11 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
         }
         event::write_event(store, &mut ev, dry)?;
         wrote += 1;
-        match outcome {
-            "equivalent" if j == "for-checks" => println!("  → recorded: equivalent as it bears on those {} check(s); they hold again at the current text. Other checks through this version still wait.", p.checks.len()),
-            "equivalent" => println!("  → recorded: equivalent. Every check that read v:{} of {} holds again, and so does everything downstream that rests on it. Nothing downstream was written.", short(&p.from), p.record),
-            _ => println!("  → recorded: not equivalent. The change is a redefinition from here on; the checks stay with v:{} until redone.", short(&p.from)),
+        match (outcome, is_scoped) {
+            ("equivalent", true) => println!("  → recorded: equivalent as it bears on those {} check(s); they hold again at the current text. Other checks through this version still wait.", p.checks.len()),
+            ("equivalent", false) => println!("  → recorded: equivalent. Every check that read v:{} of {} holds again, and so does everything downstream that rests on it. Nothing downstream was written.", short(&p.from), p.record),
+            (_, true) => println!("  → recorded: not equivalent for those {} check(s); they are ended on this pair and must be redone. Other checks through this version still wait.", p.checks.len()),
+            (_, false) => println!("  → recorded: not equivalent. Every check that read v:{} of {} is ended on this pair and must be redone.", short(&p.from), p.record),
         }
     }
     if !dry && wrote > 0 {
@@ -2231,7 +2261,7 @@ question: `vsect ask` it before closing. Units: bullets = top-level bullets afte
 --level with their bodies; rows = table body rows (title = first non-date cell). Importing a file
 twice adds nothing.".into(),
         "confirm" => "vsect confirm                      what awaits a second mind: each record, the version its checks read → now
-vsect confirm <kind:slug> [--from v] [--to v] [--judgment equivalent|for-checks|not-equivalent] [--criterion \"…\"]
+vsect confirm <kind:slug> [--from v] [--to v] [--judgment equivalent|for-checks|not-equivalent] [--criterion \"…\"] [--checks review:x#C1,…]
 
 A check binds to the exact versions it read. When a statement in its basis is reworded, the check
 lapses until someone other than the reviser confirms the new text says what the old one said.
@@ -2240,7 +2270,9 @@ lapses until someone other than the reviser confirms the new text says what the 
                     everything downstream, with nothing written downstream (one event at the root).
   for-checks      — only as it bears on the listed checks' criteria (--criterion says what you compared);
                     other checks through this version keep waiting.
-  not-equivalent  — the change is a redefinition from here on; the checks stay with the old version.
+  not-equivalent  — the change is a redefinition for those checks; they are ended on this pair and redone.
+  --checks <refs> — judge only the named checks (review item refs or event-id prefixes); the rest stay
+                    pending, so a pair that bears on one check and not the others gets a per-check verdict.
 Refuses the reviser. Confirmations chain: a→b and b→c confirmed means a check that read a holds at c.".into(),
         "ask" => "vsect ask \"question?\" [--concerns kind:slug]… [--blocks kind:slug]… [--closer anyone|awaiting:<work>|steward-fact|steward-purpose] [--why \"…\"]
 

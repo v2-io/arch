@@ -244,8 +244,10 @@ pub struct Equivalence {
     classes: BTreeMap<String, BTreeMap<String, String>>,
     /// securing event id -> (record id, from, to) pairs confirmed for that check only
     scoped: BTreeMap<String, Vec<(String, String, String)>>,
-    /// (record id, from, to) pairs a confirmer judged not equivalent
+    /// (record id, from, to) pairs a confirmer judged not equivalent for every check
     pub refused: Vec<(String, String, String, String)>, // + confirmer
+    /// securing event id -> (record id, from, to) pairs judged not equivalent for that check only
+    refused_scoped: BTreeMap<String, Vec<(String, String, String)>>,
 }
 
 impl Equivalence {
@@ -290,22 +292,33 @@ impl Equivalence {
             }
             let (Some(rec), Some(from), Some(to)) = (ev.about.clone(), ev.str("from-version"), ev.str("to-version")) else { continue };
             let rec = rec.split('#').next().unwrap_or(&rec).to_string();
-            if ev.str("outcome") != Some("equivalent") {
-                eq.refused.push((rec, from.to_string(), to.to_string(), ev.actor.name.clone()));
-                continue;
-            }
-            match ev.get("scope") {
-                Some(Value::Mapping(m)) => {
-                    if let Some(Value::Sequence(ids)) = m.get(Value::String("for".into())) {
-                        for id in ids.iter().filter_map(|v| v.as_str()) {
-                            eq.scoped.entry(id.to_string()).or_default().push((rec.clone(), from.to_string(), to.to_string()));
-                        }
+            let scoped_ids: Option<Vec<String>> = match ev.get("scope") {
+                Some(Value::Mapping(m)) => m.get(Value::String("for".into())).and_then(|v| v.as_sequence()).map(|ids| ids.iter().filter_map(|v| v.as_str().map(|s| s.to_string())).collect()),
+                _ => None,
+            };
+            let equivalent = ev.str("outcome") == Some("equivalent");
+            match (equivalent, scoped_ids) {
+                (true, None) => eq.union(&rec, from, to),
+                (true, Some(ids)) => {
+                    for id in ids {
+                        eq.scoped.entry(id).or_default().push((rec.clone(), from.to_string(), to.to_string()));
                     }
                 }
-                _ => eq.union(&rec, from, to),
+                (false, None) => eq.refused.push((rec, from.to_string(), to.to_string(), ev.actor.name.clone())),
+                (false, Some(ids)) => {
+                    for id in ids {
+                        eq.refused_scoped.entry(id).or_default().push((rec.clone(), from.to_string(), to.to_string()));
+                    }
+                }
             }
         }
         eq
+    }
+    /// Has a confirmer ended this check's claim on this pair (not equivalent, for all or for it)?
+    pub fn refused_for(&self, event_id: &str, rec: &str, a: &str, b: &str) -> bool {
+        let pair = |r: &str, f: &str, t: &str| r == rec && ((f == a && t == b) || (f == b && t == a));
+        self.refused.iter().any(|(r, f, t, _)| pair(r, f, t))
+            || self.refused_scoped.get(event_id).map(|v| v.iter().any(|(r, f, t)| pair(r, f, t))).unwrap_or(false)
     }
 }
 
@@ -629,6 +642,9 @@ impl State {
                     if self.eq.same(&e.id, &e.version, &cur) || self.eq.scoped_covers(&ev.id, &e.id, &e.version, &cur) {
                         continue;
                     }
+                    if self.eq.refused_for(&ev.id, &e.id, &e.version, &cur) {
+                        continue; // a confirmer ended this check's claim on the pair: it is redone, not re-bound
+                    }
                     by_pair.entry((e.id.clone(), e.version.clone(), cur)).or_default().push((ev.id.clone(), id.clone()));
                 }
             }
@@ -637,6 +653,38 @@ impl State {
             .into_iter()
             .map(|((record, from, to), checks)| PendingConfirm { record, from, to, checks })
             .collect()
+    }
+
+    /// Lapsed checks that no confirmation can cure: every pair that lapsed them was judged not
+    /// equivalent (for all checks, or for this one). These are redone, not re-bound.
+    pub fn ended_checks(&self) -> Vec<(String, &Event)> {
+        let mut out = vec![];
+        for (id, rs) in &self.records {
+            if !rs.live() {
+                continue;
+            }
+            for (ev, v) in &rs.securing {
+                if ev.act == "decline" || v.holds() || matches!(ev.str("outcome"), Some("broken") | Some("narrowed")) {
+                    continue;
+                }
+                let mut any_pair = false;
+                let mut all_refused = true;
+                for e in basis_from_yaml(ev.get("basis")) {
+                    let Some(cur) = self.scan.records.get(&e.id).map(|r| r.own_version.clone()) else { continue };
+                    if cur == e.version || e.version == "unwritten" || self.eq.same(&e.id, &e.version, &cur) || self.eq.scoped_covers(&ev.id, &e.id, &e.version, &cur) {
+                        continue;
+                    }
+                    any_pair = true;
+                    if !self.eq.refused_for(&ev.id, &e.id, &e.version, &cur) {
+                        all_refused = false;
+                    }
+                }
+                if any_pair && all_refused {
+                    out.push((id.clone(), ev));
+                }
+            }
+        }
+        out
     }
 
     /// Rewordings a check rests on that no `revise` event has classified (reworded/redefined, by

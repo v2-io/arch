@@ -226,6 +226,9 @@ pub enum Cmd {
         /// What you compared, in a sentence (required for `for-checks`; welcome otherwise).
         #[arg(long)]
         criterion: Option<String>,
+        /// Judge only these checks (review:slug#C1 item refs or event-id prefixes; repeat or comma-separate). The rest stay pending.
+        #[arg(long, value_delimiter = ',')]
+        checks: Vec<String>,
     },
     /// Record that a statement was shown false, on evidence; shows what rests on it.
     Refute {
