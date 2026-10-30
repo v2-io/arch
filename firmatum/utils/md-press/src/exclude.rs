@@ -32,6 +32,14 @@ use std::path::{Path, PathBuf};
 /// exact accident this file exists to prevent.
 pub const IGNORE_FILES: &[&str] = &[".md-pressignore", ".fmt-mdignore"];
 
+/// Files the math pass must leave alone, though unwrapping is fine: prose
+/// whose glyphs are the *subject* (a glyph-perception study, a table of
+/// Unicode characters), where `σ` is a character being discussed rather than
+/// a variable. Same gitignore syntax, same at-or-above lookup, same
+/// "declared, not inferred" reasoning as `.md-pressignore`: declining every
+/// glyph one by one would bury such a file in not-math markers.
+pub const NO_MATH_FILES: &[&str] = &[".md-press-nomath"];
+
 /// Extensions whose language md-press has no model of, and whose line
 /// structure carries meaning the render-equality gate cannot see.
 ///
@@ -69,14 +77,25 @@ pub fn foreign_language(path: &Path) -> Option<&'static str> {
 
 /// Caches one compiled matcher per directory that holds an ignore file,
 /// tagged with the ignore filename actually found there (for reporting).
-#[derive(Default)]
 pub struct Excluder {
+    names: &'static [&'static str],
     matchers: HashMap<PathBuf, Option<(Gitignore, &'static str)>>,
+}
+
+impl Default for Excluder {
+    fn default() -> Self {
+        Self { names: IGNORE_FILES, matchers: HashMap::new() }
+    }
 }
 
 impl Excluder {
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// An excluder that reads other ignore-file names (e.g. `NO_MATH_FILES`).
+    pub fn with_files(names: &'static [&'static str]) -> Self {
+        Self { names, matchers: HashMap::new() }
     }
 
     /// Is `path` excluded by any `.md-pressignore` / `.fmt-mdignore` at or
@@ -98,10 +117,11 @@ impl Excluder {
     }
 
     fn matcher_for(&mut self, dir: &Path) -> Option<&(Gitignore, &'static str)> {
+        let names = self.names;
         let entry = self.matchers.entry(dir.to_path_buf()).or_insert_with(|| {
             let mut b = GitignoreBuilder::new(dir);
             let mut found: Option<&'static str> = None;
-            for name in IGNORE_FILES {
+            for name in names {
                 let f = dir.join(name);
                 if !f.is_file() {
                     continue;

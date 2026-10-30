@@ -374,8 +374,99 @@ pub fn instructions() -> String {
     std::fs::read_to_string(disk).unwrap_or_else(|_| compiled.to_string())
 }
 
-/// The default model, used when `--math` names none.
-pub const DEFAULT_MODEL: &str = "llama3.2:3b";
+/// The name of the deterministic converter (`umath`, v7) as a `--math`
+/// engine. It is the default: a pure function of the text, so a report is
+/// reproducible and a declined decision can be remembered (see
+/// `NOT_MATH_OPEN`).
+pub const CONVERTER: &str = "converter";
+
+/// The engine used when `--math` names none: the converter.
+pub const DEFAULT_MODEL: &str = CONVERTER;
+
+/// The local model `--math=MODEL` used by default before 0.3.0.
+pub const DEFAULT_LLM: &str = "llama3.2:3b";
+
+/// The opening of md-press's in-file memory of a declined math decision.
+/// The whole marker is `<!--md-press:not-math:KEY-->`, written at the end of
+/// the site (a paragraph or heading line, or a table cell), where KEY is the
+/// declined passage's original text verbatim. On later runs a proposal whose
+/// original text is a KEY on its site is not offered. The grammar is stable:
+/// other tools (vsect's normalizer) strip any `<!--md-press:…-->` comment on
+/// one line, so every md-press marker keeps that shape.
+pub const NOT_MATH_OPEN: &str = "<!--md-press:not-math:";
+
+/// The marker remembering a declined passage, or `None` when its text cannot
+/// be a KEY: an HTML comment may not contain `--`, a KEY ending in `-` would
+/// make `--->`, and the marker must stay on one line.
+pub fn not_math_marker(key: &str) -> Option<String> {
+    if key.is_empty() || key.contains("--") || key.ends_with('-') || key.contains(['\n', '\r']) {
+        return None;
+    }
+    Some(format!("{NOT_MATH_OPEN}{key}-->"))
+}
+
+/// Split a site body into (text, trailing not-math markers verbatim, their
+/// KEYs).
+pub fn split_not_math(body: &str) -> (&str, &str, Vec<String>) {
+    let mut end = body.len();
+    let mut keys = Vec::new();
+    loop {
+        let t = body[..end].trim_end_matches([' ', '\t']);
+        if !t.ends_with("-->") {
+            break;
+        }
+        let Some(p) = t.rfind(NOT_MATH_OPEN) else { break };
+        let key = &t[p + NOT_MATH_OPEN.len()..t.len() - 3];
+        if key.contains("--") || key.is_empty() {
+            break;
+        }
+        keys.push(key.to_string());
+        end = p;
+    }
+    keys.reverse();
+    (&body[..end], &body[end..], keys)
+}
+
+/// Raw `<` / `>` inside an inline `$…$` span, rewritten as `\lt` / `\gt`
+/// (and `<=` `>=` `<<` `>>` as `\leq` `\geq` `\ll` `\gg`). GitHub reads a raw
+/// angle inside math as the start of an HTML tag and corrupts the rest of the
+/// paragraph (FORMAT §Math Formatting; lint-md's old rule). Only spans that
+/// GitHub itself would read as math are touched: closed, single `$`, and with
+/// no whitespace just inside either delimiter, so `costs $5 < $10` is left
+/// alone.
+pub fn fix_inline_angles(text: &str) -> String {
+    let mut out = String::with_capacity(text.len() + 8);
+    let mut cur = 0;
+    for (a, b) in protected_ranges(text) {
+        let span = &text[a..b];
+        let inner = match span.strip_prefix('$').and_then(|r| r.strip_suffix('$')) {
+            Some(i) if !span.starts_with("$$") && !i.is_empty() => i,
+            _ => continue,
+        };
+        if !inner.contains(['<', '>'])
+            || inner.starts_with(char::is_whitespace)
+            || inner.ends_with(char::is_whitespace)
+            || inner.contains("<!--")
+        {
+            continue;
+        }
+        let mut t = inner.to_string();
+        for (from, to) in [("<=", "\\leq "), (">=", "\\geq "), ("<<", "\\ll "), (">>", "\\gg "), ("<", "\\lt "), (">", "\\gt ")] {
+            t = t.replace(from, to);
+        }
+        while t.contains("  ") {
+            t = t.replace("  ", " ");
+        }
+        let t = t.trim_end();
+        out.push_str(&text[cur..a]);
+        out.push('$');
+        out.push_str(t);
+        out.push('$');
+        cur = b;
+    }
+    out.push_str(&text[cur..]);
+    out
+}
 
 /// A local model handle with a circuit breaker. The first failure that is
 /// about the *server or model* rather than one line (ollama not running,
@@ -401,6 +492,10 @@ impl Model {
     }
     pub fn name(&self) -> &str {
         &self.name
+    }
+    /// Is this the deterministic converter rather than an LLM?
+    pub fn is_converter(&self) -> bool {
+        self.fake.is_none() && self.name == CONVERTER
     }
     /// Why the model was marked unavailable, if it was.
     pub fn down_reason(&self) -> Option<String> {
@@ -973,6 +1068,112 @@ fn edit_pairs(original: &str, candidate: &str) -> Option<Vec<((usize, usize), St
     Some(regions)
 }
 
+/// Like `edit_pairs`, but robust where a prose segment's text also occurs
+/// inside an existing math span (`$\lambda \in (0, 1)$, $\lambda^K < 1$`: the
+/// `, ` between the spans also occurs inside the first). `edit_pairs` takes
+/// the first occurrence and can misalign; here every region must hold a
+/// balanced number of unescaped `$` (a region replaces whole spans and prose,
+/// never half a span), and the search backtracks to the first alignment in
+/// which all regions do. The converter path uses this, because each region is
+/// a separately declinable decision: a misaligned pair would splice text.
+fn align_pairs(original: &str, candidate: &str) -> Option<Vec<((usize, usize), String)>> {
+    let mut prose: Vec<String> = Vec::new();
+    let mut maths: Vec<String> = Vec::new();
+    let mut cur = String::new();
+    let mut mcur = String::new();
+    let mut in_math = false;
+    let mut escaped = false;
+    for c in candidate.chars() {
+        if c == '$' && !escaped {
+            if !in_math {
+                prose.push(std::mem::take(&mut cur));
+            } else {
+                maths.push(std::mem::take(&mut mcur));
+            }
+            in_math = !in_math;
+            continue;
+        }
+        escaped = c == '\\' && !escaped;
+        if !in_math {
+            cur.push(c);
+        } else {
+            mcur.push(c);
+        }
+    }
+    if in_math {
+        return None;
+    }
+    prose.push(cur);
+    let n = prose.len() - 1;
+    if n == 0 {
+        return (original == candidate).then(Vec::new);
+    }
+    if !original.starts_with(prose[0].as_str()) {
+        return None;
+    }
+    fn balanced(r: &str) -> bool {
+        let mut k = 0;
+        let mut esc = false;
+        for c in r.chars() {
+            if c == '$' && !esc {
+                k += 1;
+            }
+            esc = c == '\\' && !esc;
+        }
+        k % 2 == 0
+    }
+    fn go(
+        original: &str,
+        prose: &[String],
+        maths: &[String],
+        k: usize,
+        p: usize,
+        out: &mut Vec<((usize, usize), String)>,
+        budget: &mut usize,
+    ) -> bool {
+        let n = prose.len() - 1;
+        if k > n {
+            return p == original.len();
+        }
+        if *budget == 0 {
+            return false;
+        }
+        *budget -= 1;
+        let seg = prose[k].as_str();
+        let Some(first) = original.get(p..).and_then(|r| r.chars().next()) else { return false };
+        let q = p + first.len_utf8(); // each replaced region is non-empty
+        let mut from = q;
+        loop {
+            let start = if k == n {
+                let Some(s) = original.len().checked_sub(seg.len()) else { return false };
+                if s < q || !original.is_char_boundary(s) || original[s..] != *seg {
+                    return false;
+                }
+                s
+            } else {
+                match original.get(from..).and_then(|r| r.find(seg)) {
+                    Some(rel) => from + rel,
+                    None => return false,
+                }
+            };
+            if balanced(&original[p..start]) {
+                out.push(((p, start), maths[k - 1].clone()));
+                if go(original, prose, maths, k + 1, start + seg.len(), out, budget) {
+                    return true;
+                }
+                out.pop();
+            }
+            if k == n {
+                return false;
+            }
+            from = start + original[start..].chars().next().map_or(1, char::len_utf8);
+        }
+    }
+    let mut out = Vec::with_capacity(n);
+    let mut budget = 10_000;
+    go(original, &prose, &maths, 1, prose[0].len(), &mut out, &mut budget).then_some(out)
+}
+
 /// The alignment gate: edits confined to replaced regions that contain no
 /// protected text (code, links, URLs — existing math may be absorbed into a
 /// new span), no prose-role weak glyph, and no markdown emphasis or code
@@ -1308,12 +1509,18 @@ pub struct SiteResult {
     pub flags: Vec<String>,
     /// the model was unavailable for at least one chunk that wanted it
     pub skipped: bool,
+    /// Where a declined piece's not-math marker goes: before `pieces[k]`.
+    /// `None` on the LLM path, whose declines are not remembered.
+    pub marker_slot: Option<usize>,
 }
 
 /// The math pass for one prose site: structure split off and reattached
 /// verbatim, body split at prose separators, each piece promoted under the
 /// gates independently.
 pub fn promote_site(model: &Model, text: &str) -> SiteResult {
+    if model.is_converter() {
+        return convert_site(text);
+    }
     let (pre, body, suf) = split_structure(text);
     let mut flags = Vec::new();
     let mut skipped = false;
@@ -1342,7 +1549,100 @@ pub fn promote_site(model: &Model, text: &str) -> SiteResult {
     }
     done.push((suf.to_string(), suf.to_string()));
     let out = done.iter().map(|(_, r)| r.as_str()).collect();
-    SiteResult { text: out, pieces: done, flags, skipped }
+    SiteResult { text: out, pieces: done, flags, skipped, marker_slot: None }
+}
+
+/// Why the converter's replacement of `region` by `$span$` is refused, if it
+/// is: the hard gates that apply to a deterministic converter. The LLM-era
+/// content gates (`operands_survive`, `math_content_consistent`,
+/// `preserves_prose`) are not used here: they were built for model failure
+/// modes and refuse about 22% of this converter's correct output (spike
+/// `proposed-integration-plan.md` §3). The alignment itself is checked by
+/// `edit_pairs` before this is called.
+fn converter_refusal(region: &str, span: &str) -> Option<String> {
+    if region.contains('`') {
+        return Some("a code delimiter would move into math".into());
+    }
+    if region.contains("**") || region.contains("__") {
+        return Some("an emphasis delimiter would move into math".into());
+    }
+    let stars = region.matches('*').count();
+    if stars > span.matches('*').count() + span.matches("\\ast").count() {
+        return Some("a `*` would be lost".into());
+    }
+    if span.contains("<!--") || span.contains("-->") {
+        return Some("a comment would move into math".into());
+    }
+    None
+}
+
+/// The math pass on one prose site with the deterministic converter.
+///
+/// The structure prefix and trailing hard break are split off and reattached
+/// verbatim, then any trailing not-math markers. The body goes to the converter
+/// whole: it makes the prose-role decision for `→ · ×` itself, so the
+/// sentence and separator splitting the LLM path needs would only cut
+/// expressions. Sites the trigger (`needs_math_pass`) does not select get
+/// only the deterministic `\(…\)` normalization. Either way, raw angles in
+/// inline math are fixed last (`fix_inline_angles`). Each changed region is
+/// one decision. A region whose original text is a KEY of one of the site's
+/// not-math markers is left as written and not offered, so a declined
+/// decision never comes back.
+pub fn convert_site(text: &str) -> SiteResult {
+    let (pre, body, suf) = split_structure(text);
+    let (core, marks, keys) = split_not_math(body);
+    let mut flags = Vec::new();
+    let candidate = if needs_math_pass(core) {
+        match umath::convert(core) {
+            Ok((c, _)) => c,
+            Err(e) => {
+                flags.push(format!("converter error ({e}); left as written"));
+                core.to_string()
+            }
+        }
+    } else {
+        normalize_paren_math(core)
+    };
+    let candidate = fix_inline_angles(&candidate);
+    let mut done: Vec<(String, String)> = vec![(pre.to_string(), pre.to_string())];
+    if candidate != core {
+        match align_pairs(core, &candidate) {
+            None => flags.push(format!("conversion is not the text with regions replaced: «{candidate}»")),
+            Some(pairs) => {
+                let mut cur = 0;
+                for ((a, b), span) in pairs {
+                    let region = &core[a..b];
+                    let new = format!("${span}$");
+                    if new == region {
+                        continue; // an existing span, unchanged
+                    }
+                    if keys.iter().any(|k| k == region) {
+                        continue; // declined before; the marker remembers it
+                    }
+                    if let Some(why) = converter_refusal(region, &span) {
+                        flags.push(format!("{why}: «{region}» → «{new}»"));
+                        continue;
+                    }
+                    if a > cur {
+                        done.push((core[cur..a].to_string(), core[cur..a].to_string()));
+                    }
+                    done.push((region.to_string(), new));
+                    cur = b;
+                }
+                if cur < core.len() {
+                    done.push((core[cur..].to_string(), core[cur..].to_string()));
+                }
+            }
+        }
+    }
+    if done.len() == 1 {
+        done.push((core.to_string(), core.to_string()));
+    }
+    let marker_slot = Some(done.len());
+    done.push((marks.to_string(), marks.to_string()));
+    done.push((suf.to_string(), suf.to_string()));
+    let out = done.iter().map(|(_, r)| r.as_str()).collect();
+    SiteResult { text: out, pieces: done, flags, skipped: false, marker_slot }
 }
 
 /// Is this (trimmed) line blank, allowing for blockquote markers?

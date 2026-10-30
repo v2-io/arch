@@ -1,6 +1,53 @@
 # md-press status
 
-*Updated 2026-10-15 (comrak from the v2-io fork); 2026-10-05 (report by default, decision codes, usage log, callout fix; hand-off section); 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
+*Updated 2026-10-30 (0.3.0: the deterministic converter is the math engine; declined math is remembered in the file; raw angles in inline math fixed); 2026-10-15 (comrak from the v2-io fork); 2026-10-05 (report by default, decision codes, usage log, callout fix; hand-off section); 2026-10-02 (math on by default; math-pass safety rework; quieter output; the two FEEDBACK files' defects). 2026-08-06: renamed from `fmt-md`, parser-sited math pass. `.udon` guard 2026-07-29. Founding-session body 2026-07-22.*
+
+## 0.3.0: the converter replaces the model, and a decided file stays decided (2026-10-30)
+
+*For whoever resumes, cold. Written by the Opus instance that built asf's commit hook (asf objective I.2), which asked for this. The 2026-10-05 hand-off below is still the record of everything before it. Where the two disagree on the math pass, this section is current.*
+
+**Why.** asf's pre-commit hook gates md-press (`bin/check-commit` in asf). It could not gate the math pass, because a declined math proposal came back on every run, so a file whose author declined one would fail every later commit. And remembering a decline needs a deterministic engine: a model can propose differently on a cache miss, which makes a remembered decline stale. Both are fixed here (FEEDBACK-2026-10-30 §1–§2).
+
+**Decision 1 of the 2026-10-05 list, taken on the merits: the deterministic converter replaces llama3.2 as the default math engine.**
+- **The evidence.** It is from `spikes/spike-unicode-math-2026-10-02/`, so the claim can be checked rather than taken on my word.
+  - Held-out set D (400 sites selected with frozen v3; v4 froze before any D label existed; the only clean held-out set). Triggered whole prose lines, n = 200, scorer v2. Every batch was labeled twice, independently, by Opus agents, not people.
+  - Converter v4: 84.5% exact-or-equivalent, 5.0% wrong+over, 187 lines changed, 5.3% of changed lines wrong.
+  - llama3.2:3b through md-press's own pieces and gates: 37.5%, 1.5%, 80 lines changed, 3.8% of changed lines wrong.
+  - v7, the version integrated here, gets 85.0% and 4.5% on D. It was built after D was seen, so that is not held out.
+  - Source: the spike's `README.md` §Results and `results.md` §Set D. Data: `data/gold/D/`, `D-items.json`, `data/llama-D-lines.jsonl`. Reproduce with `python3 py/evaluate_c.py --set D umath_v4 umath_v7`.
+  - In absolute terms the converter makes about three times as many wrong edits as llama (about 10 lines against 3 of 200) while getting more than twice as many lines right. Each wrong edit is now one declinable, remembered decision.
+- **What was integrated.** `umath/` is a path-dependency crate, copied from the spike's `rs/umath/` at arch `fefafde` (v7, unchanged: `src/`, `tests/`, `Cargo.toml` minus its release profile, `PORT.md`).
+  - The spike's copy stays the measured, frozen one, with `tools/differential.sh` and the fuzz as its regression gate. Before changing `umath/`, read `umath/PORT.md`; a changed converter needs the differential re-run before any of the numbers above are cited for it.
+  - `cargo test -p umath` runs its reference tests.
+- **How it plugs in** (`src/math.rs` `convert_site`, following the spike's integration plan):
+  - **Sites.** The same parse-sited lines and cells as before, with structure split off by `split_structure`. The whole body goes to the converter; the sentence and separator splitting was the LLM path's need, and it cut expressions.
+  - **Trigger.** Kept: `needs_math_pass`, plan step (a). Untriggered sites are 20–26% wrong+over on D, so widening waits on a fresh labeled set.
+  - **Untriggered sites.** They still get the deterministic `\(…\)` normalization.
+  - **Gates.** The alignment check (`edit_pairs`: the output is the input with regions replaced), then per region: no code delimiter, no `**`/`__`, every `*` surviving as `*` or `\ast`, no comment moved into math (`converter_refusal`). The LLM-era content gates are not applied on this path; the spike's verifier measured them refusing about 22% of this converter's output, mostly correct conversions.
+  - **Errors.** An `Err` from the converter flags the site and leaves it.
+- **The LLM path stays,** behind `--math=MODEL` (`MD_PRESS_MATH=MODEL`), unchanged, and its declines are not remembered. `DEFAULT_LLM` keeps the old default name.
+
+**The in-file memory.** Declining a converter math decision writes `<!--md-press:not-math:KEY-->` at the end of that site (paragraph line, heading, or table cell, before its padding and any hard break). KEY is the declined passage's original text verbatim.
+- On later runs, a proposal on that site whose original text is a KEY is not offered (`split_not_math`, `convert_site`). New passages on the same line still are.
+- Markdown renderers hide the comment, and asf's monograph build strips comments.
+- **The grammar is a stable contract.** vsect's normalizer (arch `7134ea6`) strips any `<!--md-press:…-->` comment on one line before hashing a statement, so markers never lapse a check. Keep every md-press marker in that shape.
+- A KEY may not contain `--`, end in `-`, or span lines. Such a decline is reported ("cannot be remembered") and offered again.
+- **One exception, accepted:** a declined blank line around `$$` is not remembered. Declining it declines FORMAT's rule; when md-press gets it wrong, the fix belongs in its `$$` detection.
+
+**Raw angles in inline math** (FEEDBACK-2026-08-22 §2's first item). `fix_inline_angles` rewrites `<=` `>=` `<<` `>>` `<` `>` inside an inline `$…$` as `\leq` `\geq` `\ll` `\gg` `\lt` `\gt`.
+- It runs on the converter path at every site, triggered or not, and each fix is a declinable, remembered decision.
+- Only spans GitHub itself reads as math are touched: closed, single `$`, no whitespace just inside a delimiter. So `costs $5 < $10` is left alone.
+- The rest of §2 (`\vert`, `\ast`, `_` in `\text{}`, `#slug` in math) is still open.
+
+**Who else this changes.** Installing 0.3.0 changes the math pass for every repo that runs md-press, and recall goes up. On 2026-10-30 only asf gated on md-press: vivarium's pre-commit runs `bin/orient-check`, limen's `fence-drift/run.sh` probes md-press's own fixtures, and no CI calls it. So no other repo's commits start failing. A repo that adds a gate should measure its math debt first, as asf did. asf's live tree had 156 files and 938 math decisions. 890 were read in context before being taken or declined. The other 48 were declared out instead: 25 in the glyph study (`.md-press-nomath`), 19 in Undermind reports and 4 in generated readme partials (`.md-pressignore`).
+
+**Alignment.** Each changed region is a separately declinable decision, so the converter path aligns regions with `align_pairs`, not `edit_pairs`. It backtracks so that every region holds whole `$…$` spans. On asf, `$\lambda \in (0, 1)$, $\lambda^K < 1$` showed the need: the `, ` between the spans also occurs inside one, the first-occurrence alignment paired regions wrongly, and a single decline would have spliced text. The LLM path still uses `edit_pairs`.
+
+**`.md-press-nomath`** (new). Same gitignore syntax and at-or-above lookup as `.md-pressignore`. Files it matches are unwrapped as usual but skip the math pass. It is for prose whose glyphs are the subject (asf's glyph-sequence perception study), where declining glyph by glyph would bury the file in markers.
+
+**Tests:** `tests/converter.rs` (10; the alignment case among them) and one more in `tests/exclude.rs` for `.md-press-nomath`. It covers the default engine; idempotence; a declined passage remembered across later edits; a new passage on a marked line still offered; table cells; two declines on one line; angles and currency; the marker grammar; headings and list items. `cargo test` passes in full.
+
+**Still open, for the converter:** a clean held-out set for v7; the house-label list (`W₀`/`W₁`, mined from canon per the spike's `py/lexicon.py`); widening the trigger step by step, scripts on Greek bases first (plan §4); the remaining lint-md render-compat checks.
 
 ## Where it stands, and how to pick it back up (2026-10-05)
 

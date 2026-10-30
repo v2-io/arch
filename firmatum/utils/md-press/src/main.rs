@@ -23,11 +23,12 @@ usage: md-press [options] <file.md>...          report; write nothing
   --toggle CODES    Flip the decisions with these codes (comma- or
                     space-separated; repeatable). With --fix the flipped plan
                     is written; without it, the report shows the flipped plan.
-  --no-math         Skip the math pass (see MATH below), e.g. for a fully
-                    deterministic check, or where ollama is not installed.
-  --math[=MODEL]    The math pass is on by default; this flag names a
-                    different local model (default llama3.2:3b), or turns
-                    the pass back on over MD_PRESS_MATH=off.
+  --no-math         Skip the math pass (see MATH below): unwrap only.
+  --math[=MODEL]    The math pass is on by default, with the deterministic
+                    converter (`--math=converter`). --math=MODEL uses a local
+                    ollama model instead (e.g. llama3.2:3b), whose declined
+                    decisions are NOT remembered. Bare --math turns the pass
+                    back on over MD_PRESS_MATH=off.
   -q, --quiet       Report: list only the files that would change (exit code
                     as usual). --fix: errors only.
   -v, --verbose     Report: also list each line break inside joined
@@ -40,7 +41,8 @@ usage: md-press [options] <file.md>...          report; write nothing
                     verbatim exclusions does not also disable this.
   --explain         Debug: print every consulted break with its calibrated
                     probability and named feature values on stderr.
-  -V, --version     Print the version (0.2.0: report by default, --fix, codes).
+  -V, --version     Print the version (0.3.0: the deterministic converter is
+                    the math engine, and declined math is remembered).
   -h, --help        Show this.
 
 THE REPORT. Per file that would change: first what md-press is confident
@@ -50,10 +52,15 @@ is unsure about, each with the alternative a flip gives. Flipping a join
 keeps that break and ends the line with two spaces, so it renders as a line
 break and is never asked about again; flipping a keep joins the lines.
 Either way the file itself carries the decision. Flipping a math change
-puts the original text back, and that one is NOT remembered: the next run
-proposes it again. If you flip the same thing more than once and it looks
-like a bug rather than a judgment call, please report it (see the end of
-the report).
+puts the original text back and remembers that too: md-press writes
+<!--md-press:not-math:TEXT--> at the end of that line or table cell, where
+TEXT is the passage as written, and later runs leave that text on that line
+alone. Markdown renderers hide the comment. (Two exceptions: declines under
+--math=MODEL are not remembered, and neither is a declined blank line around
+$$, which declines the house rule itself.) So once every decision in a file
+is taken or flipped, md-press reports nothing for it again. If you flip the
+same kind of thing more than once and it looks like a bug rather than a
+judgment call, please report it (see the end of the report).
 
 CODES are derived from the file's exact contents, its path, this build of
 md-press, and the options that change the plan. They stop matching as soon
@@ -61,11 +68,11 @@ as any of those change — a stale or mistyped code is an error, and nothing
 is written. So a code always means exactly what the report showed.
 
 Environment: MD_PRESS_MATH=off (or 0/no) disables the math pass for every
-call that doesn't pass --math; MD_PRESS_MATH=MODEL picks the model. Flags
-win over the environment. Model proposals are cached under
+call that doesn't pass --math; MD_PRESS_MATH=MODEL picks an ollama model
+instead of the converter. Flags win over the environment. Model proposals
+(not the converter's, which need none) are cached under
 $XDG_CACHE_HOME/md-press/math (default ~/.cache), keyed by model, prompt, and
-text, so re-runs and reports on text already seen are instant and
-repeatable; every safety check still re-runs on each use. MD_PRESS_CACHE=off
+text; every safety check still re-runs on each use. MD_PRESS_CACHE=off
 disables it; deleting the directory is always safe.
 
 LOG: each run that reports or writes changes appends what it decided — the
@@ -81,6 +88,10 @@ render-equality gate below does run). So `md-press --fix - < FILE` answers
 "what would the engine do to these bytes", not "what would md-press write
 to this file" — a file that file mode would skip comes back reformatted. To
 see what would happen to a file, report on it by name.
+
+MATH EXCLUSIONS: a .md-press-nomath file (same syntax, same lookup) marks
+files whose glyphs are their subject (a glyph study, a character table):
+they are unwrapped as usual, but the math pass skips them.
 
 EXCLUSIONS: a .md-pressignore file (gitignore syntax) at or above a file marks
 it as not-for-formatting, and is honoured even when the file is named
@@ -117,26 +128,29 @@ two-space marks it adds on purpose). If they differ at all — which would
 mean a bug in md-press — that file is left exactly as it was and the problem
 is reported. Running md-press again on its output changes nothing.
 
-MATH: Unicode/bare math in prose (η, ‖δ‖ ≤ R, M_t) is promoted to $LaTeX$
-using a local ollama model, and blank lines around $$ display math are
-fixed. The model proposes only where each expression starts and stops;
-house rules are applied deterministically afterward. Glyphs the house also
-uses as punctuation (→ · × ≈ ≤ ≥ ≠ ± ≡ √) count as math only beside a
-math-looking operand: "asf → logos" and "a · b · c" separators are prose.
-If ollama or the model is missing, the run says so once and continues
-unwrap-only.
+MATH: Unicode math in prose (η, ‖δ‖ ≤ R, M_τ⁺) is promoted to $LaTeX$ by a
+deterministic converter (umath v7, built in: no model, same answer every
+run). Only lines that carry Unicode math are considered: a strong math
+glyph, an isolated Greek letter, or a punctuation-like glyph (→ · × ≈ ≤ ≥ ≠
+± ≡ √) beside a math-looking operand, so "asf → logos" and "a · b · c"
+stay prose. Bare ASCII (x, M_t) is left alone. Three other fixes ride along:
+a raw < or > inside inline $…$ becomes \lt / \gt (GitHub reads a raw angle
+in math as HTML; a span with a space just inside a $, like "$5 < $10", is
+not read as math), \(…\) becomes $…$, and blank lines are added around $$
+display math. --math=MODEL uses a local ollama model instead; if it is
+missing, the run says so once and continues unwrap-only.
 
 WHY MATH IS GOVERNED DIFFERENTLY: promoting math is *meant* to change
 rendering (a literal "η" becomes a typeset symbol), so the render rule above
-cannot apply to it and does not. Its guarantee is separate and narrower: the
-model sees only prose — never list markers, quote markers, indentation, code,
-links, or existing math — and a proposal is kept only if every character
-outside its new $...$ spans is the original's own, in order, and nothing
-inside a new span is invented. Anything else is left byte-identical (and
-counted in a summary; -v lists them), so the model can never quietly reword
-prose, restructure markdown, or invent mathematics. It is not strictly
-deterministic: the model runs at temperature 0, but a different model or
-version can propose differently.
+cannot apply to it and does not. Its guarantee is separate and narrower:
+the engine sees only prose (never list markers, quote markers, indentation,
+or code), and a change is kept only if every character outside its new
+$...$ spans is the original's own, in order, and no emphasis or code
+delimiter moves into math. Anything else is left byte-identical (and counted
+in a summary; -v lists them). Each changed passage is its own decision, with
+its own code. With the converter the plan is deterministic; with
+--math=MODEL it is not strictly so (temperature 0, but a different model or
+version can propose differently), and the LLM-era content checks also apply.
 
 Exit codes: 0 = nothing would change (report), or done (--fix)
             1 = the report found files that would change
@@ -270,6 +284,7 @@ fn split_codes(v: &str) -> Vec<String> {
 fn run_identity(opts: &Opts) -> String {
     let exe = std::env::current_exe().ok().and_then(|p| std::fs::read(p).ok()).unwrap_or_default();
     let math = match &opts.model {
+        Some(m) if m == md_press::math::CONVERTER => "math=converter-v7".to_string(),
         Some(m) => format!("math={m};prompt={:032x}", md_press::fnv128(&[md_press::math::instructions().as_bytes()])),
         None => "math=off".into(),
     };
@@ -324,7 +339,7 @@ fn describe(it: &Item) -> String {
             format!("L{}  {lead}{what} ({alt}): \"{}\" ⏎ \"{}\"", it.line, tail(&item.line_a, 40), head(&item.line_b, 40))
         }
         Detail::Math { before, removed, added, after, applied } => {
-            let verb = if *applied { "math" } else { "math, left as written" };
+            let verb = if *applied { "math" } else { "math, left as written and remembered" };
             format!("L{}  {lead}{verb}: {before}«{removed}» → «{added}»{after}", it.line)
         }
         Detail::Blank { after, delim, applied } => format!(
@@ -406,9 +421,10 @@ Each [code] flips one decision; a paragraph's confident joins flip together.
   md-press --toggle CODE FILE…             show the flipped plan first
 Codes match only this exact file content and md-press build. A flipped join
 keeps the break and marks it (two trailing spaces, so it renders as a line
-break), and the file remembers it. A flipped math change comes back on the
-next run. If you flip the same thing twice and it looks like a bug rather
-than a judgment call, please describe it in a dated FEEDBACK-*.md in";
+break); a flipped math change gets a <!--md-press:not-math:…--> comment at
+the end of its line. Either way the file remembers it. If you flip the same
+kind of thing twice and it looks like a bug rather than a judgment call,
+please describe it in a dated FEEDBACK-*.md in";
 
 fn print_summaries(tally: &Tally, model: Option<&md_press::math::Model>, fix: bool, verbose: bool) {
     if let Some(m) = model
@@ -422,13 +438,13 @@ fn print_summaries(tally: &Tally, model: Option<&md_press::math::Model>, fix: bo
     }
     if !tally.math_refused.is_empty() && (verbose || fix) {
         if verbose {
-            eprintln!("md-press: math passages left as written (the model's proposal failed a check):");
+            eprintln!("md-press: math passages left as written (the proposal failed a check, or a decline cannot be remembered):");
             for r in &tally.math_refused {
                 eprintln!("    {r}");
             }
         } else {
             eprintln!(
-                "md-press: math: {} in {} left as written — the model's proposals failed a check (-v lists them).",
+                "md-press: math: {} in {} left as written — a proposal failed a check (-v lists them).",
                 plural(tally.math_refused.len(), "passage", "passages"),
                 plural(tally.math_files.len(), "file", "files")
             );
@@ -581,6 +597,7 @@ fn main() {
         }
     } else {
         let mut excluder = md_press::exclude::Excluder::new();
+        let mut no_math = md_press::exclude::Excluder::with_files(md_press::exclude::NO_MATH_FILES);
         for f in &opts.files {
             let path = PathBuf::from(f);
             if !opts.allow_udon
@@ -608,7 +625,9 @@ fn main() {
             };
             let key = std::fs::canonicalize(&path).unwrap_or_else(|_| path.clone()).display().to_string();
             let ctx = path.display().to_string();
-            match plan_file(&ctx, &key, input, &run_id, clf.as_ref(), model.as_ref(), &opts.toggles, opts.explain, &mut tally) {
+            // a .md-press-nomath declaration turns the math pass off for this file only
+            let file_model = if model.is_some() && no_math.excluded(&path).is_some() { None } else { model.as_ref() };
+            match plan_file(&ctx, &key, input, &run_id, clf.as_ref(), file_model, &opts.toggles, opts.explain, &mut tally) {
                 Ok(mut p) => {
                     p.path = Some(path);
                     plans.push(p);

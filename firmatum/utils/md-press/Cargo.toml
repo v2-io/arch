@@ -1,6 +1,6 @@
 [package]
 name = "md-press"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 
 [dependencies]
@@ -9,3 +9,7 @@ comrak = { git = "https://github.com/v2-io/comrak", branch = "sourcepos-fixes" }
 ignore = "0.4.31"
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = "1.0.151"
+# The deterministic Unicode-math converter (the default math engine since 0.3.0).
+# Copied from spikes/spike-unicode-math-2026-10-02/rs/umath at arch fefafde
+# (v7, the measured version); see umath/PORT.md before changing it.
+umath = { path = "umath" }

@@ -197,3 +197,16 @@ fn legacy_fmt_mdignore_still_excludes() {
     assert!(ex.excluded(&root.join("out.generated.md")).is_some());
     assert!(ex.excluded(&root.join("prose.md")).is_none());
 }
+
+#[test]
+fn a_nomath_file_declares_math_free_paths_separately() {
+    let root = scratch("nomath");
+    write(&root.join(".md-press-nomath"), "glyphs/\n");
+    write(&root.join("glyphs/survey.md"), "σ τ υ\n");
+    write(&root.join("notes.md"), "η\n");
+    let mut nm = Excluder::with_files(md_press::exclude::NO_MATH_FILES);
+    assert!(nm.excluded(&root.join("glyphs/survey.md")).is_some());
+    assert!(nm.excluded(&root.join("notes.md")).is_none());
+    // a math-only declaration is not a formatting exclusion
+    assert!(Excluder::new().excluded(&root.join("glyphs/survey.md")).is_none());
+}

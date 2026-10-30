@@ -296,11 +296,32 @@ pub fn math_pass(
     use crate::math::promote_site;
     let mut out_lines: Vec<String> = Vec::new();
     let mut in_display = false;
+    // Declined converter pieces are remembered: a not-math marker naming the
+    // original text goes at the site's marker slot, so the next run leaves
+    // that text alone. A passage whose text cannot be a marker KEY is listed
+    // in `unkeyed` and reported.
+    let mut unkeyed: Vec<(usize, String)> = Vec::new();
     let mut assemble = |i: usize, r: &crate::math::SiteResult| -> String {
-        r.pieces
-            .iter()
-            .map(|(orig, res)| if orig != res && !decide(i, orig, res) { orig.as_str() } else { res.as_str() })
-            .collect()
+        let mut out = String::new();
+        let mut marks = String::new();
+        for (k, (orig, res)) in r.pieces.iter().enumerate() {
+            if Some(k) == r.marker_slot {
+                out.push_str(&marks);
+            }
+            if orig != res && !decide(i, orig, res) {
+                out.push_str(orig);
+                if r.marker_slot.is_some() {
+                    match crate::math::not_math_marker(orig) {
+                        Some(m) if !marks.contains(&m) => marks.push_str(&m),
+                        Some(_) => {}
+                        None => unkeyed.push((i, orig.clone())),
+                    }
+                }
+            } else {
+                out.push_str(res);
+            }
+        }
+        out
     };
     // carry each line's own ending (LF or CRLF, or none on a final line)
     // through untouched: `str::lines` drops `\r` and the final empty line
@@ -382,6 +403,13 @@ pub fn math_pass(
             }
         };
         out_lines.push(new_line + eol);
+    }
+    for (i, orig) in unkeyed {
+        tally.math_refused.push(format!(
+            "{ctx}: line {}: declined «{orig}» cannot be remembered (its text cannot sit in an HTML comment); it will be offered again",
+            i + 1
+        ));
+        tally.math_files.insert(ctx.to_string());
     }
     out_lines.concat()
 }
