@@ -1552,25 +1552,129 @@ fn line_diff(a: &str, b: &str) -> String {
         ops.push(('+', bl[j]));
         j += 1;
     }
+    // A normalized paragraph is one line, often hundreds of characters; a change late in it must be
+    // visible, so a replaced line pair is shown as a word-level diff with context, never truncated
+    // to a prefix (a confirmer judged blind from identical-looking prefixes on 2026-10-30).
     let mut out = String::new();
-    let mut last_shown: Option<usize> = None;
-    for (k, (c, line)) in ops.iter().enumerate() {
-        let near_change = (k.saturating_sub(1)..=(k + 1).min(ops.len() - 1)).any(|x| ops[x].0 != ' ');
-        if *c == ' ' && !near_change {
+    let mut k = 0;
+    let mut any = false;
+    while k < ops.len() {
+        let (c, line) = ops[k];
+        if c == ' ' {
+            k += 1;
             continue;
         }
-        if let Some(l) = last_shown {
-            if k > l + 1 {
-                out.push_str("      …\n");
+        any = true;
+        // a run of `-` lines followed by a run of `+` lines
+        let mut minus: Vec<&str> = vec![];
+        let mut plus: Vec<&str> = vec![];
+        while k < ops.len() && ops[k].0 == '-' {
+            minus.push(ops[k].1);
+            k += 1;
+        }
+        while k < ops.len() && ops[k].0 == '+' {
+            plus.push(ops[k].1);
+            k += 1;
+        }
+        if minus.is_empty() && plus.is_empty() {
+            // a lone `+` before any `-` (ops order); handle the single line
+            if c == '+' {
+                plus.push(line);
+            } else {
+                minus.push(line);
+            }
+            k += 1;
+        }
+        if minus.len() == plus.len() {
+            for (a, b) in minus.iter().zip(plus.iter()) {
+                out.push_str(&word_diff(a, b));
+            }
+        } else {
+            for a in &minus {
+                out.push_str(&format!("    - {}\n", clip(a, 400)));
+            }
+            for b in &plus {
+                out.push_str(&format!("    + {}\n", clip(b, 400)));
             }
         }
-        let shown: String = line.chars().take(160).collect();
-        out.push_str(&format!("    {c} {shown}\n"));
-        last_shown = Some(k);
+        out.push_str("      …\n");
     }
-    if out.is_empty() {
+    if !any {
         out.push_str("    (the normalized texts are identical)\n");
     }
+    out
+}
+
+fn clip(s: &str, n: usize) -> String {
+    if s.chars().count() <= n { s.to_string() } else { format!("{}… [{} chars]", s.chars().take(n).collect::<String>(), s.chars().count()) }
+}
+
+/// Word-level diff of two paragraph lines: unchanged words outside a window are folded to `…`,
+/// removed words are shown as `[-word-]`, added as `{+word+}`, with about eight words of context.
+fn word_diff(a: &str, b: &str) -> String {
+    let aw: Vec<&str> = a.split(' ').collect();
+    let bw: Vec<&str> = b.split(' ').collect();
+    let (n, m) = (aw.len(), bw.len());
+    let mut dp = vec![vec![0u32; m + 1]; n + 1];
+    for i in (0..n).rev() {
+        for j in (0..m).rev() {
+            dp[i][j] = if aw[i] == bw[j] { dp[i + 1][j + 1] + 1 } else { dp[i + 1][j].max(dp[i][j + 1]) };
+        }
+    }
+    let mut ops: Vec<(char, &str)> = vec![];
+    let (mut i, mut j) = (0, 0);
+    while i < n && j < m {
+        if aw[i] == bw[j] {
+            ops.push((' ', aw[i]));
+            i += 1;
+            j += 1;
+        } else if dp[i + 1][j] >= dp[i][j + 1] {
+            ops.push(('-', aw[i]));
+            i += 1;
+        } else {
+            ops.push(('+', bw[j]));
+            j += 1;
+        }
+    }
+    while i < n {
+        ops.push(('-', aw[i]));
+        i += 1;
+    }
+    while j < m {
+        ops.push(('+', bw[j]));
+        j += 1;
+    }
+    const CTX: usize = 8;
+    let changed: Vec<usize> = ops.iter().enumerate().filter(|(_, (c, _))| *c != ' ').map(|(k, _)| k).collect();
+    if changed.is_empty() {
+        return "    (lines differ only in a way the word split does not show)\n".into();
+    }
+    let mut out = String::from("    ~ ");
+    let mut last_emitted: Option<usize> = None;
+    for (k, (c, w)) in ops.iter().enumerate() {
+        let near = changed.iter().any(|&x| k + CTX >= x && k <= x + CTX);
+        if !near {
+            continue;
+        }
+        if let Some(l) = last_emitted {
+            if k > l + 1 {
+                out.push_str(" … ");
+            }
+        } else if k > 0 {
+            out.push_str("… ");
+        }
+        match c {
+            '-' => out.push_str(&format!("[-{w}-]")),
+            '+' => out.push_str(&format!("{{+{w}+}}")),
+            _ => out.push_str(w),
+        }
+        out.push(' ');
+        last_emitted = Some(k);
+    }
+    if last_emitted.map(|l| l + 1 < ops.len()).unwrap_or(false) {
+        out.push('…');
+    }
+    out.push('\n');
     out
 }
 
@@ -1994,7 +2098,20 @@ fn read(store: &Store, id: &str, at: Option<&str>, bare: bool) -> Result<i32> {
     let rid = pid.record_id();
     let st = State::compute(store);
     if let Some(v) = at {
-        let full = st.trail.events.iter().filter_map(|e| e.str("own-version").or(e.str("target-version"))).find(|x| x.starts_with(v)).map(|s| s.to_string()).unwrap_or_else(|| v.to_string());
+        // a version prefix resolves against every version the trail cites for this record (own,
+        // target, from/to, and basis entries), then against the current one; an ambiguous prefix is refused
+        let cited = event::cited_versions(&st.trail);
+        let mut candidates: BTreeSet<String> = cited.iter().filter(|(ver, rec)| ver.starts_with(v) && rec.as_deref().map(|r| r == rid).unwrap_or(true)).map(|(ver, _)| ver.clone()).collect();
+        if let Some(r) = st.record(&rid) {
+            if r.own_version.starts_with(v) {
+                candidates.insert(r.own_version.clone());
+            }
+        }
+        let full = match candidates.len() {
+            0 => bail!("no version of {rid} starting `{v}` is cited by any event or current; `vsect why {rid}` lists the versions the trail knows"),
+            1 => candidates.into_iter().next().unwrap(),
+            n => bail!("`{v}` matches {n} versions of {rid}: {}", candidates.iter().map(|c| short(c)).collect::<Vec<_>>().join(", ")),
+        };
         let canon = event::read_object(store, &full, Some(&rid))?;
         print!("{}", event::object_text(&canon));
         return Ok(EXIT_OK);
