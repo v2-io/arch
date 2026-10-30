@@ -699,11 +699,15 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
             }
         }
     }
-    let mut tev = Event::new(store, "take", Some(&review_id), actor.clone())
-        .with("review", yaml_str(&rel))
-        .with("review-version", yaml_str(&review.own_version))
-        .with("items", Value::Sequence(items_yaml));
-    event::write_event(store, &mut tev, dry)?;
+    // the take event is written once per review version: a re-take that added nothing adds no event either
+    let already_taken = st.trail.events.iter().any(|e| e.act == "take" && e.about.as_deref() == Some(&review_id) && e.str("review-version") == Some(&review.own_version));
+    if wrote > 0 || !already_taken {
+        let mut tev = Event::new(store, "take", Some(&review_id), actor.clone())
+            .with("review", yaml_str(&rel))
+            .with("review-version", yaml_str(&review.own_version))
+            .with("items", Value::Sequence(items_yaml));
+        event::write_event(store, &mut tev, dry)?;
+    }
     println!("{} {rel}{}", if dry { "Would take" } else { "Taken" }, if dry { " (dry run, nothing written)" } else { "" });
     for l in lines {
         println!("{l}");
@@ -1103,8 +1107,12 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
     for (id, paths) in &st.scan.collisions {
         items.push(("collision".into(), id.clone(), format!("two files claim one id: {}", paths.join(", "))));
     }
+    // A dangling edge target is a notice, not a structural error: ASF's FORMAT allows `depends:`
+    // to name a planned segment, and `bin/lint-outline` owns that check against the OUTLINE's
+    // `missing` rows. --strict counts them, which is where a stale name gets caught.
+    let mut notices: Vec<(String, String, String)> = vec![];
     for (src, edge, tgt) in &st.dangling {
-        items.push(("dangling-target".into(), src.clone(), format!("`{edge}` names {tgt}, which is no record in the store")));
+        notices.push(("dangling-target".into(), src.clone(), format!("`{edge}` names {tgt}, which is no record in the store (planned, or a stale name?)")));
     }
     for (rel, why) in &st.trail.problems {
         items.push(("trail".into(), rel.clone(), why.clone()));
@@ -1125,7 +1133,6 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
     }
     // open items whose target does not resolve: a judgment item (dispose, or confirm answered by the
     // successor), so a notice, not a structural error
-    let mut notices: Vec<(String, String, String)> = vec![];
     for f in &st.findings_open {
         let t = f.target.split('#').next().unwrap_or(&f.target);
         if !st.scan.records.contains_key(t) {
