@@ -240,6 +240,14 @@ pub enum Cmd {
         #[arg(long)]
         strict: bool,
     },
+    /// Drop stored statement versions that git can reproduce, or that no event cites.
+    Gc,
+    /// One-time store migrations.
+    Migrate {
+        /// Drop creation events (mint, import, ask, note) and revise events no check rests on; events then say only what the tree does not.
+        #[arg(long)]
+        prune_creation_events: bool,
+    },
     /// A record as it stands, with marks for what is known about it.
     Read {
         id: String,

@@ -93,6 +93,68 @@ fn default_planned_cell() -> String {
 }
 
 impl Store {
+    /// The paths a record of this kind and slug could live at, from the kind's `find` globs with
+    /// the file name fixed to `<slug>.md` (directories only organize, so every glob's directory
+    /// is a candidate). Used to search git history for a record's past versions.
+    pub fn pathspecs_for(&self, kind: &str, slug: &str) -> Vec<String> {
+        let globs: Vec<String> = match self.kinds.kinds.get(kind) {
+            Some(d) => d.find.clone(),
+            None => {
+                let dir = self.builtin_dir(kind);
+                let rel = dir.strip_prefix(&self.root).map(|p| p.to_string_lossy().to_string()).unwrap_or_default();
+                let mut g = vec![format!("{rel}/*.md")];
+                if kind == "item" {
+                    g.push(format!("{rel}/imported/*.md"));
+                }
+                g
+            }
+        };
+        let mut out = vec![];
+        for g in globs {
+            let dir = match g.rsplit_once('/') {
+                Some((d, _)) => d.to_string(),
+                None => String::new(),
+            };
+            // expand a glob in the directory part against the working tree and git's HEAD tree
+            let dir_pattern = if dir.is_empty() { ".".to_string() } else { dir.clone() };
+            let mut dirs: Vec<String> = vec![];
+            if dir_pattern.contains('*') {
+                if let Some(full) = self.root.join(&dir_pattern).to_str() {
+                    if let Ok(paths) = glob::glob(full) {
+                        for p in paths.flatten() {
+                            if let Ok(rel) = p.strip_prefix(&self.root) {
+                                dirs.push(rel.to_string_lossy().to_string());
+                            }
+                        }
+                    }
+                }
+            } else {
+                dirs.push(dir);
+            }
+            for d in dirs {
+                out.push(if d.is_empty() || d == "." { format!("{slug}.md") } else { format!("{d}/{slug}.md") });
+            }
+        }
+        out.sort();
+        out.dedup();
+        out
+    }
+
+    /// Records whose working-tree content differs from HEAD, as paths relative to the root.
+    pub fn dirty_paths(&self) -> std::collections::BTreeSet<String> {
+        git(&self.root, &["status", "--porcelain", "--untracked-files=all"])
+            .map(|s| s.lines().filter_map(|l| l.get(3..).map(|p| p.trim().to_string())).collect())
+            .unwrap_or_default()
+    }
+
+    /// When a path first entered git, as `<short sha> <date>`, if it did.
+    pub fn first_commit_of(&self, rel: &str) -> Option<String> {
+        git(&self.root, &["log", "--diff-filter=A", "--format=%h %ad", "--date=short", "--follow", "--", rel])
+            .ok()
+            .and_then(|s| s.lines().last().map(|l| l.to_string()))
+            .filter(|s| !s.is_empty())
+    }
+
     /// Slugs the store declares as planned: `#slug` tokens on table rows carrying the planned cell.
     pub fn planned_slugs(&self) -> std::collections::BTreeSet<String> {
         let mut out = std::collections::BTreeSet::new();

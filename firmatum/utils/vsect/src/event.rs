@@ -2,7 +2,7 @@
 
 use crate::norm;
 use crate::store::Store;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_yaml::Value;
 use std::collections::BTreeMap;
@@ -196,10 +196,23 @@ pub fn object_path(store: &Store, version: &str) -> PathBuf {
     store.objects_dir().join(&version[..2.min(version.len())]).join(version)
 }
 
-/// Store the canonical serialization of a statement version; returns the version.
-pub fn write_object(store: &Store, kind: &str, form: &str, text: &str, dry_run: bool) -> Result<String> {
+/// Keep a statement version only if git cannot reproduce it: the record's file at HEAD, normalized,
+/// is a different version (the edit is uncommitted). A version git holds is read back from git.
+/// Returns the version either way.
+pub fn write_object(store: &Store, rel: &str, kind: &str, form: &str, text: &str, dry_run: bool) -> Result<String> {
     let canon = norm::canonical_object(kind, form, text);
     let version = norm::sha256_hex(canon.as_bytes());
+    let at_head = store
+        .file_at("HEAD", rel)
+        .ok()
+        .map(|c| {
+            let (fm, body) = crate::record::split_frontmatter(&c);
+            let f = fm.and_then(|f| crate::record::parse_frontmatter(&f).ok()).and_then(|m| m.get("form").and_then(|v| v.as_str()).map(|s| s.to_string())).unwrap_or_default();
+            norm::own_version(kind, &f, &crate::record::statement_text(&body))
+        });
+    if at_head.as_deref() == Some(version.as_str()) {
+        return Ok(version);
+    }
     let path = object_path(store, &version);
     if !dry_run && !path.exists() {
         if let Some(parent) = path.parent() {
@@ -210,10 +223,47 @@ pub fn write_object(store: &Store, kind: &str, form: &str, text: &str, dry_run: 
     Ok(version)
 }
 
-pub fn read_object(store: &Store, version: &str) -> Result<String> {
+/// The canonical object for a version: from `.vsect/objects/` if kept there, else from git — the
+/// record's file at each commit that touched it, normalized, until one hashes to the version.
+pub fn read_object(store: &Store, version: &str, record: Option<&str>) -> Result<String> {
     let path = object_path(store, version);
-    std::fs::read_to_string(&path)
-        .map_err(|_| anyhow!("no object for version {}: vsect never saw it", norm::short(version)))
+    if let Ok(c) = std::fs::read_to_string(&path) {
+        return Ok(c);
+    }
+    if let Some(rid) = record {
+        if let Some(c) = find_in_git(store, rid, version)? {
+            return Ok(c);
+        }
+    }
+    bail!("no text for version {}: not in .vsect/objects/ and not reproducible from git{}", norm::short(version), record.map(|r| format!(" for {r}")).unwrap_or_default())
+}
+
+/// Search git history for the record's file content whose normalized version is `version`.
+pub fn find_in_git(store: &Store, record_id: &str, version: &str) -> Result<Option<String>> {
+    let (kind, slug) = record_id.split_once(':').ok_or_else(|| anyhow!("{record_id} is not kind:slug"))?;
+    let pathspecs = store.pathspecs_for(kind, slug);
+    if pathspecs.is_empty() {
+        return Ok(None);
+    }
+    let mut args = vec!["log", "--all", "--format=%H", "--"];
+    let specs: Vec<&str> = pathspecs.iter().map(|s| s.as_str()).collect();
+    args.extend(specs.iter());
+    let out = match crate::store::git(&store.root, &args) {
+        Ok(o) => o,
+        Err(_) => return Ok(None),
+    };
+    for commit in out.lines() {
+        for spec in &pathspecs {
+            let Ok(content) = store.file_at(commit, spec) else { continue };
+            let (fm, body) = crate::record::split_frontmatter(&content);
+            let form = fm.and_then(|f| crate::record::parse_frontmatter(&f).ok()).and_then(|m| m.get("form").and_then(|v| v.as_str()).map(|s| s.to_string())).unwrap_or_default();
+            let canon = norm::canonical_object(kind, &form, &crate::record::statement_text(&body));
+            if norm::sha256_hex(canon.as_bytes()) == version {
+                return Ok(Some(canon));
+            }
+        }
+    }
+    Ok(None)
 }
 
 /// The normalized text part of a stored object.
@@ -222,6 +272,60 @@ pub fn object_text(canon: &str) -> &str {
         Some(i) => &canon[i + 5..],
         None => canon,
     }
+}
+
+/// Every version the trail cites, with the record it belongs to (when the event says).
+pub fn cited_versions(trail: &Trail) -> BTreeMap<String, Option<String>> {
+    let mut out: BTreeMap<String, Option<String>> = BTreeMap::new();
+    for ev in &trail.events {
+        let rec = ev.about.as_ref().map(|a| a.split('#').next().unwrap_or(a).to_string());
+        for k in ["own-version", "target-version", "from-version", "to-version"] {
+            if let Some(v) = ev.str(k) {
+                out.entry(v.to_string()).or_insert_with(|| rec.clone());
+            }
+        }
+        if let Some(Value::Mapping(m)) = ev.get("basis") {
+            for (k, v) in m {
+                if let (Some(k), Some(v)) = (k.as_str(), v.as_str()) {
+                    out.entry(v.to_string()).or_insert_with(|| Some(k.to_string()));
+                }
+            }
+        }
+    }
+    out
+}
+
+/// Drop every object git can reproduce, or that no event cites. Returns (removed, kept, kept-uncited).
+pub fn gc_objects(store: &Store, trail: &Trail, dry_run: bool) -> Result<(usize, usize, Vec<String>)> {
+    let cited = cited_versions(trail);
+    let mut removed = 0;
+    let mut kept = 0;
+    let mut kept_uncited = vec![];
+    let pattern = store.objects_dir().join("*").join("*");
+    let Some(p) = pattern.to_str() else { return Ok((0, 0, vec![])) };
+    for path in glob::glob(p)?.flatten() {
+        let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
+        let drop = match cited.get(&name) {
+            None => true, // nothing points at it
+            Some(Some(rec)) => find_in_git(store, rec, &name)?.is_some(),
+            Some(None) => false,
+        };
+        if drop {
+            if !dry_run {
+                std::fs::remove_file(&path)?;
+                if let Some(parent) = path.parent() {
+                    let _ = std::fs::remove_dir(parent); // only if empty
+                }
+            }
+            removed += 1;
+        } else {
+            kept += 1;
+            if cited.get(&name) == Some(&None) {
+                kept_uncited.push(name);
+            }
+        }
+    }
+    Ok((removed, kept, kept_uncited))
 }
 
 pub fn check_objects(store: &Store) -> Vec<(String, String)> {

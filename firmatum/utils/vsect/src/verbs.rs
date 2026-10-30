@@ -114,6 +114,13 @@ pub fn run(cli: Cli) -> Result<i32> {
             refute(&store, &target, &ground, by_item.as_deref(), at.as_deref(), actor, dry)
         }
         Cmd::Check { strict } => check(&store, strict, json),
+        Cmd::Gc => gc(&store, dry),
+        Cmd::Migrate { prune_creation_events } => {
+            if !prune_creation_events {
+                bail!("the one migration built is `vsect migrate --prune-creation-events`");
+            }
+            migrate_prune(&store, dry)
+        }
         Cmd::Read { id, at, bare } => read(&store, &id, at.as_deref(), bare),
         Cmd::Why { id } => why(&store, &id),
         Cmd::Impact { id } => impact(&store, &id),
@@ -281,6 +288,9 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
     }
     // waiting
     let unrec = st.unreconciled();
+    let unclassified = st.unclassified_rewordings();
+    let dirty: BTreeSet<String> = store.dirty_paths();
+    let dirty_records = st.scan.records.values().filter(|r| dirty.contains(&r.rel)).count();
     let stale: Vec<(String, String, String)> = st.lapsed().into_iter().map(|(id, ev, v)| (id, ev.at.clone(), v.word())).collect();
     let (n_refuted, n_replaced) = st.refutations();
     let steward_q: Vec<&state::Question> = st.questions_open.iter().filter(|q| q.closer.starts_with("steward")).collect();
@@ -329,7 +339,9 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
                 "findings_open": st.findings_open.len(),
                 "questions_open": st.questions_open.len(),
                 "questions_for_steward": steward_q.len(),
-                "edits_not_taken_in": unrec.len(),
+                "deleted_fate_unrecorded": unrec.len(),
+                "rewordings_unclassified": unclassified.len(),
+                "records_with_uncommitted_edits": dirty_records,
                 "checks_stale": stale.len(),
             },
             "evidence": { "by_line": by_line, "records_with_a_check": checked_records.len(),
@@ -385,9 +397,16 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
         any = true;
         println!("  {:>4} checks lapsed, not curable by confirmation  → vsect check --strict", stale.len());
     }
+    if !unclassified.is_empty() {
+        any = true;
+        println!("  {:>4} edits a check rests on, unclassified         → vsect revise", unclassified.len());
+    }
     if !unrec.is_empty() {
         any = true;
-        println!("  {:>4} edits not yet taken in                       → vsect revise", unrec.len());
+        println!("  {:>4} records gone, fate not recorded             → vsect revise", unrec.len());
+    }
+    if dirty_records > 0 {
+        println!("  {:>4} records with uncommitted edits (git's to say; shown, not waiting)", dirty_records);
     }
     if !any {
         println!("  (nothing waiting)");
@@ -429,121 +448,80 @@ fn revise(store: &Store, one: Option<&str>, actor: Actor, answers: &BTreeMap<Str
         Some(s) => Some(Id::parse(store, s)?.record_id()),
         None => None,
     };
-    let todo: Vec<(String, &'static str)> = st.unreconciled().into_iter().filter(|(id, _)| only.as_ref().map(|o| o == id).unwrap_or(true)).collect();
-    if todo.is_empty() {
+    let matches = |id: &str| only.as_ref().map(|o| o == id).unwrap_or(true);
+    // A record's text is the tree's to say. Two things are not: which rewordings a check rests on
+    // were meant as rewordings (and by whom, which `confirm` refuses), and what became of a record
+    // the trail speaks about that is gone.
+    let rewordings: Vec<_> = st.unclassified_rewordings().into_iter().filter(|p| matches(&p.record)).collect();
+    let deletions: Vec<(String, &'static str)> = st.unreconciled().into_iter().filter(|(id, _)| matches(id)).collect();
+    if rewordings.is_empty() && deletions.is_empty() {
         match &only {
-            Some(o) if !st.records.contains_key(o) => bail!("{o} is not in the store"),
-            _ => println!("Nothing to take in."),
+            Some(o) if !st.scan.records.contains_key(o) && !st.records.contains_key(o) => bail!("{o} is not in the store"),
+            _ => println!("Nothing to take in: no check rests on an unclassified edit, and nothing the trail speaks about is gone."),
         }
         return Ok(EXIT_OK);
     }
-    let n = todo.len();
-    let mut minted = 0usize;
     let mut revised = 0usize;
     let mut settled = 0usize;
-    for (id, why) in todo {
-        let rs = st.rs(&id).cloned().unwrap_or_default();
-        let parsed = Id::parse(store, &id)?;
-        match why {
-            "new: not yet minted" => {
-                let r = st.record(&id).unwrap();
-                let form = r.frontmatter.get("form").and_then(|v| v.as_str()).unwrap_or("");
-                event::write_object(store, &r.id.kind, form, &r.text, dry)?;
-                let mut ev = Event::new(store, "mint", Some(&id), actor.clone())
-                    .with("own-version", yaml_str(&r.own_version))
-                    .with("record", yaml_str(&r.rel))
-                    .with("declarations", declarations(r));
-                let p = event::write_event(store, &mut ev, dry)?;
-                minted += 1;
-                if n <= 12 || dry {
-                    println!("  • {id} — minted at v:{} {}", short(&r.own_version), if dry { format!("(would write {})", p.display()) } else { String::new() });
-                }
-            }
-            "edited since last taken in" => {
-                let r = st.record(&id).unwrap();
-                let form = r.frontmatter.get("form").and_then(|v| v.as_str()).unwrap_or("");
-                event::write_object(store, &r.id.kind, form, &r.text, dry)?;
-                let from = rs.last_version.clone().unwrap_or_default();
-                // does any check rest on this record's version?
-                let resting: Vec<String> = st
-                    .records
-                    .iter()
-                    .flat_map(|(rid, s)| s.securing.iter().map(move |(ev, _)| (rid.clone(), ev)))
-                    .filter(|(_, ev)| state::basis_from_yaml(ev.get("basis")).iter().any(|b| b.id == id))
-                    .map(|(rid, _)| rid)
-                    .collect::<BTreeSet<_>>()
-                    .into_iter()
-                    .collect();
-                let change = if resting.is_empty() {
-                    "unclassified".to_string()
-                } else {
-                    println!("  • {id}  v:{} → v:{}", short(&from), short(&r.own_version));
-                    println!("      {} check(s) rest on this version: {}", resting.len(), resting.join(", "));
-                    match ask_q(answers, "change", "      Did the meaning change, or only the words?", &["reworded", "redefined"]) {
-                        Some(a) if a == "reworded" || a == "redefined" => a,
-                        Some(a) => bail!("`{a}` is not an answer: reworded or redefined"),
-                        None => return Ok(EXIT_NOT_RUN),
-                    }
-                };
-                let mut ev = Event::new(store, "revise", Some(&id), actor.clone())
-                    .with("own-version", yaml_str(&r.own_version))
-                    .with("from-version", yaml_str(&from))
-                    .with("change", yaml_str(&change))
-                    .with("record", yaml_str(&r.rel))
-                    .with("declarations", declarations(r));
-                if let Some(a) = &rs.atom {
-                    ev.atom = Some(a.clone());
-                }
-                event::write_event(store, &mut ev, dry)?;
-                revised += 1;
-                if resting.is_empty() {
-                    println!("  • {id}  v:{} → v:{}  (no check rests on it; change left unclassified)", short(&from), short(&r.own_version));
-                } else if change == "reworded" {
-                    println!("      → recorded as your claim. The checks stay with v:{} until a different mind confirms the change didn't touch them.", short(&from));
-                } else {
-                    println!("      → the checks on it and on everything that rests on it stop counting.");
-                }
-            }
-            "deleted: fate not recorded" => {
-                println!("  • {id} — gone from the store. What happened to it?");
-                let ans = match ask_q(answers, "fate", "      fate?", &["retired", "superseded:<kind:slug>"]) {
-                    Some(a) => a,
-                    None => return Ok(EXIT_NOT_RUN),
-                };
-                let last = rs.last_known_version().unwrap_or_default();
-                let mut ev = if ans == "retired" {
-                    Event::new(store, "retire", Some(&id), actor.clone()).with("own-version", yaml_str(&last))
-                } else if let Some(into) = ans.strip_prefix("superseded:") {
-                    let into_id = Id::parse(store, into)?.record_id();
-                    if !st.scan.records.contains_key(&into_id) {
-                        bail!("{into_id} is not in the store; a successor must exist");
-                    }
-                    Event::new(store, "supersede", Some(&id), actor.clone())
-                        .with("own-version", yaml_str(&last))
-                        .with("from", yaml_str(&id))
-                        .with("into", yaml_str(&into_id))
-                } else {
-                    bail!("`{ans}` is not a fate: retired, or superseded:<kind:slug>");
-                };
-                if let Some(a) = &rs.atom {
-                    ev.atom = Some(a.clone());
-                }
-                event::write_event(store, &mut ev, dry)?;
-                settled += 1;
-                let citing: Vec<String> = st.dependents(&id).iter().filter(|(_, _, d)| *d == 1).map(|(s, _, _)| s.clone()).collect();
-                if !citing.is_empty() {
-                    println!("      → {} statements still cite it and should now cite its fate: {}", citing.len(), citing.join(", "));
-                }
-                let open_here = st.findings_open.iter().filter(|f| f.target == id).count();
-                if open_here > 0 {
-                    println!("      → {open_here} finding(s) against it stay open until disposed of (vsect findings --dispose)");
-                }
-            }
-            _ => {}
+    for p in rewordings {
+        let r = st.record(&p.record).unwrap();
+        let form = r.frontmatter.get("form").and_then(|v| v.as_str()).unwrap_or("");
+        event::write_object(store, &r.rel, &r.id.kind, form, &r.text, dry)?;
+        let targets: BTreeSet<&str> = p.checks.iter().map(|(_, t)| t.as_str()).collect();
+        println!("  • {}  v:{} → v:{}", p.record, short(&p.from), short(&p.to));
+        println!("      {} check(s) rest on the old text, on: {}", p.checks.len(), targets.into_iter().collect::<Vec<_>>().join(", "));
+        let change = match ask_q(answers, "change", "      Did the meaning change, or only the words?", &["reworded", "redefined"]) {
+            Some(a) if a == "reworded" || a == "redefined" => a,
+            Some(a) => bail!("`{a}` is not an answer: reworded or redefined"),
+            None => return Ok(EXIT_NOT_RUN),
+        };
+        let mut ev = Event::new(store, "revise", Some(&p.record), actor.clone())
+            .with("own-version", yaml_str(&p.to))
+            .with("from-version", yaml_str(&p.from))
+            .with("change", yaml_str(&change))
+            .with("record", yaml_str(&r.rel));
+        event::write_event(store, &mut ev, dry)?;
+        revised += 1;
+        if change == "reworded" {
+            println!("      → recorded as your claim. The checks stay with v:{} until a different mind confirms (vsect confirm {}).", short(&p.from), p.record);
+        } else {
+            println!("      → redefined: the checks on it and on everything that rests on it stop counting until redone.");
         }
-        let _ = parsed;
     }
-    println!("{}: {minted} minted · {revised} revised · {settled} fates recorded{}", if dry { "Dry run" } else { "Taken in" }, if dry { " (nothing written)" } else { "" });
+    for (id, _) in deletions {
+        let rs = st.rs(&id).cloned().unwrap_or_default();
+        println!("  • {id} — gone from the store. What happened to it?");
+        let ans = match ask_q(answers, "fate", "      fate?", &["retired", "superseded:<kind:slug>"]) {
+            Some(a) => a,
+            None => return Ok(EXIT_NOT_RUN),
+        };
+        let last = rs.last_known_version().unwrap_or_default();
+        let mut ev = if ans == "retired" {
+            Event::new(store, "retire", Some(&id), actor.clone()).with("own-version", yaml_str(&last))
+        } else if let Some(into) = ans.strip_prefix("superseded:") {
+            let into_id = Id::parse(store, into)?.record_id();
+            if !st.scan.records.contains_key(&into_id) {
+                bail!("{into_id} is not in the store; a successor must exist");
+            }
+            Event::new(store, "supersede", Some(&id), actor.clone())
+                .with("own-version", yaml_str(&last))
+                .with("from", yaml_str(&id))
+                .with("into", yaml_str(&into_id))
+        } else {
+            bail!("`{ans}` is not a fate: retired, or superseded:<kind:slug>");
+        };
+        event::write_event(store, &mut ev, dry)?;
+        settled += 1;
+        let citing: Vec<String> = st.dependents(&id).iter().filter(|(_, _, d)| *d == 1).map(|(s, _, _)| s.clone()).collect();
+        if !citing.is_empty() {
+            println!("      → {} statements still cite it and should now cite its fate: {}", citing.len(), citing.join(", "));
+        }
+        let open_here = st.findings_open.iter().filter(|f| f.target == id).count();
+        if open_here > 0 {
+            println!("      → {open_here} finding(s) against it stay open until disposed of (vsect findings --dispose)");
+        }
+    }
+    println!("{}: {revised} rewording(s) classified · {settled} fate(s) recorded{}", if dry { "Dry run" } else { "Taken in" }, if dry { " (nothing written)" } else { "" });
     Ok(EXIT_OK)
 }
 
@@ -635,16 +613,6 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
     let mut skipped = 0usize;
     let mut act_on = 0usize;
 
-    // the review record itself is minted so its version is on record
-    if st.rs(&review_id).map(|s| s.last_version.is_none()).unwrap_or(true) {
-        event::write_object(store, "review", "", &review.text, dry)?;
-        let mut ev = Event::new(store, "mint", Some(&review_id), actor.clone())
-            .with("own-version", yaml_str(&review.own_version))
-            .with("record", yaml_str(&rel))
-            .with("declarations", declarations(&review));
-        event::write_event(store, &mut ev, dry)?;
-    }
-
     for item in &items {
         let item_id = format!("{review_id}#{}", item.id);
         items_yaml.push(yaml_str(&format!("{}:{}", item.id, item.kind)));
@@ -657,8 +625,6 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
             (b, "declared", v.clone())
         } else if let Some(rev) = item.fields.get("at") {
             let (r, b) = basis_at(store, &target, rev)?;
-            let form = r.frontmatter.get("form").and_then(|v| v.as_str()).unwrap_or("");
-            event::write_object(store, &r.id.kind, form, &r.text, dry)?;
             (b, "git-revision", r.own_version.clone())
         } else {
             let Some(r) = st.record(&tid) else {
@@ -687,9 +653,6 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
                     .with("committed", yaml_str(item.fields.get("committed").map(|s| s.as_str()).unwrap_or("after")))
                     .with("recheck", yaml_str(item.fields.get("recheck").map(|s| s.as_str()).unwrap_or("")))
                     .with("outcome", yaml_str(outcome));
-                if let Some(a) = st.rs(&tid).and_then(|s| s.atom.clone()) {
-                    ev.atom = Some(a);
-                }
                 event::write_event(store, &mut ev, dry)?;
                 wrote += 1;
                 let now_v = st.record(&tid).map(|r| r.own_version.clone());
@@ -897,17 +860,7 @@ fn ask(store: &Store, text: &str, concerns: &[String], blocks: &[String], closer
     let rel = path.strip_prefix(&store.root).unwrap().to_string_lossy().to_string();
     let r = record::load_record(store, "question", &rel, &c)?;
     let qid = r.id.record_id();
-    event::write_object(store, "question", "", &r.text, dry)?;
-    let mut mint = Event::new(store, "mint", Some(&qid), actor.clone())
-        .with("own-version", yaml_str(&r.own_version))
-        .with("record", yaml_str(&rel))
-        .with("declarations", declarations(&r));
-    event::write_event(store, &mut mint, dry)?;
-    let mut ev = Event::new(store, "ask", Some(&qid), actor)
-        .with("closer", yaml_str(closer))
-        .with("concerns", yaml_list(concerns))
-        .with("blocks", yaml_list(blocks));
-    event::write_event(store, &mut ev, dry)?;
+    let _ = actor; // the file is the ask: its frontmatter says who asked, when, and who may close it
     let who = match closer {
         "anyone" => "open to anyone".to_string(),
         c if c.starts_with("steward") => "for the steward".to_string(),
@@ -959,9 +912,6 @@ fn answer(store: &Store, question: &str, outcome: &str, text: Option<&str>, reop
     }
     if let Some(s) = superseded_by {
         ev = ev.with("superseded-by", yaml_str(&Id::parse(store, s)?.record_id()));
-    }
-    if let Some(a) = st.rs(&qid).and_then(|s| s.atom.clone()) {
-        ev.atom = Some(a);
     }
     let p = event::write_event(store, &mut ev, dry)?;
     println!("{qid} → {outcome}{}", if dry { format!(" (would write {})", p.display()) } else { String::new() });
@@ -1129,8 +1079,6 @@ fn refute(store: &Store, target: &str, ground: &str, by_item: Option<&str>, at: 
     let rid = tid.record_id();
     let (basis, version) = if let Some(rev) = at {
         let (r, b) = basis_at(store, &tid, rev)?;
-        let form = r.frontmatter.get("form").and_then(|v| v.as_str()).unwrap_or("");
-        event::write_object(store, &r.id.kind, form, &r.text, dry)?;
         (b, r.own_version)
     } else {
         let Some(r) = st.record(&rid) else {
@@ -1147,9 +1095,6 @@ fn refute(store: &Store, target: &str, ground: &str, by_item: Option<&str>, at: 
         .with("ground", Value::Mapping(g));
     if let Some(b) = by_item {
         ev = ev.with("by", yaml_str(b));
-    }
-    if let Some(a) = st.rs(&rid).and_then(|s| s.atom.clone()) {
-        ev.atom = Some(a);
     }
     let p = event::write_event(store, &mut ev, dry)?;
     println!("{} {tid} at v:{} by {gkind}, as of {}.{}", if dry { "Would refute" } else { "Refuted" }, short(&version), store.moment(), if dry { format!(" (would write {})", p.display()) } else { String::new() });
@@ -1175,7 +1120,7 @@ fn refute(store: &Store, target: &str, ground: &str, by_item: Option<&str>, at: 
 
 // ---------- items: note / close / recheck / bring --tracker ----------
 
-fn write_item_record(store: &Store, dir: &std::path::Path, slug: &str, fm_lines: &[String], title: &str, body: &str, actor: &Actor, act: &str, extra: Vec<(&str, Value)>, dry: bool) -> Result<String> {
+fn write_item_record(_store: &Store, dir: &std::path::Path, slug: &str, fm_lines: &[String], title: &str, body: &str, dry: bool) -> Result<String> {
     let path = dir.join(format!("{slug}.md"));
     if path.exists() {
         bail!("item:{slug} exists already");
@@ -1198,21 +1143,8 @@ fn write_item_record(store: &Store, dir: &std::path::Path, slug: &str, fm_lines:
     }
     std::fs::create_dir_all(dir)?;
     std::fs::write(&path, &c)?;
-    let rel = path.strip_prefix(&store.root).unwrap().to_string_lossy().to_string();
-    let r = record::load_record(store, "item", &rel, &c)?;
-    let iid = r.id.record_id();
-    event::write_object(store, "item", "", &r.text, dry)?;
-    let mut mint = Event::new(store, "mint", Some(&iid), actor.clone())
-        .with("own-version", yaml_str(&r.own_version))
-        .with("record", yaml_str(&rel))
-        .with("declarations", declarations(&r));
-    event::write_event(store, &mut mint, dry)?;
-    let mut ev = Event::new(store, act, Some(&iid), actor.clone());
-    for (k, v) in extra {
-        ev = ev.with(k, v);
-    }
-    event::write_event(store, &mut ev, dry)?;
-    Ok(iid)
+    // the file is the opening act: its frontmatter says who opened it, when, from where
+    Ok(format!("item:{slug}"))
 }
 
 fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option<&str>, slug: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
@@ -1227,7 +1159,7 @@ fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option
     if !concerns.is_empty() {
         fm.push(format!("concerns: [{}]", concerns.join(", ")));
     }
-    let iid = write_item_record(store, &store.builtin_dir("item"), &slug, &fm, text, why.unwrap_or(""), &actor, "note", vec![("owner", yaml_str(owner)), ("concerns", yaml_list(concerns))], dry)?;
+    let iid = write_item_record(store, &store.builtin_dir("item"), &slug, &fm, text, why.unwrap_or(""), dry)?;
     println!("Recorded {iid}, owner {owner}.");
     Ok(EXIT_OK)
 }
@@ -1262,9 +1194,6 @@ fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>,
     if let Some(w) = why {
         ev = ev.with("reason", yaml_str(w));
     }
-    if let Some(a) = st.rs(&iid).and_then(|s| s.atom.clone()) {
-        ev.atom = Some(a);
-    }
     event::write_event(store, &mut ev, dry)?;
     println!("{iid} → {outcome}{}", if dry { " (dry run)" } else { "" });
     Ok(EXIT_OK)
@@ -1287,9 +1216,6 @@ fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&s
         .with("at-commit", yaml_str(&store.moment()));
     if let Some(o) = owner {
         ev = ev.with("owner", yaml_str(o));
-    }
-    if let Some(a) = st.rs(&iid).and_then(|s| s.atom.clone()) {
-        ev.atom = Some(a);
     }
     event::write_event(store, &mut ev, dry)?;
     if outcome == "holds" {
@@ -1509,7 +1435,7 @@ fn bring_tracker(store: &Store, path: &str, unit: &str, level: usize, actor: Act
         let title = rebase_links(&u.title, &tracker_dir, &to_dir);
         let block = rebase_links(&u.block, &tracker_dir, &to_dir);
         let body = format!("Imported verbatim (relative links rebased) from `{rel}` line {}, section *{}*. Not yet re-checked against HEAD: `vsect recheck item:{slug} --outcome holds|stale|landed|not-an-item --why …`.\n\n{}", u.line, u.section.replace('*', ""), block);
-        write_item_record(store, &dir, &slug, &fm, &title, &body, &actor, "import", vec![("source", yaml_str(&format!("{rel}:{}", u.line))), ("unit", yaml_str(unit)), ("concerns", yaml_list(&concerns))], dry)?;
+        write_item_record(store, &dir, &slug, &fm, &title, &body, dry)?;
         n_new += 1;
         if n_new <= 6 || dry {
             lines_out.push(format!("  item:{slug}  ← {rel}:{}{}", u.line, if concerns.is_empty() { String::new() } else { format!("  ({})", concerns.join(", ")) }));
@@ -1626,8 +1552,8 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
         if revisers.iter().any(|r| r == &actor.name) {
             bail!("{} made this change ({} v:{} → v:{}); a rewording is confirmed by someone other than the reviser.", actor.name, p.record, short(&p.from), short(&p.to));
         }
-        let old = event::read_object(store, &p.from)?;
-        let new = event::read_object(store, &p.to)?;
+        let old = event::read_object(store, &p.from, Some(&p.record))?;
+        let new = event::read_object(store, &p.to, Some(&p.record))?;
         println!("{}  v:{} → v:{}  (revised by {})", p.record, short(&p.from), short(&p.to), if revisers.is_empty() { "no recorded reviser".to_string() } else { revisers.join(", ") });
         print!("{}", line_diff(event::object_text(&old), event::object_text(&new)));
         println!("  {} check(s) read v:{} and would hold again:", p.checks.len(), short(&p.from));
@@ -1669,9 +1595,6 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
         if let Some(c) = criterion {
             ev = ev.with("criterion", yaml_str(c));
         }
-        if let Some(a) = st.rs(&p.record).and_then(|s| s.atom.clone()) {
-            ev.atom = Some(a);
-        }
         event::write_event(store, &mut ev, dry)?;
         wrote += 1;
         match outcome {
@@ -1684,6 +1607,116 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
         let after = State::compute(store);
         let still = after.pending_confirms().len();
         println!("{} rewording(s) still await a second mind.", still);
+    }
+    Ok(EXIT_OK)
+}
+
+// ---------- gc / migrate ----------
+
+fn gc(store: &Store, dry: bool) -> Result<i32> {
+    let trail = event::read_all(store);
+    let (removed, kept, uncited) = event::gc_objects(store, &trail, dry)?;
+    println!("{} {removed} object(s) git can reproduce or nothing cites; kept {kept}{}", if dry { "Would drop" } else { "Dropped" }, if uncited.is_empty() { String::new() } else { format!(" ({} cited without a record to search git for)", uncited.len()) });
+    Ok(EXIT_OK)
+}
+
+/// Events say only what the tree does not. Creation events (mint, import, ask, note) say "this
+/// file exists with this frontmatter", which the tree says; a `revise` whose old version no check
+/// rests on says nothing `confirm` will read. Both go. Remaining events lose their `atom` (the id
+/// of a mint that no longer exists) and are re-identified; a confirmation scoped to securing events
+/// follows them to their new ids. Then objects git can reproduce go.
+fn migrate_prune(store: &Store, dry: bool) -> Result<i32> {
+    let trail = event::read_all(store);
+    // which (record, version) pairs do securing bases rest on?
+    let mut rested: BTreeSet<(String, String)> = BTreeSet::new();
+    for ev in &trail.events {
+        if let Some(Value::Mapping(m)) = ev.get("basis") {
+            for (k, v) in m {
+                if let (Some(k), Some(v)) = (k.as_str(), v.as_str()) {
+                    rested.insert((k.to_string(), v.to_string()));
+                }
+            }
+        }
+    }
+    let creation = ["mint", "import", "ask", "note"];
+    let mut drop: Vec<&Event> = vec![];
+    let mut keep: Vec<&Event> = vec![];
+    for ev in &trail.events {
+        let rec = ev.about.as_deref().map(|a| a.split('#').next().unwrap_or(a).to_string()).unwrap_or_default();
+        let goes = creation.contains(&ev.act.as_str())
+            || (ev.act == "revise" && !ev.str("from-version").map(|f| rested.contains(&(rec.clone(), f.to_string()))).unwrap_or(false));
+        if goes { drop.push(ev) } else { keep.push(ev) }
+    }
+    // re-identify kept events without `atom`; securing events first so confirmations can follow them
+    let mut id_map: BTreeMap<String, String> = BTreeMap::new();
+    let mut rewritten: Vec<(String, Event)> = vec![]; // (old path, new event)
+    let securing = ["rederive", "instantiate", "run", "read-check", "assert", "decline"];
+    let mut ordered: Vec<&Event> = keep.iter().copied().filter(|e| securing.contains(&e.act.as_str())).collect();
+    ordered.extend(keep.iter().copied().filter(|e| !securing.contains(&e.act.as_str())));
+    for ev in ordered {
+        let old_id = ev.id.clone();
+        let old_path = ev.rel_path();
+        let mut new = ev.clone();
+        new.atom = None;
+        if new.act == "confirm-rewording" {
+            if let Some(Value::Mapping(m)) = new.payload.get_mut("scope") {
+                if let Some(Value::Sequence(ids)) = m.get_mut(Value::String("for".into())) {
+                    for v in ids.iter_mut() {
+                        if let Some(s) = v.as_str() {
+                            if let Some(n) = id_map.get(s) {
+                                *v = Value::String(n.clone());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        new.id = event::compute_id(&new)?;
+        id_map.insert(old_id, new.id.clone());
+        rewritten.push((old_path, new));
+    }
+    let changed = rewritten.iter().filter(|(p, n)| *p != n.rel_path()).count();
+    println!("{}: drop {} creation/unneeded event(s) ({} mint · {} import · {} ask/note · {} revise with no check resting), keep {}, re-identify {changed}",
+        if dry { "Would migrate" } else { "Migrating" },
+        drop.len(),
+        drop.iter().filter(|e| e.act == "mint").count(),
+        drop.iter().filter(|e| e.act == "import").count(),
+        drop.iter().filter(|e| e.act == "ask" || e.act == "note").count(),
+        drop.iter().filter(|e| e.act == "revise").count(),
+        keep.len());
+    if dry {
+        return Ok(EXIT_OK);
+    }
+    for ev in &drop {
+        let p = store.root.join(ev.rel_path());
+        if p.exists() {
+            std::fs::remove_file(&p)?;
+        }
+    }
+    for (old_path, new) in &rewritten {
+        let new_path = store.root.join(new.rel_path());
+        if let Some(parent) = new_path.parent() {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(&new_path, event::to_yaml(new)?)?;
+        if old_path != &new.rel_path() {
+            let _ = std::fs::remove_file(store.root.join(old_path));
+        }
+    }
+    // empty event directories go
+    if let Some(p) = store.events_dir().join("**").to_str() {
+        let mut dirs: Vec<_> = glob::glob(p)?.flatten().filter(|d| d.is_dir()).collect();
+        dirs.sort_by(|a, b| b.components().count().cmp(&a.components().count()));
+        for d in dirs {
+            let _ = std::fs::remove_dir(&d);
+        }
+    }
+    let trail2 = event::read_all(store);
+    let (removed, kept, _) = event::gc_objects(store, &trail2, false)?;
+    println!("Objects: dropped {removed} git can reproduce or nothing cites; kept {kept}.");
+    if !trail2.problems.is_empty() {
+        println!("Trail problems after migration: {}", trail2.problems.len());
+        for (p, w) in trail2.problems.iter().take(5) { println!("  {p}: {w}"); }
     }
     Ok(EXIT_OK)
 }
@@ -1715,8 +1748,8 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
     // referenced events that do not exist
     let ids: BTreeSet<&str> = st.trail.events.iter().map(|e| e.id.as_str()).collect();
     for ev in &st.trail.events {
-        for key in ["corrects", "episode", "contests", "atom"] {
-            if let Some(r) = ev.str(key).or(if key == "atom" { ev.atom.as_deref() } else { None }) {
+        for key in ["corrects", "episode", "contests"] {
+            if let Some(r) = ev.str(key) {
                 if !ids.contains(r) {
                     items.push(("trail".into(), ev.rel_path(), format!("`{key}` names event {} which does not exist", short(r))));
                 }
@@ -1765,7 +1798,10 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
     }
     let structural = items.len();
     for (id, why) in st.unreconciled() {
-        notices.push(("not-taken-in".into(), id, why.into()));
+        notices.push(("gone-unrecorded".into(), id, why.into()));
+    }
+    for p in st.unclassified_rewordings() {
+        notices.push(("unclassified-edit".into(), p.record.clone(), format!("v:{} → v:{} with {} check(s) resting on the old text; reworded or redefined? (vsect revise)", short(&p.from), short(&p.to), p.checks.len())));
     }
     for (id, ev, v) in st.lapsed() {
         notices.push(("lapsed-check".into(), id, format!("{} ({}) {}", ev.str("from").unwrap_or(&ev.id), ev.actor.name, v.word())));
@@ -1822,7 +1858,7 @@ fn read(store: &Store, id: &str, at: Option<&str>, bare: bool) -> Result<i32> {
     let st = State::compute(store);
     if let Some(v) = at {
         let full = st.trail.events.iter().filter_map(|e| e.str("own-version").or(e.str("target-version"))).find(|x| x.starts_with(v)).map(|s| s.to_string()).unwrap_or_else(|| v.to_string());
-        let canon = event::read_object(store, &full)?;
+        let canon = event::read_object(store, &full, Some(&rid))?;
         print!("{}", event::object_text(&canon));
         return Ok(EXIT_OK);
     }
@@ -1886,7 +1922,13 @@ fn why(store: &Store, id: &str) -> Result<i32> {
     let st = State::compute(store);
     let evs = st.events_about(&rid);
     if evs.is_empty() {
-        println!("{rid}: no recorded act. {}", if st.scan.records.contains_key(&rid) { "It is in the store but not yet taken in (vsect revise)." } else { "It is not in the store." });
+        match st.record(&rid) {
+            Some(r) => {
+                let since = store.first_commit_of(&r.rel).map(|s| format!(", in the tree since {s}")).unwrap_or_else(|| ", in the tree (not yet committed)".into());
+                println!("{rid}: no recorded act{since}. No check, finding, question or refutation names it.");
+            }
+            None => println!("{rid}: no recorded act, and it is not in the store."),
+        }
         return Ok(EXIT_OK);
     }
     println!("{rid} — {} act(s), oldest first", evs.len());

@@ -93,18 +93,13 @@ pub struct RecordState {
 }
 
 impl RecordState {
+    /// A record the trail speaks about that is gone from the tree with no fate recorded. (A
+    /// record's existence is the tree's to say; only its disappearance needs an event.)
     pub fn unreconciled(&self) -> Option<&'static str> {
-        match (self.exists, &self.last_version, &self.current_version) {
-            (true, None, _) => Some("new: not yet minted"),
-            (true, Some(l), Some(c)) if l != c => Some("edited since last taken in"),
-            (false, _, _)
-                if !self.retired
-                    && self.superseded_by.is_none()
-                    && (self.last_version.is_some() || self.seen_version.is_some()) =>
-            {
-                Some("deleted: fate not recorded")
-            }
-            _ => None,
+        if !self.exists && !self.retired && self.superseded_by.is_none() && self.seen_version.is_some() {
+            Some("deleted: fate not recorded")
+        } else {
+            None
         }
     }
     /// The version to cite for a record that is gone: its last lifecycle version, else the last one seen.
@@ -639,6 +634,13 @@ impl State {
             .into_iter()
             .map(|((record, from, to), checks)| PendingConfirm { record, from, to, checks })
             .collect()
+    }
+
+    /// Rewordings a check rests on that no `revise` event has classified (reworded/redefined, by
+    /// whom). These are what `vsect revise` walks; everything else about a record's text is the
+    /// tree's to say.
+    pub fn unclassified_rewordings(&self) -> Vec<PendingConfirm> {
+        self.pending_confirms().into_iter().filter(|p| self.revisers_between(&p.record, &p.from, &p.to).is_empty()).collect()
     }
 
     /// Who revised `record` between `from` and `to` (actor names), from its lifecycle trail.

@@ -24,6 +24,10 @@ vsect help · vsect help model · vsect help <verb>
 - **`vsect read <id>`** shows a record with marks above it (`✓` a check that holds · `↻` one that lapsed · `⚠` refuted, broken or an open finding · `?` an open question); `--at <version>` shows any version vsect has seen, including ones never committed; `--bare` the text alone. **`vsect why <id>`** is its history; **`vsect impact <id>`** what rests on it.
 - Every writing verb takes `--by --role [--session]` (or `VSECT_BY` / `VSECT_ROLE` / `VSECT_SESSION`) and `--dry-run`. Questions can be answered in advance with `--answer key=value`; without a terminal an unanswered question stops the verb with exit 3. Exit codes describe the command, not the store: 0 done · 1 done, with items to act on · 2 failed · 3 not run. `--format json` on the dashboard, `check` and `open`.
 
+## What is recorded, and what is not
+
+An event is written only when it says something the tree does not: a check, a finding, a confirmation, a refutation, a close, an answer, a re-check, a disposal, the fate of a deleted record (retire / supersede), and a `revise` classification (reworded or redefined, by whom — what `confirm` refuses on) when a check rests on the old text. A record's existence, its text, its frontmatter and who committed it are git's to say, so there is no mint, and `ask`, `note` and `bring --tracker` write only the file. A statement version is kept under `.vsect/objects/` only while git cannot reproduce it (an uncommitted edit a check was recorded against); `read --at`, `confirm`'s diff and rename detection otherwise read the record's file at the commit whose normalized text hashes to the version. `vsect gc` drops objects git can now reproduce; `vsect migrate --prune-creation-events` is the one-time move from the first build's shape (it dropped 1,030 of asf's 1,116 events and all 1,044 objects on 2026-10-31, with every verdict identical before and after). The reason, from Joseph: every copy of something that already exists becomes *"yet another thing to integrate"*.
+
 ## What a store looks like
 
 ```text
