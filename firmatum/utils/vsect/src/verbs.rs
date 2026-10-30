@@ -1143,20 +1143,22 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
     for q in &st.questions_open {
         for t in q.concerns.iter().chain(q.blocks.iter()) {
             if !st.scan.records.contains_key(t.split('#').next().unwrap_or(t)) {
-                items.push(("open-target-missing".into(), q.id.clone(), format!("question concerns {t}, which is not in the store")));
+                notices.push(("open-on-gone-target".into(), q.id.clone(), format!("question concerns {t}, which is not in the store now")));
             }
         }
     }
-    // refuted / broken, unmarked (marks are not written in this version, so every one is reported)
+    // refuted / broken, unmarked. Marks are not written in this version, so every refuted live
+    // record is reported; as a notice, since nothing could clear it yet, and the record's own
+    // `vsect read` already shows the refutation.
     for (id, rs) in &st.records {
         if rs.exists && rs.refuted.is_some() && rs.superseded_by.is_none() && !rs.retired {
             let r = st.record(id).unwrap();
             if !r.body.contains("> [!vsect refuted]") {
-                items.push(("unmarked".into(), id.clone(), "refuted, and its file carries no mark saying so".into()));
+                notices.push(("unmarked".into(), id.clone(), "refuted, and its file carries no mark saying so (mark-writing is not built; replace or retire it)".into()));
             }
         }
         if rs.live() && !rs.broken_by.is_empty() {
-            items.push(("unmarked".into(), id.clone(), format!("rests on refuted {}; its file carries no mark", rs.broken_by.join(", "))));
+            notices.push(("unmarked".into(), id.clone(), format!("rests on refuted {}; its file carries no mark", rs.broken_by.join(", "))));
         }
     }
     // declared-field hygiene for domain kinds
@@ -1448,9 +1450,11 @@ whether the meaning changed only when a recorded check rests on the old version)
 A rewording is recorded as your claim; the old checks stay with the old version until a different mind confirms.".into(),
         "check" => "vsect check [--strict] [--format json]
 
-Reports structural problems (unreadable records, id collisions, dangling edge targets, edited or misnamed
-event and object files, open items whose target is gone, refuted statements without a mark). --strict also
-counts edits not yet taken in and checks that have lapsed. Exit 1 when there is anything to act on.".into(),
+Structural problems, always counted: unreadable records, id collisions, a frontmatter slug disagreeing with
+its file name, edited or misnamed event and object files, events naming events that do not exist.
+Notices, counted only with --strict: dangling edge targets (a planned segment, or a stale name — lint-outline
+owns the planned case), edits not yet taken in, checks that lapsed, open items whose target is gone, refuted
+statements whose file carries no mark. Exit 1 when anything counted is present.".into(),
         "refute" => "vsect refute <kind:slug> --ground counterexample|broken-derivation|missed-prediction|broken-mapping:\"…\" \\
     [--by-item review:slug#C2] [--at <git rev>]
 

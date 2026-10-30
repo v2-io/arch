@@ -486,7 +486,10 @@ impl State {
                 continue;
             }
             for (ev, verdict) in &rs.securing {
-                if !verdict.holds() && ev.act != "decline" {
+                // a check that broke or narrowed the statement did its work; the finding it
+                // opened is the waiting item, not the check
+                let broke = matches!(ev.str("outcome"), Some("broken") | Some("narrowed"));
+                if !verdict.holds() && ev.act != "decline" && !broke {
                     v.push((id.clone(), ev, verdict));
                 }
             }
