@@ -40,7 +40,10 @@ fn strip_tool_markers(text: &str) -> String {
         out.push_str(&rest[..i]);
         match rest[i..].find("-->") {
             Some(j) => rest = &rest[i + j + 3..],
+            // an unterminated marker is not a marker: keep the remainder verbatim, so no text
+            // ever drops out of a version (false staleness over false equivalence)
             None => {
+                out.push_str(&rest[i..]);
                 rest = "";
             }
         }
@@ -196,6 +199,15 @@ mod tests {
         assert_eq!(normalize(c), normalize(d));
         // a marker inside display math would still be stripped; md-press never writes one there
         assert_eq!(normalize("x\n"), "x\n");
+    }
+
+    #[test]
+    fn unterminated_marker_keeps_the_tail() {
+        // nothing after an unterminated `<!--md-press:` may drop out of the hash
+        let a = "claim one.<!--md-press:not-math:η tail text that must stay\n";
+        assert!(normalize(a).contains("tail text that must stay"));
+        let b = "claim one.<!--md-press:not-math:η tail text that must CHANGE\n";
+        assert_ne!(normalize(a), normalize(b));
     }
 
     #[test]
