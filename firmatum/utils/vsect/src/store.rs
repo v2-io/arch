@@ -73,6 +73,52 @@ pub struct Kinds {
     /// Lines evidence can be recorded on, with their rungs lowest first.
     #[serde(default)]
     pub lines: BTreeMap<String, Vec<String>>,
+    /// Where the store says which not-yet-written records are planned, so an edge naming one is
+    /// not dangling. e.g. ASF's OUTLINE `missing` rows.
+    #[serde(default)]
+    pub planned: Option<PlannedDecl>,
+}
+
+/// Table rows in the named files whose cells include `cell` name planned records by `#slug`.
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct PlannedDecl {
+    #[serde(default)]
+    pub find: Vec<String>,
+    #[serde(default = "default_planned_cell")]
+    pub cell: String,
+}
+
+fn default_planned_cell() -> String {
+    "missing".into()
+}
+
+impl Store {
+    /// Slugs the store declares as planned: `#slug` tokens on table rows carrying the planned cell.
+    pub fn planned_slugs(&self) -> std::collections::BTreeSet<String> {
+        let mut out = std::collections::BTreeSet::new();
+        let Some(p) = &self.kinds.planned else { return out };
+        let slug_re = regex::Regex::new(r"#([a-z0-9]+(?:-[a-z0-9]+)*)").unwrap();
+        for g in &p.find {
+            let Some(full) = self.root.join(g).to_str().map(|s| s.to_string()) else { continue };
+            let Ok(paths) = glob::glob(&full) else { continue };
+            for path in paths.flatten() {
+                let Ok(text) = std::fs::read_to_string(&path) else { continue };
+                for line in text.lines() {
+                    if !line.trim_start().starts_with('|') {
+                        continue;
+                    }
+                    let is_planned = line.split('|').any(|c| c.trim() == p.cell);
+                    if !is_planned {
+                        continue;
+                    }
+                    if let Some(c) = slug_re.captures(line) {
+                        out.insert(c[1].to_string());
+                    }
+                }
+            }
+        }
+        out
+    }
 }
 
 impl Kinds {

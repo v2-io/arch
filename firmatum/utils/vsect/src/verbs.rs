@@ -83,6 +83,13 @@ pub fn run(cli: Cli) -> Result<i32> {
             }
             (None, None) => open(&store, None, json),
         },
+        Cmd::Confirm { record, from, to, judgment, criterion } => match record {
+            None => confirm_list(&store),
+            Some(r) => {
+                let actor = actor(&actor_args, "second-mind")?;
+                confirm(&store, &r, from.as_deref(), to.as_deref(), judgment.as_deref(), criterion.as_deref(), actor, &answers, dry)
+            }
+        },
         Cmd::Refute { target, ground, by_item, at } => {
             let actor = actor(&actor_args, "verifier")?;
             refute(&store, &target, &ground, by_item.as_deref(), at.as_deref(), actor, dry)
@@ -341,9 +348,13 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
         any = true;
         println!("  {:>4} questions open                   oldest {:<5} → vsect open", other_q.len(), oldest(other_q.iter().map(|q| q.asked.as_str()).collect()));
     }
-    if !stale.is_empty() {
+    let pending = st.pending_confirms();
+    if !pending.is_empty() {
         any = true;
-        println!("  {:>4} checks lapsed since recorded     oldest {:<5} → vsect check --strict", stale.len(), oldest(stale.iter().map(|s| s.1.as_str()).collect()));
+        println!("  {:>4} rewordings awaiting a second mind  ({} checks lapsed) → vsect confirm", pending.len(), stale.len());
+    } else if !stale.is_empty() {
+        any = true;
+        println!("  {:>4} checks lapsed, not curable by confirmation  → vsect check --strict", stale.len());
     }
     if !unrec.is_empty() {
         any = true;
@@ -1096,6 +1107,169 @@ fn refute(store: &Store, target: &str, ground: &str, by_item: Option<&str>, at: 
     Ok(EXIT_OK)
 }
 
+// ---------- confirm ----------
+
+/// A line diff of two texts (LCS), rendered with `-`/`+` and one line of context.
+fn line_diff(a: &str, b: &str) -> String {
+    let al: Vec<&str> = a.lines().collect();
+    let bl: Vec<&str> = b.lines().collect();
+    let (n, m) = (al.len(), bl.len());
+    let mut dp = vec![vec![0u32; m + 1]; n + 1];
+    for i in (0..n).rev() {
+        for j in (0..m).rev() {
+            dp[i][j] = if al[i] == bl[j] { dp[i + 1][j + 1] + 1 } else { dp[i + 1][j].max(dp[i][j + 1]) };
+        }
+    }
+    let mut ops: Vec<(char, &str)> = vec![];
+    let (mut i, mut j) = (0, 0);
+    while i < n && j < m {
+        if al[i] == bl[j] {
+            ops.push((' ', al[i]));
+            i += 1;
+            j += 1;
+        } else if dp[i + 1][j] >= dp[i][j + 1] {
+            ops.push(('-', al[i]));
+            i += 1;
+        } else {
+            ops.push(('+', bl[j]));
+            j += 1;
+        }
+    }
+    while i < n {
+        ops.push(('-', al[i]));
+        i += 1;
+    }
+    while j < m {
+        ops.push(('+', bl[j]));
+        j += 1;
+    }
+    let mut out = String::new();
+    let mut last_shown: Option<usize> = None;
+    for (k, (c, line)) in ops.iter().enumerate() {
+        let near_change = (k.saturating_sub(1)..=(k + 1).min(ops.len() - 1)).any(|x| ops[x].0 != ' ');
+        if *c == ' ' && !near_change {
+            continue;
+        }
+        if let Some(l) = last_shown {
+            if k > l + 1 {
+                out.push_str("      …\n");
+            }
+        }
+        let shown: String = line.chars().take(160).collect();
+        out.push_str(&format!("    {c} {shown}\n"));
+        last_shown = Some(k);
+    }
+    if out.is_empty() {
+        out.push_str("    (the normalized texts are identical)\n");
+    }
+    out
+}
+
+fn confirm_list(store: &Store) -> Result<i32> {
+    let st = State::compute(store);
+    let pending = st.pending_confirms();
+    if pending.is_empty() {
+        println!("Nothing awaits a second mind: every recorded check holds, or lapsed for a reason a confirmation cannot cure.");
+        return Ok(EXIT_OK);
+    }
+    println!("{} rewording(s) awaiting a second mind. Each: the record, the version its checks read → the version now, and what a confirmation would re-bind.", pending.len());
+    for p in &pending {
+        let revisers = st.revisers_between(&p.record, &p.from, &p.to);
+        let targets: BTreeSet<&str> = p.checks.iter().map(|(_, t)| t.as_str()).collect();
+        println!("\n  {}  v:{} → v:{}   revised by {}", p.record, short(&p.from), short(&p.to), if revisers.is_empty() { "(no revise event)".to_string() } else { revisers.join(", ") });
+        println!("    re-binds {} check(s) on: {}", p.checks.len(), targets.into_iter().collect::<Vec<_>>().join(", "));
+        println!("    → vsect confirm {} --from {} --to {}", p.record, short(&p.from), short(&p.to));
+    }
+    Ok(EXIT_OK)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, judgment: Option<&str>, criterion: Option<&str>, actor: Actor, answers: &BTreeMap<String, String>, dry: bool) -> Result<i32> {
+    let rid = Id::parse(store, record)?.record_id();
+    let st = State::compute(store);
+    let mut pending: Vec<_> = st.pending_confirms().into_iter().filter(|p| p.record == rid).collect();
+    if let Some(f) = from {
+        pending.retain(|p| p.from.starts_with(f));
+    }
+    if let Some(t) = to {
+        pending.retain(|p| p.to.starts_with(t));
+    }
+    if pending.is_empty() {
+        if !st.scan.records.contains_key(&rid) {
+            bail!("{rid} is not in the store");
+        }
+        println!("No rewording of {rid} awaits a second mind{}.", if from.is_some() || to.is_some() { " for those versions" } else { "" });
+        return Ok(EXIT_OK);
+    }
+    let mut wrote = 0;
+    for p in pending {
+        // the second mind is not the reviser
+        let revisers = st.revisers_between(&p.record, &p.from, &p.to);
+        if revisers.iter().any(|r| r == &actor.name) {
+            bail!("{} made this change ({} v:{} → v:{}); a rewording is confirmed by someone other than the reviser.", actor.name, p.record, short(&p.from), short(&p.to));
+        }
+        let old = event::read_object(store, &p.from)?;
+        let new = event::read_object(store, &p.to)?;
+        println!("{}  v:{} → v:{}  (revised by {})", p.record, short(&p.from), short(&p.to), if revisers.is_empty() { "no recorded reviser".to_string() } else { revisers.join(", ") });
+        print!("{}", line_diff(event::object_text(&old), event::object_text(&new)));
+        println!("  {} check(s) read v:{} and would hold again:", p.checks.len(), short(&p.from));
+        let mut criteria = vec![];
+        for (eid, target) in &p.checks {
+            let ev = st.trail.events.iter().find(|e| &e.id == eid);
+            let crit = ev.and_then(|e| e.str("criterion")).unwrap_or("");
+            let from_item = ev.and_then(|e| e.str("from")).unwrap_or(eid);
+            println!("    {from_item} on {target}{}", if crit.is_empty() { String::new() } else { format!(": {}", crit.chars().take(140).collect::<String>()) });
+            if !crit.is_empty() {
+                criteria.push(crit.to_string());
+            }
+        }
+        let j = match judgment {
+            Some(j) => j.to_string(),
+            None => match ask_q(answers, "judgment", "  Does the new text say what the old one said? [equivalent / for-checks (only as it bears on these checks) / not-equivalent]", &["equivalent", "for-checks", "not-equivalent"]) {
+                Some(a) => a,
+                None => return Ok(EXIT_NOT_RUN),
+            },
+        };
+        let (outcome, scope): (&str, Value) = match j.as_str() {
+            "equivalent" | "yes" => ("equivalent", yaml_str("unconditional")),
+            "for-checks" | "checked" => {
+                let mut m = serde_yaml::Mapping::new();
+                m.insert(yaml_str("for"), Value::Sequence(p.checks.iter().map(|(e, _)| yaml_str(e)).collect()));
+                ("equivalent", Value::Mapping(m))
+            }
+            "not-equivalent" | "no" => ("not-equivalent", yaml_str("unconditional")),
+            other => bail!("`{other}` is not a judgment: equivalent, for-checks, or not-equivalent"),
+        };
+        if j == "for-checks" && criterion.is_none() {
+            bail!("a confirmation scoped to particular checks says what it compared: give --criterion");
+        }
+        let mut ev = Event::new(store, "confirm-rewording", Some(&p.record), actor.clone())
+            .with("from-version", yaml_str(&p.from))
+            .with("to-version", yaml_str(&p.to))
+            .with("outcome", yaml_str(outcome))
+            .with("scope", scope);
+        if let Some(c) = criterion {
+            ev = ev.with("criterion", yaml_str(c));
+        }
+        if let Some(a) = st.rs(&p.record).and_then(|s| s.atom.clone()) {
+            ev.atom = Some(a);
+        }
+        event::write_event(store, &mut ev, dry)?;
+        wrote += 1;
+        match outcome {
+            "equivalent" if j == "for-checks" => println!("  → recorded: equivalent as it bears on those {} check(s); they hold again at the current text. Other checks through this version still wait.", p.checks.len()),
+            "equivalent" => println!("  → recorded: equivalent. Every check that read v:{} of {} holds again, and so does everything downstream that rests on it. Nothing downstream was written.", short(&p.from), p.record),
+            _ => println!("  → recorded: not equivalent. The change is a redefinition from here on; the checks stay with v:{} until redone.", short(&p.from)),
+        }
+    }
+    if !dry && wrote > 0 {
+        let after = State::compute(store);
+        let still = after.pending_confirms().len();
+        println!("{} rewording(s) still await a second mind.", still);
+    }
+    Ok(EXIT_OK)
+}
+
 // ---------- check ----------
 
 fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
@@ -1209,6 +1383,10 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
                 let parts: Vec<String> = by_class.iter().map(|(c, n)| format!("{n} {c}")).collect();
                 println!("{} notice(s), not counted: {} (--strict lists and counts them)", notices.len(), parts.join(" · "));
             }
+        }
+        if !st.planned.is_empty() {
+            let slugs: BTreeSet<&str> = st.planned.iter().map(|(_, _, t)| t.as_str()).collect();
+            println!("{} edge target(s) name planned records (declared by the store's `planned:` rows), not counted: {}", st.planned.len(), slugs.into_iter().collect::<Vec<_>>().join(", "));
         }
         for n in &not_run {
             println!("not run: {n}");
@@ -1395,6 +1573,7 @@ Work      vsect revise [<kind:slug>]                 take in edits made outside 
           vsect take --check <id> --criterion … --outcome …   record one check inline
           vsect ask \"…\" [--concerns id] [--closer …]  record an open question
           vsect answer <question:slug> --outcome …   close one
+          vsect confirm [<kind:slug>]                the second mind: confirm a rewording still says what was checked
           vsect refute <id> --ground kind:text        record a refutation, on evidence
           vsect findings --dispose <item> --as … --why …
           vsect check [--strict]                     everything that can be checked; exit 1 = act on it
@@ -1460,6 +1639,18 @@ statements whose file carries no mark. Exit 1 when anything counted is present."
 
 Records that a statement was shown false, on evidence, and lists what rests on it. No mark is written into
 any file in this version; `vsect check` reports the refuted statement as unmarked until that exists.".into(),
+        "confirm" => "vsect confirm                       what awaits a second mind: each record, the version its checks read → now
+vsect confirm <kind:slug> [--from v] [--to v] [--judgment equivalent|for-checks|not-equivalent] [--criterion \"…\"]
+
+A check binds to the exact versions it read. When a statement in its basis is reworded, the check
+lapses until someone other than the reviser confirms the new text says what the old one said.
+`confirm` shows the diff of the two stored versions and the checks it would re-bind, then asks.
+  equivalent      — full stop: every check that read the old version holds again, and so does
+                    everything downstream, with nothing written downstream (one event at the root).
+  for-checks      — only as it bears on the listed checks' criteria (--criterion says what you compared);
+                    other checks through this version keep waiting.
+  not-equivalent  — the change is a redefinition from here on; the checks stay with the old version.
+Refuses the reviser. Confirmations chain: a→b and b→c confirmed means a check that read a holds at c.".into(),
         "ask" => "vsect ask \"question?\" [--concerns kind:slug]… [--blocks kind:slug]… [--closer anyone|awaiting:<work>|steward-fact|steward-purpose] [--why \"…\"]
 
 Writes questions/<slug>.md and records the ask. Nothing reaches the steward without a stated reason.".into(),

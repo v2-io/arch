@@ -152,6 +152,23 @@ pub enum Cmd {
         #[arg(long)]
         by_revision: Option<String>,
     },
+    /// The second mind: confirm that a reworded statement still says what the checked version said.
+    Confirm {
+        /// The record whose rewording you judge (kind:slug). With nothing: list what awaits a second mind.
+        record: Option<String>,
+        /// The version the checks read (prefix). Default: every pending pair on the record.
+        #[arg(long)]
+        from: Option<String>,
+        /// The version now (prefix). Default: the current one.
+        #[arg(long)]
+        to: Option<String>,
+        /// Your judgment, if not asked interactively: equivalent | for-checks | not-equivalent.
+        #[arg(long)]
+        judgment: Option<String>,
+        /// What you compared, in a sentence (required for `for-checks`; welcome otherwise).
+        #[arg(long)]
+        criterion: Option<String>,
+    },
     /// Record that a statement was shown false, on evidence; shows what rests on it.
     Refute {
         target: String,

@@ -61,6 +61,8 @@ pub struct RecordState {
     pub exists: bool,
     pub atom: Option<String>,
     pub last_lifecycle: Option<Event>,
+    /// Every lifecycle event on the record, oldest first (mint, revise, …).
+    pub lifecycle: Vec<Event>,
     pub last_version: Option<String>,
     pub current_version: Option<String>,
     /// The last version any event cited for this record (own-version or target-version), so a
@@ -110,6 +112,20 @@ pub struct State {
     pub reverse: BTreeMap<String, Vec<(String, String)>>,
     /// Declared targets that resolve to no record: (source id, edge, target)
     pub dangling: Vec<(String, String, String)>,
+    /// Declared targets that resolve to no record but are declared planned (store `planned:`)
+    pub planned: Vec<(String, String, String)>,
+    /// Confirmed equivalences between versions.
+    pub eq: Equivalence,
+}
+
+/// A difference between a version a check read and the version now, awaiting a second mind.
+#[derive(Debug, Clone)]
+pub struct PendingConfirm {
+    pub record: String,
+    pub from: String,
+    pub to: String,
+    /// The securing events (id, their target) that would hold again if the pair were confirmed.
+    pub checks: Vec<(String, String)>,
 }
 
 /// An entry in a check's basis as recorded on the event.
@@ -204,7 +220,81 @@ pub fn effective_version(b: &[BasisEntry]) -> String {
     crate::norm::sha256_hex(s.join("\n").as_bytes())
 }
 
-fn verdict(store: &Store, scan: &Scan, about: &str, recorded: &[BasisEntry]) -> Verdict {
+/// Confirmed equivalences between versions of one statement (core.md §3.6): the smallest
+/// equivalence relation containing every unconditional `confirm-rewording … equivalent` pair,
+/// plus the scoped confirmations, which apply to the named checks alone.
+#[derive(Debug, Default, Clone)]
+pub struct Equivalence {
+    /// record id -> union-find parent map over versions
+    classes: BTreeMap<String, BTreeMap<String, String>>,
+    /// securing event id -> (record id, from, to) pairs confirmed for that check only
+    scoped: BTreeMap<String, Vec<(String, String, String)>>,
+    /// (record id, from, to) pairs a confirmer judged not equivalent
+    pub refused: Vec<(String, String, String, String)>, // + confirmer
+}
+
+impl Equivalence {
+    fn find(m: &mut BTreeMap<String, String>, v: &str) -> String {
+        let mut cur = v.to_string();
+        loop {
+            match m.get(&cur) {
+                Some(p) if p != &cur => cur = p.clone(),
+                _ => return cur,
+            }
+        }
+    }
+    fn union(&mut self, rec: &str, a: &str, b: &str) {
+        let m = self.classes.entry(rec.to_string()).or_default();
+        m.entry(a.to_string()).or_insert_with(|| a.to_string());
+        m.entry(b.to_string()).or_insert_with(|| b.to_string());
+        let ra = Self::find(m, a);
+        let rb = Self::find(m, b);
+        if ra != rb {
+            m.insert(ra, rb);
+        }
+    }
+    pub fn same(&self, rec: &str, a: &str, b: &str) -> bool {
+        if a == b {
+            return true;
+        }
+        let Some(m) = self.classes.get(rec) else { return false };
+        let mut m = m.clone();
+        Self::find(&mut m, a) == Self::find(&mut m, b)
+    }
+    pub fn scoped_covers(&self, event_id: &str, rec: &str, a: &str, b: &str) -> bool {
+        self.scoped
+            .get(event_id)
+            .map(|v| v.iter().any(|(r, f, t)| r == rec && ((f == a && t == b) || (f == b && t == a))))
+            .unwrap_or(false)
+    }
+    pub fn from_trail(trail: &Trail) -> Equivalence {
+        let mut eq = Equivalence::default();
+        for ev in &trail.events {
+            if ev.act != "confirm-rewording" {
+                continue;
+            }
+            let (Some(rec), Some(from), Some(to)) = (ev.about.clone(), ev.str("from-version"), ev.str("to-version")) else { continue };
+            let rec = rec.split('#').next().unwrap_or(&rec).to_string();
+            if ev.str("outcome") != Some("equivalent") {
+                eq.refused.push((rec, from.to_string(), to.to_string(), ev.actor.name.clone()));
+                continue;
+            }
+            match ev.get("scope") {
+                Some(Value::Mapping(m)) => {
+                    if let Some(Value::Sequence(ids)) = m.get(Value::String("for".into())) {
+                        for id in ids.iter().filter_map(|v| v.as_str()) {
+                            eq.scoped.entry(id.to_string()).or_default().push((rec.clone(), from.to_string(), to.to_string()));
+                        }
+                    }
+                }
+                _ => eq.union(&rec, from, to),
+            }
+        }
+        eq
+    }
+}
+
+fn verdict(store: &Store, scan: &Scan, about: &str, recorded: &[BasisEntry], event_id: &str, eq: &Equivalence) -> Verdict {
     let now = basis_of(store, scan, about);
     let rec_ids: BTreeSet<&str> = recorded.iter().map(|e| e.id.as_str()).collect();
     let now_ids: BTreeSet<&str> = now.iter().map(|e| e.id.as_str()).collect();
@@ -223,7 +313,7 @@ fn verdict(store: &Store, scan: &Scan, about: &str, recorded: &[BasisEntry]) -> 
         if cur == "unwritten" && e.version != "unwritten" {
             return Verdict::CannotEvaluate(format!("{} is not in the store now", e.id));
         }
-        if cur != e.version {
+        if cur != e.version && !eq.same(&e.id, &e.version, cur) && !eq.scoped_covers(event_id, &e.id, &e.version, cur) {
             if e.id == about {
                 own = true;
             } else {
@@ -291,6 +381,7 @@ impl State {
                     }
                 }
                 rs.last_lifecycle = Some(ev.clone());
+                rs.lifecycle.push(ev.clone());
             }
             if ev.act == "refute" {
                 rs.refuted = Some(ev.clone());
@@ -299,7 +390,8 @@ impl State {
                 // a contested refutation shows both; kept on the refute event's side
             }
         }
-        // securing events with verdicts
+        // securing events with verdicts, under the confirmed equivalences
+        let eq = Equivalence::from_trail(&trail);
         for ev in &trail.events {
             if !SECURING.contains(&ev.act.as_str()) {
                 continue;
@@ -307,9 +399,15 @@ impl State {
             let Some(about) = &ev.about else { continue };
             let rid = record_of(about);
             let recorded = basis_from_yaml(ev.get("basis"));
-            let v = verdict(store, &scan, &rid, &recorded);
+            let v = verdict(store, &scan, &rid, &recorded, &ev.id, &eq);
             records.entry(rid).or_default().securing.push((ev.clone(), v));
         }
+        // planned targets: slugs the store declares as planned (e.g. OUTLINE `missing` rows)
+        let planned_slugs = store.planned_slugs();
+        let (planned, dangling): (Vec<_>, Vec<_>) = dangling.into_iter().partition(|(_, _, tgt)| {
+            let slug = tgt.split_once(':').map(|(_, s)| s).unwrap_or(tgt);
+            planned_slugs.contains(slug)
+        });
         // broken: a live record whose `broken`-on-refute edge targets a refuted, unreplaced record
         let refuted_live: BTreeSet<String> = records
             .iter()
@@ -433,7 +531,77 @@ impl State {
             questions_closed,
             reverse,
             dangling,
+            planned,
+            eq,
         }
+    }
+
+    /// Every (record, version read, version now) difference that keeps a check from holding,
+    /// with the checks it would re-bind. A confirmation of such a pair by someone other than the
+    /// reviser is what `vsect confirm` records.
+    pub fn pending_confirms(&self) -> Vec<PendingConfirm> {
+        let mut by_pair: BTreeMap<(String, String, String), Vec<(String, String)>> = BTreeMap::new();
+        for (id, rs) in &self.records {
+            if !rs.live() {
+                continue;
+            }
+            for (ev, v) in &rs.securing {
+                if ev.act == "decline" || v.holds() {
+                    continue;
+                }
+                if matches!(ev.str("outcome"), Some("broken") | Some("narrowed")) {
+                    continue;
+                }
+                for e in basis_from_yaml(ev.get("basis")) {
+                    let Some(cur) = self.scan.records.get(&e.id).map(|r| r.own_version.clone()) else { continue };
+                    if cur == e.version || e.version == "unwritten" {
+                        continue;
+                    }
+                    if self.eq.same(&e.id, &e.version, &cur) || self.eq.scoped_covers(&ev.id, &e.id, &e.version, &cur) {
+                        continue;
+                    }
+                    by_pair.entry((e.id.clone(), e.version.clone(), cur)).or_default().push((ev.id.clone(), id.clone()));
+                }
+            }
+        }
+        by_pair
+            .into_iter()
+            .map(|((record, from, to), checks)| PendingConfirm { record, from, to, checks })
+            .collect()
+    }
+
+    /// Who revised `record` between `from` and `to` (actor names), from its lifecycle trail.
+    pub fn revisers_between(&self, record: &str, from: &str, to: &str) -> Vec<String> {
+        let Some(rs) = self.records.get(record) else { return vec![] };
+        // Follow the version chain (from-version → own-version) rather than event order: two
+        // revisions in one second sort by id, and order would miss one.
+        let mut next: BTreeMap<&str, Vec<(&str, &str)>> = BTreeMap::new(); // from -> [(own, actor)]
+        for ev in &rs.lifecycle {
+            if ev.act == "revise" {
+                if let (Some(f), Some(o)) = (ev.str("from-version"), ev.str("own-version")) {
+                    next.entry(f).or_default().push((o, ev.actor.name.as_str()));
+                }
+            }
+        }
+        let mut names: Vec<String> = vec![];
+        let mut seen: BTreeSet<&str> = BTreeSet::new();
+        let mut stack: Vec<&str> = vec![from];
+        while let Some(cur) = stack.pop() {
+            if cur == to || !seen.insert(cur) {
+                continue;
+            }
+            if let Some(outs) = next.get(cur) {
+                for (own, actor) in outs {
+                    if !names.iter().any(|n| n == actor) {
+                        names.push(actor.to_string());
+                    }
+                    stack.push(own);
+                }
+            }
+        }
+        // if `to` was never reached the chain is broken or branched; the names collected are
+        // still everyone who revised away from `from`, which is the conservative set to refuse
+        names
     }
 
     pub fn record(&self, id: &str) -> Option<&Record> {
