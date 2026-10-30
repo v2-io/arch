@@ -4,6 +4,7 @@
 //! records and the recorded acts; none can be typed. See `vsect help model`.
 
 mod event;
+mod intent;
 mod norm;
 mod record;
 mod state;
@@ -251,6 +252,51 @@ pub enum Cmd {
         /// The text was read at this git revision (for a target that has since gone).
         #[arg(long)]
         at: Option<String>,
+    },
+    /// Say what you are about to do to a record, visibly to every agent and worktree now. Refused if another agent holds it (unless --alongside).
+    Claim {
+        /// Records (kind:slug), one or more.
+        records: Vec<String>,
+        /// What you intend, in a sentence.
+        #[arg(long)]
+        intent: String,
+        /// edit (exclusive by nature) | record (additive: findings, items) | free text
+        #[arg(long, default_value = "edit")]
+        kind: String,
+        /// How long the claim lives before it expires: 6h, 90m, 1d.
+        #[arg(long, default_value = "6h")]
+        ttl: String,
+        /// Record a co-intent beside another agent's live claim instead of being refused.
+        #[arg(long)]
+        alongside: bool,
+    },
+    /// Release your claim on records (or anyone's expired one; --force with --why for a live one).
+    Release {
+        records: Vec<String>,
+        #[arg(long)]
+        force: bool,
+        #[arg(long)]
+        why: Option<String>,
+    },
+    /// Every live claim: who is at work on what, where, since when, and what they said.
+    Intents {
+        /// Include expired claims.
+        #[arg(long)]
+        all: bool,
+    },
+    /// For hooks: given file paths, report records claimed by someone other than --by. Exit 1 if any.
+    Claimed {
+        paths: Vec<String>,
+    },
+    /// Say that an existing item or finding was raised again from another source, without editing it.
+    Raise {
+        /// The item (item:slug) or finding (review:x#F1).
+        target: String,
+        /// Where it was raised again (a file, a review, a line).
+        #[arg(long)]
+        source: String,
+        #[arg(long)]
+        why: Option<String>,
     },
     /// Correct the record of an act without editing it: a correction event that names the original.
     Annotate {

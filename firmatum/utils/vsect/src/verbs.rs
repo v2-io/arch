@@ -1,6 +1,7 @@
 //! The verbs. Each is something the work already does; recording is a side effect of doing it.
 
 use crate::event::{self, Actor, Event};
+use crate::intent;
 use crate::norm;
 use crate::record::{self, Id, Record};
 use crate::state::{self, BasisEntry, State};
@@ -112,6 +113,23 @@ pub fn run(cli: Cli) -> Result<i32> {
         Cmd::Refute { target, ground, by_item, at } => {
             let actor = actor(&actor_args, "verifier")?;
             refute(&store, &target, &ground, by_item.as_deref(), at.as_deref(), actor, dry)
+        }
+        Cmd::Claim { records, intent, kind, ttl, alongside } => {
+            let actor = actor(&actor_args, "agent")?;
+            claim_verb(&store, &records, &intent, &kind, &ttl, alongside, actor)
+        }
+        Cmd::Release { records, force, why } => {
+            let actor = actor(&actor_args, "agent")?;
+            release_verb(&store, &records, force, why.as_deref(), actor)
+        }
+        Cmd::Intents { all } => intents_verb(&store, all, json),
+        Cmd::Claimed { paths } => {
+            let who = actor_args.by.clone().or_else(|| std::env::var("VSECT_BY").ok()).unwrap_or_default();
+            claimed_verb(&store, &paths, &who, json)
+        }
+        Cmd::Raise { target, source, why } => {
+            let actor = actor(&actor_args, "finder")?;
+            raise_verb(&store, &target, &source, why.as_deref(), actor, dry)
         }
         Cmd::Annotate { event, why } => {
             let actor = actor(&actor_args, "annotator")?;
@@ -375,6 +393,17 @@ fn dashboard(store: &Store, json: bool) -> Result<i32> {
     }
     for (id, why) in &broken {
         println!("  ⚠ {id} — {why}");
+    }
+    let live_claims: Vec<intent::Claim> = intent::all_claims(store).into_iter().filter(|c| !c.expired()).collect();
+    if !live_claims.is_empty() {
+        println!();
+        println!("At work now ({} claim(s); a claim is a signal every worktree sees, not a record)", live_claims.len());
+        for c in live_claims.iter().take(12) {
+            println!("  {}  {} ({}) in {} since {}: {}", c.record, c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent.chars().take(90).collect::<String>());
+        }
+        if live_claims.len() > 12 {
+            println!("  … {} more → vsect intents", live_claims.len() - 12);
+        }
     }
     println!();
     println!("Waiting, oldest first");
@@ -1046,6 +1075,11 @@ fn open(store: &Store, target: Option<&str>, json: bool) -> Result<i32> {
         println!("{}", serde_json::to_string_pretty(&json!({"schema": "vsect-open/0", "items": out, "imported_unchecked": imp}))?);
         return Ok(EXIT_OK);
     }
+    if let Some(f) = &filter {
+        for c in intent::claims_on(store, f).into_iter().filter(|c| !c.expired()) {
+            println!("At work: {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent);
+        }
+    }
     if by_target.is_empty() && unchecked.is_empty() {
         println!("Nothing open{}.", filter.map(|f| format!(" about {f}")).unwrap_or_default());
         return Ok(EXIT_OK);
@@ -1231,6 +1265,19 @@ fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option
     let slug = slug.map(|s| s.to_string()).unwrap_or_else(|| slugify(text));
     if !record::slug_re().is_match(&slug) {
         bail!("slug `{slug}` must be lowercase kebab-case");
+    }
+    // two agents can both see nothing in `vsect open` and both open the item: warn on a near match
+    {
+        let st = State::compute(store);
+        let words = |t: &str| t.to_lowercase().split(|c: char| !c.is_alphanumeric()).filter(|w| w.len() > 3).map(|w| w.to_string()).collect::<BTreeSet<_>>();
+        let mine = words(text);
+        for it in st.items_open.iter().filter(|i| !i.unchecked) {
+            let theirs = words(it.restated.as_deref().unwrap_or(&it.title));
+            let shared = mine.intersection(&theirs).count();
+            if !mine.is_empty() && shared * 10 >= mine.len().min(theirs.len()) * 6 && shared >= 3 {
+                println!("  note: {} looks close (\"{}\", owner {}); if it is the same work, `vsect raise {} --source …` instead of a second item", it.id, it.restated.as_deref().unwrap_or(&it.title).chars().take(80).collect::<String>(), it.owner, it.id);
+            }
+        }
     }
     let mut fm = vec![format!("owner: {}", yaml_quote(owner)), format!("opened: {}", event::now()), format!("opened-by: {}", yaml_quote(&actor.name))];
     if !concerns.is_empty() {
@@ -1923,6 +1970,130 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
     Ok(EXIT_OK)
 }
 
+// ---------- intent: claim / release / intents / claimed / raise ----------
+
+fn claim_verb(store: &Store, records: &[String], intent_text: &str, kind: &str, ttl: &str, alongside: bool, actor: Actor) -> Result<i32> {
+    if records.is_empty() {
+        bail!("name at least one record (kind:slug)");
+    }
+    let ttl_d = intent::parse_ttl(ttl)?;
+    let st = State::compute(store);
+    let mut refused = 0;
+    for r in records {
+        let rid = Id::parse(store, r)?.record_id();
+        if !st.scan.records.contains_key(&rid) {
+            bail!("{rid} is not in the store");
+        }
+        match intent::claim(store, &rid, &actor.name, actor.role.as_deref().unwrap_or(""), intent_text, kind, ttl_d, alongside) {
+            Ok((c, others)) => {
+                println!("Claimed {rid} — {} ({}) in {} until {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.expires.get(..16).unwrap_or(&c.expires), c.intent);
+                for o in others {
+                    println!("  alongside {} ({}, since {}): {}", o.agent, o.kind, o.since.get(11..16).unwrap_or(&o.since), o.intent);
+                }
+            }
+            Err(e) => {
+                println!("Refused: {e}");
+                refused += 1;
+            }
+        }
+    }
+    println!("(a claim is a signal, not a record: it is not committed, every worktree sees it, and it expires; `vsect release` when done)");
+    Ok(if refused > 0 { EXIT_ITEMS } else { EXIT_OK })
+}
+
+fn release_verb(store: &Store, records: &[String], force: bool, why: Option<&str>, actor: Actor) -> Result<i32> {
+    if records.is_empty() {
+        bail!("name at least one record (kind:slug)");
+    }
+    if force && why.is_none() {
+        bail!("--force releases another agent's live claim: say why with --why, it is printed");
+    }
+    for r in records {
+        let rid = Id::parse(store, r)?.record_id();
+        let released = intent::release(store, &rid, &actor.name, if force { why } else { None })?;
+        for c in released {
+            let how = if c.agent == actor.name { "released".to_string() } else if c.expired() { "released (expired)".to_string() } else { format!("released by force: {}", why.unwrap_or("")) };
+            println!("{rid} — {}'s claim {how}", c.agent);
+        }
+    }
+    Ok(EXIT_OK)
+}
+
+fn intents_verb(store: &Store, all: bool, json: bool) -> Result<i32> {
+    let claims = intent::all_claims(store);
+    let live: Vec<&intent::Claim> = claims.iter().filter(|c| !c.expired()).collect();
+    let expired: Vec<&intent::Claim> = claims.iter().filter(|c| c.expired()).collect();
+    if json {
+        println!("{}", serde_json::to_string_pretty(&json!({"schema": "vsect-intents/0", "live": live, "expired": expired}))?);
+        return Ok(EXIT_OK);
+    }
+    if live.is_empty() && (!all || expired.is_empty()) {
+        println!("Nobody has claimed anything. ({})", intent::intents_dir(store).display());
+        return Ok(EXIT_OK);
+    }
+    println!("{} live claim(s) — who is at work on what, visible from every worktree:", live.len());
+    for c in &live {
+        println!("  {}  {} ({}{}) in {} · since {} · until {}", c.record, c.agent, c.kind, if c.alongside { ", alongside" } else { "" }, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.expires.get(11..16).unwrap_or(&c.expires));
+        println!("      {}", c.intent);
+    }
+    if all && !expired.is_empty() {
+        println!("{} expired (anyone may `vsect release` them):", expired.len());
+        for c in &expired {
+            println!("  {}  {} since {} — {}", c.record, c.agent, c.since.get(..16).unwrap_or(&c.since), c.intent);
+        }
+    } else if !expired.is_empty() {
+        println!("({} expired claim(s) not shown; --all lists them)", expired.len());
+    }
+    Ok(EXIT_OK)
+}
+
+/// For the pre-commit hook: which of these paths are records another agent has claimed?
+fn claimed_verb(store: &Store, paths: &[String], me: &str, json: bool) -> Result<i32> {
+    let pairs = intent::records_for_paths(store, paths);
+    let claims = intent::all_claims(store);
+    let mut hits = vec![];
+    for (rel, rid) in pairs {
+        for c in claims.iter().filter(|c| c.record == rid && !c.expired() && c.agent != me) {
+            hits.push((rel.clone(), rid.clone(), c.clone()));
+        }
+    }
+    if json {
+        println!("{}", serde_json::to_string_pretty(&json!({"schema": "vsect-claimed/0", "hits": hits.iter().map(|(p, r, c)| json!({"path": p, "record": r, "claim": c})).collect::<Vec<_>>()}))?);
+    } else {
+        for (p, r, c) in &hits {
+            println!("{p}: {r} is claimed by {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent);
+        }
+    }
+    Ok(if hits.is_empty() { EXIT_OK } else { EXIT_ITEMS })
+}
+
+/// "Also raised in": a `raise` event on an item or finding, so a second finder leaves a trace
+/// without editing the record, and `read`/`open` can count how many places raised it.
+fn raise_verb(store: &Store, target: &str, source: &str, why: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
+    let st = State::compute(store);
+    let about = if target.starts_with("review:") && target.contains('#') {
+        if !st.findings_open.iter().any(|f| f.item == target) && !st.trail.events.iter().any(|e| e.str("finding") == Some(target)) {
+            bail!("{target} is not a finding the store knows");
+        }
+        st.findings_open.iter().find(|f| f.item == target).map(|f| f.target.clone()).unwrap_or_else(|| target.to_string())
+    } else {
+        let rid = Id::parse(store, target)?.record_id();
+        if !st.scan.records.contains_key(&rid) {
+            bail!("{rid} is not in the store");
+        }
+        rid
+    };
+    let mut ev = Event::new(store, "raise", Some(&about), actor)
+        .with("raised", yaml_str(target))
+        .with("source", yaml_str(source));
+    if let Some(w) = why {
+        ev = ev.with("text", yaml_str(w));
+    }
+    event::write_event(store, &mut ev, dry)?;
+    println!("{} raised again from {source}{}", target, if dry { " (dry run)" } else { "" });
+    Ok(EXIT_OK)
+}
+
 // ---------- annotate ----------
 
 /// Correct the record of an act without editing it: a `correct` event that names the original
@@ -2351,6 +2522,13 @@ fn read(store: &Store, id: &str, at: Option<&str>, bare: bool) -> Result<i32> {
             }
         }
     }
+    for c in intent::claims_on(store, &rid).into_iter().filter(|c| !c.expired()) {
+        marks.push(format!("⟳ at work: {} ({}) in {} since {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), c.since.get(11..16).unwrap_or(&c.since), c.intent));
+    }
+    let raised = st.trail.events.iter().filter(|e| e.act == "raise" && e.about.as_deref() == Some(&rid)).count();
+    if raised > 0 {
+        marks.push(format!("↑ raised again from {raised} other source(s) (vsect why {rid})"));
+    }
     for f in st.findings_open.iter().filter(|f| f.target.split('#').next() == Some(&rid)) {
         marks.push(format!("⚠ open finding {} ({}, {}): {}", f.item, f.by, st.age_days(&f.at), f.text));
     }
@@ -2498,6 +2676,9 @@ Work      vsect revise [<kind:slug>]                 take in edits made outside 
           vsect refute <id> --ground kind:text        record a refutation, on evidence
           vsect findings --dispose <item> --as … --why …
           vsect annotate <event-id|review:x#C1> --why \"…\"   correct the record of an act without editing it
+          vsect raise item:x --source \"…\"               say an existing item was raised again elsewhere
+Intent    vsect claim <kind:slug>… --intent \"…\" [--kind edit|record] [--ttl 6h] [--alongside]   say what you are about to do, visibly
+          vsect release <kind:slug>…                   when done; vsect intents — who is at work on what, from every worktree
           vsect check [--strict]                     everything that can be checked; exit 1 = act on it
 Store     vsect init --name … --steward … --decider …   found a store (no kinds)
           vsect kinds                                what the store declares
@@ -2585,6 +2766,25 @@ question: `vsect ask` it before closing. Units: bullets = top-level bullets afte
 `##` (preambles are navigation); checkboxes = `- [ ]` lines anywhere; sections = headings of
 --level with their bodies; rows = table body rows (title = first non-date cell). Importing a file
 twice adds nothing.".into(),
+        "claim" | "release" | "intents" | "claimed" | "intent" => "Intent: what an agent is about to do to a record, visible to every other agent and worktree now.
+
+vsect claim <kind:slug>… --intent \"…\" [--kind edit|record|…] [--ttl 6h|90m|1d] [--alongside]
+vsect release <kind:slug>… [--force --why \"…\"]
+vsect intents [--all]
+vsect claimed <path>…        (for hooks: exit 1 if a path's record is claimed by someone other than --by)
+
+A claim is a signal, not a record: it is not committed and not hashed; it lives under git's common
+directory, which every worktree shares, so an integrator in a worktree and a drain agent in the main
+tree see it the moment it is written. It expires (default 6h). Claiming a record another agent holds
+is refused and shows their note; `--alongside` records a co-intent instead (fine for recording
+findings on one segment; a collision for editing it). The holder releases; anyone may release an
+expired claim; `--force --why` releases a live one and prints the reason. The dashboard shows
+live claims under \"At work now\"; `vsect open <id>` and `vsect read <id>` show claims on that record.".into(),
+        "raise" => "vsect raise item:<slug> | review:x#F1 --source \"where it was raised again\" [--why \"…\"]
+
+Records that an existing item or finding was found again from another source, as a `raise` event,
+without editing the record; `read` shows how many sources raised it. Use it instead of opening a
+second item for the same work.".into(),
         "annotate" => "vsect annotate <event-id-prefix | review:x#C1> --why \"…\"
 
 Corrects the record of an act without editing it: a `correct` event that names the original (core §5.1
