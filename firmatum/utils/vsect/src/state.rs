@@ -68,6 +68,8 @@ pub struct Item {
     pub by: String,
     pub source: String,
     pub section: String,
+    /// The re-checker's restatement of a held item, when the tracker's frame was wrong.
+    pub restated: Option<String>,
     /// true until a `recheck` with outcome `holds` (or for items opened with `note`)
     pub unchecked: bool,
 }
@@ -581,6 +583,7 @@ impl State {
                 by: s("opened-by"),
                 source: s("source"),
                 section: s("section"),
+                restated: fm.get("restated").and_then(|v| v.as_str()).map(|s| s.to_string()),
                 unchecked: imported && !item_held.contains(id),
             });
         }

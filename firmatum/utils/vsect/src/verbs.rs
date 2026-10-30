@@ -75,9 +75,9 @@ pub fn run(cli: Cli) -> Result<i32> {
             let actor = actor(&actor_args, "integrator")?;
             close_item(&store, &item, &outcome, by_commit.as_deref(), why.as_deref(), actor, dry)
         }
-        Cmd::Recheck { item, outcome, why, owner } => {
+        Cmd::Recheck { item, outcome, why, owner, of, restate } => {
             let actor = actor(&actor_args, "rechecker")?;
-            recheck(&store, &item, &outcome, &why, owner.as_deref(), actor, dry)
+            recheck(&store, &item, &outcome, &why, owner.as_deref(), of.as_deref(), restate.as_deref(), actor, dry)
         }
         Cmd::Bring { path, tracker, unit, level } => {
             if !tracker {
@@ -952,7 +952,7 @@ fn open(store: &Store, target: Option<&str>, json: bool) -> Result<i32> {
         let targets: Vec<String> = if it.concerns.is_empty() { vec!["(the store)".into()] } else { it.concerns.clone() };
         for t in targets {
             if matches(&t) {
-                by_target.entry(t).or_default().push((it.opened.clone(), "item".into(), it.id.clone(), if it.owner.is_empty() { "anyone".into() } else { it.owner.clone() }, it.title.clone()));
+                by_target.entry(t).or_default().push((it.opened.clone(), "item".into(), it.id.clone(), if it.owner.is_empty() { "anyone".into() } else { it.owner.clone() }, it.restated.clone().unwrap_or_else(|| it.title.clone())));
             }
         }
     }
@@ -1010,7 +1010,7 @@ fn open(store: &Store, target: Option<&str>, json: bool) -> Result<i32> {
             let show = if filter.is_some() { its.len() } else { its.len().min(8) };
             for it in its.iter().take(show) {
                 let line = it.source.split(':').nth(1).unwrap_or("?");
-                println!("    L{:<5} {}  {}{}", line, it.id, it.title.chars().take(90).collect::<String>(), if it.concerns.is_empty() { String::new() } else { format!("  ({})", it.concerns.join(", ")) });
+                println!("    L{:<5} {}  {}{}", line, it.id, it.title, if it.concerns.is_empty() { String::new() } else { format!("  ({})", it.concerns.join(", ")) });
             }
             if its.len() > show {
                 println!("    … {} more (vsect open --format json lists all)", its.len() - show);
@@ -1199,35 +1199,57 @@ fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>,
     Ok(EXIT_OK)
 }
 
-fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
+#[allow(clippy::too_many_arguments)]
+fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&str>, of: Option<&str>, restate: Option<&str>, actor: Actor, dry: bool) -> Result<i32> {
     let iid = Id::parse(store, item)?.record_id();
     let st = State::compute(store);
     let Some(it) = st.items_open.iter().find(|i| i.id == iid) else { bail!("{iid} is not an open item") };
     if !it.unchecked {
         bail!("{iid} has already been re-checked, or was opened directly; close it with `vsect close`");
     }
-    if !["holds", "stale", "landed", "not-an-item"].contains(&outcome) {
-        bail!("outcome `{outcome}` is not holds, stale, landed or not-an-item");
+    let outcomes = ["holds", "landed", "stale", "superseded", "duplicate", "not-an-item"];
+    if !outcomes.contains(&outcome) {
+        bail!("outcome `{outcome}` is not one of {}", outcomes.join(", "));
     }
-    let r = st.record(&iid).unwrap();
     let mut ev = Event::new(store, "recheck", Some(&iid), actor.clone())
         .with("outcome", yaml_str(outcome))
         .with("criterion", yaml_str(why))
         .with("at-commit", yaml_str(&store.moment()));
+    if outcome == "duplicate" {
+        let Some(o) = of else { bail!("`duplicate` names the item it duplicates: --of item:<slug>") };
+        let oid = Id::parse(store, o)?.record_id();
+        if oid == iid {
+            bail!("an item is not a duplicate of itself");
+        }
+        if !st.scan.records.contains_key(&oid) {
+            bail!("{oid} is not in the store");
+        }
+        ev = ev.with("of", yaml_str(&oid));
+    } else if of.is_some() {
+        bail!("--of belongs to `duplicate` only");
+    }
     if let Some(o) = owner {
         ev = ev.with("owner", yaml_str(o));
+    }
+    if let Some(r) = restate {
+        if outcome != "holds" {
+            bail!("--restate belongs to `holds`: a closed item keeps its tracker's words");
+        }
+        ev = ev.with("restated", yaml_str(r));
     }
     event::write_event(store, &mut ev, dry)?;
     if outcome == "holds" {
         // the item leaves items/imported/ for items/, and its frontmatter records the re-check
+        let r = st.record(&iid).unwrap();
         let from = store.root.join(&r.rel);
         let to = store.builtin_dir("item").join(format!("{}.md", r.id.slug));
         let (fm, body) = record::split_frontmatter(&std::fs::read_to_string(&from)?);
         let mut fm = fm.unwrap_or_default();
+        fm = fm.lines().filter(|l| !l.starts_with("owner:") && !l.starts_with("rechecked:") && !l.starts_with("restated:")).collect::<Vec<_>>().join("\n");
         fm.push_str(&format!("\nrechecked: {} by {}", event::now(), yaml_quote(&actor.name)));
-        if let Some(o) = owner {
-            fm = fm.lines().filter(|l| !l.starts_with("owner:")).collect::<Vec<_>>().join("\n");
-            fm.push_str(&format!("\nowner: {}", yaml_quote(o)));
+        fm.push_str(&format!("\nowner: {}", yaml_quote(owner.unwrap_or(&it.owner))));
+        if let Some(rs) = restate {
+            fm.push_str(&format!("\nrestated: {}", yaml_quote(rs)));
         }
         let content = format!("---\n{}\n---\n{}", fm.trim(), body);
         if !dry {
@@ -1236,10 +1258,10 @@ fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&s
                 std::fs::remove_file(&from)?;
             }
         }
-        println!("{iid} → holds: it is a real open item now, owner {}; moved to {}", owner.unwrap_or(&it.owner), to.strip_prefix(&store.root).unwrap_or(&to).display());
+        println!("{iid} → holds: a real open item now, owner {}{}; moved to {}", owner.unwrap_or(&it.owner), if restate.is_some() { ", restated" } else { "" }, to.strip_prefix(&store.root).unwrap_or(&to).display());
         println!("  (the file now belongs to md-press like any live record; the hook will say if it needs reformatting)");
     } else {
-        println!("{iid} → {outcome}: closed. {why}");
+        println!("{iid} → {outcome}{}: closed. {why}", of.map(|o| format!(" of {o}")).unwrap_or_default());
     }
     Ok(EXIT_OK)
 }
@@ -1276,9 +1298,23 @@ fn tracker_units(text: &str, unit: &str, level: usize) -> Result<Vec<TrackerUnit
     let mut section: Vec<(usize, String)> = vec![]; // heading chain
     let section_str = |section: &Vec<(usize, String)>| section.iter().map(|(_, t)| t.clone()).collect::<Vec<_>>().join(" › ");
     let mut seen_h2 = false;
+    let mut fence: Option<String> = None; // inside a fenced code block, `#` lines are not headings
     let mut i = 0;
     while i < lines.len() {
         let line = lines[i];
+        let t = line.trim_start();
+        if let Some(tok) = &fence {
+            if t.starts_with(tok.as_str()) {
+                fence = None;
+            }
+            i += 1;
+            continue;
+        }
+        if t.starts_with("```") || t.starts_with("~~~") {
+            fence = Some(t.chars().take_while(|&c| c == '`' || c == '~').collect());
+            i += 1;
+            continue;
+        }
         if let Some(h) = heading_level(line) {
             let title = line.trim_start().trim_start_matches('#').trim().to_string();
             section.retain(|(l, _)| *l < h);
@@ -1289,7 +1325,24 @@ fn tracker_units(text: &str, unit: &str, level: usize) -> Result<Vec<TrackerUnit
             if unit == "sections" && h == level {
                 let start = i;
                 let mut j = i + 1;
-                while j < lines.len() && !heading_level(lines[j]).map(|hl| hl <= level).unwrap_or(false) {
+                let mut inner_fence: Option<String> = None;
+                while j < lines.len() {
+                    let tj = lines[j].trim_start();
+                    if let Some(tok) = &inner_fence {
+                        if tj.starts_with(tok.as_str()) {
+                            inner_fence = None;
+                        }
+                        j += 1;
+                        continue;
+                    }
+                    if tj.starts_with("```") || tj.starts_with("~~~") {
+                        inner_fence = Some(tj.chars().take_while(|&c| c == '`' || c == '~').collect());
+                        j += 1;
+                        continue;
+                    }
+                    if heading_level(lines[j]).map(|hl| hl <= level).unwrap_or(false) {
+                        break;
+                    }
                     j += 1;
                 }
                 let parent = section.iter().filter(|(l, _)| *l < h).map(|(_, t)| t.clone()).collect::<Vec<_>>().join(" › ");
@@ -2107,14 +2160,19 @@ any file in this version; `vsect check` reports the refuted statement as unmarke
 vsect note \"…\" [--concerns kind:slug]… [--owner who] [--why \"…\"]     opens items/<slug>.md
 vsect close item:<slug> --outcome done --by-commit <sha>   |  --outcome moot|superseded --why \"…\"
 vsect bring <tracker.md> --tracker --unit bullets|checkboxes|sections|rows [--level 3]
-vsect recheck item:<slug> --outcome holds|stale|landed|not-an-item --why \"…\" [--owner who]
+vsect recheck item:<slug> --outcome holds|landed|stale|superseded|duplicate|not-an-item --why \"…\" [--owner who] [--of item:x] [--restate \"…\"]
 
 `bring --tracker` imports a tracker's units as items under items/imported/, each with its source
 file and line, its section, and the segments it names. An imported item carries the tracker's
 label, not the store's: it is listed apart under \"imported, not yet re-checked\", cannot be closed
 with `close`, and clears only by `recheck`, which records what was checked against HEAD. `holds`
-makes it a real open item (the file moves to items/ and gains an owner); stale, landed and
-not-an-item close it with the reason. Units: bullets = top-level bullets after the file's first
+makes it a real open item (the file moves to items/ and gains an owner, and `--restate` carries
+the frame the re-check found true beside the verbatim import); landed (say where), stale,
+superseded (by a mechanism or a later decision), duplicate (--of item:x keeps the link) and
+not-an-item (navigation, a principle, a roll-up) close it with the reason. An item that is partly
+landed holds, restated to the open part; one that bundles two owners is two: `vsect note` the
+second and close this one as duplicate --of it. A not-an-item that carries a real claim is a
+question: `vsect ask` it before closing. Units: bullets = top-level bullets after the file's first
 `##` (preambles are navigation); checkboxes = `- [ ]` lines anywhere; sections = headings of
 --level with their bodies; rows = table body rows (title = first non-date cell). Importing a file
 twice adds nothing.".into(),

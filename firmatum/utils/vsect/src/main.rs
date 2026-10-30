@@ -156,18 +156,24 @@ pub enum Cmd {
         #[arg(long)]
         why: Option<String>,
     },
-    /// Re-check an imported item against HEAD: holds (it is real and open), stale, landed, or not-an-item.
+    /// Re-check an imported item against HEAD: holds (real and open), landed (say where), stale, superseded, duplicate (--of), or not-an-item.
     Recheck {
         item: String,
-        /// holds | stale | landed | not-an-item
+        /// holds | landed | stale | superseded | duplicate | not-an-item
         #[arg(long)]
         outcome: String,
         /// What you checked and found, in a sentence.
         #[arg(long)]
         why: String,
-        /// Who resolves it, when it holds.
+        /// Who resolves it, when it holds (a KR id like C.1, or a name).
         #[arg(long)]
         owner: Option<String>,
+        /// For `duplicate`: the item it duplicates (item:slug).
+        #[arg(long)]
+        of: Option<String>,
+        /// For `holds`: the item restated in the frame the re-check found true; kept beside the verbatim import.
+        #[arg(long)]
+        restate: Option<String>,
     },
     /// Bring outside material in. `--tracker` imports a tracker file's items as unchecked items.
     Bring {
