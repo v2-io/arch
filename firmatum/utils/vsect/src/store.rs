@@ -77,6 +77,11 @@ pub struct Kinds {
     /// not dangling. e.g. ASF's OUTLINE `missing` rows.
     #[serde(default)]
     pub planned: Option<PlannedDecl>,
+    /// A file whose bold `**X.N**` tokens are the owner ids items may name (e.g. an objectives
+    /// tree's KR ids). An owner that looks like one (`[A-Z].N`) but is not listed is refused;
+    /// free-text names pass.
+    #[serde(default)]
+    pub owners_from: Option<String>,
 }
 
 /// Table rows in the named files whose cells include `cell` name planned records by `#slug`.
@@ -138,6 +143,25 @@ impl Store {
         out.sort();
         out.dedup();
         out
+    }
+
+    /// Check an owner against the store's declared owner ids. Ok(()) when the store declares none,
+    /// when the owner is a free-text name, or when it is a listed id; Err when it looks like an id
+    /// (`A.1`, `I.3`) that the declared file does not carry.
+    pub fn check_owner(&self, owner: &str) -> Result<()> {
+        let Some(path) = &self.kinds.owners_from else { return Ok(()) };
+        let looks_like_id = regex::Regex::new(r"^[A-Z]\.\d+[a-z]?$").unwrap();
+        if !looks_like_id.is_match(owner.trim()) {
+            return Ok(());
+        }
+        let text = std::fs::read_to_string(self.root.join(path)).with_context(|| format!("reading {path} (owners_from)"))?;
+        let re = regex::Regex::new(r"\*\*([A-Z]\.\d+[a-z]?)\*\*").unwrap();
+        let ids: std::collections::BTreeSet<String> = re.captures_iter(&text).map(|c| c[1].to_string()).collect();
+        if ids.contains(owner.trim()) {
+            Ok(())
+        } else {
+            bail!("owner `{owner}` looks like a KR id but {path} does not list it (it lists {}). A met KR leaves the tree; name the KR that now owns this, or a person.", ids.iter().cloned().collect::<Vec<_>>().join(" "))
+        }
     }
 
     /// Records whose working-tree content differs from HEAD, as paths relative to the root.

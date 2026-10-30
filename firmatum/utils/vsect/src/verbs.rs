@@ -1151,6 +1151,7 @@ fn note(store: &Store, text: &str, concerns: &[String], owner: &str, why: Option
     for c in concerns {
         Id::parse(store, c)?;
     }
+    store.check_owner(owner)?;
     let slug = slug.map(|s| s.to_string()).unwrap_or_else(|| slugify(text));
     if !record::slug_re().is_match(&slug) {
         bail!("slug `{slug}` must be lowercase kebab-case");
@@ -1229,6 +1230,7 @@ fn recheck(store: &Store, item: &str, outcome: &str, why: &str, owner: Option<&s
         bail!("--of belongs to `duplicate` only");
     }
     if let Some(o) = owner {
+        store.check_owner(o)?;
         ev = ev.with("owner", yaml_str(o));
     }
     if let Some(r) = restate {
