@@ -1,0 +1,3 @@
+{"file": "BIBLIOGRAPHY-TODO.md", "code": "w43yw", "to": "join", "prev": "ipeline; W-4 (the emit wiring) is done, so this is the anonymized-build consumption layer.", "next": "**Defer until W-3 is in motion.**"}
+{"file": "TERMINOLOGY-TODO.md", "code": "ftajt", "to": "join", "prev": "4. `bin/term lint` to surface schema or cross-ref issues.", "next": "The LEXICON.md output is the same artifact rows below describe; what changed is *how it's "}
+{"file": "TODO.md", "code": "eyv4s", "to": "join", "prev": "taying `\\chapter` in the body. Mechanism already exists in kaobook: `\\asfAppendixToCremap`", "next": "  (`mono/kaobook/preamble/environments.tex:318-328`) \u2014 a one-time"}
