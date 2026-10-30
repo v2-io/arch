@@ -1841,6 +1841,55 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
             notices.push(("unmarked".into(), id.clone(), format!("rests on refuted {}; its file carries no mark", rs.broken_by.join(", "))));
         }
     }
+    // stray files: something under a record kind's directory that no glob claims (a hash-named
+    // object carried there by git's directory-rename detection in a rebase, 2026-10-31) would
+    // otherwise sit unread
+    {
+        let mut claimed: BTreeSet<String> = st.scan.records.values().map(|r| r.rel.clone()).collect();
+        for (rel, _) in &st.scan.unreadable {
+            claimed.insert(rel.clone());
+        }
+        let mut dirs: BTreeSet<String> = BTreeSet::new();
+        let mut globs: Vec<String> = store.kinds.kinds.values().flat_map(|d| d.find.clone()).collect();
+        for b in crate::store::BUILTIN_KINDS {
+            if !store.kinds.kinds.contains_key(*b) {
+                globs.extend(store.pathspecs_for(b, "*"));
+            }
+        }
+        for g in &globs {
+            if let Some((d, _)) = g.rsplit_once('/') {
+                if let Some(full) = store.root.join(d).to_str() {
+                    if let Ok(paths) = glob::glob(full) {
+                        for p in paths.flatten() {
+                            if p.is_dir() {
+                                if let Ok(rel) = p.strip_prefix(&store.root) {
+                                    dirs.insert(rel.to_string_lossy().to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        let exclude: Vec<glob::Pattern> = store.kinds.kinds.values().flat_map(|d| d.exclude.iter()).filter_map(|e| glob::Pattern::new(e).ok()).collect();
+        for d in dirs {
+            let Ok(entries) = std::fs::read_dir(store.root.join(&d)) else { continue };
+            for e in entries.flatten() {
+                let p = e.path();
+                if p.is_dir() {
+                    continue;
+                }
+                let Ok(rel) = p.strip_prefix(&store.root) else { continue };
+                let rel = rel.to_string_lossy().to_string();
+                if claimed.contains(&rel) || exclude.iter().any(|x| x.matches(&rel)) {
+                    continue;
+                }
+                let name = p.file_name().and_then(|s| s.to_str()).unwrap_or("");
+                let hashlike = name.len() == 64 && name.chars().all(|c| c.is_ascii_hexdigit());
+                notices.push(("stray-file".into(), rel.clone(), if hashlike { "a hash-named file where records live: a statement object carried here (git directory-rename detection in a rebase does this); it belongs under .vsect/objects/ or nowhere, since git holds committed versions".into() } else { "no record kind's glob claims this file".into() }));
+            }
+        }
+    }
     // declared-field hygiene for domain kinds
     for k in store.kinds.kinds.keys() {
         for r in st.live_of_kind(k) {
