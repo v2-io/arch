@@ -1885,6 +1885,9 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
                     continue;
                 }
                 let name = p.file_name().and_then(|s| s.to_str()).unwrap_or("");
+                if name.starts_with('.') {
+                    continue; // hidden files (.DS_Store, editor state) are never records; reporting them teaches readers to skip notices
+                }
                 let hashlike = name.len() == 64 && name.chars().all(|c| c.is_ascii_hexdigit());
                 notices.push(("stray-file".into(), rel.clone(), if hashlike { "a hash-named file where records live: a statement object carried here (git directory-rename detection in a rebase does this); it belongs under .vsect/objects/ or nowhere, since git holds committed versions".into() } else { "no record kind's glob claims this file".into() }));
             }
