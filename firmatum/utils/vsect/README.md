@@ -1,0 +1,52 @@
+# vsect
+
+Work inside a verisectorium: a corpus of small named records where every record must carry its own honest epistemic state, because every mind that works on it arrives with no memory of earlier sessions. Bare `vsect` shows where the store stands. Every number it prints is computed from the records and the recorded acts; none can be typed.
+
+The design is at `~/src/aat-v3/msc/vsect/` (`README.md` → `model.md` → `vsect.md` → `core.md` → `storage.md` → `open.md`). This is its first working version, built 2026-10-30 against ASF (`~/src/arch/asf/`) as the first live corpus, under objective I.3/I.4 of ASF's `msc/inside-out-2026-10/INTENT.md`. It is the design's "what comes first" (`vsect.md` §8): it infers nothing about truth.
+
+```sh
+cargo install --path firmatum/utils/vsect   # from ~/src/arch/; puts `vsect` on PATH beside aspectus and md-press
+cd ~/src/arch/asf && vsect                   # the dashboard
+vsect help · vsect help model · vsect help <verb>
+```
+
+## What it does
+
+- **Dashboard** (bare `vsect`): what is known broken, what is waiting and for how long, what evidence is recorded, as raw counts, as of a commit (`+dirty` when the tree differs). Exit 0 when rendered.
+- **`vsect revise [<kind:slug>]`** takes in edits made outside vsect: new records are minted, edited ones get a revise event, deleted ones are asked their fate (retired, or superseded by a named successor). Every version seen is kept under `.vsect/objects/`.
+- **`vsect take <reviews/x.md>`** takes in a review record's typed items: a check becomes a securing event bound to the exact versions it read (its basis); a finding stays open on its statement. A check that broke something opens a finding too. If the text changed after the check, take says so and the check stays with the version it read. Taking a review twice adds nothing. `vsect take --check <id> --criterion … --outcome …` records one check inline, writing the review record for you.
+- **`vsect ask` / `vsect answer`** record questions with a closer (anyone, awaiting:<work>, steward-fact, steward-purpose) and close them.
+- **`vsect refute <id> --ground kind:text`** records a refutation on evidence (counterexample, broken derivation, missed prediction, broken mapping; never authority) and lists what rests on the statement.
+- **`vsect open [<id>]`** is the open ledger: findings, questions, lapsed checks and unrecorded fates, keyed by the statement they concern, oldest first, each with who may resolve it.
+- **`vsect check [--strict]`** is the lint: structural problems always (unreadable records, id collisions, dangling edge targets, edited or misnamed event and object files, refuted statements without a mark); with `--strict` also edits not taken in and lapsed checks. Exit 1 when there is anything to act on. ASF's pre-commit hook runs it.
+- **`vsect read <id>`** shows a record with marks above it (`✓` a check that holds · `↻` one that lapsed · `⚠` refuted, broken or an open finding · `?` an open question); `--at <version>` shows any version vsect has seen, including ones never committed; `--bare` the text alone. **`vsect why <id>`** is its history; **`vsect impact <id>`** what rests on it.
+- Every writing verb takes `--by --role [--session]` (or `VSECT_BY` / `VSECT_ROLE` / `VSECT_SESSION`) and `--dry-run`. Questions can be answered in advance with `--answer key=value`; without a terminal an unanswered question stops the verb with exit 3. Exit codes describe the command, not the store: 0 done · 1 done, with items to act on · 2 failed · 3 not run. `--format json` on the dashboard, `check` and `open`.
+
+## What a store looks like
+
+```text
+<store>/
+  .vsect/kinds.yaml                     name, steward, decider, kinds (grain, find globs, edge fields), edges, lines
+  .vsect/events/<kind>/<slug>/<id>.yaml one file per act, content-addressed, never edited (`check` reports any that were)
+  .vsect/objects/<2 hex>/<version>      the canonical text of every statement version seen
+  reviews/<slug>.md                     what a verifier, auditor or integrator sent back, with typed items
+  questions/<slug>.md                   open questions
+```
+
+Everything under `.vsect/` is committed with the store. A review record's items are sections `## C1 (check)` / `## F1 (finding)` whose fields are list items (`- target: …`, `- act: …`, `- line: …`, `- criterion: …`, `- committed: before|after`, `- outcome: …`, `- recheck: …`, and `- at: <git rev>` or `- version: …` for the text it read), then free text. Fields are list items rather than bare `key: value` lines because md-press reads a bare block as a paragraph to rewrap.
+
+## What this version chose, where it departs from the design, and what it found
+
+- **Grain.** ASF segments are declared as single-statement records (`segment:<slug>`), the design's `grain: record`. They are not carved into statements: of ASF's 642 equation tags, 251 carry a kebab-case id, 310 a note or condition, 81 nothing, and 38 segments carry none. Carving is the design's five-segment test (`open.md` Q10); objective B.1 will be the first to need claim-level anchors.
+- **`depends:` is a meaning edge**, in the basis, transitive, `broken` on refutation. So a check on a segment lapses when anything upstream of it changes, with the cause named (`stale: own text changed` vs `stale: upstream changed (which)`). This is the design's strict rule (`core.md` §3.4–3.7) and `open.md` Q4's cost. First measurement on ASF: the F72 checks on `#deriv-evidence-allocation-ceiling` rest on a basis of 36 statement versions. One edit anywhere in that set lapses them until a different mind confirms the change did not touch them. Nothing in this version re-binds a lapsed check (`confirm` is not built), so that cost is visible but not yet payable.
+- **Normalizer.** `vsect-norm/0`, named on every event, is a documented approximation of `core.md` §3.1 (no CommonMark parse; fenced code and display math kept byte for byte; paragraphs reflowed; any math change is a change). A later normalizer gets a new name and never silently invalidates earlier checks.
+- **Event ids** are the SHA-256 of the event's canonical JSON, including its time; so `take` is made idempotent by lookup (the review item already taken on that target), not by hash. The design's §5.4 duplicate detection and §7.6 idempotency cannot both hold by hash alone; this is a design finding.
+- **Built-in kind `review`**, not `report`: the harness treats "report" in a path an agent writes as a cue to report in chat instead of writing the file (the lead coordinator, 2026-10-30).
+- **No marks are written into records** (`core.md` §10) in this version. `refute` records the event and the cascade; `check` reports every refuted or broken statement whose file carries no mark, so the gap stays visible.
+- **`revise` asks reworded/redefined only when a recorded check rests on the old version**; otherwise it records `change: unclassified` with that reason. The design asks every time; asking 246 times with nothing at stake would be asking what does not matter.
+- **Deleted records** that were never minted but were checked or refuted at a past revision (`- at: <git rev>`) still get a fate: `revise` walks them too.
+- **Not built:** `next` ranking, `confirm` (equivalence and second-mind re-binding), cascade marks, `verify` and `brief` writing, `orient`, outlines, free-form review intake, `contest`, `decide`/`purpose` records, cross-store addressing, interrupted-write recovery, the unassigned-prose heuristic (moot at record grain).
+
+## Agreement surface
+
+Two implementations should agree on every id, own version, basis, holding verdict and check item (`core.md` §16). The normalizer tests in `src/norm.rs` are the start of that fixture set; the rest is owed.
