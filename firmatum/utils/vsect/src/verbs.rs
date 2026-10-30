@@ -2206,6 +2206,31 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
             }
         }
     }
+    // a premise named inside an equation tag (`*[Derived (…, from #slug)]*`) that the record's
+    // declared edges do not carry: a check here would not lapse when that premise changes, since
+    // the basis is built from declared edges (the t1 re-check lane found three, 2026-10-30)
+    {
+        let tag_re = Regex::new(r"\*\[[A-Z][^\]]*\(([^)]*)\)\]\*").unwrap();
+        let slug_re = Regex::new(r"#?([a-z][a-z0-9]*(?:-[a-z0-9]+)+)").unwrap();
+        for (id, r) in &st.scan.records {
+            if !store.kinds.kinds.contains_key(&r.id.kind) {
+                continue;
+            }
+            let declared: BTreeSet<String> = r.edges.values().flatten().map(|t| state::resolve_target(store, &r.id.kind, t)).collect();
+            let mut named: BTreeSet<String> = BTreeSet::new();
+            for tag in tag_re.captures_iter(&r.text) {
+                for c in slug_re.captures_iter(&tag[1]) {
+                    let cand = format!("{}:{}", r.id.kind, &c[1]);
+                    if cand != *id && st.scan.records.contains_key(&cand) && !declared.contains(&cand) {
+                        named.insert(cand);
+                    }
+                }
+            }
+            for n in named {
+                notices.push(("tag-names-undeclared-premise".into(), id.clone(), format!("an equation tag names {n}, which no declared edge carries: a check here will not lapse when it changes")));
+            }
+        }
+    }
     for (id, why) in st.unreconciled() {
         notices.push(("gone-unrecorded".into(), id, why.into()));
     }
