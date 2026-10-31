@@ -239,6 +239,9 @@ pub enum Cmd {
         /// Judge only these checks (review:slug#C1 item refs or event-id prefixes; repeat or comma-separate). The rest stay pending.
         #[arg(long, value_delimiter = ',')]
         checks: Vec<String>,
+        /// Confirm equivalence full stop even though it re-binds checks on other segments: the judgment is about the two texts, not the checks.
+        #[arg(long)]
+        all: bool,
     },
     /// Record that a statement was shown false, on evidence; shows what rests on it.
     Refute {

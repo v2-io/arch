@@ -103,11 +103,11 @@ pub fn run(cli: Cli) -> Result<i32> {
             }
             (None, None) => open(&store, None, json),
         },
-        Cmd::Confirm { record, from, to, judgment, criterion, checks } => match record {
+        Cmd::Confirm { record, from, to, judgment, criterion, checks, all } => match record {
             None => confirm_list(&store),
             Some(r) => {
                 let actor = actor(&actor_args, "second-mind")?;
-                confirm(&store, &r, from.as_deref(), to.as_deref(), judgment.as_deref(), criterion.as_deref(), &checks, actor, &answers, dry)
+                confirm(&store, &r, from.as_deref(), to.as_deref(), judgment.as_deref(), criterion.as_deref(), &checks, all, actor, &answers, dry)
             }
         },
         Cmd::Refute { target, ground, by_item, at } => {
@@ -1920,7 +1920,7 @@ fn confirm_list(store: &Store) -> Result<i32> {
 }
 
 #[allow(clippy::too_many_arguments)]
-fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, judgment: Option<&str>, criterion: Option<&str>, only_checks: &[String], actor: Actor, answers: &BTreeMap<String, String>, dry: bool) -> Result<i32> {
+fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, judgment: Option<&str>, criterion: Option<&str>, only_checks: &[String], all: bool, actor: Actor, answers: &BTreeMap<String, String>, dry: bool) -> Result<i32> {
     let rid = Id::parse(store, record)?.record_id();
     let st = State::compute(store);
     let mut pending: Vec<_> = st.pending_confirms().into_iter().filter(|p| p.record == rid).collect();
@@ -1961,15 +1961,21 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
         let new = event::read_object(store, &p.to, Some(&p.record))?;
         println!("{}  v:{} → v:{}  (revised by {})", p.record, short(&p.from), short(&p.to), if revisers.is_empty() { "no recorded reviser".to_string() } else { revisers.join(", ") });
         print!("{}", line_diff(event::object_text(&old), event::object_text(&new)));
-        println!("  {} check(s) read v:{} and would hold again:", p.checks.len(), short(&p.from));
-        let mut criteria = vec![];
+        // the reach, grouped by the segment each check is on: a confirmer sees at once what an
+        // unconditional judgment would re-bind beyond the record it compared
+        let mut by_target: BTreeMap<String, Vec<(String, String)>> = BTreeMap::new();
         for (eid, target) in &p.checks {
             let ev = st.trail.events.iter().find(|e| &e.id == eid);
-            let crit = ev.and_then(|e| e.str("criterion")).unwrap_or("");
-            let from_item = ev.and_then(|e| e.str("from")).unwrap_or(eid);
-            println!("    {from_item} on {target}{}", if crit.is_empty() { String::new() } else { format!(": {}", crit.chars().take(140).collect::<String>()) });
-            if !crit.is_empty() {
-                criteria.push(crit.to_string());
+            let crit = ev.and_then(|e| e.str("criterion")).unwrap_or("").to_string();
+            let from_item = ev.and_then(|e| e.str("from")).unwrap_or(eid).to_string();
+            by_target.entry(target.clone()).or_default().push((from_item, crit));
+        }
+        let other_segments: Vec<&String> = by_target.keys().filter(|t| *t != &p.record).collect();
+        println!("  {} check(s) read v:{} and would hold again, on {} segment(s){}:", p.checks.len(), short(&p.from), by_target.len(), if other_segments.is_empty() { String::new() } else { format!(" — {} of them not {}", other_segments.len(), p.record) });
+        for (target, checks) in &by_target {
+            println!("    {target}{}", if target == &p.record { String::new() } else { "  (another segment)".into() });
+            for (from_item, crit) in checks {
+                println!("      {from_item}{}", if crit.is_empty() { String::new() } else { format!(": {}", crit.chars().take(140).collect::<String>()) });
             }
         }
         let j = match judgment {
@@ -1985,6 +1991,13 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
             Value::Mapping(m)
         };
         let narrowed = !only_checks.is_empty();
+        // an unconditional `equivalent` is a judgment about the two texts, and re-binds every check
+        // that read the old one, on every segment. When that reach crosses into other segments, the
+        // confirmer says so with --all (or narrows with --checks), so nobody re-binds thirteen checks
+        // it never saw because "equivalent" was the first option (a verifier's dry run, 2026-10-31).
+        if matches!(j.as_str(), "equivalent" | "yes") && !narrowed && !other_segments.is_empty() && !all {
+            bail!("an unconditional `equivalent` here re-binds {} check(s) on {} other segment(s) ({}). If the two texts say the same thing full stop, that is right: say --all. If you judged it only for the checks you read, name them: --checks <refs> --criterion \"…\".", p.checks.len(), other_segments.len(), other_segments.iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", "));
+        }
         let (outcome, scope, is_scoped): (&str, Value, bool) = match j.as_str() {
             "equivalent" | "yes" if narrowed => ("equivalent", scoped_list(), true), // "equivalent" for named checks is a scoped confirmation
             "equivalent" | "yes" => ("equivalent", yaml_str("unconditional"), false),
@@ -2917,6 +2930,9 @@ lapses until someone other than the reviser confirms the new text says what the 
   not-equivalent  — the change is a redefinition for those checks; they are ended on this pair and redone.
   --checks <refs> — judge only the named checks (review item refs or event-id prefixes); the rest stay
                     pending, so a pair that bears on one check and not the others gets a per-check verdict.
+  --all           — required for an unconditional `equivalent` whose reach crosses into other segments:
+                    the judgment is about the two texts, and every check that read the old one, anywhere,
+                    holds again; say so, or narrow with --checks.
 Refuses the reviser. Confirmations chain: a→b and b→c confirmed means a check that read a holds at c.".into(),
         "ask" => "vsect ask \"question?\" [--concerns kind:slug]… [--blocks kind:slug]… [--closer anyone|awaiting:<work>|steward-fact|steward-purpose] [--why \"…\"]
 
