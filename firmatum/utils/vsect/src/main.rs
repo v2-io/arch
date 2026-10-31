@@ -312,8 +312,13 @@ pub enum Cmd {
         #[arg(long)]
         strict: bool,
     },
-    /// Drop stored statement versions that git can reproduce, or that no event cites.
+    /// Drop stored statement versions that the durable ref (origin/main) can reproduce, or that no event cites.
     Gc,
+    /// Where every cited version lives: kept as an object, on the durable ref, on another ref only, or lost. --keep seals the "another ref only" ones as objects.
+    Anchors {
+        #[arg(long)]
+        keep: bool,
+    },
     /// One-time store migrations.
     Migrate {
         /// Drop creation events (mint, import, ask, note) and revise events no check rests on; events then say only what the tree does not.

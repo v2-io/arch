@@ -137,6 +137,7 @@ pub fn run(cli: Cli) -> Result<i32> {
         }
         Cmd::Check { strict } => check(&store, strict, json),
         Cmd::Gc => gc(&store, dry),
+        Cmd::Anchors { keep } => anchors(&store, keep),
         Cmd::Migrate { prune_creation_events } => {
             if !prune_creation_events {
                 bail!("the one migration built is `vsect migrate --prune-creation-events`");
@@ -245,6 +246,10 @@ fn basis_at(store: &Store, id: &Id, rev: &str) -> Result<(Record, Vec<BasisEntry
             continue;
         };
         let r = record::record_at(store, &cur.kind, &path, rev)?;
+        // a version read from a revision the durable ref does not carry is kept as an object now,
+        // so a rebase that leaves the revision behind cannot lose the text a check was bound to
+        let form = r.frontmatter.get("form").and_then(|v| v.as_str()).unwrap_or("");
+        event::write_object(store, &r.rel, &r.id.kind, form, &r.text, false)?;
         for (edge, targets) in &r.edges {
             if meaning.contains(edge) {
                 for t in targets {
@@ -678,17 +683,25 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
         let target_s = item.fields.get("target").ok_or_else(|| anyhow!("{item_id}: no `target:`"))?;
         let target = Id::parse(store, target_s)?;
         let tid = target.record_id();
-        // which version did it examine?
+        // which version did it examine? (the version is the binding; the commit is advice, recorded when given)
+        let mut at_commit: Option<String> = None;
         let (basis, version_from, target_version) = if let Some(v) = item.fields.get("version") {
             let b = state::basis_of(store, &st.scan, &tid);
             (b, "declared", v.clone())
         } else if let Some(rev) = item.fields.get("at") {
             let (r, b) = basis_at(store, &target, rev)?;
+            if !store.on_durable(rev) {
+                lines.push(format!("  {}: `at: {rev}` is not on {}; the text it read is kept under .vsect/objects/ until that ref carries it (a rebase may leave the commit behind)", item.id, store.durable_ref()));
+            }
+            at_commit = Some(rev.clone());
             (b, "git-revision", r.own_version.clone())
         } else {
             let Some(r) = st.record(&tid) else {
                 bail!("{item_id}: {tid} is not in the store now; say which version it read with `at: <git rev>` or `version: <own version>`");
             };
+            // a check on an uncommitted text binds to a version only the working tree holds: keep it
+            let form = r.frontmatter.get("form").and_then(|v| v.as_str()).unwrap_or("");
+            event::write_object(store, &r.rel, &r.id.kind, form, &r.text, dry)?;
             (state::basis_of(store, &st.scan, &tid), "current", r.own_version.clone())
         };
         let about = target.to_string();
@@ -720,6 +733,7 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
                     .with("effective-version", yaml_str(&state::effective_version(&basis)))
                     .with("target-version", yaml_str(&target_version))
                     .with("version-from", yaml_str(version_from))
+                    .with("at-commit", at_commit.as_deref().map(yaml_str).unwrap_or(Value::Null))
                     .with("line", yaml_str(item.fields.get("line").map(|s| s.as_str()).unwrap_or("derivation")))
                     .with("criterion", yaml_str(item.fields.get("criterion").map(|s| s.as_str()).unwrap_or("")))
                     .with("committed", yaml_str(item.fields.get("committed").map(|s| s.as_str()).unwrap_or("after")))
@@ -1307,8 +1321,12 @@ fn close_item(store: &Store, item: &str, outcome: &str, by_commit: Option<&str>,
     match outcome {
         "done" => {
             let Some(c) = by_commit else { bail!("--by-commit: the commit that did the work") };
-            if store.root.join(".git").exists() && store::git(&store.root, &["cat-file", "-e", &format!("{c}^{{commit}}")]).is_err() {
-                bail!("{c} is not a commit in this repository");
+            let local = store::git(&store.root, &["cat-file", "-e", &format!("{c}^{{commit}}")]).is_ok();
+            if !local {
+                // the work may have been done in another repository (a tool the store depends on);
+                // then the reason says where, and it is recorded beside the commit
+                let Some(w) = why else { bail!("{c} is not a commit in this repository; if the work was done elsewhere (a tool's repo), say where with --why, and it is recorded beside the commit") };
+                ev = ev.with("by-commit-elsewhere", yaml_str(w));
             }
             ev = ev.with("by-commit", yaml_str(c));
         }
@@ -2112,6 +2130,69 @@ fn annotate(store: &Store, event: &str, why: &str, actor: Actor, dry: bool) -> R
     let p = event::write_event(store, &mut ev, dry)?;
     println!("{} correction of {} ({} on {}): {}{}", if dry { "Would record" } else { "Recorded" }, short(&target.id), target.act, target.about.as_deref().unwrap_or("-"), why, if dry { format!(" (would write {})", p.display()) } else { String::new() });
     Ok(EXIT_OK)
+}
+
+// ---------- anchors ----------
+
+/// Every version an event cites: kept as an object, on the durable ref, on some other ref only,
+/// or lost. `--keep` materializes the "other ref only" ones as objects now, before a rebase or
+/// `git gc` can take the only commit that holds them.
+fn anchors(store: &Store, keep: bool) -> Result<i32> {
+    let trail = event::read_all(store);
+    let d = store.durable_ref();
+    let mut seen: BTreeMap<(String, String), String> = BTreeMap::new();
+    for ev in &trail.events {
+        let Some(about) = &ev.about else { continue };
+        let rec = about.split('#').next().unwrap_or(about).to_string();
+        for k in ["target-version", "own-version", "from-version", "to-version"] {
+            if let Some(v) = ev.str(k) {
+                seen.entry((rec.clone(), v.to_string())).or_insert_with(|| ev.act.clone());
+            }
+        }
+    }
+    let mut counts: BTreeMap<&str, usize> = BTreeMap::new();
+    let mut elsewhere = vec![];
+    let mut lost = vec![];
+    for ((rec, ver), act) in &seen {
+        let a = event::anchor_of(store, rec, ver)?;
+        let word = match a {
+            event::Anchor::Object => "kept",
+            event::Anchor::Durable => "on-durable",
+            event::Anchor::ElsewhereOnly => "elsewhere-only",
+            event::Anchor::Lost => "lost",
+        };
+        *counts.entry(word).or_default() += 1;
+        match a {
+            event::Anchor::ElsewhereOnly => elsewhere.push((rec.clone(), ver.clone(), act.clone())),
+            event::Anchor::Lost => lost.push((rec.clone(), ver.clone(), act.clone())),
+            _ => {}
+        }
+    }
+    println!("{} cited (record, version) pair(s); durable ref {d}: {}", seen.len(), counts.iter().map(|(k, v)| format!("{k} {v}")).collect::<Vec<_>>().join(" · "));
+    for (rec, ver, act) in &elsewhere {
+        println!("  elsewhere-only  {rec} v:{} ({act}) — held by a ref {d} does not reach; a rebase or gc can lose it", short(ver));
+    }
+    for (rec, ver, act) in &lost {
+        println!("  LOST            {rec} v:{} ({act}) — no object and no ref holds this text; the check is bound to a version nobody can read", short(ver));
+    }
+    if keep && !elsewhere.is_empty() {
+        let mut n = 0;
+        for (rec, ver, _) in &elsewhere {
+            if let Some(canon) = event::find_in_git(store, rec, ver)? {
+                let path = event::object_path(store, ver);
+                if let Some(parent) = path.parent() {
+                    std::fs::create_dir_all(parent)?;
+                }
+                std::fs::write(&path, canon)?;
+                event::note_written(store, &path);
+                n += 1;
+            }
+        }
+        println!("Kept {n} version(s) as objects; commit .vsect/objects/ so they travel with the store.");
+    } else if !elsewhere.is_empty() {
+        println!("(`vsect anchors --keep` materializes the elsewhere-only ones as objects now)");
+    }
+    Ok(if lost.is_empty() && (elsewhere.is_empty() || keep) { EXIT_OK } else { EXIT_ITEMS })
 }
 
 // ---------- gc / migrate ----------

@@ -82,6 +82,9 @@ pub struct Kinds {
     /// free-text names pass.
     #[serde(default)]
     pub owners_from: Option<String>,
+    /// The ref whose history counts as durable for statement versions (default origin/main, main, master, HEAD).
+    #[serde(default)]
+    pub durable_ref: Option<String>,
 }
 
 /// Table rows in the named files whose cells include `cell` name planned records by `#slug`.
@@ -162,6 +165,27 @@ impl Store {
         } else {
             bail!("owner `{owner}` looks like a KR id but {path} does not list it (it lists {}). A met KR leaves the tree; name the KR that now owns this, or a person.", ids.iter().cloned().collect::<Vec<_>>().join(" "))
         }
+    }
+
+    /// The ref whose history counts as durable: a version git holds only on a worktree branch is
+    /// kept as an object until this ref carries it. `durable_ref:` in kinds.yaml, else the first
+    /// of origin/main, main, master, HEAD that exists.
+    pub fn durable_ref(&self) -> String {
+        if let Some(r) = &self.kinds.durable_ref {
+            return r.clone();
+        }
+        for r in ["origin/main", "main", "master"] {
+            if git(&self.root, &["rev-parse", "--verify", "-q", &format!("{r}^{{commit}}")]).is_ok() {
+                return r.to_string();
+            }
+        }
+        "HEAD".into()
+    }
+
+    /// Is `commit` reachable from the durable ref?
+    pub fn on_durable(&self, commit: &str) -> bool {
+        let d = self.durable_ref();
+        git(&self.root, &["merge-base", "--is-ancestor", commit, &d]).is_ok()
     }
 
     /// Records whose working-tree content differs from HEAD, as paths relative to the root.

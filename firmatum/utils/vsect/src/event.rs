@@ -217,21 +217,14 @@ pub fn object_path(store: &Store, version: &str) -> PathBuf {
     store.objects_dir().join(&version[..2.min(version.len())]).join(version)
 }
 
-/// Keep a statement version only if git cannot reproduce it: the record's file at HEAD, normalized,
-/// is a different version (the edit is uncommitted). A version git holds is read back from git.
-/// Returns the version either way.
+/// Keep a statement version as an object unless the durable ref (origin/main, by default) can
+/// reproduce it. A version held only in the working tree, or only on a worktree branch that a
+/// rebase will leave behind, is kept; `gc` drops it once the durable ref carries it. Returns the
+/// version either way.
 pub fn write_object(store: &Store, rel: &str, kind: &str, form: &str, text: &str, dry_run: bool) -> Result<String> {
     let canon = norm::canonical_object(kind, form, text);
     let version = norm::sha256_hex(canon.as_bytes());
-    let at_head = store
-        .file_at("HEAD", rel)
-        .ok()
-        .map(|c| {
-            let (fm, body) = crate::record::split_frontmatter(&c);
-            let f = fm.and_then(|f| crate::record::parse_frontmatter(&f).ok()).and_then(|m| m.get("form").and_then(|v| v.as_str()).map(|s| s.to_string())).unwrap_or_default();
-            norm::own_version(kind, &f, &crate::record::statement_text(&body))
-        });
-    if at_head.as_deref() == Some(version.as_str()) {
+    if durable_holds(store, rel, kind, &version)? {
         return Ok(version);
     }
     let path = object_path(store, &version);
@@ -243,6 +236,26 @@ pub fn write_object(store: &Store, rel: &str, kind: &str, form: &str, text: &str
         note_written(store, &path);
     }
     Ok(version)
+}
+
+/// Does the durable ref carry this version of the record? Fast path: the file at the durable tip
+/// (and at HEAD, when HEAD is on it); slow path: every commit on the durable ref that touched the
+/// record's paths.
+fn durable_holds(store: &Store, rel: &str, kind: &str, version: &str) -> Result<bool> {
+    let d = store.durable_ref();
+    let version_of = |content: &str| -> String {
+        let (fm, body) = crate::record::split_frontmatter(content);
+        let f = fm.and_then(|f| crate::record::parse_frontmatter(&f).ok()).and_then(|m| m.get("form").and_then(|v| v.as_str()).map(|s| s.to_string())).unwrap_or_default();
+        norm::own_version(kind, &f, &crate::record::statement_text(&body))
+    };
+    if let Ok(c) = store.file_at(&d, rel) {
+        if version_of(&c) == version {
+            return Ok(true);
+        }
+    }
+    let slug = std::path::Path::new(rel).file_stem().and_then(|s| s.to_str()).unwrap_or("");
+    let rid = format!("{kind}:{slug}");
+    Ok(find_in_git_in(store, &rid, version, &d)?.is_some())
 }
 
 /// The canonical object for a version: from `.vsect/objects/` if kept there, else from git — the
@@ -260,14 +273,22 @@ pub fn read_object(store: &Store, version: &str, record: Option<&str>) -> Result
     bail!("no text for version {}: not in .vsect/objects/ and not reproducible from git{}", norm::short(version), record.map(|r| format!(" for {r}")).unwrap_or_default())
 }
 
-/// Search git history for the record's file content whose normalized version is `version`.
+/// Search every ref for the record's file content whose normalized version is `version`.
 pub fn find_in_git(store: &Store, record_id: &str, version: &str) -> Result<Option<String>> {
+    find_in_git_in(store, record_id, version, "--all")
+}
+
+/// Search the commits reachable from `refspec` (a ref, or `--all`) that touched the record's
+/// paths for the content whose normalized version is `version`.
+pub fn find_in_git_in(store: &Store, record_id: &str, version: &str, refspec: &str) -> Result<Option<String>> {
     let (kind, slug) = record_id.split_once(':').ok_or_else(|| anyhow!("{record_id} is not kind:slug"))?;
     let pathspecs = store.pathspecs_for(kind, slug);
     if pathspecs.is_empty() {
         return Ok(None);
     }
-    let mut args = vec!["log", "--all", "--format=%H", "--"];
+    let mut args = vec!["log", "--format=%H"];
+    args.push(refspec);
+    args.push("--");
     let specs: Vec<&str> = pathspecs.iter().map(|s| s.as_str()).collect();
     args.extend(specs.iter());
     let out = match crate::store::git(&store.root, &args) {
@@ -286,6 +307,30 @@ pub fn find_in_git(store: &Store, record_id: &str, version: &str) -> Result<Opti
         }
     }
     Ok(None)
+}
+
+/// Where a cited version can be found: kept as an object, on the durable ref, on some other ref
+/// only (a worktree branch a rebase may leave behind), or nowhere.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Anchor {
+    Object,
+    Durable,
+    ElsewhereOnly,
+    Lost,
+}
+
+pub fn anchor_of(store: &Store, record: &str, version: &str) -> Result<Anchor> {
+    if object_path(store, version).exists() {
+        return Ok(Anchor::Object);
+    }
+    let d = store.durable_ref();
+    if find_in_git_in(store, record, version, &d)?.is_some() {
+        return Ok(Anchor::Durable);
+    }
+    if find_in_git(store, record, version)?.is_some() {
+        return Ok(Anchor::ElsewhereOnly);
+    }
+    Ok(Anchor::Lost)
 }
 
 /// The normalized text part of a stored object.
@@ -317,7 +362,9 @@ pub fn cited_versions(trail: &Trail) -> BTreeMap<String, Option<String>> {
     out
 }
 
-/// Drop every object git can reproduce, or that no event cites. Returns (removed, kept, kept-uncited).
+/// Drop every object the durable ref can reproduce, or that no event cites. A version held only
+/// on a worktree branch stays kept: a rebase may leave that branch behind and `git gc` take it.
+/// Returns (removed, kept, kept-uncited).
 pub fn gc_objects(store: &Store, trail: &Trail, dry_run: bool) -> Result<(usize, usize, Vec<String>)> {
     let cited = cited_versions(trail);
     let mut removed = 0;
@@ -329,7 +376,7 @@ pub fn gc_objects(store: &Store, trail: &Trail, dry_run: bool) -> Result<(usize,
         let name = path.file_name().and_then(|s| s.to_str()).unwrap_or("").to_string();
         let drop = match cited.get(&name) {
             None => true, // nothing points at it
-            Some(Some(rec)) => find_in_git(store, rec, &name)?.is_some(),
+            Some(Some(rec)) => find_in_git_in(store, rec, &name, &store.durable_ref())?.is_some(),
             Some(None) => false,
         };
         if drop {
