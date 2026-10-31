@@ -1082,7 +1082,8 @@ fn open(store: &Store, target: Option<&str>, json: bool) -> Result<i32> {
     // lapsed checks and unrecorded fates are open work too
     for (id, ev, v) in st.lapsed() {
         if matches(&id) {
-            by_target.entry(id.clone()).or_default().push((ev.at.clone(), "lapsed-check".into(), ev.str("from").unwrap_or(&ev.id).to_string(), "a different mind than the reviser".into(), v.word()));
+            let (kind, resolver) = if v.unread() { ("upstream-unread", "a confirmer, or let stand") } else { ("lapsed-check", "a different mind than the reviser") };
+            by_target.entry(id.clone()).or_default().push((ev.at.clone(), kind.into(), ev.str("from").unwrap_or(&ev.id).to_string(), resolver.into(), v.word()));
         }
     }
     for (id, rs) in &st.records {
@@ -2536,7 +2537,8 @@ fn check(store: &Store, strict: bool, json: bool) -> Result<i32> {
         notices.push(("unclassified-edit".into(), p.record.clone(), format!("v:{} → v:{} with {} check(s) resting on the old text; reworded or redefined? (vsect revise)", short(&p.from), short(&p.to), p.checks.len())));
     }
     for (id, ev, v) in st.lapsed() {
-        notices.push(("lapsed-check".into(), id, format!("{} ({}) {}", ev.str("from").unwrap_or(&ev.id), ev.actor.name, v.word())));
+        let class = if v.unread() { "upstream-unread" } else { "lapsed-check" };
+        notices.push((class.into(), id, format!("{} ({}) {}", ev.str("from").unwrap_or(&ev.id), ev.actor.name, v.word())));
     }
     let not_run = if store.root.join(".git").exists() { vec![] } else { vec!["deleted-event detection against git history (no .git here)".to_string()] };
     if json {
@@ -2636,11 +2638,14 @@ fn read(store: &Store, id: &str, at: Option<&str>, bare: bool) -> Result<i32> {
         let outcome = ev.str("outcome").unwrap_or("");
         let broke = matches!(outcome, "broken" | "narrowed");
         // a check that broke the statement is never a check-mark: if its basis still holds, the break stands at this text
-        let (sym, word) = match (broke, v.holds()) {
-            (true, true) => ("⚠", format!("the break stands at this text ({outcome})")),
-            (true, false) => ("⚠", format!("broke an earlier text; {}", v.word())),
-            (false, true) => ("✓", v.word()),
-            (false, false) => ("↻", v.word()),
+        // ✓ holds · ✓~ holds for what it read, an upstream it did not read changed (a confirmer may
+        // end it or let it stand) · ↻ lapsed · ⚠ the check broke the statement
+        let (sym, word) = match (broke, v.holds(), v.unread()) {
+            (true, true, _) => ("⚠", format!("the break stands at this text ({outcome})")),
+            (true, false, _) => ("⚠", format!("broke an earlier text; {}", v.word())),
+            (false, true, _) => ("✓", v.word()),
+            (false, false, true) => ("✓~", v.word()),
+            (false, false, false) => ("↻", v.word()),
         };
         marks.push(format!("{sym} {} {outcome} by {who} on {} · {} · {word}", ev.act, ev.at.get(..10).unwrap_or(""), ev.str("line").unwrap_or("")));
         if let Some(c) = ev.str("criterion") {
@@ -2787,7 +2792,7 @@ fn help(topic: Option<&str>) -> Result<i32> {
 
 const USAGE: &str = "vsect — work inside a verisectorium. Bare `vsect` is the dashboard.
 
-Read      vsect read <kind:slug> [--at v] [--bare]   the record with marks: ✓ holds · ↻ lapsed · ⚠ broken/open · ? question
+Read      vsect read <kind:slug> [--at v] [--bare]   the record with marks: ✓ holds · ✓~ holds for what it read, an unread upstream changed · ↻ lapsed · ⚠ broken/open · ? question
           vsect why <kind:slug>                      every recorded act on it
           vsect impact <kind:slug>                   what rests on it
           vsect open [<kind:slug>]                   what is open, keyed by statement, oldest first
