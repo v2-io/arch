@@ -1180,7 +1180,10 @@ fn review_finding(store: &Store, item: &str, revision: &str, why: &str, actor: A
     // actor; a revision with no revise event (an edit no check rested on) names no reviser in the
     // ledger, so the confirmer's word that it was someone else is recorded as a claim, not refused.
     let rid = f.target.split('#').next().unwrap_or(&f.target).to_string();
-    let rev_clean = revision.trim_start_matches("v:");
+    let rev_clean = revision.trim_start_matches("v:").trim();
+    if rev_clean.len() < 4 {
+        bail!("--by-revision names the answering revision: a version prefix (at least 4 characters), an event id, or a record; `vsect why {rid}` lists the versions");
+    }
     let revise_events: Vec<&Event> = st
         .trail
         .events
