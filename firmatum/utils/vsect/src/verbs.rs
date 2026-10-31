@@ -716,6 +716,21 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
         let mut item_author = author.clone();
         if !read_set.is_empty() {
             item_author.read = read_set.iter().filter(|r| basis.iter().any(|b| &b.id == *r)).cloned().collect();
+            // a declared read whose version at `at:` is not the version now: did the reader read it
+            // at `at:`, or at a later commit the check's commit does not reach? (a checker read
+            // #def-chronica at c0d9c504 and recorded at: ed2b07e4, so its checks bound to the older
+            // text and lapsed at once, 2026-10-31)
+            if version_from == "git-revision" {
+                for r in &item_author.read {
+                    let at_v = basis.iter().find(|b| &b.id == r).map(|b| b.version.clone());
+                    let now_v = st.record(r).map(|rec| rec.own_version.clone());
+                    if let (Some(a), Some(n)) = (at_v, now_v) {
+                        if a != n {
+                            lines.push(format!("  {}: `read:` names {r}, which is v:{} at `at:` but v:{} now — if you read the current text, the check is bound to a text you did not read; record `at:` as the commit you actually read", item.id, short(&a), short(&n)));
+                        }
+                    }
+                }
+            }
         }
         match item.kind.as_str() {
             "check" => {
@@ -1159,23 +1174,38 @@ fn review_finding(store: &Store, item: &str, revision: &str, why: &str, actor: A
     let Some(f) = st.findings_open.iter().find(|f| f.item == item) else {
         bail!("{item} is not an open finding (vsect open)");
     };
-    // the finding's placer is the finder; the reviser is whoever last revised the target. Refuse
-    // when the confirmer is the reviser (the design's rule); the finder confirming is ideal.
+    // The rule: a finding is confirmed answered by someone other than the reviser of the *answering*
+    // revision (core §9.3) — not by someone other than whoever last edited the record. Resolve the
+    // named revision to its revise event (by version prefix or event-id prefix) and compare that
+    // actor; a revision with no revise event (an edit no check rested on) names no reviser in the
+    // ledger, so the confirmer's word that it was someone else is recorded as a claim, not refused.
     let rid = f.target.split('#').next().unwrap_or(&f.target).to_string();
-    if let Some(rs) = st.rs(&rid) {
-        if let Some(ev) = &rs.last_lifecycle {
-            if ev.act == "revise" && ev.actor.name == actor.name {
-                bail!("{} revised {rid} last; a finding is confirmed answered by someone other than the reviser", actor.name);
-            }
+    let rev_clean = revision.trim_start_matches("v:");
+    let revise_events: Vec<&Event> = st
+        .trail
+        .events
+        .iter()
+        .filter(|e| e.act == "revise" && e.about.as_deref().map(|a| a.split('#').next().unwrap_or(a) == rid).unwrap_or(false))
+        .filter(|e| e.str("own-version").map(|v| v.starts_with(rev_clean)).unwrap_or(false) || e.id.starts_with(rev_clean))
+        .collect();
+    let mut reviser_known = false;
+    for e in &revise_events {
+        reviser_known = true;
+        if e.actor.name == actor.name {
+            bail!("{} made revision {} of {rid} ({}); a finding is confirmed answered by someone other than the reviser of the answering revision", actor.name, short(e.str("own-version").unwrap_or(&e.id)), e.at.get(..10).unwrap_or(""));
         }
     }
-    let mut ev = Event::new(store, "review-finding", Some(&f.target), actor)
+    let mut ev = Event::new(store, "review-finding", Some(&f.target), actor.clone())
         .with("finding", yaml_str(item))
         .with("revision", yaml_str(revision))
         .with("outcome", yaml_str("answered"))
-        .with("criterion", yaml_str(why));
+        .with("criterion", yaml_str(why))
+        .with("reviser-recorded", Value::Bool(reviser_known));
     event::write_event(store, &mut ev, dry)?;
     println!("{item} → answered by {revision}{}", if dry { " (dry run)" } else { "" });
+    if !reviser_known {
+        println!("  (no revise event names revision {revision} of {rid}, so the ledger does not know who made it; that it was not you is recorded as your claim)");
+    }
     Ok(EXIT_OK)
 }
 
