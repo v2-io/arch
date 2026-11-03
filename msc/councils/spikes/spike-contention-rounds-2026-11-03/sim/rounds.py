@@ -89,8 +89,9 @@ class State:
     points: list = field(default_factory=list)      # pending: [{"by","text","target"}], sorted by target
     ruled_targets: list = field(default_factory=list)   # transitions already challenged (re-raise barred)
     speeches: dict = field(default_factory=dict)    # (member, fid) -> count
-    last_side: Optional[str] = None
-    last_floor: dict = field(default_factory=dict)  # member -> round last given the floor
+    last_side: dict = field(default_factory=dict)   # question fid -> side of the last speech on it
+    last_floor: dict = field(default_factory=dict)  # member -> floor-grant index when last given the floor
+    floor_grants: int = 0                           # 42:6's reset unit: the number of floor grants so far
     round_no: int = 0
     last_announced: Optional[dict] = None
     business_since_announce: bool = True
@@ -108,9 +109,10 @@ class State:
         return (t.fid if t else None, t.stated if t else None, self.phase, len(self.points))
 
     def transitions_in_round(self, rnd: int):
-        """Record indices of the challengeable transitions made in round rnd."""
+        """Record indices of the challengeable transitions made in round rnd: floor acts, the chair's
+        stating and putting, and the announcement of a result [45:9]."""
         return [i for i, e in enumerate(self.record)
-                if e.get("round") == rnd and (e.get("act") in FLOOR_KINDS or e.get("chair") in ("stated", "put"))]
+                if e.get("round") == rnd and (e.get("act") in FLOOR_KINDS or e.get("chair") in ("stated", "put", "announced"))]
 
     def fingerprint(self) -> str:
         d = asdict(self)
@@ -118,6 +120,7 @@ class State:
         d["claims_this_round"] = sorted(self.claims_this_round)
         d["speeches"] = sorted((f"{k[0]}|{k[1]}", v) for k, v in self.speeches.items())
         d["last_floor"] = sorted(self.last_floor.items())
+        d["last_side"] = sorted(self.last_side.items())
         return hashlib.sha256(json.dumps(d, sort_keys=True, default=str).encode()).hexdigest()
 
 
@@ -129,10 +132,15 @@ def inadmissible_reason(a: Act, s: State) -> Optional[str]:
     if a.member not in s.present:
         return "not present"
     if s.phase in ("vote", "ruling", "objection-vote"):
-        if a.kind == "vote":
+        if a.kind in ("vote", "pass"):
             return None
-        if a.kind == "pass":
-            return None
+        if a.kind == "point-of-order" and s.phase == "vote":
+            text, target = a.args
+            if target not in s.transitions_in_round(s.round_no - 1):
+                return "the challenged transition is not one of the previous round's [23:5]"
+            if (target, a.member) in s.ruled_targets or any(p["target"] == target and p["by"] == a.member for p in s.points):
+                return "this member has already challenged that transition"
+            return None   # a point against the put or the stating, before any member has voted [4:34, 45:6]
         return "voting in progress; no interruption [45:6]"
     if a.kind == "vote":
         return "no vote in progress"
@@ -142,8 +150,8 @@ def inadmissible_reason(a: Act, s: State) -> Optional[str]:
         text, target = a.args
         if target not in s.transitions_in_round(s.round_no - 1):
             return "the challenged transition is not one of the previous round's [23:5]"
-        if target in s.ruled_targets or any(p["target"] == target for p in s.points):
-            return "that transition has already been challenged"
+        if (target, a.member) in s.ruled_targets or any(p["target"] == target and p["by"] == a.member for p in s.points):
+            return "this member has already challenged that transition"
         return None
     if a.kind == "second":
         (fid,) = a.args
@@ -170,7 +178,7 @@ def inadmissible_reason(a: Act, s: State) -> Optional[str]:
             return "not yet stated"
         n = s.speeches.get((a.member, t.fid), 0)
         if n >= 2:
-            return "two speeches exhausted [43:8]"
+            return "two speeches exhausted [43:12]"
         if n == 1 and any(s.speeches.get((m, t.fid), 0) == 0 for m in s.claims_this_round if m != a.member):
             return "second speech barred while another seeking the floor has not spoken [43:13]"
         return None
@@ -230,7 +238,8 @@ def apply(a: Act, s: State, note: str = "") -> State:
             fr.stated, fr.stated_round = True, s.round_no
             ev["chair"] = "stated"
         s.record.append(ev)
-        s.last_floor[a.member] = s.round_no
+        s.floor_grants += 1
+        s.last_floor[a.member] = s.floor_grants
         return s
     if a.kind == "second":
         (fid,) = a.args
@@ -246,13 +255,15 @@ def apply(a: Act, s: State, note: str = "") -> State:
         t = s.top()
         t.debated = True
         s.speeches[(a.member, t.fid)] = s.speeches.get((a.member, t.fid), 0) + 1
-        s.last_side = side
+        s.last_side[t.fid] = side
         s.record.append(ev)
-        s.last_floor[a.member] = s.round_no
+        s.floor_grants += 1
+        s.last_floor[a.member] = s.floor_grants
         return s
     if a.kind == "point-of-order":
         text, target = a.args
-        s.points = sorted(s.points + [{"by": a.member, "text": text, "target": target}], key=lambda p: p["target"])
+        s.points = sorted(s.points + [{"by": a.member, "text": text, "target": target}],
+                          key=lambda p: (p["target"], p["text"]))   # ordered by content, never by slot
         s.record.append(ev)
         return s
     if a.kind == "object-consideration":
@@ -272,7 +283,7 @@ def chair_duties(s: State) -> State:
     if s.phase == "open" and s.points:
         p = s.points[0]
         s.phase = "ruling"
-        s.vote = {"on": f"point-of-order:{p['text']}", "ballots": {}, "threshold": "majority", "target": p["target"]}
+        s.vote = {"on": f"point-of-order:{p['text']}", "ballots": {}, "threshold": "majority", "target": p["target"], "by": p["by"]}
         s.record.append({"round": s.round_no, "chair": "point submitted to the assembly [23:18-21]"})
     return s
 
@@ -283,6 +294,9 @@ def announce(s: State) -> State:
     s = copy.deepcopy(s)
     v = s.vote
     not_voting = sorted(m for m in s.present if m not in v["ballots"])
+    if not v["ballots"]:
+        s.record.append({"round": s.round_no, "chair": "poll void: no ballots cast; the question is put again", "on": v["on"]})
+        return s                                  # phase and vote unchanged: the poll repeats next round
     yes = sum(1 for c in v["ballots"].values() if c == "aye")
     no = sum(1 for c in v["ballots"].values() if c == "no")
     if v["threshold"] == "two-thirds-neg":
@@ -295,9 +309,12 @@ def announce(s: State) -> State:
     s.last_announced = {"on": v["on"], "result": adopted}
     s.business_since_announce = False
     if s.phase == "ruling":
-        s.ruled_targets = sorted(set(s.ruled_targets) | {v["target"]})
-        s.points = [p for p in s.points if p["target"] != v["target"]]
+        s.ruled_targets = sorted(set(map(tuple, s.ruled_targets)) | {(v["target"], v["by"])})
+        s.points = [p for p in s.points if not (p["target"] == v["target"] and p["by"] == v["by"])]
         s.phase = "open"
+        s.vote = None
+        if s.points:
+            return chair_duties(s)             # the next pending point is submitted at once
     elif s.phase == "objection-vote":
         if adopted:
             s.stack.pop()
@@ -311,12 +328,14 @@ def announce(s: State) -> State:
     return s
 
 
-def put_question_if_exhausted(s: State, asked_for_debate: bool) -> State:
+def put_question_if_exhausted(s: State, asked_for_debate: bool, silent: set = frozenset()) -> State:
+    """Exhaustion = every present member was asked and none claimed debate. A member that did not
+    answer was not asked in the relevant sense: silence extends the question, it never closes it."""
     s = copy.deepcopy(s)
     t = s.top()
     if t is None or s.phase != "open" or s.points or not t.stated:
         return s
-    if s.round_no <= t.stated_round:
+    if s.round_no <= t.stated_round or silent:
         return s
     if not DEBATABLE[t.kind] or not asked_for_debate:
         s.phase = "vote"
@@ -377,73 +396,75 @@ def commute(a: Act, b: Act, s: State) -> bool:
 # Preference in recognition
 # ----------------------------------------------------------------------------
 def lottery(s: State, member: str) -> str:
-    """The recorded lottery: keyed by seed, round and roster SLOT, never by name."""
+    """The recorded lottery: keyed by the committed seed, the floor-grant count (42:6's reset unit —
+    a point of order does not yield the floor [42:20], so it does not redraw), and the roster slot."""
     slot = s.members.index(member)
-    return hashlib.sha256(f"{s.seed}|{s.round_no}|{slot}".encode()).hexdigest()
+    return hashlib.sha256(f"{s.seed}|{s.floor_grants}|{slot}".encode()).hexdigest()
 
 
-def debater_key(a: Act, s: State):
+def claim_key(a: Act, s: State):
+    """ONE key per claim, depending on the claim and the state only, never on the other claims
+    (independence of losing claims). Rungs: the maker's first speech [42:9(1)]; least recently given
+    the floor; the lottery. Alternation [42:9(3)] is NOT a rung: a declared side is cheap talk, so the
+    default records the side and leaves alternation to a charter that routes side to a judgment."""
     t = s.top()
-    maker_pref = 0 if (t is not None and t.maker == a.member and s.speeches.get((a.member, t.fid), 0) == 0) else 1
-    alternation = 1 if (s.last_side is not None and a.args[0] == s.last_side) else 0
-    return (maker_pref, alternation, s.last_floor.get(a.member, -1), lottery(s, a.member))
-
-
-def neutral_key(a: Act, s: State):
-    """Between a debater and a mover the book has only the race [42:6]; here: least recently
-    given the floor, then the lottery."""
-    return (s.last_floor.get(a.member, -1), lottery(s, a.member))
+    maker_pref = 0 if (a.kind == "speak" and t is not None and t.maker == a.member
+                       and s.speeches.get((a.member, t.fid), 0) == 0) else 1
+    return (maker_pref, s.last_floor.get(a.member, -1), lottery(s, a.member))
 
 
 def choose_floor(cands: list, s: State) -> Optional[Act]:
-    debaters = [a for a in cands if a.kind == "speak"]
-    movers = [a for a in cands if a.kind == "move"]
-    top_d = min(debaters, key=lambda a: debater_key(a, s)) if debaters else None
-    top_m = min(movers, key=lambda a: neutral_key(a, s)) if movers else None
-    if top_d and top_m:
-        if debater_key(top_d, s)[0] == 0:
-            return top_d                              # the maker's first speech beats everyone [42:9(1)]
-        return min([top_d, top_m], key=lambda a: neutral_key(a, s))
-    return top_d or top_m
+    return min(cands, key=lambda a: claim_key(a, s)) if cands else None
 
 
 # ----------------------------------------------------------------------------
 # The round
 # ----------------------------------------------------------------------------
 def resolve(s: State, profile: dict, silent: set = frozenset()) -> State:
-    """Pure in (s, profile, silent). Every policy is evaluated against the round-open state S0."""
+    """Pure in (s, profile, silent). Every policy is evaluated against the round-open state S0, which
+    guards see WITHOUT this round's claims (so no guard can read another member's sealed response)."""
     s = copy.deepcopy(s)
     s.round_no += 1
     rnd = s.round_no
-    for m in sorted(silent):
+    for m in sorted(silent, key=s.members.index):
         s.claim_log.append({"round": rnd, "member": m, "intent": "no response by deadline (silent this round)"})
 
-    # 0. who is seeking the floor this round (needed by the 43:13 filter), from the profile alone
-    s0 = copy.deepcopy(s)
-    s0.claims_this_round = set()
+    # 0. who is seeking the floor: members with an ADMISSIBLE floor entry, judged before the 43:13 bar
+    view = copy.deepcopy(s)
+    view.claims_this_round = set()
     seeking = set()
     for m, pol in profile.items():
         for guard, act in pol.entries:
-            if act.kind in FLOOR_KINDS and (guard(s0) if guard else True):
-                seeking.add(m)
+            if act.kind == "speak" and (guard(view) if guard else True) and admissible(act, view):
+                seeking.add(m)              # 43:13 is about members who desire to SPEAK; a mover's claim is not one
+                break
+    s0 = copy.deepcopy(s)
     s0.claims_this_round = seeking
     s.claims_this_round = seeking
 
-    # 1. live acts, all against S0 (so nothing here depends on the order members are visited)
+    # 1. live acts, all against S0; guards against the claim-free view
     nonfloor, floor = [], []
     asked_for_debate = False
     for m in profile:
         pol = profile[m]
-        took_floor = False
+        took_floor = took_ballot = False
         for guard, act in pol.entries:
-            g_ok = guard(s0) if guard is not None else True
-            adm = admissible(act, s0) if g_ok else None
+            g_ok = guard(view) if guard is not None else True
+            reason = inadmissible_reason(act, s0) if g_ok else None
+            adm = (reason is None) if g_ok else None
             entry = {"round": rnd, "member": m, "intent": act.key() if act.kind != "vote" else ("vote", m, "(sealed)"),
                      "guard_held": g_ok, "admissible": adm}
             s.claim_log.append(entry)
+            if g_ok and act.kind == "speak" and reason is not None and reason.startswith("second speech barred"):
+                asked_for_debate = True        # 43:13 defers the speech; it does not close debate
             if not g_ok or not adm:
                 continue
-            if act.kind in FLOOR_KINDS:
+            if act.kind == "vote":
+                if took_ballot:
+                    continue                   # one ballot per member: the first (highest-priority) entry
+                took_ballot = True
+                nonfloor.append(act)
+            elif act.kind in FLOOR_KINDS:
                 if took_floor:
                     continue
                 took_floor = True
@@ -453,40 +474,52 @@ def resolve(s: State, profile: dict, silent: set = frozenset()) -> State:
                 nonfloor.append(act)
     s.claim_log.sort(key=lambda e: (e["round"], s.members.index(e["member"]) if e["member"] in s.members else -1, str(e["intent"])))
 
-    # 2. a vote round: ballots only; the round IS the poll; it closes with the round
+    # 2. a vote round is the poll — unless a point against the put/stating lands, which voids the poll
     if s.phase in ("vote", "ruling", "objection-vote"):
+        points = [a for a in nonfloor if a.kind == "point-of-order"]
+        if points:
+            for a in sorted(points, key=lambda a: (a.args, s.members.index(a.member))):
+                s = apply(a, s, note="point against the put/stating; the poll is void until ruled [4:34]")
+            s.record.append({"round": rnd, "chair": "poll void: ballots discarded pending the point", "on": s.vote["on"]})
+            s.vote = None
+            s.phase = "open"
+            return chair_duties(s)
         for a in nonfloor:
             if a.kind == "vote":
                 s = apply(a, s)
         return announce(s)
 
-    # 3. non-floor acts: each admitted iff admissible at S0; applied in kind order (set-valued
-    #    effects, so order within a kind cannot matter); never re-checked against siblings
+    # 3. non-floor acts admissible at S0. Points first; if any point landed, every other non-floor act
+    #    is deferred to the round after the ruling (the point must be disposed of before anything else
+    #    [23:2(1)]); their windows survive because a ruling round opens no debate and no vote on them.
     snap0 = s0.snapshot_key()
-    for a in sorted(nonfloor, key=lambda a: (KIND_ORDER.get(a.kind, 9), s.members.index(a.member))):
-        if a.kind == "vote":
-            continue
+    points = sorted((a for a in nonfloor if a.kind == "point-of-order"), key=lambda a: (a.args, s.members.index(a.member)))
+    others = sorted((a for a in nonfloor if a.kind not in ("point-of-order", "vote")),
+                    key=lambda a: (KIND_ORDER.get(a.kind, 9), a.args, s.members.index(a.member)))
+    for a in points:
+        s = apply(a, s, note="admitted ahead of the floor" + (" (fragile)" if is_fragile(a, s0) else ""))
+    if points:
+        for a in others:
+            s.claim_log.append({"round": rnd, "member": a.member, "intent": a.key(), "deferred": "a point of order is pending"})
+        return chair_duties(s)
+    for a in others:
         s = apply(a, s, note="admitted ahead of the floor" + (" (fragile)" if is_fragile(a, s0) else ""))
 
-    # 4. a point of order halts the floor: it is disposed of first [23:2(1)]
-    if s.points:
-        return chair_duties(s)
-
-    # 5. one floor act, and only if its implicit guard still holds (I1)
+    # 4. one floor act, only if its implicit guard still holds (I1)
     cands = [a for a in floor if admissible(a, s)]
     if s.snapshot_key() != snap0:
-        cands = []                                   # the in-round non-floor acts changed what the floor act assumed
+        cands = []
         s.record.append({"round": rnd, "chair": "floor claims deferred: state changed by acts admitted this round"})
     w = choose_floor(cands, s)
     if w is not None:
         s = apply(w, s, note="floor: " + ("debater" if w.kind == "speak" else "mover") +
                   f" lastfloor={s.last_floor.get(w.member, -1)}")
 
-    # 6. the chair's duties
+    # 5. the chair's duties — never on the strength of silence
     t = s.top()
-    if t is not None and s.phase == "open" and s.needs_second and not t.seconded_by and rnd > t.made_round:
+    if t is not None and s.phase == "open" and s.needs_second and not t.seconded_by and rnd > t.made_round and not silent:
         return apply(Act("chair-proceed", s.members[0], ()), s)
-    return put_question_if_exhausted(s, asked_for_debate)
+    return put_question_if_exhausted(s, asked_for_debate, silent)
 
 
 def collect_and_resolve(s: State, arrivals: list, deadline_cut: Optional[int] = None) -> State:
@@ -494,9 +527,16 @@ def collect_and_resolve(s: State, arrivals: list, deadline_cut: Optional[int] = 
     logged as supplementary, never applied (a late ballot is not counted and not seen)."""
     on_time = arrivals if deadline_cut is None else arrivals[:deadline_cut]
     late = [] if deadline_cut is None else arrivals[deadline_cut:]
-    profile = {m: p for m, p in on_time}
+    profile, refused = {}, []
+    for m, p in on_time:
+        if m in profile:
+            refused.append(m)                 # the first submission is final; a replacement is refused
+        else:
+            profile[m] = p
     silent = set(s.present) - set(profile)
     s2 = resolve(s, profile, silent)
+    for m in sorted(refused, key=s.members.index):
+        s2.claim_log.append({"round": s2.round_no, "member": m, "intent": "duplicate submission refused (first is final)"})
     for m, p in sorted(late, key=lambda mp: s.members.index(mp[0])):
         s2.claim_log.append({"round": s2.round_no, "member": m, "intent": "late (supplementary): " +
                              "; ".join(("vote (sealed)" if a.kind == "vote" else str(a.key())) for _, a in p.entries)})

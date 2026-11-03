@@ -1,21 +1,25 @@
-F1  arrival-order invariance: 200 random states x 18 permutations — identical records
-F3  relabeling equivariance: 600 random states, one member renamed to sort first/last — identical
-F4  deadline: record depends only on the on-time set; the vote round closed at its deadline, eli recorded as not voting, no ballot visible before announcement
-P   points of order are breach-specific and not re-raisable: an obstructor got 3 halts in 20 rounds and ben still spoke 2 times
-1.4 alternation is ranked among debaters first; a mover's claim cannot flip which debater speaks
-I1  a floor act is deferred when in-round acts changed its snapshot; guarded routing re-decides next round
-F3  ladder: maker first [42:9(1)]; everyone once before anyone twice [42:9(2) via 43:13]; then least-recently-floored, then a recorded lottery by slot
-D1/D2 fragility classification (as a diff tool, not an oracle) and commutation: as before; classification now stable under relabeling
+F1  arrival-order invariance: 200 random states x 18 permutations, guarded policies — identical
+F3  relabeling equivariance: 600 random states, guarded policies, one member renamed — identical
+IND independence of losing claims: 305 random contests, a non-winning claim never changed the winner (except 43:13's deferral)
+1.1 an out-of-order claim is invisible to the 43:13 bar; a deferred second speech does not close debate
+1.3 the lottery is keyed by floor-grant count: a point of order redrew 0 of 40 ties (was 20 of 40)
+1.4 a point in the vote round voids the poll; the announcement is a challengeable transition
+1.5 point before objection, objection deferred not lost; two members' points on one transition both ruled
+1.6 silence extends: no put, no 'no second', no 0-0 rejection on a round nobody answered
+F4  deadline: on-time set only; late ballot not counted, not seen; duplicate submission refused; first ballot per policy
+I1  floor act deferred when in-round acts changed its snapshot; a standing guarded policy re-routes next round
+LAD maker first [42:9(1)]; everyone once before anyone twice [43:13]; then least-recently-floored, then lottery; a declared side is recorded and buys nothing
+D1/D2 fragility classification (a diff tool) and commutation, as before
 
 Specimen record (committee configuration, no seconds):
    {'round': 1, 'member': 'ada', 'act': 'move', 'args': ['main', 'Reset canon to the pre-sprint tag'], 'note': 'floor: mover lastfloor=-1', 'chair': 'stated'}
    {'round': 2, 'member': 'ada', 'act': 'speak', 'args': ['for', 'findability: the eight checks added nothing'], 'note': 'floor: debater lastfloor=1'}
    {'round': 3, 'member': 'ben', 'act': 'speak', 'args': ['against', 'I re-derived the mathematics; the checks are real'], 'note': 'floor: debater lastfloor=-1'}
    {'round': 4, 'member': 'cyd', 'act': 'speak', 'args': ['against', 're-integration cost of a reset is high'], 'note': 'floor: debater lastfloor=-1'}
-   {'round': 5, 'member': 'eli', 'act': 'point-of-order', 'args': ['the last speech was not germane to the pending question', 3], 'note': 'admitted ahead of the floor (fragile)'}
-   {'round': 5, 'chair': 'point submitted to the assembly [23:18-21]'}
-   {'round': 6, 'chair': 'announced', 'on': 'point-of-order:the last speech was not germane to the pending question', 'tally': {'ada': 'no', 'ben': 'no', 'cyd': 'no', 'dee': 'no', 'eli': 'aye'}, 'not_voting': [], 'result': 'rejected'}
-   {'round': 7, 'member': 'dee', 'act': 'move', 'args': ['amend', "insert 'after an independent re-derivation of the eight checks'"], 'note': 'floor: mover lastfloor=-1', 'chair': 'stated'}
+   {'round': 5, 'member': 'dee', 'act': 'move', 'args': ['amend', "insert 'after an independent re-derivation of the eight checks'"], 'note': 'floor: mover lastfloor=-1', 'chair': 'stated'}
+   {'round': 6, 'member': 'eli', 'act': 'point-of-order', 'args': ['the last act was not in order', 4], 'note': 'admitted ahead of the floor (fragile)'}
+   {'round': 6, 'chair': 'point submitted to the assembly [23:18-21]'}
+   {'round': 7, 'chair': 'announced', 'on': 'point-of-order:the last act was not in order', 'tally': {'ada': 'no', 'ben': 'no', 'cyd': 'no', 'dee': 'no', 'eli': 'aye'}, 'not_voting': [], 'result': 'rejected'}
    {'round': 8, 'chair': 'put', 'on': 2}
    {'round': 9, 'chair': 'announced', 'on': 2, 'tally': {'ada': 'aye', 'ben': 'aye', 'cyd': 'aye', 'dee': 'aye', 'eli': 'aye'}, 'not_voting': [], 'result': 'adopted'}
    {'round': 10, 'chair': 'put', 'on': 1}
