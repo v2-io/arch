@@ -10,6 +10,18 @@ use std::path::PathBuf;
 
 pub const SCHEMA: &str = "vsect-event/0";
 
+/// Who acted. `name` is a label (typed with `--by`, or defaulted from the harness identity);
+/// `agent` is the identity acts are compared on when the harness supplied one. `identity` says
+/// what the record of who acted rests on, and is always set by vsect, never read from a file:
+///
+/// - `harness-agent`: `agent` is the Claude Code agent key (`<session>` or `<session>/<agent-id>`),
+///   exported into the shell as `CC_AGENT` by the agent-identity hook from the harness's own ids;
+/// - `harness-session`: only the root session id was available (`CLAUDE_CODE_SESSION_ID`), which
+///   every subagent of that session shares, so it cannot tell a lead from its subagents;
+/// - `declared`: nothing but what was typed.
+///
+/// Fields absent on events written before 2026-11-02 are absent, not empty, so those events hash
+/// as they always did.
 #[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
 pub struct Actor {
     pub name: String,
@@ -17,8 +29,106 @@ pub struct Actor {
     pub session: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub role: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent: Option<String>,
+    #[serde(default, rename = "agent-type", skip_serializing_if = "Option::is_none")]
+    pub agent_type: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parent: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub identity: Option<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub read: Vec<String>,
+    /// Actor fields this build does not know, carried through unchanged so that an event written
+    /// by a newer vsect still hashes to its id here. Without it, the 2026-10-30 build read the
+    /// first events carrying `agent:` as edited (the unknown keys were dropped before re-hashing).
+    #[serde(flatten, default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub extra: BTreeMap<String, Value>,
+}
+
+impl Actor {
+    /// The identity acts are compared on: the agent key when there is one, else the name.
+    pub fn mind(&self) -> &str {
+        self.agent.as_deref().filter(|s| !s.is_empty()).unwrap_or(&self.name)
+    }
+    /// Same mind: equal agent keys when both acts carry one; otherwise equal names (the only
+    /// evidence older or undecorated records have). Agent keys answer the 74-spellings problem
+    /// both ways: one agent typing two names is one mind; two agents typing one name are two.
+    pub fn same_mind(&self, other: &Actor) -> bool {
+        match (self.agent.as_deref().filter(|s| !s.is_empty()), other.agent.as_deref().filter(|s| !s.is_empty())) {
+            (Some(a), Some(b)) => a == b,
+            _ => self.name == other.name,
+        }
+    }
+    /// The name, with the agent's short id when the name was typed and does not show it.
+    pub fn label(&self) -> String {
+        match self.agent.as_deref() {
+            Some(a) => {
+                let short = a.rsplit('/').next().unwrap_or(a);
+                let short = &short[..short.len().min(8)];
+                if self.name.contains(short) { self.name.clone() } else { format!("{} [{}]", self.name, short) }
+            }
+            None => self.name.clone(),
+        }
+    }
+}
+
+/// The identity the harness supplies to this process, if any (see `Actor`).
+#[derive(Debug, Clone, Default)]
+pub struct HarnessIdentity {
+    pub identity: &'static str,
+    pub session: Option<String>,
+    pub agent: Option<String>,
+    pub agent_id: Option<String>,
+    pub agent_type: Option<String>,
+    pub parent: Option<String>,
+}
+
+/// Read the harness identity from the environment. `CC_AGENT` is written into every Bash command
+/// by the agent-identity hook (estate install, 2026-11-02): the agent key first, then `key=value`
+/// fields, e.g. `<session>/<agent-id> parent=<session> type=general-purpose depth=1
+/// src=agent-identity-hook/2`. The key counts as harness-supplied only when `src=` names that
+/// hook; an agent can still export a value by hand, so this guards against mistakes, not fraud.
+pub fn harness_identity() -> HarnessIdentity {
+    harness_identity_from(std::env::var("CC_AGENT").ok().as_deref(), std::env::var("CLAUDE_CODE_SESSION_ID").ok().as_deref())
+}
+
+pub fn harness_identity_from(cc_agent: Option<&str>, session_env: Option<&str>) -> HarnessIdentity {
+    let session = session_env.map(|s| s.trim().to_string()).filter(|s| !s.is_empty());
+    if let Some(v) = cc_agent {
+        let mut words = v.split_whitespace();
+        let key = words.next().unwrap_or("").to_string();
+        let fields: BTreeMap<&str, &str> = words.filter_map(|w| w.split_once('=')).collect();
+        if !key.is_empty() && !key.contains('=') && fields.get("src").map(|s| s.starts_with("agent-identity-hook/")).unwrap_or(false) {
+            let agent_id = key.split_once('/').map(|(_, a)| a.to_string());
+            let get = |k: &str| fields.get(k).map(|s| s.to_string()).filter(|s| !s.is_empty());
+            return HarnessIdentity {
+                identity: "harness-agent",
+                session: Some(key.split('/').next().unwrap_or(&key).to_string()),
+                agent: Some(key.clone()),
+                agent_id: Some(agent_id.unwrap_or_else(|| "main".into())),
+                agent_type: get("type"),
+                parent: get("parent"),
+            };
+        }
+    }
+    if session.is_some() {
+        return HarnessIdentity { identity: "harness-session", session, ..Default::default() };
+    }
+    HarnessIdentity { identity: "declared", ..Default::default() }
+}
+
+impl HarnessIdentity {
+    /// A readable default name: `main 0903e35e` or `general-purpose a4d8232a`.
+    pub fn default_name(&self) -> Option<String> {
+        let key = self.agent.as_deref()?;
+        let id = self.agent_id.as_deref().unwrap_or("main");
+        Some(if id == "main" {
+            format!("main {}", &key[..key.len().min(8)])
+        } else {
+            format!("{} {}", self.agent_type.as_deref().unwrap_or("agent"), &id[..id.len().min(8)])
+        })
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -420,4 +530,57 @@ pub fn check_objects(store: &Store) -> Vec<(String, String)> {
         }
     }
     problems
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn ev(actor_yaml: &str) -> Event {
+        let y = format!("schema: vsect-event/0\nid: ''\nat: 2026-11-02T00:00:00Z\nstore: t\nact: rederive\nactor:\n{actor_yaml}normalizer: vsect-norm/0\noutcome: confirmed\n");
+        serde_yaml::from_str(&y).unwrap()
+    }
+
+    #[test]
+    fn events_without_identity_fields_hash_as_before() {
+        // the id of an event written before 2026-11-02 (name/role only) must not move
+        let e = ev("  name: A\n  role: verifier\n");
+        let json = serde_json::to_string(&serde_json::to_value(&e.actor).unwrap()).unwrap();
+        assert_eq!(json, r#"{"name":"A","role":"verifier"}"#);
+    }
+
+    #[test]
+    fn unknown_actor_fields_survive_a_round_trip_and_count_in_the_id() {
+        let with = ev("  name: A\n  agent: s/a1\n  future-field: x\n");
+        let without = ev("  name: A\n  agent: s/a1\n");
+        assert_eq!(with.actor.extra.get("future-field").and_then(|v| v.as_str()), Some("x"));
+        let again: Event = serde_yaml::from_str(&serde_yaml::to_string(&with).unwrap()).unwrap();
+        assert_eq!(compute_id(&with).unwrap(), compute_id(&again).unwrap());
+        assert_ne!(compute_id(&with).unwrap(), compute_id(&without).unwrap());
+    }
+
+    #[test]
+    fn cc_agent_is_parsed_and_needs_the_hook_marker() {
+        let h = harness_identity_from(Some("s1/a2b3 parent=s1 type=general-purpose depth=1 src=agent-identity-hook/2"), Some("s1"));
+        assert_eq!(h.identity, "harness-agent");
+        assert_eq!(h.agent.as_deref(), Some("s1/a2b3"));
+        assert_eq!(h.session.as_deref(), Some("s1"));
+        assert_eq!(h.parent.as_deref(), Some("s1"));
+        assert_eq!(h.agent_type.as_deref(), Some("general-purpose"));
+        assert_eq!(h.default_name().as_deref(), Some("general-purpose a2b3"));
+        let main = harness_identity_from(Some("0903e35e-b03e depth=0 src=agent-identity-hook/2"), None);
+        assert_eq!(main.default_name().as_deref(), Some("main 0903e35e"));
+        assert_eq!(main.parent, None);
+        assert_eq!(harness_identity_from(Some("s1/a2b3 type=x"), Some("s1")).identity, "harness-session");
+        assert_eq!(harness_identity_from(None, None).identity, "declared");
+    }
+
+    #[test]
+    fn same_mind_prefers_agent_keys_and_falls_back_to_names() {
+        let a = |name: &str, agent: Option<&str>| Actor { name: name.into(), agent: agent.map(|s| s.into()), ..Default::default() };
+        assert!(a("Lane A", Some("s/1")).same_mind(&a("Lane B", Some("s/1"))));
+        assert!(!a("Lane A", Some("s/1")).same_mind(&a("Lane A", Some("s/2"))));
+        assert!(a("Lane A", None).same_mind(&a("Lane A", Some("s/2"))));
+        assert!(!a("Lane A", None).same_mind(&a("Lane B", None)));
+    }
 }

@@ -346,6 +346,8 @@ pub enum Cmd {
     Kinds,
     /// Help on a verb, or `help model` for the logical model.
     Help { topic: Option<String> },
+    /// What vsect would record as the actor here, printed as a review's `author:` block, and what that identity rests on.
+    Whoami,
 }
 
 fn main() -> ExitCode {

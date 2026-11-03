@@ -39,6 +39,9 @@ pub fn run(cli: Cli) -> Result<i32> {
     if let Cmd::Help { topic } = &cmd {
         return help(topic.as_deref());
     }
+    if let Cmd::Whoami = &cmd {
+        return whoami(&actor_args);
+    }
     let store = Store::find(&cwd)?;
     match cmd {
         Cmd::Revise { record } => {
@@ -124,7 +127,7 @@ pub fn run(cli: Cli) -> Result<i32> {
         }
         Cmd::Intents { all } => intents_verb(&store, all, json),
         Cmd::Claimed { paths } => {
-            let who = actor_args.by.clone().or_else(|| std::env::var("VSECT_BY").ok()).unwrap_or_default();
+            let who = claim_holder(&actor_args);
             claimed_verb(&store, &paths, &who, json)
         }
         Cmd::Raise { target, source, why } => {
@@ -148,20 +151,25 @@ pub fn run(cli: Cli) -> Result<i32> {
         Cmd::Why { id } => why(&store, &id),
         Cmd::Impact { id } => impact(&store, &id),
         Cmd::Kinds => kinds(&store),
-        Cmd::Init { .. } | Cmd::Help { .. } => unreachable!(),
+        Cmd::Init { .. } | Cmd::Help { .. } | Cmd::Whoami => unreachable!(),
     }
 }
 
 // ---------- helpers ----------
 
+/// Who is acting. The harness identity (`event::harness_identity`) is taken whenever the process
+/// has one; `--by` is then only a label, and may be left out. Without one, `--by` is required, as
+/// before, and the record says it rests on what was typed.
 fn actor(a: &crate::ActorArgs, default_role: &str) -> Result<Actor> {
+    let h = event::harness_identity();
     let name = a
         .by
         .clone()
         .or_else(|| std::env::var("VSECT_BY").ok())
-        .filter(|s| !s.is_empty());
+        .filter(|s| !s.is_empty())
+        .or_else(|| h.default_name());
     let Some(name) = name else {
-        eprintln!("Who is acting? Give --by <name> (or set VSECT_BY). It is recorded as your claim.");
+        eprintln!("Who is acting? Give --by <name> (or set VSECT_BY). It is recorded as your claim. (No harness identity was found: Claude Code agents get one from the agent-identity hook; `vsect whoami` shows what vsect sees.)");
         std::process::exit(EXIT_NOT_RUN);
     };
     let role = a
@@ -174,8 +182,55 @@ fn actor(a: &crate::ActorArgs, default_role: &str) -> Result<Actor> {
         .session
         .clone()
         .or_else(|| std::env::var("VSECT_SESSION").ok())
-        .filter(|s| !s.is_empty());
-    Ok(Actor { name, role: Some(role), session, read: vec![] })
+        .filter(|s| !s.is_empty())
+        .or_else(|| h.session.clone());
+    Ok(Actor {
+        name,
+        role: Some(role),
+        session,
+        agent: h.agent.clone(),
+        agent_type: h.agent_type.clone(),
+        parent: h.parent.clone(),
+        identity: Some(h.identity.to_string()),
+        read: vec![],
+        ..Default::default()
+    })
+}
+
+/// The identity a claim is held under: the harness agent key when there is one, else the name.
+fn claim_holder(a: &crate::ActorArgs) -> String {
+    let h = event::harness_identity();
+    h.agent.clone().or_else(|| a.by.clone().or_else(|| std::env::var("VSECT_BY").ok()).filter(|s| !s.is_empty())).unwrap_or_default()
+}
+
+/// `vsect whoami`: what vsect would record as the actor here, as a review's `author:` block.
+fn whoami(a: &crate::ActorArgs) -> Result<i32> {
+    let h = event::harness_identity();
+    let name = a.by.clone().or_else(|| std::env::var("VSECT_BY").ok()).filter(|s| !s.is_empty()).or_else(|| h.default_name());
+    println!("author:");
+    println!("  name: {}", yaml_quote(name.as_deref().unwrap_or("(none: give --by)")));
+    if let Some(s) = a.session.clone().or_else(|| std::env::var("VSECT_SESSION").ok()).filter(|s| !s.is_empty()).or(h.session.clone()) {
+        println!("  session: {}", yaml_quote(&s));
+    }
+    if let Some(k) = &h.agent {
+        println!("  agent: {}", yaml_quote(k));
+    }
+    if let Some(t) = &h.agent_type {
+        println!("  agent-type: {}", yaml_quote(t));
+    }
+    if let Some(p) = &h.parent {
+        println!("  parent: {}", yaml_quote(p));
+    }
+    eprintln!(
+        "identity: {} — {}",
+        h.identity,
+        match h.identity {
+            "harness-agent" => "the agent key came from the agent-identity hook (Claude Code's own ids); events record it, `--by` is a label",
+            "harness-session" => "only the root session id is visible: a lead and its subagents look the same; is the agent-identity hook installed?",
+            _ => "nothing from a harness; events will rest on what --by says",
+        }
+    );
+    Ok(EXIT_OK)
 }
 
 /// Ask a question: answered in advance by `--answer key=…`, at a terminal by a prompt, otherwise
@@ -659,12 +714,36 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
     if review.frontmatter.get("kind").and_then(|v| v.as_str()) != Some("review") {
         bail!("{path} is not a review record (frontmatter `kind: review`)");
     }
-    let author: Actor = review
-        .frontmatter
-        .get("author")
-        .map(|v| serde_yaml::from_value(v.clone()))
-        .transpose()?
-        .unwrap_or_else(|| actor.clone());
+    // The author block is what the review's writer typed. Its `identity` is computed here, never
+    // read: an `agent:` in the block counts as harness identity only when the mind running `take`
+    // has that same agent key from the harness (the writer taking its own review); otherwise the
+    // block is declared, and the taker is recorded beside it as `taken-by`, so the record keeps
+    // both what was claimed and who brought it in.
+    let typed_author: Option<Actor> = review.frontmatter.get("author").map(|v| serde_yaml::from_value(v.clone())).transpose()?;
+    let (author, taken_by): (Actor, Option<Value>) = match typed_author {
+        None => (actor.clone(), None),
+        Some(mut a) => {
+            let attested = actor.identity.as_deref() == Some("harness-agent") && a.agent.is_some() && a.agent == actor.agent;
+            // an unkeyed block identical to the taker (the block `take --check` writes for itself
+            // when no agent key exists) is the taker's own act and rests on what the taker's does
+            let same_unkeyed = a.agent.is_none() && actor.agent.is_none() && a.name == actor.name && a.session == actor.session;
+            a.identity = if attested {
+                Some("harness-agent".into())
+            } else if same_unkeyed {
+                actor.identity.clone()
+            } else {
+                Some("declared".into())
+            };
+            let taker = if attested || same_unkeyed {
+                None
+            } else {
+                let mut t = actor.clone();
+                t.read = vec![];
+                Some(serde_yaml::to_value(&t)?)
+            };
+            (a, taker)
+        }
+    };
     let items = parse_items(&review.body);
     if items.is_empty() {
         bail!("no typed items in {path}: sections like `## C1 (check)` / `## F1 (finding)` are what `take` reads (free-form intake is not built yet)");
@@ -754,6 +833,7 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
                     .with("committed", yaml_str(item.fields.get("committed").map(|s| s.as_str()).unwrap_or("after")))
                     .with("recheck", yaml_str(item.fields.get("recheck").map(|s| s.as_str()).unwrap_or("")))
                     .with("outcome", yaml_str(outcome));
+                if let Some(t) = &taken_by { ev.payload.insert("taken-by".into(), t.clone()); }
                 event::write_event(store, &mut ev, dry)?;
                 wrote += 1;
                 let now_v = st.record(&tid).map(|r| r.own_version.clone());
@@ -776,6 +856,7 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
                         .with("basis", state::basis_to_yaml(&basis))
                         .with("version-from", yaml_str(version_from))
                         .with("text", yaml_str(&format!("check {} came back {outcome}: {}", item.id, first_sentence(&item.text))));
+                    if let Some(t) = &taken_by { f.payload.insert("taken-by".into(), t.clone()); }
                     event::write_event(store, &mut f, dry)?;
                     lines.push(format!("      → opens finding {fid} (something now needs answering)"));
                     act_on += 1;
@@ -793,6 +874,7 @@ fn take(store: &Store, path: &str, actor: Actor, dry: bool) -> Result<i32> {
                     .with("basis", state::basis_to_yaml(&basis))
                     .with("version-from", yaml_str(version_from))
                     .with("text", yaml_str(&first_sentence(&item.text)));
+                if let Some(t) = &taken_by { f.payload.insert("taken-by".into(), t.clone()); }
                 event::write_event(store, &mut f, dry)?;
                 wrote += 1;
                 act_on += 1;
@@ -874,6 +956,12 @@ fn take_inline(
     }
     if let Some(s) = &actor.session {
         fm.push_str(&format!("  session: {}\n", yaml_quote(s)));
+    }
+    // the harness identity, so `take` can attest it (its `identity` is computed there, not written)
+    for (k, v) in [("agent", &actor.agent), ("agent-type", &actor.agent_type), ("parent", &actor.parent)] {
+        if let Some(v) = v {
+            fm.push_str(&format!("  {k}: {}\n", yaml_quote(v)));
+        }
     }
     if !sources.is_empty() {
         fm.push_str("sources:\n");
@@ -1195,8 +1283,8 @@ fn review_finding(store: &Store, item: &str, revision: &str, why: &str, actor: A
     let mut reviser_known = false;
     for e in &revise_events {
         reviser_known = true;
-        if e.actor.name == actor.name {
-            bail!("{} made revision {} of {rid} ({}); a finding is confirmed answered by someone other than the reviser of the answering revision", actor.name, short(e.str("own-version").unwrap_or(&e.id)), e.at.get(..10).unwrap_or(""));
+        if e.actor.same_mind(&actor) {
+            bail!("{} made revision {} of {rid} ({}); a finding is confirmed answered by someone other than the reviser of the answering revision", actor.label(), short(e.str("own-version").unwrap_or(&e.id)), e.at.get(..10).unwrap_or(""));
         }
     }
     let mut ev = Event::new(store, "review-finding", Some(&f.target), actor.clone())
@@ -1954,9 +2042,11 @@ fn confirm(store: &Store, record: &str, from: Option<&str>, to: Option<&str>, ju
             }
         }
         // the second mind is not the reviser
-        let revisers = st.revisers_between(&p.record, &p.from, &p.to);
-        if revisers.iter().any(|r| r == &actor.name) {
-            bail!("{} made this change ({} v:{} → v:{}); a rewording is confirmed by someone other than the reviser.", actor.name, p.record, short(&p.from), short(&p.to));
+        let reviser_actors = st.reviser_actors_between(&p.record, &p.from, &p.to);
+        let revisers: Vec<String> = reviser_actors.iter().map(|a| a.label()).collect();
+        if reviser_actors.iter().any(|r| r.same_mind(&actor)) {
+            let as_ = reviser_actors.iter().filter(|r| r.same_mind(&actor)).map(|r| r.label()).collect::<Vec<_>>().join(", ");
+            bail!("{} made this change, recorded as {as_} ({} v:{} → v:{}); a rewording is confirmed by someone other than the reviser{}.", actor.label(), p.record, short(&p.from), short(&p.to), if actor.agent.is_some() { " (compared on the harness agent key)" } else { "" });
         }
         let old = event::read_object(store, &p.from, Some(&p.record))?;
         let new = event::read_object(store, &p.to, Some(&p.record))?;
@@ -2049,7 +2139,7 @@ fn claim_verb(store: &Store, records: &[String], intent_text: &str, kind: &str, 
         if !st.scan.records.contains_key(&rid) {
             bail!("{rid} is not in the store");
         }
-        match intent::claim(store, &rid, &actor.name, actor.role.as_deref().unwrap_or(""), intent_text, kind, ttl_d, alongside) {
+        match intent::claim(store, &rid, &actor.name, actor.agent.as_deref().unwrap_or(""), actor.role.as_deref().unwrap_or(""), intent_text, kind, ttl_d, alongside) {
             Ok((c, others)) => {
                 println!("Claimed {rid} — {} ({}) in {} until {}: {}", c.agent, c.kind, intent::short_path(&c.worktree), intent::local_full(&c.expires), c.intent);
                 for o in others {
@@ -2075,9 +2165,9 @@ fn release_verb(store: &Store, records: &[String], force: bool, why: Option<&str
     }
     for r in records {
         let rid = Id::parse(store, r)?.record_id();
-        let released = intent::release(store, &rid, &actor.name, if force { why } else { None })?;
+        let released = intent::release(store, &rid, actor.mind(), if force { why } else { None })?;
         for c in released {
-            let how = if c.agent == actor.name { "released".to_string() } else if c.expired() { "released (expired)".to_string() } else { format!("released by force: {}", why.unwrap_or("")) };
+            let how = if c.holder() == actor.mind() { "released".to_string() } else if c.expired() { "released (expired)".to_string() } else { format!("released by force: {}", why.unwrap_or("")) };
             println!("{rid} — {}'s claim {how}", c.agent);
         }
     }
@@ -2118,7 +2208,7 @@ fn claimed_verb(store: &Store, paths: &[String], me: &str, json: bool) -> Result
     let claims = intent::all_claims(store);
     let mut hits = vec![];
     for (rel, rid) in pairs {
-        for c in claims.iter().filter(|c| c.record == rid && !c.expired() && c.agent != me) {
+        for c in claims.iter().filter(|c| c.record == rid && !c.expired() && c.holder() != me) {
             hits.push((rel.clone(), rid.clone(), c.clone()));
         }
     }
@@ -2634,7 +2724,7 @@ fn read(store: &Store, id: &str, at: Option<&str>, bare: bool) -> Result<i32> {
         marks.push(format!("↻ {why} (vsect revise)"));
     }
     for (ev, v) in &rs.securing {
-        let who = format!("{}{}", ev.actor.name, ev.actor.role.as_deref().map(|r| format!(" as {r}")).unwrap_or_default());
+        let who = format!("{}{}", ev.actor.label(), ev.actor.role.as_deref().map(|r| format!(" as {r}")).unwrap_or_default());
         let outcome = ev.str("outcome").unwrap_or("");
         let broke = matches!(outcome, "broken" | "narrowed");
         // a check that broke the statement is never a check-mark: if its basis still holds, the break stands at this text
@@ -2698,7 +2788,7 @@ fn why(store: &Store, id: &str) -> Result<i32> {
     }
     println!("{rid} — {} act(s), oldest first", evs.len());
     for ev in evs {
-        let who = format!("{}{}", ev.actor.name, ev.actor.role.as_deref().map(|r| format!(" ({r})")).unwrap_or_default());
+        let who = format!("{}{}", ev.actor.label(), ev.actor.role.as_deref().map(|r| format!(" ({r})")).unwrap_or_default());
         let mut detail = vec![];
         for k in ["change", "outcome", "line", "from", "into", "finding", "disposition", "closer", "version-from"] {
             if let Some(v) = ev.str(k) {

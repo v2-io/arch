@@ -718,18 +718,30 @@ impl State {
 
     /// Who revised `record` between `from` and `to` (actor names), from its lifecycle trail.
     pub fn revisers_between(&self, record: &str, from: &str, to: &str) -> Vec<String> {
+        let mut names: Vec<String> = vec![];
+        for a in self.reviser_actors_between(record, from, to) {
+            if !names.contains(&a.name) {
+                names.push(a.name);
+            }
+        }
+        names
+    }
+
+    /// Who revised `record` between `from` and `to`, as recorded actors (one per distinct mind,
+    /// `Actor::same_mind`), so a confirmer can be compared by agent key where the trail has one.
+    pub fn reviser_actors_between(&self, record: &str, from: &str, to: &str) -> Vec<crate::event::Actor> {
         let Some(rs) = self.records.get(record) else { return vec![] };
         // Follow the version chain (from-version → own-version) rather than event order: two
         // revisions in one second sort by id, and order would miss one.
-        let mut next: BTreeMap<&str, Vec<(&str, &str)>> = BTreeMap::new(); // from -> [(own, actor)]
+        let mut next: BTreeMap<&str, Vec<(&str, &crate::event::Actor)>> = BTreeMap::new(); // from -> [(own, actor)]
         for ev in &rs.lifecycle {
             if ev.act == "revise" {
                 if let (Some(f), Some(o)) = (ev.str("from-version"), ev.str("own-version")) {
-                    next.entry(f).or_default().push((o, ev.actor.name.as_str()));
+                    next.entry(f).or_default().push((o, &ev.actor));
                 }
             }
         }
-        let mut names: Vec<String> = vec![];
+        let mut names: Vec<crate::event::Actor> = vec![];
         let mut seen: BTreeSet<&str> = BTreeSet::new();
         let mut stack: Vec<&str> = vec![from];
         while let Some(cur) = stack.pop() {
@@ -738,8 +750,8 @@ impl State {
             }
             if let Some(outs) = next.get(cur) {
                 for (own, actor) in outs {
-                    if !names.iter().any(|n| n == actor) {
-                        names.push(actor.to_string());
+                    if !names.iter().any(|n| n.same_mind(actor)) {
+                        names.push((*actor).clone());
                     }
                     stack.push(own);
                 }

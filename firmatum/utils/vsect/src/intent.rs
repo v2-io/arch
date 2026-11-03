@@ -21,7 +21,12 @@ use std::path::PathBuf;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Claim {
     pub record: String,
+    /// The holder's name, as shown.
     pub agent: String,
+    /// The holder's harness agent key, when it had one: what claims are compared on. Claims
+    /// written without one are compared on `agent`, as before.
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub key: String,
     #[serde(default)]
     pub role: String,
     pub intent: String,
@@ -38,6 +43,10 @@ pub struct Claim {
 }
 
 impl Claim {
+    /// The identity this claim is held under (see `key`).
+    pub fn holder(&self) -> &str {
+        if self.key.is_empty() { &self.agent } else { &self.key }
+    }
     pub fn expired(&self) -> bool {
         chrono::DateTime::parse_from_rfc3339(&self.expires)
             .map(|t| t.with_timezone(&chrono::Utc) < chrono::Utc::now())
@@ -102,8 +111,9 @@ pub fn claims_on(store: &Store, record: &str) -> Vec<Claim> {
 }
 
 /// Write a claim. Refuses when another agent holds a live claim on the record unless `alongside`.
-pub fn claim(store: &Store, record: &str, agent: &str, role: &str, intent: &str, kind: &str, ttl: chrono::Duration, alongside: bool) -> Result<(Claim, Vec<Claim>)> {
-    let others: Vec<Claim> = claims_on(store, record).into_iter().filter(|c| c.agent != agent && !c.expired()).collect();
+pub fn claim(store: &Store, record: &str, agent: &str, key: &str, role: &str, intent: &str, kind: &str, ttl: chrono::Duration, alongside: bool) -> Result<(Claim, Vec<Claim>)> {
+    let holder = if key.is_empty() { agent } else { key };
+    let others: Vec<Claim> = claims_on(store, record).into_iter().filter(|c| c.holder() != holder && !c.expired()).collect();
     if !others.is_empty() && !alongside {
         let who: Vec<String> = others.iter().map(|c| format!("{} ({}, in {}, since {}): {}", c.agent, if c.kind.is_empty() { "?" } else { &c.kind }, short_path(&c.worktree), local_hm(&c.since), c.intent)).collect();
         bail!("{record} is claimed by {}. Read their note; message them through your coordinator; or `--alongside` to record a visible co-intent (fine for recording findings, a collision for editing).", who.join("; "));
@@ -112,6 +122,7 @@ pub fn claim(store: &Store, record: &str, agent: &str, role: &str, intent: &str,
     let c = Claim {
         record: record.to_string(),
         agent: agent.to_string(),
+        key: key.to_string(),
         role: role.to_string(),
         intent: intent.to_string(),
         kind: kind.to_string(),
@@ -121,7 +132,7 @@ pub fn claim(store: &Store, record: &str, agent: &str, role: &str, intent: &str,
         expires: (now + ttl).format("%Y-%m-%dT%H:%M:%SZ").to_string(),
         alongside: alongside && !others.is_empty(),
     };
-    let path = claim_path(store, record, agent);
+    let path = claim_path(store, record, holder);
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent)?;
     }
@@ -130,12 +141,13 @@ pub fn claim(store: &Store, record: &str, agent: &str, role: &str, intent: &str,
 }
 
 /// Remove a claim: the holder's own, or anyone's once expired, or anyone's with `force` and a reason.
-pub fn release(store: &Store, record: &str, agent: &str, force: Option<&str>) -> Result<Vec<Claim>> {
+/// `holder` is the releaser's agent key when it has one, else its name (see `Claim::holder`).
+pub fn release(store: &Store, record: &str, holder: &str, force: Option<&str>) -> Result<Vec<Claim>> {
     let mut released = vec![];
     for c in claims_on(store, record) {
-        let mine = c.agent == agent;
+        let mine = c.holder() == holder;
         if mine || c.expired() || force.is_some() {
-            let p = claim_path(store, record, &c.agent);
+            let p = claim_path(store, record, c.holder());
             let _ = std::fs::remove_file(&p);
             // drop the record's dir and the kind's dir when they are empty, so `ls` tells the truth
             if let Some(d) = p.parent() {
