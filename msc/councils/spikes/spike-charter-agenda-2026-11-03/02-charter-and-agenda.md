@@ -1,0 +1,89 @@
+# The executable charter and agenda
+
+*The main result. What an agentic committee's charter and agenda are as artifacts the server loads; what they must declare; how a council comes into being, carries a question to a recorded decision, reports, grows, and ends. The two concrete instances are `charters/quick-council.json` and `charters/standing-council.json`; `tools/check-charter.py` resolves every reference they make against the model and prints the action space that results. Labels as in 01: **[derived]**, **[declared]**, **[guess]**.*
+
+## 1. The answer in one paragraph
+
+A **charter is an instance over a configuration**. The model's `council.json` configurations (`committee`, `small-board`, …) are *types*: a point in the seven-axis space plus an overlay. A seated council needs what no type carries: a **roll** (seats bound to agents and perspectives), an **authority** (parent, grant, what the report's `decided-by` is), what was **referred** and the parent's **instructions**, the **pinned** model it adopts as its parliamentary authority, the **electronic-meeting rules** (the round as the unit of simultaneity and the four declared residuals of 01), the **logical-time mapping**, its **rule stack**, and its **dissolution** rule. Everything else — quorum number, minutes, the agenda of a special council, the action space — the engine derives. [derived from the model's own split between `council.json` and `ctx.config`, and from 13:8's list of what an establishing act carries]
+
+An **agenda** is two different things depending on the council's kind, and the book already makes the distinction. For a **special** council (one task, dies on its final report, 50:10) the agenda is *derived*: the referred question is *the* special order for the meeting [41:57], taken up on call to order, and nothing else may come before the council except what arises from it [9:15 by analogy: the referral is the call]. The council cannot amend it; it can only report or ask instructions [52:15]. For a **standing** council the agenda is a *rule* (an order of business, 3:16/41:5) plus, per session, an *adopted* agenda [41:61] that binds and changes only by two-thirds, a majority of the entire membership, or unanimous consent [41:63]; items the parent referred enter that agenda as instructions the council cannot drop [13:8(d), 51:37].
+
+So: **for a quick council the charter and the agenda are one artifact — the referral. For a standing council they are two.** Joseph's two routes (start with "2/3-person quick-councils that have one main decision", or "something more narrow than RONR … but very broad and then narrow") are the book's own special/standing distinction, and both run on the same `committee` type with the whitelist as the dial. [derived; the checker shows both charters load against the same configuration chain `small-board -> committee`]
+
+## 2. Declared versus derived
+
+The governing principle, borrowed from vsect: **the charter declares only what the engine cannot compute.** A declared field that could have been computed will drift from the trail (vsect's 189 drifted `closed:` lines are the estate's own evidence).
+
+| Field | Status | Why | Cite |
+|---|---|---|---|
+| `kind` (special / standing) | declared | the book's two committee types differ in dissolution, session structure, agenda, and whether `rise` exists | 50:3, 50:23 |
+| `configuration` | declared | selects the type; `committee` for every council for now | council.json |
+| `parliamentary_authority.pinned` | declared | adoption of the authority is an act [2:15]; pin = edition (ROADMAP phase 5) | 2:15 |
+| `authority.parent`, `.grant` | declared | standing comes from a grant (udon ADR); the parent's powers follow from the kind | 13:22–23, 36, 10:54 |
+| `authority.deciders_on_report` / `decided_by_on_report` | derived | always "council seats under grant" / `delegated` until the parent acts | norm-decision-authority |
+| `roll.seats[*].perspective`, `.agent` | declared | what each seat is *for* and who holds it; identity read from the harness where possible | 50:18, agent-identity |
+| `officers.chair` | declared | mechanical / a seat / elected — a genuine design choice with a cost each way (§5) | 13:17–18, 47:7 |
+| `quorum` | declared *only if* the parent wants other than a majority | the default is derivable | 40:5 |
+| `referred[*]` | declared (by the parent's act) | the task; with pending amendments if referred while pending | 13:8, 13:19, 50:19 |
+| `instructions[*]` | declared | binding; may conflict with rules of order that would otherwise apply | 13:8(d) |
+| `agenda` | **derived** (special) / declared rule + adopted per session (standing) | §1 | 41:57, 41:61 |
+| `overlay.ops` | declared | the whitelist and the agentic additions | 52:9 pattern |
+| `electronic_meeting_rules` | declared | the four residuals of 01 §3, in the book's own list | 9:35–36 |
+| `logical_time` | declared | the model's anchors are calendar words | 03 |
+| `rule_stack` | mostly derived | classes and order are the model's; the charter populates `procedural-law` (estate norms) and says whether the council may adopt special rules | 50:26, 2:7 n4 |
+| `dissolution` | derived from kind | special: final report / discharge / parent expiry; standing: parent's act or term | 50:10, 50:30, 36:8–9 |
+| `record` | derived | the event log *is* the record; minutes and the report are projections | 48:2–5, 51:7 |
+| the action space | **derived** | `available_actions` over the patched model; the checker prints the load-time projection | INTERFACE |
+
+## 3. How a council comes into being
+
+Three paths, two of which are live now. In each, **the establishing act is the charter** — the ROADMAP's "fiat charter", made precise: [derived]
+
+1. **Steward fiat.** Joseph writes or approves a charter. In the book this is a main-motion referral [13:6] by the parent, carrying 13:8's details; for a standing council with standing authority it is the parent's special-rule-grade act [50:8]. The charter's `authority.parent` is `steward/joseph`; his later acts are instructions [13:22], vacancy-filling [13:23], discharge [36], ratification [10:54], and adoption or declining of the report [51:10–14].
+2. **Referral from a parent council.** A council that adopts `commit` (subsidiary, on a pending question) or `commission-inquiry` (the charter-added act of 05) *generates* a child charter: kind = special; configuration = the parent's; roll = the motion's composition (13:8(c): number + selection, or named; filled by the filling-blanks device if incomplete, 13:12–13); referred = the question with its pending amendments [13:19]; instructions = the motion's; authority.parent = the parent council; grant = the parent's grant, narrowed. The child's report re-pends the question in the parent automatically if it was a subsidiary commit [51:40], or arrives as an advisory input if it was an inquiry [52:28]. Recursion is native [50:15].
+3. **Self-hosting** (mass meeting → organized society, 53–54; ROADMAP phase 5). Not needed for agentic councils now: every council has a parent. Noted so the charter format does not foreclose it (a self-hosted body's charter is adopted in-band at its first sitting, 2:15 last sentence).
+
+**The seating sequence, as events.** [derived]  
+`charter-loaded` (pin recorded) → `seat-credentialed` × n → call to order: a roll round establishes presence [Sample Rules A §4] → `quorum-ok` or the inquorate set [40:7, 40:11] → for a special council the chair announces *the* special order [41:57] and **states the referred question without any motion** [51:40: "becomes pending automatically … no motion being necessary"] → the question is pending at the bottom of a fresh stack and the first open round begins. Before the first referral a standing council has only the interstitial action space (receive a referral; call a sitting, which any two seats may do [50:21]; give notice).
+
+## 4. From a question to a recorded decision, and back to the parent
+
+The lifecycle is the model's, unchanged. What a committee *produces* is the part the book is specific about and the drafts were vague on: [derived]
+
+- A committee **cannot alter the text** of a referred resolution; it recommends. "Like ordinary committees, a committee of the whole cannot alter the text of any resolution referred to it; but it can propose amendments, which it must report in the form of recommendations" [52:8, and 51:36–43 for ordinary committees]. So in a council the amendments adopted in-council are *recommended* amendments, and the final vote is on the **recommendation** (adopt / not adopt / no recommendation, 51:37), not on the question itself. The engine needs no change: the pending frame is the question, the in-council disposition vote is recorded with `effect = recommendation`, and the report projects it.
+- The **report** has a form the book gives [51:7]: the charge; the facts; the findings; the recommendation cast as a resolution — and the book's caution that supporting reasons can cost adoption [51:6] is one Joseph's purpose reverses: a truth-seeking council's reasons *are* the product. The charter's `report-form` instruction says so, and it is a legitimate instruction [13:8(d)].
+- **Every vote is on the record per seat with reasons** (01 §6), so the minutes rule for roll calls applies [48:5(2c)] and the prevailing side is computed.
+- **Minority views** are by leave in the book [51:64–69]; the charter makes them of right by instruction, because the parent is the one who wants them. A seat may also sign the report "except in a specified particular" [51:71] — the agentic form is a per-seat reason attached to its vote.
+- **Landing.** The report emits `report-adopted` → the parent's store receives a decision record: `deciders: council (seats) under delegated authority (grant)`, `decided-by: delegated`. If the parent is a council that committed the question while pending, the question re-pends there with the recommended amendments first in order [13:20, 51:42–43]; if the referral was by main motion, a new main motion is needed in the parent or the matter dies [36:11, 51:11]. If the parent is Joseph, his act on the record is one of support / ratify / rule / decline (udon ADR); the veto is declining adoption. Nothing in the tool upgrades `decided-by`.
+- **Dissolution** of a special council is the same event as the report's reception [50:10, 36:8]; its subcommittees, being responsible to it [50:15], report into its record before it rises or are discharged by its rising.
+
+## 5. The chair, decided per charter
+
+`actions.json` says the chair's list is also its obligation where exactly one chair action is admissible. That splits the office cleanly: [derived]
+
+- **Duties** (state, put, announce, recognize per the ladders, announce the next item, declare the scheduled recess, respond to a parliamentary inquiry with the why-not tree): computable; the server performs them as derived events with no round.
+- **Rulings** (every `adjudged` predicate): need a mind. The adjudication machine already has the path a chair in doubt takes — *submit to the assembly* [23:18–21] — so a **mechanical chair is a chair that is always in doubt**: every raised judgment question becomes a round. Cost, named in the charter: the chair's *sua sponte* duties are lost — ruling a motion dilatory [39, 13:9], enforcing decorum [43], denying recognition to an obstructive member when there is no time to report to the parent [50:25 n7]. Any seat may raise these by point of order; nobody is *charged* with them.
+- A **member-chair** (`seat/<id>` or `elected`, 13:17–18) restores those duties, participates fully [49:21(7)], speaks first and last on appeals [24:3(5)], and introduces the chair-partiality questions the book spends §47 managing. For a 3-seat quick council the mechanical chair is the right default; for a 5–7-seat standing council an elected chair is worth the cost. Both are one field.
+- **Rule-out-of-order is not a judgment when the model compiled it.** A submitted intent whose admissibility expression is false is refused with its why-not tree (the justification algebra); that *is* the chair's ruling, and it is not appealable inside the tool because an appeal against a compiled conjunct is a claim that the model is wrong. The charter routes that claim: suspend the rule if suspendible [25], record a model erratum in the report, and let the parent ratify [10:54]. This is the ROADMAP's pinned-version question answered for the running case.
+
+## 6. How capabilities grow — and whether "growing is widening the list"
+
+The coordinator's hypothesis was that a quick council is a narrow `restrict_actions` configuration and growing it is widening the list. Checked against the engine and lifecycle: [derived]
+
+- **It holds for the action-space axis.** Disabling a motion makes its lifecycle transitions unreachable and its guards vacuous; nothing else references it. The checker shows the quick council excluding 11 of 31 registry motions and the standing council 5, both loading against the same chain. The small-board/committee overlays already supply the one structural patch a narrow council needs (no `seconded` state). Widening = editing one list. ✔
+- **It does not hold for two other axes**, and the charter format makes them explicit so nobody mistakes a whitelist edit for growth:
+  - **Schema.** Subcommittees, standing councils, and reports all need the records `gaps.json` already names: `Committee {id, kind, roll, charter_ref, parent, state}` and `Meeting/Session {kind, call_ref, formation_rule}`. The charter's `commission-inquiry` declares `requires_schema: ctx.subcommittees`; the checker reports it as a declared extension rather than an error.
+  - **Effects.** `commission-inquiry`, `co-opt-member`, and `move-rise-and-report` adopt motions whose *effect* is outside the state machine (fork an agent, hand a credential, emit a report). The model has `Effect` fields but no executor; the coordinator's `mechanics.md` effect pattern (`effect-requested` → adapter → `effect-completed`) is the right seam.
+- **Who widens, and how, is itself in the book.** The parent by subsequent instruction, majority, any time [13:22]; the council by adopting special rules of order only if the charter authorizes it [50:26], at the special-rule threshold [2:22]; a council that acts beyond its charter is cured only by the parent's ratification [10:54]. Three growth channels, three thresholds, none invented.
+- **Three defects must be fixed before the whitelist can be trusted** (`model-defects.md` F1–F3): `restrict_actions` does not say whether it reaches chair duties — read literally, the committee-of-the-whole overlay disables `state-question` and `put-question` and cannot run; it also omits `object-to-unanimous-consent`, a rights-critical act. Both charters here set `scope: member-initiated` explicitly and the checker never whitelists duties.
+
+**Narrow-and-up and top-down are one road.** The quick council is `committee` + `special` + narrow whitelist + mechanical chair; the broad council is `committee` + `standing` + wide whitelist + elected chair. Reading RONR top-down produces the wide list; building from a 3-seat decision produces the narrow one; they meet at the same artifact, differing in one field (`kind`) and two lists. The only things not on the dial are the schema and effect axes, which both routes need and neither can get by editing lists.
+
+## 7. What of the book still means something
+
+The full survey is `04-machinery-survey.md`. The shape of its answer: the **question lifecycle** survives whole (it is event-ordered, not clock-ordered); the **scheduler** survives with hours as rounds or event anchors and is nearly idle in a special council; the **rules hierarchy** survives and gains a populated `procedural-law` class (estate norms) above the charter; **timers** survive because all but three are event-anchored (03); **sessions and meetings** become sittings and the council's life, with the book's own special-committee rule that all its meetings are one session [50:23]; **committee machinery** is the part that survives *best*, because the council is a committee and the book wrote §§13, 36, 50–52 for exactly this relation to a parent. The demonstrated no-gos are small and specific (division, the vote ladder, tellers, stand-at-ease under a mechanical chair, call of the house).
+
+## 8. Interfaces to the sibling spikes
+
+- **contention-rounds** owns the inside of a round: ordering among same-round intents, the recognition tiebreak, interrupts, merges, standing intents. This spike's contribution to it is the **common-state condition** (01 §3) as the property the charter declares and the server must keep, and the list of four residuals the charter must carry.
+- **walking-skeleton** reads a charter `{seats, quorum, agenda}`; those are `roll.seats`, `quorum`, and `agenda.items` here. Its `debate ends when a full round passes` is not a divergence from the model but the model's own `put-question` exhaustion made literal (01 §3 g); its disabling of closure motions is the committee configuration [50:25], and the parent's *debate-budget instruction* is how a bounded debate is nonetheless legitimate [13:8(d)].
