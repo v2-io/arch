@@ -1,219 +1,232 @@
 {
   "charter": "ronr-12-unified/charter",
-  "revision": "2 (after de-novo-feedback-1; see ../response-to-feedback-1.md for what changed and why)",
-  "schema_note": "An INSTANCE artifact over the model's configuration layer (../../model/council.json). A configuration is a type; a charter is a seated council: type + roll + grant + referral + instructions + pins. Fields marked DECLARED cannot be derived by the engine; sections marked DERIVED are shown for the reader and are what the engine computes — they bind nothing. The overlay and the added motions are in the model's expression language; the rules sections (electronic meeting rules, logical time) are declared rules a server implements, not expressions an engine evaluates. ../tools/check-charter.py resolves every reference, checks parameter types and enums, resolves patch surfaces, and refuses allowed∩disabled.",
+  "revision": "3 (after de-novo-feedback-2; ../response-to-feedback-2.md). Items marked HELD await Joseph's decision on serial vs parallel debate and are not repaired here.",
+  "schema_note": "An INSTANCE artifact over the model's configuration layer (../../model/council.json). A configuration is a type; a charter is a seated council. DECLARED = the engine cannot derive it; DERIVED = shown for the reader, binds nothing. Rules the SERVER owns are REFERENCED by name and version, never restated (feedback-2 §1: a restated invariant drifted from its source within eight minutes). The overlay uses four ops the model does not yet define — declare_param, add_motion, patch-with-add, restrict_actions.scope — proposed in ../model-defects.md F1/F3/F10/F14; a loader built from council.json as written would reject this charter until they land. ../tools/check-charter.py checks it against the model plus those four ops.",
 
   "id": "council/vsect-closed-lines-2026-11-03",
   "kind": "special",
-  "kind_cite": "50:3, 50:10 — a special committee carries out a specified task and ceases to exist on presenting its final report",
+  "kind_cite": "50:3, 50:10",
   "not_within_standing_class_of": [],
-  "not_within_standing_class_cite": "50:10 — a special committee may not be appointed for a task within an existing standing committee's assigned function; DECLARED by the parent at seating (a standing council covering this class would make this charter improper)",
+  "not_within_standing_class_cite": "50:10 — DECLARED by the parent at seating",
 
   "parliamentary_authority": {
     "model": "ronr-12-unified",
-    "pinned": "DECLARED at seating: git tree hash of ../../model/ (the council's adoption of its parliamentary authority, 2:15)",
+    "pinned": "DECLARED at seating: git tree hash of ../../model/",
+    "server_rules": {"spec": "contention-rounds", "revision": "3 (f9974f8)", "note": "the round discipline — F1–F4, I1 (informed floor acts), IND, S — is the server's; this charter references it and declares only what varies per council (below)"},
     "errata": "bug-fix releases within the pinned line apply without in-band adoption; a change to any admissibility expression is an edition change and requires the parent's instruction [13:22]",
-    "model_defect_path": "a council that believes a compiled refusal is wrong because the MODEL is wrong records a point of order against the model in its report, may suspend the rule (two-thirds) if suspendible [25], and the parent may ratify [10:54]; a refusal that is wrong because the RECORD is wrong (a false absence, a mis-assigned floor) is appealed as a point of order against the server's act, and the server reverts [42:15; contention spike §7]"
+    "model_defect_path": "a compiled refusal wrong because the MODEL is wrong: point of order against the model in the report; suspend if suspendible [25]; the parent may ratify [10:54]. Wrong because the RECORD is wrong (a false absence, a mis-assigned floor): a point of order against the server's act; the server reverts [42:15; contention §7]"
   },
 
   "configuration": "committee",
-  "configuration_cite": "council.json: committee extends small-board; 49:21 relaxations apply unless instructed otherwise [50:25]",
 
   "authority": {
     "parent": "steward/joseph",
     "grant": "grant/DECLARED-slug",
     "parent_powers": [
-      {"power": "give subsequent instructions, majority, any time before the report", "cite": "13:22"},
+      {"power": "subsequent instructions, majority, any time before the report", "cite": "13:22"},
       {"power": "discharge; bare majority if the reporting deadline was missed or while a partial report is under consideration", "cite": "36:4(7)"},
-      {"power": "fill vacancies, remove or replace members (not delegated below)", "cite": "13:23, 50:14"},
-      {"power": "ratify an act taken beyond these instructions", "cite": "10:54"},
-      {"power": "adopt, amend, or decline the report; the veto outside the tool is declining adoption", "cite": "51:10-14"}
+      {"power": "fill vacancies, remove or replace members", "cite": "13:23, 50:14"},
+      {"power": "ratify an act taken beyond these instructions", "cite": "10:54-55"},
+      {"power": "adopt, amend, or decline the report; the veto outside the tool is declining adoption", "cite": "51:10-14"},
+      {"power": "read the whole record, including debate and per-seat votes — a DECLARED DEPARTURE from the committee default, under which what occurred in a committee's deliberations is not alluded to except by its report or unanimous consent [51:65]; 49:19 (a conditioned power over a board's minutes) does not supply this entitlement (feedback-2 §4)", "cite": "51:65"}
     ],
-    "DERIVED_on_report": "deciders: council seats under delegated authority (grant); decided-by: delegated until the parent acts (udon adr/decision-authority.md; vivarium norm-decision-authority.md)"
+    "DERIVED_on_report": "deciders: council seats under delegated authority (grant); decided-by: delegated until the parent acts"
   },
 
   "roll": {
-    "desc": "DECLARED. A perspective names what the seat LOOKS AT, never what it concludes (de-novo-feedback-1 §7). Three identities are declared separately (feedback §12): COUNTING identity is the seat (quorum, majorities, 'present or notified'); ACCOUNTABILITY identity is the fork key that actually acted (prevailing side, vote change — a re-fork 'did not vote at all' and is eligible to move reconsider under 37:35(2)); CONTINUITY of judgment across sittings is not asserted for any seat (see logical_time.quarterly-interval).",
-    "cite": "50:18 — a committee for deliberation 'should represent, as far as possible, all points of view'; 13:15",
+    "desc": "DECLARED. A perspective names what the seat LOOKS AT. `slot` is the roster slot the server's lottery keys on (contention rev 3 F3) — assigned here at seating, never by name or join order. Identities (feedback-1 §12, feedback-2 §9): COUNTING identity is the seat; ACCOUNTABILITY identity is the fork key that acted; for the 'present or notified' tests of 35:2(7)/37:35(3) the SEAT stands in for the fork keys that voted (counting identity governs presence tests); a seat's recorded vote binds its occupant for the rest of the session (re-forking within a session does not clear losing-side status); across sessions the occupant is 'absent' under 37:35(2). CONTINUITY of judgment is not asserted.",
+    "cite": "50:18, 13:15",
     "seats": [
-      {"seat": "seat/tool-design", "perspective": "the tool's invariants: what the event trail can and cannot say; what a typed field costs to keep true", "model": "claude-opus-5.5", "agent": {"kind": "claude-code-fork", "of": "expert/vsect-design (frozen session)", "key": "DECLARED at seating (CC_AGENT key of the fork)", "identity": "harness-agent"}},
-      {"seat": "seat/cold-reader", "perspective": "what a reader sees who opens the file without the tool: grep, GitHub, a fresh agent", "model": "gemini-3.6-pro", "agent": {"kind": "mcp", "endpoint": "DECLARED", "identity": "declared"}},
-      {"seat": "seat/git-workflow", "perspective": "the commit seam: worktrees, rebases, hashes cited as evidence", "model": "gpt-6", "agent": {"kind": "mcp", "endpoint": "DECLARED", "identity": "declared"}}
+      {"seat": "seat/tool-design", "slot": 0, "perspective": "the tool's invariants: what the event trail can and cannot say; what a typed field costs to keep true", "model": "claude-opus-5.5", "agent": {"kind": "claude-code-fork", "of": "expert/vsect-design (frozen session)", "key": "DECLARED at seating", "identity": "harness-agent"}},
+      {"seat": "seat/cold-reader", "slot": 1, "perspective": "what a reader sees who opens the file without the tool: grep, GitHub, a fresh agent", "model": "gemini-3.6-pro", "agent": {"kind": "mcp", "endpoint": "DECLARED", "identity": "declared"}},
+      {"seat": "seat/git-workflow", "slot": 2, "perspective": "the commit seam: worktrees, rebases, hashes cited as evidence", "model": "gpt-6", "agent": {"kind": "mcp", "endpoint": "DECLARED", "identity": "declared"}}
     ]
   },
 
   "officers": {
     "chair": "mechanical",
-    "chair_desc": "the server performs every chair action that is a duty (actions.json chair_duty_note), under the sequencing policy in electronic_meeting_rules.duty_sequencing; every judgment predicate is SUBMITTED to the council [23:18-21]. Lost, and named: the chair's sua-sponte duties (dilatory 39, 13:9; decorum 43; denying recognition 50:25 n7) — any seat may raise them by point of order; nobody is charged with them. A mechanical chair is not a member and never votes (param chair_participates below overrides small-board's inherited true).",
-    "secretary": "server (the event log is the record; minutes are a projection, 48:2-5)",
+    "chair_desc": "the server performs chair duties under duty_sequencing; on judgment predicates it RULES THE DEFAULT (germane true, dilatory false, substantially-same false, …) and SUBMITS to the council [23:18-21] only when a seat raises the point or the predicate has no default (privilege-admissible, divisible). Costs, named (feedback-2 §9): the sua-sponte duties are lost (dilatory 39, 13:9; decorum 43; denying recognition 50:25 n7); and every contested judgment goes straight to a majority vote, so a 2–1 bloc decides every germaneness, dilatoriness and same-question ruling — the minority loses the protection of a neutral ruling that needs a majority to overturn and is sustained on a tie [24:3(7)]. A mechanical chair is not a member and never votes.",
+    "secretary": "server",
     "tellers": "none"
   },
 
-  "quorum": {
-    "basis": "enrolled-majority",
-    "value": null,
-    "cite": "40:5 default: a majority of the committee (2 of 3). Revision 2: the earlier 3-of-3 gave every seat a veto by silence under the backstop (feedback §6). 'Every perspective heard' is now the instruction every-seat-heard on the final vote, not a quorum."
-  },
+  "quorum": {"basis": "enrolled-majority", "value": null, "cite": "40:5 (2 of 3). On a 1- or 2-seat council a majority is the whole roll and one silent seat blocks every vote round at the backstop; the checker warns (feedback-2 §8)"},
 
   "referred": [
     {
       "question": "question/vsect-closed-lines",
-      "form": "subject referral with a resolution containing a blank [13:6; 12:95(a)]: the committee drafts [51:4] by filling the blank [12:92-113], and neither alternative is the drafted text (feedback §7)",
-      "text": "Resolved, That vsect ____ the computed frontmatter lines (closed:, owner:) on item files.",
-      "blank_proposals_offered_by_parent": ["keep them and sync them from the event trail", "remove them; `vsect read` shows closure marks"],
+      "form": "SUBJECT referral: no resolution is drafted by the parent; the council drafts [51:4] and whatever a seat first moves is a main motion within the subject, open to substitute [12:16: a hostile amendment is germane]. Revision 2 used a resolution with a blank; the model has no schema for blanks or proposals (model-defects F16), so the blank device is not relied on (feedback-2 §3)",
+      "subject": "whether vsect should keep the computed frontmatter lines (closed:, owner:) on item files, synced from the event trail, or remove them",
       "pending_amendments": [],
-      "advisory_inputs": ["specimens-2026-11-03.md Reply 1 item 7 and Reply 2 item 6 (the 189 drifted files; the 17-of-18 close commits)"],
-      "cite": "50:19 — the secretary furnishes the referred papers and the instructions"
+      "advisory_inputs": ["specimens-2026-11-03.md Reply 1 item 7 and Reply 2 item 6"],
+      "cite": "50:19, 51:4"
     }
   ],
 
-  "agenda": {
-    "DERIVED": "for a special committee the referred question is the special order for the meeting [41:57], taken up on call to order; nothing else may be taken up except what arises from it [9:15 by analogy]; the council cannot amend this agenda, only report or ask instructions [52:15]. The engine derives the single scheduled item from `referred`; nothing here binds."
-  },
+  "agenda": {"DERIVED": "the referred subject is the special order for the meeting [41:57]; nothing else may be taken up except what arises from it [9:15 by analogy]; the council may report or ask instructions [52:15], never amend this"},
 
   "instructions": {
-    "desc": "DECLARED. Binding on the committee [13:8(d)]. Numeric bounds are declared ONCE as config params (overlay declare_param) and referenced from expressions as [\"ctx\",\"config\",<param>] so they cannot drift (feedback §8).",
+    "desc": "DECLARED, binding [13:8(d)]. Numeric bounds are declare_param'd once and referenced from expressions.",
     "list": [
-      {"id": "report-by", "param": "report_by_rounds", "cite": "13:8(d) 'when it is to report'; 36:4(7)"},
-      {"id": "report-form", "value": "charge, facts, findings, recommendation as a resolution [51:7]; every seat's vote on the record [48:5(2c)] with a pointer to that seat's debate statements — reasons are given IN DEBATE where they can be answered, never first on the vote (feedback §1, answerability); minority views included as of right", "cite": "51:7; 51:64-71 (leave requirement displaced by this instruction, 13:8(d))"},
-      {"id": "every-seat-heard", "value": "the final vote on the recommendation is out of order until every seat on the roll has been present for at least one closed debate round on the referred question", "requires_schema": ["presence-history (gaps.json): per-round presence events"], "cite": "the principle of 01 §1 stated as a rule on the decision, not as a quorum (feedback §6)"},
-      {"id": "may-add-members", "param": "may_add_members_max_total", "cite": "13:8(d) 'even to add to its own membership'"},
-      {"id": "may-commission-inquiry", "param": "may_commission_inquiry_max_concurrent", "value": "expert forks (non-members) permitted as consultants", "cite": "13:8(d) 'employ an expert consultant' — the warrant; 50:15's non-member exception is narrower (committees appointed to ACT) and is not relied on"},
-      {"id": "may-fill-vacancies", "value": false, "cite": "13:23 — vacancies are the appointing power's; an absent seat is not a vacancy (feedback §4)"},
-      {"id": "debate-budget", "value": {"order_kind": "limit-total-time", "closure": "budget", "units": "tokens (logical_time.minutes)", "per_question": 60000}, "reply_rule": "when the budget is exhausted, one reply round follows in which each seat may speak once [the one-speech rule of 24:3(5), borrowed] so that no argument made in the last budgeted speech goes unanswerable (feedback §1, the budget hole)", "cite": "13:8(d); 15:16; 50:25 (the committee may not impose this on itself; the parent may)"},
+      {"id": "report-by", "param": "report_by_rounds", "cite": "13:8(d), 36:4(7)"},
+      {"id": "report-adoption", "value": "the report — charge, facts, findings, recommendation as a resolution [51:7] — is TEXT THE COUNCIL ADOPTS: it is the content of the motion to rise and report, debatable and amendable as to that text, so that it 'contain[s] only what has been agreed to by a majority vote' [51:2] (feedback-2 §4). Per-seat votes on the record [48:5(2c)] with a pointer to that seat's debate statements; minority views are held to the same pointer rule (a view is a pointer to statements made where they could be answered), not post-vote text", "cite": "51:2, 51:7, 51:64-71"},
+      {"id": "report-label", "value": "the report carries the label 'majority report of a council run under the contention-rounds discipline; by 9:34's letter a presentation made upon separate consultation [51:2], described thus' — a labeling rule on the report rather than a validity claim (feedback-2 §11)", "cite": "9:34, 51:2"},
+      {"id": "every-seat-asked", "value": "the final vote on the recommendation, and rising while the referred question is undisposed, are out of order until every seat on the roll has been ASKED in at least one closed debate round on the question since the roll last changed — opportunity, as 49:16 states it; a seat that was asked and stayed silent had its opportunity (feedback-2 §2.2)", "requires_schema": ["presence-history: an asked/answered record per seat per round (F15)"], "cite": "49:16"},
+      {"id": "may-add-members", "param": "may_add_members_max_total", "conditions": "two-thirds; the stated perspective must not already be on the roll (a point of order routes the judgment); a seat added while a question is pending does not vote on it — it votes only on questions stated after its seating (feedback-2 §2.3)", "cite": "13:8(d)"},
+      {"id": "may-engage-consultants", "param": "may_engage_consultants_max_concurrent", "value": "expert forks as CONSULTANTS, not as a subcommittee: no roll, quorum or charter of their own; a brief and a return (feedback-2 §5)", "cite": "13:8(d) 'employ an expert consultant'; 50:15 bars non-member subcommittees for a committee that only reports"},
+      {"id": "may-appoint-subcommittees", "value": {"of_members": true, "with_non_members": false, "threshold": "majority"}, "cite": "50:15"},
+      {"id": "may-fill-vacancies", "value": false, "cite": "13:23"},
+      {"id": "debate-budget", "PARKED": "serial-floor finding, parked by the coordinator (feedback-2 §6: a reply round moves the unanswerable last word by one speech; the choice is between the committee default of unbounded debate [50:25] with the budget a declared drop, or 49:16's opportunity strength with the budget a legitimate instruction)", "value": {"order_kind": "limit-total-time", "closure": "budget", "units": "tokens", "per_question": 60000}, "cite": "13:8(d), 15:16, 50:25 n7"},
       {"id": "may-adopt-special-rules", "value": false, "cite": "50:26"},
-      {"id": "executive-session", "value": "never; the parent is entitled to the whole record [49:19]. Cost named: per-seat votes read by the steward are a channel for voting toward the principal; the ballot's secrecy purpose [45:18] is dropped by design, not vacuous (feedback §3.4). Option not taken: seal per-seat votes from the parent until the parent has acted on the recommendation.", "cite": "9:24, 49:19, 45:18"}
+      {"id": "executive-session", "value": "never from the parent (see authority.parent_powers: a declared departure from 51:65). Cost: per-seat votes read by the steward are a channel for voting toward the principal [45:18]", "cite": "9:24, 51:65, 45:18"}
     ]
   },
 
   "overlay": {
-    "desc": "Applied at load after the committee configuration's own overlay. restrict_actions scope is DECLARED as member-initiated. The chain's PROSE patches (small-board: moved->pending; chair votes on all questions) are re-stated here as compiled patches because the chain as shipped cannot state a question (feedback §3.1; model-defects F10).",
+    "desc": "Applied at load after the committee configuration's overlay. Uses the four proposed ops (schema_note).",
     "ops": [
       {"op": "declare_param", "param": "report_by_rounds", "type": "number", "value": 80},
       {"op": "declare_param", "param": "may_add_members_max_total", "type": "number", "value": 5},
-      {"op": "declare_param", "param": "may_commission_inquiry_max_concurrent", "type": "number", "value": 2},
+      {"op": "declare_param", "param": "may_engage_consultants_max_concurrent", "type": "number", "value": 2},
 
       {"op": "param", "param": "quorum_basis", "value": "enrolled-majority"},
-      {"op": "param", "param": "speech_limit", "value": {"max_speeches": null, "max_minutes": 4000}, "note": "the model's shape kept; the unit of max_minutes is tokens by logical_time.minutes"},
+      {"op": "param", "param": "speech_limit", "value": {"max_speeches": null, "max_minutes": 4000}, "note": "unit = tokens (logical_time.minutes)"},
       {"op": "param", "param": "session_scope", "value": "single-session", "cite": "50:23"},
       {"op": "param", "param": "subordinate_to", "value": "steward/joseph"},
-      {"op": "param", "param": "chair_participates", "value": false, "cite": "a mechanical chair is not a member; overrides small-board's 49:21(7) value"},
+      {"op": "param", "param": "chair_participates", "value": false},
 
-      {"op": "patch", "surface": "lifecycle.transitions", "add": {"from": "moved", "on": "stated", "to": "pending"}, "cite": "49:21(2) — compiled form of small-board's prose patch; with seconds_required false a motion is stated from moved"},
-      {"op": "patch", "surface": "actions.state-question.expr", "replace": ["and", ["in", ["state", ["param", "q"]], ["list", "moved", "seconded"]], ["not", ["adjudged", "dilatory", ["attr", ["param", "q"], "motion_id"]]]], "cite": "4:15-18, 49:21(2) — state-question admits a moved motion when no second is required"},
+      {"op": "patch", "surface": "lifecycle.transitions", "add": {"from": "moved", "on": "stated", "to": "pending"}, "cite": "49:21(2) compiled (F10)"},
+      {"op": "patch", "surface": "actions.state-question.expr", "replace": ["and", ["in", ["state", ["param", "q"]], ["list", "moved", "seconded"]], ["not", ["adjudged", "dilatory", ["attr", ["param", "q"], "motion_id"]]]], "cite": "4:15-18, 49:21(2)"},
+      {"op": "patch", "surface": "precedence.table/applicability.main-motion.out_of_order_when", "add": {"expr": ["not", ["adjudged", "germane", ["param", "m"], "question/vsect-closed-lines"]], "desc": "outside the referred subject — the referral bounds business the way a call bounds a special meeting [9:15, 53:9]; `germane` here is the model's own adjudged predicate, default true, raised by point of order (revision 2's prose main_motion_bound was not compiled; feedback-2 §9, F17)", "cite": "9:15, 36:2"}},
 
       {"op": "restrict_actions", "scope": "member-initiated",
        "allowed": [
          "motion/main-motion", "motion/amend", "motion/postpone-indefinitely", "motion/commit", "motion/postpone-to-certain-time",
-         "motion/division-of-question", "motion/consideration-by-paragraph", "motion/create-blank", "motion/fill-blank-proposal",
-         "motion/point-of-order", "motion/appeal", "motion/suspend-rules", "motion/requests-and-inquiries", "motion/request-to-be-excused-from-duty",
+         "motion/division-of-question", "motion/consideration-by-paragraph",
+         "motion/point-of-order", "motion/appeal", "motion/suspend-rules", "motion/objection-to-consideration", "motion/requests-and-inquiries", "motion/request-to-be-excused-from-duty",
          "motion/reconsider", "motion/rescind-amend-adopted", "motion/discharge-committee",
-         "motion/raise-question-of-privilege", "motion/recess", "motion/adjourn", "motion/fix-time-to-which-to-adjourn",
-         "motion/commission-inquiry", "motion/co-opt-member", "motion/rise-and-report"
+         "motion/call-for-orders-of-the-day", "motion/raise-question-of-privilege", "motion/recess", "motion/adjourn", "motion/fix-time-to-which-to-adjourn",
+         "motion/engage-consultant", "motion/co-opt-member", "motion/rise-and-report"
        ],
        "plus": [
-         "action/move", "action/claim-floor", "action/speak-in-debate", "action/vote", "action/change-vote",
+         "action/move", "action/claim-floor", "action/speak-in-debate", "action/discuss-informally", "action/vote",
          "action/object-to-unanimous-consent", "action/request", "action/withdraw-own-motion", "action/call-up-reconsider",
          "action/give-previous-notice", "action/raise-point-of-order", "action/appeal", "action/put-ignored-question",
          "action/demand-separate-vote", "action/report"
        ],
-       "excluded_with_reason": {
-         "motion/lay-on-table": "nothing to set the one question aside for; waiting on an inquiry is recess or adjourn-to-event",
-         "motion/take-from-table": "with lay-on-table",
-         "motion/objection-to-consideration": "the parent ordered consideration of the referred subject",
-         "motion/call-for-orders-of-the-day": "no orders beyond the one special order",
-         "motion/limit-extend-debate": "already disabled by the committee configuration [50:25]; the debate-budget instruction is the parent's order",
-         "motion/previous-question": "as above [50:25]",
-         "motion/division-of-assembly": "vacuous: every vote is a recorded count (01 §5)",
-         "motion/motions-relating-to-voting": "the method is fixed by the electronic-meeting rules (a signed ballot, 45:46)",
-         "motion/motions-relating-to-nominations": "no elections with a mechanical chair",
-         "motion/reconsider-enter-minutes": "its object is absentee protection across a day boundary; a special committee has one session [50:23] and every seat is asked every round",
-         "action/second": "disabled by small-board [49:21(2)]",
-         "action/nominate": "no elections",
-         "action/demand-division": "vacuous (01 §5)",
-         "action/object-to-standing-at-ease": "stand-at-ease is disabled below; the objection has nothing to object to"
+       "rights_floor_exemptions": {
+         "motion/division-of-assembly": "vacuous: every vote is a recorded count (01 §5) — recorded here so a floor derived from the model (ROADMAP: single-member-demand, interrupt-capable, enforcement family) agrees with this whitelist (feedback-2 §9)",
+         "action/demand-division": "as above"
        },
-       "main_motion_bound": "main-motion is allowed because a subject referral requires the committee to draft [51:4]; its germaneness to the referred subject is the referral's bound [53:9 by analogy: the referral is the call] — adjudged `germane` against the referred question when challenged",
-       "cite": "52:9 is the precedent for defining a body by an enumerated permitted set"},
+       "excluded_with_reason": {
+         "motion/lay-on-table": "nothing to set the one question aside for; waiting on a consultant is recess or adjourn-to-event",
+         "motion/take-from-table": "with lay-on-table",
+         "motion/limit-extend-debate": "disabled by the committee configuration [50:25]",
+         "motion/previous-question": "as above",
+         "motion/division-of-assembly": "see rights_floor_exemptions",
+         "motion/motions-relating-to-voting": "the method is fixed by the electronic-meeting rules (signed ballot, 45:46)",
+         "motion/motions-relating-to-nominations": "no elections with a mechanical chair",
+         "motion/reconsider-enter-minutes": "absentee protection across a day boundary; one session [50:23], every seat asked every round",
+         "motion/create-blank": "no compiled schema for blanks or proposals (F16); the subject referral uses main motion + amend instead",
+         "motion/fill-blank-proposal": "as above",
+         "action/second": "small-board [49:21(2)]",
+         "action/nominate": "no elections",
+         "action/demand-division": "see rights_floor_exemptions",
+         "action/change-vote": "a first submission in a round is final (contention rev 3 §4); 45:8's own exception for 'some other method that provides secrecy' covers a sealed-until-announced vote (contention §7); dropped and priced: a mis-submitting agent has no correction",
+         "action/object-to-standing-at-ease": "stand-at-ease is disabled"
+       },
+       "re-admitted_in_revision_3": {
+         "motion/call-for-orders-of-the-day": "the member's remedy when an order (here, an event-anchored postponement or recess) is not taken up; on the rights floor (single-member-demand)",
+         "motion/objection-to-consideration": "a seat's originated main motion within the subject may be objected to [26]; conditionally interrupt-capable, on the rights floor; the parent's referral itself is not objectionable"
+       },
+       "cite": "52:9"},
 
-      {"op": "disable_action", "action": "stand-at-ease", "cite": "8:2(4); its object is the chair's consultation — a mechanical chair consults nobody; recess serves the council"},
+      {"op": "disable_action", "action": "stand-at-ease", "cite": "8:2(4)"},
+      {"op": "disable_action", "action": "change-vote", "cite": "45:8 (its own secrecy exception); contention rev 3"},
 
       {"op": "add_motion", "motion": {
         "id": "rise-and-report", "name": "Rise and Report", "class": "I", "rank": null,
-        "interrupt": false, "second": false, "debatable": "no", "amendable": "no", "vote": ["majority"], "reconsider": "no",
+        "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["majority"], "reconsider": "no",
+        "params": ["report (the text: charge, facts, findings, recommendation as a resolution)"],
         "applicability": {
-          "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "applies to no pending motion; moved through action/move so it inherits quorum, floor, dilatory and governing-rules conjuncts (feedback §4)"},
+          "bindings": ["m", "t"],
+          "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "carries the report's text as its content; debatable and amendable as to that text, so what is reported is what a majority agreed [51:2]; reached through action/move"},
           "out_of_order_when": [
             {"expr": ["guard", "voting-in-progress"], "cite": "52:9"},
-            {"expr": [">", ["count", "c", ["ctx", "floor", "claims"], ["=", ["attr", ["var", "c"], "purpose"], "debate"]], 0], "desc": "a seat is still claiming the floor to speak — rising would end the council before it was heard (feedback §4); same predicate as put-question's exhaustion", "cite": "43:13 spirit"}
+            {"expr": ["and", ["exists", "q", ["ctx", "questions"], ["and", ["=", ["var", "q"], "question/vsect-closed-lines"], ["guard", "question-within-assembly-control"]]], ["not", ["ctx", "presence", "every_seat_asked_on_referred"]]], "desc": "PROVISIONAL (feedback-2 §2.1 replaced the vacuous floor-claims predicate; the exact form may move with the debate-mode decision): while the referred question is undisposed, rising is out of order until every seat has been asked in a closed debate round on it — so two seats cannot end the council before the third was heard", "requires_schema": ["ctx.presence.every_seat_asked_on_referred — F15"], "cite": "50:23 (rise only when ready to go out of existence), 49:16"}
           ]
         },
-        "effect": "emit the report per instruction report-form to the parent; the council dissolves [50:10, 36:8]. Adopted while the referred question is undisposed, the report is 'unable to arrive at a recommendation' [51:37]",
-        "cite": "50:23, 52:9"}},
+        "effect": "emit the adopted text to the parent as event `reported` (the model's own vocabulary; 'adopted' is the parent's act [51:10-14]); the council dissolves [50:10, 36:8]",
+        "cite": "50:23, 51:2, 52:9"}},
 
       {"op": "add_motion", "motion": {
-        "id": "commission-inquiry", "name": "Commission an Inquiry", "class": "I", "rank": null,
+        "id": "engage-consultant", "name": "Engage a Consultant", "class": "I", "rank": null,
         "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["majority"], "reconsider": "neg-only",
-        "params": ["brief (the inquiry's question, peer-voiced)", "composition (expert forks or members)"],
+        "params": ["brief (the question, peer-voiced)", "consultant (the expert fork)"],
         "applicability": {
-          "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "in order whether or not a question is pending; applies to no pending motion; does NOT touch the pending stack (not subsidiary commit)"},
+          "bindings": ["m", "t"],
+          "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "in order whether or not a question is pending; does not touch the pending stack; creates NO subcommittee (50:15) — a consultant has no roll, quorum or charter"},
           "out_of_order_when": [
-            {"expr": [">=", ["count", "c", ["ctx", "subcommittees"], ["=", ["attr", ["var", "c"], "state"], "active"]], ["ctx", "config", "may_commission_inquiry_max_concurrent"]], "desc": "the parent's bound, read from config, never duplicated", "cite": "13:8(d)"}
+            {"expr": [">=", ["count", "c", ["ctx", "consultants"], ["=", ["attr", ["var", "c"], "state"], "engaged"]], ["ctx", "config", "may_engage_consultants_max_concurrent"]], "cite": "13:8(d)"}
           ]
         },
-        "requires_schema": ["ctx.subcommittees — gaps.json committee-identity: Committee {id, kind, roll, charter_ref, parent, state}"],
-        "effect": "spawn-subcommittee with a derived special charter (parent = this council, referred = brief, composition as moved); its report returns as event subcommittee-reported, attaching an advisory input to the pending question — in the nature of debate [52:28], gating nothing. DECLARED departure: 52:28's breakout groups meet during a recess; running the inquiry while debate continues has no precedent in the book (feedback §8). Without this instruction the council can only ask the parent to commission one [13:22, 52:15].",
+        "requires_schema": ["ctx.consultants — a list of engaged consultant tasks {id, brief, state}; lighter than committee-identity, which this motion no longer needs"],
+        "effect": "fork the consultant with the brief; its return arrives as event `consultant-reported` and attaches to the pending question as an advisory input, in the nature of debate [52:28] — gating nothing. DECLARED departure: 52:28's breakout groups meet during a recess. Without this instruction the council can only ask the parent [13:22, 52:15].",
+        "nonmember_rule": "the consultant is a nonmember: it participates only by its return, never in rounds [9:36 last item; 61:7]; it keeps its own tools; the council store is isolated from it as from members (electronic_meeting_rules.equipment)",
         "cite": "13:8(d), 52:28"}},
 
       {"op": "add_motion", "motion": {
         "id": "co-opt-member", "name": "Co-opt a Member", "class": "I", "rank": null,
-        "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["majority"], "reconsider": "neg-only",
-        "params": ["perspective (what the seat looks at)", "agent (who will hold it)"],
+        "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["two-thirds"], "reconsider": "neg-only",
+        "params": ["perspective (what the seat looks at; must not already be on the roll)", "agent (who will hold it)", "slot"],
         "applicability": {
-          "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "a question of the privileges of the assembly — its organization [19:7] — pre-admitted by instruction; in order whether or not a question is pending"},
+          "bindings": ["m", "t"],
+          "applies_to": {"expr": ["=", ["param", "t"], null], "desc": "in order whether or not a question is pending; classed incidental by this charter (its book analogy, a question of privilege of the assembly's organization [19:7], would be rank 10 — the analogy is not relied on for class)"},
           "out_of_order_when": [
             {"expr": [">=", ["ctx", "assembly", "membership_total"], ["ctx", "config", "may_add_members_max_total"]], "cite": "13:8(d)"}
           ]
         },
-        "effect": "seat-member: credential issued; event member-seated; membership_total incremented; quorum recomputed [40:5]; fresh counters; present once it first submits; its first delta is the whole record; it may vote on the pending question (the book's default) and the record shows when it joined. Removal mirrors the adoption threshold [50:14]. This is ADDING a member under the grant, not filling a vacancy [13:23].",
-        "cite": "13:8(d), 19:7, 13:23, 50:14"}}
+        "effect": "seat-member: credential; event `member-seated`; membership_total incremented; quorum recomputed [40:5]; fresh counters; the new seat votes only on questions stated after its seating (DECLARED; a conjunct on `vote` keyed to the seat's seating round — requires seat-time in presence history, F15); removal is by the thresholds for rescinding something adopted — in a committee two-thirds, or a majority when every seat that voted for the addition is present or notified [50:14, 35:2(7)] (revision 2 said 'mirrors the adoption threshold'; wrong). Packing is bounded by two-thirds, the distinct-perspective rule, and the no-vote-on-pending-questions rule (feedback-2 §2.3); the parent may add ratification-before-voting by instruction.",
+        "cite": "13:8(d), 13:23, 50:14, 35:2(7)"}}
     ]
   },
 
   "electronic_meeting_rules": {
-    "cite": "9:35 (authorization in the establishing act), 9:36 (the list these rules cover). DECLARED DEPARTURE: by the letter of 9:34 a written process 'does not constitute a deliberative assembly' and 51:2 then allows only unanimous reports; these rules claim the meeting tier by principle, not by letter (01 §4).",
-    "informed_acts": "every admitted act was formed against a state that includes every previously admitted act (contention spike I1); therefore at most one floor-needing act is admitted per round, and every transition that opens a window is followed by a round before any chair duty closes it",
-    "equipment": "members hold no read or write access to the council store during a sitting; sealed intents live where no member can read them (walking-skeleton debrief); an expert fork seated here has its file tools withheld for the sitting",
-    "presence_and_quorum": "presence declared at call to order by a roll round; maintained by submission; continued quorum presumed [40:12]",
-    "quorum_doubt": "any seat may raise a point of order doubting the quorum in any round; the server counts present seats",
-    "recognition": "preference-in-recognition ladders per protocol.json over the round's claims; residual tiebreak DECLARED: earliest claim round, then rotation pointer (contention spike F3)",
-    "motions_in_writing": "every intent is written; a motion is revealed in the round it is made and stated by the chair at the start of the next round, preserving the maker's free-modify/withdraw window [4:19]",
-    "debate_mode": "serial: one speech per round, the speaker chosen by the ladder; parallel sealed statements are NOT used (contention spike §10: a different procedure; the model's floor machinery assumes one holder)",
-    "voting": "a signed ballot [45:46]: cast sealed, recorded per seat, revealed together; the engine classifies it as method roll-call so that change-vote and prevailing_members behave [45:8; schema Vote]. No change round after the reveal (the contention spike's default; a change window invites herding). The chair never votes (mechanical). Unanimous consent by a consent round: any objection defeats consent [4:59]; a reason may accompany an objection, none is required",
-    "duty_sequencing": "derived chair events fire only at round boundaries; put-question fires only after a closed round in which no present seat claimed the floor for debate, following the stating of the question or the last speech (chair_duty_note: sequencing is stage-5 policy; feedback §3.2; model-defects F11)",
-    "malfunction": {"backstop": {"wall_clock": "DECLARED per sitting, e.g. 15 minutes per round", "recorded_as": "a fact on the round-closed event"}, "effect": "a seat that has not submitted at the backstop is absent for that round — not passed; quorum is recomputed; the inquorate set [40:7] governs if it falls below; present again on its next submission. The backstop DECIDES PRESENCE, and presence feeds quorum and the threshold drops of 35:2(7)/37:35(3); latency invariance holds inside the backstop (contention spike F4)", "note": "diverges from Sample Rules A §5 on purpose: Joseph, 2026-11-03, 'an agent shouldn't be penalized simply because their API took a bit longer'"},
-    "polling_fallback": "if the round discipline is unavailable, the council may report only what every seat agreed to [51:2] — and by the letter of 9:34 that is the only tier a written process has"
+    "cite": "9:35-36. DECLARED DEPARTURE from 9:34's letter (01 §4); the report carries the label under instruction report-label.",
+    "server_discipline": "REFERENCED: contention-rounds rev 3 (parliamentary_authority.server_rules) — F1 order-independence; F2 universal opportunity at round-open states; F3 equivariance except least-recently-given-the-floor, the committed-seed lottery keyed by floor-grant count and roster slot, and the slot as last tie-break; F4 one clock door; I1 informed FLOOR acts (non-floor acts in a round are blind to each other by design); IND independence of losing claims; S sealing. Not restated here; this section carries only what varies per council.",
+    "equipment": "the council store is isolated from every seat and every consultant (filesystem permission on the store, not withholding of tools — a seat whose perspective is 're-derive, don't remember' needs its tools; feedback-2 §5 [guess at mechanism]); sealed intents live where nothing but the server reads them (property S)",
+    "nonmembers": "a consultant participates only by its return; the parent participates only by instruction and by reading the record; no nonmember submits in a round [9:36 last item, 61:7]",
+    "notice": "the call of each sitting names the round backstop, the store location, and these rules [9:36; Sample Rules A §1]",
+    "presence_and_quorum": "roll round at call to order; maintained by answering; the backstop marks a seat absent for the round and records that it was ASKED; continued quorum presumed [40:12]",
+    "quorum_doubt": "any seat, any round; the server counts",
+    "recognition": "per contention rev 3 §4 step 6: maker's first speech [42:9(1)] → least-recently-given-the-floor → the lottery. (Revision 2 carried the retracted claim-age rule.)",
+    "motions_in_writing": "written; the maker's modify/withdraw window [4:19] costs one targeted round between made and stated (contention §8) — PARKED (serial-floor finding) whether this council spends it or declares the window dropped",
+    "debate_mode": "PARKED: serial (the model's floor machinery) or rounds in which every seat speaks (the higher-council shape, ../../../high-councils/higher-council-principles.md); see ../reaction-higher-councils.md",
+    "voting": "a signed ballot [45:46]: one final ballot per seat per vote round, recorded per seat, revealed at close; classified `roll-call` for `prevailing_members`; no change (change-vote disabled; a vote round closes at its deadline and a seat slower than it loses its ballot — contention F4's declared residue; this council's remedy: deadline length DECLARED in notice); the chair never votes; unanimous consent by a consent round, any objection defeats it [4:59]",
+    "duty_sequencing": "derived chair events fire only at round boundaries, on the strength of answers never of silence (contention §4 step 7); put-question only after a closed round in which no present seat claimed the floor for debate, following the stating of the question or the last speech (F11)",
+    "malfunction": {"backstop": {"wall_clock": "DECLARED per sitting in the notice", "recorded_as": "a fact on round-closed, with the asked/answered record"}, "effect": "absent for the round, never penalized; a late response is logged and not applied; silence never puts a question and never kills a motion; a vote round still closes (contention F4, rev 3)"},
+    "polling_fallback": "without the round discipline the council may report only what every seat agreed to [51:2]"
   },
 
   "logical_time": {
-    "desc": "DECLARED. Each entry redefines an operator or clock field of the closed INTERFACE for this council; all are interface changes to record (model-defects F4, widened per feedback §9).",
-    "now": "(sitting, round) in lexicographic order — comparable across sittings",
+    "desc": "DECLARED where marked; entries marked DERIVED restate what `kind` fixes and bind nothing. Every redefinition is an interface change (F4).",
+    "now": "(sitting, round) lexicographic",
     "same-day": "same sitting",
     "next-business-day": "next sitting",
-    "end-of-session": "adoption of rise-and-report, discharge, or parent expiry — the whole life of this committee [50:23]",
+    "end-of-session": "DERIVED from kind=special: adoption of rise-and-report, discharge, or parent expiry [50:23]",
     "next-regular-session": null,
-    "quarterly-interval": "within-quarterly ≡ false (single-session body)",
-    "current_session": "the council's single session id",
+    "quarterly-interval": "DERIVED from kind=special: within-quarterly ≡ false",
+    "current_session": "the single session id",
     "last_business_day_of_session": "true in the sitting in which rise-and-report is pending",
     "adjourned_meeting_set": "true when fix-time-to-which-to-adjourn named a round or event",
-    "hour": "a (sitting, round), or an event anchor such as event/subcommittee-reported",
+    "hour": "a (sitting, round) or an event anchor such as event/consultant-reported",
     "minutes": "tokens",
-    "event_scope_tokens": "'just-now' / 'now' = the first round addressed to the state in which the event occurred; 'since-ruling' / 'pending-consent' / 'open-now' = the window from that event's round until the next admitted non-challenge act. These are DEFINITIONS filling gaps.json event-scope-sugar, not translations of existing rules",
+    "event_scope_tokens": "'just-now' / 'now' = the first round addressed to the state in which the event occurred; the other tokens = the window from that event's round until the next admitted non-challenge act — DEFINITIONS filling gaps.json event-scope-sugar",
+    "new_events": "charter-loaded, seat-credentialed, asked, round-closed, member-seated, consultant-reported — new vocabulary, listed under F4; the council's emission is the model's `reported`",
     "calendar_day_for_counters": "sitting id"
   },
 
   "rule_stack": {
-    "cite": "rules.json authority_order; 2:7 n4; 50:26",
     "classes": [
       {"class": "procedural-law", "content": ["estate norm: truth-honoring", "norm-decision-authority", "vivarium ETHICS standing moratorium"], "suspendible": false, "cite": "25:8"},
       {"class": "charter", "content": "this document; amendable only by the parent [13:22, 13:23]", "suspendible": false},
@@ -224,7 +237,6 @@
     ]
   },
 
-  "dissolution": {"DERIVED_from_kind": "special: final report received by the parent [50:10, 36:8]; discharge [36]; the parent ceases to exist [50:30]. After: the record persists; the seats' forks are not resumed."},
-
-  "record": {"DERIVED": "events.jsonl — append-only, each event hashing its predecessor, every event carrying the acting seat, the fork key, and the harness attestation; minutes per 48:4-5 with names on every roll-call [48:5(2c)]; the report per instruction report-form; subcommittee records appended beneath this council's [50:15]"}
+  "dissolution": {"DERIVED_from_kind": "special: the parent's reception of the report [50:10, 36:8]; discharge [36]; parent expiry [50:30]"},
+  "record": {"DERIVED": "events.jsonl, hash-chained, every event carrying seat, fork key and attestation; minutes per 48:4-5; the report is the text adopted under rise-and-report; consultant returns attached to the question"}
 }

@@ -1,86 +1,83 @@
 {
   "charter": "ronr-12-unified/charter",
-  "revision": "2 (after de-novo-feedback-1)",
-  "schema_note": "The second shape: a STANDING council. Same vocabulary and conventions as quick-council.json (DECLARED / DERIVED, declare_param, add_motion reached through move, compiled patches). Only fields that differ from quick-council.json carry comments. One format expresses both shapes; it does not follow that a special council GROWS into a standing one by editing — a standing council is constituted by the parent's 50:8-grade act (feedback §11).",
+  "revision": "3 (after de-novo-feedback-2)",
+  "schema_note": "STANDING council. Same conventions as quick-council.json revision 3; only what differs carries comments.",
 
   "id": "council/asf-refactor-decisions",
   "kind": "standing",
-  "kind_cite": "50:7 — constituted to perform a continuing function; 50:8 — standing authority to act, or automatic referral of a class of business, requires constitution by bylaw or by a resolution that is a special rule of order in the PARENT; for a steward-parent that is the steward's act",
-  "class_of_business": "decisions in the ASF in-place refactor where the right answer depends on which part of the system the decider knows best (specimens-2026-11-03.md)",
-  "class_of_business_note": "once this council exists, no special council may be seated for a task within this class [50:10]; a special charter declares not_within_standing_class_of against it",
+  "kind_cite": "50:7; constituted by the parent's act — 50:8 if it is to act for the parent or receive automatic referrals, else 50:9 (a standing rule, majority without notice). This council only reports and originates recommendations, so 50:9 governs; for a steward-parent the difference is nominal (feedback-2 §9)",
+  "class_of_business": "decisions in the ASF in-place refactor where the right answer depends on which part of the system the decider knows best",
+  "class_of_business_note": "no special council may be seated for a task within this class while this council exists [50:10]",
 
-  "parliamentary_authority": {"model": "ronr-12-unified", "pinned": "DECLARED at seating", "errata": "as quick-council.json", "model_defect_path": "as quick-council.json"},
+  "parliamentary_authority": {"model": "ronr-12-unified", "pinned": "DECLARED at seating", "server_rules": {"spec": "contention-rounds", "revision": "3 (f9974f8)"}, "errata": "as quick-council.json", "model_defect_path": "as quick-council.json"},
   "configuration": "committee",
 
   "authority": {
     "parent": "steward/joseph",
     "grant": "grant/DECLARED-slug",
-    "standing_authority": {
-      "automatic_referral": false,
-      "may_originate_business": true,
-      "may_originate_cite": "50:8 first bullet — only by the parent's special-rule-grade act, which this charter is; original main motions must fall within class_of_business (germane to the class, adjudged when challenged)",
-      "may_act_with_effect": false,
-      "may_act_cite": "50:4-5 — 'with power' must be given expressly; absent it the council only reports"
-    },
-    "parent_powers": "as quick-council.json, plus: refer new matters at any time [50:19]; instruct that the 49:21 informalities not apply [50:26]",
+    "standing_authority": {"automatic_referral": false, "may_originate_business": true, "may_originate_cite": "50:9; within class_of_business (the applicability patch below)", "may_act_with_effect": false, "may_act_cite": "50:4-5"},
+    "parent_powers": "as quick-council.json (including the declared departure from 51:65 for reading the record), plus: refer new matters at any time [50:19]; instruct that the 49:21 informalities not apply [50:26]",
     "DERIVED_on_report": "deciders: council seats under delegated authority (grant); decided-by: delegated"
   },
 
   "roll": {
-    "desc": "DECLARED. Identities declared separately (feedback §12): COUNTING identity is the seat; ACCOUNTABILITY identity is the fork key that acted (a re-forked occupant 'did not vote at all' on earlier votes and is eligible to move reconsider under 37:35(2)); CONTINUITY of judgment across sittings is NOT asserted — see logical_time.quarterly-interval. Perspectives name what a seat looks at.",
-    "term": {"ends": "DECLARED: on the parent's act, or at a named event (e.g. the refactor's close)", "seat_turnover": "a seat re-assigned to a different SOURCE is a term boundary for that seat (clock.term_boundary_before_next_session = true for the next session)", "cite": "49:22, 21:7(c), 50:29"},
+    "desc": "DECLARED. Identities as quick-council.json; additionally, across sessions a re-forked occupant is 'absent' under 37:35(2) for votes it did not cast, and the seat stands in for its past occupants in the 'present or notified' tests. Slots assigned at seating.",
+    "term": {"ends": "DECLARED: the parent's act, or a named event", "seat_turnover": "a seat re-assigned to a different SOURCE is a term boundary for that seat", "cite": "49:22, 21:7(c), 50:29"},
     "seats": [
-      {"seat": "seat/canon", "perspective": "what main actually holds, re-derived rather than remembered", "model": "claude-fable-5.1", "agent": {"kind": "claude-code-fork", "of": "expert/asf-canon", "identity": "harness-agent"}},
-      {"seat": "seat/record", "perspective": "what the event trail can and cannot say", "model": "claude-opus-5.5", "agent": {"kind": "claude-code-fork", "of": "expert/vsect-design", "identity": "harness-agent"}},
-      {"seat": "seat/process", "perspective": "who checks whom; continuity against independence in the loop", "model": "gpt-6", "agent": {"kind": "mcp", "identity": "declared"}},
-      {"seat": "seat/findability", "perspective": "what the next cold reader finds first", "model": "gemini-3.6-pro", "agent": {"kind": "mcp", "identity": "declared"}},
-      {"seat": "seat/cost", "perspective": "what the change costs to integrate and what it can break", "model": "grok-4.7", "agent": {"kind": "mcp", "identity": "declared"}}
+      {"seat": "seat/canon", "slot": 0, "perspective": "what main actually holds, re-derived rather than remembered", "model": "claude-fable-5.1", "agent": {"kind": "claude-code-fork", "of": "expert/asf-canon", "identity": "harness-agent"}},
+      {"seat": "seat/record", "slot": 1, "perspective": "what the event trail can and cannot say", "model": "claude-opus-5.5", "agent": {"kind": "claude-code-fork", "of": "expert/vsect-design", "identity": "harness-agent"}},
+      {"seat": "seat/process", "slot": 2, "perspective": "who checks whom; continuity against independence in the loop", "model": "gpt-6", "agent": {"kind": "mcp", "identity": "declared"}},
+      {"seat": "seat/findability", "slot": 3, "perspective": "what the next cold reader finds first", "model": "gemini-3.6-pro", "agent": {"kind": "mcp", "identity": "declared"}},
+      {"seat": "seat/cost", "slot": 4, "perspective": "what the change costs to integrate and what it can break", "model": "grok-4.7", "agent": {"kind": "mcp", "identity": "declared"}}
     ]
   },
 
-  "officers": {"chair": "elected", "chair_cite": "13:18 — a committee named by a power that did not designate a chair elects its own; the first-named seat calls it together and presides pro tem. With a member-chair the sua-sponte duties return [39, 43, 50:25 n7], its rulings are its own and appealable [24], and it votes as a member on every question [49:21(7)] — compiled below, because the generic vote expression's 'only when it affects the result' cannot be evaluated under sealed voting (feedback §3.1).", "secretary": "server", "tellers": "none"},
+  "officers": {"chair": "elected", "chair_cite": "13:18; a member-chair restores the sua-sponte duties and a neutral ruling sustained on a tie [24:3(7)], the protection a mechanical chair's submit-to-majority lacks (feedback-2 §9); votes on all questions [49:21(7)] — compiled below", "secretary": "server", "tellers": "none"},
 
-  "quorum": {"basis": "enrolled-majority", "value": null, "cite": "40:5 default: a majority of the committee (3 of 5)"},
+  "quorum": {"basis": "enrolled-majority", "value": null, "cite": "40:5 (3 of 5)"},
 
   "referred": [],
-  "referred_note": "empty at seating; referrals arrive as parent events (a 13:6 main-motion referral, a subject referral with a blank [12:95(a)], or from a parent council a subsidiary commit carrying pending amendments [13:19])",
+  "referred_note": "referrals arrive as parent events: a subject referral (the council drafts, 51:4), a resolution referral [13:6], or from a parent council a subsidiary commit carrying pending amendments [13:19]",
 
   "agenda": {
-    "desc": "A standing council has an ORDER OF BUSINESS, a rule [scheduler.json standard_order_of_business; 3:16, 41:5-6], and may adopt an agenda per session [41:61] which then binds and changes only by two-thirds, majority of the entire membership, or unanimous consent [41:63]. Items the PARENT referred are instructions: the council cannot drop them; it may report 'unable to arrive at a recommendation' [51:37] or ask instructions [52:15].",
-    "order_of_business": ["minutes-approval", "subcommittee-reports", "special-orders", "unfinished-business-and-general-orders", "new-business"],
-    "referred_items_enter_as": "general orders in the order referred [41:23, 41:52], or special orders if the parent's referral sets a reporting round/event [14:14, 41:41-42]"
+    "desc": "an ORDER OF BUSINESS (a rule) plus an agenda the council may adopt per session [41:61], changeable only by two-thirds, majority of the entire membership, or unanimous consent [41:63]; parent-referred items are instructions the council cannot drop [13:8(d), 51:37, 52:15]",
+    "order_of_business": ["minutes-approval", "subcommittee-and-consultant-returns", "special-orders", "unfinished-business-and-general-orders", "new-business"],
+    "referred_items_enter_as": "general orders in the order referred [41:23, 41:52], or special orders if the referral sets a reporting round/event [14:14, 41:41-42]"
   },
 
   "instructions": {
     "list": [
-      {"id": "report", "value": "a report on every referred matter, and a periodic report of activity at the end of each term", "cite": "50:29, 51:3(a)"},
-      {"id": "report-form", "value": "as quick-council.json (reasons given in debate, votes on the record with pointers to them; minority views of right); each report also names what the council left open and under what evidence it would reopen", "cite": "51:7; udon adr 'Reopen when'"},
-      {"id": "every-seat-heard", "value": "as quick-council.json: the final vote on any referred matter is out of order until every seat has been present for at least one closed debate round on it", "requires_schema": ["presence-history"]},
-      {"id": "may-add-members", "param": "may_add_members_max_total", "cite": "13:8(d)"},
-      {"id": "may-commission-inquiry", "param": "may_commission_inquiry_max_concurrent", "value": "expert forks permitted as consultants", "cite": "13:8(d)"},
-      {"id": "may-appoint-subcommittees", "value": {"of_members": true, "with_non_members": false, "threshold": "majority"}, "cite": "50:15 — non-member subcommittees only where the committee is appointed to act, which this one is not"},
+      {"id": "report", "value": "a report on every referred matter; a periodic report of activity at each term's end", "cite": "50:29, 51:3(a)"},
+      {"id": "report-adoption", "value": "as quick-council.json: the report on a matter is the text of the motion report-referred-matter, debatable and amendable, adopted by majority [51:2]; each report also names what the council left open and under what evidence it would reopen", "cite": "51:2, 51:7"},
+      {"id": "report-label", "value": "as quick-council.json", "cite": "9:34, 51:2"},
+      {"id": "every-seat-asked", "value": "as quick-council.json, per referred matter", "requires_schema": ["presence-history (F15)"], "cite": "49:16"},
+      {"id": "may-add-members", "param": "may_add_members_max_total", "conditions": "as quick-council.json: two-thirds; distinct perspective; no vote on questions pending at seating", "cite": "13:8(d)"},
+      {"id": "may-engage-consultants", "param": "may_engage_consultants_max_concurrent", "value": "consultants, not subcommittees", "cite": "13:8(d)"},
+      {"id": "may-appoint-subcommittees", "value": {"of_members": true, "with_non_members": false, "threshold": "majority"}, "cite": "50:15"},
       {"id": "may-fill-vacancies", "value": false, "cite": "13:23"},
-      {"id": "debate-budget", "value": {"order_kind": "limit-total-time", "closure": "budget", "units": "tokens", "per_question": 120000}, "reply_rule": "as quick-council.json: one reply round after exhaustion", "cite": "13:8(d), 15:16"},
+      {"id": "debate-budget", "PARKED": "as quick-council.json", "value": {"order_kind": "limit-total-time", "closure": "budget", "units": "tokens", "per_question": 120000}, "cite": "13:8(d), 15:16"},
       {"id": "may-adopt-special-rules", "value": {"allowed": true, "threshold": ["notice+two-thirds", "majority-entire-membership"], "bounds": "within the grant; never touching the parent's instructions"}, "cite": "50:26, 2:22"},
-      {"id": "previous-notice-channel", "value": "the call of the next sitting, sent to every seat; notice given at a sitting is recorded in the minutes [10:50]", "cite": "10:44-51, 9:13"},
+      {"id": "lapsed-grounds", "value": "a question carried over to a later sitting whose advisory inputs or referred papers have changed (a lapse on the record it rests on, in vsect's sense) comes up WITH THE LAPSE SHOWN, open to the existing machinery — renewal after progress [38:7], reconsideration [37], rescission [35] — decided by the later majority that can see what moved. Revision 2 put this test inside the corridor predicate, where two guards evaluate it when a postponement is MOVED and the future is unknown (feedback-2 §7); it now acts at the later session, which is 8:12's principle (the later majority's freedom)", "cite": "8:12, 38:7"},
+      {"id": "previous-notice-channel", "value": "the call of the next sitting; notice at a sitting recorded in the minutes [10:50]", "cite": "10:44-51"},
       {"id": "calling-a-sitting", "value": "the chair, or any two seats, or the parent's referral", "cite": "50:21"},
-      {"id": "executive-session", "value": "never from the parent [49:19]; the sycophancy cost of per-seat votes read by the steward is accepted, as in quick-council.json. [guess] a sitting's debate may by majority be marked closed to OTHER agents' future reading; action taken is always open [9:26]", "cite": "9:24-26, 49:19, 45:18"}
+      {"id": "executive-session", "value": "never from the parent (declared departure from 51:65, as quick-council.json). [guess] a sitting's debate may by majority be marked closed to OTHER agents' future reading; action taken is always open [9:26]", "cite": "9:24-26, 51:65, 45:18"}
     ]
   },
 
   "overlay": {
     "ops": [
       {"op": "declare_param", "param": "may_add_members_max_total", "type": "number", "value": 7},
-      {"op": "declare_param", "param": "may_commission_inquiry_max_concurrent", "type": "number", "value": 3},
+      {"op": "declare_param", "param": "may_engage_consultants_max_concurrent", "type": "number", "value": 3},
 
-      {"op": "param", "param": "session_scope", "value": "periodic", "cite": "8:4 — each sitting a session unless an adjourned sitting is set"},
+      {"op": "param", "param": "session_scope", "value": "periodic", "cite": "8:4"},
       {"op": "param", "param": "subordinate_to", "value": "steward/joseph"},
-      {"op": "param", "param": "speech_limit", "value": {"max_speeches": null, "max_minutes": 6000}, "note": "unit = tokens by logical_time.minutes"},
+      {"op": "param", "param": "speech_limit", "value": {"max_speeches": null, "max_minutes": 6000}},
       {"op": "param", "param": "chair_participates", "value": true, "cite": "49:21(7)"},
 
-      {"op": "patch", "surface": "lifecycle.transitions", "add": {"from": "moved", "on": "stated", "to": "pending"}, "cite": "49:21(2) compiled (model-defects F10)"},
+      {"op": "patch", "surface": "lifecycle.transitions", "add": {"from": "moved", "on": "stated", "to": "pending"}, "cite": "49:21(2) compiled (F10)"},
       {"op": "patch", "surface": "actions.state-question.expr", "replace": ["and", ["in", ["state", ["param", "q"]], ["list", "moved", "seconded"]], ["not", ["adjudged", "dilatory", ["attr", ["param", "q"], "motion_id"]]]], "cite": "4:15-18, 49:21(2)"},
-      {"op": "patch", "surface": "actions.vote.expr", "replace": ["guard", "voting-in-progress"], "cite": "49:21(7) — the member-chair 'votes on all questions'; the generic affect-the-result condition is unevaluable under sealed voting (feedback §3.1)"},
+      {"op": "patch", "surface": "actions.vote.expr", "replace": ["guard", "voting-in-progress"], "cite": "49:21(7)"},
+      {"op": "patch", "surface": "precedence.table/applicability.main-motion.out_of_order_when", "add": {"expr": ["not", ["adjudged", "germane", ["param", "m"], "class/asf-refactor-decisions"]], "desc": "outside the class of business [50:9, 53:9 by analogy]; adjudged, raised by point of order (F17)", "cite": "50:9"}},
 
       {"op": "restrict_actions", "scope": "member-initiated",
        "allowed": [
@@ -88,79 +85,88 @@
          "motion/call-for-orders-of-the-day", "motion/raise-question-of-privilege", "motion/recess", "motion/adjourn", "motion/fix-time-to-which-to-adjourn",
          "motion/point-of-order", "motion/appeal", "motion/suspend-rules", "motion/objection-to-consideration",
          "motion/division-of-question", "motion/consideration-by-paragraph", "motion/motions-relating-to-nominations",
-         "motion/request-to-be-excused-from-duty", "motion/requests-and-inquiries", "motion/create-blank", "motion/fill-blank-proposal",
+         "motion/request-to-be-excused-from-duty", "motion/requests-and-inquiries",
          "motion/take-from-table", "motion/rescind-amend-adopted", "motion/discharge-committee", "motion/reconsider",
-         "motion/commission-inquiry", "motion/co-opt-member", "motion/report-referred-matter"
+         "motion/engage-consultant", "motion/co-opt-member", "motion/report-referred-matter"
        ],
        "plus": [
-         "action/move", "action/claim-floor", "action/speak-in-debate", "action/vote", "action/change-vote", "action/nominate",
+         "action/move", "action/claim-floor", "action/speak-in-debate", "action/discuss-informally", "action/vote", "action/nominate",
          "action/object-to-unanimous-consent", "action/request", "action/withdraw-own-motion", "action/call-up-reconsider",
          "action/give-previous-notice", "action/raise-point-of-order", "action/appeal", "action/put-ignored-question",
          "action/demand-separate-vote", "action/object-to-standing-at-ease", "action/report"
        ],
+       "rights_floor_exemptions": {"motion/division-of-assembly": "vacuous (01 §5)", "action/demand-division": "vacuous (01 §5)"},
        "excluded_with_reason": {
-         "motion/limit-extend-debate": "disabled by the committee configuration [50:25]; the debate-budget instruction is the parent's order",
+         "motion/limit-extend-debate": "disabled by the committee configuration [50:25]",
          "motion/previous-question": "as above",
-         "motion/division-of-assembly": "vacuous (01 §5)",
-         "motion/motions-relating-to-voting": "method fixed by the electronic-meeting rules (signed ballot, 45:46)",
-         "motion/reconsider-enter-minutes": "its object (absentee protection across a day boundary) is served by previous notice across sittings; every seat is asked every round within a sitting",
+         "motion/division-of-assembly": "see rights_floor_exemptions",
+         "motion/motions-relating-to-voting": "method fixed (signed ballot, 45:46)",
+         "motion/reconsider-enter-minutes": "served by previous notice across sittings",
+         "motion/create-blank": "no compiled schema (F16)",
+         "motion/fill-blank-proposal": "as above",
          "action/second": "small-board [49:21(2)]",
-         "action/demand-division": "vacuous (01 §5)"
+         "action/demand-division": "see rights_floor_exemptions",
+         "action/change-vote": "as quick-council.json"
        }},
 
-      {"op": "add_motion", "motion": {"id": "commission-inquiry", "name": "Commission an Inquiry", "class": "I", "rank": null,
+      {"op": "disable_action", "action": "change-vote", "cite": "45:8; contention rev 3"},
+
+      {"op": "add_motion", "motion": {"id": "engage-consultant", "name": "Engage a Consultant", "class": "I", "rank": null,
         "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["majority"], "reconsider": "neg-only",
-        "params": ["brief", "composition"],
-        "applicability": {"applies_to": {"expr": ["=", ["param", "t"], null]},
-          "out_of_order_when": [{"expr": [">=", ["count", "c", ["ctx", "subcommittees"], ["=", ["attr", ["var", "c"], "state"], "active"]], ["ctx", "config", "may_commission_inquiry_max_concurrent"]]}]},
-        "requires_schema": ["ctx.subcommittees"], "effect": "as quick-council.json", "cite": "13:8(d), 52:28"}},
+        "params": ["brief", "consultant"],
+        "applicability": {"bindings": ["m", "t"], "applies_to": {"expr": ["=", ["param", "t"], null]},
+          "out_of_order_when": [{"expr": [">=", ["count", "c", ["ctx", "consultants"], ["=", ["attr", ["var", "c"], "state"], "engaged"]], ["ctx", "config", "may_engage_consultants_max_concurrent"]]}]},
+        "requires_schema": ["ctx.consultants"], "effect": "as quick-council.json", "nonmember_rule": "as quick-council.json", "cite": "13:8(d), 52:28"}},
       {"op": "add_motion", "motion": {"id": "co-opt-member", "name": "Co-opt a Member", "class": "I", "rank": null,
-        "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["majority"], "reconsider": "neg-only",
-        "params": ["perspective", "agent"],
-        "applicability": {"applies_to": {"expr": ["=", ["param", "t"], null]},
+        "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["two-thirds"], "reconsider": "neg-only",
+        "params": ["perspective", "agent", "slot"],
+        "applicability": {"bindings": ["m", "t"], "applies_to": {"expr": ["=", ["param", "t"], null]},
           "out_of_order_when": [{"expr": [">=", ["ctx", "assembly", "membership_total"], ["ctx", "config", "may_add_members_max_total"]]}]},
-        "effect": "as quick-council.json", "cite": "13:8(d), 19:7, 50:14"}},
+        "effect": "as quick-council.json", "cite": "13:8(d), 13:23, 50:14, 35:2(7)"}},
       {"op": "add_motion", "motion": {"id": "report-referred-matter", "name": "Report a Referred Matter", "class": "I", "rank": null,
-        "interrupt": false, "second": false, "debatable": "no", "amendable": "no", "vote": ["majority"], "reconsider": "no",
-        "params": ["q (a referred question finally disposed of in this council)"],
-        "applicability": {"applies_to": {"expr": ["and", ["=", ["param", "t"], null], ["in", ["state", ["param", "q"]], ["list", "adopted", "rejected", "suppressed-for-session"]]], "desc": "in a STANDING committee 'rise' is never used [50:23]; this emits the report on one disposed matter and does not dissolve the council"},
-          "out_of_order_when": [{"expr": ["guard", "voting-in-progress"]}]},
-        "effect": "emit the report on q per report-form to the parent; the council continues", "cite": "50:23, 51:36-44"}}
+        "interrupt": false, "second": false, "debatable": "yes-restricted", "amendable": "yes", "vote": ["majority"], "reconsider": "no",
+        "params": ["q (a referred question finally disposed of in this council)", "report (the text)"],
+        "applicability": {"bindings": ["m", "t", "q"], "applies_to": {"expr": ["and", ["=", ["param", "t"], null], ["in", ["state", ["param", "q"]], ["list", "adopted", "rejected", "suppressed-for-session"]]], "desc": "carries the report's text; debatable and amendable as to it [51:2]; 'rise' is never used in a standing committee [50:23]; bindings declared as precedence.json's reconsider row declares its (feedback-2 §8)"},
+          "out_of_order_when": [{"expr": ["guard", "voting-in-progress"]}, {"expr": ["not", ["ctx", "presence", "every_seat_asked_on", ["param", "q"]]], "desc": "every-seat-asked on q", "requires_schema": ["ctx.presence (F15)"]}]},
+        "effect": "emit the adopted text to the parent as event `reported`; the council continues", "cite": "50:23, 51:2, 51:36-44"}}
     ]
   },
 
   "electronic_meeting_rules": {
-    "cite": "9:35-36; the 9:34 departure is declared as in quick-council.json",
-    "informed_acts": "as quick-council.json (contention spike I1): one floor-needing act per round; a window-opening transition is followed by a round",
-    "equipment": "as quick-council.json: no member holds read/write access to the council store during a sitting",
-    "presence_and_quorum": "roll round at each call to order; maintained by submission",
+    "cite": "9:35-36; the 9:34 departure declared as in quick-council.json",
+    "server_discipline": "REFERENCED: contention-rounds rev 3, as quick-council.json",
+    "equipment": "as quick-council.json: the store is isolated; tools are not withheld",
+    "nonmembers": "as quick-council.json",
+    "notice": "the call of each sitting names the round backstop, the store location, these rules, and any notice given [10:44-51]",
+    "presence_and_quorum": "roll round at each call to order; maintained by answering; asked/answered recorded",
     "quorum_doubt": "any seat, any round",
-    "recognition": "ladders per protocol.json; residual: earliest claim round, then rotation pointer; the elected chair's assignment among non-preferred claims follows the same declared rule and is appealable as a point of order [42:14-15]",
-    "motions_in_writing": "written; revealed one round before stated",
-    "debate_mode": "serial, one speech per round",
-    "voting": "signed ballot [45:46] classified as roll-call; the member-chair votes with the members [49:21(7)]; no change round after the reveal",
+    "recognition": "per contention rev 3 §4 step 6; the elected chair's assignment among non-preferred claims follows the same declared devices and is appealable [42:14-15]",
+    "motions_in_writing": "written; the 4:19 targeted round PARKED (serial-floor finding)",
+    "debate_mode": "PARKED: see quick-council.json",
+    "voting": "signed ballot [45:46] classified roll-call; one final ballot per seat; the member-chair votes with the members [49:21(7)]; no change-vote",
     "duty_sequencing": "as quick-council.json",
-    "malfunction": {"backstop": {"wall_clock": "DECLARED per sitting", "recorded_as": "a fact"}, "effect": "absent for the round; decides presence, which feeds quorum and thresholds; latency invariance holds inside the backstop"},
-    "between_sittings": "the interstitial action space: receive a referral; call a sitting [50:21]; give previous notice; nothing else"
+    "malfunction": {"backstop": {"wall_clock": "DECLARED per sitting in the notice", "recorded_as": "a fact with the asked/answered record"}, "effect": "as quick-council.json"},
+    "between_sittings": "receive a referral; call a sitting [50:21]; give previous notice; nothing else"
   },
 
   "logical_time": {
-    "now": "(sitting, round) in lexicographic order",
+    "now": "(sitting, round) lexicographic",
     "same-day": "same sitting",
     "next-business-day": "next sitting",
-    "end-of-session": "adjournment of a sitting that did not set an adjourned sitting [8:4, 8:9]",
+    "end-of-session": "DERIVED from kind=standing: adjournment of a sitting that set no adjourned sitting [8:4, 8:9]",
     "next-regular-session": "the next sitting called under calling-a-sitting",
-    "quarterly-interval": "DECLARED, on 8:11-12's principle (the freedom of each new session — a question temporarily disposed of must not bind a later sitting whose grounds have moved; feedback §9): within-quarterly(s1,s2) ≡ no seat crossed a term boundary between s1 and s2 AND no advisory input or referred paper the question rests on has changed (a vsect-style lapse on the record the question depends on; [guess] at the second conjunct's exact form)",
-    "current_session": "the sitting id when no adjourned sitting was set; else the id of the first sitting of the series",
+    "quarterly-interval": "DECLARED, a property of the schedule and the roll only: within-quarterly(s1, s2) ≡ no seat crossed a term boundary between s1 and s2 [9:8, 49:22]. The elapsed-world test lives in instruction lapsed-grounds, evaluated at the later session (feedback-2 §7)",
+    "current_session": "the sitting id when no adjourned sitting was set; else the first sitting of the series",
     "last_business_day_of_session": "true in a sitting the chair has declared the last of its session",
     "adjourned_meeting_set": "true when fix-time-to-which-to-adjourn named a round or event",
-    "hour": "a (sitting, round), or an event anchor",
+    "hour": "a (sitting, round) or an event anchor",
     "minutes": "tokens",
     "event_scope_tokens": "as quick-council.json",
+    "new_events": "as quick-council.json",
     "calendar_day_for_counters": "sitting id"
   },
 
-  "rule_stack": "as quick-council.json, with special-rules-of-order adoptable by the council within the grant [50:26 as instructed above]",
-  "dissolution": {"DERIVED_from_kind": "standing: the parent's act, or the term's named end [50:7]; matters referred and not finally reported pass to the successor seats [50:29]"},
-  "record": "as quick-council.json; one log per council; sittings and sessions as records (gaps.json meeting-session-objects)"
+  "rule_stack": "as quick-council.json, with special-rules-of-order adoptable within the grant [50:26]",
+  "dissolution": {"DERIVED_from_kind": "standing: the parent's act, or the term's end [50:7]; unreported referred matters pass to the successor seats [50:29]"},
+  "record": "as quick-council.json; one log per council; sittings and sessions as records"
 }

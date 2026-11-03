@@ -72,7 +72,7 @@ The same chain has another prose patch: small-board's "chair-member … votes on
 
 ### 3.3 The prevailing-side "gain" requires a guard change [verified]
 
-`guards.json mover-was-prevailing-side`:
+`guards.json mover-was-prevailing-side`:  
 `["or", ["in", member, disposition_vote.prevailing_members], ["=", method, "unanimous-consent"], ["adjudged", "prevailing-side-claim", member]]`.
 
 - The description says "(committee: anyone not on the losing side [37:35])", but the expression has no such branch. Under 37:35(2), a seat that abstained, or that the backstop marked absent, may move to reconsider ("one who did not vote at all, or even was absent"). The expression sends such a seat to the adjudicated assertion path, and `prevailing-side-claim` defaults to `null`, which means a ruling round.

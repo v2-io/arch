@@ -1,70 +1,85 @@
 #!/usr/bin/env python3
-"""check-charter.py — check a charter against the RONR-12 model (revision 2).
+"""check-charter.py — check a charter against the RONR-12 model (revision 3).
 
 Usage:  python3 tools/check-charter.py charters/quick-council.json [more charters...]
-Exit 0 iff every charter is WELL-FORMED AGAINST THE MODEL'S NAMESPACE AND TYPES. It evaluates
-nothing: a clean exit never means any state is admissible, and it never means a prose rule is
-right. (de-novo-feedback-1 §5 showed revision 1 passed a charter with seven deliberate breakages;
-tools/mutant.py reproduces that mutant and this revision refuses it.)
+
+WHAT A CLEAN EXIT MEANS, exactly: the charter is well-formed against the model's namespace and
+types PLUS the four overlay ops this spike proposes and the model does not yet define
+(declare_param, add_motion, patch-with-add, restrict_actions.scope — model-defects F1/F3/F10/F14).
+A loader built from council.json as written would reject these charters. It evaluates nothing,
+and it cannot type prose: a logical-time mapping or a 9:36 rule that is a non-empty string of
+nonsense passes (de-novo-feedback-2 §8 showed "banana" passing; it still does, and this docstring
+says so instead of pretending otherwise). tools/mutant.py runs both verifiers' mutants and prints
+which breakages are caught and which are prose and cannot be.
 
 Checks:
   1. configuration id exists in council.json
-  2. every motion/action reference resolves (registry incl. aliases, actions.json, the configuration
-     chain's add_actions, this charter's add_motion/add_action); nothing is both allowed and
-     disabled/excluded; an object-to-X action is not allowed while X is disabled
-  3. params: id in council.json (or declared here by declare_param); VALUE matches the declared type
-     (enum members, boolean, number, the ?{...} record shape with the model's own keys)
-  4. patches: the surface resolves to an existing path in a model file; a patch to an `expr` field
-     must be an expression, not prose
-  5. every expression (add_motion applicability rows, add_action exprs, patches): operator closure,
-     guard/adjudged/timer/event ids resolve, guard bindings resolvable, quantifier vars as ["var"],
-     ctx roots in schema.json (or declared in requires_schema), ctx.config params declared
-  6. add_motion records carry the registry's SDC fields and an applicability row
-  7. electronic_meeting_rules: covers 9:36's list plus informed_acts and duty_sequencing; every
-     value a non-empty string (or non-empty object)
-  8. logical_time: maps every vocabulary anchor, now/hour/minutes, and the calendar clock fields
-     of schema.json (current_session, last_business_day_of_session, adjourned_meeting_set); values
-     non-empty (null allowed only for next-regular-session)
-  9. roll, chair, quorum (basis in enum; value <= roll size; a numeric value only with basis
-     bylaws-specified), kind-specific shape (special: referred non-empty; standing: order_of_business)
-Then it prints the resulting member-initiated action space.
+  2. references resolve (registry incl. aliases, actions.json, the chain's add_actions, this charter's
+     add_motion/add_action); nothing both allowed and disabled/excluded; object-to-X not allowed while X
+     is disabled; action/move and object-to-unanimous-consent present; rights-floor motions
+     (single-member-demand / interrupt-capable / enforcement family, per ROADMAP) either allowed or
+     listed under rights_floor_exemptions with a reason
+  3. params: id in council.json or declare_param'd; value matches the declared type/enum/record shape
+  4. patches: surface resolves (actions.<id>.<field>, guards.<id>.<field>, lifecycle.transitions with
+     add, precedence.table/applicability.<motion>.out_of_order_when with add); a patch to an expr field
+     must be an expression; the model's own `note` op is accepted
+  5. every expression: operator closure; guard/adjudged/timer/event ids resolve; guard bindings
+     resolvable; quantifier vars as ["var"]; ctx roots in schema.json or declared in requires_schema;
+     ctx.config params declared; ["param", x] only for x in the row's declared bindings or motion params
+  6. add_motion: SDC fields present AND typed against registry.json / vocabulary.json (class, debatable,
+     amendable, vote thresholds, reconsider, interrupt, second); an applicability row with bindings
+  7. electronic_meeting_rules: the 9:36 keys (incl. nonmembers, notice) plus server_discipline and
+     duty_sequencing, non-empty
+  8. logical_time: every vocabulary anchor, now/hour/minutes, the calendar clock fields; non-empty
+  9. roll (unique seats, perspective, identity tier, unique slots), chair, quorum (incl. the whole-roll
+     warning for enrolled-majority on rolls of 1–2), kind-specific shape
 """
-import json, sys, os, re
+import json, sys, os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MODEL = os.path.normpath(os.path.join(HERE, "..", "..", "..", "model"))
-def load(name):
-    with open(os.path.join(MODEL, name)) as f: return json.load(f)
-FILES = {n: load(n + ".json") for n in ("council","registry","actions","guards","adjudication","lifecycle","vocabulary","schema","protocol","precedence")}
-council, registry, actions, guards, adjud, lifecycle, vocab, schema = (FILES[k] for k in ("council","registry","actions","guards","adjudication","lifecycle","vocabulary","schema"))
+def load(n):
+    with open(os.path.join(MODEL, n + ".json")) as f: return json.load(f)
+council, registry, actions, guards, adjud, lifecycle, vocab, schema, precedence = (load(k) for k in ("council","registry","actions","guards","adjudication","lifecycle","vocabulary","schema","precedence"))
 
-OPERATORS = {"and","or","not","if","=","!=","<","<=",">",">=","in","list","+","*","exists","forall","count",
-             "param","var","ctx","attr","reg","frames","top","bottom","motion","class","erank","applied-to",
-             "adheres-to","question","state","debatable","amendable","guard","adjudged","timer-open",
-             "event-occurred","same-day","before","within-quarterly","anchor","now","rank-admissible","applicable"}
+OPERATORS = {"and","or","not","if","=","!=","<","<=",">",">=","in","list","+","*","exists","forall","count","param","var","ctx","attr","reg","frames","top","bottom","motion","class","erank","applied-to","adheres-to","question","state","debatable","amendable","guard","adjudged","timer-open","event-occurred","same-day","before","within-quarterly","anchor","now","rank-admissible","applicable"}
 QUANT = {"exists","forall","count"}
 GUARDS = {g["id"]: g for g in guards["guards"]}
 PREDS = {p["id"] for p in adjud["predicates"]}
 TIMERS = {t["id"] for t in lifecycle["timers"]["list"]}
 EVENTS = {e["id"] for grp in vocab["events"].values() if isinstance(grp, list) for e in grp}
 ANCHORS = set(vocab["temporal_anchors"]["values"])
+THRESHOLDS = {t["id"] for t in vocab["thresholds"]["values"]}
+CLASSES = {k for k in vocab["motion_classes"] if k != "cite"}
+DEBATABLE = {"no","yes","yes-restricted","yes-opens-question","if-target-debatable"}
+RECONSIDER = {"yes","no","neg-only","aff-only"}
 PARAM_TYPES = {p["id"]: p["type"] for p in council["parameters"]["list"]}
 CONFIGS = {c["id"]: c for c in council["configurations"]}
 CTX_ROOTS = set(schema["context"].keys())
 CLOCK_FIELDS = {"current_session","last_business_day_of_session","adjourned_meeting_set"}
 QUORUM_BASES = {"bylaws-specified","enrolled-majority","attendees","registered-delegates-majority","present"}
 IDENTITIES = {"harness-agent","harness-session","declared"}
-NINE36 = {"equipment","presence_and_quorum","quorum_doubt","recognition","motions_in_writing","voting","malfunction","informed_acts","duty_sequencing"}
+NINE36 = {"equipment","nonmembers","notice","presence_and_quorum","quorum_doubt","recognition","motions_in_writing","voting","malfunction","server_discipline","duty_sequencing"}
 SDC = {"class","interrupt","second","debatable","amendable","vote","reconsider"}
-MOTIONS = {m["id"] for grp in ("ranked_chain","incidental","bring_back") for m in registry[grp]["motions"]}
+REG = {m["id"]: m for grp in ("ranked_chain","incidental","bring_back") for m in registry[grp]["motions"]}
+MOTIONS = set(REG)
 ALIASES = set(registry["aliases"]["entries"].keys())
 BASE_ACTIONS = {a["id"]: a for a in actions["actions"]}
+APPLIC = {r["motion"]: r for r in precedence["table/applicability"]["rows"]} if isinstance(precedence.get("table/applicability"), dict) and "rows" in precedence["table/applicability"] else {}
+if not APPLIC:  # tolerate either shape
+    ta = precedence["table/applicability"]
+    rows = ta if isinstance(ta, list) else ta.get("rows", [])
+    APPLIC = {r["motion"]: r for r in rows if isinstance(r, dict) and "motion" in r}
+# rights floor per ROADMAP phase 7: single-member-demand / not-voted thresholds, interrupt-capable, enforcement family
+def _interrupt_capable(r):
+    i = r.get("interrupt")
+    return i is True or (isinstance(i, dict) and i.get("conditional") is True)   # the registry also carries prose values ("called out when chair asks") that are not interrupt rights
+RIGHTS_FLOOR = {m for m, r in REG.items() if any(v in ("single-member-demand","not-voted") for v in (r.get("vote") or [])) or _interrupt_capable(r)} | {"point-of-order","appeal","division-of-assembly","objection-to-consideration"}
 
 problems, notes = [], []
 P = lambda m: problems.append(m)
 N = lambda m: notes.append(m)
 
-# ---------------------------------------------------------------- helpers ---
 def config_chain(cid):
     chain = []
     while cid: c = CONFIGS[cid]; chain.append(c); cid = c.get("extends")
@@ -89,21 +104,15 @@ def check_param_value(pid, val, where):
         if not isinstance(val, bool): P(f"{where}: param {pid} must be boolean, got {val!r}")
     elif t.startswith("?{"):
         keys = {k.strip() for k in t[2:t.index("}")].split(",")}
-        if val is not None and (not isinstance(val, dict) or set(val) - keys):
-            P(f"{where}: param {pid} must be null or a record with keys ⊆ {sorted(keys)}, got {val!r}")
+        if val is not None and (not isinstance(val, dict) or set(val) - keys): P(f"{where}: param {pid} must be null or a record with keys ⊆ {sorted(keys)}, got {val!r}")
     elif t.startswith("?body reference"):
         if val is not None and not isinstance(val, str): P(f"{where}: param {pid} must be a reference string or null")
     elif "body_kind enum" in t:
         if val not in {"assembly","committee","committee-of-the-whole","quasi-committee","convention","mass-meeting"}: P(f"{where}: bad body_kind {val!r}")
 
 def resolve_surface(surface):
-    """'file.id.field' or 'lifecycle.transitions.from->to' → (exists, is_expr_field)."""
     parts = surface.split(".")
     f = parts[0]
-    if f == "lifecycle" and len(parts) == 3 and parts[1] == "transitions" and "->" in parts[2]:
-        fr, to = parts[2].split("->")
-        ok = any(t["from"] == fr and to in t["to"] for t in lifecycle["transitions"]["list"])
-        return ok, False
     if f == "actions" and len(parts) == 3:
         a = BASE_ACTIONS.get(parts[1]); return (a is not None and parts[2] in a), parts[2] == "expr"
     if f == "guards" and len(parts) == 3:
@@ -113,8 +122,7 @@ def resolve_surface(surface):
 def walk_expr(x, path, scope, in_quant, requires, declared_params):
     if not isinstance(x, list) or not x: return
     head = x[0]
-    if not isinstance(head, str) or head not in OPERATORS:
-        P(f"{path}: unknown operator {head!r}"); return
+    if not isinstance(head, str) or head not in OPERATORS: P(f"{path}: unknown operator {head!r}"); return
     if head == "guard":
         gid = x[1] if len(x) > 1 else None
         if gid not in GUARDS: P(f"{path}: unresolved guard {gid}")
@@ -132,13 +140,15 @@ def walk_expr(x, path, scope, in_quant, requires, declared_params):
         root = x[1] if len(x) > 1 else None
         if root == "config":
             pid = x[2] if len(x) > 2 else None
-            if pid not in PARAM_TYPES and pid not in declared_params: P(f"{path}: ctx.config.{pid} is neither a council.json param nor declared by declare_param")
+            if pid not in PARAM_TYPES and pid not in declared_params: P(f"{path}: ctx.config.{pid} neither a council.json param nor declare_param'd")
         elif root not in CTX_ROOTS:
             ok = any(r.startswith(f"ctx.{root}") for r in requires)
             (N if ok else P)(f"{path}: ctx root {root!r} not in schema.json context" + (" (declared schema extension)" if ok else ""))
+        for sub in x[2:]:
+            if isinstance(sub, list): walk_expr(sub, path+".ctxkey", scope, in_quant, requires, declared_params)
         return
     elif head == "param":
-        if x[1] not in scope: P(f"{path}: param {x[1]} not declared in scope {sorted(scope)}")
+        if x[1] not in scope: P(f"{path}: param {x[1]!r} not among declared bindings {sorted(scope)} (INTERFACE: an unresolved param is an error)")
         return
     if head in QUANT:
         v = x[1]; walk_expr(x[2], path+f".{head}L", scope, in_quant, requires, declared_params)
@@ -147,7 +157,18 @@ def walk_expr(x, path, scope, in_quant, requires, declared_params):
         if isinstance(sub, str) and sub in in_quant and head != "var": P(f"{path}[{i}]: bare binder {sub!r} inside quantifier — write [\"var\", ...]")
         walk_expr(sub, path+f"[{i}]", scope, in_quant, requires, declared_params)
 
-# ------------------------------------------------------------------ check ---
+def check_sdc(m, w):
+    if m.get("class") not in CLASSES: P(f"{w}: class {m.get('class')!r} not in vocabulary motion_classes {sorted(CLASSES)}")
+    if m.get("debatable") not in DEBATABLE: P(f"{w}: debatable {m.get('debatable')!r} not in {sorted(DEBATABLE)}")
+    am = m.get("amendable")
+    if not (am in ("yes","no") or isinstance(am, dict)): P(f"{w}: amendable {am!r} must be yes|no|limited object")
+    v = m.get("vote")
+    if not isinstance(v, list) or not v or any(t not in THRESHOLDS for t in v): P(f"{w}: vote {v!r} must be a non-empty list of vocabulary thresholds")
+    rc = m.get("reconsider")
+    if not (rc in RECONSIDER or isinstance(rc, dict)): P(f"{w}: reconsider {rc!r} not in {sorted(RECONSIDER)} or a conditional object")
+    if not (isinstance(m.get("interrupt"), bool) or isinstance(m.get("interrupt"), dict)): P(f"{w}: interrupt must be boolean or a conditional object")
+    if not (isinstance(m.get("second"), bool) or isinstance(m.get("second"), dict)): P(f"{w}: second must be boolean or a conditional object")
+
 def check(path):
     global problems, notes
     problems, notes = [], []
@@ -171,7 +192,6 @@ def check(path):
         elif kind == "action" and ident not in all_actions: P(f"{where}: unknown action {ref}")
         elif kind not in ("motion","action"): P(f"{where}: reference kind {kind!r} not motion/action")
 
-    # ops
     for i, op in enumerate(ops):
         w = f"overlay[{i}] {op['op']}"
         if op["op"] == "declare_param":
@@ -184,77 +204,94 @@ def check(path):
             if op["action"] not in all_actions: P(f"{w}: {op['action']} unknown")
         elif op["op"] == "disable_motion":
             if op["motion"] not in all_motions: P(f"{w}: {op['motion']} unknown")
+        elif op["op"] == "note":
+            if not op.get("desc"): P(f"{w}: the model's note op needs desc")
+            else: N(f"{w}: annotation-grade (the model's own op): {op['desc'][:60]}…")
         elif op["op"] == "patch" and "add" in op:
-            if op.get("surface") != "lifecycle.transitions": P(f"{w}: 'add' is only defined for surface lifecycle.transitions")
-            else:
+            s = op.get("surface", "")
+            if s == "lifecycle.transitions":
                 t = op["add"]; states = {st["id"] for st in lifecycle["states"]}
                 if t.get("from") not in states or t.get("to") not in states: P(f"{w}: added transition names unknown state(s) {t}")
                 if t.get("on") not in EVENTS: P(f"{w}: added transition event {t.get('on')!r} not in vocabulary")
+            elif s.startswith("precedence.table/applicability.") and s.endswith(".out_of_order_when"):
+                mid = s[len("precedence.table/applicability."):-len(".out_of_order_when")]
+                if mid not in APPLIC: P(f"{w}: no applicability row for {mid!r}")
+                row = op["add"]; bind = set(APPLIC.get(mid, {}).get("bindings", ["m","t"])) | {"m","t","member"}
+                walk_expr(row.get("expr"), f"{w}.add.expr", bind, set(), [], declared)
+            else: P(f"{w}: 'add' is defined only for lifecycle.transitions and precedence applicability rows, not {s!r}")
         elif op["op"] == "patch":
             ok, is_expr = resolve_surface(op.get("surface",""))
             if not ok: P(f"{w}: surface {op.get('surface')!r} does not resolve to a model path")
             rep = op.get("replace")
             if is_expr:
-                if not isinstance(rep, list): P(f"{w}: patch to an expr field must be an expression, got {type(rep).__name__} (prose?)")
+                if not isinstance(rep, list): P(f"{w}: patch to an expr field must be an expression, got {type(rep).__name__}")
                 else: walk_expr(rep, f"{w}.replace", {"member","q","m","t","claimant","item","kind","breach","f","time","series"}, set(), [], declared)
-            elif isinstance(rep, str) and len(rep.split()) > 6: N(f"{w}: prose replacement on a non-expr surface — annotation-grade, not compiled")
+            elif isinstance(rep, str) and len(rep.split()) > 6: N(f"{w}: prose replacement on a non-expr surface — annotation-grade")
         elif op["op"] == "add_action":
             a = op["action"]; scope = {"member"} | {p.split()[0].split("(")[0] for p in a.get("params", [])}
             walk_expr(a["expr"], f"{w}.{a['id']}.expr", scope, set(), a.get("requires_schema", []), declared)
-            N(f"{w}: add_action {a['id']} bypasses action/move's conjuncts (quorum, floor, rank, dilatory, governing rules) — prefer add_motion (feedback §4)")
+            N(f"{w}: add_action {a['id']} bypasses action/move's conjuncts — prefer add_motion (F14)")
         elif op["op"] == "add_motion":
-            m = op["motion"]; missing = SDC - set(m)
-            if missing: P(f"{w}: add_motion {m['id']} lacks SDC fields {sorted(missing)}")
-            if m["id"] in MOTIONS: P(f"{w}: add_motion {m['id']} collides with a registry motion")
+            m = op["motion"]; wm = f"{w} {m.get('id')}"
+            missing = SDC - set(m)
+            if missing: P(f"{wm}: lacks SDC fields {sorted(missing)}")
+            else: check_sdc(m, wm)
+            if m["id"] in MOTIONS: P(f"{wm}: collides with a registry motion")
             app = m.get("applicability")
-            if not app or "applies_to" not in app: P(f"{w}: add_motion {m['id']} has no applicability row (move cannot reach it)")
+            if not app or "applies_to" not in app: P(f"{wm}: no applicability row (move cannot reach it)")
             else:
-                scope = {"member","m","t"} | {p.split()[0].split("(")[0] for p in m.get("params", [])}
-                walk_expr(app["applies_to"].get("expr"), f"{w}.{m['id']}.applies_to", scope, set(), m.get("requires_schema", []), declared)
+                if "bindings" not in app: P(f"{wm}: applicability row declares no bindings (precedence rows declare theirs)")
+                bind = set(app.get("bindings", [])) | {"member"}
+                reqs = m.get("requires_schema", []) + [r for row in app.get("out_of_order_when", []) for r in row.get("requires_schema", [])]
+                walk_expr(app["applies_to"].get("expr"), f"{wm}.applies_to", bind, set(), reqs, declared)
                 for j, row in enumerate(app.get("out_of_order_when", [])):
-                    walk_expr(row.get("expr"), f"{w}.{m['id']}.ooo[{j}]", scope, set(), m.get("requires_schema", []), declared)
+                    walk_expr(row.get("expr"), f"{wm}.ooo[{j}]", bind, set(), reqs, declared)
         elif op["op"] == "restrict_actions": pass
         else: P(f"{w}: unknown overlay op")
 
-    # restrict_actions
     ra = [op for op in ops if op["op"] == "restrict_actions"]
     allowed_m, allowed_a = set(), set()
     if ra:
         ra = ra[0]
-        if ra.get("scope") != "member-initiated": P("restrict_actions must declare scope: member-initiated (model-defects F1)")
+        if ra.get("scope") != "member-initiated": P("restrict_actions must declare scope: member-initiated (F1)")
         for ref in ra["allowed"]: resolve(ref, "restrict_actions.allowed"); allowed_m.add(ref.split("/",1)[1])
         for ref in ra.get("plus", []): resolve(ref, "restrict_actions.plus"); allowed_a.add(ref.split("/",1)[1])
-        for ref in ra.get("excluded_with_reason", {}):
-            resolve(ref, "restrict_actions.excluded_with_reason"); k, i = ref.split("/",1)
+        exc = ra.get("excluded_with_reason", {}); exempt = ra.get("rights_floor_exemptions", {})
+        for ref in list(exc) + list(exempt):
+            resolve(ref, "restrict_actions.excluded"); k, i = ref.split("/",1)
             if (k == "motion" and i in allowed_m) or (k == "action" and i in allowed_a): P(f"{ref} both allowed and excluded")
         for m in allowed_m & (chain_dis_m | my_dis_m): P(f"motion/{m} both allowed and disabled")
         for a in allowed_a & (chain_dis_a | my_dis_a): P(f"action/{a} both allowed and disabled")
-        if "object-to-standing-at-ease" in allowed_a and "stand-at-ease" in chain_dis_a | my_dis_a: P("action/object-to-standing-at-ease allowed while stand-at-ease is disabled")
-        if "object-to-unanimous-consent" not in allowed_a: P("rights-critical action/object-to-unanimous-consent not whitelisted (model-defects F2)")
+        if "object-to-standing-at-ease" in allowed_a and "stand-at-ease" in chain_dis_a | my_dis_a: P("object-to-standing-at-ease allowed while stand-at-ease is disabled")
+        if "object-to-unanimous-consent" not in allowed_a: P("rights-critical action/object-to-unanimous-consent not whitelisted (F2)")
         if "move" not in allowed_a: P("action/move not whitelisted: no motion can be made")
+        for m in sorted(RIGHTS_FLOOR):
+            if m not in allowed_m and f"motion/{m}" not in exempt and m not in chain_dis_m: P(f"rights-floor motion/{m} neither allowed nor under rights_floor_exemptions (ROADMAP pin list)")
         for m in sorted(MOTIONS):
-            if m not in allowed_m and f"motion/{m}" not in ra.get("excluded_with_reason", {}) and m not in chain_dis_m | my_dis_m:
-                N(f"motion/{m} silently excluded")
+            if m not in allowed_m and f"motion/{m}" not in exc and f"motion/{m}" not in exempt and m not in chain_dis_m | my_dis_m: N(f"motion/{m} silently excluded")
         for a, rec in sorted(BASE_ACTIONS.items()):
-            if rec["roles"] in (["member"], ["maker"]) and a not in allowed_a and f"action/{a}" not in ra.get("excluded_with_reason", {}) and a not in chain_dis_a | my_dis_a:
-                N(f"action/{a} (member-initiated) silently excluded")
+            if rec["roles"] in (["member"], ["maker"]) and a not in allowed_a and f"action/{a}" not in exc and f"action/{a}" not in exempt and a not in chain_dis_a | my_dis_a: N(f"action/{a} (member-initiated) silently excluded")
         for m in my_motions:
             if m not in allowed_m: N(f"add_motion {m} is not in the whitelist")
-    # 9:36
+        for a in sorted(chain_added):
+            rec = next((op["action"] for c in chain for op in c.get("overlay", []) if op["op"] == "add_action" and op["action"]["id"] == a), None)
+            if rec and rec.get("roles") == ["member"] and a not in allowed_a and f"action/{a}" not in exc:
+                N(f"action/{a} (added by the configuration chain, e.g. 49:21(4) discuss-informally) silently excluded")
     emr = ch.get("electronic_meeting_rules", {})
     for k in sorted(NINE36 - set(emr)): P(f"electronic_meeting_rules missing {k}")
     for k, v in emr.items():
         if k == "cite": continue
         if (isinstance(v, str) and not v.strip()) or (isinstance(v, dict) and not v): P(f"electronic_meeting_rules.{k} is empty")
-    # logical time
     lt = ch.get("logical_time", {})
     for a in sorted(ANCHORS | {"now","hour","minutes"} | CLOCK_FIELDS):
         if a not in lt: P(f"logical_time does not map {a!r}")
         elif lt[a] is None and a != "next-regular-session": P(f"logical_time.{a} is null")
         elif isinstance(lt[a], str) and not lt[a].strip(): P(f"logical_time.{a} is empty")
-    # roll / chair / quorum
     seats = ch.get("roll", {}).get("seats", []); ids = [s["seat"] for s in seats]
     if len(ids) != len(set(ids)): P("duplicate seat ids")
+    slots = [s.get("slot") for s in seats]
+    if any(s is None for s in slots): P("every seat needs a roster slot (contention rev 3 F3: the lottery keys on slots assigned at seating)")
+    elif len(slots) != len(set(slots)): P("duplicate roster slots")
     for s in seats:
         if not s.get("perspective"): P(f"{s['seat']}: no perspective")
         if s.get("agent", {}).get("identity") not in IDENTITIES: P(f"{s['seat']}: agent.identity not in {sorted(IDENTITIES)}")
@@ -268,11 +305,14 @@ def check(path):
     if q.get("value") is not None:
         if q["basis"] != "bylaws-specified": P("a numeric quorum value requires basis bylaws-specified")
         if q["value"] > len(ids): P("quorum exceeds roll size")
-        if q["value"] == len(ids) and len(ids) > 1: N("quorum equals the whole roll: every seat can block by silence under the backstop (feedback §6)")
+        if q["value"] == len(ids) and len(ids) > 1: N("quorum equals the whole roll: one silent seat blocks every vote round at the backstop")
+    elif q.get("basis") == "enrolled-majority" and len(ids) <= 2:
+        N(f"enrolled-majority on a roll of {len(ids)} is the whole roll: one silent seat blocks every vote round at the backstop (feedback-2 §8)")
     kind = ch.get("kind")
     if kind == "special":
         if not ch.get("referred"): P("special council with nothing referred")
-        if "DERIVED_from_kind" not in ch.get("dissolution", {}) and not any("final report" in d.get("event","") for d in ch.get("dissolution",{}).get("on",[])): P("special council lacks final-report dissolution [50:10]")
+        d = ch.get("dissolution", {})
+        if "DERIVED_from_kind" not in d and not any("final report" in x.get("event","") for x in d.get("on",[])): P("special council lacks final-report dissolution [50:10]")
     elif kind == "standing":
         if not ch.get("agenda", {}).get("order_of_business"): P("standing council lacks an order_of_business")
     else: P(f"kind {kind!r} not special|standing")
@@ -284,17 +324,14 @@ def report(path, ch, space):
     for n in notes: print("  note:", n)
     if space:
         chain, dis_m, dis_a, am, aa, added = space
-        print(f"  configuration chain (as declared by the charter): {' -> '.join(c['id'] for c in chain)}")
+        print(f"  configuration chain (declared by the charter): {' -> '.join(c['id'] for c in chain)}")
         print(f"  member-initiated motions allowed ({len(am)}): {', '.join(sorted(am))}")
         print(f"  member-initiated actions allowed ({len(aa)}): {', '.join(sorted(aa))}")
         print(f"  added by this charter ({len(added)}): {', '.join(sorted(added))}")
         print(f"  disabled by chain or charter: motions {sorted(dis_m)}; actions {sorted(dis_a)}")
-        chair_acts = [a for a, r in BASE_ACTIONS.items() if 'chair' in r['roles'] and a not in dis_a]
-        print(f"  chair duties (never whitelisted; performed by {ch.get('officers',{}).get('chair')}): {', '.join(chair_acts)}")
         print(f"  registry motions excluded: {len(MOTIONS - am)} of {len(MOTIONS)}")
-    print("  RESULT:", "well-formed against the model's namespace and types" if not problems else f"{len(problems)} problem(s)")
+    print("  RESULT:", "well-formed against the model plus the proposed ops (F1/F3/F10/F14); prose not typed" if not problems else f"{len(problems)} problem(s)")
     return not problems
 
 if __name__ == "__main__":
-    ok = all([check(p) for p in sys.argv[1:]])
-    sys.exit(0 if ok else 1)
+    sys.exit(0 if all([check(p) for p in sys.argv[1:]]) else 1)
