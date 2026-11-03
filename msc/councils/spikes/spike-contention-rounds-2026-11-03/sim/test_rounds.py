@@ -1,317 +1,332 @@
 """
-test_rounds.py — checks for the round mechanism (run: python3 test_rounds.py).
+test_rounds.py — checks for the round mechanism, revision 2 (run: PYTHONPATH=. python3 test_rounds.py).
 
-Each test names the claim in ../contention.md it supports. These are the toy's
-checks; they do not verify the RONR-12 model, and the real sweep over
-actions.json is owed (see contention.md, "What this spike did not do").
+Each test names the claim in ../contention.md it supports and, where it exists, the finding in
+../de-novo-feedback-1.md whose probe it now encodes. These check the toy; they do not verify
+the RONR-12 model.
 """
 from __future__ import annotations
 
+import copy
 import itertools
 import random
-import sys
 
-from rounds import (Act, Policy, State, Frame, RANK, DEBATABLE, admissible, apply, resolve,
-                    collect_and_resolve, is_fragile, commute, inadmissible_reason)
+from rounds import (Act, Policy, State, admissible, apply, collect_and_resolve, is_fragile, commute,
+                    FLOOR_KINDS)
 
 MEMBERS = ["ada", "ben", "cyd", "dee", "eli"]
 
 
-def fresh(needs_second=False) -> State:
-    s = State(members=list(MEMBERS), needs_second=needs_second)
-    s.present = set(MEMBERS)
+def fresh(needs_second=False, members=MEMBERS) -> State:
+    s = State(members=list(members), needs_second=needs_second)
+    s.present = set(members)
     return s
 
 
 def opened(s: State) -> State:
-    """The state as a member sees it when the NEXT round opens (round counter advanced),
-    which is what timeliness checks like 'breach just occurred' are relative to."""
-    import copy
     s2 = copy.deepcopy(s)
     s2.round_no += 1
     return s2
 
 
-def pol(*acts, standing=False) -> Policy:
-    return Policy(entries=[(None, a) for a in acts], standing=standing)
+def pol(*acts) -> Policy:
+    return Policy(entries=[(None, a) for a in acts])
 
 
 def gpol(*pairs) -> Policy:
     return Policy(entries=list(pairs))
 
 
-# ----------------------------------------------------------------------------
-# F1: arrival-order invariance
-# ----------------------------------------------------------------------------
+def passes(*exclude):
+    return [(m, pol(Act("pass", m, ()))) for m in MEMBERS if m not in exclude]
+
+
+def last_transition(s: State) -> int:
+    return s.transitions_in_round(s.round_no)[-1]
+
+
 def random_policy(m: str, s: State, rng: random.Random) -> Policy:
     t = s.top()
     choices = [Act("pass", m, ())]
-    if s.phase == "vote" or s.phase in ("ruling", "objection-vote"):
-        choices = [Act("vote", m, (rng.choice(["aye", "no", "abstain"]),))]
-    elif s.phase == "consent":
-        choices = [Act("pass", m, ()), Act("object-consent", m, ())]
+    if s.phase in ("vote", "ruling", "objection-vote"):
+        choices = [Act("vote", m, (rng.choice(["aye", "no", "abstain"]),)), Act("pass", m, ())]
     else:
         if t is None:
-            choices.append(Act("move", m, ("main", f"main by {m}")))
+            choices.append(Act("move", m, ("main", "main by " + m)))
         else:
             for k in ("amend", "commit", "postpone", "previous-question", "lay-on-table", "adjourn"):
-                choices.append(Act("move", m, (k, f"{k} by {m}")))
-            choices.append(Act("speak", m, (rng.choice(["for", "against"]), f"{m} speaks")))
+                choices.append(Act("move", m, (k, k + " by " + m)))
+            choices.append(Act("speak", m, (rng.choice(["for", "against"]), m + " speaks")))
             choices.append(Act("second", m, (t.fid,)))
             choices.append(Act("object-consideration", m, ()))
-        choices.append(Act("point-of-order", m, (f"point by {m}",)))
-        choices.append(Act("demand-division", m, ()))
+        for tr in s.transitions_in_round(s.round_no):
+            choices.append(Act("point-of-order", m, ("point by " + m, tr)))
     k = rng.randint(1, 3)
     return Policy(entries=[(None, a) for a in rng.sample(choices, min(k, len(choices)))])
 
 
-def strip_late(s: State) -> str:
-    """Fingerprint without the supplementary (late) claim-log entries, which are the only
-    arrival-dependent thing the design permits (F4)."""
-    import copy
-    s2 = copy.deepcopy(s)
-    s2.claim_log = [e for e in s2.claim_log if not str(e.get("intent", "")).startswith("late")]
-    return s2.fingerprint()
+def walk(s: State, rng: random.Random, n: int) -> State:
+    for _ in range(n):
+        s = collect_and_resolve(s, [(m, random_policy(m, s, rng)) for m in s.members])
+    return s
 
 
+# ----------------------------------------------------------------------------
 def test_f1_invariance(trials=200, seed=7):
     rng = random.Random(seed)
     for trial in range(trials):
-        s = fresh(needs_second=rng.random() < 0.5)
-        # walk a few rounds to reach assorted states
-        for _ in range(rng.randint(0, 6)):
-            prof = [(m, random_policy(m, s, rng)) for m in MEMBERS]
-            s = collect_and_resolve(s, prof)
+        s = walk(fresh(needs_second=rng.random() < 0.5), rng, rng.randint(0, 6))
         prof = [(m, random_policy(m, s, rng)) for m in MEMBERS]
-        fps = set()
-        for perm in itertools.islice(itertools.permutations(prof), 0, 120, 7):
-            fps.add(collect_and_resolve(s, list(perm)).fingerprint())
+        fps = {collect_and_resolve(s, list(p)).fingerprint()
+               for p in itertools.islice(itertools.permutations(prof), 0, 120, 7)}
         assert len(fps) == 1, f"trial {trial}: {len(fps)} distinct outcomes under permutation"
-    print(f"F1  arrival-order invariance: {trials} random states x 18 permutations each — identical records")
+    print(f"F1  arrival-order invariance: {trials} random states x 18 permutations — identical records")
 
 
-def test_f4_deadline():
-    """With a presence deadline, the record depends only on the SET of on-time responses;
-    late responses are logged as supplementary and nothing else changes."""
+# ----------------------------------------------------------------------------
+def relabel_state(s: State, old: str, new: str) -> State:
+    """Rename a member keeping its roster slot (the verifier's probe, feedback 1.3)."""
+    s2 = copy.deepcopy(s)
+    def r(x):
+        return new if x == old else x
+    s2.members = [r(m) for m in s2.members]
+    s2.present = {r(m) for m in s2.present}
+    s2.speeches = {(r(k[0]), k[1]): v for k, v in s2.speeches.items()}
+    s2.last_floor = {r(k): v for k, v in s2.last_floor.items()}
+    s2.claims_this_round = {r(m) for m in s2.claims_this_round}
+    for f in s2.stack:
+        f.maker = r(f.maker)
+        f.seconded_by = sorted(r(m) for m in f.seconded_by)
+    for p in s2.points:
+        p["by"] = r(p["by"])
+    if s2.vote:
+        s2.vote["ballots"] = {r(k): v for k, v in s2.vote["ballots"].items()}
+    for e in s2.record:
+        if "member" in e:
+            e["member"] = r(e["member"])
+        if "tally" in e:
+            e["tally"] = {r(k): v for k, v in e["tally"].items()}
+        if "not_voting" in e:
+            e["not_voting"] = sorted(r(m) for m in e["not_voting"])
+    for e in s2.claim_log:
+        e["member"] = r(e["member"])
+        if isinstance(e["intent"], tuple):
+            e["intent"] = (e["intent"][0], r(e["intent"][1]), e["intent"][2])
+    return s2
+
+
+def relabel_policy(p: Policy, old: str, new: str) -> Policy:
+    return Policy(entries=[(g, Act(a.kind, new if a.member == old else a.member, a.args)) for g, a in p.entries])
+
+
+def canon(s: State, old: str, new: str):
+    """The record with `new` mapped back to `old`, for comparison."""
+    s2 = relabel_state(s, new, old)
+    return s2.fingerprint()
+
+
+def test_f3_relabeling(trials=600, seed=11):
+    """F3: resolve commutes with relabeling a member (slot kept). Feedback 1.3 measured 347/1500
+    divergences in the first toy; this is the property test it asked for."""
+    rng = random.Random(seed)
+    for trial in range(trials):
+        s = walk(fresh(needs_second=rng.random() < 0.5), rng, rng.randint(0, 7))
+        prof = [(m, random_policy(m, s, rng)) for m in MEMBERS]
+        victim = rng.choice(MEMBERS)
+        new = rng.choice(["aaa", "zed", "mmm"])
+        s_r = relabel_state(s, victim, new)
+        prof_r = [(new if m == victim else m, relabel_policy(p, victim, new)) for m, p in prof]
+        out = collect_and_resolve(s, prof)
+        out_r = collect_and_resolve(s_r, prof_r)
+        assert out.fingerprint() == canon(out_r, victim, new), f"trial {trial}: record moved with the member's name"
+    print(f"F3  relabeling equivariance: {trials} random states, one member renamed to sort first/last — identical")
+
+
+# ----------------------------------------------------------------------------
+def test_f4_deadline_and_vote_leak():
+    """F4: record depends only on the on-time set; a late ballot is never counted and never seen
+    (feedback 1.5: the first toy let a late voter see a partial tally)."""
     rng = random.Random(3)
     for trial in range(100):
-        s = fresh()
-        for _ in range(rng.randint(0, 4)):
-            s = collect_and_resolve(s, [(m, random_policy(m, s, rng)) for m in MEMBERS])
+        s = walk(fresh(), rng, rng.randint(0, 4))
         prof = [(m, random_policy(m, s, rng)) for m in MEMBERS]
         cut = rng.randint(1, len(prof))
-        on_time = prof[:cut]
-        late = prof[cut:]
         fps = set()
-        for p1 in itertools.permutations(on_time):
-            for p2 in itertools.permutations(late):
-                fps.add(strip_late(collect_and_resolve(s, list(p1) + list(p2), deadline_cut=cut)))
-                if len(fps) > 1:
-                    break
-        assert len(fps) == 1, f"trial {trial}: on-time set fixed, record varied"
-        out = collect_and_resolve(s, prof, deadline_cut=cut)
-        for m, _ in late:
-            assert any(e["member"] == m and str(e["intent"]).startswith("late") for e in out.claim_log)
-            assert any(e["member"] == m and "silent" in str(e["intent"]) for e in out.claim_log)
-    print("F4  presence deadline: record depends only on the on-time set; late responses logged, not dropped")
+        for p1 in itertools.islice(itertools.permutations(prof[:cut]), 0, 24, 3):
+            fps.add(collect_and_resolve(s, list(p1) + prof[cut:], deadline_cut=cut).fingerprint())
+        assert len(fps) == 1
+    # the leak probe
+    s = fresh()
+    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
+    s = collect_and_resolve(s, passes())                       # nobody debates -> put
+    assert s.phase == "vote"
+    ballots = {"ada": "aye", "ben": "aye", "cyd": "no", "dee": "no"}
+    prof = [(m, pol(Act("vote", m, (ballots[m],)))) for m in ["ada", "ben", "cyd", "dee"]] + \
+           [("eli", pol(Act("vote", "eli", ("aye",))))]
+    out = collect_and_resolve(s, prof, deadline_cut=4)          # eli is late
+    ann = [e for e in out.record if e.get("chair") == "announced"][-1]
+    assert ann["not_voting"] == ["eli"] and "eli" not in ann["tally"], ann
+    assert out.phase == "open" and out.vote is None, "the vote round closed at its deadline"
+    assert not any(isinstance(e["intent"], tuple) and e["intent"][0] == "vote" and e["intent"][2] != "(sealed)"
+                   for e in out.claim_log), "no ballot content in the claim log"
+    assert any(str(e["intent"]).startswith("late") and "sealed" in str(e["intent"]) for e in out.claim_log)
+    print("F4  deadline: record depends only on the on-time set; the vote round closed at its deadline, "
+          "eli recorded as not voting, no ballot visible before announcement")
 
 
 # ----------------------------------------------------------------------------
-# D1: the fragile set is derived and matches RONR's no-floor-needed list
-# ----------------------------------------------------------------------------
-def test_d1_fragile_set():
-    s = fresh(needs_second=True)
-    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    t = s.top()
-    assert t is not None and not t.seconded_by
-    probes = {
-        "second":               Act("second", "ben", (t.fid,)),
-        "point-of-order":       Act("point-of-order", "ben", ("the motion was not in order",)),
-        "object-consideration": Act("object-consideration", "ben", ()),
-        "move amend":           Act("move", "ben", ("amend", "...")),
-        "move previous-question": Act("move", "ben", ("previous-question", "...")),
-        "speak":                Act("speak", "ben", ("against", "...")),
-    }
-    # before seconding, only the second is admissible among floor-ish acts; it is fragile (chair proceeds -> dies)
-    assert admissible(probes["second"], opened(s))
-    assert is_fragile(probes["second"], opened(s)), "a second must be admitted ahead of the floor"
-    # now a seconded, undebated main motion: the classic window
-    s2 = collect_and_resolve(s, [("ben", pol(Act("second", "ben", (t.fid,))))] +
-                                [(m, pol(Act("pass", m, ()))) for m in MEMBERS if m != "ben"])
-    derived = {name: is_fragile(a, opened(s2)) for name, a in probes.items() if admissible(a, opened(s2))}
-    expected = {"point-of-order": True, "object-consideration": True,
-                "move amend": False, "move previous-question": False, "speak": False}
-    for k, v in expected.items():
-        assert k in derived and derived[k] == v, f"{k}: derived={derived.get(k)} expected={v}"
-    # after a vote is announced: the division demand is fragile (business intervening closes it)
-    s3 = s2
-    for _ in range(6):
-        s3 = collect_and_resolve(s3, [(m, pol(Act("vote", m, ("aye",)) if s3.phase == "vote" else Act("pass", m, ()))) for m in MEMBERS])
-        if s3.last_announced is not None and not s3.business_since_announce:
-            break
-    assert s3.last_announced is not None and not s3.business_since_announce
-    assert is_fragile(Act("demand-division", "ben", ()), opened(s3))
-    print("D1  fragile set derived by simulation = {second, point-of-order, objection-to-consideration, division}; "
-          "{move, speak} not fragile — matches RONR's no-floor-needed / interrupt list for these acts")
-
-
-# ----------------------------------------------------------------------------
-# D2: commutation decides batching
-# ----------------------------------------------------------------------------
-def test_d2_commutation():
-    s = fresh(needs_second=True)
-    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    fid = s.top().fid
-    assert commute(Act("second", "ben", (fid,)), Act("second", "cyd", (fid,)), opened(s)), "two seconds commute"
+def test_point_of_order_bounded():
+    """Feedback 1.2: one member could halt the floor every round. Now a point names the transition
+    it challenges, is timely only in the next round, and cannot be re-raised against it."""
+    s = fresh()
+    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
+    speeches, points = 0, 0
+    for _ in range(20):
+        if s.phase != "open":
+            s = collect_and_resolve(s, [(m, pol(Act("vote", m, ("no",)))) for m in MEMBERS])
+            continue
+        trs = s.transitions_in_round(s.round_no)
+        eli = [Act("point-of-order", "eli", ("obstruct", tr)) for tr in trs] or [Act("pass", "eli", ())]
+        s = collect_and_resolve(s, [("ben", pol(Act("speak", "ben", ("for", "..."))))] +
+                                   [("eli", pol(*eli))] + passes("ben", "eli"))
+        speeches = sum(1 for e in s.record if e.get("act") == "speak")
+        points = sum(1 for e in s.record if e.get("act") == "point-of-order")
+    assert speeches >= 2, (speeches, points)
+    # and a second point against an already-ruled transition is refused
     s2 = fresh()
-    s2 = collect_and_resolve(s2, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] +
-                                 [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    s2 = opened(s2)
-    assert not commute(Act("move", "ben", ("amend", "a")), Act("move", "cyd", ("amend", "b")), s2), \
-        "two primary amendments do not commute [12:13]"
-    assert not commute(Act("move", "ben", ("amend", "a")), Act("move", "cyd", ("previous-question", "")), s2), \
-        "amend and previous-question do not commute [16:2]"
-    assert not commute(Act("speak", "ben", ("for", "x")), Act("speak", "cyd", ("for", "y")), s2), \
-        "two speeches do not commute (the record is ordered)"
-    print("D2  commutation by simulation: seconds commute; amendments, PQ-vs-amend, and speeches do not")
+    s2 = collect_and_resolve(s2, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
+    tr = last_transition(s2)
+    s2 = collect_and_resolve(s2, [("eli", pol(Act("point-of-order", "eli", ("x", tr))))] + passes("eli"))
+    s2 = collect_and_resolve(s2, [(m, pol(Act("vote", m, ("no",)))) for m in MEMBERS])
+    assert not admissible(Act("point-of-order", "eli", ("x again", tr)), opened(s2))
+    print(f"P   points of order are breach-specific and not re-raisable: an obstructor got {points} halts "
+          f"in 20 rounds and ben still spoke {speeches} times")
 
 
 # ----------------------------------------------------------------------------
-# I1: one exclusive act per round, and guards keep a member's act its own
+def test_mover_claim_does_not_flip_debater():
+    """Feedback 1.4: a third member's motion claim must not change which debater speaks."""
+    def setup():
+        s = fresh()
+        s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
+        s = collect_and_resolve(s, [("ada", pol(Act("speak", "ada", ("for", "..."))))] + passes("ada"))
+        return s
+    base = [("ben", pol(Act("speak", "ben", ("for", "b")))), ("cyd", pol(Act("speak", "cyd", ("against", "c"))))]
+    s1 = collect_and_resolve(setup(), base + passes("ben", "cyd"))
+    s2 = collect_and_resolve(setup(), base + [("dee", pol(Act("move", "dee", ("amend", "x"))))] + passes("ben", "cyd", "dee"))
+    w1 = [e for e in s1.record if e.get("act") in FLOOR_KINDS][-1]
+    w2 = [e for e in s2.record if e.get("act") in FLOOR_KINDS][-1]
+    assert w1["member"] == "cyd" and w1["act"] == "speak", w1          # alternation [42:9(3)]
+    assert w2["member"] in ("cyd", "dee"), w2                            # dee may win the race, never ben
+    print("1.4 alternation is ranked among debaters first; a mover's claim cannot flip which debater speaks")
+
+
 # ----------------------------------------------------------------------------
-def test_i1_informed_acts():
+def test_i1_implicit_guard():
+    """I1: a floor act fires only if the state it assumed is unchanged by this round's non-floor acts."""
     s = fresh()
-    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    main_fid = s.top().fid
-    # Same round: ben wants to amend; cyd wants to postpone — but ONLY if nothing but the main is pending;
-    # otherwise cyd would rather speak against whatever was just moved.
+    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
+    tr = last_transition(s)
+    # ben wants to speak; eli objects to consideration in the same round (a non-floor act that changes phase)
+    out = collect_and_resolve(s, [("ben", pol(Act("speak", "ben", ("for", "b")))),
+                                  ("eli", pol(Act("object-consideration", "eli", ())))] + passes("ben", "eli"))
+    assert not any(e.get("act") == "speak" for e in out.record), "the speech must not fire blind"
+    assert any("deferred" in str(e.get("chair", "")) for e in out.record) or out.phase == "objection-vote"
+    # and the guarded-policy routing from the first spike still holds
+    s = fresh()
+    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
     only_main = lambda st: len(st.stack) == 1
-    prof = [
-        ("ben", pol(Act("move", "ben", ("amend", "strike 'main', insert 'tag'")))),
-        ("cyd", gpol((only_main, Act("move", "cyd", ("postpone", "until the Fable assessment lands"))),
-                     (lambda st: len(st.stack) > 1 and st.top().kind == "amend",
-                      Act("speak", "cyd", ("against", "the amendment measures the wrong question"))))),
-        ("ada", pol(Act("pass", "ada", ()))), ("dee", pol(Act("pass", "dee", ()))), ("eli", pol(Act("pass", "eli", ()))),
-    ]
+    prof = [("ben", pol(Act("move", "ben", ("amend", "insert 'tag'")))),
+            ("cyd", gpol((only_main, Act("move", "cyd", ("postpone", "until later"))),
+                         (lambda st: len(st.stack) > 1 and st.top().kind == "amend",
+                          Act("speak", "cyd", ("against", "wrong question")))))] + passes("ben", "cyd")
     s1 = collect_and_resolve(s, prof)
-    # exactly one exclusive act was admitted
-    excl = [e for e in s1.record if e.get("round") == s1.round_no and e.get("act") in ("move", "speak")]
-    assert len(excl) == 1, excl
-    winner = excl[0]["member"]
-    # the loser kept a claim and is re-asked against the new state; its guarded policy now routes differently
-    if winner == "ben":
-        assert "cyd" in s1.claims, "cyd's claim age is kept for the next round"
-        s2 = collect_and_resolve(s1, prof)   # same standing policies re-evaluated against the new state
-        excl2 = [e for e in s2.record if e.get("round") == s2.round_no and e.get("act") in ("move", "speak")]
-        assert excl2 and excl2[0]["member"] == "cyd" and excl2[0]["act"] == "speak", excl2
-        print("I1  one exclusive act per round: ben's amendment admitted; cyd's guarded policy, re-evaluated "
-              "against the new state, spoke against it instead of postponing — cyd was never bound to a blind act")
-    else:
-        assert "ben" in s1.claims
-        print("I1  one exclusive act per round: cyd's postponement admitted; ben keeps a claim (rotation chose cyd)")
+    fl = [e for e in s1.record if e.get("round") == s1.round_no and e.get("act") in FLOOR_KINDS]
+    assert len(fl) == 1
+    if fl[0]["member"] == "ben":
+        s2 = collect_and_resolve(s1, prof)
+        fl2 = [e for e in s2.record if e.get("round") == s2.round_no and e.get("act") in FLOOR_KINDS]
+        assert fl2 and fl2[0]["member"] == "cyd" and fl2[0]["act"] == "speak", fl2
+    print("I1  a floor act is deferred when in-round acts changed its snapshot; guarded routing re-decides next round")
 
 
 # ----------------------------------------------------------------------------
-# F3: ties are broken by claim age then rotation, never by arrival
-# ----------------------------------------------------------------------------
-def test_f3_claim_age():
+def test_f3_ladder():
     s = fresh()
-    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    # all five want the floor to speak, same side; maker (ada) has preference first [42:9(1)]
-    want = lambda m: pol(Act("speak", m, ("for", f"{m} speaks")))
+    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
+    want = lambda m: pol(Act("speak", m, ("for", m)))
     order = []
-    for r in range(5):
+    for _ in range(5):
         s = collect_and_resolve(s, [(m, want(m)) for m in MEMBERS])
         order.append([e for e in s.record if e.get("round") == s.round_no and e.get("act") == "speak"][0]["member"])
     assert order[0] == "ada", order
-    assert sorted(order) == sorted(MEMBERS), order   # everyone spoke once before anyone spoke twice [42:9(2)]
-    # alternation: with sides declared, the floor alternates when preference-equal
-    s = fresh()
-    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    s = collect_and_resolve(s, [("ada", pol(Act("speak", "ada", ("for", "..."))))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    side = {"ben": "for", "cyd": "against", "dee": "for", "eli": "against"}
-    s = collect_and_resolve(s, [("ada", pol(Act("pass", "ada", ())))] +
-                               [(m, pol(Act("speak", m, (side[m], "...")))) for m in MEMBERS[1:]])
-    last = [e for e in s.record if e.get("round") == s.round_no and e.get("act") == "speak"][0]
-    assert last["args"][0] == "against", last
-    print("F3  preference ladder then claim age then rotation: maker first, everyone once before anyone twice, "
-          "alternation by declared side; arrival never consulted")
+    assert sorted(order) == sorted(MEMBERS), order
+    print("F3  ladder: maker first [42:9(1)]; everyone once before anyone twice [42:9(2) via 43:13]; "
+          "then least-recently-floored, then a recorded lottery by slot")
 
 
 # ----------------------------------------------------------------------------
-# Division is vacuous for agents
-# ----------------------------------------------------------------------------
-def test_division_vacuous():
-    s = fresh()
-    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS[1:]])
-    s = collect_and_resolve(s, [(m, pol(Act("pass", m, ()))) for m in MEMBERS])        # nobody debates -> put
-    assert s.phase == "vote"
-    ballots = {"ada": "aye", "ben": "aye", "cyd": "no", "dee": "aye", "eli": "no"}
-    s = collect_and_resolve(s, [(m, pol(Act("vote", m, (ballots[m],)))) for m in MEMBERS])
-    ann = [e for e in s.record if e.get("chair") == "announced"][-1]
-    assert ann["tally"] == ballots
-    s = collect_and_resolve(s, [("cyd", pol(Act("demand-division", "cyd", ())))] +
-                               [(m, pol(Act("pass", m, ()))) for m in MEMBERS if m != "cyd"])
-    ev = [e for e in s.record if e.get("act") == "demand-division"][-1]
-    assert "vacuous" in ev["chair"]
-    print("Div division of the assembly: every vote is already an exact, attributed, sealed count — a retake "
-          "reproduces the same tally; the demand is vacuous (its purpose, not its form, is what dissolved)")
+def test_d1_classification_and_d2():
+    s = fresh(needs_second=True)
+    s = collect_and_resolve(s, [("ada", pol(Act("move", "ada", ("main", "Keep main"))))] + passes("ada"))
+    t = s.top()
+    assert is_fragile(Act("second", "ben", (t.fid,)), opened(s))
+    s2 = collect_and_resolve(s, [("ben", pol(Act("second", "ben", (t.fid,))))] + passes("ben"))
+    o = opened(s2)
+    tr = last_transition(s2)
+    probes = {"point-of-order": Act("point-of-order", "cyd", ("x", tr)),
+              "object-consideration": Act("object-consideration", "cyd", ()),
+              "move amend": Act("move", "cyd", ("amend", "...")),
+              "move previous-question": Act("move", "cyd", ("previous-question", "...")),
+              "speak": Act("speak", "cyd", ("against", "..."))}
+    derived = {k: is_fragile(a, o) for k, a in probes.items()}
+    assert derived == {"point-of-order": True, "object-consideration": True, "move amend": False,
+                       "move previous-question": False, "speak": False}, derived
+    # classification is stable under relabeling (feedback 1.3's third channel)
+    o_r = relabel_state(o, "ada", "zed")
+    derived_r = {k: is_fragile(a, o_r) for k, a in probes.items()}
+    assert derived_r == derived
+    assert commute(Act("second", "ben", (t.fid,)), Act("second", "cyd", (t.fid,)), opened(s))
+    o2 = opened(collect_and_resolve(fresh(), [("ada", pol(Act("move", "ada", ("main", "m"))))] + passes("ada")))
+    assert not commute(Act("move", "ben", ("amend", "a")), Act("move", "cyd", ("amend", "b")), o2)
+    print("D1/D2 fragility classification (as a diff tool, not an oracle) and commutation: as before; "
+          "classification now stable under relabeling")
 
 
-# ----------------------------------------------------------------------------
-# A scripted specimen for the write-up
 # ----------------------------------------------------------------------------
 def specimen():
-    """Specimen 1 from ../../specimens-2026-11-03.md as a council might have run it (committee configuration)."""
     s = fresh()
     P = lambda m, *acts: (m, pol(*acts))
-    rounds = [
-        [P("ada", Act("move", "ada", ("main", "Reset canon to the pre-sprint tag")))] +
-        [P(m, Act("pass", m, ())) for m in ["ben", "cyd", "dee", "eli"]],
-        # round: maker speaks first; ben and cyd also claim
-        [P("ada", Act("speak", "ada", ("for", "findability: the eight checks added nothing"))),
-         P("ben", Act("speak", "ben", ("against", "I re-derived the mathematics; the checks are real"))),
-         P("cyd", Act("speak", "cyd", ("against", "re-integration cost of a reset is high"))),
-         P("dee", Act("pass", "dee", ())), P("eli", Act("pass", "eli", ()))],
-        [P("ben", Act("speak", "ben", ("against", "I re-derived the mathematics; the checks are real"))),
-         P("cyd", Act("speak", "cyd", ("against", "re-integration cost of a reset is high"))),
-         P("ada", Act("pass", "ada", ())), P("dee", Act("pass", "dee", ())), P("eli", Act("pass", "eli", ()))],
-        [P("cyd", Act("speak", "cyd", ("against", "re-integration cost of a reset is high"))),
-         P("dee", Act("move", "dee", ("amend", "insert 'after an independent re-derivation of the eight checks'"))),
-         P("ada", Act("pass", "ada", ())), P("ben", Act("pass", "ben", ())), P("eli", Act("pass", "eli", ()))],
-        [P("dee", Act("move", "dee", ("amend", "insert 'after an independent re-derivation of the eight checks'"))),
-         P("eli", Act("point-of-order", "eli", ("cyd's second speech came while dee was still seeking the floor",))),
-         P("ada", Act("pass", "ada", ())), P("ben", Act("pass", "ben", ())), P("cyd", Act("pass", "cyd", ()))],
-    ]
-    for prof in rounds:
-        s = collect_and_resolve(s, prof)
-    # the assembly rules on eli's point (toy: by vote), then dee's amendment is re-asked
-    while s.phase in ("ruling", "vote", "objection-vote"):
+    s = collect_and_resolve(s, [P("ada", Act("move", "ada", ("main", "Reset canon to the pre-sprint tag")))] + passes("ada"))
+    s = collect_and_resolve(s, [P("ada", Act("speak", "ada", ("for", "findability: the eight checks added nothing"))),
+                                P("ben", Act("speak", "ben", ("against", "I re-derived the mathematics; the checks are real"))),
+                                P("cyd", Act("speak", "cyd", ("against", "re-integration cost of a reset is high")))] + passes("ada", "ben", "cyd"))
+    s = collect_and_resolve(s, [P("ben", Act("speak", "ben", ("against", "I re-derived the mathematics; the checks are real"))),
+                                P("cyd", Act("speak", "cyd", ("against", "re-integration cost of a reset is high")))] + passes("ben", "cyd"))
+    s = collect_and_resolve(s, [P("cyd", Act("speak", "cyd", ("against", "re-integration cost of a reset is high"))),
+                                P("dee", Act("move", "dee", ("amend", "insert 'after an independent re-derivation of the eight checks'")))] + passes("cyd", "dee"))
+    tr = last_transition(s)
+    s = collect_and_resolve(s, [P("dee", Act("move", "dee", ("amend", "insert 'after an independent re-derivation of the eight checks'"))),
+                                P("eli", Act("point-of-order", "eli", ("the last speech was not germane to the pending question", tr)))] + passes("dee", "eli"))
+    while s.phase != "open":
         s = collect_and_resolve(s, [(m, pol(Act("vote", m, ("no" if m != "eli" else "aye",)))) for m in MEMBERS])
-    s = collect_and_resolve(s, [P("dee", Act("move", "dee", ("amend", "insert 'after an independent re-derivation of the eight checks'")))] +
-                               [P(m, Act("pass", m, ())) for m in MEMBERS if m != "dee"])
-    s = collect_and_resolve(s, [P(m, Act("pass", m, ())) for m in MEMBERS])                     # no debate on the amendment -> put
-    s = collect_and_resolve(s, [(m, pol(Act("vote", m, ("aye",)))) for m in MEMBERS])            # amendment adopted
-    s = collect_and_resolve(s, [P(m, Act("pass", m, ())) for m in MEMBERS])                     # main as amended -> put
-    s = collect_and_resolve(s, [(m, pol(Act("vote", m, ("no" if m in ("ada",) else "aye",)))) for m in MEMBERS])
+    s = collect_and_resolve(s, [P("dee", Act("move", "dee", ("amend", "insert 'after an independent re-derivation of the eight checks'")))] + passes("dee"))
+    s = collect_and_resolve(s, passes())
+    s = collect_and_resolve(s, [(m, pol(Act("vote", m, ("aye",)))) for m in MEMBERS])
+    s = collect_and_resolve(s, passes())
+    s = collect_and_resolve(s, [(m, pol(Act("vote", m, ("no" if m == "ada" else "aye",)))) for m in MEMBERS])
     return s
 
 
 if __name__ == "__main__":
     test_f1_invariance()
-    test_f4_deadline()
-    test_d1_fragile_set()
-    test_d2_commutation()
-    test_i1_informed_acts()
-    test_f3_claim_age()
-    test_division_vacuous()
+    test_f3_relabeling()
+    test_f4_deadline_and_vote_leak()
+    test_point_of_order_bounded()
+    test_mover_claim_does_not_flip_debater()
+    test_i1_implicit_guard()
+    test_f3_ladder()
+    test_d1_classification_and_d2()
     s = specimen()
     print("\nSpecimen record (committee configuration, no seconds):")
     for e in s.record:

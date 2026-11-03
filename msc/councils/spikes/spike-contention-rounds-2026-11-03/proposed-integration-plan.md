@@ -1,44 +1,50 @@
-# Proposed integration — suggestions for the council server, with reasons
+# Proposed integration — suggestions for the council server, with reasons (revision 2)
 
-*From the contention spike, 2026-11-03. These are suggestions; the integrator decides. Each carries its reason so it can be rejected on the reason. A do-not-inherit list is at the end.*
+*From the contention spike after `de-novo-feedback-1.md`. Suggestions, with reasons so they can be rejected on the reason. The do-not-inherit list is at the end.*
 
-## What I would carry into the server's core
+## Carry into the server's core
 
-1. **`resolve(S, profile) → (S', minutes, claims)` as a pure function with no clock and no mind.** Reason: F1 is then a property of a function, testable by shuffling (the walking-skeleton's `selftest` already does this), not a property of a process.
+1. **`resolve(S, profile) → (S', minutes, claims)` pure, no clock, no mind.** F1 and F3 are then properties of a function, tested by shuffling arrivals *and by relabeling members* (the walking skeleton's `selftest` does the first; the second is `test_f3_relabeling` here).
 
-2. **Members respond with policies — prioritized (guard, act) lists — not single intents.** Reason: it is the routing Joseph suspected rounds would need, written by the member who knows its own contingencies; it dissolves the staleness problem (a stale act is a failed guard); and standing policies let the server skip asking members whose policy covers the new state, which is what makes one-floor-act-per-round affordable. The guard language can be the model's own expression language, restricted to round-open state plus the structural effects of this round's admitted acts; never this round's sealed contents.
+2. **Policies, not single intents.** Prioritized (guard, act); guards over the round-open state plus structural in-round effects, never sealed contents. An unguarded floor act carries the implicit snapshot guard (top frame, stated-ness, phase, pending points), enforced in code.
 
-3. **A fixed admission order inside a round:** fragile acts (derived) → commuting non-floor acts (derived) → a point of order halts the floor → exactly one floor act by ladder → the chair's duties. Reason for each is in `contention.md` §4–5; the two derivations should run against `actions.json` with the model's evaluator once stage 5 exists, and until then against a hand list *marked as the stand-in*.
+3. **Admission order inside a round:** non-floor acts admissible at the round-open state, applied in a fixed kind order with set-valued effects (never re-checked against siblings, never ordered by name) → a point of order halts the floor → one floor act → the chair's duties. The non-floor class comes from the registry's interrupt attribute and its adjudicated urgency condition; the fragility probe is a diff tool against t44–t45 whose disagreements are its own bugs.
 
-4. **The ladder: maker's first speech → alternation (debaters only) → claim age in rounds → rotation, with 42:9(2) as a filter on the second speech.** Reason: that is what 42:6–13 says once the race is factored out, and the specimen showed what goes wrong when a rung is added the book does not have.
+4. **The ladder:** maker's first speech → alternation among debaters by declared side → least-recently-given-the-floor → a lottery keyed by (council seed, round, seat). Debaters ranked among themselves first, then the top debater against the top mover by the neutral key. The second-speech bar [43:13] is an admissibility filter against the round-open profile, never a rung. **No persistent claim queue.**
 
-5. **One floor act per round; in-round-triggered floor acts defer to the next round.** Reason: I1 (informed acts) and 42:6 (no claim by rising early). Do not batch floor acts by rank; `contention.md` §5.2 is the construction that shows why.
+5. **One floor act per round; in-round-triggered floor acts defer.** F2 / 42:6 is the reason.
 
-6. **Every transition that opens a window is followed by a round; silence counts as exhaustion only in a round after the one in which the question was stated.** Reason: the `stated_round` bug.
+6. **Every transition that opens a window is followed by a round;** silence counts only in a round after the question was stated.
 
-7. **Close condition = every asked member finalized, or the deadline.** Replacement allowed only before a member's own finalization. Reason: the walking-skeleton measurement (4 distinct logs under replaceable-until-everyone-is-in).
+7. **Close = every asked member finalized, or the deadline. No early close.** Replacement only before a member's own finalization.
 
-8. **Two record layers:** minutes (admitted acts with the model's justifications; announcements) and the claim log (every submitted entry with guard/admissibility outcome; "silent" and "late" marks). Reason: 42:9(2) and 43:13 need to know who was seeking the floor; the late/silent marks are the only arrival-dependent thing F1 permits and should be visibly quarantined.
+8. **Vote rounds are the poll:** they close at the deadline, non-voters recorded, thresholds over votes cast, ballots never in the claim log before announcement, late ballots never counted.
 
-9. **The presence protocol as the only clock,** sized in minutes, with consecutive silences → absent → quorum recomputed → the model's inquorate action set. Reason: F4; and it is RONR's own door (a member who left the room), so the model needs nothing new.
+9. **Points of order are breach-specific:** they name the transition, are timely only in the next round, and cannot be re-raised against a ruled transition. Dilatory stays a judgment, routed to chair-mind or council.
 
-10. **The server's mechanical acts are appealable like a chair's, and the log can revert a transition.** Reason: 42:15; a bug in `resolve` must be correctable in-band, not by an operator editing the log.
+10. **Two record layers:** minutes with the model's justifications; the claim log with every entry's guard and admissibility outcome, "silent" and "late" marks, ballots as "(sealed)."
 
-11. **Votes: sealed, simultaneous, attributed; no vote-change window by default; division, the inconclusive-vote ladder, and tellers disabled in the committee charter.** Reason: `contention.md` §7 rows; the charter sibling's §5 reached the same no-go independently.
+11. **The presence protocol as the only clock,** with consecutive silences → absent → quorum recomputed → the model's inquorate action set.
 
-## What I would leave to the charter spike
+12. **Server acts appealable like a chair's; the log can revert a transition.**
 
-The chair question (server-as-clerk with judgment submitted to the council vs. a chair-mind, and rotation of that role); what a charter must declare (the 9:36 list the charter sibling names); the maker's modify-before-stating window as a declared choice; serial vs. parallel debate as a declared choice.
+13. **Targeted rounds** (maker's modify window; a merge question to two makers; a ruling from a chair-mind) are allowed iff revealed with the round and no member's rights change at a state it was not asked at.
+
+14. **Default "ask everyone";** a standing policy is a per-member opt-out that gives up that member's breach window and is revealed as such.
+
+## Leave to the charter spike
+
+The chair question; the 9:36 declarations; the maker's modify window as a declared choice; serial vs. parallel debate; a per-member response budget, if any, for the throughput problem.
 
 ## Do not inherit
 
-These are my words, not the material's. If they survive into the server's docs they should be re-derived there, not copied.
+My words, not the material's. Re-derive before reusing.
 
-- **"Fragile"** for the derived interrupt class. The book says "in order when another has the floor" and "if there may be no other opportunity." My word is a mnemonic for the test; it is not a RONR term and should not read as one.
-- **"Informed act" / I1.** My name for the property RONR's serial floor gives silently. The book has no name for it.
-- **"Claim age."** My translation of "rose first after the floor was yielded" into rounds. The translation is derived; the term is mine.
-- **The five-rung ladder as written in the sim** (maker, alternation, claim age, rotation, then act key as a final deterministic tie-break). The last rung — breaking a residual tie by act key — is a toy artifact; a real server should use the rotation pointer or a recorded lottery and never a property of the act.
-- **"Vacuous"** as a status word. It means "the purpose dissolved, not the form suppressed." Say that, not the word.
-- **The counts in `contention.md` §7** (17 survive / 6 change / 5 vacuous / 1 conditional). They are over the 29 rows I chose; another reader would cut the rows differently. The table is the content; the count is a reading aid.
-- **Any sentence in `contention.md` beginning "RONR's X *is* Y."** Several of these are strong readings I believe (the race was never the fairness; fragility is the interrupt class), and a verifier should test them against the paragraphs rather than inherit the confidence.
-- **The toy's act set and phases.** Nine acts, four phases. The real server reads the model; it must not inherit the toy's simplifications (no secondary amendments, no series, no privileged-motion yields, no appeal-yield matrix, one point of order at a time).
+- **"Fragile."** A mnemonic for a probe with a declared parameter; not a RONR term; not the interrupt class.
+- **"Informed act" / I1.** My name for what the serial floor gives silently.
+- **"Claim age."** Retracted entirely; if it appears in a doc, it is from rev. 1.
+- **"Vacuous."** Means "the purpose dissolved"; say that.
+- **The table counts** (23/5/4/1 over 33 rows). A reading aid over rows I chose.
+- **Every sentence of the form "RONR's X *is* Y."** Two such sentences failed verification (fragility = interrupt class; claim age = rose first). The remaining ones (the race was never the fairness; 45:8 exempts sealed voting) should be tested, not inherited.
+- **The toy's act set, phases, and the "(sealed)" log convention.** The real server reads the model.
+- **The lottery seed as a string constant.** A real server records a seed per council and per session; the toy's constant is a stand-in.
