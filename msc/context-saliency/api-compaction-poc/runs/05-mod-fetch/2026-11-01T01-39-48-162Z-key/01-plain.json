@@ -1,0 +1,65 @@
+{
+  "credential": "api-key (file)",
+  "anthropicBetaSent": [],
+  "request": {
+    "model": "claude-haiku-5-5",
+    "max_tokens": 16,
+    "messages": [
+      {
+        "role": "user",
+        "content": "Reply with the single word OK."
+      }
+    ]
+  },
+  "status": 200,
+  "headers": {
+    "anthropic-organization-id": "230fd125-9d76-44fc-920d-8959297fa1dc",
+    "anthropic-ratelimit-input-tokens-limit": "10000000",
+    "anthropic-ratelimit-input-tokens-remaining": "10000000",
+    "anthropic-ratelimit-input-tokens-reset": "2026-11-01T01:39:48Z",
+    "anthropic-ratelimit-output-tokens-limit": "2000000",
+    "anthropic-ratelimit-output-tokens-remaining": "2000000",
+    "anthropic-ratelimit-output-tokens-reset": "2026-11-01T01:39:48Z",
+    "anthropic-ratelimit-requests-limit": "13000",
+    "anthropic-ratelimit-requests-remaining": "12999",
+    "anthropic-ratelimit-requests-reset": "2026-11-01T01:39:48Z",
+    "anthropic-ratelimit-tokens-limit": "12000000",
+    "anthropic-ratelimit-tokens-remaining": "12000000",
+    "anthropic-ratelimit-tokens-reset": "2026-11-01T01:39:48Z",
+    "anthropic-workspace-id": "wrkspc_01DeJ5qTebUjRzJKjARnQnFG",
+    "request-id": "req_011CgbMZvqhG8CvbWaTBTtDb"
+  },
+  "data": {
+    "model": "claude-haiku-5-5",
+    "id": "msg_011CgbMZwWcthAqnKpY2vdgL",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "text",
+        "text": "OK"
+      }
+    ],
+    "container": null,
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 18,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 4,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "diagnostics": null
+  }
+}

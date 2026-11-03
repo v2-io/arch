@@ -1,0 +1,39 @@
+{
+  "credential": "session bearer (oauth beta sent)",
+  "anthropicBetaSent": [
+    "oauth-2025-04-20",
+    "compact-2026-09-04"
+  ],
+  "request": {
+    "model": "claude-haiku-5-5",
+    "max_tokens": 2048,
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am building a recipe app. Help me name the main entities in the data model."
+      },
+      {
+        "role": "assistant",
+        "content": "Start with Recipe, Ingredient, and Step. Add a RecipeIngredient entry that holds the quantity and unit for each ingredient in a recipe."
+      }
+    ],
+    "compaction": {
+      "type": "summarize"
+    }
+  },
+  "status": 400,
+  "headers": {
+    "anthropic-organization-id": "58b6cd5c-727e-49c9-a601-5ec1da26e2cf",
+    "anthropic-workspace-id": "wrkspc_014yXXxxPycYoGZbA4ohWYBH",
+    "request-id": "req_011CgbMRUuzmC5LsG6Cm6L1h",
+    "x-should-retry": "false"
+  },
+  "data": {
+    "type": "error",
+    "error": {
+      "type": "invalid_request_error",
+      "message": "compaction: this parameter requires anthropic-beta: compact-2026-09-04"
+    },
+    "request_id": "req_011CgbMRUuzmC5LsG6Cm6L1h"
+  }
+}

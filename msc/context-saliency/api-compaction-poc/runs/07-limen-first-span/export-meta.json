@@ -1,0 +1,15 @@
+{
+  "source": "/Users/josephwecker-v2/.claude/projects/-Users-josephwecker-v2-src-limen/617b0fe9-553a-4f7d-85a7-aa572e94781d.jsonl",
+  "rowsRead": 1134,
+  "messages": 687,
+  "requestChars": 7402742,
+  "systemBlocks": 13,
+  "tools": 15,
+  "thinkingBlocks": 346,
+  "toolUses": 325,
+  "images": 3,
+  "betas": [
+    "compact-2026-09-04",
+    "thinking-binding-controls-2026-08-01"
+  ]
+}

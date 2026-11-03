@@ -1,0 +1,43 @@
+{
+  "anthropic-beta": [
+    "oauth-2025-04-20",
+    "compact-2026-09-04",
+    "thinking-binding-controls-2026-08-01"
+  ],
+  "body": {
+    "model": "claude-opus-5-5",
+    "max_tokens": 8192,
+    "system": "You help plan a small software project. Keep visible answers short.",
+    "thinking": {
+      "type": "adaptive",
+      "display": "summarized",
+      "block_binding": {
+        "prefix_mismatch_behavior": "error"
+      }
+    },
+    "messages": [
+      {
+        "role": "user",
+        "content": "We need a store for about 2,000 small JSON records, written by one process and read by a CLI that must start in under 50 ms on a laptop. Options: (A) SQLite, (B) one JSON file per record, (C) a Postgres server. Answer with the letter only."
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "I'm weighing storage options for a single-writer CLI with about 2000 records. SQLite fits best since it opens fast, stays a single file, and supports transactions. One JSON file per record would mean many reads on startup and atomicity concerns, while Postgres would need a running server and adds connection overhead.\n\n",
+            "signature": "CAQSsAYKEAgTGAI4AUIIdGhpbmtpbmcSDKMaVDa9QEnFFHMRWhoMC2D5aWBwXEJXyPX2IjB9r6BKGHmTnid1pxlvdN2GSPKOT1hV4xe835PDxNrozWYfBmc8LBqpC63AF0LIaW0qzQV5fMoNMc8WCie51sCljN2FR2oFsc8Zrsk1L+WoGcGZbDKqD5OZ09kF69TncGxv509CPNWP5hpbYC5ONNwUUc2cuD0oK0So+2T53JHn26AXGfMOhH+6UR3p5smubKOyxe928ONobXbSX8tdHwnQMaWMAPfVR0NmZD2y3vbNwnkz3xZiiAbkmLlVWnV0hNVRRRlTwmfYN/hzPCPhx5SXI3nf/yRmEGfxZutB8dRSaEaq9KxnMzmsKdckQMtwTy0cOSevSg5SyJ1g5PVEUwadFg07+OI378UDw7B8zJZqjJM+BOhVOivKcRjZWwESX2NMUrrrlo1PuGZ1qMeE2e9QkUv9QGO6wCptpyBoDo23Iv+uaQwQ3xemu/vwnAZJIbTYxFqZInMDELkGrygfyldFEZQV1Vjv43cIpP5QhD3VuwNg1E+PdGhH1Q2+AwsEPEGZLQ3dBf0Z3uoB4LoZOmLjbwnnScPI8PSnhNd9pcuVVBOiNDjNnbjlK39IukyWx6SC0q716bsdKSsxrpE57SdzqwkA29r1iipPn5pg+0YNDxLfZeJXVhU9OOmpMlxna0Wf4lDinbsAPG7StqphakdEy3XQMzVPevE0bYnnjzI0KimmHGgcueY7abaccf1KmqyRcylxhWi/xB/Kq8f1p4FQBRPPjQwvsdIU27PPVSqIceAnsuVZRMYKaGrlPmvwkK3R6tRJ8fh7gHnXlmw9s5MXXXhK8N640pprOE8x68QhlT4up6ynhopdbAA4bnNuHAYZNj/0iQhs9ruVnRIZNExTNZDV2Gz1iF6SaGVJmuBqpOZk58rkCBf7Y1nvlyv5d0+TnzYC7Ou6nBWMY+aZdjKxi6FyMk7wqk2mUEqPgcWZQqs1Vu4YAc4JGtqjGx2ZdJic9aA2GNqgruT5kM1ia0ezmEs6wU3mWYZ2ZTScTHw7pmEF91Jdfan3xC30C3UVUgoYAQ=="
+          },
+          {
+            "type": "text",
+            "text": "A"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "Name the one table or directory we need, in five words or fewer."
+      }
+    ]
+  }
+}

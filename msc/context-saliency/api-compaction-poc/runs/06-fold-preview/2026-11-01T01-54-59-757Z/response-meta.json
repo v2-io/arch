@@ -1,0 +1,926 @@
+{
+  "betas": [
+    "compact-2026-09-04",
+    "thinking-binding-controls-2026-08-01",
+    "advisor-tool-2026-03-01"
+  ],
+  "status": 200,
+  "request_id": "req_011CgbNkU4Ya4hnJPAJj5SJU",
+  "org": "230fd125-9d76-44fc-920d-8959297fa1dc",
+  "input_transformations": [
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.1.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.5.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.7.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.9.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.9.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.11.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.11.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.13.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.13.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.17.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.17.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.19.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.19.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.21.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.23.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.23.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.25.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.27.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.27.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.29.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.29.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.31.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.31.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.33.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.33.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.35.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.35.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.37.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.39.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.43.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.43.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.45.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.45.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.47.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.47.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.49.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.49.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.55.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.55.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.57.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.57.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.61.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.61.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.65.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.67.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.67.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.67.content.3",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.67.content.4",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.69.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.69.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.71.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.71.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.73.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.73.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.75.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.75.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.77.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.79.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.79.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.81.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.81.content.3",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.81.content.4",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.83.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.83.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.85.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.87.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.87.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.89.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.91.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.93.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.93.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.95.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.97.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.99.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.99.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.103.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.105.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.105.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.107.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.107.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.109.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.109.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.111.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.111.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.113.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.113.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.115.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.117.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.119.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.119.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.121.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.123.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.123.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.125.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.125.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.127.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.127.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.131.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.135.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.135.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.137.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.137.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.139.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.141.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.141.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.143.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.143.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.145.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.147.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.147.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.149.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.153.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.155.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.157.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.157.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.159.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.159.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.161.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.163.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.165.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.165.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.167.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.169.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.173.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.175.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.175.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.179.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.179.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.183.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.183.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.185.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.185.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.187.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.189.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.195.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.197.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.199.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.199.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.205.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.207.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.209.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.211.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.213.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.213.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.215.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.215.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.217.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.217.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.219.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.221.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.225.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.227.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.229.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.231.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.233.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.235.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.235.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.237.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.239.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.241.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.243.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.245.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.247.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.251.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.253.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.255.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.257.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.259.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.259.content.1",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.261.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.263.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.265.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.267.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.269.content.0",
+      "reason": "prefix_binding_mismatch"
+    },
+    {
+      "type": "thinking_mismatch_allowed",
+      "path": "messages.271.content.0",
+      "reason": "prefix_binding_mismatch"
+    }
+  ],
+  "usage_start": {
+    "input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 0,
+    "service_tier": "standard",
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "stop_reason": "refusal",
+  "stop_details": {
+    "type": "refusal",
+    "category": "reasoning_extraction",
+    "explanation": "This request was blocked as it seems to violate Anthropic's Terms of Service restrictions on reverse engineering or duplicating model outputs. To learn more, visit https://www.anthropic.com/legal/commercial-terms. API integrators: you can reduce refusals for your users by configuring a fallback model \u2014 see https://platform.claude.com/docs/en/build-with-claude/refusals-and-fallback"
+  },
+  "usage": {
+    "input_tokens": 0,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 0,
+    "iterations": [
+      {
+        "input_tokens": 728444,
+        "output_tokens": 12352,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "type": "compaction"
+      }
+    ]
+  },
+  "seconds": 121.1
+}

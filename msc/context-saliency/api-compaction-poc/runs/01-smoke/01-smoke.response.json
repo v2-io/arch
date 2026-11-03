@@ -1,0 +1,12 @@
+{
+  "status": 429,
+  "seconds": 0.27,
+  "data": {
+    "type": "error",
+    "error": {
+      "type": "rate_limit_error",
+      "message": "Error"
+    },
+    "request_id": "req_011CgbEQewuG3coVvmQx5tzi"
+  }
+}

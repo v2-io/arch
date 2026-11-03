@@ -1,0 +1,49 @@
+{
+  "status": 200,
+  "seconds": 4.31,
+  "data": {
+    "model": "claude-opus-5-5",
+    "id": "msg_011CgbEaMpHvaL1gtTi89MpU",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "compaction",
+        "content": "I'm leaving my earlier private reasoning out of this summary; here's what's needed to continue:\n\n- **Task:** Choose a store for about 2,000 small JSON records. One process writes them; a CLI reads them and must start in under 50 ms on a laptop.\n- **Options given:** (A) SQLite, (B) one JSON file per record, (C) a Postgres server.\n- **Constraint:** The user asked for the letter only.\n- **Answer given:** A.\n- **Status:** No follow-up yet. Keep replies short.",
+        "signature": "CAISkgoKHggTGALyARdjb21wYWN0aW9uX3NpZ25hdHVyZV92MRIMFIHRpcGYwcDZ0ZxNGgzmBoR6rCZP7P5kBfgiMLmERyA8Tf6S8dI+XcNR3cDI+26pm1RaVaBvGzFFBrnI/T7ddZfrhLIlyiI1ciixqCqhCSZ363Kx0GNIhIzRo50XOmQW2qjLFiJ7tnHA9WM9fKyL/ESkTjbZe/eWpEW8e92+7yGGxfx8Gku3WOeX5SwogZISoyYcOYt8yZV5ZRT/Yt7qdi3m2qEKg+DytItHDpbJwiETDym7KrPjSgE3UDazkYTJGrDRZNIaBlrGqnhJYtVmHL2gLfIVkbAPKaRt0F/dI4XwCchK2TfSH7OrBXhENzXQSC44ZiwQCkpkjKqiARVFk+v8NJhQF+kSXwUqVhgbyiuOwbfwAJnDB6MW7TLnJbqq5xSdBZfUKLkgy5ro/JiplHNjGr1CbxtVPngowsj3mo7Xu4gsMq04Qc+soHW8WwHS16d3Y/AXVlcdn6FXmcHJkIEcfke5P2l364lhuqppVyM4WfPgvuQz6zOaEbnRLVOLbWgcRELI1IMz5eifgoLiobXWSbsBbgBAk5fepTbDibdDx4e5cfzosexPDtJ3FtsMwWolFgOoQ6eu4DjVRXXy/viG4jE+3MQitgXvr/2Xzh80t5Ch4OO7kFQomjXLiGcbwt+sAPLYWv8NVqSw9+op4SPWJhnM9ERLUIDDF/HG1RPHo9h+SqEtNYmdLcp09q67Vx5Fz3hIWdspcV0N4E72Zb+90X1uAdpSF9oh5CVjXVbbukpmOLj3aZVGZ7MSNioty/qpCDdlpXbPiSjDbScVsSzowIzG0V33ndNjIajCniaUdmamWl1sFHaW35g/Y+1g3kuSjPhyv8U5Z57hMupV791uP1ir1m/Y8znTI/OORZukYPuDchfsAK6D80RSvbkya+YTCtJMKGTkf3dnlzWNJQizC9k0LdftV4VWCF1Zzc6kS4QQDqHavPHtDfO+IRCgBfTh3v5bvPtK48eKJS8bMneCXgTRpv2RxhM10uFQqMLaWV8w5FVHJUNxlmBPEI1n/9zJXQg/NX+u/F7JkD/BwvjZZSvyNghCR69YMUJ1wjH1+QJFRDSQs+ksqyVM8Drt4bIvS41uKGWCfQFqWy/Ru1pstNFb3q9bIODj6th7Q7GdNbzbuWOeSIEhVoNp2IfO7i+7GMUJzroPXV7aP+6pqEhd4wLVQ9E2gYCj7YEAqI+3Ke2g945xZoRc+1f6KqIJ7gIYZ27OdXal1HHxMOgwxEO85nYQeWzyTDMnjyz3STnD0fd2IiB+fN5GB92iDM9oHJw1+vF+Zw/tdrMfRzDG4rd6ikgTT5Ky5WJewiWgytH5wEmvqAfTTPV5aX7XN7neI/lkU/Ra4hZcKf1E4sdMSHSuUgQ3o7PoZpQ7OWKUtutESw+9Yzp7jExK66tMssWFSW0ERhYt8mRXs7Hv+sD6xSlRT0UHMYvha9wfigL49OeHvkitorkvXF79bpB4JsCc5B0J45J1/iuBzVPKg2p1DHNFMFMreIL7gPWZcc1l11jhshuTYlnVDlTqBs31ZHlknPhmF7pTr9julh7GHBUJmWqWzhItzPCVwqrBOeyKZ1TPgEwonAtzMdIm8yVn9ny5NrJvYCvCd1xZsaxKhg4VljL5o5fr4hGLHqmlT2ColQ8JYSuM4uAy7m5BhW99oQxfFcgYqDuy1ULW1YMQeGUr0BgL"
+      }
+    ],
+    "container": null,
+    "stop_reason": "compaction",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "iterations": [
+        {
+          "input_tokens": 270,
+          "output_tokens": 347,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "compaction"
+        }
+      ],
+      "output_tokens": 0,
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "input_transformations": [],
+    "diagnostics": null
+  }
+}

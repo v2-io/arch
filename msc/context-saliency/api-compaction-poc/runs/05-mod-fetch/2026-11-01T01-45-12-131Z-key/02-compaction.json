@@ -1,0 +1,85 @@
+{
+  "credential": "api-key (file)",
+  "anthropicBetaSent": [
+    "compact-2026-09-04"
+  ],
+  "request": {
+    "model": "claude-haiku-5-5",
+    "max_tokens": 2048,
+    "messages": [
+      {
+        "role": "user",
+        "content": "I am building a recipe app. Help me name the main entities in the data model."
+      },
+      {
+        "role": "assistant",
+        "content": "Start with Recipe, Ingredient, and Step. Add a RecipeIngredient entry that holds the quantity and unit for each ingredient in a recipe."
+      }
+    ],
+    "compaction": {
+      "type": "summarize"
+    }
+  },
+  "status": 200,
+  "headers": {
+    "anthropic-organization-id": "230fd125-9d76-44fc-920d-8959297fa1dc",
+    "anthropic-ratelimit-input-tokens-limit": "10000000",
+    "anthropic-ratelimit-input-tokens-remaining": "10000000",
+    "anthropic-ratelimit-input-tokens-reset": "2026-11-01T01:45:14Z",
+    "anthropic-ratelimit-output-tokens-limit": "2000000",
+    "anthropic-ratelimit-output-tokens-remaining": "2000000",
+    "anthropic-ratelimit-output-tokens-reset": "2026-11-01T01:45:14Z",
+    "anthropic-ratelimit-requests-limit": "13000",
+    "anthropic-ratelimit-requests-remaining": "12999",
+    "anthropic-ratelimit-requests-reset": "2026-11-01T01:45:13Z",
+    "anthropic-ratelimit-tokens-limit": "12000000",
+    "anthropic-ratelimit-tokens-remaining": "12000000",
+    "anthropic-ratelimit-tokens-reset": "2026-11-01T01:45:14Z",
+    "anthropic-workspace-id": "wrkspc_01DeJ5qTebUjRzJKjARnQnFG",
+    "request-id": "req_011CgbMysTighJmgjSrh6SrN"
+  },
+  "data": {
+    "model": "claude-haiku-5-5",
+    "id": "msg_011CgbMysnKBCMB6zduvmNPa",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "compaction",
+        "content": "The user is building a recipe app and asked for help naming the main entities in the data model. I suggested Recipe, Ingredient, and Step as the core entities, and proposed RecipeIngredient as a join entity that stores the quantity and unit of each ingredient within a given recipe. No other decisions have been made yet.",
+        "signature": "CAISwQkKHggTGALyARdjb21wYWN0aW9uX3NpZ25hdHVyZV92MRIM1P42dy+Rv7BxvS88GgyueBRAo4EALnvwxfgiMGarzt0bAhjmNxck/FkvIHC1W6hA8Ge//eQHrKkzs45KsPNpAxJISRNzDp9N2GG03SrQCPd9wHHX3v3T3QmVNrUJZI6zlHqYGasC/3jGR6q1P0hcuP573EWlniSeQ88NTgAA38BhmP0Ac2PR6FkrlrSJZRlNnuEfnjFs/BZ0CfqcC1YttW1f633Fs/rzYfUZryH6+jOXR0e6Sh78zcUw4Yvi4//pmGlLlexMhSnKLsOss5wLUmty2lBc67aEhvjCRa/WOgcoMtu1XjU20Di9x54mUBKywxw2i3RfvF0fujQOX7vhHCQ4IZDd3qhjOqN0gZxejRc3AYOzTCryO1AFo2AGENWRRDxLox0MkmQf+++0clGCX6c9B7xY6Twsf5iwW4lvehGJUpHO55cMjwqVkigv1ZUor3oHsO9rZDQ93ddg9NOqLr5Htvf7ePoTzX3YVQ1dLFnJNiKaJLUya7YME2F71xNFt1/QdEO7OqKZIQHOgYxHVB7EoSGs6L7DjQmCK6iwZRhPCIz9PDnneNR7Qx5QZxA2IRknNNwJLoRz9bOmjffT1DpdbaH+p/hy1Yua2did0WCSJ5HnHlcxW2IISt/dk0SP/hzH1RGAKWbJaFDZepagz/d8ERD9z0VP7un3Gv9Wg2qOe8xWIfnE6CGQdsTcJo1qkV7exT9ptPVhFuiidYFwywFhnzBqczu+LvYBwLRjzDZG1fZ67bBQfWvWfdFOhcTIKO/16I0KX7RWlt93UQMioc43FRDbU6YZySmV8UhJcFBOYKdf1xYEWUZfYjyPRJivjnksGtmtzLghOsHhzA1QfG5dahYgY9ndnu5Sasapx8VPoRRHrhmTuaVGuMt9nBCQmd+qeELBXzKmTrN19Nx+ANLzlj7sRIEHCcXWimns1KCvc70nOfszSEG99Y368EA/n8KHpNzObNnXMq3nJrI9i4riMIXjF6mHbUvH5caZL+a7Fp4tzP1yMxE+JxV4NF94T2uQLB7LLh88DJ/Q22Dvh7k5zzrB+Z05ghNxo/q6kM3RSirkOjhVjU99vFyFoYXG1DLRc7nqoOmgEJan1D/N8ITVf6Kw/D7dv46y8dFWB7wGh9vU+j7kQxQ+25P1kbj3RxQXyDkPElY1UJ51xrQzxAJx3ItrwkGNHcMBYhI+n05gVXhXo56UGBdIssPIwz2gso90yJ/K782UJafKCPnZ5pEc8QDC3iD6LnzQI0xkZx0rIRpFFknaftNhZQSZfKC0kfG3KcW8WGDxb0r89M1Rngo/HM/uSRKxioEODrS58uAE67Qia6AJJlBosQuTjjIjv98dQz1qr0SwvBhf4O5XSWRo+uMWBVZt0hsS/TCcsLobWNZTVk1zHmIfpuNOlu0J601kD1FD03X33kgekj6ExHn8irF9eLeEs8UC6jf+WTq2FuTM6KkFFbrDnf6nlOXs2lJajE5iA9LNCT9oWP6HdoaWLqv0UqGCK4Ofpn8OT2f2WhzKjI8xwPOmsOuPDt9Dbu0GtuW8liefT8QD/VDK9auiaol22naLIYElESfNZRgL"
+      }
+    ],
+    "container": null,
+    "stop_reason": "compaction",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "iterations": [
+        {
+          "input_tokens": 143,
+          "output_tokens": 169,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "compaction"
+        }
+      ],
+      "output_tokens": 0,
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "diagnostics": null
+  }
+}

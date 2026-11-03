@@ -1,0 +1,12 @@
+{
+  "messagesInSession": 272,
+  "messagesSent": 272,
+  "requestChars": 2347923,
+  "advisorCallsReplaced": 2,
+  "thinkingBlocksSent": 175,
+  "betas": [
+    "compact-2026-09-04",
+    "thinking-binding-controls-2026-08-01",
+    "advisor-tool-2026-03-01"
+  ]
+}

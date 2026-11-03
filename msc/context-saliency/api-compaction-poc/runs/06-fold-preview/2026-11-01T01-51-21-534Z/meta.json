@@ -1,0 +1,15 @@
+{
+  "messagesSent": 264,
+  "messagesInSession": 264,
+  "requestChars": 2329544,
+  "seconds": 1,
+  "status": 400,
+  "thinkingBlocksSent": 171,
+  "error": {
+    "type": "invalid_request_error",
+    "message": "Advisor tool result content could not be processed."
+  },
+  "request_id": "req_011CgbNT3QzzKbTXuc2eNxFW",
+  "org": "230fd125-9d76-44fc-920d-8959297fa1dc",
+  "instructions": "Write a chronological log of the conversation above, for the instance that will continue it. Open with one line saying what it is: a log written from the conversation, shortened where marked, with the full transcript kept by the harness.\n\nWrite in the third person: \"the user\" and \"the assistant\", never \"I\".\n\nTime is the spine. Go through the conversation in order and record each stretch as it happened: what was asked, what was done, what was found, what was decided.\n\n- The user's messages: quote each in full, in order. If you must shorten one, quote its opening and say how much you cut.\n- Place each constraint, preference, decision, correction and open question at the point where it arose or changed, in the words it was stated in, with its status at that point (proposed, tried, settled, reversed). When a later turn changes its status, record that at the later point; don't move it earlier.\n- Take constraints and preferences only from the messages of this conversation, and say whose message each came from. Don't restate system instructions or tool definitions, and don't attribute them to the user.\n- Keep dead ends where they happened: what was tried, how many attempts, what failed.\n- Fold routine runs of tool calls into one line each: what they were for and what came of them, with counts. Name files and paths exactly.\n- Mark every place you shortened or left something out: [omitted: what, about how much]. A named omission is fine; a hidden one is not.\n- End with where things stand, what is open, which files the next instance should read whole before acting, and what it will need that those files won't tell it.\n\nAim for roughly 12,000 to 18,000 words. Don't call tools. Respond with the log only."
+}

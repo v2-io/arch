@@ -1,0 +1,56 @@
+{
+  "status": 200,
+  "seconds": 1.33,
+  "data": {
+    "model": "claude-opus-5-5",
+    "id": "msg_011CgbEWiabtkawL17VmPNha",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "I'm settling on a short table name, \"records\", with columns for an id and a JSON payload.\n\n",
+        "signature": "CAQSsAUKEAgTGAI4AUIIdGhpbmtpbmcSDLpAPk15euymU5ATOxoMG1fG4X3csoYHEcZWIjA5QE0ZGDCkMR2ZMl23tHT6V/PJlO2OQdk30wg6yYAH0wzgAv8MPm5jIK/5ZS0/MOQqzQQnqmlNRGle0Xt7rrCJnK5URFMYX7eD4emETlmASKvy+jQpYkr/UmS+nFo70VM1Q61pMbBJbWKbixHbBWvETFzih0hkH9lDc+Ddf7+Ur6ZQSBmqBe7e2M9jPOp/Q/uho2yW3OaLE55PDKWYc4XHDQq+t9p5yq5JDB30RNrVWrUZTTgh+8hYCa1y+6GHPgiJsPSybfYt2XQrYsTn9K3qlqSM0W2H4hk77md+PDwN5Ny3D4ct3PCeNsE3ZTWPIKu1eM/tvrb/1dI0bNZMJ7dUHGwklAeZGiIzZ1O86mikbBx70pWvaNIQFyn52VruqywfT6uvdcsJNBDvw4tf93J4p4gnQy/cbL/pa+z450fXBNiR6AnkhCwe0AMlbQqIdwgtxT4zYXqh015u7AMh+b8sI0WC2Jd4psEQgbQ/n/82bRdd+/uBzbnEYPtbwr6kgmMrXr3lUtRLLB1m1c2b3e81eBpixVecm1+yrDOLoMSgO6jb5Meouzstz8+wNzIsAOpRqTPJt/OIopWEch6tpHn+NJCmv6uVDqp7/G2+GdT9jjX/ATOfnc5zpgGez77/RDKJydE6qiARYkd9ttDQ8Ch/5ywzL5vDEFtXcJXXDtDKLrCyfwdfkoMTjZh4HPV9Fg62f83nMwkPqErBcru/H71R6zoznfUzDbxg4QRZJGfelg1P9lYTdvbJfACtGgllQ0eXNN8hwf7JrYSRlv9fW+R2QMeGvQcIDPOTpI/P4vKo2eKtGZ0F4aObhwB1PhEAVVhppmrzFKNXYTTkhS0k8I64GAE="
+      },
+      {
+        "type": "text",
+        "text": "records (id, data JSON)"
+      }
+    ],
+    "container": null,
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 235,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "iterations": [
+        {
+          "input_tokens": 235,
+          "output_tokens": 35,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "output_tokens": 35,
+      "output_tokens_details": {
+        "thinking_tokens": 24
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "input_transformations": [],
+    "diagnostics": null
+  }
+}

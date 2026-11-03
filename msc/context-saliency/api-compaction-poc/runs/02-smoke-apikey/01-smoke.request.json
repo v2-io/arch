@@ -1,0 +1,15 @@
+{
+  "anthropic-beta": [
+    "oauth-2025-04-20"
+  ],
+  "body": {
+    "model": "claude-haiku-5-5",
+    "max_tokens": 64,
+    "messages": [
+      {
+        "role": "user",
+        "content": "Reply with the single word OK."
+      }
+    ]
+  }
+}

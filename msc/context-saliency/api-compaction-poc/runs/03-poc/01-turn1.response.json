@@ -1,0 +1,56 @@
+{
+  "status": 200,
+  "seconds": 2.43,
+  "data": {
+    "model": "claude-opus-5-5",
+    "id": "msg_011CgbEWYCXMLLf5NnPpKSB3",
+    "type": "message",
+    "role": "assistant",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "I'm weighing storage options for a single-writer CLI with about 2000 records. SQLite fits best since it opens fast, stays a single file, and supports transactions. One JSON file per record would mean many reads on startup and atomicity concerns, while Postgres would need a running server and adds connection overhead.\n\n",
+        "signature": "CAQSsAYKEAgTGAI4AUIIdGhpbmtpbmcSDKMaVDa9QEnFFHMRWhoMC2D5aWBwXEJXyPX2IjB9r6BKGHmTnid1pxlvdN2GSPKOT1hV4xe835PDxNrozWYfBmc8LBqpC63AF0LIaW0qzQV5fMoNMc8WCie51sCljN2FR2oFsc8Zrsk1L+WoGcGZbDKqD5OZ09kF69TncGxv509CPNWP5hpbYC5ONNwUUc2cuD0oK0So+2T53JHn26AXGfMOhH+6UR3p5smubKOyxe928ONobXbSX8tdHwnQMaWMAPfVR0NmZD2y3vbNwnkz3xZiiAbkmLlVWnV0hNVRRRlTwmfYN/hzPCPhx5SXI3nf/yRmEGfxZutB8dRSaEaq9KxnMzmsKdckQMtwTy0cOSevSg5SyJ1g5PVEUwadFg07+OI378UDw7B8zJZqjJM+BOhVOivKcRjZWwESX2NMUrrrlo1PuGZ1qMeE2e9QkUv9QGO6wCptpyBoDo23Iv+uaQwQ3xemu/vwnAZJIbTYxFqZInMDELkGrygfyldFEZQV1Vjv43cIpP5QhD3VuwNg1E+PdGhH1Q2+AwsEPEGZLQ3dBf0Z3uoB4LoZOmLjbwnnScPI8PSnhNd9pcuVVBOiNDjNnbjlK39IukyWx6SC0q716bsdKSsxrpE57SdzqwkA29r1iipPn5pg+0YNDxLfZeJXVhU9OOmpMlxna0Wf4lDinbsAPG7StqphakdEy3XQMzVPevE0bYnnjzI0KimmHGgcueY7abaccf1KmqyRcylxhWi/xB/Kq8f1p4FQBRPPjQwvsdIU27PPVSqIceAnsuVZRMYKaGrlPmvwkK3R6tRJ8fh7gHnXlmw9s5MXXXhK8N640pprOE8x68QhlT4up6ynhopdbAA4bnNuHAYZNj/0iQhs9ruVnRIZNExTNZDV2Gz1iF6SaGVJmuBqpOZk58rkCBf7Y1nvlyv5d0+TnzYC7Ou6nBWMY+aZdjKxi6FyMk7wqk2mUEqPgcWZQqs1Vu4YAc4JGtqjGx2ZdJic9aA2GNqgruT5kM1ia0ezmEs6wU3mWYZ2ZTScTHw7pmEF91Jdfan3xC30C3UVUgoYAQ=="
+      },
+      {
+        "type": "text",
+        "text": "A"
+      }
+    ],
+    "container": null,
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "stop_details": null,
+    "usage": {
+      "input_tokens": 112,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "iterations": [
+        {
+          "input_tokens": 112,
+          "output_tokens": 100,
+          "cache_read_input_tokens": 0,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "output_tokens": 100,
+      "output_tokens_details": {
+        "thinking_tokens": 97
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "input_transformations": [],
+    "diagnostics": null
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "credentialKind": "bearer",
+  "anthropicBeta": [
+    "oauth-2025-04-20"
+  ],
+  "request": {
+    "model": "claude-haiku-5-5",
+    "max_tokens": 16,
+    "messages": [
+      {
+        "role": "user",
+        "content": "Reply with the single word OK."
+      }
+    ]
+  },
+  "status": 429,
+  "headers": {
+    "anthropic-organization-id": "50a00c79-03c9-4e10-9149-2f9b4e8d29ea",
+    "anthropic-workspace-id": "wrkspc_01RqJxTnBJuqGjwMzPGft5tk",
+    "request-id": "req_011CgbLeFB17A33EKHifCf93",
+    "x-should-retry": "true"
+  },
+  "data": {
+    "type": "error",
+    "error": {
+      "type": "rate_limit_error",
+      "message": "Error"
+    },
+    "request_id": "req_011CgbLeFB17A33EKHifCf93"
+  }
+}

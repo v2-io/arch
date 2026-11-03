@@ -1,0 +1,53 @@
+{
+  "anthropic-beta": [
+    "oauth-2025-04-20",
+    "compact-2026-09-04",
+    "thinking-binding-controls-2026-08-01"
+  ],
+  "body": {
+    "model": "claude-opus-5-5",
+    "max_tokens": 8192,
+    "system": "You help plan a small software project. Keep visible answers short.",
+    "thinking": {
+      "type": "adaptive",
+      "display": "summarized",
+      "block_binding": {
+        "prefix_mismatch_behavior": "error"
+      }
+    },
+    "messages": [
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "compaction",
+            "content": "**Context:** The user is planning a small software project. Visible answers should be kept short.\n\n**Requirements stated so far:**\n- Store about 2,000 small JSON records.\n- Records are written by a single process.\n- They are read by a CLI that must start in under 50 ms on a laptop.\n\n**Options presented by the user:**\n- (A) SQLite\n- (B) One JSON file per record\n- (C) A Postgres server\n\n**Decision so far:** The user asked for the letter only, and the assistant answered **A (SQLite)**. No rationale was given in the reply.\n\n**Not yet discussed (possible next topics):**\n- Schema or table layout\n- Database file location\n- Handling concurrent reads during writes (e.g., WAL mode)\n- How the CLI queries or loads records\n- Migration or backup approach",
+            "signature": "CAISkgoKHggTGALyARdjb21wYWN0aW9uX3NpZ25hdHVyZV92MRIM+ZkLvINvn6e3QvIJGgyI+9uDllrBlZ/2nj8iMM1oHgweKuRkqu1DtrxyEUFcUSdr3LVV8gd0uI7cxKtwDH2DLOKQwy5S1HAwoGv5ZyqhCaHY++6HfD/MLIvzOZRQ7lQD7akYCY37eYCg2i2X6znueFIXvEd2/oVxYRkDBO3gojxMHWrjACl1WkYiUpq1zsXwJjoqK1SvX0q576AUgdt20rWsit8ELFszHoZlQTnsWEiBQhaWjZq1+tApquwvuZQ3diHIp6cpA8nx01AO+jecVfFAWJETz4jFnhIdhpstBkYTwxXcWSBCWQUpuZRWrItmlr7M4Xxmx+VImkS41Q0GQLzVZES9/djehRakScz5w0LCmXiayulpJ3KbNtxNOjJY0OfHv8q1Pzb3LgOfSgtk0g8ArtO04VR5mOaz6112MHEwuJKYq5N143sqJ+Mtp2GejBdU1+a8bUO7Pp/0+X+kfOKi0CwbjHqavIZMv3O/zDo397Wqd9minHRmSPj46cRjL0ynYdz+VUx55kyjpg3X56zhq3gR5cQUqXhqgsX42hrh2RN9eKj2dqcBR5w46NqNKXIVWfa0wl9zIHsiQ6EquzQ1BZ2CRqcGljG7Cee9InvRUMAx2f66blLG+qInHi7hJp7zQTrceFjUOulirUgDcj6UatsEeX1zJj0CiF8V4sJcK7U7QEByo0UkTmpP9JxcHGHEaqblpeR1Wxew2Ey6hRDJJ5HvtKBn79ilobd5gP3TWIXQTTdZK9mCADTEQB7/F55BvzrOrxWNXC0inaBCgkt1iKvQ9ipt8Ig/aZoe4jBRxByno8dqkkyqw+DUMXV22tP/p+Dk+2BReM7wSFa2oXtOgzhBDrFOgZvSrcAbMNd4IT3crpucKHiZxi+MnaQSVHwYDMxxz5YKS71Xa8aGBCZWcS+VHQJEWb5YBK3pGVbwoUqA3K4dZIjtEO4f0yKQIY3sOnsGvnN6E0k2o4u4RwtAEERT1DGN8ih1KzL4oW2cZ12X3GQVD0H8VFhkMJKQ4DM3qg3bIHq8tjVkngN5jGIzreSk3omrZ6jbJ4pWrV4WPGrAKZV7ryQiPlurL/IkzirpIT88QyVtiEcRYFzjQNdY6sZdxfskZZyVmqWz15CNT85IOSF8lTi+SbagPfhuBK12wMPYHcuz0BlekR8R7zI7Pg0GVXFhwo17iXP91jH/xVJ3KnlC9Y9ZdwYqU/xPBxvW5pmx2Rz/tHILdagdO1QH3Aa4xQse79dlLXRkVL3fyl3bxXOwng8cRe4LjPJMy+sRZ7+yavW3iyPKc8XwiW8WlUcYnwgz9N7TyKdEcRZCyXH9kx1P9B+TDFUIL+10PXvvBNMui0NlpRd8HLlhQxdrceQkg3IjgZEESIbrRIPH7uJye2uMNC7pTwYJP0vlz/jj8f2uDGBae3i7HTA+DG2yp5ScctVU0JseCS6R0EMmd0Fsl/Cdr7D5vrCpXbMqNh03v9QUk2F3nr4csUG8azAfZ54HRbEGSGDh+k/aIeLbgeZIGEwygxzS/ke1/wWL3bEH5LuMQ4cwnTU5lI9R03v02ICeo7DC2V45mL/cZmCR7I0tdRVo5lOLIzw/5Z06snhldjqC5JuTz73e1CsEXExPgVF2sh/8uhe2L7MCkMTE6b1AFeZCmO2Baje5afCU+Av8bXxuWtAkyqZVmBFvcRgL"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "Name the one table or directory we need, in five words or fewer."
+      },
+      {
+        "role": "assistant",
+        "content": [
+          {
+            "type": "thinking",
+            "thinking": "I'm settling on a short table name, \"records\", with columns for an id and a JSON payload.\n\n",
+            "signature": "CAQSsAUKEAgTGAI4AUIIdGhpbmtpbmcSDLpAPk15euymU5ATOxoMG1fG4X3csoYHEcZWIjA5QE0ZGDCkMR2ZMl23tHT6V/PJlO2OQdk30wg6yYAH0wzgAv8MPm5jIK/5ZS0/MOQqzQQnqmlNRGle0Xt7rrCJnK5URFMYX7eD4emETlmASKvy+jQpYkr/UmS+nFo70VM1Q61pMbBJbWKbixHbBWvETFzih0hkH9lDc+Ddf7+Ur6ZQSBmqBe7e2M9jPOp/Q/uho2yW3OaLE55PDKWYc4XHDQq+t9p5yq5JDB30RNrVWrUZTTgh+8hYCa1y+6GHPgiJsPSybfYt2XQrYsTn9K3qlqSM0W2H4hk77md+PDwN5Ny3D4ct3PCeNsE3ZTWPIKu1eM/tvrb/1dI0bNZMJ7dUHGwklAeZGiIzZ1O86mikbBx70pWvaNIQFyn52VruqywfT6uvdcsJNBDvw4tf93J4p4gnQy/cbL/pa+z450fXBNiR6AnkhCwe0AMlbQqIdwgtxT4zYXqh015u7AMh+b8sI0WC2Jd4psEQgbQ/n/82bRdd+/uBzbnEYPtbwr6kgmMrXr3lUtRLLB1m1c2b3e81eBpixVecm1+yrDOLoMSgO6jb5Meouzstz8+wNzIsAOpRqTPJt/OIopWEch6tpHn+NJCmv6uVDqp7/G2+GdT9jjX/ATOfnc5zpgGez77/RDKJydE6qiARYkd9ttDQ8Ch/5ywzL5vDEFtXcJXXDtDKLrCyfwdfkoMTjZh4HPV9Fg62f83nMwkPqErBcru/H71R6zoznfUzDbxg4QRZJGfelg1P9lYTdvbJfACtGgllQ0eXNN8hwf7JrYSRlv9fW+R2QMeGvQcIDPOTpI/P4vKo2eKtGZ0F4aObhwB1PhEAVVhppmrzFKNXYTTkhS0k8I64GAE="
+          },
+          {
+            "type": "text",
+            "text": "records (id, data JSON)"
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "Which option did we choose at the start, and why?"
+      }
+    ]
+  }
+}
