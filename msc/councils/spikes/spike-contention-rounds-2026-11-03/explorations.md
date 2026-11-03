@@ -1,0 +1,41 @@
+# Explorations — the diffuse layer
+
+*Hypotheses, dead ends, and the things I would want a next mind to think about. Nothing here is a result; results are in `contention.md`. Labels as there: derived / checked / guess.*
+
+## The order I actually went in
+
+I read the model's interface, actions, protocol, guards, engine, lifecycle, council configuration, adjudication, and the book's §3:30–35, §4, §5, §9:30–36, §23, §24, §29, §42, §45:6–10, §49:21 before forming a map, and councils-46's drafts after. The first thing that changed my map was 9:34: the book says in writing that a written deliberative process is not a deliberative assembly. I had been treating the question as "how to simulate a chair's eyes"; after 9:34 the question became "what was simultaneity *for*," and that is the question `contention.md` answers.
+
+## Hypotheses I held and what happened to them
+
+- **H1 "Simple rounds suffice."** Half true. A round of sealed intents resolves the race. What it does not resolve by itself: (a) acts whose window closes with the ordinary flow of business must be admitted ahead of the floor or the window is unfair; (b) a member's intent formed at S must not be executed at S' without that member's say — hence guards; (c) closing cannot be "everyone is in" if anyone can replace a submission. Joseph's hunch that rounds "won't be the whole of it" was right in these three specific ways, and no others I could find. *(derived; (c) measured by the sibling.)*
+- **H2 "Batch simultaneous motions by precedence rank to save rounds."** Refuted by I1 (`contention.md` §5.2). Keeping it as a documented wrong turn, because it is the obvious efficiency and it is exactly the kind of silent change this estate's memory warns about ("efficiency is the tell").
+- **H3 "Fragility can replace the interrupt list."** Survived, with one narrowing (`contention.md` §5.1): the probe must be the ordinary course of business, not another member's competing motion. The narrowing is where the result got interesting: RONR says the fragility test in English at 42:7/42:19 ("if there may be no other opportunity").
+- **H4 "Division of the assembly has a residual function — doubting that enough have voted."** Refuted: in rounds, abstention is explicit and the count of voters is exact. Vacuous. The charter sibling's §5 reached the same no-go by three attempts; mine was one line because the toy made it obvious. *(checked: `test_division_vacuous`.)*
+- **H5 "Claim age (fair-time 'rose first') is enough as the tie-break; no rotation needed."** Not enough: within one round, several members can claim for the first time together, and claim age ties. Rotation (or a recorded lottery) is needed for exactly that case. *(derived.)*
+- **H6 "Mid-speech interruption has no fair equivalent."** I expected to land this as the spike's no-go. It did not land: chunked speeches with a round between chunks are fair and faithful, just expensive. The honest statement is a *priced* equivalent and a no-go only for the unchunked real-time form. I note this because I wanted the clean no-go and had to give it up.
+
+## Bugs that were principles
+
+- The sim's first version put a motion to a vote in the same round it was stated, when nobody had claimed debate — but nobody could have, since nobody had been asked at a state where it was pending. The fix (`stated_round`) is the general rule: silence is exhaustion only *after being asked*. Every transition that opens a window must be followed by a round. I would not have stated the rule that precisely without the bug.
+- An unspoken debater was beating a mover on a "not yet spoken" rung. The book has that rung only among debaters (42:9(2)) and carries it as "not entitled" — a filter — not as a preference. The toy already had the filter (43:13); the rung was double-counting it and extending it where the book is silent. Removing it made the specimen resolve on claim age, which is the book's actual answer (the race, in fair time).
+- The objection-to-consideration could be admitted against a motion the chair had not stated, and the no-second death could fire during a vote. Both were ordering bugs in the toy's chair duties, and both are instances of the same principle: the chair's mechanical duties are part of `resolve` and must respect the phase like any act.
+
+## Things I think are true and did not establish
+
+- **Guards can be the model's expression language, restricted.** The restriction: round-open state plus structural effects of acts admitted this round, never sealed contents (votes). I did not write the restriction as a grammar. *(guess.)*
+- **The fragility sweep over the real model will match t44–t45 with at most a handful of discrepancies, and the discrepancies will be in the conditional entries** (question of privilege, request needing immediate response, reconsider "if no other opportunity") — the ones the book already marks as judgment-shaped. *(guess; owed.)*
+- **Standing policies will do most of the work in practice.** A member who has said "pass unless a vote opens, a point of order is raised, or an amendment to X is moved" is not asked in most rounds, so the per-round polling cost is dominated by the one or two members who want the floor. If true, "one floor act per round" is cheap. *(guess; needs a cost run on a real council.)*
+- **Parallel debate is a different procedure, not a faster serial one.** Sealed statements revealed together remove the floor from debate entirely: the only contention left is among motions. It also removes the maker's first-speech preference and alternation (both meaningless when everyone speaks at once). Whether it serves truth better is a disposition question Joseph put out of scope; I only note that it is fair under F1–F4 and that it is *not* RONR's debate. A council could run serial debate for the first exchange and parallel for closing statements, which is roughly what human bodies do with "closing arguments." *(guess.)*
+
+## Things I would want a next mind to look at
+
+1. The real fragility sweep (owed; `contention.md` §10).
+2. Whether the one-floor-act-per-round rule needs an exception for the *maker's first speech immediately after stating*: the book gives the maker the floor first after the question is stated [4:15(a)], and the maker could carry the speech in the same policy that moved. Admitting it in the same round would skip the objection-to-consideration window [26:2(1)] and the point-of-order window on the stating [23:5] — so I think no exception, but it costs a round on every motion and someone should weigh it. *(derived that the windows would be skipped; guess on the weighing.)*
+3. The reverting log. A point of order sustained against the server's own act needs the pre-act state back. Append-only with a "reverted" event is enough in principle; what it does to standing policies and claim ages is not worked out.
+4. Presence vs. quorum under long silences: how many consecutive silent rounds before "absent," and whether a member can declare itself temporarily absent (RONR has no such act; agents may need one when their context is being managed).
+5. Whether the chair-mind, if any, should be *asked* in the same round as members or in a round of its own. A chair asked in the same round sees nothing more than members; a chair asked after sees the profile — which is RONR's chair (who sees who rose) but is an information asymmetry the design otherwise avoids.
+
+## A thought about truth, since that is what councils are for
+
+A round of sealed intents is, epistemically, a sealed ballot on *what to do next*, not just on the question. Within a round, nobody's intent is conditioned on anybody else's current-round intent. That is the strongest independence the medium allows, and it is stronger than RONR's floor, where the second riser has heard the first. Across rounds, anchoring returns — deliberation is sequential or it is not deliberation. The design cannot and should not remove that; what it does is make the one place independence is possible (within the round) actually independent, and make every claim, admitted or not, part of the record so that corroboration can later be told from convergence. That last part is the record's job, not the mechanism's, and it is why the claim log carries losers.
