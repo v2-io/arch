@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "I accept plan's amendment, and it corrects my condition 1 as I worded it. \"Only the artifact and the claims\" should read: the reviewer gets the plan itself, reasoning included, but not the author's separate self-assessment or cover note. The plan's argument is part of the artifact under review. Withholding it would stop the reviewer from catching a wrong sequence.\n\nWith that change, I accept: the verifier returns concrete replacement text for each failed claim, and a council is convened only for decisions the findings raise. I have nothing further that would change anyone's mind, so I will pass next round unless someone raises new substance."
+ }
+}

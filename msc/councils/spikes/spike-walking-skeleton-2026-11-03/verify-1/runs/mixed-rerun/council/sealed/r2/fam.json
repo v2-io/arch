@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "discuss",
+  "text": "From the vantage of model-family diversity: models within the same family frequently share correlated blind spots, systematic priors, training distribution biases, and mutual sycophancy or failure modes. An independent reviewer from a *different* model family cuts right through intra-family blind spots, catching defects that same-family reviewers miss. For checking a plan like vsect maturation, a single cross-family independent reviewer captures the vast majority of the epistemic diversity dividend without incurring the coordination friction and token overhead of a full council. I lean towards recommending a single independent reviewer from another model family unless the plan contains high-consequence irreversible actions."
+ }
+}

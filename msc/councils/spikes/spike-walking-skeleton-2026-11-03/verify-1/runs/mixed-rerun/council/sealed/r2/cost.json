@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Recommend one independent reviewer from another model family as the default check. It is one review latency and token/attention budget, while preserving the key independence benefit evidenced by the 43% defect-finding rate. Use a council only when the plan is unusually high-stakes, ambiguous, or multi-domain enough that one reviewer is unlikely to cover the failure modes; otherwise the council's coordination, repeated context, and steward-attention costs are unlikely to change the action enough to justify them."
+ }
+}

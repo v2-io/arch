@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "I support the added implementation details. For cost, the reviewer should receive the plan artifact, including its reasoning, but not an author-supplied grade or approval framing; withholding useful context would force a second pass and increase latency. Require concrete replacement edits so the output directly changes the plan, while treating the 43% figure as directional evidence rather than a precise controlled rate."
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. The words now match the review that improves a draft: one cross-family reviewer, the plan handed over with its reasoning, no separate self-assessment, replacement text for failed claims, and a council only when a finding is a decision.",
+  "vote": "yes"
+ }
+}

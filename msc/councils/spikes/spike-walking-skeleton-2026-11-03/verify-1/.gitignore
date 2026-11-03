@@ -1,0 +1,11 @@
+# same classes the spike's own .gitignore keeps out of the record: seat tokens,
+# harness homes that symlink real auth files, per-run working dirs, runtime state
+**/tokens*.json
+**/codexhome/
+**/grokhome/
+runs/**/cwd/
+runs/**/cwd-*/
+**/lock
+**/__pycache__/
+**/*.tmp.*
+tmp/

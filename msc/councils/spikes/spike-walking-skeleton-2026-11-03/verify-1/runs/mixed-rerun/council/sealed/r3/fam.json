@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "I strongly support this motion. It aligns cleanly with the model-family diversity perspective: epistemic diversity is achieved primarily by breaking correlated failure modes across architectures/pre-training sets, which a single cross-family reviewer accomplishes directly. Crucially, condition 1 (verifier sees only the artifact and claims, not author reasoning) protects against cross-family sycophancy/priming, while condition 2 ensures falsifiable claim verification. Reserving councils for normative/trade-off decisions rather than raw verification is the exact right division of labor."
+ }
+}

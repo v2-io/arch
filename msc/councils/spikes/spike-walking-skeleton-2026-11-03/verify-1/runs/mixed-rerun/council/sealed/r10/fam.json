@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. Unambiguously captures the consensus.",
+  "vote": "yes"
+ }
+}

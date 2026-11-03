@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Present. I will assess review options by added latency, token/attention cost, and whether the check is likely to change the action."
+ }
+}

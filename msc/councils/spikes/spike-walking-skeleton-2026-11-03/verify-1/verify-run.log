@@ -1,0 +1,43 @@
+== A driver-mode seat gap
+  after driver turn ended: holder ts = 0 (0 means released)
+  stranger claims seat A between driver turns -> HELD epoch 2 by launcher:stranger
+  driver's next turn -> REFUSED: Seat A is already held by another live connection (launcher:stranger, holder since 0s ago,
+  RESULT: CONFIRMED DEFECT — seat unguarded between driver turns
+== B SIGKILL lease lapse
+  immediately after SIGKILL of holder X: Y -> refused (lease live)
+  after lease_s: Y -> held epoch 2, previous {'epoch': 1, 'lapsed_for_s': 5.1, 'principal': 'launcher:X', 'released': False}
+  RESULT: claim holds (SIGKILL -> lapse -> takeover, epoch 2, 'lapsed' not 'released')
+== C concurrency stress
+  meeting 0: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 1: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 2: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 3: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 4: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 5: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 6: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 7: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  RESULT: lock discipline held under 20 writers + 2 tickers x 8 meetings
+== D1 partial withdraw / debate limit
+  max_debate_rounds=3; one co-maker withdrew in debate round 2; question put after debate round 5
+  RESULT: CONFIRMED DEFECT — partial withdrawal reset the debate-round limit (put at 5, expected 3)
+== D2 all-gone adjourn in ticks
+  ticks: ['r1', 'r2', None, None, None]; adjourned=True after 0.00s; reason: ['no quorum in 2 consecutive rounds']
+  RESULT: observation (design): inquorate rounds are ticks, not time; a convene with nobody arriving adjourns on the second tick after arrival_grace_s
+== D3 stuck live member
+  r1 closed after 3.1s by backstop-deadline (absent ['A'], gone []); r2 closed after 3.0s by backstop-deadline (absent ['A'], gone [])
+  RESULT: confirmed: a live-but-silent seat costs the full backstop every round, with no escalation to 'gone'
+== D4 late submission dropped
+  late submit -> ok=False: round r1 is not open (open round: r2)
+  content of the late intent anywhere in receipts/events: False; refusal receipt carries intent_sha: False
+== D5 replace promise
+  council_submit description says: "Submit your sealed intent for the open round. Nobody sees it until the round closes, when everyone's are revealed together. You may replace it until the round c"
+  seat_token advertised on single-seat server: False
+  status view after submitting: You have submitted (sealed): {'action': 'present'}. You may replace it until the round closes.
+  second submit -> REFUSED: REFUSED: you already submitted in r1; submissions are final (charter round_policy.replaceable=false)
+  RESULT: CONFIRMED: members are told twice they may replace; the server refuses
+== E replay is not tamper evidence
+  tampered trial-4 (all r8 votes -> no, sealed/ deleted): steward replay says: events: 34; chain: OK; replay: OK (every derived event recomputed identically)
+  vote-result now: rejected {'abstain': 0, 'no': 4, 'yes': 0}
+  RESULT: CONFIRMED: replay+chain are derivation checks, not tamper evidence; sealed/ is not cross-checked
+== F never-present vs grace
+  B present, A never arrived, grace 1s: r1 closed=r1 by all-submitted-or-gone gone=['A']

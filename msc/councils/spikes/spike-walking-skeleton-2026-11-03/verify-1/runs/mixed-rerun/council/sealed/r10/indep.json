@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. This states the reading that the adopted motion needed: the reviewer gets the plan with its reasoning, not a separate self-assessment or cover note.",
+  "vote": "yes"
+ }
+}

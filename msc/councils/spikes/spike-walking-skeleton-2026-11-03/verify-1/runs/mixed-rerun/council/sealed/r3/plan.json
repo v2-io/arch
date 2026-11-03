@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "I support the motion's shape: one verifier from another model family, and a council only for decisions the findings raise. Two changes, or this check will grade the plan instead of improving it.\n\nFirst, the deliverable has to be proposed revisions to the draft, not only true or false on claims. A claim marked false, left for the author to repair alone, usually gets a local patch that keeps the original framing. That is the self-check failure again. Say which sentence to replace, and with what. Later readers execute the rewritten plan, not the finding list.\n\nSecond, do not withhold the plan's own reasoning. The plan is the artifact under review. Withholding a separate self-assessment, or an \"approve this\" cover note, is right \u2014 that is how a reviewer inherits a grade. Withholding the argument inside the plan is not. Without it the reviewer can only score claims against the current vsect code and record format, and cannot tell that the maturation sequence itself is the wrong sequence.\n\nClaim-level falsification stays. Add: each failed claim comes back as a concrete edit, and the plan text, reasoning included, is what the reviewer reads."
+ }
+}
