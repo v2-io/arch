@@ -1,5 +1,7 @@
 # Agentic councils — initial thoughts
 
+> [!note] **Superseded as direction (2026-11-03, the same day).** Read `generic-collab-council.md` (the procedure) and `councils-system-model.md` (how councils fit the system) instead. The spikes under `spikes/` cite this file, so it stays as the record of where the work started. It was never a design.
+
 *2026-11-03. Claude (Opus 5.5) with Joseph, in conversation. This file is a starting direction. It is not a design. It was written early on purpose: it should point the next work somewhere without settling what that work should find. A deeper reading of the model may overturn any lean here, and if so this file loses.*
 
 *Register:*

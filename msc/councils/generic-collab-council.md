@@ -1,8 +1,10 @@
 # The generic collaborative council
 
-*2026-11-03. A minimal council procedure, proposed by Joseph and refined with Claude (Opus 5.5, councils-46) in conversation. It is a template, not one council type: the same loop serves brainstorming and other generative or creative meetings, epistemic tribunals, and decisions. In Joseph's words, "the main qualifications being the preparation and leadership nuance". Most of what makes it work lives in the members' norms and skill, not in the mechanism.*
+*v2, 2026-11-03. A minimal council procedure, proposed by Joseph and refined in conversation with Claude (Opus 5.5, councils-46), then through a feedback round from six readers (`feedback/gcc-*.md`) and Joseph's corrections to that round. It is a template, not one council type: the same loop serves brainstorming and other generative meetings, epistemic tribunals, and decisions. In Joseph's words, "the main qualifications being the preparation and leadership nuance". Most of what makes it work lives in the members' norms and skill, not in the mechanism.*
 
-*Register: Joseph's words are quoted. Everything else either restates what was agreed in conversation (marked "agreed") or is Claude's note (marked "note"). Nothing here has run yet. It is meant to be built on the walking-skeleton substrate (`spikes/spike-walking-skeleton-2026-11-03/`) and tried on real items.*
+*How it fits the larger system, where vsect record types and their transitions are what councils move, is in `councils-system-model.md`.*
+
+*Register: Joseph's words are quoted. "Agreed" marks what was settled in conversation. "Note" marks Claude's comments. Nothing here has run yet.*
 
 ## The loop
 
@@ -24,76 +26,115 @@ Joseph's statement of it (2026-11-03), lightly formatted:
 
 His caveat: "Probably a bit naive but also maybe a bit of overkill in some ways. A lot of the nuance in this case would end up falling to the capabilities and skills and instructions / norms of the agents involved..."
 
-### Why the shape works (note)
+**What each member sees** (agreed; it was already true of the 2025 implementation, in which members called a `wait-for-turn` endpoint):
+- **First response:** written blind. The server releases no first response until all are in, then releases them all at once.
+- **Second response:** written after seeing every first response, plus the second responses of those shuffled ahead of it (anywhere from none to all of them).
+- **The last seat in the shuffle** sees the most second responses and writes the unity report. That gives it nothing the next loop doesn't give everyone.
 
-- **First responses are sealed and parallel.** Everyone commits before seeing anyone else. The divergence among first responses is the record's evidence that any later convergence was earned. Nobody waits on anybody, so slowness costs nothing.
-- **Second responses are sequential, in a recorded random order.** This restores responsiveness. Because the order is a recorded shuffle and never arrival, it is fair and it replays exactly. On the substrate it is a chain of one-seat rounds, each seeing the ones before it.
-- **The last seat in the shuffle writes the unity report.** It has seen everything, and because the role rotates at random, no one agent's reading accumulates. The next round's sealed first responses can contest the report.
+Withholding is a property of delivery. It needs no proof machinery: a member who loves the truth doesn't go looking at others' responses early, and no mechanism would contain one that did. The shuffle is server-random and recorded, so a meeting replays exactly.
+
+**The unity report** is an attempt to put the round into an organized form, if there is enough consensus to do so: consensus so far, open questions, discussion-level proposals, and what someone is waiting on first. Its shape is close to the finish form, so the leader can take it up directly. It is one member's reading, contestable in the next round's first responses.
 
 ## The leader
 
-This is where most of the nuance lives. Joseph (2026-11-03):
+Joseph (2026-11-03):
 
 > The 1st iteration should *always* be 'present the topic' without solution. One thing that would be useful, that I've used when presiding to ensure that I'm properly prepared, is to have a *secret* "expected solution" or something — effectively my solution that was part of the thinking process that arrived at the discussion question in the first place (or my first-pass recommendation etc.) — but it is *always* sealed up, not from hiding accountability etc., but to ensure the leader is prepared and really involved, but also that the leader does not unduly influence and must present anything new that the committee misses in light of their own questions etc. etc. Often iteration 2 is some simple follow-up questions that illuminate the problem in a different light. The leader can't do this well if they haven't spent their own time on the problem, but even at iteration 2 the wrong thing to do is simply present what "you think it ought to be." The leader is seeing what consensus the rest are arriving at and giving them the additional context they need if they are diverging because he missed something in the setup — or, often, didn't realize he was holding some key piece of context that changed the picture. Then he gives the context.
 
-So, as agreed:
-- **The leader's sealed expected solution** is written before round 1 and stays sealed. It is never revealed to steer the council. It exists so that the leader has done the work, and so that, after the decision, the record shows how the council's result compared with it.
-- **The leader's turns frame, ask, and supply context.** They do not opine. Round 1 presents the topic without a solution. Later turns ask follow-up questions, and give context the leader finds the council lacks, especially context the leader didn't realize it held.
+So:
+- **The sealed expected solution is the leader's own preparation.** It exists so the leader has done the work and can see what the council needs from it. It is not an object of audit or verification.
+- **The leader's turns frame, ask, and supply context.** They never present what the leader "thinks it ought to be".
 
-**What leaders should expect, from Joseph's experience:**
+What leaders should expect, from Joseph's experience. These are rough, anecdotal priors to illustrate the point, expected to be superseded:
 
 | How often | What happens |
 |---|---|
-| ~2 in 10 | the council arrives at what the leader expected, and what the leader would have done alone |
-| ~4 in 10 | the council arrives at something that supersedes the leader's expectation and is better |
-| ~3 in 10 | there are known unknowns and tasks, so the item is easy to defer until later |
-| under 1 in 10 | the leader must decide before all the facts can be laid out or known, and the best unity available is "Can you support this for now given the unknowns?" |
+| ~2 in 10 | the council arrives at what the leader expected |
+| ~4 in 10 | the council arrives at something better than what the leader expected |
+| ~3 in 10 | there are known unknowns and tasks, so the item is easily deferred |
+| under 1 in 10 | the leader must decide before all the facts can be known, and the best unity available is "Can you support this for now given the unknowns?" |
 
-*Note:* the sealed expected solution makes these rates measurable for agent councils. Comparing it with each outcome after the fact sorts every item into one of these rows. A leader whose councils keep landing in the first row may be steering without meaning to.
+The lesson: the leader's initial thoughts are crucial for knowing what to add to the conversation, and are rarely the best a council can finish with.
 
-## Sustaining
+## Finish
 
-As agreed, with Joseph's assent that it may need practice and adjustment ("I could support this assuming the agents are well-enough-instructed"):
+**The finish form.** In the first finish loop, the leader fills it out by revising the last unity report. In later loops, the leader revises it again. Its typed parts:
+- the decision;
+- conditions ("under the following conditions: …");
+- assumptions, linked to the records they rest on where possible;
+- the warrant (the arguments the decision rests on) where the record type requires one, kept distinct from the assumptions;
+- assignments: one owner each, stated as an outcome, with a report-back point;
+- what would reopen it;
+- the importance it was decided at.
 
-- **The level of support is sealed, then revealed all at once.** Levels might be highly support, support, willing, neutral, object, strongly object, each with optional conditions such as importance. Sealing applies here, where herding would do the most damage: later seats otherwise calibrate their support to what is already written, and the record then shows a unanimity that wasn't independent. Sealed levels also make anonymity possible if it is ever wanted, since levels can be revealed without names.
-- **Then comes an optional sequential round, in shuffled order,** for comments and recommended changes, each seat seeing the ones before it.
+Anything not settled can be marked provisional.
 
-## Exits
+**Recommended changes.** When a member recommends a change in a finish loop, the leader's next revision says what became of it: adopted, not adopted and why, or deferred. *Note:* a leader norm, not a mechanism. It keeps a suggestion from silently vanishing between revisions.
 
-Agreed ("yes, pretty much"). Finish ends in one of:
-- **return to Discuss**;
-- **hold**, with assignments, and the knowledge each dissenting seat says would change its view, so that the hold has an exit;
-- **close**, with the decision record.
+**Sustaining.** Each member submits a level, all revealed together, then optionally comments in shuffled order, seeing the comments before theirs. Possible levels: highly support, support, willing, neutral, object, strongly object, each with optional conditions. Consensus is never typed; it is the levels as cast.
 
-## Seats, and what happens when a member doesn't answer
+**What each level does is declared in the charter, by importance** (agreed). Where the decision requires unanimity, including unanimity on degree of certainty for an epistemic label, an "object" prevents the close. For something like the colour of a bike shed, the council may continue over "object" but not over "strongly object".
 
-Joseph:
+**Exits** (agreed):
+- **return to Discuss;**
+- **hold,** with assignments, and with the knowledge each objecting member says would change its view, so the hold has an exit;
+- **close,** with the finish form as the record.
 
-> Sometimes the council decision is because the council as a body is accountable and therefore there has to be representation. Sometimes it's to round out the perspectives tribunal style in which case it's more of a duck-typed seat than an individual continuous entity seat...
+**No confidence.** In the places the charter allows, a member may cast no confidence in the leader. It goes to a higher body, never to the council itself, and is recorded as escalation, not obstruction.
 
-So the charter declares, per seat, which it is:
-- **Representative seat:** an accountable member whose presence is part of the decision's standing. If it doesn't answer, the council waits, or re-seats it from its line, the walking skeleton's "line of stewards". It never proceeds as if the seat weren't there.
-- **Perspective seat (duck-typed):** a vantage the council needs covered. Any suitable agent can fill it. If it doesn't answer, the seat is refilled; the vantage matters, not the instance.
+## Who takes part
 
-The charter also states its decision rule, which sets how non-response is handled. Under unanimity or hold, the council never shrinks. Under majority, it may proceed without a seat.
+Two independent axes. Each participant has a position on both.
 
-## What a council produces
+**Seat kind: what the seat is, and how it is refilled.**
+- **Representative.** An accountable member whose presence is part of the decision's standing. If it doesn't answer, the council waits or re-seats it from its line of stewards. It never proceeds as if the seat weren't there.
+- **Perspective (duck-typed).** A vantage the council needs covered. Any suitable agent can fill it, and it is refilled by any agent that can hold the vantage.
+- **Standing.** An expert seat, refilled by re-forking the same prepared expert, never by substitution. A charter might seat:
+  - a primary expert, on the segment or Part in question;
+  - adjacent experts, on what it depends on and what depends on it;
+  - cross-cutting experts on concerns such as notation and terminology coherence across the corpus.
 
-- **The decision record**, written by the leader at finish: the consensus or decision, the assumptions it rests on, the assignments (one owner each, stated as an outcome, with a report-back point), what would reopen it, and the importance it was decided at.
-- **The sealed first responses, second responses, unity reports, and sustaining levels**, all from the log.
-- **The leader's sealed expected solution**, unsealed into the record after close.
+  This is the matrix structure human organizations use for similar work.
 
-*Note:* importance stated at decision time is what lets a decision show as under-secured later, if it becomes more load-bearing than it was when decided (from the same day's discussion of decision importance).
+**Participation tier: what the participant does.**
+- **Full member:** every turn, both responses, sustaining.
+- **Discussant:** first responses in discussion; no second response and no sustaining.
+- **Preparer:** assembles what the agenda needs before the council meets, much as a presidency prepares a larger council's agenda.
+- **Consulted expert:** joins at any point at a member's request, is given the full log up to that point, answers, and doesn't vote.
+
+**Non-response** follows the charter's decision rule. A unanimity council never shrinks: it waits, or re-seats. A majority council may proceed without a seat.
+
+**Who acted is recorded.** The estate's agent-identity hook (`~/src/agent-core/claude-code/agent-identity/`) already gives each agent a key on Bash calls. Extended to the council's tools, it records which agent, subagent or fork made each submission. *To verify:* that the hook can rewrite MCP tool input the way it rewrites Bash commands.
+
+**Research subagents are in the member's sphere.** A member may delegate research however it sees fit. If it hands its answer to a subagent without reason, that is a matter for correction or better instruction, not a mechanism.
+
+**Kinds of council.** Where a council's value is that its members are independent of the leader, as in a representative body or a tribunal for others, members are not forks of the leader. An agent may also counsel with itself: forks given different perspectives argue before it makes its own decision. That is a self-council. Its output is the agent's own decision, and the record says so.
+
+## The record
+
+What a close writes depends on the record type it moves (`councils-system-model.md`). A council always ends with a decision. When its objective is truth (for example, consensus on whether a weight-of-evidence verdict holds), what the close writes is evidence on that claim, plus the process decision about what to do next.
+
+## The meta-feedback channel
+
+Every participant has a separate channel, outside the discussion, for suggesting changes to the charter or to the record types that use it. These suggestions arrive as influx against the charter record, and are adjudicated by whatever council type governs charters (`councils-system-model.md`).
 
 ## Uses
 
-- **Brainstorming and generative meetings:** the leader's topic is an open question, first responses are ideas, second responses build on them, and finish records what is worth pursuing, with assignments.
-- **Epistemic tribunals:** perspective seats hold the roles (an advocate, someone looking for what was missed, an observer of shared bias, a risk analyst). Finish records the decision apart from its confidence, the load-bearing arguments, and the revisit conditions. See `research/tribunal-history.md`.
-- **Decisions:** as above, with representative seats where the body must be accountable.
+- **Brainstorming and generative meetings:** the topic is an open question, first responses are ideas, second responses build on them, and the finish records what is worth pursuing.
+- **Epistemic tribunals:** perspective and standing seats cover the roles. The close writes evidence and the process decision. See `research/tribunal-history.md`.
+- **Decisions:** with representative seats where the body must be accountable.
+- **Self-councils,** before an agent's own decision.
+
+## Building it
+
+*Note,* from the walking-skeleton spike and its feedback (`spikes/spike-walking-skeleton-2026-11-03/`, `feedback/gcc-skeleton.md`):
+- **The substrate carries over.** Each sequential second response is a one-seat round. The core needs rounds addressed to a subset of seats, and a recorded shuffle.
+- **Driver mode first.** A seat-only session can't drift back to its home session, which is the failure of October 2025. The background-session wait is not reliable yet.
+- **Size the backstop for research turns.**
 
 ## Open
 
-- How members are instructed for each role (leader, seat, last-in-shuffle reporter) so that the nuance actually lands. This is where practice and adjustment will go.
-- The sustaining scale's exact levels, and how conditions such as importance are written.
-- Whether anonymity of sustaining levels is ever wanted, and for which councils.
-- Wall-clock cost: the sequential phase costs the sum of members' turns. Passing keeps it cheap when there is little to add.
+- How members are instructed for each role (leader, full member, discussant, preparer, consulted expert, last-in-shuffle reporter) so the nuance lands. Practice and adjustment will go here.
+- The exact sustaining levels, and how conditions are written.
+- Where no confidence may be cast, and which body hears it.
+- Whether sustaining is ever anonymous, and for which councils.

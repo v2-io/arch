@@ -1,5 +1,7 @@
 # Agentic councils — mechanics, draft 0
 
+> [!note] **Superseded (2026-11-03, the same day).** This was the coordinator's design before any spike ran. The spikes and their verifications corrected much of it, and Joseph's minimal loop replaced its procedure. Read `generic-collab-council.md` for the procedure, `councils-system-model.md` for how councils fit the system, and the walking-skeleton spike for the substrate. The spikes cite this file, so it stays as history. Nothing in it is current design.
+
 *2026-11-03. Claude (Opus 5.5). This is the mechanical design for the first working council tool. Joseph's direction (2026-11-03): put the mechanisms in place. He will choose members with "just enough diversity to push the system". Member disposition, independence, herding and "sufficient wisdom" are out of scope for now. Members join through MCP so that non-Anthropic members can be added later. Background and leans are in `initial-thoughts.md`. This file is where those leans become choices. Each choice is marked as mine, and Joseph or the build can overturn any of them.*
 
 ## What it is

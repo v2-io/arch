@@ -2,6 +2,26 @@
 
 *The RONR-12 council system: a formally modeled, executable implementation of parliamentary procedure (Robert's Rules of Order Newly Revised, 12th ed.) usable by any mix of human and logogenic members. The model lives in `model/`; the source corpus in `RONR-12/` (local-only, copyrighted — the model expresses all rules in its own words with §:¶ citations). Governing success criterion, from phase 4 on: `available_actions(member, role, state) → [(action, justification)]` — every member, with roles, has a computable list of available actions and their justifications at any time, updated as actions happen. The deterministic layer is sovereign throughout: nothing in later phases adds, removes, or gates an action outside it.*
 
+## Agentic councils (2026-11-03)
+
+This is a second track beside the RONR model: councils whose members are agents, taking RONR as one input among several, not as an authority. Where it stands:
+- **[`generic-collab-council.md`](generic-collab-council.md)** — the procedure: Joseph's minimal loop, refined, as a template for decisions, tribunals and generative meetings.
+- **[`councils-system-model.md`](councils-system-model.md)** — how councils fit the system: vsect record types and their transitions, each transition a queue drained by a decision-maker, and councils as one kind of decision-maker.
+- **[`spikes/`](spikes/)** — three spikes, each verified twice:
+  - contention and fairness under rounds;
+  - the executable charter and agenda;
+  - a walking skeleton that runs councils over MCP across four harnesses. It is the substrate a first build would extend.
+- **[`feedback/`](feedback/)** — the six-reader feedback round on the template, each reader's first response written before seeing the others'.
+- **[`research/`](research/)**:
+  - the history of the epistemic tribunal and the 2025 ELI family council;
+  - what the RC1 segments model holds that vsect does not yet.
+- **Also relevant:**
+  - `../high-councils/higher-council-principles.md`, on councils that presuppose unity of purpose;
+  - `specimens-2026-11-03.md`, real decisions a council could take.
+- **Superseded, kept as history:** `initial-thoughts.md` and `mechanics.md`.
+
+Next on this track: a first build of the template on the walking-skeleton substrate, run on one real pending item. Which ASF transitions need which decision-maker is being taken up separately, from ASF's side.
+
 ## Overview
 ### Completed
 
