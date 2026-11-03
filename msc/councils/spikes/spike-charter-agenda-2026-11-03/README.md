@@ -1,6 +1,6 @@
 # Spike: the executable charter and agenda for agentic councils (2026-11-03)
 
-*Commissioned by councils-46 for Joseph; spiked by a Claude (Fable 5.1) session. Role separation: this directory is the spike only — verification and integration are other minds' work. Write-scope was this directory; nothing outside it was changed.*
+*Commissioned by councils-46 for Joseph; spiked by a Claude (Fable 5.1) session; verified de novo by an Opus 5.5 session (`de-novo-feedback-1.md`), whose findings came back to the spiker and are answered in `response-to-feedback-1.md`. Everything below is revision 2 unless marked. Write-scope was this directory; nothing outside it was changed.*
 
 **The question.** What are an agentic committee's charter and agenda as artifacts a server loads: what they must declare, how a council comes into being, how it carries a question to a recorded decision and reports, how it grows, and which of RONR's machinery still means something when the members are agents and time is logical.
 
@@ -10,21 +10,24 @@
 
 | File | What it holds |
 |---|---|
-| `debrief.md` | For Joseph first: the problem, the attempts, the discoveries, the outcomes, the tangents, in pre-spike vocabulary. |
+| `debrief.md` | For Joseph first: the problem, the attempts, the discoveries, the outcomes, the tangents, in pre-spike vocabulary — including what verification overturned. |
+| `response-to-feedback-1.md` | Finding by finding: accepted / contested, what changed, where. |
+| `de-novo-feedback-1.md` | The independent verifier's report (another mind; not edited by the spiker). |
 | `02-charter-and-agenda.md` | **The main result.** Declared vs derived; the three ways a council comes into being; question → decision → report → parent; the chair; growth and whether it is "widening the list"; the sibling interfaces. |
-| `01-what-simultaneity-protects.md` | The hardest part, first: the principle under the book's simultaneity requirement, the ten mechanisms it carries, what a round must carry instead, a demonstrated no-go, and two gains. |
+| `01-what-simultaneity-protects.md` | The hardest part, first: the principle under the book's simultaneity requirement (and 9:34's explicit exclusion of written process), the ten mechanisms it carries plus four more the verifier found, what a round must carry instead under the contention spike's informed-acts property, two declared drops with their costs, a demonstrated no-go. |
 | `03-logical-time.md` | Mechanical inventory of every clock word in the model and the small mapping that makes it run on rounds. |
 | `04-machinery-survey.md` | Family by family: keeps / translates / instruction / no-go, with the walking-skeleton's `amend` evidence. |
 | `05-in-meeting-acts.md` | The research subcommittee and the co-opted member as event streams; a three-seat council walked end to end on a real specimen. |
 | `06-adversarial-cases.md` | Eleven cases outside the motivating family, each with what held, what bent, and what to push on. |
 | `charters/quick-council.json`, `charters/standing-council.json` | The two executable instances, in the model's own vocabulary. |
-| `tools/check-charter.py` | Resolves every reference a charter makes against the model and prints the resulting action space. `python3 tools/check-charter.py charters/*.json` — both are well-formed as of this commit. |
+| `tools/check-charter.py`, `tools/mutant.py` | Checks a charter against the model's namespace and types (references, parameter enums/types, patch surfaces, allowed∩disabled, declared params, the 9:36 keys, the clock fields) and prints the resulting action space. `mutant.py` reproduces the verifier's seven deliberate breakages; the checker reports all seven. It evaluates nothing. |
 | `model-defects.md` | Nine things in the model the work ran into (F1–F2 are real defects in the committee-of-the-whole overlay). |
 | `proposed-integration-plan.md` | Suggestions with reasons, and a do-not-inherit list of language that is mine. |
 | `00-neighborhood-map.md` | My map of the ground, written before reading the coordinator's drafts. |
 
 ## Completion state, honestly
 
-- **Strengthened past the claim:** the charter/agenda artifact exists, loads against the model, and the "narrow configuration" hypothesis holds on the action-space axis with two defects found that must be fixed first.
+- **Strengthened to the claim:** the charter/agenda artifact exists and is well-formed against the model; the "narrow configuration" hypothesis holds on the action-space axis once four model defects are fixed (F1–F3, F10); the two in-meeting acts are motions reached through `move`.
+- **A principled departure, declared:** by 9:34's letter a written council is consultative and may report only unanimity (51:2); the meeting tier is claimed by principle, with the four extra loads the verifier named carried or deliberately dropped (01 §3.5).
 - **Demonstrated no-gos:** division of the assembly, the vote ladder, tellers, stand-at-ease under a mechanical chair, call of the house, reconsider-and-enter-on-the-minutes (by vacuity).
-- **Not done, and said so:** no engine ran (stage 5 is pending); the walkthrough is hand-derived; the checker tests load-time closure, not admissibility; the "same source = same member" rule is asserted, not derived.
+- **Not done, and said so:** no engine ran (stage 5 is pending); the walkthrough is hand-derived; the checker tests well-formedness, not admissibility; the corridor's elapsed-world conjunct is a guess at form; the 01 §3.5 load list is not proven complete.
