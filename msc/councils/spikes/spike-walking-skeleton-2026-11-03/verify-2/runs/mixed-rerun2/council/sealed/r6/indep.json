@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes, on the condition that the motion is read together with the three safeguards argued in r3 and r4 (not moved as formal text): the reviewer is isolated from the author's context and prior conclusions; the reviewer checks specific claims against artifacts rather than judging plausibility; and findings go back to the author, with resolution confirmed by someone other than the author. A council of one model family does not count as verification.",
+  "vote": "yes"
+ }
+}

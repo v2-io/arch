@@ -1,0 +1,90 @@
+== PART 1: verify-1/verify.py tests, unchanged, against the current code
+-- verify-1 A driver-mode seat gap
+  after driver turn ended: holder ts = 1793740185.269494 (0 means released)
+  stranger claims seat A between driver turns -> REFUSED
+  driver's next turn -> ok
+  RESULT: no gap found
+  => PASS: verify-1 A driver-mode seat gap — returned False, want False (True = defect present)
+-- verify-1 B SIGKILL lease lapse
+  immediately after SIGKILL of holder X: Y -> refused (lease live)
+  after lease_s: Y -> held epoch 2, previous {'epoch': 1, 'lapsed_for_s': 5.1, 'principal': 'launcher:X', 'released': False}
+  RESULT: claim holds (SIGKILL -> lapse -> takeover, epoch 2, 'lapsed' not 'released')
+  => PASS: verify-1 B SIGKILL lease lapse — returned True, want True (True = claim holds)
+-- verify-1 C concurrency stress
+  meeting 0: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 1: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 2: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 3: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 4: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 5: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 6: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  meeting 7: events 15 rounds 4 accepted 20 lost 0 replaced 0 chain OK replay OK adjourned True sealed==logged True -> OK
+  RESULT: lock discipline held under 20 writers + 2 tickers x 8 meetings
+  => PASS: verify-1 C concurrency stress — returned True, want True (True = lock discipline held)
+-- verify-1 D1 partial withdraw / debate limit
+  max_debate_rounds=3; one co-maker withdrew in debate round 2; question put after debate round 3
+  RESULT: limit held
+  => PASS: verify-1 D1 partial withdraw / debate limit — returned True, want True (True = limit held)
+-- verify-1 D3 stuck live member
+  r1 closed after 3.1s by backstop-deadline (absent ['A'], gone []); r2 closed after 3.1s by backstop-deadline (absent ['A'], gone [])
+  RESULT: confirmed: a live-but-silent seat costs the full backstop every round, with no escalation to 'gone'
+  (returned True; True = every round waits the full backstop; see part 2 for the escalation, which needs >= 2 rounds)
+-- verify-1 D4 late submission dropped
+  late submit -> ok=False: round r1 has closed without your submission; it is recorded as late. The open round is r2.
+  content of the late intent anywhere in receipts/events: True; refusal receipt carries intent_sha: True
+  (returned True; returns not-ok (refused) either way; look at the printed content line)
+-- verify-1 D5 replace promise
+  council_submit description says: "Submit your sealed intent for the open round. Nobody sees it until the round closes, when everyone's are revealed together. Your submission is final for the rou"
+  seat_token advertised on single-seat server: False
+  status view after submitting: You have submitted (sealed): {'action': 'present'}. Submissions are final for the round; wait for it to close (council_wait).
+  second submit -> REFUSED: REFUSED: you already submitted in r1; submissions are final (charter round_policy.replaceable=false)
+  RESULT: consistent
+  => PASS: verify-1 D5 replace promise — returned False, want False (True = contradiction present)
+-- verify-1 E replay is not tamper evidence
+  tampered trial-4 (all r8 votes -> no, sealed/ deleted): steward replay says: events: 34; chain: OK; derivation: OK; sealed vs revealed: sealed files MISSING for ['r1', 'r2', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9']
+  vote-result now: rejected {'abstain': 0, 'no': 4, 'yes': 0}
+  RESULT: CONFIRMED: replay+chain are derivation checks, not tamper evidence; sealed/ is not cross-checked
+  (verify-1's E decides by finding 'OK' in the output, which the new replay line contains even when it fails; steward replay's exit code on the tampered copy is 1)
+  => PASS: verify-1 E: replay no longer passes the copy with sealed/ deleted — a full regeneration that also rewrites sealed/ still passes replay; see the witness test
+== PART 2: author's tests on the current code
+-- driver holds its seats between turns (fix for verify-1 A)
+  after turn 1 ended: holder ts=live; stranger -> refused; driver turn 2 -> ok
+  => PASS: driver seat is held between turns
+-- a live-but-silent seat escalates to gone after 2 backstopped rounds (fix for verify-1 D3)
+  r1: open 2.0s, backstop-deadline, absent ['A'], gone [], stalled []
+  r2: open 2.1s, backstop-deadline, absent ['A'], gone [], stalled []
+  r3: open 0.1s, all-submitted-or-gone, absent ['A'], gone ['A'], stalled ['A']
+  r4: open 0.1s, all-submitted-or-gone, absent ['A'], gone ['A'], stalled ['A']
+  => PASS: stall escalates after 2 backstops and stays escalated — 2 later rounds
+-- a stalled seat that acts again is no longer stalled
+  stalled after r3: ['A']; after A acts in r4: []
+  => PASS: stall clears when the seat acts
+-- late intent recorded; own-completion refusal says what happened (verify-1 D4, 3.3)
+  late A -> round r1 has closed without your submission; it is recorded as late. The open round is r2.
+  B again after its own close -> your submission for r1 was already counted, and r1 has closed (all seats had answered). Submissions are final. The open 
+  => PASS: late intent recorded in receipts
+  => PASS: own-completion refusal names the cause
+-- witness: members' recorded heads catch a regenerated log (answer to verify-1 E)
+  untampered: witnessed heads: 10 from 2 log(s); contradicted: 0; events covered by a witness: 0..14 of 14
+  tampered (votes flipped, log regenerated, sealed/ rewritten to match): replay says: events: 15; chain: OK; derivation: OK; sealed vs revealed: OK
+  tampered: witness says: witnessed heads: 10 from 2 log(s); contradicted: 3; events covered by a witness: 0..14 of 14
+  => PASS: witness passes the untampered log
+  => PASS: replay still passes a fully regenerated log (by design: internal consistency only)
+  => PASS: witness catches the regenerated log
+-- smoke c1 reproduced: tokens, final submissions, shared-connection seat_token
+  single-seat hides seat_token: True; 2nd submit refused: True; guessed token refused with guidance: True (seat_token was given but matches no seat. This connection already hold...)
+  multi-seat requires seat_token: True; real token -> ok; no token -> refused
+  => PASS: protocol smoke
+-- smoke c2 reproduced: one holder per seat; clean release; SIGKILL lapse; launcher principals outlive their process
+  Y refused while X live: True; Y holds after X exits cleanly: True; Z refused while Y live: True; Z holds 4.0s after Y's SIGKILL (lease 4s); epochs [1, 2, 3]; previous released flags: [True, False]; launcher-held B after its server exited: held
+  => PASS: holder exclusivity
+-- smoke c3 reproduced: live-but-silent seat; backstop closes the round, seat absent not gone
+  r1 closed after 3.0s by backstop-deadline, absent ['C'], gone []
+  => PASS: backstop
+-- what the member reads matches the charter (verify-1 D5)
+  replaceable=False: description/view say final
+  => PASS: text matches replaceable=False
+  replaceable=True: description/view say replace
+  => PASS: text matches replaceable=True
+
+== 19 of 19 checks pass

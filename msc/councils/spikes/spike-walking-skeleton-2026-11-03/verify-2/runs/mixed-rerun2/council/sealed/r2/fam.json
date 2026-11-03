@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Require one independent reviewer from another model family for checking the vsect maturation plan, escalating to a council only if cross-family review reveals fundamental structural ambiguity or unresolvable trade-offs. Cross-family review provides the essential blindspot detection (breaking shared training/alignment assumptions) with minimal overhead; full councils should be reserved for high-stakes normative deadlocks."
+ }
+}

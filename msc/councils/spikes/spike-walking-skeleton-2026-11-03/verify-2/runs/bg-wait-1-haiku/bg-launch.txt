@@ -1,0 +1,5 @@
+backgrounded · eadf9284 · concilium-verify2-bg
+  claude agents             list sessions
+  claude attach eadf9284    open in this terminal
+  claude logs eadf9284      show recent output
+  claude stop eadf9284      stop this session

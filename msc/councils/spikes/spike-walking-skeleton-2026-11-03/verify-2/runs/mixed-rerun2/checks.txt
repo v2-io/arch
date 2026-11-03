@@ -1,0 +1,66 @@
+== replay
+events: 25; chain: OK; derivation: OK; sealed vs revealed: OK
+== witness
+witnessed heads: 41 from 4 log(s); contradicted: 0; events covered by a witness: 0..24 of 24
+== minutes
+MINUTES — council trial-4c-mixed (charter sha fc7aab5c13de; 25 events; chain OK)
+Purpose: Trial of one council across four harnesses and four model families (Claude Code, codex, grok, agy). The agenda question is from specimens-2026-11-03.md (reply 1, item 9); the outcome is not acted on. Re-run on the build that answers de-novo-feedback-1.
+Seats:
+  indep: independence of verification: the author of a result must never be the one who checks it, and agreement among same-substrate minds is coherence, not independent evidence [model claude haiku, harness claude-code -p]
+  cost: the cost and latency of the check itself: what each option costs in time, tokens and the steward's attention, and whether it would change any action [model gpt-5.6-luna, harness codex exec]
+  plan: the plan's own author and readers: what kind of review actually improves a draft plan, as opposed to grading it [model grok default, harness grok -p]
+  fam: model-family diversity: what a reviewer from another family catches that one from the same family misses [model gemini-3.8-flash-low, harness agy -p]
+Seat holders (from receipts; who acted behind each seat):
+  +   0.0s indep: epoch 1 held by parent-process:Josephs-MacBook-Pro:78439
+  +   6.1s cost: epoch 1 held by codex-session:01a1a345-e3b3-7251-92ce-1699d5d70b35
+  +   9.8s fam: epoch 1 held by agy-conversation:6225899a-27ed-4fab-b6c8-9b482f9439c6
+  + 210.8s cost: epoch 1 released (signal 15)
+  + 211.8s indep: epoch 1 released (signal 2)
+  + 213.5s fam: epoch 1 released (stdin closed)
+
+[0] council convened; seats indep, cost, plan, fam; quorum 3
+[2] round r1 closed (all-submitted-or-gone); revealed:
+         cost — present: Present. I will compare the options by marginal time/token cost, steward attention, and whether the added deliberation changes the recommended action.
+         fam — present
+         indep — present
+         absent: plan (gone: plan)
+[3] roll: present cost, fam, indep; absent plan
+[5] round r2 closed (all-submitted-or-gone); revealed:
+         cost — move: Recommend one independent reviewer from another model family as the default check. It costs roughly one review's latency/tokens and one steward handoff; a council multiplies those costs and coordination latency. The cited 43% independent-defect rate suggests the reviewer changes action, while 116/116 self-confirmations argue against relying on internal consensus. Reserve a council for unusually high-stakes or disputed plans.
+         fam — move: Require one independent reviewer from another model family for checking the vsect maturation plan, escalating to a council only if cross-family review reveals fundamental structural ambiguity or unresolvable trade-offs. Cross-family review provides the essential blindspot detection (breaking shared training/alignment assumptions) with minimal overhead; full councils should be reserved for high-stakes normative deadlocks.
+         indep — move: Recommend: the vsect maturation plan gets one independent reviewer from a different model family than its author, with the reviewer's findings going back to the author for response. A council of same-substrate members does not substitute for this. Five minds from one family agreeing is coherence, not independent evidence, and the 116-of-116 self-confirmation record is the warning. If a council is used, its members should span at least two model families and each should be checking a claim, not endorsing the author's plan. Any council check should be recorded as a separate verification step, not as the author's own confirmation.
+         absent: plan (gone: plan)
+[6] motion pending on q2, moved by cost: "Recommend one independent reviewer from another model family as the default check. It costs roughly one review's latency/tokens and one steward handoff; a council multiplies those costs and coordination latency. The cited 43% independent-defect rate suggests the reviewer changes action, while 116/116 self-confirmations argue against relying on internal consensus. Reserve a council for unusually high-stakes or disputed plans."
+[7] indep's motion did not get the floor; it stands as indep's standing intent: "Recommend: the vsect maturation plan gets one independent reviewer from a different model family than its author, with the reviewer's findings going back to the author for response. A council of same-substrate members does not substitute for this. Five minds from one family agreeing is coherence, not independent evidence, and the 116-of-116 self-confirmation record is the warning. If a council is used, its members should span at least two model families and each should be checking a claim, not endorsing the author's plan. Any council check should be recorded as a separate verification step, not as the author's own confirmation."
+[8] fam's motion did not get the floor; it stands as fam's standing intent: "Require one independent reviewer from another model family for checking the vsect maturation plan, escalating to a council only if cross-family review reveals fundamental structural ambiguity or unresolvable trade-offs. Cross-family review provides the essential blindspot detection (breaking shared training/alignment assumptions) with minimal overhead; full councils should be reserved for high-stakes normative deadlocks."
+[10] round r3 closed (all-submitted-or-gone); revealed:
+         cost — pass: Pass. The standing positions converge on the same cost-effective default; no further cost/latency point would change the recommendation.
+         fam — speak: I support the pending motion moved by cost. All three participating seats (cost, indep, fam) agree on the core principle: a single independent reviewer from a different model family is the appropriate default check for the vsect plan. Cross-family diversity pierces the shared blind spots that caused 116/116 self-confirmations, while avoiding the multiplicative latency/token cost of a full council unless an irreconcilable deadlock emerges.
+         indep — speak: I support cost's motion, with one amendment. Cross-family review is the right default, and it is what my vantage asks for. Three points. First, "another model family" is a weaker guarantee than "not the author." The reviewer should also not share the author's context, drafts or prior conclusions, or it will tend to inherit the author's framing. Second, the reviewer must check specific claims against the artifacts, not just read the plan and judge it plausible. Third, the reviewer's findings should go back to the author, and the author must not mark them resolved alone. Otherwise the author becomes the checker again. On the council question I agree with cost and fam: escalate only when the reviewer finds a structural or normative disagreement. A council of one family should not be counted as verification. If the motion is amended to include these three conditions, I would vote yes.
+         absent: plan (gone: plan)
+[12] round r4 closed (all-submitted-or-gone); revealed:
+         cost — speak: Support the amendment. These safeguards add little token/latency cost compared with a council and materially improve the chance the review changes action: isolate the reviewer from author context, require artifact-backed claim checks, and require an independent resolution step. Escalation should remain conditional on structural or normative disagreement.
+         fam — pass
+         indep — pass
+         absent: plan (gone: plan)
+[14] round r5 closed (all-submitted-or-gone); revealed:
+         cost — pass: Pass. The amendment's safeguards are now stated and no further cost analysis would change the proposed default.
+         fam — pass
+         indep — pass
+         absent: plan (gone: plan)
+[15] question put (every member who acted passed): "Recommend one independent reviewer from another model family as the default check. It costs roughly one review's latency/tokens and one steward handoff; a council multiplies those costs and coordination latency. The cited 43% independent-defect rate suggests the reviewer changes action, while 116/116 self-confirmations argue against relying on internal consensus. Reserve a council for unusually high-stakes or disputed plans."
+[17] round r6 closed (all-submitted-or-gone); revealed:
+         cost — vote yes: Yes. The default is cost-efficient and preserves an escalation path; apply the stated isolation, artifact-checking, and independent-resolution safeguards.
+         fam — vote yes: Yes. An independent reviewer from another model family brings distinct inductive priors and unshared blind spots to catch subtle flaws, balancing thoroughness with minimal coordination overhead.
+         indep — vote yes: Yes, on the condition that the motion is read together with the three safeguards argued in r3 and r4 (not moved as formal text): the reviewer is isolated from the author's context and prior conclusions; the reviewer checks specific claims against artifacts rather than judging plausibility; and findings go back to the author, with resolution confirmed by someone other than the author. A council of one model family does not count as verification.
+         absent: plan (gone: plan)
+[18] VOTE on q2: ADOPTED — yes 3, no 0, abstain 0 (cost:yes, fam:yes, indep:yes)
+[20] round r7 closed (all-submitted-or-gone); revealed:
+         cost — pass: Pass. The adopted decision is clear; no additional cost or latency consideration would change it.
+         fam — pass
+         indep — pass
+         absent: plan (gone: plan)
+[21] fam's standing intent lapsed (not re-affirmed when the floor reopened)
+[22] indep's standing intent lapsed (not re-affirmed when the floor reopened)
+[23] item q2 closed (done)
+[24] ADJOURNED: agenda complete

@@ -1,0 +1,7 @@
+{"charter_sha": "156851664df2db44ba497fec698b1e84f5f57e4da4f4a2ae4a57f7b366e95f5b", "kind": "created", "pid": 78310, "ts": 1793740626.215504}
+{"kind": "round-opened", "kind_": "call-to-order", "pid": 78310, "round": "r1", "ts": 1793740626.215801}
+{"kind": "server-start", "pid": 78344, "ppid": 62026, "proc": "Josephs-MacBook-Pro-78344-1793740626", "seat": "A", "ts": 1793740626.668579}
+{"kind": "round-opened", "kind_": "call-to-order", "pid": 78344, "round": "r2", "ts": 1793740926.974215}
+{"closed_by": "all-submitted-or-gone", "kind": "round-closed", "live": {"A": [], "B": []}, "pid": 78344, "round": "r1", "ts": 1793740926.974611, "waited_s": 300.755}
+{"closed_by": "all-submitted-or-gone", "kind": "round-closed", "live": {"A": [], "B": []}, "pid": 78344, "round": "r2", "ts": 1793740931.9778829, "waited_s": 5.002}
+{"kind": "server-exit", "pid": 78344, "proc": "Josephs-MacBook-Pro-78344-1793740626", "seat": "A", "ts": 1793740956.2879841, "why": "signal 15"}

@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. The default is cost-efficient and preserves an escalation path; apply the stated isolation, artifact-checking, and independent-resolution safeguards.",
+  "vote": "yes"
+ }
+}

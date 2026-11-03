@@ -1,0 +1,50 @@
+{
+ "agenda": [
+  {
+   "brief": "From specimens-2026-11-03.md (reply 1, item 9): a draft plan for maturing a record-keeping tool (vsect) is waiting for review, and it is open whether one independent reviewer from another model family or a council should check it. The estate's experience: the agent that authors a result is never the one that verifies it; independent checkers found defects in roughly 43% of landings that integrators re-checking their own work had confirmed 116 of 116. Move what you would recommend.",
+   "id": "q2",
+   "title": "Who should check a plan like the vsect maturation plan: one independent reviewer from another model family, or a council?"
+  }
+ ],
+ "council": "trial-4c-mixed",
+ "debate_policy": {
+  "max_debate_rounds": 3,
+  "max_open_rounds": 2
+ },
+ "parent": "Joseph Wecker (veto outside the tool)",
+ "purpose": "Trial of one council across four harnesses and four model families (Claude Code, codex, grok, agy). The agenda question is from specimens-2026-11-03.md (reply 1, item 9); the outcome is not acted on. Re-run on the build that answers de-novo-feedback-1.",
+ "quorum": 3,
+ "round_policy": {
+  "arrival_grace_s": 180,
+  "backstop_s": 900,
+  "lease_s": 30,
+  "max_inquorate_rounds": 2,
+  "replaceable": false
+ },
+ "seats": [
+  {
+   "harness": "claude-code -p",
+   "id": "indep",
+   "model": "claude haiku",
+   "vantage": "independence of verification: the author of a result must never be the one who checks it, and agreement among same-substrate minds is coherence, not independent evidence"
+  },
+  {
+   "harness": "codex exec",
+   "id": "cost",
+   "model": "gpt-5.6-luna",
+   "vantage": "the cost and latency of the check itself: what each option costs in time, tokens and the steward's attention, and whether it would change any action"
+  },
+  {
+   "harness": "grok -p",
+   "id": "plan",
+   "model": "grok default",
+   "vantage": "the plan's own author and readers: what kind of review actually improves a draft plan, as opposed to grading it"
+  },
+  {
+   "harness": "agy -p",
+   "id": "fam",
+   "model": "gemini-3.8-flash-low",
+   "vantage": "model-family diversity: what a reviewer from another family catches that one from the same family misses"
+  }
+ ]
+}

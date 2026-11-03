@@ -1,0 +1,35 @@
+== 1 stall recovery race
+  after A's silence: 2 closes: [('r1', 'backstop-deadline'), ('r2', 'backstop-deadline')]
+  A, back and looping (0.3 s think): accepted 0, refused 13; sample refusal: ['REFUSED: round r3 has closed without your submission; it is recorded as late. The open round is r6.']
+  rounds after A's return: 35, A in a close's submitted: 0; all closed all-submitted-or-gone: True; adjourned: ['agenda complete']
+  what A's view said while it was stalled (nothing about being stalled or needing to hurry): ['  motion pending on q1, moved by B: "X"', '  round r3 opened (debate, item q1)', 'OPEN ROUND r3 (debate). 0 of 2 seats have submitted.', 'You may submit with council_submit(round="r3", action=..., ...):', '  - speak {text}: a motion is pending and debatable; no speech limit in committee [49:21(3)]', '  - pass: agentic: passing is a real, recorded choice; a full round of passes ends debate (committee has no closure motion [50:25])']
+  RESULT: CONFIRMED: a stalled seat that returns and behaves like a member never gets back in; the meeting ran to adjournment without it
+== 2 abandoned wait eats delta
+  per trial, which of the two pending waits (abandoned, live) got the delta: [{100: True, 101: False}, {102: True, 103: True}, {105: True, 104: True}, {106: True, 107: False}]
+  RESULT: CONFIRMED in 2 of 4 trials: exactly one reply carried the delta; if the harness kept the other request, the member never sees that round's reveal
+== 3 stall counts gone rounds
+  two backstop rounds where A was gone (crashed) and C was the slow live seat -> stalled = ['A', 'C']
+  real dir: [('r1', 'backstop-deadline', 'gone', ['A'], 'stalled', None), ('r2', 'backstop-deadline', 'gone', ['A'], 'stalled', None)]
+  A returns live (claim ok=True); B submits in r3; r3 closed 0.00s later by all-submitted-or-gone: gone=['A', 'C'] stalled=['A', 'C'] (A live and 0 s old; C live and slow)
+  RESULT: CONFIRMED: a crashed-and-returned seat is 'stalled' by rounds that never waited for it
+== 4 minutes omit stalled
+  describe(round-closed with stalled=[A]) -> 'round r3 closed (all-submitted-or-gone); revealed:\n    B — pass\n    absent: A (gone: A)'
+  RESULT: CONFIRMED: the minutes and the member view show 'gone', not that the seat was stalled
+== 5 driver relaunch loop
+  driver ran 8.1s (exit 0); fake claude invoked 16 times; driver turn-ends 16; rounds closed 2 ['backstop-deadline', 'backstop-deadline']; adjourned: ['no quorum in 2 consecutive rounds']
+  RESULT: CONFIRMED: 16 resumed turns for 2 rounds in which nobody acted; the only exit was backstop -> stall -> gone -> inquorate -> adjourned
+== 6 principal asserted
+  two processes, same _meta.sessionId: first -> held, second -> held; holder records: [('seat-held', 'codex-session:01a1a3-the-real-codex-session')]; second's submit -> accepted
+  RESULT: CONFIRMED: the one-holder rule is against accidental duplicates; a client that names the holder's _meta is the holder
+== 7 late arrival recovers
+  r1 closed all-submitted-or-gone gone=['A'] before A arrived; A arrives, calls status -> ok; next round waits for A: True
+  RESULT: a late first arrival recovers on its first call (unlike a stalled seat, test 1)
+
+== summary (True = the property described was reproduced)
+  True  1 stall recovery race
+  True  2 abandoned wait eats delta
+  True  3 stall counts gone rounds
+  True  4 minutes omit stalled
+  True  5 driver relaunch loop
+  True  6 principal asserted
+  True  7 late arrival recovers

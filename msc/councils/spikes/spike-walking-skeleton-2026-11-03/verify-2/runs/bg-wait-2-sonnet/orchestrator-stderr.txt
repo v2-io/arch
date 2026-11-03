@@ -1,0 +1,13 @@
+{"ts": 1793741038.309301, "t": 0.0, "kind": "created", "council": "/Users/josephwecker-v2/src/arch/msc/councils/spikes/spike-walking-skeleton-2026-11-03/verify-2/runs/bg-wait-2-sonnet/council", "cwd": "/private/tmp/claude-505/-Users-josephwecker-v2-src-arch-msc-councils/9011573d-9666-41e3-bf3d-90c37792b769/scratchpad/bgcwd2"}
+{"ts": 1793741038.848984, "t": 0.5, "kind": "bg-launched", "rc": 0, "id": "b79ae02b", "stdout": "backgrounded \u00b7 b79ae02b \u00b7 concilium-verify2-bg-wait-2-sonnet\n  claude agents             list sessions\n  claude attach b79ae02b    open in this terminal\n  claude logs b79ae02b      show recent output\n  claude stop b79ae02b      stop this session", "stderr": ""}
+{"ts": 1793741044.390381, "t": 6.1, "kind": "saw", "what": "A present in r1", "after": 5.5}
+{"ts": 1793741044.390638, "t": 6.1, "kind": "holding", "seconds": 150, "why": "A's wait must run past 120 s before its turn comes"}
+{"ts": 1793741194.3934422, "t": 156.1, "kind": "progress-sent-so-far", "n": 16}
+{"ts": 1793741194.398533, "t": 156.1, "kind": "B-present", "ok": true, "msg": "sealed for r1", "since_A_present": 150.0}
+{"ts": 1793741200.461707, "t": 162.2, "kind": "saw", "what": "A acted in r2 (or r2 closed)", "after": 6.1}
+{"ts": 1793741200.4623208, "t": 162.2, "kind": "A-in-r2", "acted": true, "after": 6.1}
+Traceback (most recent call last):
+  File "/Users/josephwecker-v2/src/arch/msc/councils/spikes/spike-walking-skeleton-2026-11-03/verify-2/bg-meeting.py", line 125, in <module>
+    note("B-submitted", round=r["id"], kind=r["kind"])
+TypeError: note() got multiple values for argument 'kind'
+exit=1

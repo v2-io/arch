@@ -1,0 +1,9 @@
+tmp/
+**/tokens*.json
+**/codexhome/
+**/grokhome/
+runs/**/cwd/
+runs/**/cwd-*/
+**/lock
+**/__pycache__/
+**/*.tmp.*

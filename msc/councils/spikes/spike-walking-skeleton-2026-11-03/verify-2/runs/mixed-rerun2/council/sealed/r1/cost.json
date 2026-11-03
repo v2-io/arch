@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Present. I will compare the options by marginal time/token cost, steward attention, and whether the added deliberation changes the recommended action."
+ }
+}

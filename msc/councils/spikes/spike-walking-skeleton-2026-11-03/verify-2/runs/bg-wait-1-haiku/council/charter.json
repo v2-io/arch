@@ -1,0 +1,38 @@
+{
+ "agenda": [
+  {
+   "brief": "A mechanics question for the record only. Move, discuss or pass as you see fit.",
+   "id": "q1",
+   "title": "Should a council member that waits in the background be told, when it wakes, how long it was idle?"
+  }
+ ],
+ "council": "verify2-bg-wait",
+ "debate_policy": {
+  "max_debate_rounds": 2,
+  "max_open_rounds": 2
+ },
+ "parent": "verify-2 (nothing decided here is acted on)",
+ "purpose": "verify-2: a claude --bg member waits through the real server past the 120 s auto-background point; does the server's 'your turn' wake it?",
+ "quorum": 2,
+ "round_policy": {
+  "arrival_grace_s": 300,
+  "backstop_s": 900,
+  "lease_s": 30,
+  "max_inquorate_rounds": 2,
+  "replaceable": false
+ },
+ "seats": [
+  {
+   "harness": "claude --bg",
+   "id": "A",
+   "model": "haiku",
+   "vantage": "the member whose wait is being tested; any view you have on the question"
+  },
+  {
+   "harness": "verify-2/bg-meeting.py",
+   "id": "B",
+   "model": "script",
+   "vantage": "a scripted seat that answers the roll late on purpose"
+  }
+ ]
+}

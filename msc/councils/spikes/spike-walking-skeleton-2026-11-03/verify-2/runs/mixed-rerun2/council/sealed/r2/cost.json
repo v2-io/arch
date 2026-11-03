@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Recommend one independent reviewer from another model family as the default check. It costs roughly one review's latency/tokens and one steward handoff; a council multiplies those costs and coordination latency. The cited 43% independent-defect rate suggests the reviewer changes action, while 116/116 self-confirmations argue against relying on internal consensus. Reserve a council for unusually high-stakes or disputed plans."
+ }
+}

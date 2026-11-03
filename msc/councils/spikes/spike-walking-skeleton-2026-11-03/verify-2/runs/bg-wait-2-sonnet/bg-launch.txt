@@ -1,0 +1,5 @@
+backgrounded · b79ae02b · concilium-verify2-bg-wait-2-sonnet
+  claude agents             list sessions
+  claude attach b79ae02b    open in this terminal
+  claude logs b79ae02b      show recent output
+  claude stop b79ae02b      stop this session
