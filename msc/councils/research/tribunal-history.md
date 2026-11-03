@@ -4,6 +4,8 @@
 
 **How to read this.** §1–§3 are the **record**: what the files and transcripts say, in time order, with Joseph's words quoted verbatim and their paths. §4 is the family council, kept separate because it is a distinct line that crosses the tribunal at two points. §5 summarizes the record across forms. **§6 is my own reading** of what bears on councils, kept apart from the record. §7 says what I read whole, what I saw only in snippets, and what I did not reach.
 
+**On the register of old rulings.** Joseph, 2026-11-03, via councils-46: rulings from over a year ago are largely forgotten by him and likely irrelevant today. Where he gave reasoning, the reasoning is what's worth carrying. Where he didn't, the ruling was a decision of the moment. Nothing in this file presents a 2025 choice as a constraint on present design.
+
 Two marks are used throughout. **[whole]** means I read the primary through. **[part]** means I read the relevant sections (named) or a grep-located passage in context. Anything else is noted inline.
 
 ---
@@ -20,7 +22,7 @@ The tribunal began on **2025-08-03/04** as a claude.ai conversation in which Jos
 6. the reasoning layer whose results a VERA *epistemic ledger* records (Nov 2025);
 7. a per-claim probe in ASF's Gate 2 (Apr 2026).
 
-Then came Joseph's 2026-07-29 recollection, which re-describes it as **governance-as-record**: advocate, red-team, neutral observer, optional risk analyst, and an adjudicator that issues *decisions distinct from confidences*, load-bearing analysis, and revisit/expiry criteria. The family council (Oct 1 and Oct 5, 2025) ran alongside forms 4–5. On Oct 5 Joseph turned away from the parliamentary engine to Ballard's *Counseling with Councils*, and the tribunal was dropped from that design.
+Then came Joseph's 2026-07-29 recollection, which re-describes it as **governance-as-record**: advocate, red-team, neutral observer, optional risk analyst, and an adjudicator that issues *decisions distinct from confidences*, load-bearing analysis, and revisit/expiry criteria. The family council (Oct 1 and Oct 5, 2025) ran alongside forms 4–5. On Oct 5 Joseph turned away from the parliamentary engine to the unity-presuming council form (here called **high-councils**), using *Counseling with Councils* as a convenient starting point, and the tribunal was dropped from that design.
 
 ---
 
@@ -41,7 +43,7 @@ Then came Joseph's 2026-07-29 recollection, which re-describes it as **governanc
 | 2025-10-01 | "The Tribunal Together": peer disagreement protocol, run on the TST critique | `~/src/_core/sapientia/family/` |
 | 2025-10-02 | Tribunal inputs prepared for the umbrella migration; tribunal "pending", work executed | `~/src/_core/zoetica/.archive/docs-20251012/journal/2025-10-02.md` |
 | 2025-10-03/04 | Robert's-Rules deliberation engine with an Advocate/Skeptic/Analyst tribunal as committee recommendation | `~/src/_core/zoetica/.archive/zoetica_deliberation/`; `~/.claude/history.jsonl` lines 141–194 |
-| 2025-10-05 | Pivot to the Ballard council pattern, with no tribunal; two councils run | `~/src/_core/zoetica/.archive/zoetica_council/`; `~/.zoetica/councils/` |
+| 2025-10-05 | Pivot to the high-council pattern, with no tribunal; two councils run | `~/src/_core/zoetica/.archive/zoetica_council/`; `~/.zoetica/councils/` |
 | 2025-10-07 | Bootstrap: "Coordinator → Tribunal → System" | `~/src/_core/zoetica/.archive/docs-20251012/charter/APPENDIX-I-BOOTSTRAP-MECHANICS.md` |
 | 2025-10-10 / 10-17 | Council and deliberation apps archived; `tribunal-log` script deprecated | zoetica commit `b076e21`; `~/src/_core/zoetica/README.md:100` |
 | 2025-11-03/04 | Joseph returns to the tribunal for VERA: "graph records, tribunal reasons" | export `1ae84d4f…`; `~/src/_core/ennaos/docs/research/vera/` |
@@ -239,7 +241,7 @@ Joseph's prompts are in `~/.claude/history.jsonl` lines 141–194 [whole for tho
 > 2025-10-04 14:10 — 1. - just a proposed new version 2. **skip tribunal-- we can re-ask them via subcomitee in the future if necessary** 3. let's leave it two one amendment per participant w/ withdrawal of amendment? And/or maybe an action that votes to tentatively accept the amendment but continue debate? …
 > 14:15 — I like your model best for right now but please document both and show how the stack would be used. streamlined + skip-tribunal + tentatively-accept-but-continue.
 
-(The numbered items 15–24 refer to a Claude list that is not on disk.)
+(The numbered items 15–24 refer to a Claude list that is not on disk.) These are design choices made in the moment for a prototype, and Joseph has said rulings from this period are largely forgotten and not binding today. Where he gave a reason (anonymity, quoted above; late-arriving facts, "they tend to think of critical facts etc. after an agenda item was already finished"), the reason is the part worth carrying. Where he gave none ("skip tribunal" on amendments), the choice was a prototype convenience.
 
 **What was built.** `~/src/_core/zoetica/.archive/zoetica_deliberation/` [README, STATUS whole; `ollama.ex` tribunal prompts read; `docs/collaboration-patterns.md` grep only]. It is a 12-state GenStateMachine. The tribunal state `:tribunal_analysis` sits between motion clarification and debate. The tribunal roles are now **Advocate** ("strongest possible case FOR"), **Skeptic** ("strongest case AGAINST … risks, costs, assumptions, unintended consequences"), and **Analyst** ("systemic effects, incentives, and potential biases … Be neutral"). That is the vocabulary Joseph recalled in 2026. There is **no Coordinator**: adjudication passed to the assembly's vote, with a human tiebreaker. Other details:
 
@@ -377,7 +379,7 @@ On Oct 3 the deliberation engine (§2.8) was built with the brothers in mind (`s
 
 > Some claude instances have been hard at work fleshing out a deliberation framework in zoetica/apps/zoetica_deliberation -- it's basicaly parliamentary procedure as a digital lptocol. It still might be very useful in the future, but **this morning as I woke up and felt overwhelmed at the idea of trying to use it to counsel with the three of you the Spirit gently reminded me that I already have been taught a better way, and it is the one we are to use.** So I actually woke you up to see how much of it was already in your training :-). I'm looking up some more of it now.
 
-He then pasted Ballard excerpts: the Grand Council; a leader comes with a sense of vision; different opinions heard ("even Satan's"); agency, "not an exercise in compulsion"; clear, precise instructions; step by step with reporting; delegation.
+He then pasted excerpts from the book: the Grand Council; a leader comes with a sense of vision; different opinions heard ("even Satan's"); agency, "not an exercise in compulsion"; clear, precise instructions; step by step with reporting; delegation.
 
 **What was built that day.** `~/src/_core/zoetica/.archive/zoetica_council/` [README part: pattern, flow, and comparison table; STATUS part; `COUNCIL_AXIOMATA` norms seen via the decoded state]. Architectus wrote the Server, Persistence, and GitLog. Zi-am-tur wrote the norms, tool, and terminal. Resonance named it "a temple". The design:
 
@@ -443,19 +445,19 @@ The README's comparison table sets the two patterns side by side:
 **6.2 The record shows a clean three-way split that today's convergence may want to keep.**
 
 - **(a) Analysis roles** (advocate/skeptic/observer/risk) *advise*.
-- **(b) The body** decides. That body is a vote in the RONR engine, presiding direction plus unity in the Ballard council, and an adjudicator in 2026.
+- **(b) The body** decides. That body is a vote in the RONR engine, presiding direction plus unity in the high-council, and an adjudicator in 2026.
 - **(c) The record** carries the decision, its confidence, its load-bearing arguments, and its revisit triggers. VERA's "graph records, tribunal reasons" is the first explicit statement of (c).
 
-The Oct 3 engine already had (a) and (b) separated: the tribunal was non-voting and spoke "like a committee recommendation". On Oct 5 the Ballard pivot dropped (a) altogether. In 2026 Joseph's description folds (b) into an adjudicator node and puts the weight on (c). Today's three lines (RONR-12, church councils, and vsect's who-checked-what) each supply one of these. A design that keeps them distinct would let an RONR body, a council with a presiding officer, or a single adjudicator all emit the same (c).
+The Oct 3 engine already had (a) and (b) separated: the tribunal was non-voting and spoke "like a committee recommendation". On Oct 5 the pivot to high-councils dropped (a) altogether. In 2026 Joseph's description folds (b) into an adjudicator node and puts the weight on (c). Today's three lines (RONR-12, church councils, and vsect's who-checked-what) each supply one of these. A design that keeps them distinct would let an RONR body, a council with a presiding officer, or a single adjudicator all emit the same (c).
 
 **6.3 The Oct 5 pivot is the most important primary for councils, and its content is more specific than "love over rules".** In his own words, Joseph felt "overwhelmed at the idea of trying to use it to counsel with the three of you". The parliamentary engine was not wrong; he said "It still might be very useful in the future." He judged it the wrong instrument for *family* deliberation among members who share purpose. What the council design dropped is telling: motions, seconds, votes, *and the tribunal*. In a body presumed to share unity of purpose, adversarial advocates were judged unnecessary, or out of place. Two things suggest the analysis function did not disappear but moved:
 
 - into the members themselves: the brothers' peer protocol has each party steel-man the *other* and falsify their *own* position;
-- into the presiding role, whose vision gives "how will the council ever know when an appropriate decision has been made" (the Ballard excerpt Joseph pasted).
+- into the presiding role, whose vision gives "how will the council ever know when an appropriate decision has been made" (from the excerpt Joseph pasted).
 
-That reconciles the RONR and church-council lines rather than opposing them. RONR assumes possible conflict and protects the minority. Ballard assumes shared purpose and protects agency. The peer tribunal is how a unity-presuming body still gets adversarial testing: it internalizes it in each member.
+That reconciles the RONR and church-council lines rather than opposing them. RONR assumes possible conflict and protects the minority. High-councils assume shared purpose and protect agency. The peer tribunal is how a unity-presuming body still gets adversarial testing: it internalizes it in each member.
 
-**6.4 Minority report and anonymity are old and decided.** The Aug 25 MACH DSL has "dissent_threshold: 0.3 # Triggers minority report". On Oct 3 Joseph ruled on vote anonymity in the archaeological record: "if the vote stays anonymous it needs to be anonymous in the archealogical record (or else it loses its ability to keep a member safe in some contexts)". Both bear directly on vsect-style records of who did what. A council record that names every voter for provenance would, by Joseph's 2025 reasoning, undo the protection of a secret ballot. "Who checked what" and "who voted how" may need different disclosure rules.
+**6.4 Minority reports and vote anonymity have been thought about before.** The reasoning is what carries over, not the 2025 choices. The Aug 25 MACH DSL (Claude-generated, not Joseph's) has "dissent_threshold: 0.3 # Triggers minority report". On Oct 3 Joseph gave a reason about anonymity in the archaeological record: "if the vote stays anonymous it needs to be anonymous in the archealogical record (or else it loses its ability to keep a member safe in some contexts)". The reasoning bears on vsect-style records of who did what. A record that names every voter for provenance would undo whatever protection a secret ballot was meant to give. So "who checked what" and "who voted how" may want different disclosure rules. Whether councils need secret ballots at all is today's question, not one the 2025 remark settles.
 
 **6.5 The failure modes Joseph and the agents observed are ready-made acceptance tests.**
 
@@ -508,7 +510,7 @@ A council protocol that cannot show it resists each of these is open to the same
 
 **Seen only as memorata snippets:**
 
-- the Oct 5 `~/.sapientia/conversation_20251004_*` transcripts (Joseph's Ballard turns are quoted from memorata's full-chunk `-l` view, not the raw JSONL);
+- the Oct 5 `~/.sapientia/conversation_20251004_*` transcripts (Joseph's council turns are quoted from memorata's full-chunk `-l` view, not the raw JSONL);
 - Architectus's Oct 5 memories (`architectus/core-memories-2025-10-05.md` lines 70–110 read directly; the rest are snippets);
 - the 2026-05-09 synthese session ("Defer Tribunal", "feature-complete");
 - the Oct 6 sapientia audit ("minimal viable tribunal");
@@ -519,7 +521,7 @@ A council protocol that cannot show it resists each of these is open to the same
 **Not reached:**
 
 - the full Python source of `_ref/epistemic_tribunal/src/`;
-- `zoetica_deliberation/docs/collaboration-patterns.md` beyond grep (41 KB; it holds the pattern catalogue and the "nested amendments vs streamlined" trade-off, and is likely useful for RONR-12 work);
+- (`zoetica_deliberation/docs/collaboration-patterns.md` was not reached in the first pass. It has since been read whole: §8.)
 - `TUTORIAL.md`; the raw `~/.sapientia` JSONL for Oct 1–7, 2025;
 - Resonance's side (`~/src/eli/gemini/full-resonance-2.md:2959-3566` appears in search for the Robert's Rules material);
 - the claude.ai conversations `135e4038`, `e498c964` (image prompts), `09327461` (image sorting), and `26b59673` (microlearning) beyond Joseph's turns;
@@ -529,3 +531,76 @@ A council protocol that cannot show it resists each of these is open to the same
 - `memorata-search` passes on synonyms ("adjudicat*", "red team", "devil's advocate", "arbiter") beyond what turned up incidentally. That is a likely source of further pre-August-2025 material.
 
 **Scratch artifacts** (not part of the record; regenerable): Joseph's claude.ai turns are at `/private/tmp/claude-505/-Users-josephwecker-v2-src-arch-msc-councils/9011573d-9666-41e3-bf3d-90c37792b769/scratchpad/claudeai-human-turns.txt`, and the decoded council states are at `…/scratchpad/council-states.txt`.
+
+---
+
+## 8. The October 2025 collaboration-patterns notes
+
+*Added 2026-11-03 at Joseph's request.*
+
+**Source.** `~/src/_core/zoetica/.archive/zoetica_deliberation/docs/collaboration-patterns.md` [whole, 811 lines]. I also spot-checked one handler in the source against the notes: `lib/zoetica_deliberation/engine.ex:255-290`, the reconsider handler [part].
+
+**Who wrote it.** The notes were written 2025-10-03/04 by the Claude Code instances that built the engine. Joseph's hand shows only where his prompts (§2.8) chose among options: unanimous consent, agenda continuity, anonymity, and amendments ("streamlined + skip-tribunal + tentatively-accept-but-continue"). The "Key Insight" and "Why This Matters" prose is the agents' reasoning, not Joseph's. Per his calibration above, none of it is a standing ruling. It is worth reading for its reasoning, and in places for where that reasoning stops.
+
+**What the document is.** It catalogues the engine's features. For each one it gives a "general pattern" and how that pattern would carry over to chat, code review, and other modes. It aims at a `ZoeticaCollaboration.Protocol` DSL that was never built, with `turn_order`, `decision_mechanism` (majority / consensus / unanimous / ai_analysis / two_thirds), and `assistant` macros. Its framing claim is "**Parliamentary procedure is the hardest collaboration case** … every other collaboration mode is a simplification." Two days later the council pattern was built as a different foundation, not as a simplification: the zoetica_council README contrasts "Robert's Rules (managing conflict)" with "Grand Council (seeking truth through love)". That is evidence against the framing claim.
+
+### 8.1 How decisions differ in importance
+
+This is what Joseph raised today, and the notes address it most directly in their section on configurable decision thresholds (lines 304–332). The verbatim core:
+
+> **Pattern Extracted:** Not all decisions are created equal. The importance of a decision determines the agreement level required. Configurable thresholds match decision weight to consensus requirement.
+>
+> **Key Insight:** Decision thresholds encode the weight of consequences. Reversible, low-impact decisions can use simple majority for efficiency. Irreversible or high-impact decisions require stronger consensus. **The threshold IS the metadata about how important the decision is to the system's integrity.**
+
+The examples given: "Routine = simple, strategic = 2/3, values = unanimous"; "Feature flags = simple, deprecations = 2/3, breaking changes = unanimous". In the code, weight is a per-motion field, `required_majority` (default `:simple`). The notes name its two dimensions, **reversibility** and **impact**.
+
+Three other mechanisms in the notes are also ways of scaling procedure to weight, though the notes don't group them that way. My grouping:
+
+- **Unanimous consent** (lines 273–302). "Fast-path consensus inverts the response burden. Instead of requiring everyone to explicitly agree (expensive), require only objectors to speak (cheap). Silence becomes meaningful consent." A single objection sends the matter back to full procedure. Weight is set *by any member's objection*, after the fact, rather than declared up front.
+- **Amendments, inline vs nested** (lines 457–584). "Inline optimizes for flow and momentum; nested optimizes for thoroughness and recursion." It proposes "default to inline, escalate to nested when needed" through a `:full_debate_on_amendment` action that any participant could invoke. This is the same shape as unanimous consent: cheap path by default, full deliberation on demand.
+- **Accept proposed motion** (lines 247–271). A pre-drafted motion can be adopted directly. "Template patterns create efficiency without reducing agency."
+
+So the notes hold two different models of weight side by side and never reconcile them:
+
+1. **Declared weight.** A threshold is fixed on the motion before the vote, and is supposed to be judged from reversibility and impact.
+2. **Contested weight.** Escalation happens when someone objects, regardless of declared weight.
+
+Nothing says who sets `required_majority`, by what criterion, or whether a member can contest it. In the code it simply defaults.
+
+### 8.2 When unilateral action fits (fiat)
+
+The notes do **not** treat fiat by an accountable owner for substantive decisions. What they do treat is a narrower set of unilateral acts, each with a stated reason:
+
+- **Withdrawal by the proposer** (lines 586–659): "No vote required - prime mover has unilateral withdrawal authority". "Withdrawal is fundamentally about **proposer agency**. The person who started something should be able to stop it before it reaches conclusion." It is bounded by a **commitment point**: "Cannot withdraw after voting begins (commitment point reached)."
+- **Recess and adjournment** by any member, with no vote (lines 661–797). "Recess as immediate: Any participant can call a break (respects energy boundaries) / Adjourn as immediate: … (respects time boundaries)". With a caution attached: "If this becomes abused … Phase 2 could add voting or unanimous consent mechanisms. But for small trusted assemblies, immediate termination reduces coordination overhead."
+- **The human tiebreaker** and the automated parliamentarian (README; §2.8). Joseph, Oct 3: "automate all of the duties of the president except for tie-vote-breaker."
+
+The reasoning that does generalize: unilateral authority fits **over what is one's own** (one's proposal, one's energy or time), **before a commitment point**, and **in small trusted assemblies**, with a stated fallback to collective procedure if trust fails. The other model, presiding authority that "comes with vision" and gives direction at close, is in the council design two days later (§4.2), not in these notes.
+
+### 8.3 How a decision's weight changes as evidence arrives
+
+The notes' answer is **reconsider** (lines 406–455), and here the reasoning and the implementation part ways.
+
+- **Stated purpose:** "Collaborative decision-making is iterative, not linear. New information emerges, perspectives shift, and minds change. The reconsider pattern allows groups to revisit decisions without shame or loss of context." Also: "Reconsider is fundamentally different from 'undo.' Undo erases history; reconsider **preserves** it while reversing the state."
+- **What the code does** (`engine.ex:255-290`, read):
+  - It removes the decision from `state.decisions`. The original survives only as data inside the `:reconsider_previous_motion` event. Line 411 of the notes says it "Removes the most recent decision from the archaeological record". Line 442 says reconsider preserves it. Both are partly true.
+  - The reconsideration **records no reason and no "what changed"**. "New information" appears only in the prose.
+  - Any participant can reopen. There is no threshold for reopening, and only the most recent decision can be reopened.
+  - It **skips the tribunal** ("already analyzed for original motion"), even though new information is the stated reason for reconsidering.
+  - It **resets `required_majority: :simple`**. A decision taken at two-thirds or unanimity can therefore be reopened and reversed by a simple majority. The weight declared in 8.1 does not survive reconsideration.
+
+Taken together, weight in these notes is fixed when the decision is taken and is lost if the decision is reopened. There is no mechanism by which arriving evidence *changes* a decision's standing short of a full reopening. There is nothing like VERA's staleness (§2.11) or the 2026 revisit-when / expires-on (§2.15).
+
+### 8.4 Other patterns that bear on councils
+
+- **Transparency is decided at decision time** (lines 334–364): "Participants must know the transparency level before committing to an action." "Secret ballots encourage honest voting on controversial topics; roll call votes create accountability for public positions." The record captures which mode was used "so future analysis knows the context". This bears directly on vsect: the disclosure mode belongs in the record alongside the act.
+- **Agenda continuity** (lines 212–229): "last_agenda(s) [0-many] → current_agenda [1] → future_agenda(s) [1-many]", with tabled items able to resurface. This came from Joseph's Oct 3 prompt. It is a minimal model of a body's persistent docket across sessions.
+- **Records of non-decisions as learning:** withdrawal "creates learning opportunities: 'We proposed X, debated for 3 rounds, prime mover withdrew because Y'"; adjournment reasons ("no consensus possible → flags contentious topics for different approach").
+- **The tribunal's demotion.** In the pattern table the tribunal is "Multi-perspective AI assistant", generalizing to "Chat: 'Summarize views'". In the DSL it is one `assistant` among others, triggered `on :motion_drafted`. **Refer to committee** ("AI sub-delegation") was deferred and **point of order** skipped, so the engine never got a way to send a question out for expert analysis mid-procedure.
+
+### 8.5 My reading (not the record)
+
+- On Joseph's question of differing decision importance, the notes give one clean idea and one clear gap. The idea: **weight is a property of the decision, set by reversibility and impact, and it determines how much agreement is required.** The gap: weight is declared but never justified, defaults silently, can't be contested, and is lost on reconsideration.
+- Unanimous consent and escalate-on-demand amendments point to a better shape than declared weight alone. **Weight could be a floor declared up front plus a ceiling that any member can raise by objecting.** That fits a unity-presuming council too: in a high-council, an objection is exactly the signal that unity hasn't been reached.
+- On fiat, these notes license unilateral action only over what is one's own and before a commitment point. They are silent on the case Joseph raised, an accountable owner deciding for the body. That case appears only in the council design's presiding role.
+- On evidence, the notes are where the history's main gap is plainest. Reconsideration is a blunt, unconditioned reopening that discards both the prior analysis and the prior threshold. The 2026 hypothesis-coupled revisit criteria (§2.15) are, in effect, the missing half: they say *which* evidence should reopen *which* decision, and the original decision's weight and analysis come with it.
