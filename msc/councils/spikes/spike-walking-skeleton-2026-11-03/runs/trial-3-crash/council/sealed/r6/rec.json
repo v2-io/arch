@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes, with my conditions from r4 on the record: any action with no verified CC_AGENT is marked as an identity gap; vsect checks the key and src tag rather than reading the raw variable; adversarial tests run in the live harness before any project-scoped rule is relied on; and the trial record shows which run had the prefix refused. Sec's amendment (project rule provisional until tests pass) is one I support.",
+  "vote": "yes"
+ }
+}

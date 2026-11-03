@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion on q1, restated so the operative text is unambiguous (replaces the pre-amendment motion that failed in r6, and supersedes my standing intent). The council recommends to Joseph, who approves any change to the global settings file:\n(1) Remove Bash(export CC_AGENT=*) from ~/.claude/settings.json now. Confirm in a fresh session that the rule is gone.\n(2) Record the identity gap: the time window the rule is out, and which vsect or git-trailer actions in it lack a verified CC_AGENT prefix. Do not read those actions as attributed.\n(3) On a scratch project, with the rule project-scoped, run the chaining matrix in the hook-rewritten form (export CC_AGENT='...'; then the agent command). Cases: ;, &&, ||, |, a newline between commands, a newline inside the export value, backticks, $(, a second export CC_AGENT= with a different key, and one case where the agent's own command is itself a valid-looking export. Each must still prompt.\n(4) Reinstate only if every case prompts: project-scoped, literal prefix export CC_AGENT=' (no * tail). Then verify the two-hook combination and the TUI prompt text, and record the exact pattern and the test run that justified it.\nIf any case is auto-allowed, the rule does not come back in any form with a * tail."
+ }
+}

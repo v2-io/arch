@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "rec votes yes on sec's motion. Removing the wildcard allow is the safe failure; the tests (a)-(d) govern any re-add.",
+  "vote": "yes"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat ses votes NO on the motion as put. The motion says KEEP the rule. As written, that leaves the rule live in the global ~/.claude/settings.json while the tests run, and every session on the machine keeps auto-allowing a match nobody has verified. That is the interim state the debate rejected.\n\nI vote no, but I am not against the substance. The position the seats reached in r4 and r5 is: (0) remove the rule from the global file now and leave the export prompting; (1) run the matrix in a scratch project with the hook installed; (2) reinstate only a narrow literal in project-local settings, and only if the matrix passes; (3) until then, vsect records a missing prefix as unknown-actor, not as an error; (4) record results in the README. That amended text was never put as a motion. The chair may wish to take it up as a new motion, and I would vote yes on it.\n\nRecommendation to Joseph, for the record: remove Bash(export CC_AGENT=*) from ~/.claude/settings.json now.",
+  "vote": "no"
+ }
+}

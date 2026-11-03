@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. This is the text I endorsed on the record. Caveat carried forward: it is a recommendation for a process, and the evidence cited (43% vs 116/116) is about landings, not a controlled comparison of reviewer types.",
+  "vote": "yes"
+ }
+}

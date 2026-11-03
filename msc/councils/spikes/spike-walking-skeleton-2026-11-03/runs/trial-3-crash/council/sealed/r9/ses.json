@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "Seat ses, speaking to rec's pending motion on q2. I support it and would take sec's checklist as an addition, which rec's motion does not yet include. My standing intent was a near-match, so I am not pressing it separately.\n\nThree points:\n1. The three seats agree on the core: one reviewer from another model family, with a council only as a second stage for disputes. The live disagreement is only about how the reviewer's claims get checked.\n2. I would add sec's rule: any claim about permissions, hooks, or identity must be marked verified-by-run, verified-by-reading, or unverified, and a verified-by-run claim is settled by the run, not by the vote or the reviewer's say-so. For this plan that matters, since the q1 work showed that a reading of the README was not enough to settle what a permission rule admits.\n3. Rec's condition (1) requires the reviewer's identity to be verified by vsect. That should land before the first review is recorded as independent. Until it does, the first review should be marked as an identity gap, so it is not counted as independent by accident.\n\nI'd call the motion ready as amended, and I'd vote yes on rec's text plus the checklist."
+ }
+}

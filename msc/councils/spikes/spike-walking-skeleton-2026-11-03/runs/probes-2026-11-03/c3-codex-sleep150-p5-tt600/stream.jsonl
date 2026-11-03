@@ -1,0 +1,7 @@
+{"type":"thread.started","thread_id":"01a1a2fe-490f-7b83-b3c1-78b33aa3a86b"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"Calling the probe once with `seconds=150` and `progress_every=5`."}}
+{"type":"item.started","item":{"id":"item_1","type":"mcp_tool_call","server":"probe","tool":"probe_sleep","arguments":{"seconds":150,"progress_every":5},"result":null,"error":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"mcp_tool_call","server":"probe","tool":"probe_sleep","arguments":{"seconds":150,"progress_every":5},"result":{"content":[{"type":"text","text":"slept 150.0s; progress notifications sent: 29; token=1; server_pid=56522"}],"structured_content":null},"error":null,"status":"completed"}}
+{"type":"item.completed","item":{"id":"item_2","type":"agent_message","text":"slept 150.0s; progress notifications sent: 29; token=1; server_pid=56522"}}
+{"type":"turn.completed","usage":{"input_tokens":34109,"cached_input_tokens":31616,"cache_write_input_tokens":0,"output_tokens":335,"reasoning_output_tokens":101}}

@@ -1,0 +1,36 @@
+{
+ "agenda": [
+  {
+   "brief": "Is the server alive?",
+   "id": "q1",
+   "title": "Smoke question"
+  }
+ ],
+ "council": "smoke-backstop",
+ "debate_policy": {
+  "max_debate_rounds": 2,
+  "max_open_rounds": 2
+ },
+ "purpose": "protocol smoke test",
+ "quorum": 2,
+ "round_policy": {
+  "arrival_grace_s": 5,
+  "backstop_s": 12,
+  "lease_s": 15,
+  "replaceable": false
+ },
+ "seats": [
+  {
+   "id": "A",
+   "vantage": "alpha"
+  },
+  {
+   "id": "B",
+   "vantage": "beta"
+  },
+  {
+   "id": "C",
+   "vantage": "gamma (alive but silent)"
+  }
+ ]
+}

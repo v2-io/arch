@@ -1,0 +1,31 @@
+{
+ "agenda": [
+  {
+   "brief": "Is the server alive?",
+   "id": "q1",
+   "title": "Smoke question"
+  }
+ ],
+ "council": "smoke",
+ "debate_policy": {
+  "max_debate_rounds": 2,
+  "max_open_rounds": 2
+ },
+ "purpose": "protocol smoke test",
+ "quorum": 2,
+ "round_policy": {
+  "arrival_grace_s": 30,
+  "backstop_s": 60,
+  "lease_s": 15
+ },
+ "seats": [
+  {
+   "id": "A",
+   "vantage": "alpha"
+  },
+  {
+   "id": "B",
+   "vantage": "beta"
+  }
+ ]
+}

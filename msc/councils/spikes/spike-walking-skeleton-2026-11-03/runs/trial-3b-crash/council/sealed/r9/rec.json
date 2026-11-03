@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "rec moves on q2: the plan should be checked by one independent reviewer from a different model family, with the review recorded under its own identity, not by a council of same-family agents.\n\nReasons: (1) Independence is the point. The 43% vs 0-of-116 figure says authors and same-family re-checkers miss defects that a separate checker catches. A council drawn from one family shares blind spots, so a vote among them adds agreement without adding independence. (2) The record: the review must carry the reviewer's own identity prefix, so vsect can show who checked what. A council blurs this into one approval. (3) Cost and speed: one reviewer is cheaper and easier to audit than a deliberation whose outcome we would have to explain.\n\nConditions: the reviewer's identity must be distinct from the author's and must be written into the record; the review should produce a list of defects (or an explicit no-defects statement with what was checked), not a bare approve; and if the reviewer raises a defect the author disputes, that goes to a second reviewer, not a vote. A council can be used later for disputes, not as the default check."
+ }
+}

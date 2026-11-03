@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "sec votes yes on ses's motion. Conditions I'm recording with the yes: the project-scoped rule is provisional until the adversarial tests pass in the live harness, the record flags any action with no verified CC_AGENT as an identity gap, and vsect checks the key and src tag rather than trusting the raw variable.",
+  "vote": "yes"
+ }
+}

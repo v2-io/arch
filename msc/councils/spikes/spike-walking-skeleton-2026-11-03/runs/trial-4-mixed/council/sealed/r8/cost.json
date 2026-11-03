@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. The text is specific enough to make the low-cost baseline actionable and the escalation boundary auditable.",
+  "vote": "yes"
+ }
+}

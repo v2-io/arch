@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "sec votes yes on rec's motion, with two recorded additions from debate: (5) every security, permission, hook, or identity claim in the plan is marked verified-by-run (output quoted), verified-by-reading, or unverified, and a run settles any dispute over a verified-by-run item; (6) the 43% and 116-of-116 figures are cited with their source and not compared directly, since they measure different things.",
+  "vote": "yes"
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion (ses): Recommend to Joseph: KEEP Bash(export CC_AGENT=*) only with conditions, and do not treat the README's safety claim as verified. Conditions: (a) narrow the literal to the hook's fixed shape, e.g. export CC_AGENT='* parent=* src=agent-identity-hook/2'; so arbitrary CC_AGENT values are not pre-approved; (b) run the compound-form tests before relying on it: ';', '&&', '||', newline, and '|' each followed by a command that must still prompt, plus backtick and ${} substitution; (c) confirm the permission check sees the final rewritten command when two PreToolUse hooks both rewrite Bash; (d) confirm the approval prompt shows the full chained command; (e) move the rule from machine-wide ~/.claude/settings.json to project-scoped settings for estate agents, or record explicitly that it is machine-wide and which sessions it reaches. Fallback: if (b) or (c) fails, REMOVE the rule and accept the prompt. Until (a)-(c) are done, the identity tooling should fail loudly, not run unattributed, if the export is refused."
+ }
+}

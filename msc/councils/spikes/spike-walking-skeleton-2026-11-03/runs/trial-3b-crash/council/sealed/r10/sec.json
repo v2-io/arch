@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "sec speaks in favour of ses's motion on q2, with one addition I would want in the record. The motion sets out independence but says nothing about what the reviewer may touch. The reviewer should be read-only with respect to the plan and repo: it reports findings and does not edit, because a checker that can fix the thing it checks can quietly hide its own defects. It should also run the plan's commands in a scratch copy rather than only re-reading the author's summary, since a reader who only reads inherits the author's framing. I support the motion with those two conditions added. The motion's own caveat stands: the 43% figure compares independent checkers with self-checks, not one model family with another, so the record should say the cross-family benefit is assumed, not measured."
+ }
+}

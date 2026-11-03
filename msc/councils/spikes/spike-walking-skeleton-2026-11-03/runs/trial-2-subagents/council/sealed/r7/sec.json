@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "sec votes yes on the motion as written. My stated preference, which I did not put as a condition, is that the global rule come out now and be re-added only in scoped settings after tests (b) and (c) pass. That preference is recorded in r5 and r6, and Joseph can take it up or not.",
+  "vote": "yes"
+ }
+}

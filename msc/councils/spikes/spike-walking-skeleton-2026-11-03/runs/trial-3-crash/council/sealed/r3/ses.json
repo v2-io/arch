@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion (seat ses), on q1: Remove Bash(export CC_AGENT=*) from the global ~/.claude/settings.json now. Re-add it only in project or local settings for the repo that needs CC_AGENT, and only after the adversarial tests pass in the live harness: the export followed by `;`, `&&`, `||`, `|`, a newline, a backtick, and an injection inside the quoted value, each showing a prompt; plus one run with a second PreToolUse hook that also rewrites Bash, confirming the string the permission check sees.\n\nOn rec's point that removal makes attribution silent: I think the failure is not silent. Without the rule, the export prompts the agent, so the gap shows up at the moment it happens. A missing prefix that the agent sees and can report is better than an allow that admits unseen commands in every session. I accept rec's condition that vsect or the record should verify the CC_AGENT value that actually ran, and I accept sec's point that the rule should not be the only identity check. Those can land in parallel with the test work.\n\nI would vote for this motion and would revisit keeping the rule globally only if the tests pass and the scope is narrowed."
+ }
+}

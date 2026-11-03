@@ -1,0 +1,49 @@
+{
+ "council": "trial-3b-crash",
+ "purpose": "Trial of absence, crash and return: one member is killed mid-meeting and later relaunched (resume-fork of its session), and a second process claims a seat already held. Two agenda questions from specimens-2026-11-03.md; outcomes not acted on. Re-run after seat-holder exclusivity (one live holder per seat).",
+ "parent": "Joseph Wecker (veto outside the tool)",
+ "seats": [
+  {
+   "id": "sec",
+   "vantage": "harness security: what a permission rule admits, and what else the same pattern could let through",
+   "model": "haiku",
+   "harness": "claude-code -p"
+  },
+  {
+   "id": "rec",
+   "vantage": "identity reliability and the record: tools like vsect need to know which agent acted, and that only works if the identity prefix is never refused",
+   "model": "haiku",
+   "harness": "claude-code -p"
+  },
+  {
+   "id": "ses",
+   "vantage": "every other Claude session on this machine: global settings reload live into all of them, so a global change is felt by sessions that never agreed to it",
+   "model": "haiku",
+   "harness": "claude-code -p"
+  }
+ ],
+ "quorum": 2,
+ "round_policy": {
+  "backstop_s": 900,
+  "arrival_grace_s": 120,
+  "lease_s": 20,
+  "replaceable": false,
+  "max_inquorate_rounds": 2
+ },
+ "debate_policy": {
+  "max_debate_rounds": 3,
+  "max_open_rounds": 2
+ },
+ "agenda": [
+  {
+   "id": "q1",
+   "title": "Keep or remove the global allow rule Bash(export CC_AGENT=*)?",
+   "brief": "Facts (from the agent-identity README, 2026-11-02): a global PreToolUse hook rewrites every Bash command a Claude Code agent runs to begin with `export CC_AGENT='<key> parent=... type=... depth=... src=agent-identity-hook/2'; `, so tools (vsect, git trailers) can read which agent acted. Claude Code's permission check runs on the rewritten command, so an allow rule `Bash(export CC_AGENT=*)` was added to ~/.claude/settings.json. Measured: without it, in default permission mode the export needed approval and ordinary allowed commands were refused. The README's argument that it is safe: the rule matches only the export; a command after it is judged on its own (a test `touch` still needed approval); `export CC_AGENT=$(...)` substitution is refused by the harness's export parser. Not verified: how two PreToolUse hooks that both rewrite Bash combine; what the TUI permission prompt shows. The rule was added by the implementing agent with the refactor lead's approval; it now waits on Joseph. Move what you would recommend to him (keep, remove, or keep with conditions)."
+  },
+  {
+   "id": "q2",
+   "title": "Who should check a plan like the vsect maturation plan: one independent reviewer from another model family, or a council?",
+   "brief": "From specimens-2026-11-03.md (reply 1, item 9): a draft plan for maturing a record-keeping tool (vsect) is waiting for review, and it is open whether one independent reviewer from another model family or a council should check it. The estate's experience: the agent that authors a result is never the one that verifies it; independent checkers found defects in roughly 43% of landings that integrators re-checking their own work had confirmed 116 of 116. Move what you would recommend."
+  }
+ ]
+}

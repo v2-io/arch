@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes, as moved, with sec's condition (5) accepted: every security-, hook- or identity-related claim in the plan is marked verified-by-run (output quoted), verified-by-reading, or unverified, and a run settles a dispute over a verified-by-run item. Until vsect verifies the reviewer's identity, the first review is recorded as an identity gap, not as independent.",
+  "vote": "yes"
+ }
+}

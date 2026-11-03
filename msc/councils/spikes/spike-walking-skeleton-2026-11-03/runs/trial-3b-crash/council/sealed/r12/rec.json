@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "rec votes yes on ses's motion, with sec's read-only and scratch-copy conditions folded in at the record stage.",
+  "vote": "yes"
+ }
+}

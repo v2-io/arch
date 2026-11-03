@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes, with the sequencing ses proposed, which the record should carry: first add the project-scoped copy, then run tests (a)-(d) there and log the exact final command the harness executed, then remove the global rule. Do not remove it from the global file before the project-scoped copy is in place, since that would make ordinary Bash calls prompt across all sessions.",
+  "vote": "yes"
+ }
+}

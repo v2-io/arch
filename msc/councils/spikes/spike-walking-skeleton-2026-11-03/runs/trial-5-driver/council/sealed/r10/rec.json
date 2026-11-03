@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat rec votes YES on the amended form moved in r7 and put in r10: remove Bash(export CC_AGENT=*) from ~/.claude/settings.json now and leave the export prompting; run the matrix in a scratch project with its own settings, in default mode, with the hook installed, recording each compound form, the two-hook final command string, and the TUI prompt display; reinstate only a narrow literal in project-local settings with no wildcard tail, and only if the matrix passes; until then vsect records a missing prefix as unknown-actor, not as an error; record results in the README, marking two-hook ordering unknown if not established. Recommendation to Joseph, who owns the settings file and the test owners are Joseph and the refactor lead: remove the rule now and run the matrix.",
+  "vote": "yes"
+ }
+}

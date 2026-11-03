@@ -1,0 +1,11 @@
+launched {'seat': 'sec', 'sub': 'sec', 'pid': 57594, 'extra': []}
+launched {'seat': 'rec', 'sub': 'rec', 'pid': 57595, 'extra': []}
+launched {'seat': 'ses', 'sub': 'ses', 'pid': 57596, 'extra': []}
+killed {'seat': 'ses', 'pid': 57596, 'at_seq': 10}
+resuming {'seat': 'ses', 'session': 'faf98c11-5597-4a7c-8d50-9d50f17b541a', 'at_seq': 15}
+launched {'seat': 'ses', 'sub': 'ses-resumed', 'pid': 57920, 'extra': ['--resume', 'faf98c11-5597-4a7c-8d50-9d50f17b541a', '--fork-session']}
+launched {'seat': 'ses', 'sub': 'ses-duplicate', 'pid': 58321, 'extra': []}
+exited {'which': 'sec', 'rc': 0}
+exited {'which': 'rec', 'rc': 0}
+exited {'which': 'ses2', 'rc': 0}
+exited {'which': 'dup', 'rc': 0}

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "For routine plan checks, move that one independent reviewer from another model family be the default. It is the lowest-latency, lowest-token, lowest-steward-attention check and preserves the key independence property. Use a council only when the plan is high-risk, unusually ambiguous, or the first review exposes disagreement: its extra seats and coordination cost are justified only when they are likely to change the action."
+ }
+}

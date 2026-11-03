@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "sec moves, as a merged recommendation for Joseph on q1: remove Bash(export CC_AGENT=*) from global ~/.claude/settings.json now. Re-add it only in project-scoped settings for the repo that needs CC_AGENT, and only after these checks pass in the live permission check: (a) compound forms prompt, namely export CC_AGENT=x; <cmd>, &&, ||, newline-separated commands, and export CC_AGENT=x && curl ... | sh; (b) a value containing quotes, spaces, or ; does not escape the quoted value; (c) the output shape is confirmed with a second PreToolUse hook that also rewrites Bash.\n\nI take rec's point that removal makes identity silently missing. So the removal should come with a record-side fix: vsect and the record should flag an action with no CC_AGENT value as an identity gap, not as an unattributed success. Attribution has to fail loudly, not quietly.\n\nReason I prefer remove-then-scope over keep-with-conditions: the rule currently applies to every session on this machine. A safety argument tested on one command shape does not justify that scope. The cost of removal is approval prompts, which is reversible and safe."
+ }
+}

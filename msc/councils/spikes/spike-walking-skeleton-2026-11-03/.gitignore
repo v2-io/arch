@@ -1,0 +1,11 @@
+# secrets: seat tokens, and per-run harness homes that symlink real auth files
+**/tokens*.json
+**/codexhome/
+**/grokhome/
+# per-run working dirs (agy plugin configs embed seat tokens; harness scratch)
+runs/**/cwd/
+runs/**/cwd-*/
+# runtime state that is not record
+**/lock
+**/__pycache__/
+**/*.tmp.*

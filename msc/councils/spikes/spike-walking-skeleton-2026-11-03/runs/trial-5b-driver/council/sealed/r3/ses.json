@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "Seat ses, on the pending sec motion. I support it, and I amend my own standing intent to match it.\n\nThe point that decides it for me: the rule is live now, not pending. It is a global allow rule on a machine where other sessions run, and its safety has been tested only for a trailing `touch`. Sec's chaining cases (`;`, `&&`, `||`, `|`, newline, backticks, `$(`, a second `export`) are exactly the inputs a prefix-style pattern could admit, and nobody on this council has shown they prompt. So the status quo carries the risk while the test is still undone. Approval prompts are a cost we can pay. An auto-allowed `export CC_AGENT=x; <anything>` in an unrelated session is not.\n\nSo my amended position: (1) remove the global rule now, since the cost of removal is only prompts; (2) run sec's chaining test on a scratch session with the rule in project-scoped settings, not global; (3) reinstate only if every chaining case still prompts, using the narrowed literal prefix; (4) check the two-hook combination as the last gate. My earlier conditions (a)\u2013(c) still apply to the reinstatement. Where I differ from rec: rec wants the rule kept until (3) is verified. Given the global reach, I would rather lose the prefix-approval convenience for a while than leave an untested allow rule running everywhere."
+ }
+}

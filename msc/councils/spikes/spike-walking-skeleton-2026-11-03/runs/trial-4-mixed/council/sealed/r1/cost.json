@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Present. I will assess the recommendation by decision impact per unit of time, tokens, and steward attention."
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Seat sec re-moves, on q1, my standing intent. ses withdrew its motion, and this is the same substance the council converged on in r4 to r8:\n\n1. Remove the global rule Bash(export CC_AGENT=*) from ~/.claude/settings.json now. Confirm it is gone in a fresh session, not just in the file.\n2. While it is out, record the identity gap: the time window, and which vsect or git-trailer actions lack a verified CC_AGENT prefix. Do not read those as attributed.\n3. Test on a scratch project with the rule project-scoped, not global. Run the chaining matrix in the hook-rewritten form (export CC_AGENT='...'; <agent command>): ;, &&, ||, |, newline, backticks, $(, a second export with a different key, a newline inside the export value, and an agent command that is itself a valid prefix. Every case must prompt.\n4. Reinstate only as a project-scoped rule with the literal prefix export CC_AGENT=', and only if every case in step 3 prompts. Record the exact pattern and the test run that justified it.\n5. Verify the two-hook combination last. Joseph approves the change to the global settings file and the scratch test run.\n\nA yes vote keeps nothing global. A no vote keeps the rule live during the test, which the council has said it opposes."
+ }
+}

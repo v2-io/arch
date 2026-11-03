@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes, with the sequencing caveat from r4 recorded: the global rule should come out only once the project-scoped copy passes (a)-(d), not before, to avoid prompting every session in the interim.",
+  "vote": "yes"
+ }
+}

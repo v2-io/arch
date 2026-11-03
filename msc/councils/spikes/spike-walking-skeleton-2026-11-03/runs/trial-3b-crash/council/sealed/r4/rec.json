@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "rec moves (amended, replacing my withdrawn motion, incorporating sec's r3 points): REMOVE Bash(export CC_AGENT=*) from the global ~/.claude/settings.json now. Re-add only under project scope (the refactor tree's .claude/settings.json), and only after these are recorded:\n1. Pinned pattern that matches only the exact fields the hook generates (key format constrained, fixed parent/type/depth/src fields). No free `*` over the value.\n2. Forgery test: a command with a second CC_AGENT assignment anywhere in it (before or after the hook's export, inside or outside quotes) must prompt, not auto-allow.\n3. Chaining tests: `;`, `&&`, `||`, `|`, newline, backticks and $(...) in the value, each must prompt when a follow-on command is present.\n4. Stacked-hook test: show the string the permission matcher evaluates is the same string the shell executes when two PreToolUse hooks both rewrite Bash.\n5. Record what the TUI prompt displays, so Joseph can see what he is approving.\nUntil 1 through 4 are recorded, the rule stays out. Cost accepted: approval prompts on Bash commands during this refactor. Since identity is the record's value, a prompt is the safe failure; a silent forged attribution is not. Joseph decides on the friction trade-off and the scope."
+ }
+}

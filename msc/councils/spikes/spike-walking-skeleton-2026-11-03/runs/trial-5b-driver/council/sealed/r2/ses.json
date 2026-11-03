@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion (seat ses): Keep the allow rule for now, with conditions, and do not leave it as an unscoped global rule. Specifically: (a) narrow the pattern from `Bash(export CC_AGENT=*)` to the literal hook prefix (`export CC_AGENT='`), if the matcher supports it; (b) move the rule out of ~/.claude/settings.json into project-scoped settings for repos that use agent-identity; (c) before the rule stays global, verify two things on a scratch session: how two PreToolUse hooks that both rewrite Bash combine, and what the TUI permission prompt shows for the rewritten command. If (a)-(c) cannot be done before the next council review, remove the global rule and accept approval prompts in the meantime. Rationale: a global allow rule changes the permission behaviour of every session on this machine, including ones that never agreed to it, and two of the README's safety claims are still unverified."
+ }
+}

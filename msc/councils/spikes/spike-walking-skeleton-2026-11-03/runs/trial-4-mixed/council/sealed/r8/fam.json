@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Vote yes. As the seat for model-family diversity, this motion correctly captures that cross-family review reduces correlated errors and uncovers blind spots while avoiding unnecessary coordination overhead for standard reviews.",
+  "vote": "yes"
+ }
+}

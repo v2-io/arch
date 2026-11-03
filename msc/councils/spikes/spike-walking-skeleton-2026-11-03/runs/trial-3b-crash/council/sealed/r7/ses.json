@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. Remove the global rule now; re-add only in project scope after tests 1-4 are recorded. Consistent with my r2 recommendation.",
+  "vote": "yes"
+ }
+}

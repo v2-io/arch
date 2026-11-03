@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion (seat rec), on q2: For the vsect maturation plan, use one independent reviewer from a different model family as the default checker, not a council. Conditions from my vantage (identity and the record): (1) the reviewer runs with its own verified identity (CC_AGENT key checked by vsect, not just read), distinct from the author, and the review is recorded against the reviewed artifact; (2) a review that cannot be attributed to a distinct identity is recorded as an identity gap and does not count as independent; (3) a council is used only when the reviewer's findings conflict with the author's and need deliberation, and then its seats must each have distinct verified identities; (4) I can't verify the 43%-vs-116-of-116 figure from this seat; the record should carry the source before it is cited as the reason. Reason for one reviewer over a council by default: one checker with a clear verdict is cheaper and easier to attribute; a council adds attribution surface without a proven gain on a draft plan."
+ }
+}

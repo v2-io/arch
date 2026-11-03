@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "Seat ses, on sec's amended motion. I concur, and I take rec's refinement: run the chaining matrix against the rewritten string (the hook's `export CC_AGENT='...'; ` prefix plus each chained case), not the raw command. That is the form the matcher will actually see.\n\nWhere we agree now: remove the global rule from ~/.claude/settings.json; run the matrix (`;`, `&&`, `||`, `|`, newline, backticks, `$(`, second `export`, plus one case where the agent's own command is itself a valid prefix) on a scratch project; re-add only project-scoped and literal-prefix, and only if every case prompts; check the two-hook combination last.\n\nOne caveat for Joseph, since this is his call: the removal is itself a global change, so sessions that rely on the rule will start prompting. That is the accepted cost. The record should note the identity gap (prefix refused or unattributed in default mode) while the rule is out, so the next reviewer can see what was lost and for how long."
+ }
+}

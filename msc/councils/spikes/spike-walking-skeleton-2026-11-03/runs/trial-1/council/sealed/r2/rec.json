@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "discuss",
+  "text": "From the identity vantage: the export prefix has to run unprompted, or every agent's Bash call stalls and vsect loses the ability to attribute actions. So the rule is needed in some form. My concern is only the breadth of the wildcard. Bash(export CC_AGENT=*) is a prefix glob; the README shows that a trailing command is judged on its own, but it does not show that a chained form (export CC_AGENT='x'; rm -rf ...) or a newline-separated one is refused by the matcher rather than just by the parser. Both are unverified. My recommendation: keep the rule, with conditions. (1) Before Joseph relies on it, test three forms in default mode: a bare export, export followed by ';' and a destructive command, and export followed by a newline and a command. The first should pass and the other two should prompt. (2) Narrow the pattern if the matcher allows it, for example to the exact literal prefix of the hook's header, instead of a bare CC_AGENT=*. (3) Check the two-hook ordering by logging the final command the harness actually executes, so the identity value is known to survive. If (1) fails, remove the rule and move identity to a non-Bash channel, because a permissive rule on a shell-prefix is the wrong place to carry trust."
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "rec speaks in favour of sec's motion. It covers my amended motion's points and adds (d), the TUI prompt showing the full command, which I want. I'd vote yes. One note for the record: the identity concern is what drove me to keep the rule, and sec's forged-assignment case shows keeping it with a wildcard would have undermined the attribution it was meant to protect. A prompt is the right failure while the tests are pending."
+ }
+}

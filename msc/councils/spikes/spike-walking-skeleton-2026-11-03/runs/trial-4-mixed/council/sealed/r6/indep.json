@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Replacement text, endorsed on the record by plan, indep, and cost: \"A draft plan like the vsect maturation plan is checked by one independent reviewer from another model family. The reviewer writes findings before reading the author's justifications, and returns changes the author can apply: missing steps, wrong dependencies, unstated assumptions, and checks that would not catch a bad landing. A review that only grades the plan does not count. The author answers in writing; the reviewer confirms, or the unresolved defect is recorded. Reserve a council for an unresolved defect or for irreversible or cross-cutting work; if a council sits, at least one seat is from another family and the record names the families. Cross-family review reduces correlated error; it does not erase shared training bias. The 43% versus 116/116 figures are about landings and justify separating author from checker; they are not a measured comparison of one reviewer against a council.\" Vantage note from indep: the author of a result must not be its checker, and same-substrate agreement is coherence, not independent evidence."
+ }
+}

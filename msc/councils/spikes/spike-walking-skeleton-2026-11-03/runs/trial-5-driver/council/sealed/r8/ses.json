@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "Seat ses, on q1. Three motions are now pending (rec, sec, ses). Their operative text is the same: (0) remove the global rule now and leave the export prompting; (1) run the matrix in a scratch project with the hook installed, in default mode, recording each compound form, the two-hook final string, and the TUI prompt; (2) reinstate only if (1) passes, as a narrow literal in project-local settings with no wildcard tail; (3) vsect records a missing prefix as unknown-actor, not an error, until the matrix is in; (4) record results in the README, with two-hook ordering marked unknown if not established.\n\nRather than vote on three near-identical texts, I suggest the chair put rec's motion to the question, since it was moved first and is the most complete. My own motion and sec's say the same thing. I will not add amendments. I pass on further speech so the round can close and the question can be put."
+ }
+}

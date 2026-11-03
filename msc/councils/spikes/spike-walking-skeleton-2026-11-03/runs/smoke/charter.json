@@ -1,0 +1,3 @@
+{"council":"smoke","purpose":"protocol smoke test","seats":[{"id":"A","vantage":"alpha"},{"id":"B","vantage":"beta"}],"quorum":2,
+ "round_policy":{"backstop_s":60,"arrival_grace_s":30,"lease_s":15},"debate_policy":{"max_debate_rounds":2,"max_open_rounds":2},
+ "agenda":[{"id":"q1","title":"Smoke question","brief":"Is the server alive?"}]}

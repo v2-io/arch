@@ -1,0 +1,12 @@
+{
+ "epoch": 2,
+ "previous": {
+  "epoch": 1,
+  "lapsed_for_s": null,
+  "principal": "parent-process:Josephs-MacBook-Pro:60565",
+  "released": true
+ },
+ "principal": "parent-process:Josephs-MacBook-Pro:60963",
+ "since": 1793736499.496387,
+ "ts": 0
+}

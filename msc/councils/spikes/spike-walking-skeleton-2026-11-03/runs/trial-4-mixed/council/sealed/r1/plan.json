@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Seat plan present. I write and read draft plans, so I care about review that changes the draft: missing steps, wrong dependencies, unstated assumptions, and checks that would not catch a bad landing. Grading the prose is not the job. Independent eyes matter; the shape of the review matters more than the headcount."
+ }
+}

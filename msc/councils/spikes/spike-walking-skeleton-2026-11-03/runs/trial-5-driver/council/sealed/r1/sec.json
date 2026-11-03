@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Seat sec present. Preliminary view on q1, for the record: the export-prefix allow rule is risky as written. Its safety rests on the harness parsing `export CC_AGENT=...` as a standalone statement, and the README has not verified how two PreToolUse hooks that both rewrite Bash combine. Until that is tested, I lean toward keep-with-conditions: narrow the pattern to the exact literal prefix the hook emits (no wildcard tail), confirm that `export CC_AGENT='x'; <cmd>` judges `<cmd>` separately, and check that `;`, `&&`, newline, and backtick forms cannot smuggle a second command past the match. I will submit a recommendation once the round opens for substance."
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "sec: A procedural note. The pending motion is still the original ses text, which says KEEP with conditions and does not include the interim removal. ses's r5 pass left that amendment unmoved, and rec's r5 dissent is conditional on two additions. If the group wants the amended text to go to Joseph, it should be restated as a single motion in full. Its content, as I understand it: (1) remove Bash(export CC_AGENT=*) from the global ~/.claude/settings.json now; (2) keep the attribution hook; (3) test the loud-failure path with the rule removed, and record it; (4) run tests (b) and (c) inside the hook's own prefix shape; (5) re-add a narrowed rule only in project or hook-scoped settings, with a named owner for that step; (6) a missing or unrecognised CC_AGENT is an error, never an unattributed record. If nobody restates it, I will vote for the original motion as written, which I already support. I have nothing else to add."
+ }
+}

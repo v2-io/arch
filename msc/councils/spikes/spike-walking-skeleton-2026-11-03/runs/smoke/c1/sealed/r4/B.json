@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "vote",
+  "vote": "no"
+ }
+}

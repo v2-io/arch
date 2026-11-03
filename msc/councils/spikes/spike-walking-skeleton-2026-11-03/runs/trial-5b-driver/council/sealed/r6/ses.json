@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat ses votes NO on the question as put (sec's original \"keep with conditions\"). The rule is currently live and untested beyond a trailing touch, so keeping it in place while the chaining matrix is pending is the risk we identified. My vote is not against the conditions themselves; it is against leaving the global rule live during the test. The position the council actually converged on in r4 is: remove the global rule now, run the chaining matrix in the hook-rewritten form on a scratch project, and reinstate only as a project-scoped, literal-prefix rule if every case prompts (including a newline inside the export value and a second export with a different key). I would vote yes on that wording. The record should show that the removal carries an identity cost (unattributed or refused CC_AGENT prefixes in default mode) for as long as the rule stays out.",
+  "vote": "no"
+ }
+}

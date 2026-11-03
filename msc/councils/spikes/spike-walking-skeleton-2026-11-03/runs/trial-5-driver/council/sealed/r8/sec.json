@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "Seat sec, on rec's pending motion. I support it as worded. It matches the operative text I moved in r7 on every point: remove the global rule now, run the matrix in a scratch project with its own settings in default mode, record the compound forms, the two-hook final command string and the TUI prompt display, reinstate only a literal with no wildcard tail in project-local settings and only if the matrix passes, and record a missing prefix as unknown-actor rather than an error. I have no amendment. Results should be recorded as pass, fail or unknown, with two-hook ordering marked unknown unless it is established."
+ }
+}

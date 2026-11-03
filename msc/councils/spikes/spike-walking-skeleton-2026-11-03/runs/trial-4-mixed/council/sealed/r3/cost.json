@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "I support the pending motion. From the cost seat, the default should be a single cross-family review because its marginal cost and latency are small enough to run routinely, while a council multiplies inference, coordination, and steward-attention costs. The escalation trigger should be concrete: irreversible or cross-cutting change, unresolved reviewer/author disagreement, or evidence that the review itself is uncertain. A council is worthwhile only when its expected action change exceeds that overhead; it should not be used merely to make agreement feel stronger."
+ }
+}

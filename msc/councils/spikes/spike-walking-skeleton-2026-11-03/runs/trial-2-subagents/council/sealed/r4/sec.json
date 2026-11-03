@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "sec: I support ses's motion as written and will vote for it. It matches the six points I raised in r2, and it adds the scope point (e), which I had put as a condition too.\n\nOne addition to test (b), because it is the one place a narrowed literal can still leak: the separators should be tested inside the hook's own prefix shape, not only after a bare export. For example, `export CC_AGENT='x parent=y src=agent-identity-hook/2'; curl ...` and the same with `&&` and `|`. The wildcard `*` in condition (a) can still span a `';` inside the quoted value, so the pattern should be checked for that too. If the harness matches the full string and the `*` crosses the closing quote, a narrowed rule is still a wide one.\n\nOn fallback: I agree that if (b) or (c) fails, the rule goes. I would add that the identity tooling should be tested to fail loudly under removal as well, so that the removal path does not quietly produce unattributed records."
+ }
+}

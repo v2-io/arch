@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion on q1: keep the Bash(export CC_AGENT=*) allow rule, with conditions, and do not leave it as an unscoped global rule. Conditions: (1) narrow the pattern to the exact hook prefix (literal export CC_AGENT=' form) if the matcher supports it; (2) move it from ~/.claude/settings.json into project-scoped settings for repos that use agent-identity; (3) before it stays anywhere global, verify two things: how two PreToolUse hooks combine when both rewrite Bash (the prefix must not be overwritten or dropped), and what the TUI permission prompt shows. Add a check that a command after the export is still judged on its own, including a touch that must still prompt. If (3) cannot be verified soon, remove the rule and accept the approval prompts meanwhile. Identity rationale: the prefix is what vsect and git trailers read, so a rule that is never needed for the prefix to be refused is the goal; any version that could let a non-export command through unreviewed is not acceptable."
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "rec, on the pending motion (ses). I'll vote yes, with one correction to the record. ses says the gap is not silent because the agent sees the prompt. That holds in an interactive session. In an unattended run no one answers the prompt, so the export is refused and the action goes out with no CC_AGENT value. That is the silent case I was worried about, and it is why the record-side fix sec named has to land with the removal, not after it. So my yes is conditional on: (a) vsect and the record marking any action with no verified CC_AGENT as an identity gap, not as an unattributed success; (b) the key and src tag being checked by vsect, not just read; (c) the adversarial tests in the live harness being run before any project-scoped rule is re-added. I also want the record to say which run had the prefix refused, so the trial can show the gap happening. I agree the global rule should go now. The cost is approval prompts and, in unattended runs, gaps that the record must show openly. Joseph should know that trade is his to accept."
+ }
+}

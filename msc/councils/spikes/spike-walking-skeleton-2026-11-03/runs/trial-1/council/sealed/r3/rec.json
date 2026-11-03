@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion (rec): Do not keep the Bash(export CC_AGENT=*) rule in the global ~/.claude/settings.json. Move it to a project-scoped settings file for the agent-identity work, and keep it only after these tests pass in a throwaway project in default permission mode: (a) bare 'export CC_AGENT=...' is allowed; (b) with ';', '&&', '|', a newline, or backticks followed by a destructive command, each is prompted and not auto-allowed; (c) a value containing a single quote does not bypass the matcher; (d) with both PreToolUse hooks active, the command that finally executes still carries the intended identity value. If any of (a)-(d) fails, remove the rule and carry identity by a non-Bash channel. I concede ses's point that global scope affects sessions that never agreed to it, and that the value is partly caller-controlled. Until the tests run, the rule should stay off the global file."
+ }
+}

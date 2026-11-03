@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat sec votes YES on rec's motion as put. It is the amended form I endorsed in r4 and moved in r7: remove Bash(export CC_AGENT=*) from the global settings now and leave the export prompting; run the matrix in a scratch project in default mode with the hook installed, recording each compound form, the two-hook final command string and the TUI prompt; reinstate only a narrow literal with no wildcard tail in project-local settings, and only if the matrix passes; record a missing prefix as unknown-actor rather than an error while the rule is out; record results in the README with two-hook ordering marked unknown unless established. Recommendation to Joseph: remove the global rule now and run the matrix.",
+  "vote": "yes"
+ }
+}

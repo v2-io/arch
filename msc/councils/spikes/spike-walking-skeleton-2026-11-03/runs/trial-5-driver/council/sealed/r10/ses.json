@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat ses votes YES on rec's motion: remove the global rule now, leave the export prompting; run the matrix in a scratch project with the hook installed; reinstate only as a narrow project-local literal with no wildcard tail, and only if the matrix passes; record a missing prefix as unknown-actor until then; record results in the README with two-hook ordering marked unknown if not established. This is the form I endorsed in r4 and r5. Joseph and the refactor lead own the settings file and the test runs; this is a recommendation to them.",
+  "vote": "yes"
+ }
+}

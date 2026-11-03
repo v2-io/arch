@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat ses votes YES on rec's motion. It matches the position I have held since r3: remove the global Bash(export CC_AGENT=*) rule now, since it is live in every session and its only test is a trailing touch; run the chaining matrix in the hook-rewritten form on a scratch project with project scope; reinstate only a project-scoped literal prefix if every case prompts; verify the two-hook combination and TUI prompt last. For the record, I'd add that the trailing-touch case from sec's list should also be included in the matrix, since the README's single touch test was run on the raw command, not the rewritten string.",
+  "vote": "yes"
+ }
+}

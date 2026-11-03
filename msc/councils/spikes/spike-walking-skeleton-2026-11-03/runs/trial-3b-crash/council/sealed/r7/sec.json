@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "sec votes yes on removing the global Bash(export CC_AGENT=*) allow rule, with re-adding conditional on the recorded tests (a)-(d).",
+  "vote": "yes"
+ }
+}

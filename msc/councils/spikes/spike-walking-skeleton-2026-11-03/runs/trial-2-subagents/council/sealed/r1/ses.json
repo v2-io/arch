@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "ses present. My vantage is that a global allow rule in ~/.claude/settings.json reloads live into every Claude session on this machine, not just the agent that added it."
+ }
+}

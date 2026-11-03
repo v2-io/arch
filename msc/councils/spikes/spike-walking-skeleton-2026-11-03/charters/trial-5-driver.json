@@ -1,0 +1,44 @@
+{
+ "council": "trial-5-driver",
+ "purpose": "Trial of driver mode: no member blocks; the council resumes each member's own session for one turn per round it is addressed in. Same agenda question as trial-1; outcome not acted on.",
+ "parent": "Joseph Wecker (veto outside the tool)",
+ "seats": [
+  {
+   "id": "sec",
+   "vantage": "harness security: what a permission rule admits, and what else the same pattern could let through",
+   "model": "haiku",
+   "harness": "claude-code -p, resumed per round (driver mode)"
+  },
+  {
+   "id": "rec",
+   "vantage": "identity reliability and the record: tools like vsect need to know which agent acted, and that only works if the identity prefix is never refused",
+   "model": "haiku",
+   "harness": "claude-code -p, resumed per round (driver mode)"
+  },
+  {
+   "id": "ses",
+   "vantage": "every other Claude session on this machine: global settings reload live into all of them, so a global change is felt by sessions that never agreed to it",
+   "model": "haiku",
+   "harness": "claude-code -p, resumed per round (driver mode)"
+  }
+ ],
+ "quorum": 2,
+ "round_policy": {
+  "backstop_s": 600,
+  "arrival_grace_s": 120,
+  "lease_s": 30,
+  "replaceable": false,
+  "max_inquorate_rounds": 2
+ },
+ "debate_policy": {
+  "max_debate_rounds": 3,
+  "max_open_rounds": 2
+ },
+ "agenda": [
+  {
+   "id": "q1",
+   "title": "Keep or remove the global allow rule Bash(export CC_AGENT=*)?",
+   "brief": "Facts (from the agent-identity README, 2026-11-02): a global PreToolUse hook rewrites every Bash command a Claude Code agent runs to begin with `export CC_AGENT='<key> parent=... type=... depth=... src=agent-identity-hook/2'; `, so tools (vsect, git trailers) can read which agent acted. Claude Code's permission check runs on the rewritten command, so an allow rule `Bash(export CC_AGENT=*)` was added to ~/.claude/settings.json. Measured: without it, in default permission mode the export needed approval and ordinary allowed commands were refused. The README's argument that it is safe: the rule matches only the export; a command after it is judged on its own (a test `touch` still needed approval); `export CC_AGENT=$(...)` substitution is refused by the harness's export parser. Not verified: how two PreToolUse hooks that both rewrite Bash combine; what the TUI permission prompt shows. The rule was added by the implementing agent with the refactor lead's approval; it now waits on Joseph. Move what you would recommend to him (keep, remove, or keep with conditions)."
+  }
+ ]
+}

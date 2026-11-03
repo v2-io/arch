@@ -1,0 +1,11 @@
+{"ts": 1793736461.8689961, "kind": "launched", "seat": "sec", "sub": "sec", "pid": 60563, "extra": []}
+{"ts": 1793736461.871806, "kind": "launched", "seat": "rec", "sub": "rec", "pid": 60564, "extra": []}
+{"ts": 1793736461.874161, "kind": "launched", "seat": "ses", "sub": "ses", "pid": 60565, "extra": []}
+{"ts": 1793736475.9355378, "kind": "killed", "seat": "ses", "pid": 60565, "at_seq": 7}
+{"ts": 1793736497.5054982, "kind": "resuming", "seat": "ses", "session": "bd09bfdf-7f6e-4e1c-85c2-55bce87ab9b3", "at_seq": 14}
+{"ts": 1793736497.507776, "kind": "launched", "seat": "ses", "sub": "ses-resumed", "pid": 60963, "extra": ["--resume", "bd09bfdf-7f6e-4e1c-85c2-55bce87ab9b3", "--fork-session"]}
+{"ts": 1793736506.539969, "kind": "launched", "seat": "ses", "sub": "ses-duplicate", "pid": 61073, "extra": []}
+{"ts": 1793736534.453227, "kind": "exited", "which": "sec", "rc": 0}
+{"ts": 1793736534.453295, "kind": "exited", "which": "rec", "rc": 0}
+{"ts": 1793736534.453314, "kind": "exited", "which": "ses2", "rc": 0}
+{"ts": 1793736534.4533272, "kind": "exited", "which": "dup", "rc": 0}

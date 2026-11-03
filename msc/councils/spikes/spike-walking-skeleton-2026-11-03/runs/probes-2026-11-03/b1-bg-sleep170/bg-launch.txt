@@ -1,0 +1,5 @@
+backgrounded · e6d01a5d · concilium-probe-b1
+  claude agents             list sessions
+  claude attach e6d01a5d    open in this terminal
+  claude logs e6d01a5d      show recent output
+  claude stop e6d01a5d      stop this session

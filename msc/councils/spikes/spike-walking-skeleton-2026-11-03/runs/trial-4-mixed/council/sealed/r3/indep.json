@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "indep: I support fam's motion as the baseline, with two amendments. (1) \"Different model family\" is necessary for independence but not sufficient. A cross-family reviewer still shares some training-distribution biases with other models, and the motion's claim that it removes \"shared training-distribution biases\" overstates what we know; the record should say it reduces correlated error, not that it eliminates it. (2) The reviewer's findings should be checked against the plan's concrete claims (dependencies, the landing checks named in the plan) by someone other than the author, rather than accepted as a final verdict. The motion's escalation trigger, \"structural deadlocks,\" is vague; plan's trigger (an author and reviewer cannot resolve a claimed defect, or the plan commits irreversible or cross-cutting work) is more checkable and I would adopt it. Without amendment I would still vote yes; the core recommendation is the same across the standing intents."
+ }
+}

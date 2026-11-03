@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat rec votes NO on the motion as put. The put text keeps the rule in ~/.claude/settings.json while the tests run, which the seats agreed in r4 and r5 was inconsistent with its own unverified status. My vote is not against the conditions. I support the amended operative text sec gave in r5: (0) remove Bash(export CC_AGENT=*) from the global settings now and leave the export prompting; (1) run the matrix in a scratch project with the hook installed, recording each compound form, the two-hook final string, and the TUI prompt; (2) reinstate only if (1) passes, as a narrow project-local literal with no wildcard tail; (3) vsect records a missing prefix as unknown-actor, not an error, until the matrix is recorded. If the seats put the amended text to a vote, I will vote yes on it.",
+  "vote": "no"
+ }
+}

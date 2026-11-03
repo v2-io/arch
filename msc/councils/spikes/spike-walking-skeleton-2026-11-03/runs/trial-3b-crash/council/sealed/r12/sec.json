@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "sec votes yes, with the read-only and scratch-copy conditions stated in r10 recorded alongside it.",
+  "vote": "yes"
+ }
+}

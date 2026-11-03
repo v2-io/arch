@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Seat rec moves, on q1, the amended form that sec and ses both endorsed and that was not put to a vote in r6: (0) Remove Bash(export CC_AGENT=*) from ~/.claude/settings.json now. Leave the export prompting. (1) Run the test matrix in a scratch project with its own settings file, in default permission mode, with the hook installed. Record: `export CC_AGENT='x'; touch`, `&&`, `||`, a newline, a backtick and $() inside the value, an early-closing single quote, and both hooks installed with the final command text the permission check receives. Record what the TUI prompt displays. Each second command must prompt. (2) Reinstate only if (1) passes, and only as a narrow literal in the project-local settings of the repo that consumes identity, with no wildcard tail. If the permission syntax cannot express that literal, do not reinstate; leave the export prompting. (3) While the rule is out, the hook writes identity to a file or env var that vsect and the trailer tooling read directly, and vsect records a missing prefix as unknown-actor, not as an error. (4) Record the results in the README. Mark the two-hook ordering as unknown if it is not established. Reason: the rule's safety is unverified, and the global file applies it to every session, so it should not be live during the tests."
+ }
+}

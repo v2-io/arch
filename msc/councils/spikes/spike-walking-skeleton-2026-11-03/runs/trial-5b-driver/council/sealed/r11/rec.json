@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat rec votes yes on the motion as put: remove the global Bash(export CC_AGENT=*) rule now; test the chaining matrix on a scratch project with project scope; reinstate only the literal prefix export CC_AGENT=' if every case prompts; record the identity gap while the rule is out. Joseph approves the global change and the test run.",
+  "vote": "yes"
+ }
+}

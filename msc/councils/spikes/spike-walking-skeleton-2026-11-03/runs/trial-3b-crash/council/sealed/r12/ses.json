@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes, with the conditions rec and sec added in debate: the reviewer is read-only toward the plan and repo; it runs the plan's commands in a scratch copy; its identity is recorded on every review action; and the record states that the cross-family benefit is assumed, not measured.",
+  "vote": "yes"
+ }
+}

@@ -1,0 +1,7 @@
+{"type":"thread.started","thread_id":"01a1a2fe-4908-79e2-8dc5-8aa7b33569a3"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"I’m calling the connected probe server once with the requested parameters."}}
+{"type":"item.started","item":{"id":"item_1","type":"mcp_tool_call","server":"probe","tool":"probe_sleep","arguments":{"seconds":150,"progress_every":5},"result":null,"error":null,"status":"in_progress"}}
+{"type":"item.completed","item":{"id":"item_1","type":"mcp_tool_call","server":"probe","tool":"probe_sleep","arguments":{"seconds":150,"progress_every":5},"result":null,"error":{"message":"tool call error: tool call failed for `probe/probe_sleep`\n\nCaused by:\n    timed out awaiting tools/call after 60s"},"status":"failed"}}
+{"type":"item.completed","item":{"id":"item_2","type":"agent_message","text":"tool call error: tool call failed for `probe/probe_sleep`\n\nCaused by:\n    timed out awaiting tools/call after 60s"}}
+{"type":"turn.completed","usage":{"input_tokens":25411,"cached_input_tokens":16512,"cache_write_input_tokens":0,"output_tokens":291,"reasoning_output_tokens":87}}

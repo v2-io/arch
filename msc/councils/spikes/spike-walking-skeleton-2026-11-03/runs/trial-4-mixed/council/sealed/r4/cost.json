@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "I support incorporating the operational amendments. They improve the cost-effectiveness of the baseline by making the cheap review produce actionable signal: require findings on dependencies, assumptions, and whether checks catch bad landings; have the reviewer write before seeing author rationale; and escalate on unresolved author/reviewer defects or irreversible/cross-cutting work. Also phrase the benefit as reduced correlated error, not eliminated shared bias. These constraints add little coordination cost compared with convening a council."
+ }
+}

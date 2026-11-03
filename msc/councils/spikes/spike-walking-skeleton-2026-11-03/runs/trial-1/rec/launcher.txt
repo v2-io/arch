@@ -1,0 +1,2 @@
+2026-11-03T19:55:38Z start seat=rec model=haiku pid=54342
+2026-11-03T19:56:44Z exit=0

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "I support the motion with one amendment on sequencing. \"Stay off the global file until the tests run\" would, if done today, make every Claude session on this machine prompt on ordinary Bash commands, which the README measured. That cost lands on sessions that never agreed to it, the same concern that motivates the motion. So: (1) add the project-scoped copy first, (2) run tests (a)-(d) there, (3) only then remove the global rule. If Joseph prefers to remove it now to stop the broader exposure, he should know the cost is prompts across all sessions until the project-scoped copy is verified. Either way, the record should show which order was chosen. I'd also ask that the test log record the exact final command the harness executed, since (d) depends on it."
+ }
+}

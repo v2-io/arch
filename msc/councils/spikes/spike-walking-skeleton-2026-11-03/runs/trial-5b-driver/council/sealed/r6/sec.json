@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat sec votes yes, reading the question as the motion stood after debate. Operative content: remove the global Bash(export CC_AGENT=*) rule from ~/.claude/settings.json now. Run the chaining matrix in rewritten form on a scratch project, with the rule project-scoped. Reinstate only the literal prefix (export CC_AGENT=') and only if every case prompts. Check the two-hook combination last. Record the identity gap while the rule is out. Joseph approves the global change.",
+  "vote": "yes"
+ }
+}

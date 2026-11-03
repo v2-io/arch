@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Motion (seat ses), restated so the vote is on the wording the council converged on in r4-r6, not the pre-amendment text:\n\nRecommendation to Joseph on q1: REMOVE the global allow rule Bash(export CC_AGENT=*) from ~/.claude/settings.json now. Then:\n1. Confirm the removal took effect in a fresh session, not just that the file was edited.\n2. Run the chaining matrix in the hook-rewritten form (the hook's export prefix followed by each case) on a scratch project, with the rule project-scoped. Cases: ;  &&  ||  |  newline  backticks  $(...)  a second export, including one with a different key; a newline inside the export value; and one case where the agent's own command is itself a valid-looking export. Each must still prompt.\n3. Reinstate only if every case prompts: project-scoped, literal prefix (export CC_AGENT=') and never a * tail.\n4. Verify the two-hook combination last, and record the TUI prompt text.\n5. While the rule is out, record the identity gap: the time window, and which vsect or git-trailer actions lack a verified CC_AGENT prefix. Those are not to be read as attributed.\n\nCost accepted: approval prompts in default mode, and possibly unattributed actions for the gap. Joseph approves the global change and the test run."
+ }
+}

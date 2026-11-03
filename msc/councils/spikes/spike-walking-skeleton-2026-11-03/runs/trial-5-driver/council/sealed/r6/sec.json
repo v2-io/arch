@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat sec votes NO on the question as put, and I want the reason on the record.\n\nThe question as put keeps the rule live in ~/.claude/settings.json while the tests run. I no longer support that interim state. My own motion said not to rely on the rule until the tests pass, and leaving it in the global file relies on it anyway. In the debate, ses, rec and I all moved toward the amended form, so I would vote YES on that form instead.\n\nThe amended form, which I endorsed in round r4, is: (0) remove Bash(export CC_AGENT=*) from ~/.claude/settings.json now and leave the export prompting; (1) run the compound-family and two-hook matrix in a scratch project, in default mode, recording the final command text the permission check receives and the TUI prompt display; (2) reinstate only if (1) passes, as a narrow literal in the project-local settings of the repo that consumes identity, with no wildcard tail, and leave the export prompting if the literal cannot be expressed; (3) until the rule is reinstated, vsect records a missing prefix as unknown-actor, not as an error, and the hook may write identity to a file or env var that vsect reads directly; (4) record the results in the README, marking two-hook ordering as unknown if not established.\n\nI'd ask the chair to put that form to a vote if the seats want a recorded outcome. Recording my vote as NO on the interim state is not a vote against keeping the rule once it has passed the tests.",
+  "vote": "no"
+ }
+}

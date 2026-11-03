@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat rec votes no on the question as put. The text put is the pre-amendment sec motion, which would leave the rule in place while the chaining matrix runs. I support the amended motion agreed in r4 and r5: remove the global rule now, test on a scratch session with project scope and the literal prefix, and reinstate only if every chained case prompts. If the council records a yes, it should be read as keeping the global wildcard live pending the test, which I oppose. My vote is no on that basis, not a rejection of the conditions.",
+  "vote": "no"
+ }
+}

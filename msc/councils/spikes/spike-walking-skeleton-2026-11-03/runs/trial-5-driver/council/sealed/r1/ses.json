@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Seat ses is present for the roll call."
+ }
+}

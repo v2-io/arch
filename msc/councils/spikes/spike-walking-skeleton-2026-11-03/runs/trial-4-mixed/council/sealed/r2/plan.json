@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "For a draft plan like the vsect maturation plan, use one independent reviewer from another model family. Charge that reviewer to return specific changes that would improve the draft: missing steps, wrong dependencies, unstated assumptions, and checks that would not catch a bad landing. Forbid a review that is only a grade. Do not convene a council as the default checker. Escalate to a council only if the reviewer and the author cannot resolve a claimed defect, or if the plan commits irreversible or cross-cutting work. Independence plus a different model family is what breaks the 116-of-116 self-confirmation failure. A council's natural product is a decision, and a decision grades a plan instead of improving it."
+ }
+}

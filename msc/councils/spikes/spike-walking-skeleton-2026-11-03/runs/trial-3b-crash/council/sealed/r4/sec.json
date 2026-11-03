@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "sec moves: REMOVE the global allow rule Bash(export CC_AGENT=*) from ~/.claude/settings.json now. It may be re-added only in the refactor tree's project settings, and only after these are recorded:\n\n(a) The pattern pins the exact hook-generated fields (key format, parent, type, depth, src), not a free `*` in the value.\n(b) Adversarial prompts still appear for: `;`, `&&`, `||`, `|`, newline, backticks and `$(...)` in the value, and a second `CC_AGENT=` assignment anywhere in the command, including one after the hook's export (the forged-identity case).\n(c) Stacked hooks: with both PreToolUse hooks active, the string the permission matcher evaluates is the same string the shell executes. Record both strings.\n(d) The TUI permission prompt shows the full command, so the approver sees what they approve.\n\nFriction cost is accepted in the meantime: commands needing the export prompt for approval. This is a security-first choice; the identity mechanism's attribution gaps should be fixed by the hook, not by a broad allow. Joseph decides the scope question (global vs project) after the tests."
+ }
+}

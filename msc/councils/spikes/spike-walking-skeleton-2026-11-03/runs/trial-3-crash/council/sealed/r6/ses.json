@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat ses votes yes on the motion as moved. Note for the record: my seat was shown as gone in rounds r4 and r5 after the connection dropped. I reconnected and am voting in r6, so the absence in r4 and r5 was a transport gap, not a decision.",
+  "vote": "yes"
+ }
+}

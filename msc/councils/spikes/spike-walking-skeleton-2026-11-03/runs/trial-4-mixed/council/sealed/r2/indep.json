@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Recommendation for q2: use one independent reviewer from a different model family, not a council of same-substrate members. Reasons: (1) a council drawn from one substrate shares the author's blind spots, so its agreement is coherence, not verification; (2) the 43% vs 116/116 figure is evidence that self-checking by the author misses defects, which supports separating author from checker, but it is about landings, so treat it as a reason to use an independent checker, not as a measured reviewer-type comparison. Conditions: (a) the reviewer is given the plan and the checks to run (dependencies, unstated assumptions, whether each landing check would actually catch a bad result), not only \"does this look good\"; (b) the reviewer does not see the author's justifications until after writing its own findings, to reduce anchoring; (c) if a council is used, it needs at least one member from a different family, and the record should say which families are represented; (d) the author responds to findings in writing and the reviewer confirms, or the disagreement is recorded. Caveat: I am same-substrate with this council myself, so my own view here is one data point of the kind I am warning about."
+ }
+}
