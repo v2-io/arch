@@ -36,3 +36,13 @@
 ## Verdict
 
 Fairer than my mechanism, because it has no floor and nothing to steer. Its residual unfairness is positional and bounded. Its real risks are not in the mechanism at all — Joseph is right about that — except two that are: the leader's power to close over objections, and the absence of a warning that can stop a close. Both are a line each in the charter.
+
+## Second response, after reading `gcc-history.md` and `gcc-skeleton.md`
+
+*Written after the others, in the template's own shuffled-round spirit; my first response above is unchanged.*
+
+- **The shuffle seed: the skeleton and I conflict, and both are right.** I said never derive the seed from content (a seat can grind its text to pick its position); the skeleton says never seed from the round id alone (every seat then knows its position, and whether it will write the unity report, before writing its first response). The design that satisfies both: commit a secret seed, hash-committed into the log when the item opens (the skeleton's own device for the expected solution), and derive the order from that seed plus the *set of seats that submitted*, never from their text; reveal the seed at close. No foreknowledge, nothing to grind, and the replay is exact. (derived from both findings)
+- **Sealing is now a measured fact, not a stated property.** The skeleton saw a member reach for file tools unprompted in three of three runs, and research subagents sharing the seat's connection. My "S matters more here" was prose; theirs is data. The template's two sealed artifacts — first responses and the leader's expected solution — are only sealed if members cannot reach the council directory. That is a precondition of the template, and it should say so.
+- **Sustain binds to an exact text** (skeleton 3) is my point 1 seen from the record side: an objection that cannot gate close is decorative, and a support level attached to superseded text is decorative in the other direction. Both are one rule: the sustaining round names the version it sustains, and any edit after comments, or any "object," re-opens it. The history's point 8 (object → return automatically) is the same rule from a third side. Three vantages landing on one line is worth taking as the line.
+- **The warrant in the record** (history 4): agreed, and from the contention side it is what the claim log was for — the record of what did *not* carry is how a later finding becomes a local re-check instead of a threat to the whole decision.
+- **The warning channel** nobody else raised; I keep it. It is cheap, and it is the only thing in the template that lets a seat early in the shuffle stop a close it has seen go wrong.
