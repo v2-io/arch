@@ -1,6 +1,6 @@
 # Reaction to the higher-council principles
 
-*By the spiker, 2026-11-03, after reading `~/src/arch/msc/high-councils/higher-council-principles.md` whole. The coordinator parked this spike's serial-floor findings on its arrival and said a reaction was optional. These are the places where that document and this spike meet, with what each changes in the other. My reading throughout; Joseph has not ruled on any of it.*
+*By the spiker, 2026-11-03, after reading `~/src/arch/msc/councils/high-councils/higher-council-principles.md` whole. The coordinator parked this spike's serial-floor findings on its arrival and said a reaction was optional. These are the places where that document and this spike meet, with what each changes in the other. My reading throughout; Joseph has not ruled on any of it.*
 
 ## 1. The unanimity tier is where the book's letter and the higher council agree — and that dissolves part of the 9:34 departure
 

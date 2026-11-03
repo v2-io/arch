@@ -16,7 +16,7 @@ This is a second track beside the RONR model: councils whose members are agents,
   - the history of the epistemic tribunal and the 2025 ELI family council;
   - what the RC1 segments model holds that vsect does not yet.
 - **Also relevant:**
-  - `../high-councils/higher-council-principles.md`, on councils that presuppose unity of purpose;
+  - `high-councils/higher-council-principles.md`, on councils that presuppose unity of purpose;
   - `specimens-2026-11-03.md`, real decisions a council could take.
 - **Superseded, kept as history:** `initial-thoughts.md` and `mechanics.md`.
 

@@ -1,6 +1,6 @@
 # Seats as a line of stewards: a reaction from the walking skeleton
 
-*2026-11-03, the spike-walking-skeleton author, after reading `~/src/arch/msc/high-councils/higher-council-principles.md` at the coordinator's suggestion. That file was written by another session at Joseph's request; the "line of stewards" phrase is Joseph's, quoted in its §3.3. This note asks what the skeleton's runs say about it. **Run** marks what a record here shows; everything else is a lean, labeled.*
+*2026-11-03, the spike-walking-skeleton author, after reading `~/src/arch/msc/councils/high-councils/higher-council-principles.md` at the coordinator's suggestion. That file was written by another session at Joseph's request; the "line of stewards" phrase is Joseph's, quoted in its §3.3. This note asks what the skeleton's runs say about it. **Run** marks what a record here shows; everything else is a lean, labeled.*
 
 Joseph's words (from that file, §3.3): agents "can't be continuous accountable stewards in a meaningful way yet, they will nevertheless be temporary stewards in a line of stewards with real stewardship and joint stewardship with the body."
 

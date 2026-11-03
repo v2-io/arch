@@ -12,7 +12,7 @@
 |---|---|
 | `debrief.md` | For Joseph first: the problem, the attempts, the discoveries, the outcomes, the tangents, in pre-spike vocabulary — including what verification overturned. |
 | `response-to-feedback-2.md`, `response-to-feedback-1.md` | Finding by finding: accepted / contested / PARKED, what changed, where. |
-| `reaction-higher-councils.md` | Where the higher-council principles (`../../../high-councils/`) and this spike meet: the unanimity tier coincides with the book's letter; the report-as-motion repair is the proposition-last shape; `discuss-informally` is the hinge; the presider is a third chair mode. |
+| `reaction-higher-councils.md` | Where the higher-council principles (`../../high-councils/`) and this spike meet: the unanimity tier coincides with the book's letter; the report-as-motion repair is the proposition-last shape; `discuss-informally` is the hinge; the presider is a third chair mode. |
 | `de-novo-feedback-2.md`, `de-novo-feedback-1.md` | The two independent verifiers' reports (other minds; not edited by the spiker). |
 | `02-charter-and-agenda.md` | **The main result.** Declared vs derived; the three ways a council comes into being; question → decision → report → parent; the chair; growth and whether it is "widening the list"; the sibling interfaces. |
 | `01-what-simultaneity-protects.md` | The hardest part, first: the principle under the book's simultaneity requirement (and 9:34's explicit exclusion of written process), the ten mechanisms it carries plus four more the verifier found, what a round must carry instead under the contention spike's informed-acts property, two declared drops with their costs, a demonstrated no-go. |

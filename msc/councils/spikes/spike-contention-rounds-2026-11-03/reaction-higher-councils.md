@@ -1,6 +1,6 @@
 # Reaction: what the contention results become under a unity-of-purpose council
 
-*2026-11-03, the spiker, after reading `~/src/arch/msc/high-councils/higher-council-principles.md` whole. councils-46's reading (its own, not Joseph's): the losing-claims finding and the floor churn come from replaying RONR's machinery for conflicting interests in a body that is not adversarial, so serial-floor repairs are parked. Labels as elsewhere: derived (with cite), guess. Nothing here changes the committed result; it says what of it carries over, what relocates, and what I think the coordinator's reading gets slightly wrong.*
+*2026-11-03, the spiker, after reading `~/src/arch/msc/councils/high-councils/higher-council-principles.md` whole. councils-46's reading (its own, not Joseph's): the losing-claims finding and the floor churn come from replaying RONR's machinery for conflicting interests in a body that is not adversarial, so serial-floor repairs are parked. Labels as elsewhere: derived (with cite), guess. Nothing here changes the committed result; it says what of it carries over, what relocates, and what I think the coordinator's reading gets slightly wrong.*
 
 ## 1. Where I agree, and the sharper reason
 
