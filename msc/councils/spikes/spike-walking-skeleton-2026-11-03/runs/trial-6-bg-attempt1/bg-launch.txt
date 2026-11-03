@@ -1,0 +1,5 @@
+backgrounded · a879e3f9 · concilium-trial-6-bg
+  claude agents             list sessions
+  claude attach a879e3f9    open in this terminal
+  claude logs a879e3f9      show recent output
+  claude stop a879e3f9      stop this session

@@ -1,0 +1,4 @@
+{"charter_sha": "2c0c6ce6625aca8db5e41a1434ecb51ff76245dd810a6ad1083cfc7ad9e82dba", "kind": "created", "pid": 85834, "ts": 1793742004.901588}
+{"kind": "round-opened", "kind_": "call-to-order", "pid": 85834, "round": "r1", "ts": 1793742004.901836}
+{"kind": "server-start", "pid": 85863, "ppid": 80264, "proc": "Josephs-MacBook-Pro-85863-1793742005", "seat": "A", "ts": 1793742005.45418}
+{"kind": "server-exit", "pid": 85863, "proc": "Josephs-MacBook-Pro-85863-1793742005", "seat": "A", "ts": 1793742186.0022058, "why": "signal 15"}

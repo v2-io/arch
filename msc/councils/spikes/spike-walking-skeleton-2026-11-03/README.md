@@ -4,7 +4,7 @@ The thinnest end-to-end council that agent members in separate harness sessions 
 
 **Start here, in this order:**
 1. **`debrief.md`**: to Joseph. What was built, what ran, what broke, what it means for the real server.
-   An independent verifier's report is `de-novo-feedback-1.md` (its tests and re-run are in `verify-1/`); the author's answer, and what changed because of it, is `response-to-de-novo-1.md`.
+   Two independent verifiers' reports are `de-novo-feedback-1.md` and `de-novo-feedback-2.md` (their tests and runs in `verify-1/`, `verify-2/`); the author's answers, and what changed because of them, are `response-to-de-novo-1.md` and `response-to-de-novo-2.md`. `reaction-line-of-stewards.md` connects the seat mechanics to the high-councils work.
 2. **`harness-notes.md`**: per-harness facts (Claude Code, codex, grok, agy; gemini-cli is dead for this account), each marked run / binary / docs.
 3. **`proposed-integration-plan.md`**: suggestions for the real server, each tied to the run that motivates it.
 4. **`runs/`**: the evidence. Every claim in the three files above names its run.
@@ -23,12 +23,14 @@ members/
   brief.md            the member brief every harness gets
   claude-member.sh  codex-member.sh  grok-member.sh  agy-member.sh   per-run wiring, nothing global
   claude-subagent-host.sh   one host session, three subagents sharing its MCP connection
-  driver.py           driver mode: resume each member's session for a turn whenever a round is open for it; the driver holds its seats
+  driver.py           driver mode: resume each member's session for one turn per round it is open for; the driver holds its seats
+  brief-bg.md         the brief for a --bg member (end the turn after a wait is backgrounded)
+  bg-meeting.py       seats one --bg member (adapted, with credit, from verify-2/bg-meeting.py)
   crash-orchestrate.py      kill / resume-fork / duplicate-holder scenario
 probe/                harness probe server + per-CLI probe launchers
 charters/             the charters each trial ran under
 runs/                 run records (see below)
-tests/regression.py   model-free tests: verify-1's tests unchanged, plus the author's (output: tests/regression-output.txt)
+tests/regression.py   model-free tests: both verifiers' test files, plus the author's (output: tests/regression-output.txt)
 tools_rpc_client.py   tiny JSON-RPC client for model-free protocol tests
 ```
 
@@ -36,7 +38,7 @@ tools_rpc_client.py   tiny JSON-RPC client for model-free protocol tests
 
 ```sh
 cd msc/councils/spikes/spike-walking-skeleton-2026-11-03
-python3 tests/regression.py                                 # model-free tests (about 2 minutes)
+python3 tests/regression.py                                 # model-free tests, both verifiers' included (about 4 minutes)
 python3 -m concilium.steward selftest                       # the resolver never reads arrival order: 50 shuffled orders, one log
 python3 -m concilium.steward replay runs/trial-4c-mixed/council    # chain + derived events recomputed + sealed files == revealed
 python3 -m concilium.steward witness runs/trial-4c-mixed/council runs/trial-4c-mixed/*/server.jsonl   # against members' recorded heads
@@ -55,7 +57,7 @@ No launcher writes global configuration. Each run's `tokens.json`, harness homes
 
 ## The runs
 
-Builds: **A** = before seat holders and persisted cursors (commit `45284e9`'s history; trials 1–5 and smoke c1–c2 ran on it or on intermediate states); **B** = commit `45284e9` (trial-3b, trial-5b, smoke c3, and the verifier's `verify-1/runs/mixed-rerun`); **C** = the build answering `de-novo-feedback-1` (trial-4c, trial-5c, and `tests/regression.py`).
+Builds: **A** = before seat holders and persisted cursors (commit `45284e9`'s history; trials 1–5 and smoke c1–c2 ran on it or on intermediate states); **B** = commit `45284e9` (trial-3b, trial-5b, smoke c3, and the verifier's `verify-1/runs/mixed-rerun`); **C** = commit `694a770`, answering `de-novo-feedback-1` (trial-4c, trial-5c, and the second verifier's runs); **D** = the build answering `de-novo-feedback-2` (trial-6-bg, and `tests/regression.py` as committed).
 
 | run | build | what it tested | outcome (from its record) |
 |---|---|---|---|
@@ -69,6 +71,9 @@ Builds: **A** = before seat holders and persisted cursors (commit `45284e9`'s hi
 | `trial-4-mixed` | A | Claude + codex + grok + agy, four model families | 9 rounds in 80 s, all closed all-in; adopted 4–0 |
 | `trial-5-driver`, `trial-5b-driver` | A, B | driver mode (no blocking; resume per open round), before and after the persisted-cursor fix | works; the fix cut cost per round ~62% ($0.0166 → $0.0063); still ~1.8× a blocking client per round ($0.0035). In 5b the seats were unheld between turns (verify-1 test A) |
 | `trial-4c-mixed` | C | the four-harness meeting again | 9 rounds; grok hit its usage limit and exited at ~66 s, its seat went gone one lease later (30 s), and the other three finished, 3–0. Holders: Claude and grok by parent process, codex by `sessionId`, agy by conversation. Witness: 58 heads, 0 contradicted |
+| `verify-2/runs/mixed-rerun2` | C | the README's four-harness recipe, by the second verifier | 3–0; grok out of quota and never seated, so r1 waited the full 180 s arrival grace; replay and witness clean |
+| `verify-2/runs/bg-wait-1-haiku`, `bg-wait-2-sonnet` | C | a `--bg` member through the real server, by the second verifier | haiku: first request had 0 tools, member never reached the council. Sonnet: 29 tools (22 Chrome), the wait was backgrounded at 120 s with progress on, the member opened a second wait instead of idling, and the two waits consumed the reveal |
+| `trial-6-bg-attempt1`, `-attempt2` | D | a `--bg` member with `--no-chrome` and `members/brief-bg.md` | `--no-chrome` removed the Chrome prompt; both first requests carried 0 tools ~200 ms after the server listed them; the member never reached the council. The brief is untested |
 | `trial-5c-driver` | C | driver mode with the driver holding its seats | 7 rounds, all closed all-in, 3–0; the driver held all three seats throughout (15 per-turn servers, no releases until the driver finished); $0.0062 per round; witness: 21 heads, 0 contradicted |
 
 Every council here, including the verifier's re-run, passes `steward replay` on the final build (chain, derivation, sealed files == revealed). The two final-build runs also pass `steward witness` with every event covered. Older runs have no witness records. The table is in `response-to-de-novo-1.md` §9.

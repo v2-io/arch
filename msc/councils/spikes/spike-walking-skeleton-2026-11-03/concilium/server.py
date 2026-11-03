@@ -1,6 +1,6 @@
 """concilium stdio MCP server: one process per member harness session.
 
-  python3 -I -m concilium.server --dir COUNCIL [--seat S --token T] [--log PATH]
+  python3 -I path/to/concilium/server.py --dir COUNCIL [--seat S --token T] [--log PATH]
           [--max-wait S] [--progress-every S] [--tag TAG]
 
 The seat is fixed at launch by --seat/--token (or CONCILIUM_SEAT/CONCILIUM_TOKEN),
@@ -10,9 +10,18 @@ references its parent's server by name shares the parent's process).
 
 Every JSON-RPC message in and out is appended to --log with the process id,
 so a run can be reconstructed without trusting any model's account of it.
+
+Delivery, and the two rules that come from "a returned result is not a delivered
+result" (harness-notes; de-novo-feedback-2 §2.3):
+- the seat's "since your last look" cursor advances only when the seat's
+  submission is accepted (its own act), never when the server sends a view, so
+  every view a member could act on carries what it has not yet acted after;
+- a newer council_wait on a seat supersedes an older one still pending in this
+  process, which then returns without rendering (a harness may have abandoned it).
 """
 import argparse
 import json
+import secrets
 import os
 import sys
 import threading
@@ -39,8 +48,11 @@ LOGL = threading.Lock()
 LOGF = open(A.log, "a", buffering=1) if A.log else None
 CLIENT = {}
 CANCELLED = set()
-IN_WAIT = {}          # seat -> since ts
-LAST_CALL = {}
+WAIT_GEN = {}         # seat -> generation of the newest council_wait in this process
+# exclusivity is keyed to (principal, holder key): the principal is what the
+# caller *asserts* (de-novo-feedback-2 §2.5); the key is a secret this
+# connection holds (or its launcher, for a driver), never sent by the client
+HOLDER_KEY = os.environ.get("CONCILIUM_HOLDER_KEY") or secrets.token_hex(16)
 
 
 def log(kind, **kw):
@@ -84,8 +96,11 @@ def resolve_seat(args):
 
 
 def principal_for(meta):
-    """Who is acting, as well as this process can tell (trial-3: seats need one
-    holder, and the holder is a session or a driver, not a process).
+    """Who the caller says is acting (trial-3: seats need one holder, and the
+    holder is a session or a driver, not a process). These are recorded
+    assertions, not attestations: codex's sessionId and agy's conversation id are
+    strings the client sends, and any client can send them. Exclusivity therefore
+    also requires the holder key (HOLDER_KEY), which the client never sees.
     Order: an explicit principal from the launcher (a driver passes its own id,
     so its per-turn server processes are one holder); a session id the harness
     puts in _meta (codex sessionId, agy root conversation); else the harness
@@ -105,6 +120,7 @@ PRINCIPALS = {}   # seat -> principal this process acts as
 
 
 def attest(meta, how):
+    """What the caller asserted about itself, recorded as such (not verified)."""
     return {"proc": PROC, "client": CLIENT, "seat_from": how,
             "meta_keys": sorted((meta or {}).keys()),
             "tool_use_id": (meta or {}).get("claudecode/toolUseId") or (meta or {}).get("callId")}
@@ -117,12 +133,11 @@ def heartbeat_loop():
         for s in list(PRINCIPALS):
             if s in PRINCIPALS:
                 try:
-                    store.refresh_seat(D, s, PRINCIPALS[s])
+                    store.refresh_seat(D, s, PRINCIPALS[s], HOLDER_KEY)
                 except Exception:
                     log("refresh-error", err=traceback.format_exc())
             try:
-                store.heartbeat(D, s, PROC, {"pid": os.getpid(), "client": CLIENT.get("name"),
-                                             "in_wait": s in IN_WAIT, "last_call": LAST_CALL.get(s)})
+                store.heartbeat(D, s, PROC, {"pid": os.getpid(), "client": CLIENT.get("name")})  # diagnostics only
             except Exception:
                 log("heartbeat-error", err=traceback.format_exc())
         try:
@@ -200,7 +215,7 @@ def tool_call(rid, params):
         return
     at = attest(meta, how)
     principal = principal_for(meta)
-    ok, h = store.claim_seat(D, seat, principal, at)
+    ok, h = store.claim_seat(D, seat, principal, at, key=HOLDER_KEY)
     if not ok:
         ago = int(time.time() - h["since"])
         reply(rid, (f"Seat {seat} is already held by another live connection ({h['principal']}, holder since {ago}s ago, "
@@ -209,32 +224,38 @@ def tool_call(rid, params):
                     f"hold lapses on its own after the lease; otherwise stop here."), True)
         return
     PRINCIPALS[seat] = principal
-    LAST_CALL[seat] = time.time()
     at["principal"] = principal
     at["epoch"] = h["epoch"]
     store.receipt(D, "call", seat=seat, tool=name, attest=at)
     if name == "council_status":
         witness(seat)
         txt, last = view.render(D, seat, store.cursor(D, seat, PRINCIPALS[seat]) if args.get("since") is None else args["since"])
-        store.set_cursor(D, seat, PRINCIPALS[seat], last)
         reply(rid, txt)
     elif name == "council_submit":
         intent = {k: args[k] for k in ("action", "text", "vote") if k in args}
         ok, msg = store.submit(D, seat, args.get("round", ""), intent, at)
+        if ok:
+            # the member acted on round R, so it held every event up to R's opening:
+            # that, and only that, is acknowledged (the reveal of R comes later)
+            store.set_cursor(D, seat, PRINCIPALS[seat], store.round_opened_seq(D, args["round"]))
         witness(seat)
         txt, last = view.render(D, seat, store.cursor(D, seat, PRINCIPALS[seat]))
-        store.set_cursor(D, seat, PRINCIPALS[seat], last)
         reply(rid, ("OK: " if ok else "REFUSED: ") + msg + "\n\n" + txt, not ok)
     elif name == "council_wait":
         maxw = float(args.get("max_wait_s") or A.max_wait)
         tok = meta.get("progressToken")
         t0 = time.time()
         nextp = t0 + A.progress_every
-        IN_WAIT[seat] = t0
+        WAIT_GEN[seat] = gen = WAIT_GEN.get(seat, 0) + 1
         n = 0
         why = "timeout"
-        try:
+        if True:
             while True:
+                if WAIT_GEN.get(seat) != gen:
+                    store.receipt(D, "wait-superseded", seat=seat, after=round(time.time() - t0, 2), proc=PROC)
+                    reply(rid, "This council_wait was superseded by a newer council_wait on your seat; "
+                               "the newer one carries the view. Nothing to do here.")
+                    return
                 if rid in CANCELLED:
                     log("wait-cancelled", id=rid, seat=seat, after=time.time() - t0)
                     store.receipt(D, "wait-cancelled", seat=seat, after=time.time() - t0)
@@ -257,11 +278,8 @@ def tool_call(rid, params):
                                      "message": f"waiting for the council ({int(time.time() - t0)}s)"}})
                     nextp += A.progress_every
                 time.sleep(0.5)
-        finally:
-            IN_WAIT.pop(seat, None)
         witness(seat)
         txt, last = view.render(D, seat, store.cursor(D, seat, PRINCIPALS[seat]))
-        store.set_cursor(D, seat, PRINCIPALS[seat], last)
         store.receipt(D, "wait-returned", seat=seat, why=why, waited_s=round(time.time() - t0, 2),
                       progress_sent=n, proc=PROC)
         head = {"your-turn": "A round is open for you.",
@@ -292,7 +310,7 @@ def _release_all(why):
         if pr.startswith("launcher:"):
             continue
         try:
-            store.release_seat(D, s, pr, why)
+            store.release_seat(D, s, pr, why, HOLDER_KEY)
         except Exception:
             pass
 
@@ -313,7 +331,7 @@ def main():
             for i, x in enumerate(sys.argv)]
     log("start", pid=os.getpid(), ppid=os.getppid(), dir=D, seat=A.seat, argv=argv,
         env={k: v for k, v in os.environ.items() if k.startswith(("CLAUDE", "CC_", "CODEX", "GROK", "GEMINI", "CONCILIUM"))
-             and "TOKEN" not in k})
+             and "TOKEN" not in k and "KEY" not in k})
     store.receipt(D, "server-start", proc=PROC, seat=A.seat, ppid=os.getppid())
     threading.Thread(target=heartbeat_loop, daemon=True).start()
     for line in sys.stdin:

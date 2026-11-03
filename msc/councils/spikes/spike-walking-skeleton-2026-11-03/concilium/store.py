@@ -10,9 +10,12 @@ the steward CLI open the same directory; mutual exclusion is an flock on
   receipts.jsonl          non-canonical journal: wall-clock receipts of everything
                           that happened (submissions incl. replacements, deliveries,
                           closes, presence changes), with attestations
-  sealed/<round>/<seat>.json   a seat's current sealed intent (replaceable until close)
-  rounds/<round>.json     {opened_at} wall-clock, for the backstop deadline
-  presence/<seat>/<proc>.json  lease heartbeats from each server process holding the seat
+  sealed/<round>/<seat>.json   a seat's sealed intent (final unless the charter says replaceable)
+  rounds/<round>.json     {opened_at, closed_at} wall-clock: the backstop deadline, and stall clearing
+  holder/<seat>.json      the seat's one holder: principal (asserted by the caller), hash of a
+                          holder key (a secret the client never sees), epoch, lease ts, last_call
+  cursors/<seat>.json     what the holder has acknowledged by acting (see server.py)
+  presence/<seat>/<proc>.json  diagnostics only; liveness is the holder lease
 
 Why sealed intents live in per-seat files and not in the log: appending them
 as they arrive would put arrival order into the canonical log. Only the close
@@ -177,19 +180,28 @@ def holder(d, seat):
     return _read_json(_p(d, "holder", seat + ".json"))
 
 
-def claim_seat(d, seat, principal, attest, now=None):
-    """Returns (ok, info). Called on every tool call; also refreshes the lease."""
+def _same_holder(h, principal, key):
+    return h["principal"] == principal and h.get("key") == (core.sha(key) if key else None)
+
+
+def claim_seat(d, seat, principal, attest, now=None, key=None):
+    """Returns (ok, info). Called on every tool call; refreshes the lease and
+    records `last_call` (a real call: the seat's own act, which clears a stall).
+    A holder is (principal, key): the principal is what the caller asserts, the
+    key a secret held by the connection or its launcher (de-novo-feedback-2
+    §2.5: two clients presenting the same codex sessionId were one holder)."""
     now = now or time.time()
     lease_s = charter(d).get("round_policy", {}).get("lease_s", 30)
     with locked(d):
         h = holder(d, seat)
-        if h and h["principal"] != principal and now - h["ts"] <= lease_s:
+        if h and not _same_holder(h, principal, key) and now - h["ts"] <= lease_s:
             receipt(d, "seat-claim-refused", seat=seat, principal=principal, holder=h["principal"],
                     epoch=h["epoch"], attest=attest)
             return False, h
-        if not h or h["principal"] != principal:
+        if not h or not _same_holder(h, principal, key) or not h["ts"]:
             epoch = (h["epoch"] + 1) if h else 1
-            rec = {"principal": principal, "epoch": epoch, "since": now, "ts": now,
+            rec = {"principal": principal, "key": core.sha(key) if key else None, "epoch": epoch,
+                   "since": now, "ts": now, "last_call": now,
                    "previous": h and {"principal": h["principal"], "epoch": h["epoch"],
                                       "lapsed_for_s": None if h["ts"] == 0 else round(now - h["ts"], 1),
                                       "released": h["ts"] == 0}}
@@ -198,22 +210,24 @@ def claim_seat(d, seat, principal, attest, now=None):
                     previous=rec["previous"], attest=attest)
             return True, rec
         h["ts"] = now
+        h["last_call"] = now
         _atomic_write(_p(d, "holder", seat + ".json"), h)
         return True, h
 
 
-def refresh_seat(d, seat, principal):
+def refresh_seat(d, seat, principal, key=None):
+    """Heartbeat: keeps the lease, does not count as the seat acting."""
     with locked(d):
         h = holder(d, seat)
-        if h and h["principal"] == principal:
+        if h and h["ts"] and _same_holder(h, principal, key):
             h["ts"] = time.time()
             _atomic_write(_p(d, "holder", seat + ".json"), h)
 
 
-def release_seat(d, seat, principal, why):
+def release_seat(d, seat, principal, why, key=None):
     with locked(d):
         h = holder(d, seat)
-        if h and h["principal"] == principal:
+        if h and _same_holder(h, principal, key):
             h["ts"] = 0
             _atomic_write(_p(d, "holder", seat + ".json"), h)
             receipt(d, "seat-released", seat=seat, principal=principal, epoch=h["epoch"], why=why)
@@ -228,6 +242,10 @@ def release_seat(d, seat, principal, why):
 def cursor(d, seat, principal):
     rec = _read_json(_p(d, "cursors", seat + ".json"), {})
     return rec.get("seq", -1) if rec.get("principal") == principal else -1
+
+
+def round_opened_seq(d, round_id):
+    return next((e["seq"] for e in events(d) if e["type"] == "round-opened" and e["body"]["round"] == round_id), -1)
 
 
 def set_cursor(d, seat, principal, seq):
@@ -314,7 +332,18 @@ def try_close(d, now=None, force_deadline=False):
             live[s] = [{"proc": h["principal"]}] if h and h["ts"] and now - h["ts"] <= lease_s else []
         grace = pol.get("arrival_grace_s", 120)
         gone = []
-        stalled = _stalled(ch, events(d), pol.get("absent_rounds_to_gone", 2))
+        evs_now = events(d)
+        stalled = _stalled(ch, evs_now, pol.get("absent_rounds_to_gone", 2))
+        if stalled:
+            # de-novo-feedback-2 §2.1: "until it acts again" -- any call from the
+            # seat's holder after the last close clears the stall, so this round
+            # (and the next) waits for it. No bound on thinking time is added.
+            last = [e["body"]["round"] for e in evs_now if e["type"] == "round-closed"][-1]
+            closed_at = _read_json(_p(d, "rounds", last + ".json"), {}).get("closed_at", now)
+            for s_ in list(stalled):
+                h = holder(d, s_)
+                if h and h.get("last_call", 0) > closed_at:
+                    stalled.discard(s_)
         for s in addressed:
             if s in subs:
                 continue
@@ -335,26 +364,31 @@ def try_close(d, now=None, force_deadline=False):
         close_ev = {"type": "round-closed", "body": body}
         derived = core.step(st, ch, close_ev)
         _append(d, [close_ev] + derived, events(d))
+        rp = _p(d, "rounds", r["id"] + ".json")
+        _atomic_write(rp, dict(_read_json(rp, {}), closed_at=time.time()))
         receipt(d, "round-closed", round=r["id"], closed_by=closed_by, waited_s=round(now - opened, 3),
                 live={s: [l["proc"] for l in v] for s, v in live.items()})
         return r["id"]
 
 
 def _stalled(ch, evs, k):
-    """verify-1 D3: a seat whose server is alive but which has not answered
-    in k consecutive rounds that either ran to the wall-clock backstop for it,
-    or already treated it as stalled, is not 'slow': it is not looping. It is
-    treated as gone (recorded under `stalled` in the close) until it acts again.
-    Slow thinking is never penalized: only rounds that already waited the full
-    backstop start a streak. k=0 disables. Charter: absent_rounds_to_gone."""
+    """A seat is stalled after k consecutive closes that each *waited for it*:
+    it was absent, not gone (de-novo-feedback-2 §2.2: a crashed seat used to be
+    counted in rounds that waited for someone else), and the round ran to the
+    backstop -- or the seat was already stalled in that close. Only rounds that
+    already waited the full backstop start a streak, so slow thinking never counts.
+    Pure over the log; `try_close` then removes any seat that has called since
+    (its own act; §2.1). k=0 disables (a council that must never shrink, e.g.
+    unanimity-or-hold, sets 0). Charter: round_policy.absent_rounds_to_gone."""
     if not k:
         return set()
     closes = [e["body"] for e in evs if e["type"] == "round-closed"]
     out = set()
-    for seat in ch and [x["id"] for x in ch["seats"]]:
+    for seat in [x["id"] for x in ch["seats"]]:
         n = 0
         for c in reversed(closes):
-            if seat in c["absent"] and (c["closed_by"] == "backstop-deadline" or seat in c.get("stalled", [])):
+            waited = (seat in c["absent"] and seat not in c["gone"] and c["closed_by"] == "backstop-deadline")
+            if waited or seat in c.get("stalled", []):
                 n += 1
                 if n >= k:
                     out.add(seat)

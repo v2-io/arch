@@ -49,11 +49,14 @@ def charter(seats="AB", quorum=None, **pol):
             "debate_policy": {"max_debate_rounds": 3, "max_open_rounds": 2}, "agenda": [{"id": "q1", "title": "one"}]}
 
 
-def server(d, seat, tok, principal=None, log=None):
+def server(d, seat, tok, principal=None, log=None, key=None):
     env = dict(os.environ)
     env.pop("CONCILIUM_PRINCIPAL", None)
+    env.pop("CONCILIUM_HOLDER_KEY", None)
     if principal:
         env["CONCILIUM_PRINCIPAL"] = principal
+    if key:
+        env["CONCILIUM_HOLDER_KEY"] = key
     argv = [PY, "-I", SERVER, "--dir", d, "--seat", seat, "--token", tok, "--heartbeat", "1"]
     if log:
         argv += ["--log", log]
@@ -109,16 +112,16 @@ def part1():
 def t_driver_holds():
     say("-- driver holds its seats between turns (fix for verify-1 A)")
     d = fresh("driver"); toks = store.create(d, charter("AB"))
-    pr = "launcher:driver-1"
-    ok, h = store.claim_seat(d, "A", pr, {"test": 1})                 # what driver.py does at start
-    c1 = server(d, "A", toks["A"], principal="driver-1")              # turn 1
+    pr = "launcher:driver-1"; key = "driver-1-secret"
+    ok, h = store.claim_seat(d, "A", pr, {"test": 1}, key=key)        # what driver.py does at start
+    c1 = server(d, "A", toks["A"], principal="driver-1", key=key)     # turn 1 (the driver passes its key)
     t, err, _ = c1.call("council_status", {})
     c1.close(); time.sleep(0.4)                                       # turn ends (stdin closed)
     h = store.holder(d, "A")
     c2 = server(d, "A", toks["A"], principal="stranger")
     t2, err2, _ = c2.call("council_status", {})
-    store.refresh_seat(d, "A", pr)                                    # driver heartbeat
-    c3 = server(d, "A", toks["A"], principal="driver-1")              # turn 2
+    store.refresh_seat(d, "A", pr, key)                               # driver heartbeat
+    c3 = server(d, "A", toks["A"], principal="driver-1", key=key)     # turn 2
     t3, err3, _ = c3.call("council_status", {})
     c2.close(); c3.close()
     say(f"  after turn 1 ended: holder ts={'live' if h['ts'] else 0}; stranger -> {'refused' if err2 else 'HELD'}; driver turn 2 -> {'refused' if err3 else 'ok'}")
@@ -335,9 +338,96 @@ def t_replace_text():
         verdict(f"text matches replaceable={rep}", says_replace if rep else says_final)
 
 
+def part3():
+    say("== PART 3: verify-2/verify2.py tests, unchanged, against the current code")
+    sys.path.insert(0, os.path.join(HERE, "verify-2"))
+    import verify2 as v2
+    v2.TMP = os.path.join(TMP, "verify2")
+    os.makedirs(v2.TMP, exist_ok=True)
+    v2.say = say
+    # True from these tests meant "the defect was reproduced"; a fixed build should return False
+    expect = {"1 stall recovery race": False, "3 stall counts gone rounds": False, "4 minutes omit stalled": False,
+              "5 driver relaunch loop": False, "6 principal asserted": False, "7 late arrival recovers": True}
+    for name, fn in v2.TESTS:
+        say(f"-- verify-2 {name}")
+        if name.startswith("2 "):
+            say("  (not run as written: it passes when exactly one of two pending waits carries the delta, which "
+                "supersession now makes true by design; t_abandoned_wait below tests the property instead)")
+            continue
+        try:
+            r = fn()
+        except StopIteration:
+            if name.startswith("3 "):
+                # its live part looks for r3's close right after the returned seat's first call; the fix is
+                # that r3 now waits for that seat, so there is no close to find
+                d3 = os.path.join(v2.TMP, "t3")
+                st3 = core.fold(store.charter(d3), store.events(d3))
+                waits = st3["round"] is not None and "A" not in store.sealed(d3, st3["round"]["id"])
+                say(f"  (StopIteration: r3 did not close; it is open and waiting for the returned seat A: {waits})")
+                r = False if waits else "unexpected"
+            else:
+                r = "exception"
+        except Exception as e:
+            say("  EXCEPTION", repr(e)); r = "exception"
+        verdict(f"verify-2 {name}", r == expect[name], f"returned {r}, want {expect[name]}")
+
+
+def t_abandoned_wait():
+    say("-- an abandoned council_wait cannot eat the delta (fix for verify-2 §2.3)")
+    d = fresh("abandoned"); toks = store.create(d, charter("AB", quorum=2))
+    a = server(d, "A", toks["A"], principal="A-session")
+    a.call("council_submit", {"round": "r1", "action": "present"})
+    acts = {"call-to-order": {"action": "present"}, "open": {"action": "move", "text": "X"},
+            "debate": {"action": "pass"}, "vote": {"action": "vote", "vote": "yes"}}
+    live_ok = []; old_superseded = []
+    for trial in range(4):
+        ids = (200 + trial * 2, 201 + trial * 2)        # first = the one the harness abandoned, second = live
+        for rid in ids:
+            a.p.stdin.write(json.dumps({"jsonrpc": "2.0", "id": rid, "method": "tools/call",
+                                        "params": {"name": "council_wait", "arguments": {"max_wait_s": 20},
+                                                   "_meta": {"progressToken": rid}}}) + "\n")
+            a.p.stdin.flush()
+            time.sleep(0.3)
+        st = core.fold(store.charter(d), store.events(d)); r = st["round"]
+        store.submit(d, "B", r["id"], acts[r["kind"]], {})
+        got = {}; t0 = time.time()
+        while len(got) < 2 and time.time() - t0 < 10:
+            m = a.q.get(timeout=10)
+            if m.get("id") in ids:
+                got[m["id"]] = m["result"]["content"][0]["text"]
+        live_ok.append("Since your last look" in got.get(ids[1], ""))
+        old_superseded.append("superseded" in got.get(ids[0], ""))
+        st = core.fold(store.charter(d), store.events(d))
+        if st["adjourned"]:
+            break
+        a.call("council_submit", dict(acts[st["round"]["kind"]], round=st["round"]["id"]))
+    # and a status call between acts repeats the delta rather than consuming it
+    st = core.fold(store.charter(d), store.events(d))
+    t1, _, _ = a.call("council_status", {}); t2, _, _ = a.call("council_status", {})
+    a.close()
+    say(f"  live wait carried the delta: {live_ok}; abandoned wait superseded: {old_superseded}; "
+        f"two status calls in a row both show the delta: {'Since your last look' in t1 and 'Since your last look' in t2}")
+    verdict("the live wait always carries the reveal", all(live_ok) and all(old_superseded))
+    verdict("a view is not consumed by sending it", "Since your last look" in t1 and "Since your last look" in t2)
+
+
+def t_bad_key():
+    say("-- a client that copies the holder's principal is still refused (fix for verify-2 §2.5)")
+    d = fresh("key"); toks = store.create(d, charter("AB", quorum=1))
+    meta = {"sessionId": "same-asserted-session", "progressToken": 1}
+    x = server(d, "A", toks["A"]); y = server(d, "A", toks["A"])
+    _, ex, _ = x.call("council_status", {}, meta=meta)
+    _, ey, _ = y.call("council_status", {}, meta=meta)
+    _, es, _ = y.call("council_submit", {"round": "r1", "action": "present"}, meta=meta)
+    x.close(); y.close()
+    say(f"  first -> {'refused' if ex else 'held'}; copy of its sessionId from another connection -> "
+        f"{'refused' if ey else 'HELD'}; its submit -> {'refused' if es else 'ACCEPTED'}")
+    verdict("asserted principal alone does not hold a seat", not ex and ey and es)
+
+
 def part2():
     say("== PART 2: author's tests on the current code")
-    for t in (t_driver_holds, t_stall_escalation, t_stall_clears, t_late_and_message, t_witness,
+    for t in (t_driver_holds, t_stall_escalation, t_stall_clears, t_abandoned_wait, t_bad_key, t_late_and_message, t_witness,
               t_smoke_protocol, t_smoke_holders, t_smoke_backstop, t_replace_text):
         try:
             t()
@@ -350,6 +440,7 @@ def part2():
 if __name__ == "__main__":
     part1()
     part2()
+    part3()
     n_ok = sum(1 for _, ok in RESULTS if ok)
     say(f"\n== {n_ok} of {len(RESULTS)} checks pass")
     for n, ok in RESULTS:

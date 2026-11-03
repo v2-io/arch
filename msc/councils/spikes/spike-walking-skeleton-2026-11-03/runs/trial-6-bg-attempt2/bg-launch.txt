@@ -1,0 +1,5 @@
+backgrounded · e6c84f18 · concilium-trial-6-bg-attempt2
+  claude agents             list sessions
+  claude attach e6c84f18    open in this terminal
+  claude logs e6c84f18      show recent output
+  claude stop e6c84f18      stop this session

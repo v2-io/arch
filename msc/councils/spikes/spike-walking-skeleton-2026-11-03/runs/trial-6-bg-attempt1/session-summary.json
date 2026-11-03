@@ -1,0 +1,29 @@
+{
+ "session": "a879e3f9-8e4e-41ad-ad3d-45c92eefc75b",
+ "source": "the session's own transcript under ~/.claude/projects (not copied: it carries a session-context attachment with the user's email)",
+ "requests": [
+  {
+   "timestamp": "2026-11-03T21:40:05.664Z",
+   "tool_count": 0,
+   "system_prompt_mentions_claude_in_chrome": false,
+   "system_prompt_mentions_ToolSearch": false
+  }
+ ],
+ "assistant_messages": 0,
+ "record_types": {
+  "custom-title": 2,
+  "agent-name": 2,
+  "mode": 2,
+  "permission-mode": 2,
+  "session-owner": 2,
+  "atis-latch": 2,
+  "file-history-snapshot": 2,
+  "user": 1,
+  "attachment": 6,
+  "api-request-shape": 1,
+  "api-request-blob": 2,
+  "api-request": 2,
+  "last-prompt": 1,
+  "cost-state": 2
+ }
+}

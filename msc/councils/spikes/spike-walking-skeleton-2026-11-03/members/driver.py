@@ -41,6 +41,8 @@ def note(kind, **kw):
 
 
 LOST = set()
+KEYS = {s: __import__("secrets").token_hex(16) for s in SEATS}   # holder keys; never logged
+LAUNCHED = {}   # seat -> round id of its last turn (de-novo-feedback-2 §2.4: one turn per seat per round)
 
 
 def principal(seat):
@@ -56,7 +58,7 @@ def hold_seats():
     for s in SEATS:
         if s in LOST:
             continue
-        ok, h = store.claim_seat(C, s, principal(s), {"proc": PROC, "client": "driver"})
+        ok, h = store.claim_seat(C, s, principal(s), {"proc": PROC, "client": "driver"}, key=KEYS[s])
         if not ok:
             LOST.add(s)
             note("seat-lost", seat=s, holder=h["principal"], epoch=h["epoch"])
@@ -64,7 +66,13 @@ def hold_seats():
 
 def heartbeat():
     while True:
-        hold_seats()
+        for s in SEATS:
+            if s not in LOST:
+                store.refresh_seat(C, s, principal(s), KEYS[s])   # keeps the lease; not the seat acting
+                h = store.holder(C, s)
+                if not h or not store._same_holder(h, principal(s), KEYS[s]):
+                    LOST.add(s)
+                    note("seat-lost", seat=s, holder=(h or {}).get("principal"), epoch=(h or {}).get("epoch"))
         for s in SEATS:
             if s not in LOST:
                 store.heartbeat(C, s, PROC, {"pid": os.getpid(), "client": "driver", "busy": s in BUSY})
@@ -87,7 +95,8 @@ def turn(seat):
     cfg = {"mcpServers": {"council": {"type": "stdio", "command": "/usr/bin/python3",
            "args": ["-I", os.path.join(HERE, "concilium", "server.py"), "--dir", C, "--seat", seat,
                     "--log", os.path.join(d, "server.jsonl"), "--tag", f"{seat}-t{TURNS[seat]}"],
-           "env": {"CONCILIUM_TOKEN": toks[seat], "CONCILIUM_PRINCIPAL": f"driver-{os.getpid()}-{seat}"}}}}
+           "env": {"CONCILIUM_TOKEN": toks[seat], "CONCILIUM_PRINCIPAL": f"driver-{os.getpid()}-{seat}",
+                   "CONCILIUM_HOLDER_KEY": KEYS[seat]}}}}
     cmd = ["claude", "-p", prompt, "--model", MODEL, "--mcp-config", json.dumps(cfg), "--strict-mcp-config",
            "--tools", "", "--allowedTools", "mcp__council__council_submit,mcp__council__council_status,mcp__council__council_record",
            "--disallowedTools", "mcp__council__council_wait",
@@ -115,6 +124,11 @@ def turn(seat):
         CURSOR[seat] = last
         TURNS[seat] += 1
         BUSY.discard(seat)
+    r_now = store.state(C)[1]["round"]
+    acted = bool(r_now is None or seat in store.sealed(C, LAUNCHED.get(seat, "")) or r_now["id"] != LAUNCHED.get(seat))
+    if not acted:
+        note("turn-no-act", seat=seat, round=LAUNCHED.get(seat),
+             why="the turn ended without a submission; no second turn for this round")
     note("turn-end", seat=seat, secs=round(time.time() - t0, 1), rc=out.returncode, **res,
          stderr=out.stderr[-300:])
 
@@ -133,9 +147,10 @@ def main():
             subs = store.sealed(C, r["id"])
             for s in r["addressed"]:
                 with L:
-                    go = s not in subs and s not in BUSY and s not in LOST
+                    go = s not in subs and s not in BUSY and s not in LOST and LAUNCHED.get(s) != r["id"]
                     if go:
                         BUSY.add(s)
+                        LAUNCHED[s] = r["id"]
                 if go:
                     threading.Thread(target=turn, args=(s,), daemon=True).start()
         time.sleep(1)
@@ -143,7 +158,7 @@ def main():
         time.sleep(1)
     for s in SEATS:
         if s not in LOST:
-            store.release_seat(C, s, principal(s), "driver finished")
+            store.release_seat(C, s, principal(s), "driver finished", KEYS[s])
     json.dump({"sessions": SID, "turns": TURNS}, open(os.path.join(RUN, "driver-summary.json"), "w"), indent=1)
 
 

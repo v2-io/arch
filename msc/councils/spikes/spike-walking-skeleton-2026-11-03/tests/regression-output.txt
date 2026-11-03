@@ -1,8 +1,8 @@
 == PART 1: verify-1/verify.py tests, unchanged, against the current code
 -- verify-1 A driver-mode seat gap
-  after driver turn ended: holder ts = 1793739357.909591 (0 means released)
+  after driver turn ended: holder ts = 1793742472.67127 (0 means released)
   stranger claims seat A between driver turns -> REFUSED
-  driver's next turn -> ok
+  driver's next turn -> REFUSED: Seat A is already held by another live connection (launcher:driver-1, holder since 0s ago,
   RESULT: no gap found
   => PASS: verify-1 A driver-mode seat gap — returned False, want False (True = defect present)
 -- verify-1 B SIGKILL lease lapse
@@ -26,7 +26,7 @@
   RESULT: limit held
   => PASS: verify-1 D1 partial withdraw / debate limit — returned True, want True (True = limit held)
 -- verify-1 D3 stuck live member
-  r1 closed after 3.1s by backstop-deadline (absent ['A'], gone []); r2 closed after 3.1s by backstop-deadline (absent ['A'], gone [])
+  r1 closed after 3.0s by backstop-deadline (absent ['A'], gone []); r2 closed after 3.0s by backstop-deadline (absent ['A'], gone [])
   RESULT: confirmed: a live-but-silent seat costs the full backstop every round, with no escalation to 'gone'
   (returned True; True = every round waits the full backstop; see part 2 for the escalation, which needs >= 2 rounds)
 -- verify-1 D4 late submission dropped
@@ -52,13 +52,20 @@
   => PASS: driver seat is held between turns
 -- a live-but-silent seat escalates to gone after 2 backstopped rounds (fix for verify-1 D3)
   r1: open 2.0s, backstop-deadline, absent ['A'], gone [], stalled []
-  r2: open 2.1s, backstop-deadline, absent ['A'], gone [], stalled []
+  r2: open 2.0s, backstop-deadline, absent ['A'], gone [], stalled []
   r3: open 0.1s, all-submitted-or-gone, absent ['A'], gone ['A'], stalled ['A']
   r4: open 0.1s, all-submitted-or-gone, absent ['A'], gone ['A'], stalled ['A']
   => PASS: stall escalates after 2 backstops and stays escalated — 2 later rounds
 -- a stalled seat that acts again is no longer stalled
   stalled after r3: ['A']; after A acts in r4: []
   => PASS: stall clears when the seat acts
+-- an abandoned council_wait cannot eat the delta (fix for verify-2 §2.3)
+  live wait carried the delta: [True, True, True, True]; abandoned wait superseded: [True, True, True, True]; two status calls in a row both show the delta: True
+  => PASS: the live wait always carries the reveal
+  => PASS: a view is not consumed by sending it
+-- a client that copies the holder's principal is still refused (fix for verify-2 §2.5)
+  first -> held; copy of its sessionId from another connection -> refused; its submit -> refused
+  => PASS: asserted principal alone does not hold a seat
 -- late intent recorded; own-completion refusal says what happened (verify-1 D4, 3.3)
   late A -> round r1 has closed without your submission; it is recorded as late. The open round is r2.
   B again after its own close -> your submission for r1 was already counted, and r1 has closed (all seats had answered). Submissions are final. The open 
@@ -76,15 +83,46 @@
   multi-seat requires seat_token: True; real token -> ok; no token -> refused
   => PASS: protocol smoke
 -- smoke c2 reproduced: one holder per seat; clean release; SIGKILL lapse; launcher principals outlive their process
-  Y refused while X live: True; Y holds after X exits cleanly: True; Z refused while Y live: True; Z holds 4.0s after Y's SIGKILL (lease 4s); epochs [1, 2, 3]; previous released flags: [True, False]; launcher-held B after its server exited: held
+  Y refused while X live: True; Y holds after X exits cleanly: True; Z refused while Y live: True; Z holds 4.1s after Y's SIGKILL (lease 4s); epochs [1, 2, 3]; previous released flags: [True, False]; launcher-held B after its server exited: held
   => PASS: holder exclusivity
 -- smoke c3 reproduced: live-but-silent seat; backstop closes the round, seat absent not gone
-  r1 closed after 3.0s by backstop-deadline, absent ['C'], gone []
+  r1 closed after 3.1s by backstop-deadline, absent ['C'], gone []
   => PASS: backstop
 -- what the member reads matches the charter (verify-1 D5)
   replaceable=False: description/view say final
   => PASS: text matches replaceable=False
   replaceable=True: description/view say replace
   => PASS: text matches replaceable=True
+== PART 3: verify-2/verify2.py tests, unchanged, against the current code
+-- verify-2 1 stall recovery race
+  after A's silence: 3 closes: [('r1', 'backstop-deadline'), ('r2', 'backstop-deadline'), ('r3', 'all-submitted-or-gone')]
+  A, back and looping (0.3 s think): accepted 25, refused 0; sample refusal: []
+  rounds after A's return: 26, A in a close's submitted: 25; all closed all-submitted-or-gone: False; adjourned: []
+  what A's view said while it was stalled (nothing about being stalled or needing to hurry): ['      absent: A (stalled, so not waited for: A: silent through rounds that ran to the backstop; waited for again from its next call)', '  question put (every member who acted passed): "X"', '  round r4 opened (vote, item q1)', 'OPEN ROUND r4 (vote). 0 of 2 seats have submitted.', 'You may submit with council_submit(round="r4", action=..., ...):', '  - vote {vote, text?}: the question is put; vote yes, no or abstain (abstaining is recorded, not counted) [44:1-3]']
+  RESULT: not reproduced (accepted 25)
+  => PASS: verify-2 1 stall recovery race — returned False, want False
+-- verify-2 2 abandoned wait eats delta
+  (not run as written: it passes when exactly one of two pending waits carries the delta, which supersession now makes true by design; t_abandoned_wait below tests the property instead)
+-- verify-2 3 stall counts gone rounds
+  two backstop rounds where A was gone (crashed) and C was the slow live seat -> stalled = ['C']
+  real dir: [('r1', 'backstop-deadline', 'gone', ['A'], 'stalled', None), ('r2', 'backstop-deadline', 'gone', ['A'], 'stalled', None)]
+  (StopIteration: r3 did not close; it is open and waiting for the returned seat A: True)
+  => PASS: verify-2 3 stall counts gone rounds — returned False, want False
+-- verify-2 4 minutes omit stalled
+  describe(round-closed with stalled=[A]) -> 'round r3 closed (all-submitted-or-gone); revealed:\n    B — pass\n    absent: A (stalled, so not waited for: A: silent through rounds that ran to the backstop; waited for again from its next call)'
+  RESULT: shows stalled
+  => PASS: verify-2 4 minutes omit stalled — returned False, want False
+-- verify-2 5 driver relaunch loop
+  driver ran 8.2s (exit 0); fake claude invoked 4 times; driver turn-ends 4; rounds closed 2 ['backstop-deadline', 'backstop-deadline']; adjourned: ['no quorum in 2 consecutive rounds']
+  RESULT: not reproduced
+  => PASS: verify-2 5 driver relaunch loop — returned False, want False
+-- verify-2 6 principal asserted
+  two processes, same _meta.sessionId: first -> held, second -> refused; holder records: [('seat-held', 'codex-session:01a1a3-the-real-codex-session'), ('seat-claim-refused', 'codex-session:01a1a3-the-real-codex-session')]; second's submit -> refused
+  RESULT: not reproduced
+  => PASS: verify-2 6 principal asserted — returned False, want False
+-- verify-2 7 late arrival recovers
+  r1 closed all-submitted-or-gone gone=['A'] before A arrived; A arrives, calls status -> ok; next round waits for A: True
+  RESULT: a late first arrival recovers on its first call (unlike a stalled seat, test 1)
+  => PASS: verify-2 7 late arrival recovers — returned True, want True
 
-== 19 of 19 checks pass
+== 28 of 28 checks pass

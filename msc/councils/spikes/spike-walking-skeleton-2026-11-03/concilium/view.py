@@ -24,7 +24,12 @@ def describe(ev):
             txt = f": {i['text']}" if i.get("text") else ""
             lines.append(f"    {s} — {i['action']}{extra}{txt}")
         if b["absent"]:
-            lines.append(f"    absent: {', '.join(b['absent'])}" + (f" (gone: {', '.join(b['gone'])})" if b["gone"] else ""))
+            stalled = b.get("stalled", [])
+            gone = [s for s in b["gone"] if s not in stalled]
+            notes = ([f"gone: {', '.join(gone)}"] if gone else []) + \
+                    ([f"stalled, so not waited for: {', '.join(stalled)}: silent through rounds that ran to the "
+                      f"backstop; waited for again from its next call"] if stalled else [])
+            lines.append(f"    absent: {', '.join(b['absent'])}" + (f" ({'; '.join(notes)})" if notes else ""))
         return "\n".join(lines)
     if t == "roll-taken":
         return f"roll: present {', '.join(b['present']) or '—'}; absent {', '.join(b['absent']) or '—'}"
@@ -72,6 +77,10 @@ def render(d, seat, since):
         out.append(f"Pending motion (makers {', '.join(st['pending']['makers'])}): \"{st['pending']['text']}\"")
     if seat in st["standing"]:
         out.append(f"Your standing intent: \"{st['standing'][seat]['text']}\"")
+    closes = [e["body"] for e in evs if e["type"] == "round-closed"]
+    if closes and seat in closes[-1].get("stalled", []):
+        out.append("Note: the council stopped waiting for your seat after it was silent through rounds that ran "
+                   "to the backstop. This call restores it: rounds wait for you again from now on.")
     new = [e for e in evs if e["seq"] > since]
     if new:
         out.append(f"\nSince your last look (events {new[0]['seq']}–{new[-1]['seq']}):")

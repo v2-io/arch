@@ -1,0 +1,19 @@
+{
+ "session": "e6c84f18-640d-488d-9d2e-8ff92e7bbdaf",
+ "source": "the session's own transcript under ~/.claude/projects (not copied: it carries a session-context attachment with the user's email)",
+ "requests": [
+  {
+   "timestamp": "2026-11-03T21:43:37.303Z",
+   "tool_count": 0,
+   "system_prompt_mentions_claude_in_chrome": false,
+   "system_prompt_mentions_ToolSearch": false
+  }
+ ],
+ "assistant_text": [
+  {
+   "timestamp": "2026-11-03T21:43:43.611Z",
+   "text": "<invoke name=\"council_wait\">\n</invoke>"
+  }
+ ],
+ "tool_uses": []
+}
