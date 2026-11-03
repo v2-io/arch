@@ -1,0 +1,4 @@
+# Verbatim session exports (whole Claude Code transcripts: system prompt,
+# memory, tool output, images). Kept local; this repo is public.
+runs/**/request.json
+runs/**/block.json
