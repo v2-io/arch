@@ -1,0 +1,2 @@
+2026-11-03T20:52:18Z start seat=plan harness=grok model= pid=83813
+2026-11-03T20:53:24Z exit=1

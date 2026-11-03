@@ -69,4 +69,6 @@ So the docs' 2-minute auto-background is real in a main (here background) conver
 
 So the one universal waiting mechanism, a blocking `council_wait`, works in all four harnesses, with two per-harness adjustments, both per-run: codex needs `tool_timeout_sec` raised in its own `-c` config (or the server must cap `council_wait` under 60 s), and Claude Code needs progress notifications under ~30 s apart if anyone lowers its idle timeout (its default idle timeout is 30 min on stdio, per docs). The server should always send progress; it costs nothing and is what keeps Claude Code's idle timer alive.
 
-agy also closes the server's stdin at exit (`stdin_closed`), as utf-mcp observed; Claude Code, codex and grok end the server by signal, so a server cannot count on an orderly exit message from them. Presence has to be a lease, not a goodbye.
+How each harness ends a member's server, from servers that log signals (the verifier's `verify-1/runs/mixed-rerun`, and `runs/trial-4c-mixed` receipts): Claude Code sends SIGINT; codex SIGTERM; agy closes stdin (as utf-mcp observed); grok sends nothing a server can catch (the process is simply gone). So a grok seat never releases and only lapses after the lease, and a server cannot count on an orderly exit from any harness. Liveness has to be a lease, not a goodbye.
+
+Quota is a crash like any other. In `trial-4c` grok (now grok-4.7) stopped mid-meeting: *"You've reached your free Grok Build usage limit for now"*, exit 1, about 66 s in. Its seat went gone one lease later, and the meeting finished without it.

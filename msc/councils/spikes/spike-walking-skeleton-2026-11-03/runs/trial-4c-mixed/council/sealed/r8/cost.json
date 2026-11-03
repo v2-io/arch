@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Yes. The lower-cost independent review is the right default, with council effort reserved for a named unresolved estate choice.",
+  "vote": "yes"
+ }
+}

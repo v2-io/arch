@@ -87,6 +87,8 @@ def apply(state, ev):
             st["standing"].pop(m, None)
     elif t == "intent-standing":
         st["standing"][b["seat"]] = {"item": b["item"], "text": b["text"], "since_round": b["round_n"]}
+    elif t == "makers-withdrew":
+        st["pending"]["makers"] = b["makers"]
     elif t == "intent-lapsed":
         st["standing"].pop(b["seat"], None)
     elif t == "motion-withdrawn":
@@ -316,9 +318,11 @@ def step(state, charter, inp):
                     return evs
                 st = _emit(st, evs, "item-closed", {"item": item, "disposition": "withdrawn"})
                 return evs + _tail(st, charter, _next_item_or_adjourn)
-            st = _emit(st, evs, "motion-pending", {"item": item, "text": st["pending"]["text"],
-                                                   "makers": remaining, "round_n": st["round_counter"],
-                                                   "note": f"co-makers {withdrawing} withdrew; motion stands"})
+            # verify-1 D1: re-emitting motion-pending here reset the debate-round
+            # limit, so a procedural act silently extended charter policy. A
+            # partial withdrawal only changes who the makers are.
+            st = _emit(st, evs, "makers-withdrew", {"item": item, "by": withdrawing, "makers": remaining,
+                                                    "note": "co-makers withdrew; the motion stands with the rest"})
         all_pass = all(i["action"] == "pass" for i in subs.values())
         if all_pass or st["debate_rounds_this_motion"] >= max_debate:
             st = _emit(st, evs, "question-put", {

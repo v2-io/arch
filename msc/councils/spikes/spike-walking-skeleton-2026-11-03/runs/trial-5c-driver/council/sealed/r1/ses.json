@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Seat ses is present. Preliminary view for q1, to be argued in later rounds: remove the global allow rule Bash(export CC_AGENT=*) from ~/.claude/settings.json, or at minimum move it out of global settings. Global settings reload live into every session on this machine, so a rule written for one agent-identity workflow now governs sessions that never agreed to it. The README's safety case rests on tests of a single chained `touch`; it does not cover other chaining forms (`;`, `&&`, newlines), nor the order in which two PreToolUse hooks combine their rewrites. Those are the questions that would change my mind."
+ }
+}

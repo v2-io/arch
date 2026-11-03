@@ -1,0 +1,2 @@
+2026-11-03T20:52:18Z start seat=indep model=haiku pid=83811
+2026-11-03T20:54:16Z exit=0

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Present. I\u2019ll evaluate the reviewer-vs-council choice by marginal decision value per unit of time, tokens, and steward attention."
+ }
+}

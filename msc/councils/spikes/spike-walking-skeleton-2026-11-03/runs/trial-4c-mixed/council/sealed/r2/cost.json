@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Recommend one independent reviewer from another model family as the default check: it buys independence at substantially lower latency, token spend, and steward coordination than convening a council. Escalate to a council only when the plan is high-risk, unusually ambiguous, or the independent review exposes unresolved disagreement; otherwise the extra council cost is unlikely to change the action enough to justify itself."
+ }
+}

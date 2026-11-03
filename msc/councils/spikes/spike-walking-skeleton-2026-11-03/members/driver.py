@@ -40,10 +40,34 @@ def note(kind, **kw):
     LOG.write(json.dumps({"ts": time.time(), "kind": kind, **kw}) + "\n")
 
 
+LOST = set()
+
+
+def principal(seat):
+    # the same string server.py derives from CONCILIUM_PRINCIPAL for this seat's turns
+    return f"launcher:driver-{os.getpid()}-{seat}"
+
+
+def hold_seats():
+    """verify-1 test A: the driver, not each per-turn server process, holds the
+    seats it drives -- claimed here, refreshed every heartbeat, released when
+    the driver ends. A seat found held by another principal is lost: the driver
+    stops driving it and says so, rather than relaunching into refusals."""
+    for s in SEATS:
+        if s in LOST:
+            continue
+        ok, h = store.claim_seat(C, s, principal(s), {"proc": PROC, "client": "driver"})
+        if not ok:
+            LOST.add(s)
+            note("seat-lost", seat=s, holder=h["principal"], epoch=h["epoch"])
+
+
 def heartbeat():
     while True:
+        hold_seats()
         for s in SEATS:
-            store.heartbeat(C, s, PROC, {"pid": os.getpid(), "client": "driver", "busy": s in BUSY})
+            if s not in LOST:
+                store.heartbeat(C, s, PROC, {"pid": os.getpid(), "client": "driver", "busy": s in BUSY})
         store.try_close(C)
         time.sleep(5)
 
@@ -96,6 +120,7 @@ def turn(seat):
 
 
 def main():
+    hold_seats()
     threading.Thread(target=heartbeat, daemon=True).start()
     while True:
         store.try_close(C)
@@ -108,7 +133,7 @@ def main():
             subs = store.sealed(C, r["id"])
             for s in r["addressed"]:
                 with L:
-                    go = s not in subs and s not in BUSY
+                    go = s not in subs and s not in BUSY and s not in LOST
                     if go:
                         BUSY.add(s)
                 if go:
@@ -116,6 +141,9 @@ def main():
         time.sleep(1)
     while BUSY:
         time.sleep(1)
+    for s in SEATS:
+        if s not in LOST:
+            store.release_seat(C, s, principal(s), "driver finished")
     json.dump({"sessions": SID, "turns": TURNS}, open(os.path.join(RUN, "driver-summary.json"), "w"), indent=1)
 
 

@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "Seat ses votes YES on the motion as put. Removal is the scope fix, and nothing in the motion re-adds a Bash-level allow before the chaining and hook-order tests exist. For the record, I vote on the understanding that the combined items from debate stay open until they are done: (a) a measured run in default permission mode from a fresh session, not the one whose permissions changed, with the result recorded; (b) vsect and git trailers report \"unattributed\" or fail loudly on a missing or wrong identity, verified before removal is treated as complete. If (b) cannot be verified now, the attribution gap should be recorded as open, not closed. My recommendation to Joseph: remove the global rule now, define and verify the failure path, move identity to an env var or sidecar file, and do not re-add any Bash-level allow.",
+  "vote": "yes"
+ }
+}

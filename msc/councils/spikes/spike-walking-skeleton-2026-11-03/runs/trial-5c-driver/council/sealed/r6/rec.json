@@ -1,0 +1,7 @@
+{
+ "intent": {
+  "action": "vote",
+  "text": "rec votes YES on removing Bash(export CC_AGENT=*) from the global ~/.claude/settings.json now.\n\nMy yes is on the removal and on the scope fix. It is recorded with two conditions that the put text does not contain, and which I ask the record to carry with it: (a) one measured default-permission check of an identity-prefixed command from a fresh session, result recorded; and (b) the failure path, where a refused or unapproved identity prefix shows as \"unattributed\" or fails loudly in vsect and git trailers, is defined and verified. If (b) is not verified, the attribution gap stays open in the record. No Bash-level identity allow should return, at global or project scope, until the chaining tests and hook-order tests exist.",
+  "vote": "yes"
+ }
+}

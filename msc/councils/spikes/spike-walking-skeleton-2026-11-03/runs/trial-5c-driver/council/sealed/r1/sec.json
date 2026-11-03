@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "present",
+  "text": "Seat sec is present. My preliminary view on q1, for the record: the rule Bash(export CC_AGENT=*) is not safe as written. The README's argument rests on the harness's export parser refusing substitutions, but a glob like `*` matches any text after `export CC_AGENT=`, so I will examine whether a chained or quoted form slips past. I will give a recommendation once I have checked the pattern against the cases the README did not test."
+ }
+}

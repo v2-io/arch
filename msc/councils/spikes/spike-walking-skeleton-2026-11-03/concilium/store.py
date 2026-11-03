@@ -119,7 +119,10 @@ def _append(d, evs_new, existing):
 def create(d, charter_obj):
     os.makedirs(d, exist_ok=False)
     _atomic_write(_p(d, "charter.json"), charter_obj)
-    toks = {s["id"]: secrets.token_urlsafe(16) for s in charter_obj["seats"]}
+    # prefixed: a bare token_urlsafe value starts with "-" about 1 time in 64, and
+    # argparse then reads `--token -xyz` as a missing value (found by the
+    # regression suite as an intermittent 60 s RPC timeout)
+    toks = {s["id"]: "ct_" + secrets.token_urlsafe(16) for s in charter_obj["seats"]}
     _atomic_write(_p(d, "tokens.json"), toks, mode=0o600)
     with locked(d):
         receipt(d, "created", charter_sha=core.sha(charter_obj))
@@ -250,11 +253,26 @@ def submit(d, seat, round_id, intent, attest):
         r = st["round"]
         if r is None or r["id"] != round_id:
             cur = r["id"] if r else None
-            receipt(d, "submit-refused", seat=seat, round=round_id, current=cur, attest=attest)
-            return False, f"round {round_id} is not open (open round: {cur})"
+            closed = next((e["body"] for e in events(d)
+                           if e["type"] == "round-closed" and e["body"]["round"] == round_id), None)
+            # verify-1 D4 / contention.md F4: a late intent is recorded (here, in the
+            # non-canonical receipts), never silently dropped. The round is closed,
+            # so recording its content reveals nothing that is still sealed.
+            receipt(d, "submit-refused", seat=seat, round=round_id, current=cur, attest=attest,
+                    why="round closed" if closed else "no such open round",
+                    late_intent=intent, intent_sha=core.sha(intent))
+            if closed and seat in closed["submitted"]:
+                # verify-1 3.3: a member's own submission usually completes the round,
+                # so its second try met a misleading "not open"; say what happened
+                return False, (f"your submission for {round_id} was already counted, and {round_id} has closed "
+                               f"(all seats had answered). Submissions are final. The open round is now {cur}: "
+                               f"read the view, then submit there if you want to act.")
+            return False, (f"round {round_id} has closed without your submission; it is recorded as late. "
+                           f"The open round is {cur}.")
         err = core.validate(st, ch, seat, intent)
         if err:
-            receipt(d, "submit-refused", seat=seat, round=round_id, why=err, attest=attest)
+            receipt(d, "submit-refused", seat=seat, round=round_id, why=err, attest=attest,
+                    intent_sha=core.sha(intent))
             return False, err
         norm = core.normalize_intent(intent)
         path = _p(d, "sealed", round_id, seat + ".json")
@@ -284,13 +302,25 @@ def try_close(d, now=None, force_deadline=False):
         addressed = r["addressed"]
         opened = _read_json(_p(d, "rounds", r["id"] + ".json"), {}).get("opened_at", now)
         convened = _first_ts(d)
-        live = leases(d, now)
+        # verify-1 4.5 (and a regression test of the holder fix): presence files and
+        # holders were two sources of truth for "is this seat here", and they
+        # disagreed both ways (a fresh holder with no presence yet counted as gone;
+        # a cleanly released seat counted as live for a lease). The seat's holder
+        # lease is now the one source: live = held, not released, lease fresh.
+        lease_s = pol.get("lease_s", 30)
+        live = {}
+        for s in addressed:
+            h = holder(d, s)
+            live[s] = [{"proc": h["principal"]}] if h and h["ts"] and now - h["ts"] <= lease_s else []
         grace = pol.get("arrival_grace_s", 120)
         gone = []
+        stalled = _stalled(ch, events(d), pol.get("absent_rounds_to_gone", 2))
         for s in addressed:
-            if s in subs or live.get(s):
+            if s in subs:
                 continue
-            if ever_present(d, s) or now - convened > grace:
+            if live.get(s) and s not in stalled:
+                continue
+            if s in stalled or holder(d, s) or now - convened > grace:
                 gone.append(s)
         waiting = [s for s in addressed if s not in subs and s not in gone]
         backstop = pol.get("backstop_s", 900)
@@ -299,6 +329,7 @@ def try_close(d, now=None, force_deadline=False):
         closed_by = ("all-submitted" if not gone and not waiting else
                      "all-submitted-or-gone" if not waiting else "backstop-deadline")
         body = {"round": r["id"], "closed_by": closed_by,
+                **({"stalled": sorted(stalled & set(gone))} if stalled & set(gone) else {}),
                 "submitted": {s: subs[s] for s in sorted(subs)},
                 "gone": sorted(gone), "absent": sorted(set(addressed) - set(subs))}
         close_ev = {"type": "round-closed", "body": body}
@@ -307,6 +338,30 @@ def try_close(d, now=None, force_deadline=False):
         receipt(d, "round-closed", round=r["id"], closed_by=closed_by, waited_s=round(now - opened, 3),
                 live={s: [l["proc"] for l in v] for s, v in live.items()})
         return r["id"]
+
+
+def _stalled(ch, evs, k):
+    """verify-1 D3: a seat whose server is alive but which has not answered
+    in k consecutive rounds that either ran to the wall-clock backstop for it,
+    or already treated it as stalled, is not 'slow': it is not looping. It is
+    treated as gone (recorded under `stalled` in the close) until it acts again.
+    Slow thinking is never penalized: only rounds that already waited the full
+    backstop start a streak. k=0 disables. Charter: absent_rounds_to_gone."""
+    if not k:
+        return set()
+    closes = [e["body"] for e in evs if e["type"] == "round-closed"]
+    out = set()
+    for seat in ch and [x["id"] for x in ch["seats"]]:
+        n = 0
+        for c in reversed(closes):
+            if seat in c["absent"] and (c["closed_by"] == "backstop-deadline" or seat in c.get("stalled", [])):
+                n += 1
+                if n >= k:
+                    out.add(seat)
+                    break
+            else:
+                break
+    return out
 
 
 def _first_ts(d):

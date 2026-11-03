@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Recommendation from the independence-of-verification vantage: check the vsect plan with one independent reviewer from a different model family, not with a council drawn from one substrate. Reasons: (1) A council of same-family members agreeing is coherence, not verification. If the council is all one family, its consensus cannot count as an independent check, however many seats it has. (2) The reviewer should get the artifact and the claims it makes, not the author's reasoning, so they cannot inherit the author's framing. (3) The reviewer's job is to find defects and state which claims are unverified, not to grade the plan. (4) The author revises based on findings and does not self-certify the revision; a re-check goes to the same independent reviewer or a second one from a third family if the fixes are material. (5) A council can still be useful for deciding what to do with the findings, but only if it is mixed-family and its members are told which claims rest on which evidence. Caveat: the 43% vs 0/116 figure is an estate-wide base rate, not evidence about this plan; I would not cite it as proof that this plan is defective."
+ }
+}

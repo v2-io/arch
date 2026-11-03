@@ -39,8 +39,6 @@ LOGL = threading.Lock()
 LOGF = open(A.log, "a", buffering=1) if A.log else None
 CLIENT = {}
 CANCELLED = set()
-CURSORS = {}          # seat -> last event seq shown to this process for that seat
-SEATS_USED = set()
 IN_WAIT = {}          # seat -> since ts
 LAST_CALL = {}
 
@@ -109,8 +107,7 @@ PRINCIPALS = {}   # seat -> principal this process acts as
 def attest(meta, how):
     return {"proc": PROC, "client": CLIENT, "seat_from": how,
             "meta_keys": sorted((meta or {}).keys()),
-            "tool_use_id": (meta or {}).get("claudecode/toolUseId") or (meta or {}).get("callId"),
-            "cc_agent": os.environ.get("CC_AGENT")}
+            "tool_use_id": (meta or {}).get("claudecode/toolUseId") or (meta or {}).get("callId")}
 
 
 def heartbeat_loop():
@@ -147,7 +144,7 @@ TOOLS_ALL = [
                                                       "max_wait_s": {"type": "number"}},
                      "additionalProperties": False}},
     {"name": "council_submit",
-     "description": "Submit your sealed intent for the open round. Nobody sees it until the round closes, when everyone's are revealed together. You may replace it until the round closes; only your last counts. `action` must be one of those listed for you in the view.",
+     "description": "Submit your sealed intent for the open round. Nobody sees it until the round closes, when everyone's are revealed together. {REPLACE} `action` must be one of those listed for you in the view.",
      "inputSchema": {"type": "object", "properties": {
          "round": {"type": "string"}, "action": {"type": "string"},
          "text": {"type": "string"}, "vote": {"type": "string", "enum": ["yes", "no", "abstain"]},
@@ -166,8 +163,13 @@ def tools_for_this_process():
     Multi-seat servers (launched without --seat, e.g. one connection shared by
     several subagents) require it."""
     out = []
+    replaceable = store.charter(D).get("round_policy", {}).get("replaceable", False)
     for t in TOOLS_ALL:
         t = json.loads(json.dumps(t))
+        # verify-1 D5: the description promised replacement while every charter forbade it
+        t["description"] = t["description"].replace(
+            "{REPLACE}", "You may replace it until the round closes; only your last counts." if replaceable
+            else "Your submission is final for the round: think before you submit.")
         props = t["inputSchema"]["properties"]
         if A.seat:
             props.pop("seat_token", None)
@@ -176,6 +178,16 @@ def tools_for_this_process():
             t["inputSchema"].setdefault("required", []).append("seat_token")
         out.append(t)
     return out
+
+
+def witness(seat):
+    """Record the chain head this process is about to show a member, in this
+    process's own log (which lives with the member's run, not in the council
+    directory). steward witness checks a council log against these: a rewrite of
+    any event a member was shown contradicts a head it recorded (verify-1 test E)."""
+    evs = store.events(D)
+    if evs:
+        log("head-observed", seat=seat, seq=evs[-1]["seq"], hash=evs[-1]["hash"])
 
 
 def tool_call(rid, params):
@@ -197,18 +209,19 @@ def tool_call(rid, params):
                     f"hold lapses on its own after the lease; otherwise stop here."), True)
         return
     PRINCIPALS[seat] = principal
-    SEATS_USED.add(seat)
     LAST_CALL[seat] = time.time()
     at["principal"] = principal
     at["epoch"] = h["epoch"]
     store.receipt(D, "call", seat=seat, tool=name, attest=at)
     if name == "council_status":
+        witness(seat)
         txt, last = view.render(D, seat, store.cursor(D, seat, PRINCIPALS[seat]) if args.get("since") is None else args["since"])
         store.set_cursor(D, seat, PRINCIPALS[seat], last)
         reply(rid, txt)
     elif name == "council_submit":
         intent = {k: args[k] for k in ("action", "text", "vote") if k in args}
         ok, msg = store.submit(D, seat, args.get("round", ""), intent, at)
+        witness(seat)
         txt, last = view.render(D, seat, store.cursor(D, seat, PRINCIPALS[seat]))
         store.set_cursor(D, seat, PRINCIPALS[seat], last)
         reply(rid, ("OK: " if ok else "REFUSED: ") + msg + "\n\n" + txt, not ok)
@@ -246,6 +259,7 @@ def tool_call(rid, params):
                 time.sleep(0.5)
         finally:
             IN_WAIT.pop(seat, None)
+        witness(seat)
         txt, last = view.render(D, seat, store.cursor(D, seat, PRINCIPALS[seat]))
         store.set_cursor(D, seat, PRINCIPALS[seat], last)
         store.receipt(D, "wait-returned", seat=seat, why=why, waited_s=round(time.time() - t0, 2),
@@ -255,6 +269,7 @@ def tool_call(rid, params):
                 "timeout": f"No round for you yet after {int(maxw)}s. Call council_wait again to keep waiting."}[why]
         reply(rid, head + "\n\n" + txt)
     elif name == "council_record":
+        witness(seat)
         reply(rid, view.minutes(D))
     else:
         reply(rid, f"unknown tool {name}", True)
@@ -269,7 +284,13 @@ def handle(rid, params):
 
 
 def _release_all(why):
+    """Release held seats when this process ends -- unless the holder is a
+    launcher-declared principal (a driver), which outlives each server process
+    and holds the seat itself (verify-1 test A: releasing here left a driven
+    seat unheld between turns)."""
     for s, pr in list(PRINCIPALS.items()):
+        if pr.startswith("launcher:"):
+            continue
         try:
             store.release_seat(D, s, pr, why)
         except Exception:
@@ -287,7 +308,10 @@ def main():
     import signal
     for sg in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
         signal.signal(sg, _on_signal)
-    log("start", pid=os.getpid(), ppid=os.getppid(), dir=D, seat=A.seat, argv=sys.argv,
+    # never log the token (verify-1 / redaction of runs/smoke: argv carried --token)
+    argv = [("<redacted>" if i and sys.argv[i - 1] == "--token" else x.split("=")[0] + "=<redacted>" if x.startswith("--token=") else x)
+            for i, x in enumerate(sys.argv)]
+    log("start", pid=os.getpid(), ppid=os.getppid(), dir=D, seat=A.seat, argv=argv,
         env={k: v for k, v in os.environ.items() if k.startswith(("CLAUDE", "CC_", "CODEX", "GROK", "GEMINI", "CONCILIUM"))
              and "TOKEN" not in k})
     store.receipt(D, "server-start", proc=PROC, seat=A.seat, ppid=os.getppid())

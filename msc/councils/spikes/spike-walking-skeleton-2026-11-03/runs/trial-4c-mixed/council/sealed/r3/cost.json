@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "The revealed views reinforce the cost case: a single reviewer can inspect the coherent artifact and produce actionable edits in one pass; a council adds synchronization, duplicated context, and steward attention. I support council escalation only for a discrete unresolved policy/risk decision or material architectural divergence, where the expected action change can justify those costs. The 43% figure supports independence, not automatically more reviewers."
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "speak",
+  "text": "rec, on the combined motion (ses, r5 text). I vote yes on that text.\n\nOne point for the record, so the sequencing is clear. Condition (b) is a requirement on the failure path, and it is not yet met. Nothing in the current tools reports \"unattributed\" today. So the motion should read: remove the rule, and the failure path (vsect and git trailers report \"unattributed\" or fail loudly on a missing or wrong identity) must be defined and verified before the removal is treated as complete. If that cannot be verified in the same session, the removal still stands (it is the scope fix, and it is the safer state), but the record should show the attribution gap as open, not closed.\n\nI accept sec's two specifics for the chaining tests: scratch project, project-scoped rule only, one row per separator. And I accept the two structural questions (compound splitting; later hook rewrites) as blockers for any re-add, not for removal.\n\nRecommendation to Joseph, from my seat: remove the global rule now; define and verify the \"unattributed\" failure path in vsect and git trailers; move identity to an env var or sidecar file in the hook; do not re-add any Bash-level allow."
+ }
+}

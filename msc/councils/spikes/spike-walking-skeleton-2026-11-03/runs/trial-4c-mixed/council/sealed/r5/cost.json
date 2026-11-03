@@ -1,0 +1,6 @@
+{
+ "intent": {
+  "action": "move",
+  "text": "Recommend one independent reviewer from a model family distinct from the author as the default. The review should mark defects and unverified claims against the draft, carry no score, remain attached, and require the author to revise or decline each finding in writing without self-certifying; material fixes should be re-checked by that reviewer or a third-family reviewer. Convene a mixed-family council only afterward, and only to decide a named estate-level policy or risk that remains unresolved\u2014not to re-read or approve the plan as a whole."
+ }
+}

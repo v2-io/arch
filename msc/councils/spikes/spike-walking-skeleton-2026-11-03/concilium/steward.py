@@ -4,7 +4,8 @@
   python3 -m concilium.steward status DIR [SEAT]          the view (as SEAT, else the first seat)
   python3 -m concilium.steward minutes DIR                the record
   python3 -m concilium.steward tick DIR [--deadline]      try to close the open round (or force the backstop)
-  python3 -m concilium.steward replay DIR                 recompute every derived event from the inputs; verify the chain
+  python3 -m concilium.steward replay DIR                 chain + every derived event recomputed + sealed files == revealed (internal consistency, not tamper evidence)
+  python3 -m concilium.steward witness DIR LOG...         check the log against chain heads members' servers recorded in their own logs
   python3 -m concilium.steward presence DIR               live leases per seat
   python3 -m concilium.steward selftest                   latency-invariance property test (shuffled arrivals)
 """
@@ -25,16 +26,69 @@ def cmd_new(d, charter_path):
     print(json.dumps(toks, indent=1))
 
 
+def sealed_check(d, evs):
+    """Every closed round's revealed intents against the per-seat sealed files."""
+    missing, mismatched = [], []
+    for e in evs:
+        if e["type"] != "round-closed":
+            continue
+        b = e["body"]
+        sealed = store.sealed(d, b["round"])
+        if not sealed and b["submitted"]:
+            missing.append(b["round"])
+        elif sealed != b["submitted"]:
+            mismatched.append(b["round"])
+    return missing, mismatched
+
+
 def cmd_replay(d):
+    """What this checks (verify-1 test E): that the log is internally consistent
+    -- the hash chain links, every derived event is what the core computes from
+    the charter and the input events, and every closed round's revealed intents
+    equal the seats' sealed files. It is NOT tamper evidence against anyone who
+    can write the council directory: such a writer can regenerate all three.
+    `steward witness` is the check against records kept outside it."""
     ch = store.charter(d)
     evs = store.events(d)
     c = store.verify_chain(evs)
     bad = core.replay(ch, evs)
-    print(f"events: {len(evs)}; chain: {'OK' if not c else c}; replay: {'OK (every derived event recomputed identically)' if not bad else 'MISMATCH'}")
+    missing, mismatched = sealed_check(d, evs)
+    sealed_txt = ("OK" if not (missing or mismatched) else
+                  f"MISMATCH in {mismatched}" if mismatched else f"sealed files MISSING for {missing}")
+    print(f"events: {len(evs)}; chain: {'OK' if not c else c}; "
+          f"derivation: {'OK' if not bad else 'MISMATCH'}; sealed vs revealed: {sealed_txt}")
     if bad:
         print(json.dumps(bad, indent=1))
-        return 1
-    return 0 if not c else 1
+    return 0 if not (c or bad or missing or mismatched) else 1
+
+
+def cmd_witness(d, logs):
+    """Check the council log against the chain heads that members' server
+    processes recorded in their own logs (`head-observed` records, written to
+    each member's --log, outside the council directory). Rewriting any event at
+    or before a head a member was shown changes that head's hash, so it fails
+    here unless every witness log is rewritten too. Logs from servers older than
+    the witness change carry no heads and witness nothing."""
+    evs = store.events(d)
+    by_seq = {e["seq"]: e["hash"] for e in evs}
+    n = bad = 0
+    for path in logs:
+        for line in open(path):
+            try:
+                r = json.loads(line)
+            except Exception:
+                continue
+            if r.get("kind") != "head-observed":
+                continue
+            n += 1
+            if by_seq.get(r["seq"]) != r["hash"]:
+                bad += 1
+                print(f"CONTRADICTED: {path} saw seq {r['seq']} = {r['hash'][:12]}, log has "
+                      f"{(by_seq.get(r['seq']) or 'nothing')[:12]}")
+    top = max((json.loads(l)["seq"] for p in logs for l in open(p) if '"head-observed"' in l), default=-1)
+    print(f"witnessed heads: {n} from {len(logs)} log(s); contradicted: {bad}; "
+          f"events covered by a witness: 0..{top} of {len(evs) - 1}")
+    return 1 if bad or not n else 0
 
 
 SCRIPT_CHARTER = {
@@ -135,6 +189,8 @@ def main(argv):
         print(store.try_close(argv[1], force_deadline="--deadline" in argv))
     elif c == "replay":
         return cmd_replay(argv[1])
+    elif c == "witness":
+        return cmd_witness(argv[1], argv[2:])
     elif c == "presence":
         print(json.dumps(store.leases(argv[1]), indent=1))
     elif c == "selftest":

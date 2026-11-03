@@ -9,3 +9,4 @@ runs/**/cwd-*/
 **/lock
 **/__pycache__/
 **/*.tmp.*
+tests/tmp/

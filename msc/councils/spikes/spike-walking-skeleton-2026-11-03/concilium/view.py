@@ -34,6 +34,8 @@ def describe(ev):
         return f"motion pending on {b['item']}, moved by {', '.join(b['makers'])}{co}: \"{b['text']}\"{note}"
     if t == "intent-standing":
         return f"{b['seat']}'s motion did not get the floor; it stands as {b['seat']}'s standing intent: \"{b['text']}\""
+    if t == "makers-withdrew":
+        return f"{', '.join(b['by'])} withdrew as co-maker(s); the motion stands, moved by {', '.join(b['makers'])}"
     if t == "intent-lapsed":
         return f"{b['seat']}'s standing intent lapsed ({b['why']})"
     if t == "motion-withdrawn":
@@ -81,7 +83,11 @@ def render(d, seat, since):
         mine = subs.get(seat)
         out.append(f"\nOPEN ROUND {r['id']} ({r['kind']}). {len(subs)} of {len(r['addressed'])} seats have submitted.")
         if mine:
-            out.append(f"You have submitted (sealed): {mine}. You may replace it until the round closes.")
+            if ch.get("round_policy", {}).get("replaceable", False):
+                out.append(f"You have submitted (sealed): {mine}. You may replace it until the round closes.")
+            else:
+                out.append(f"You have submitted (sealed): {mine}. Submissions are final for the round; "
+                           "wait for it to close (council_wait).")
         acts = core.available(st, ch, seat)
         if acts:
             out.append(f"You may submit with council_submit(round=\"{r['id']}\", action=..., ...):")
