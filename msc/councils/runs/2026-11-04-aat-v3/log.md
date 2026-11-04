@@ -44,3 +44,8 @@
     - drainers (named owners with real time) from day one;
     - ASF's status during the crossing. The leader recommends freezing ASF canon as read-only influx. Awaiting Joseph.
   - **The pilots continue.** Line B becomes the first step of the real thing. Line A's measurements still inform episode design. The scout's hash-identity and accreted-structure inventory now inform what to copy as-is.
+- **Joseph (same day):** "So no need for a council and no need to spend time putting together complex 'intermediate' massaging mechanisms that will be deprecated when finished vs simply making the system more robust with better influx management — what we want anyway..."
+  - ASF is ordinary influx; if it changes, that is more influx.
+  - "Crossing" is influx disposition, with "copy as-is" as one outcome.
+  - The leader's freeze recommendation is **withdrawn**: it was intermediate-mechanism thinking.
+  - Line B was told to build the store's permanent influx management, sized to its first cluster.
