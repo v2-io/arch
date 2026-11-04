@@ -35,3 +35,12 @@
   - **in a new store, nothing enters unless it crosses.** Each thing must earn its place; what doesn't cross stays behind in ASF as the archive. The residue condition (asf-flows §5) is met by construction.
 
   The measured failure is the one the opt-in default fixes. Against it stands the cost of crossing, which Line B is measuring.
+- **Decided by Joseph (2026-11-04).** The council is not convened. Joseph:
+
+  > I'm seeing very few if any advantages to trying to mutate the existing vsect and theory "in place" — you can have all the advantages of all of the current learnings, and constant improvement with clean data from the beginning, with the only downside being that it will be in a state of not-yet-status-quo for a much longer time. But relative to the current gridlock and the fact that changing it in place won't alter that calculus neutralizes that disadvantage. And if there's something you want to copy "as-is" — nothing prevents it!
+
+  - **Direction:** a new store in `~/src/aat-v3/`, with current ASF as influx.
+  - **Leader's agreement and two conditions raised:**
+    - drainers (named owners with real time) from day one;
+    - ASF's status during the crossing. The leader recommends freezing ASF canon as read-only influx. Awaiting Joseph.
+  - **The pilots continue.** Line B becomes the first step of the real thing. Line A's measurements still inform episode design. The scout's hash-identity and accreted-structure inventory now inform what to copy as-is.
