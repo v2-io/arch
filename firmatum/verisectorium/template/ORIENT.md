@@ -1,1 +1,0 @@
-sop/src/dir-orient.md

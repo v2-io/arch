@@ -1,1 +1,0 @@
-../../../theory/src/claim-naming-criteria.md
