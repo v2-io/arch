@@ -7,7 +7,7 @@
   - **Line B, a new store:** found a store in `~/src/aat-v3/` by charter, and carry one small cluster across from ASF as a changeset.
 - **The unknowns named at the hold:**
   1. What the vsect trail is worth now: how many recorded checks still bind to current versions.
-  2. What the corrections on main since the tag are, and whether they are small enough to carry across.
+  2. ~~What the corrections on main since the tag are, and whether they are small enough to carry across.~~ *Dropped the same day on Joseph's question ("how could this be a problem?"). It came from the earlier reset-to-tag question. A new store takes current main as its influx, so the corrections are already in what crosses. What remains is crossing fidelity in general, which Line B measures.*
   3. What crossing one segment costs. Line B measures it.
   4. What founding a store costs. Line B measures it.
   5. Whether in-place repair of what accreted costs less. Line A measures one large piece of it.
