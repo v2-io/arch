@@ -19,7 +19,6 @@ firmatum/
   ato/                # sm v2-io/ato   (private)
   relata/             # sm v2-io/relata
   practica/           # sm v2-io/practica
-  verisectorium/      # outline+segments pattern (working name); theory founding in progress — see its README
   # descent/          # deferred — still nested under udon/tools/descent
 ```
 
