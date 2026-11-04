@@ -218,7 +218,16 @@ This is RC1's EPISODE (vsect design question Q17) in its strongest form. It is t
 
 Execution fans out to other workers. Coherence is checked by mechanical stations wherever it can be. The clearest case is a notation change: a tool verifies the new notation is consistent across every use, while a mind handles only the intent and the hard cases. **The context-window limit is why mechanical stations matter.** No checker for notation consistency across uses exists yet; `NOTATION.md` is maintained by hand.
 
-**How vsect would carry it.** Git already supplies half: worktrees and merges of reviewed commits. The other half is vsect's: lapses and findings raised inside the changeset stay inside it until it commits, and at commit one set of confirmations is issued against canon. Today a lane's edits on a branch lapse checks globally when it merges, which is why 336 lapsed checks are waiting.
+**How vsect would carry it, as measured** by Line A on 2026-11-04, extracting the Claim Records from 24 segments (`asf/msc/inside-out-2026-10/system-review/claim-record-extraction-2026-11-04.md`, on branch `worktree-agent-a25fdf864ac319cc9`):
+- **Grouping alone saves nothing.** In vsect 0.1.0, one changeset and 24 separate edits leave the same lapses: 234 to 242 pending pairs either way, identical pair by pair. A verdict depends only on the end state.
+- **The changeset's value lies in confirmation, and it needs two things vsect lacks:**
+  - a **transform vsect can verify**, such as "this section moved, the rest is byte-identical", so most confirmations need no judgment;
+  - **read sets at span grain.** Of 15 confirmations still owed, 5 or 6 can't be blanket-equivalent, because those checks judged the moved record itself.
+
+  This is vsect's design question Q17 (episodes) meeting Q2 (partial reads).
+- **Moved text strands its evidence** unless the design's split act carries checks and findings along with it. 25 checks and up to 21 findings were stranded this way.
+- **Exact undo is free.** Where text returned to an earlier hash, its bindings came back.
+- **The new store should hold Claim Records as separate records from the start.** Reviews of the records broke or narrowed 21 of 31 checks, so records fail on their own schedule. vsect 0.1.0 handled a claim-record kind with a `describes` edge without any code change.
 
 **A pilot that is already owed** (from the fresh read): moving the Claim Records out of the 24 segment bodies where they were written. The changeset has:
 - one intent;
