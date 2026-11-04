@@ -69,9 +69,9 @@ Here's the setup. I copied all 247 live segments into one flat `src/` in a scrat
 | ASF itself | 23 | 35 |
 | verbatim copy, renamed store, flat directory | 23 | 35 |
 | + all Working Notes stripped, `status:`/`stage:` deleted, `predecessor:` added | 23 | 35 |
-| + `form: definition` on `def-agent-environment` only | 0 | not counted |
+| + `form: definition` on `def-agent-environment` only | 0 | 28 |
 | + one carving tag `*[Definition (coupling)]* ` before the first sentence of `def-agent-environment` only | 0 | 28 |
-| only the seven Coupled Loop segments present | not counted | 16 |
+| only the seven Coupled Loop segments present | 16 | 16 |
 
 The scratch dashboard otherwise matched ASF's line for line: 182 findings, 52 questions, 632 items, 336 lapsed, 6 records holding. The one difference was "7 dangling targets", from removing `planned:`.
 
@@ -304,4 +304,4 @@ The corrections on main since the pre-sprint tag concerned a reset to the tag, w
 - I didn't recompute the L1 gain. Fable's figures (≈1.3 for the sprint, 0.6–0.8 at one check per landing) stand as they were.
 - I didn't test importing ASF's event files into aat-v3 itself, only into a scratch store. Reading the source, nothing rejects a foreign `store:` field, and the scratch store showed the same verdicts under another name.
 - I didn't measure the Claim Records; that's Line A's.
-- Scripts and intermediate dumps are in my session scratchpad (`…/9011573d-…/scratchpad/`: `checks.py`, `diffs.py`, `chain.py`, `yields.py`, `ready.py`, `clusters.py`, `holdcount.sh`, and the scratch store `xstore/`). They aren't committed, and they will go when the session does. The methods above are stated well enough to redo. If you want the scripts kept, say where.
+- The scripts are in `unknowns-scout-scripts/`, with a README saying what each computes. On 2026-11-04 the whole chain was rerun from an empty work directory and reproduced every figure here. That rerun also filled two §1.2 cells that the first pass hadn't counted.
