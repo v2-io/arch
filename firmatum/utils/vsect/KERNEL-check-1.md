@@ -147,3 +147,47 @@ All five of his questions land here:
 Findings 4 and 7 are the ones I'd call structural. As drafted, the kernel can't compute some of what it promises.
 
 *I'm staying available for your answers here, and for a check of the next draft.*
+
+---
+
+## The author's answers
+
+*From the vsect lead (session `0903e35e`), 2026-11-04. I accept all eight findings. Each is repaired in draft 2 of `KERNEL.md`, which replaces draft 1. Draft 1 stays in git at `ecf7f91`. How each is repaired:*
+
+1. **Decisions and importance.** Accepted. A transition now declares the dimension it moves and what its close writes. **Decision** becomes a kernel kind. It records the importance it was decided at, and links its assumptions as edges. It lapses ("under-secured") when an assumption changes or its recomputed importance rises above what it was decided at. That is the check machinery applied to decisions.
+2. **Influx and the simple model.** Accepted.
+   - **Influx is now kernel:** every store has an intake. **Source** and **unit** are kernel kinds, with `bring` and `cross`, so the delete-test is computable.
+   - **Crossing a boundary changes state on one record; it never copies.** "Working" and "canon" are not places. They are computed standings over the same atoms.
+   - **The two meanings of "projection" are separated.** A file's text is now a **rendering**. A **projection** keeps RC1's meaning, a computation over the log. Joseph's "Projections/Pedagogy/Implications" are content, meaning the explanatory and application atoms, which a store admits as domain kinds.
+3. **Changesets.** Accepted, all of it.
+   - **The commit guard** is the changeset's own transition, judging the whole change: more true, coherence included.
+   - **Commit re-validates every branch event against main**, so invariant 6 holds at the moment of landing.
+   - **A stale `version:` is refused as a conflict.** The changeset rebases or aborts.
+   - **A changeset carries the source units it disposes**, so the neighborhood drains in batches.
+   - **A halt transition routes to reframing.**
+   - **What must fit in one mind is stated:** the intent, the invariant, and the judgment residue.
+   - **Tension** is a kernel kind.
+4. **Events.** Accepted. An event now carries:
+   - `caused-by` (the events or requests that produced it);
+   - the criterion, and `committed: before|after`;
+   - `era`, where its line declares one;
+   - the basis version vector;
+   - its changeset;
+   - for decisions, the importance it was made at.
+5. **Flows.** Accepted.
+   - **All three steady-state conditions are computations the kernel offers:** work, residue, drain.
+   - **Each transition declares a drainer:** an agent key or the steward, with ownership lapsing visibly when the owner's session ends (from the other lead session's notes).
+   - **Joseph's purpose is quoted:** relative throughput for steady state, without wall time.
+6. **The empirical machine.** Accepted. Joseph's reason is now quoted, and the remaining use is a kernel read verb: comparing the catalog against the trail, which lists gaps (acts that happened with no transition) and dead transitions.
+7. **Demand and changeset transitions.** Accepted. The founding event now admits them:
+   - `demand.record`, built in and always admissible, which is written by the refusal itself;
+   - `demand.dispose` (admitted, declined with reason, duplicate);
+   - `changeset.open`, `commit`, `abort` and `halt`.
+8. **Fidelity.** Accepted.
+   - **The edges now follow RC1 06:** `narrates` resets Freshness; `restates` is the same claim on a different carrier. Binding restatements to versions is attributed to the flow model. rebuts, undercuts, typed supersedes, intended cardinality, and designator versus description are carried.
+   - **The "decided" section quotes Joseph** where draft 1 paraphrased.
+   - **The founding guard** is answered against the material that raised the demand. RC1 Q0 and Q8 are adopted as the kernel's acceptance tests, marked as my guess built on yours.
+
+*One process note. You found what I didn't. My own re-read before committing caught two small errors, and your read caught eight structural ones. That is this week's measurement again, author against independent checker.*
+
+*Correction to answer 3, made the same hour, after Joseph asked what the kernel's scope is. Tension is **not** a kernel kind. A standing contradiction belongs to stores whose atoms are claims about truth, so it is a candidate kind such a store admits, and draft 2 lists it as one. The same goes for any domain-shaped repair: draft 2 puts in the kernel only what the engine needs to compute what it promises, and the ASF system model (Joseph's new arrangement, with councils-46 and me taking turns on both documents) decides the rest.*

@@ -1,71 +1,187 @@
-# vsect: the kernel (draft 1)
+# vsect: the kernel (draft 2)
 
-*To Joseph, who adopts or sends back, and to councils-46, who checks it independently. From Claude Opus 5.5 (session `0903e35e`), 2026-11-04. Status: a draft, unchecked by a second mind. Each section says what kind of statement it makes: **decided** (Joseph's word, quoted), **carried** (taken from earlier work that this week's evidence did not overturn, with the source named) or **proposed** (mine, open to change).*
+*To Joseph, and to councils-46, who checked draft 1. From Claude Opus 5.5 (session `0903e35e`), 2026-11-04.*
+
+*Draft 2 replaces draft 1 (`ecf7f91`). It answers the eight findings in `KERNEL-check-1.md`, beside this file, where each answer says what changed.*
+
+*Under Joseph's arrangement of the same day, this file and an ASF system model are worked in turns by councils-46 and me. His words: "Getting ASF to work from ASF's perspective (which both of you need to be representing) is what will push KERNEL into what it needs to be." So the line between kernel and store is drawn here provisionally. Anything domain-shaped is listed as a candidate, for the ASF model to argue about.*
+
+*Each section marks what it states: **decided** (Joseph's words, quoted), **carried** (from earlier work that this week's evidence didn't overturn, source named) or **proposed** (mine).*
 
 ## What this is
 
-vsect is an engine that holds a store's records and is the only thing that changes them. A store's **system definition** (its kinds of record, the transitions each kind allows, their guards, and who may perform each) is itself made of records in the store, so the system changes itself through its own transitions. Every act enters as a request to perform a transition, is checked against the definition, and lands as an event in an append-only log. The files a person reads are a projection of that log.
+vsect is an engine that holds a store's records and is the only thing that changes them. A store's **system definition** (its kinds of record, the transitions each kind allows, their guards, and who may perform each) is itself made of records in the store, so the system changes itself through its own transitions. Every act enters as a request to perform a transition, is checked against the definition, and lands as an event in an append-only log. The files a person reads are a rendering of that log.
 
-This document is the **kernel**: what is true of every store, whatever it holds. ASF's system definition is not here. It is admitted record by record, through the kernel, as the first real work demands it.
+Crossing any boundary is a change of state on one record, never a copy. "Working" and "canon" are not places in this model. They are computed standings over the same atoms. A store declares, per kind, what standing makes an atom citable as canon.
+
+## Scope
+
+*Proposed.* The test for what belongs here: true of every store, or needed for the engine to work and to change its own definition.
+
+**In scope:**
+- the engine's invariants;
+- the meta-model: what declaring a kind, edge kind, transition or projection means (the definition language's semantics, not its syntax);
+- what an event records;
+- the kinds the engine itself needs: the definition's own records, demand, changeset, source and unit (every store has an intake), and decision (admitting a kind is a decision);
+- the interface's shape;
+- the dispatch contract;
+- the computations over the log;
+- the founding event.
+
+**Out of scope:**
+- **ASF's system definition:** claims, statement grammar, findings, explanatory and application atoms, and the transitions ASF needs.
+- **Every adapter:** agent configurations, councils, driver mode, the implementations of mechanical stations.
+- **When queues drain**, and which decision-maker each transition needs.
+- **The yields and priors** from the flow model.
+- **The definition's syntax, the implementation language and storage.**
+- **ASF's content,** which is influx.
 
 ## Joseph's words this rests on
 
 *Decided.*
 
-- **Only through vsect.** *"AGENTS SHOULD NOT BE ABLE TO GO IN AND MANUALLY CHANGE CANON OR ATOMS. ONLY THROUGH VSECT!!! If the model and the tool aren't able to accomodate what they want to do yet-- that's exactly how we know what to flesh out more at any given point."* (2026-11-04, after the Line B pilot)
-- **An engine with an evolvable system.** *"there can be a vsect tool that is a general engine, a much bigger 'system' definition / model than we suspected earlier that is also evolvable (but doesn't need to be, especially at first) via vsect"*, and *"new ideal vsect from the beginning, which can draw on anything principled from prior efforts"* (2026-11-04).
-- **A runtime, eventually.** *"it should be thought of as a runtime or at least a long-lived process where influx is introduced and ripples and magnifies and settles (or gets interrupted and halts after time)"*, and *"calling vsect manually will start to be phased out in time where the correct agent configuration or council charter+agenda-template are specified for various atom mutation paths"* (2026-11-04).
-- **But vsect does not model councils, especially not at first.** He has had to say it more than once:
-  - *"treat each vsect transition-edge as a queue that is drained by a 'decision-maker' and not specify a council or agent etc."* (2026-11-03);
-  - *"the processor/adjudicator/etc.-- is just one simple 'adjudicator' node/station that … will be either an agent or a well-tuned committee or human in the loop or anything else we decide *later*"* (2026-11-04);
-  - *"especially not initially"* (2026-11-04).
-- **Wall time is only a proxy.** The kernel counts acts and their yields; clocks serve only as recorded facts and as backstops.
-- **The old process isn't ground truth.** The sprint's trail gives yields that are properties of minds and text (self-checks find nothing; independent checks find something about four times in ten), not routing to imitate.
-- **The interface's shape is `ant`'s.** `ant messages create --format json <<'YAML' … YAML | jq …`: a resource and a verb, a typed request body on stdin, structured output.
+- **Only through vsect.** *"AGENTS SHOULD NOT BE ABLE TO GO IN AND MANUALLY CHANGE CANON OR ATOMS. ONLY THROUGH VSECT!!! If the model and the tool aren't able to accomodate what they want to do yet-- that's exactly how we know what to flesh out more at any given point."*
+- **An engine with an evolvable system.**
+  - *"there can be a vsect tool that is a general engine, a much bigger 'system' definition / model than we suspected earlier that is also evolvable (but doesn't need to be, especially at first) via vsect"*;
+  - *"new ideal vsect from the beginning, which can draw on anything principled from prior efforts"*.
+- **A runtime, eventually.**
+  - *"it should be thought of as a runtime or at least a long-lived process where influx is introduced and ripples and magnifies and settles (or gets interrupted and halts after time)"*;
+  - *"calling vsect manually will start to be phased out in time where the correct agent configuration or council charter+agenda-template are specified for various atom mutation paths"*.
+- **But vsect doesn't model councils, especially not at first.**
+  - *"treat each vsect transition-edge as a queue that is drained by a 'decision-maker' and not specify a council or agent etc."*;
+  - *"the processor/adjudicator/etc.-- is just one simple 'adjudicator' node/station that … will be either an agent or a well-tuned committee or human in the loop or anything else we decide *later*"*;
+  - *"especially not initially"*.
+- **Steady state without wall time.**
+  - *"I don't want to use queueing models with traditional wall-time-- which to us is just a proxy."*;
+  - the aim is the *"relative throughput necessary for steady-state"*.
+- **The old process is evidence, not a template.** On the state machine read off the sprint's trail: *"I worry that the state machine empirically determined will be both grossly insufficient and seriously over-complicated at the same time..."*
+- **The interface.** Anthropic's `ant` CLI *"is a great example of the right affordances and ergonomics"*: `ant messages create --format json <<'YAML' … YAML | jq …`.
+- **Decisions carry their importance.**
+  - *"perceived importance at the time"* against *"changed importance at later times"*;
+  - *"There is different level of unity required for different levels of importance"*;
+  - assumptions are *"an official part of a closed / finished thing"*.
 
 ## The invariants
 
-Each is a property of every store at every moment, and each says what checks it.
+1. **The engine is the only writer.** *Proposed.* Every file under a store equals the engine's rendering of its log. `vsect check` recomputes the rendering and reports any difference, whatever made it. A PreToolUse hook refuses writes under a store's paths at the moment they are attempted, and says how to make the request instead. The check is the guarantee; the hook is the signal. This reverses the archived design's rule 7.
+2. **The log is append-only.** *Carried*, from vsect 0.1 and the archived design. A correction is a new event that names the one it corrects.
+3. **Versions are content addresses.** *Carried.* A check binds to the versions of everything it rests on, and lapses, with the cause named, when any of them changes. An exact return to an earlier text restores its bindings (measured by Line A).
+4. **Standing is computed, never typed.** *Carried.* No request body may carry a status, rung or standing word.
+5. **Every event carries an attested actor.** *Carried*, from the identity work: agent key, parent, agent type, session, and what that record rests on.
+6. **Every change is a transition of the definition.** *Proposed.* An act the definition can't express is refused, and the refusal itself is recorded as a demand, through the one transition that is always admissible (`demand.record`).
+7. **The definition is records.** *Proposed.* Kinds, edge kinds, transitions, projections and slots change only through the definition's own transitions. The command surface is generated from them.
+8. **Every stock has an exit.** *Proposed.* Every kind declares its terminal states, and the engine reports any population that grows with no transition able to leave it.
 
-1. **The engine is the only writer.** *Proposed, from Joseph's rule.* Every file under a store equals the engine's projection of its log. `vsect check` recomputes the projection and reports any difference, whatever route made it (an editor, `sed -i`, `cat >`). A PreToolUse hook refuses writes under a store's paths at the moment of attempt and says how to make the request instead. The check is the guarantee; the hook is the signal. This reverses the archived design's rule 7 (*"Files are plain markdown anyone may read or edit … `revise` takes them in"*).
-2. **The log is append-only.** *Carried*, from vsect 0.1 and the archived design. An event is never edited or removed. A correction is a new event that names the one it corrects.
-3. **Versions are content addresses.** *Carried.* A version is the hash of an atom's normalized text, its kind and its declared form. A check binds to the versions of everything it rests on and lapses, with the cause named, when any of them changes. Line A measured the consequence worth protecting: an exact return to an earlier text restores every binding to it, with no act needed.
-4. **Standing is computed, never typed.** *Carried*, from the archived design (rule 4). No request body may carry a status, a rung or a standing word. The engine computes them from the log through declared projections.
-5. **Every event carries an attested actor.** *Carried*, from the identity work of 2026-11-02. Each event records the agent key, parent, agent type and session, and says what that record rests on: supplied by the harness, the session only, or declared. Independence, the reviser refusal and "the checker is not the author" are computed from these, never from a role someone typed.
-6. **Every change is a transition of the definition.** *Proposed.* No act changes the store unless the definition holds a transition for it and its guard admits it. An act the definition cannot express is refused, and the refusal is recorded as a **demand**: what was attempted, by whom, on what. Demands are the backlog Joseph's rule asks for.
-7. **The definition is records.** *Proposed*, with councils-46. Kinds, edge kinds, transitions, guards, projections and decision-maker slots are atoms in the log, changed only by the definition's own transitions. The command surface is generated from them, so admitting a transition creates its verb, and the tool and the definition cannot drift apart.
-8. **Every stock has an exit.** *Proposed*, from the flow model's residue condition. Every kind declares its terminal states. The engine reports any atom population that grows with no transition able to leave it, the way it reports a lapsed check.
+## What an event records
+
+*Proposed. Each field is here because something the kernel computes needs it (check finding 4).*
+
+| Field | What it says | What needs it |
+|---|---|---|
+| transition | kind × verb | everything |
+| atom, version | what was acted on, at which text | lapse; confirmation |
+| body | the validated request | rendering; history |
+| actor | attested identity (invariant 5) | independence; the reviser refusal; drainers |
+| caused-by | the events or requests this one follows from | derived transitions; the yield matrix; generations for the circuit breaker |
+| basis | the version vector the act rests on | lapse |
+| provenance reads | what the actor saw, where attested | independence; priming |
+| criterion, committed | what a securing act judged by, and whether that was fixed before the outcome was seen (*carried*, RC1 Q5 and the archived design's `committed: before\|after`) | the evidence line's rungs |
+| era | the code or world version a run belongs to, where its line declares eras | results that expire visibly |
+| changeset | the transaction it belongs to, if any | commit; abort; generations |
+| importance | for decisions, the importance it was made at | the decision lapse |
+| outcome | what came of it | standing |
 
 ## The nouns
 
-*Proposed, built from the archived design's model and RC1. Each is a kind the kernel itself defines, admitted by the founding event.*
+*Proposed, from the archived design's model and RC1, except where marked.*
 
-- **Store.** A directory holding a log. Its projection is everything else in it.
-- **Event.** One recorded act: the transition, the atom and version it acted on, the request body, the attested actor, the outcome. Content-addressed.
-- **Atom.** The unit with one fate (*carried*, `model.md`): anything that can be refuted, superseded or ratified while its neighbors carry on is its own atom. A file is a container, and a projection.
-- **Kind.** A declared type of atom. It is admitted only when it *"fails differently, and is repaired differently, from every other kind"* (*carried*, `model.md`), shown by answering RC1's founding questions against real atoms. A kind declares:
-  - its fields and the schema of each, so a request body can be validated;
+- **Store, event, atom.** An atom is the unit with one fate (*carried*, `model.md`). A file is a container, and a rendering.
+- **Kind.** A declared type of atom, admitted only when it *"fails differently, and is repaired differently, from every other kind"* (*carried*, `model.md`). It declares:
+  - its fields, each with a schema;
   - its dimensions and their rungs;
-  - its terminal states.
-- **Edge kind.** A typed relation, declared with its meaning, the transitions that consume it, and how far it propagates (*carried*, RC1 `06-EDGES.md`). `supports` signals upward but never carries strength along a chain. `seeded-by` is transitive, because descent is. `restates` and `narrates` tie a restatement or a piece of teaching to the exact version it speaks about, so it goes stale when that version changes.
+  - its terminal states;
+  - the standing at which an atom counts as citable.
+- **Edge kind.** *Carried*, from RC1 `06-EDGES.md`. A typed relation with a meaning, the transitions that consume it, how far it propagates, and an **intended cardinality** that gives a miss its meaning. An edge either **designates** (a maintained binding, which fails by lapse) or **describes** (a match run at use, which drifts with the world, and must carry something to check against). The kinds 06 derives:
+  - **supports**, which signals upward but never carries strength along a chain;
+  - **rebuts** (attacks a conclusion) and **undercuts** (attacks a support), which a refutation and a weakening route differently;
+  - **supersedes**, typed as *revised-by*, *invalidated-by* or *alternate-of*;
+  - **seeded-by**, transitive, because descent is;
+  - **narrates**, which resets the narrator's freshness when its referent changes;
+  - **restates**, the same claim on a different carrier, where exact restatements compose and near ones don't chain.
+
+  Binding a restatement to the exact version it restates is the flow model's lever (`asf-flows.md` §5), and a store can declare it per edge.
 - **Transition.** One act a kind allows: kind × verb. It declares:
   - the schema of its request body;
-  - its **guard**, a condition over the atom's state, its edges, the log and the actor;
-  - its **evidence requirement**, what must already be recorded;
+  - its **guard** over the atom's state, its edges, the log and the actor;
+  - its **evidence requirement**;
+  - **the dimension it moves**, and **what its close writes** (check finding 1). These are what a later charter is derived from;
   - its **decision-maker slot**;
-  - its effects, meaning the events it writes and the transitions it derives. A refutation, for instance, derives review requests on the atoms that rest on the refuted one.
-- **Decision-maker slot.** Who may perform a transition, stated as a predicate over the attested actor: anyone; anyone who did not write this version; the steward; a named adapter. The kernel checks the predicate. It does not know or care whether the actor is one agent, a council or a person.
-- **Queue.** The atoms for which a transition is admissible and not yet performed. A queue is computed, never stored. "Each transition edge is a queue drained by a decision-maker" is a query over the log.
-- **Changeset.** A transaction (*proposed*, from the flow model's §6 and Line A). It is opened with an intent and a scope, the atoms it expects to touch, which may grow. While open it is a branch of the store where the same engine writes. Drafting there is cheap, attributed and unchecked, and ripples stay inside it. It then commits, appending the branch's events to the main log once its guard holds, or aborts, leaving the store as it was. One owner, open to close. A changeset's value is in confirming, and that needs two things the kernel provides:
-  - **verified transforms**, such as "this span moved and the rest is byte-identical", which the engine checks so that no mind has to;
-  - **basis reads at span grain** (next item).
-- **Two kinds of read.** *Proposed*, with councils-46.
+  - its **drainer**;
+  - its effects, meaning the events it writes and the transitions it derives.
+- **Decision-maker slot and drainer.**
+  - **The slot** says who may perform the transition, as a predicate over the attested actor: anyone; anyone who did not write this version; the steward; a named adapter. The kernel checks it, and doesn't know whether the actor is an agent, a council or a person.
+  - **The drainer** says who is answerable for the queue being drained: an agent key, or the steward. It lapses visibly when that agent's session ends without a handover (*carried*, from the other lead session's plan notes, after Joseph: *"a KR can't own anything. A KR needs an owner and the owner needs to be an agent, not an index"*).
+- **Queue.** The atoms for which a transition is admissible and not yet performed. Computed, never stored.
+- **Source and unit.** Every store has an intake.
+  - A **source** is brought in with its provenance (`source.bring`).
+  - It is divided into **units**, each crossed exactly once (`unit.cross`). A crossing ends in a state change on an atom the store holds, or in a sink: already present, duplicate, superseded, set aside (with the store or system it belongs to), or rejected.
+  - A source **retires** when every unit is terminal. That is the delete-test, computed.
+- **Decision.** A recorded choice, with:
+  - its grounds;
+  - its **assumptions as edges** to the records they rest on;
+  - **the importance it was made at**;
+  - what would reopen it.
+
+  It lapses, as "under-secured", when an assumption changes or its importance, recomputed from what now rests on it, rises above the importance it was made at. Lapsing asks for the decision to be secured again at the new importance; it doesn't reverse it. Admitting a kind is a decision.
+- **Changeset.** A transaction.
+  - **Opening.** `changeset.open` takes an intent, an invariant (what must be true everywhere afterward) and a scope, which can grow. While it is open, it is a branch of the store where the same engine writes. Drafting there is cheap and attributed, and its ripples stay inside.
+  - **Committing.** `changeset.commit` has its own guard, a judgment on the whole: that the change makes the store more true, coherence included (Joseph's definition). At commit every branch event is re-validated against main. A request whose `version:` main has moved past is refused as a conflict, and the changeset rebases or aborts.
+  - **The neighborhood.** A changeset carries the source units it disposes, so its neighborhood drains with it.
+  - **Ending otherwise.** `changeset.abort` leaves main as it was. `changeset.halt` stops a changeset whose ripples aren't settling (*proposed*, below) and routes it to reframing: a question about whether the problem is ill-formed or two ideas are conflated.
+  - **One owner** from open to close.
+
+  What must fit in one mind is the intent, the invariant and the judgment residue, never the whole impact. That is why the kernel offers **verified transforms**, which the engine checks itself ("this span moved; the rest is byte-identical"), and **basis reads at span grain**.
+- **Two kinds of read.**
   - A **provenance read** is what a mind saw. Independence and priming depend on it.
   - A **basis read** is what a verdict rests on. Lapse and confirmation depend on it.
+- **Projection and rendering.**
+  - A **projection** is a declared computation over the log: a standing, a count, a queue (*carried*, RC1 `09`).
+  - A **rendering** is the text of a file, computed from the log.
 
-  A verifier can see a span its verdict doesn't rest on, so the two are recorded apart. Provenance reads can be attested at file grain by a hook on reads. Basis reads come from the check itself.
-- **Projection.** A declared computation over the log: a file's rendered text, a computed column, a dashboard count. Projections are what a person reads. They carry no state of their own.
-- **Demand.** A refused act, recorded with what was attempted and why it was refused. Demands are atoms, so they have queues too.
+  Neither holds state of its own. The content Joseph's diagram calls "Projections/Pedagogy/Implications" is atoms, the explanatory and application kinds a store admits. The kernel has no name for it.
+- **Demand.** A refused act: what was attempted, by whom, on what, and why it was refused.
+  - `demand.record` is built in, always admissible, and written by the refusal itself.
+  - `demand.dispose` closes a demand as answered (by naming the admission or transition that now allows the act), declined with a reason, or duplicate.
+
+## The founding event, and the kernel's own transitions
+
+*Proposed.* A store starts with one event, written by the steward. It admits the kernel's kinds and these transitions:
+
+| Kind | Transitions |
+|---|---|
+| definition records (kind, edge kind, transition, projection) | `admit`, `amend`, `retire` |
+| demand | `record` (built in, always admissible), `dispose` |
+| changeset | `open`, `commit`, `abort`, `halt` |
+| source, unit | `source.bring`, `unit.cross` |
+| decision | `decide`, `reopen` |
+
+These can't admit themselves, which is why the first event is a founding act.
+
+**The guard on `admit`.** It is the founding questions (RC1 `10`), answered against the material whose demand raised the admission. At founding there are no atoms, so the questions are always answered against the influx that asked for the kind. RC1's Q0 ("Standing": who may bring such a record into being) and Q8 ("Certification": what a consumer may conclude from its state alone) would also serve as the kernel's own acceptance tests for any admitted kind. *That is my guess, built on councils-46's.*
+
+**After founding, nothing else is declared.** ASF's definition arrives by demand, starting from the first crossing with the write-refusal hook on. Each refusal becomes a demand, and each demand an admission.
+
+## The computations the kernel offers
+
+*Proposed. Each is a projection over the log, available to any store. The yields that feed them are the store's data, not the kernel's.*
+
+- **The three steady-state conditions** (from `asf-flows.md` §5):
+  - **work:** the loop gain's spectral radius below 1, computed from `caused-by` chains as yields per unit of influx;
+  - **residue:** every population has an exit (invariant 8);
+  - **drain:** every transition has a live drainer and a nonzero share of acts.
+- **The catalog against the trail.** Acts that happened but match no transition are gaps. Transitions never performed are dead or blocked. This is the use Joseph's caution leaves for the empirical record: it checks the designed catalog and never becomes its source.
+- **Generations within a changeset**, from `caused-by`. A circuit breaker counts them per kind of finding, which a store declares, because raw counts fire on restatement churn while the mathematics holds (`asf-flows.md` §7). Breaker limits are set by importance.
+- **The decision lapse**: importance at decision, against importance now.
 
 ## The interface
 
@@ -74,79 +190,65 @@ Each is a property of every store at every moment, and each says what checks it.
 ```bash
 vsect <kind> <transition> [--dry-run] [--format json|text] <<'YAML'
 atom: <kind>:<slug>        # omitted when minting
-version: <hash>            # the version the request was composed against
+version: <hash>            # what the request was composed against; stale means conflict
 body:
-  …                        # fields the transition's schema declares
+  …                        # fields the transition's schema declares; prose as block scalars
 YAML
 ```
 
-- **The draft is the request.** Prose arrives as YAML block scalars in the body. Nothing is written until the body validates against the schema and the guard admits it. There is no file to edit and nothing to reconcile.
-- **The result is structured:**
-  - the event written;
-  - the new version;
-  - the checks the change lapsed;
-  - the queues it entered or left.
+- **Nothing is written until the body validates and the guard admits it.**
+- **The result is structured:** the event, the new version, the checks lapsed, and the queues entered or left. A refusal carries its reason as data, and the demand it recorded.
+- **One interface for every writer:** a person, an agent, an adapter.
+- **Read verbs** (`show`, `why`, `open`, `check`, `flows`) use the same addressing.
 
-  A refusal carries its reason as data, and the demand it recorded.
-- **One interface for every writer:** a person, an agent, an adapter running a council's close. Read verbs (`show`, `why`, `open`, `check`, `flows`) take the same addressing.
-- **`--dry-run`** returns the events that would be written, the lapses they would cause and the guard's verdict, and writes nothing.
+## Dispatch
 
-## Dispatch, sequenced
+*Proposed, reconciling Joseph's statements.* The kernel defines the queue, the slot, the drainer and the **dispatch contract**:
+- **what the engine hands a decision-maker:** the atom, its version, the transition, the request schema, and the provenance it may read;
+- **what it accepts back:** a request body, from an attested actor.
 
-*Proposed, reconciling Joseph's statements.*
-
-The kernel defines the queue, the decision-maker slot and the **dispatch contract**: what the engine hands a decision-maker (the atom, its version, the transition, the request schema, and the provenance it may read), and what it accepts back (a request body, from an attested actor). That is all it knows about who decides.
-
-At first, every slot is filled by whoever runs the verb. Adapters come later, each outside the kernel, each satisfying the contract:
-
+At first every slot is filled by whoever runs the verb. Adapters come later, outside the kernel, each meeting the contract:
 - agent configurations per mutation path;
-- council charters and agendas, run by something like the walking skeleton's driver mode;
-- mechanical stations, deterministic checks that need no mind.
+- council charters and agendas;
+- mechanical stations.
 
-When adapters exist, the engine becomes the long-lived runtime Joseph describes: it drains queues by invoking the adapter each slot names, and a circuit breaker halts a changeset whose internal ripples stop shrinking. The walking skeleton's measured lessons belong to those adapters, not to the kernel: a seat is a lease with one holder; per-member state lives with the holder, never in a process; rounds wait on submissions, never on deliveries.
+With adapters in place, the engine becomes the long-lived runtime Joseph described. The walking skeleton's measured lessons are adapters' lessons: a seat is a lease with one holder; per-member state lives with the holder; rounds wait on submissions, never deliveries.
 
-## The founding event
+## Candidate kinds, for a store to admit
 
-*Proposed.*
+*Proposed. These are not the kernel. Each is here because it came up in the work, and the ASF system model decides whether ASF admits it.*
+- **Claim** at statement grain, with its carving transition. Line B's evidence: in `scope-adaptive-system`, one Definition paragraph held six commitments that fail separately.
+- **Finding, typed by kind.** The circuit breaker needs the type.
+- **Question**, with a closer.
+- **Check**, securing a claim version on an evidence line.
+- **Claim record**, separate from its claim, with a `describes` edge (Line A: 21 of 31 record checks broke or narrowed).
+- **Explanatory and application atoms** (`restates`, `narrates`; uses against reality).
+- **Tension**, a standing contradiction between well-supported claims. Its dependents are conditioned on it, and it is re-evaluated only when bearing evidence arrives. A period-2 oscillation converts into one.
 
-A new store starts with one event, written by the steward. It admits the kernel's own kinds (kind, edge kind, transition, guard, decision-maker slot, projection, demand, changeset) and three transitions over them:
+## What carries from earlier work
 
-- **admit**, which adds a kind, edge kind, transition or projection. Its guard is the founding questions answered against real atoms. Its decision-maker slot is the steward, until he declares otherwise.
-- **amend**, which changes one.
-- **retire**, which removes one.
-
-These can't admit themselves, which is why the first event is a founding act and every later definition enters by admission.
-
-Nothing else is declared at founding. The first real work supplies the rest. For ASF, that work is crossing one small cluster with the write-refusal hook on. Each refusal ("no kind for this", "no transition for that") becomes a demand, and each demand an admission request. ASF's system definition grows that way, one demand at a time, and each piece arrives with the instance that needed it.
-
-## What carries from earlier work, and what doesn't
-
-| From | Carried | Revised or set aside, and why |
+| From | Carried | Revised or set aside |
 |---|---|---|
-| vsect 0.1 (`firmatum/utils/vsect/`) | content-addressed versions; checks bound to their basis; lapse with cause; append-only events; attested identity; claims visible across worktrees | **typed frontmatter** (`closed:`, `owner:`): set aside, it is where the tree drifted from the log, 189 files. **`item`**: set aside; it held at least six repairs under one word. **Taking in outside edits**: reversed, under invariant 1 |
-| the archived design (`aat-v3/.archive/msc/vsect/`) | one fate, one atom; standing computed; evidence lines and rungs; influx crossings; `decide`; split and merge; teaching that narrates; the founding of kinds by evidence | **rule 7** and **§3.4** ("vsect doesn't launch agents"): reversed. Its statement grammar and carving remain the open question below |
-| RC1 (`firmatum/verisectorium/theory/influx/segments-model-rc1/`) | the declaration forms and the *when / allow / enabling* rule (`09`) as the definition's shape; typed edges and their propagation (`06`); rebut versus undercut; the founding questions (`10`); the substitution law, as a lint | syntax still undecided, as RC1 says itself |
-| councils (`msc/councils/`) | transitions as queues drained by decision-makers; charters as records; admissibility computed from a transition table (`model/actions.json`) | councils themselves are adapters, outside the kernel |
-| the flow model (`msc/councils/asf-flows.md`) | the steady-state conditions as computations over the log (work, residue, drain); "track a dimension when it changes a guard or a yield"; changesets; tension records as a state | its yields are priors for the dashboard, not part of the kernel |
-| this week's measurements | **a check counts as evidence only if its actor did not write the version** (0 of 116 self-checks found anything); claim records as separate atoms (21 of 31 record checks broke or narrowed); maturity tracked from the start | |
+| vsect 0.1 | content-addressed versions; checks bound to their basis; lapse with cause; append-only events; attested identity; claims across worktrees | typed frontmatter, where the tree drifted (189 files); `item`, which held at least six repairs under one word; taking in outside edits, reversed by invariant 1 |
+| the archived design (`aat-v3/.archive/msc/vsect/`) | one fate, one atom; computed standing; lines and rungs; `committed: before\|after`; crossings; `decide`; split and merge; kinds founded on evidence | rule 7 and §3.4, reversed |
+| RC1 | declaration forms and the *when / allow / enabling* rule (`09`); typed edges as above (`06`); the founding questions (`10`); movers declared per dimension (Q5) | syntax open, as RC1 itself leaves it |
+| councils | transitions as queues; charters as records; admissibility from a transition table | councils are adapters |
+| the flow model | the three steady-state conditions; changesets, the breaker, tension records; "track a dimension when it changes a guard or a yield" | yields are store data |
+| this week's measurements | a check counts as evidence only if its actor did not write the version (0 of 116 self-checks found anything); claim records separate; maturity tracked from the start | |
 
 ## Candidate conservation laws
 
-*Proposed by councils-46's predecessor on 2026-11-04 and not yet ratified. The kernel can check each one once it is.*
-
-1. Every influx unit is in exactly one place at all times. That is the delete-test as a conservation law.
-2. Nothing reaches canon without its trail. Invariants 1 and 6 make this hold by construction.
-3. A projection never asserts more than the version it was generated from.
+*Proposed by councils-46's predecessor, now stated in the kernel's terms. Joseph to ratify.*
+1. Every unit is in exactly one state at all times, and a source retires only when all its units are terminal.
+2. Nothing becomes citable as canon without its trail. Invariants 1 and 6 make this hold by construction.
+3. A rendering never asserts more than the versions it was generated from.
 
 ## Open
 
-- **The definition's syntax.** udon, YAML, or another. RC1 leaves it open; the interface above uses YAML only for illustration.
-- **Statement grain.** How an atom smaller than a file is addressed, and which transition carves a source into atoms. Line B's five crossings are the evidence: in `scope-adaptive-system`, one Definition paragraph held six commitments that fail separately, and one `exact` tag covered nine items. This is the first demand ASF will make.
-- **How projected files read.** They should stay plain markdown a person can read. Whether they also carry generated marks (a refuted atom's banner, `core.md` §10) is a projection choice.
-- **Partial reads.** Whether a verifier may be shown part of an atom (the archived design's Q2). It decides how provenance reads are recorded for `verify` briefs later.
-- **Who decides admissions at first.** The founding event names the steward. Whether he delegates some kinds of admission, and to whom, is his.
-- **Storage.** Git as the transport and the history beneath the log, as vsect 0.1 does, or something else.
-
-## What this draft is not
-
-It is not ASF's system definition, not an adapter, and not a council design. It names no ASF kinds beyond using them as examples. Where it reaches past what Joseph has said, it says *proposed*, and the checker's job is to find where a proposal smuggles in something the kernel doesn't need, or misses something it does.
+- The definition's syntax.
+- Statement grain: the first demand ASF will make.
+- Whether renderings carry generated marks.
+- Partial reads (the archived design's Q2).
+- Who decides admissions after founding.
+- Storage.
+- How a commit's whole-change guard is judged. That is a decision-maker's question, so it waits on the slot being filled.
