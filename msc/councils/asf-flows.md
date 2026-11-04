@@ -26,7 +26,7 @@ influx   +--------+--------------->| Theory    ----->  Theory    -----> Projecti
 **Left out on purpose:**
 - **Wall time.** It is only a proxy here. Everything below is counted per unit of influx, not per hour.
 - **Who adjudicates.** Each station is one generic adjudicator: an agent, a council, a human, or a deterministic tool. Joseph: "we can pretty much treat each vsect transition-edge as a queue that is drained by a 'decision-maker' and not specify a council or agent etc." Which decision-maker drains which queue, and when draining starts, is plugged in afterward.
-- **The empirical state machine from the sprint trail.** It records a process known to be deficient. Joseph's caution: it would be "both grossly insufficient and seriously over-complicated at the same time".
+- **The sprint trail's routing.** The empirical state machine records a process known to be deficient. Joseph's caution: it would be "both grossly insufficient and seriously over-complicated at the same time". The trail's *yields* are a different matter (found by the fresh read, `feedback/asf-flows-fable-1.md` §2.2). Some yields are properties of minds and text that survive a change of process: self-check ≈ 0, first independent check 0.42, confirm precision ≈ 0.03, the fan-out distribution, units per source. Those come from the trail and are this model's priors. The sprint's routing choices are what the model sets by design instead: 2 checks per version, strengthenings landed inside the loop, nothing retired.
 
 ## 2. The atoms
 
@@ -70,10 +70,18 @@ Each station is a generic adjudicator with a finite set of outcomes.
 
 ## 4. Yields
 
-Write the expected yields as a matrix A, where a_ij is the expected number of items of type j produced by processing one item of type i. Then:
-- **total work per unit of influx** is (I − A)⁻¹ · f, where f is the influx vector;
-- **each station's relative throughput** falls out of that expression;
-- **the matrix's shape comes from RC1** (my synthesis, untested): its coupling map says which entries are nonzero, and its substitution law says which must stay zero. For example, authority never moves evidence, and a beautiful explanation never moves support.
+Each edge carries two quantities, and they must not be merged:
+- **gain** A: a_ij is the expected number of items of type j produced by processing one item of type i;
+- **cost** C: c_i is the adjudicator-units consumed in processing one item of type i, at the station that handles it.
+
+Then:
+- **items by type per unit of influx** are x = (I − Aᵀ)⁻¹ f, where f is the influx vector;
+- **each station's required share** of adjudicator-units comes from x weighted by C;
+- **the spectral radius** that decides whether work is finite lives on A alone.
+
+A full re-check and a confirm can have the same gain (they find the same real changes) at very different cost. That is why the two are carried separately.
+
+**The matrix's shape comes from RC1** (my synthesis, untested). Its coupling map says which entries are nonzero, and its substitution law says which must stay zero. For example, authority never moves evidence, and a beautiful explanation never moves support.
 
 The priors that matter, from `research/flows-vsect-lead.md`:
 
@@ -97,6 +105,8 @@ The priors that matter, from `research/flows-vsect-lead.md`:
 | text revised by rounds that also added material | stays near its earlier rate (**measured**, the scope segment: 17–40% over six rounds, no trend) |
 
 So **maturity and independence must be tracked from the start**: they change the most important yields by an order of magnitude. This is the general rule: track a dimension when it changes a guard or a yield.
+- **Independence** is maturation-plan phase 2.
+- **Maturity already has a carrier:** the rungs `kinds.yaml` declares per evidence line, such as `derivation: drafted → premises-checked → independently-rederived`. A record's rung is computable from the checks already recorded, and nothing reads it yet.
 
 **Fan-out is heavy-tailed** (**measured**, `depends:` graph, 247 live segments):
 
@@ -116,27 +126,51 @@ The roots (`def-agent-environment`, `def-action-transition`, `def-observation-fu
 
 **The application edge is about zero today** (**measured**): Objective E is unmet, and the one measurement run measured a proxy.
 
-## 5. Steady state: two conditions
+## 5. Steady state: three conditions
 
 1. **Work is finite** when the spectral radius of A's feedback part is below 1. Loop gains near or above 1 mean work grows without bound, however many adjudicators run.
 2. **Residue is bounded** when every stock has a retirement edge. Spectral radius below 1 bounds the work. It does not bound the residue: sources never retired, restatements not tied to their claim, Working Notes, unanswered questions. I.10 measured residue growing while claims converged. Each stock needs its exit:
    - a source retires when all its units are terminal;
    - a restatement retires or re-binds when its claim changes;
    - a question closes, or is held with its exit stated.
+3. **Every edge is drained.** Each station has a declared drainer and a nonzero share of adjudicator-units per unit of influx, or the station is declared a sink. A model without wall time otherwise can't see an edge that exists and is never traversed. The useful form is a comparison: the required shares, from x and C, against the actual allocation. The gap between them is the finding.
+
+**The drainer itself can lapse.** An owner who can answer for work is an agent whose session ends. In flow terms, that is a retirement edge on the drainer: ownership ends visibly unless it is handed over, the same shape as a lapsed check.
+
+**ASF now** (checked by the fresh read at `2133cf2e`, `feedback/asf-flows-fable-1.md` §3.2):
+- no commit to any `src/` since 2026-10-31;
+- 18 of 858 items closed as done;
+- 0 sources retired;
+- 12 of 64 questions answered;
+- no KR with an agent as owner.
+
+Securing ran at 488 acts against 77 confirms, 29 closes, 12 answers and 0 retirements. ASF fails the third condition, not the first. It is also in a **transient**, not a steady state: most of its influx is already in the store, so the next phase is a backlog drain. For that, the numbers that matter are the share of owed work that changes canon and the allocation of stations, more than ρ.
+
+**Priority is a separate question.** The flow model counts how much work there is, with every unit equal. Which work comes first is priced by what is waiting on it, by cascade size and by staleness: RC1's disposition ordering (`07-DISPOSITION-AND-GAP-ECONOMICS.md`), a projection over this model, not part of it.
 
 ### The loops
 
-**L1, the version loop.** Revise → checks lapse → re-check → finding → revise. Per version, the gain is roughly (independent re-checks per version) × (finding rate). One independent re-check at 0.42 gives about 0.4: subcritical for one claim on its own.
+**L1, the version loop.** Revise → checks lapse → re-check → finding → revise. Its gain per version is (checks per version) × (findings per check) × (versions per finding). The fresh read filled it from the trail at HEAD: 488 checks, 246 revises, 313 findings, so 1.98 checks per version and 0.64 findings per check. Taking one revise per answered finding:
 
-**L2, the cascade, decided at the roots.** An edit at a root lapses checks on up to about 245 dependents. Illustrative arithmetic on the priors above:
-
-| How lapses are handled | Expected findings from one root edit |
+| Regime | L1 gain |
 |---|---|
-| every lapse re-checked in full | 245 × 0.42 ≈ 100 |
-| every lapse confirmed | 245 × 0.03 ≈ 7 real lapses, each needing work |
-| read sets: only checks that read the changed text lapse | small |
+| the sprint as run, about 2 checks per version | ≈ 1.3 |
+| one independent check per landing, findings back to the same integrator (retrospective item 5) | ≈ 0.6 |
+| the same, plus the lapse route | ≈ 0.8 |
 
-Even confirmation leaves a gain well above 1 at a root. **A root edit can't be handled as a single edit. It has to be a changeset (§6).** Leaves (median 6 transitive dependents) are subcritical however lapses are handled.
+These figures are illustrative, from one day's frequencies. Versions per finding is set to 1 by assumption, and the trail allows nearer 1.9, which would put the sprint's gain near 2.4 and the one-check regime near 1. Two things hold either way:
+- the sprint's measured growth (segments 1.5–2.5×, no round removing more text than it added) is what a gain above 1 looks like;
+- "one check per landing, then back to the author" is not only hygiene. It is the lever that moves the gain across 1.
+
+**L2, the cascade, decided at the roots.** An edit at a root lapses checks on up to about 245 dependents. How lapses are handled changes the cost of a root edit much more than what it finds. Of 120 lapses in the one confirm pass, about 3 were real (yield ≈ 0.03). So:
+
+| How lapses are handled | Work per root edit | Expected real changes to address |
+|---|---|---|
+| every lapse re-checked in full | 245 full checks | ≈ 7 |
+| every lapse confirmed | 245 confirms, each much cheaper | ≈ 7 |
+| read sets: only checks that read the changed text lapse | only those checks | ≈ 7 |
+
+A full re-check also finds defects unrelated to the edit, at the dependent's own first-check rate. That is ordinary checking the edit happened to trigger, not cascade gain. At a root, about 7 real changes, each needing work, is above 1 however lapses are handled. **So a root edit can't be handled as a single edit. It has to be a changeset (§6).** At the median segment (6 transitive dependents, about 0.2 real changes), the cascade is subcritical. Read sets and confirmation are what keep its cost proportionate.
 
 **L3, restatement churn.** Claim change → stale restatements → findings → claim revisions. This is what kept Part I producing findings after its mathematics stopped yielding. Binding restatements to versions cuts this edge.
 
@@ -180,7 +214,17 @@ This is RC1's EPISODE (vsect design question Q17) in its strongest form. It is t
 - its invariant (what must be true everywhere afterward);
 - the judgment residue (the places where applying it takes thought).
 
-Execution fans out to other workers. Coherence is checked by mechanical stations wherever it can be. The clearest case is a notation change: a tool verifies the new notation is consistent across every use, while a mind handles only the intent and the hard cases. **The context-window limit is why mechanical stations matter.**
+Execution fans out to other workers. Coherence is checked by mechanical stations wherever it can be. The clearest case is a notation change: a tool verifies the new notation is consistent across every use, while a mind handles only the intent and the hard cases. **The context-window limit is why mechanical stations matter.** No checker for notation consistency across uses exists yet; `NOTATION.md` is maintained by hand.
+
+**How vsect would carry it.** Git already supplies half: worktrees and merges of reviewed commits. The other half is vsect's: lapses and findings raised inside the changeset stay inside it until it commits, and at commit one set of confirmations is issued against canon. Today a lane's edits on a branch lapse checks globally when it merges, which is why 336 lapsed checks are waiting.
+
+**A pilot that is already owed** (from the fresh read): moving the Claim Records out of the 24 segment bodies where they were written. The changeset has:
+- one intent;
+- a crisp invariant: every body's hashed text is unchanged except for the removed section;
+- a mechanical check of that invariant;
+- no judgment residue.
+
+It would define vsect's episode by use, before anyone designs it in the abstract. The pilot is wrongly drawn if the global lapse count after commit is no smaller than doing the same work as 24 separate edits.
 
 ## 7. The circuit breaker
 
@@ -190,7 +234,18 @@ Joseph: "one way or another we have to be able to allow a minor perturbation to 
 - **settling:** generation sizes shrink;
 - **supercritical:** after a few generations they haven't shrunk.
 
-Supercritical triggers the stop. It routes not back to execution but to **reframing**: a station that asks whether the problem statement is ill-formed, or two ideas are conflated. A high-council or a de novo look fits it well. In RC1's terms, a conflation is a fused dimension or a mixed composite, and the cure is to split them. The circuit breaker's limits (how many generations, how much growth) are set by importance, like everything else a charter declares.
+Supercritical triggers the stop, but **generations must be counted per kind of finding**, or the breaker fires on the wrong loop. The fresh read retrodicted it on the sprint's most-checked segment, `scope-adaptive-system`: its findings ran 2, 2, 2, 2, 2, 3 across six rounds, flat. Raw counts would fire at about round four and send it to reframing. The record says the mathematics held, and most of the flat yield was restatement and wording churn (L3), whose cure is binding restatements, not reframing. So:
+
+| What doesn't shrink | Route |
+|---|---|
+| restatement and wording findings (L3) | bind restatements to versions, and continue |
+| findings on the mathematics itself (L1) | **reframing** |
+
+Reframing doesn't send the work back to execution. It asks whether the problem statement is ill-formed, or two ideas are conflated. A high-council or a de novo look fits it well. In RC1's terms, a conflation is a fused dimension or a mixed composite, and the cure is to split them.
+
+Findings have no kind field today: the 313 recorded have no type. The same founding-questions pass planned for `item` would give them one.
+
+If typing doesn't separate the loops, the breaker needs a different statistic, such as edit mass per generation. The circuit breaker's limits (how many generations, how much growth) are set by importance, like everything else a charter declares.
 
 ## 8. Tension records
 
@@ -202,6 +257,8 @@ A standing contradiction is a **state**, not a loop. A tension record owns the c
 - **re-evaluation happens only when evidence arrives that bears on the tension**, through its falsifier triggers, never continuously.
 
 **Detection.** Oscillation shows as a period-2 cycle: the same pair of changes reverting each other across rounds. Detecting one converts the loop into a tension record.
+
+ASF hasn't entered this regime yet: the record shows no period-2 cycle. Its one live contradiction (C.3: `#scope-composite-agent` admits what it requires) is a defect needing an adjudicator, not two well-supported claims.
 
 **Seeds in the verisectorium OUTLINE:**
 - "a standing contradiction *expands* work, never shrinks it" (the relata transfer);
@@ -223,9 +280,18 @@ RC1's epistemic dimensions are state carried by atoms. The flow model is edges b
 
 **Tracking rule:** track a dimension when it changes a guard or a yield. By that rule, the vsect lead's numbers make **independence** and **maturity** the first two to track. The complete model supplies candidates; the flow model admits them when they change what moves or how much.
 
-## 10. Open, and the tests that would decide
+## 10. What to do with it, and what is open
 
-- **L1's real gain:** a round that only lands findings, followed by one more independent check. If that check still finds problems at about a quarter of the rate, the defects were there all along. If it finds almost nothing, rounds were creating their own work.
+**What to do, in order** (from the fresh read, `feedback/asf-flows-fable-1.md` §5):
+1. **Fill A and C from the trail, once.** The flow review's `scripts/fsm.py` plus a tally by role gives every process-invariant entry. Set the process-chosen entries to the retrospective's rules. Print ρ, the required station shares, and the actual allocation beside them. This belongs in maturation phase 2's `vsect flows`.
+2. **Pilot the changeset on the Claim Record extraction** (§6).
+3. **Run the L1 experiment** (below). It decides the yield the whole model turns on, and it costs one round.
+4. **Retrodict the breaker with typed findings,** by classifying the scope segment's 36 findings by hand.
+
+A model is a reason to run these, not a substitute for running them. The fresh read's caution: this is the fourth design layer (RC1, vsect's design, the maturation plan, these flows) over a theory that has had no hands since 2026-10-31. Filling A once and running one experiment is worth more than a fifth layer.
+
+**Open:**
+- **L1's real gain:** a round that only lands findings, followed by one more independent check. If that check still finds problems at about a quarter of the rate, the defects were there all along. If it finds almost nothing, rounds were creating their own work. Versions per finding is the entry this would measure.
 - **The cascade with read sets:** recompute L2 at the roots once checks declare what they read.
 - **The reality edge:** what switching on application does to the feedback part's spectral radius, and what the system needs in order to survive it.
 - **Endogenous influx:** how much of f belongs in A.
