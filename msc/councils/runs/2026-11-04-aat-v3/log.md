@@ -19,3 +19,14 @@
   - **Line B** (Fable) → founding a pilot store in `~/src/aat-v3/`, report at `~/src/aat-v3/msc/pilot-founding-2026-11-04/`.
   - **Line A** offered to the ASF lead (session 0903e35e), whose plan already holds it (phase 4, retrospective item 12). If the lead declines, a separate agent will run it on a worktree branch, unmerged.
 - **Line A accepted by the ASF lead.** A lane is extracting the Claim Records as one changeset on an asf worktree branch, after first claiming the 24 segments in vsect. No merge, no push. Its account will be at `asf/msc/inside-out-2026-10/system-review/claim-record-extraction-2026-11-04.md` on that branch, comparing the one changeset with 24 separate edits on a clone, and saying what vsect needs for episodes.
+- **Correction to the leader's own work (same day).** Joseph: "That's the kind of *not* thoughtful coordinator-mode and abdication that leaders should avoid :-)" — on the unknowns list. The list was written to hand out, not thought through. Done properly:
+  - **Don't separate the paths:**
+    - loop gains (6): process rules either path can adopt;
+    - ledger triage (8): owed either way;
+    - cross-first order (7): planning, not evidence;
+    - trail worth (1): mostly dissolves, because versions are content hashes and verbatim crossing may keep the bindings. To check.
+  - **Do separate them:**
+    - (a) what cleaning the accreted structure costs in place. Line A measures the largest piece.
+    - (b) what founding and crossing cost. Line B measures it.
+    - (c) **the crux:** what a new store can do that ASF can't adopt in place by declaring and migrating. If nothing, the question reduces to cost; if something, that decides it.
+  - The scout has been re-briefed to put (c), the hash-identity check, and the accreted-structure inventory first.
