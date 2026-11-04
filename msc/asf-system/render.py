@@ -21,7 +21,7 @@ LANE_COLOR = {
     "outside_in": "#f2f2f2", "influx": "#e8f1fb", "working": "#fdf3e1", "canon": "#e7f5e9",
     "explanation": "#f3eafa", "application": "#fbe9ec", "outside_out": "#f2f2f2", "sinks": "#e6e6e6",
 }
-ROLE_SHAPE = {"judgment": "box", "decision": "diamond", "mechanical": "box"}
+ROLE_SHAPE = {"judgment": "box", "decision": "box", "mechanical": "box"}  # decision points: colour, not a diamond (Joseph)
 LANE_ORDER = [lane["id"] for lane in M["lanes"]]
 
 
@@ -100,7 +100,7 @@ def dot(regime="founding"):
             lab = f'{s["kind"]}.{s["verb"]}\nslot: {s["slot"]}\ndrainer: {drain}' + (f"\nload ≈ {xv:.1f} per source" if xv is not None else "")
             fill = "#d9d9d9" if s["role"] == "mechanical" else ("#fff2b3" if s["role"] == "decision" else "white")
             border = "#c0392b" if not s.get("drainer") else "black"
-            L.append(f'  "st_{n}" [shape={ROLE_SHAPE[s["role"]]}, style="filled{",rounded" if s["role"] != "decision" else ""}", fillcolor="{fill}", color="{border}", label={q(lab)}];')
+            L.append(f'  "st_{n}" [shape={ROLE_SHAPE[s["role"]]}, style="filled,rounded", fillcolor="{fill}", color="{border}", label={q(lab)}];')
         if lid == "sinks":
             for s in M["sinks"]:
                 L.append(f'  "sink_{s}" [shape=doublecircle, style=filled, fillcolor="#333333", fontcolor=white, fontsize=8, label={q(s)}];')
@@ -119,7 +119,7 @@ def dot(regime="founding"):
         for e in s.get("exits", []):
             L.append(f'"st_{n}" -> "{e}" [label="set aside", color="#888888"];')
     legend = ("ellipse: a kind of atom (Petri place); bold border: kernel kind; red border: a demand on the kernel\\l"
-              "box: a judgment station · yellow diamond: a decision point · grey: mechanical (deterministic)\\l"
+              "white: a judgment station · yellow: a decision point · grey: mechanical (deterministic)\\l"
               "red station border: no drainer (the drain condition fails) · red dashed edge: feedback upstream\\l"
               "load: items processed per source of influx, from x = (I − Aᵀ)⁻¹ f, no wall time\\l")
     L.append(f'legend [shape=note, fontsize=9, label="{legend}"];')

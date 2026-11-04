@@ -13,8 +13,8 @@
 
 The picture follows Joseph's diagram, with lanes for influx, working, canon, explanation and application, plus lanes for what leaves and for the sinks:
 - **ellipses** are kinds of atom, as Petri places;
-- **boxes** are judgment stations;
-- **yellow diamonds** are decision points, where importance, and later a charter, matter;
+- **white boxes** are judgment stations;
+- **yellow boxes** are decision points, where importance, and later a charter, matter;
 - **grey boxes** are mechanical stations;
 - **a red border** on a station means no drainer;
 - **red dashed edges** run upstream, as feedback.

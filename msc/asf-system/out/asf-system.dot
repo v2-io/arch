@@ -12,7 +12,7 @@ subgraph cluster_influx { label="Influx"; style=filled; color="#bbbbbb"; fillcol
   "unit" [shape=ellipse, penwidth=2.5, color="black", label="unit\n[kernel]"];
   "st_bring" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="source.bring\nslot: anyone\ndrainer: ⚠ none"];
   "st_carve" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="unit.carve\nslot: anyone\ndrainer: ⚠ none"];
-  "st_cross" [shape=diamond, style="filled", fillcolor="#fff2b3", color="#c0392b", label="unit.cross\nslot: anyone\ndrainer: ⚠ none"];
+  "st_cross" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="#c0392b", label="unit.cross\nslot: anyone\ndrainer: ⚠ none"];
   "st_retire_source" [shape=box, style="filled,rounded", fillcolor="#d9d9d9", color="black", label="source.retire\nslot: engine\ndrainer: engine"];
 }
 subgraph cluster_working { label="Working (computed standing, not a place)"; style=filled; color="#bbbbbb"; fillcolor="#fdf3e1"; fontsize=11;
@@ -23,12 +23,12 @@ subgraph cluster_working { label="Working (computed standing, not a place)"; sty
   "tension" [shape=ellipse, penwidth=1, color="black", label="tension\n(two supported claims)"];
   "demand" [shape=ellipse, penwidth=2.5, color="black", label="demand\n(a refused act)\n[kernel]"];
   "st_integrate" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="claim.revise\nslot: the original integrator (continuity)\ndrainer: ⚠ none"];
-  "st_answer" [shape=diamond, style="filled", fillcolor="#fff2b3", color="#c0392b", label="question.answer\nslot: the question's closer\ndrainer: ⚠ none"];
+  "st_answer" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="#c0392b", label="question.answer\nslot: the question's closer\ndrainer: ⚠ none"];
   "st_open_cs" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="changeset.open\nslot: anyone\ndrainer: ⚠ none"];
-  "st_commit_cs" [shape=diamond, style="filled", fillcolor="#fff2b3", color="#c0392b", label="changeset.commit\nslot: not the owner; importance-gated\ndrainer: ⚠ none"];
-  "st_halt_cs" [shape=diamond, style="filled", fillcolor="#fff2b3", color="#c0392b", label="changeset.halt\nslot: breaker (mechanical) → reframing\ndrainer: ⚠ none"];
-  "st_hold_tension" [shape=diamond, style="filled", fillcolor="#fff2b3", color="#c0392b", label="tension.resolve\nslot: on bearing evidence only\ndrainer: ⚠ none"];
-  "st_admit" [shape=diamond, style="filled", fillcolor="#fff2b3", color="black", label="definition.admit\nslot: steward\ndrainer: steward"];
+  "st_commit_cs" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="#c0392b", label="changeset.commit\nslot: not the owner; importance-gated\ndrainer: ⚠ none"];
+  "st_halt_cs" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="#c0392b", label="changeset.halt\nslot: breaker (mechanical) → reframing\ndrainer: ⚠ none"];
+  "st_hold_tension" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="#c0392b", label="tension.resolve\nslot: on bearing evidence only\ndrainer: ⚠ none"];
+  "st_admit" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="black", label="definition.admit\nslot: steward\ndrainer: steward"];
 }
 subgraph cluster_canon { label="Canon (citable standing)"; style=filled; color="#bbbbbb"; fillcolor="#e7f5e9"; fontsize=11;
   anchor_canon [shape=point, style=invis];
@@ -41,9 +41,9 @@ subgraph cluster_canon { label="Canon (citable standing)"; style=filled; color="
   "st_secure" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="check.take\nslot: did not write this version; unprimed\ndrainer: ⚠ none"];
   "st_confirm" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="check.confirm\nslot: not the reviser\ndrainer: ⚠ none"];
   "st_refute" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="claim.refute\nslot: evidence, never authority\ndrainer: ⚠ none"];
-  "st_decide" [shape=diamond, style="filled", fillcolor="#fff2b3", color="#c0392b", label="decision.decide\nslot: by importance\ndrainer: ⚠ none"];
-  "st_revise_purpose" [shape=diamond, style="filled", fillcolor="#fff2b3", color="black", label="purpose.revise\nslot: steward\ndrainer: steward"];
-  "st_term_decide" [shape=diamond, style="filled", fillcolor="#fff2b3", color="#c0392b", label="term.decide\nslot: anyone\ndrainer: ⚠ none"];
+  "st_decide" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="#c0392b", label="decision.decide\nslot: by importance\ndrainer: ⚠ none"];
+  "st_revise_purpose" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="black", label="purpose.revise\nslot: steward\ndrainer: steward"];
+  "st_term_decide" [shape=box, style="filled,rounded", fillcolor="#fff2b3", color="#c0392b", label="term.decide\nslot: anyone\ndrainer: ⚠ none"];
   "st_check_record" [shape=box, style="filled,rounded", fillcolor="white", color="#c0392b", label="claim_record.take\nslot: did not write the record\ndrainer: ⚠ none"];
   "st_m_render" [shape=box, style="filled,rounded", fillcolor="#d9d9d9", color="black", label="rendering.check\nslot: engine\ndrainer: engine"];
   "st_m_notation" [shape=box, style="filled,rounded", fillcolor="#d9d9d9", color="#c0392b", label="notation.check\nslot: tool\ndrainer: ⚠ none"];
@@ -173,5 +173,5 @@ anchor_outside_out -> anchor_sinks [style=invis, weight=50];
 "st_m_notation" -> "finding" [style=dashed, color="#c0392b", constraint=false];
 "front" -> "st_m_bindings";
 "st_m_bindings" -> "finding" [style=dashed, color="#c0392b", constraint=false];
-legend [shape=note, fontsize=9, label="ellipse: a kind of atom (Petri place); bold border: kernel kind; red border: a demand on the kernel\lbox: a judgment station · yellow diamond: a decision point · grey: mechanical (deterministic)\lred station border: no drainer (the drain condition fails) · red dashed edge: feedback upstream\lload: items processed per source of influx, from x = (I − Aᵀ)⁻¹ f, no wall time\l"];
+legend [shape=note, fontsize=9, label="ellipse: a kind of atom (Petri place); bold border: kernel kind; red border: a demand on the kernel\lwhite: a judgment station · yellow: a decision point · grey: mechanical (deterministic)\lred station border: no drainer (the drain condition fails) · red dashed edge: feedback upstream\lload: items processed per source of influx, from x = (I − Aᵀ)⁻¹ f, no wall time\l"];
 }
