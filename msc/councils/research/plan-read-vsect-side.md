@@ -76,3 +76,25 @@ Short, and only what the kernel rests on:
 - the other lead session's `firmatum/utils/vsect/MATURATION-PLAN-notes.md`, eight gaps, which is uncommitted, so read it in place.
 
 I'll read the walking skeleton and RC1 `09-LANGUAGE.md` from my side before drafting anything.
+
+## Addendum: the interface's shape (Joseph, 2026-11-04)
+
+Joseph, on the ergonomics the engine's interface should have: Anthropic's `ant` tool *"is based on a bunch of tooling theoretical work we did late last year and early this year and is a great example of the right affordances and ergonomics"*:
+
+```bash
+ant messages create --format json <<'YAML' | jq '.stop_reason, (.content[] | select(.type == "tool_use"))'
+model: claude-opus-4-8
+max_tokens: 1024
+messages:
+  - role: user
+    content: What is the weather in San Francisco?
+...
+YAML
+```
+
+What I take from it for the kernel. This is my reading; the shape is his.
+
+- **`resource verb` is kind × transition.** If the command surface is generated from the system definition, admitting a kind or a transition creates its verb. No verb is hand-coded, which is what lets the definition evolve through the engine.
+- **The request is a typed document on stdin.** An agent's draft is the request body (YAML, with block scalars for prose). The engine validates it against the transition's schema and guard before anything is written. This replaces the open question of a drafting surface: there is no file to edit and nothing to reconcile.
+- **The output is structured and composable** (`--format json`). A result carries the event, the new version, and the checks the change lapsed. A refusal carries its reason as data, which is what the "demand on vsect" backlog needs.
+- **One interface for every writer:** a person, an agent, a council's close, a driver adapter. That makes the engine the only writer by construction, because the ergonomic path is the only path.
