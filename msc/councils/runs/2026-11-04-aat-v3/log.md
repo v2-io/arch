@@ -30,3 +30,8 @@
     - (b) what founding and crossing cost. Line B measures it.
     - (c) **the crux:** what a new store can do that ASF can't adopt in place by declaring and migrating. If nothing, the question reduces to cost; if something, that decides it.
   - The scout has been re-briefed to put (c), the hash-identity check, and the accreted-structure inventory first.
+- **The leader's own reading of the crux (c),** a view to weigh against the pilots, not a conclusion. Almost everything a new store offers looks reachable in place: re-declaring and migrating kinds, restructuring the layout, rewriting SOPs, archiving residue in bulk. The difference is the default's direction:
+  - **in place, residue stays unless someone removes it.** Each accreted thing needs an act to retire it. The record: 0 sources retired, 18 of 858 items done.
+  - **in a new store, nothing enters unless it crosses.** Each thing must earn its place; what doesn't cross stays behind in ASF as the archive. The residue condition (asf-flows §5) is met by construction.
+
+  The measured failure is the one the opt-in default fixes. Against it stands the cost of crossing, which Line B is measuring.
