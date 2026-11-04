@@ -49,3 +49,7 @@
   - "Crossing" is influx disposition, with "copy as-is" as one outcome.
   - The leader's freeze recommendation is **withdrawn**: it was intermediate-mechanism thinking.
   - Line B was told to build the store's permanent influx management, sized to its first cluster.
+- **Slugs (Joseph, same day).** The scout's "slugs need to stay stable" was relayed to Line B uncritically by the leader. Joseph: "I feel a simple mapping made available is sufficient. I *do not like* an older broken theory inhibiting truth. That is exactly the kind of non-factor that I *don't* want subverting our actual goal here." Corrected to Line B:
+  - name segments by what is true;
+  - publish an old-slug → fate mapping (renamed, split, merged, retired);
+  - external references resolve through that mapping, which also serves as ASF's disposition record.
