@@ -14,3 +14,7 @@
   6. The flow model's loop gains under each regime.
   7. Which Parts or clusters are mature enough to cross first.
   8. How much of the open ledger is real owed work and how much is residue.
+- **Assignments launched (same hour):**
+  - **Unknowns scout** (Opus, read-only) → `../../research/unknowns-scout.md`.
+  - **Line B** (Fable) → founding a pilot store in `~/src/aat-v3/`, report at `~/src/aat-v3/msc/pilot-founding-2026-11-04/`.
+  - **Line A** offered to the ASF lead (session 0903e35e), whose plan already holds it (phase 4, retrospective item 12). If the lead declines, a separate agent will run it on a worktree branch, unmerged.
