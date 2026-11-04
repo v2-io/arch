@@ -1,5 +1,7 @@
 # ASF's primary flows: a model without wall time
 
+> [!note] **How to read this now (2026-11-04).** Joseph has decided that ASF will not be iterated on in place: "There is no good reason to iterate on ASF under this repo and in its current regime… that one sprint showed us exactly what it needed to for us to now do this right." The new store is being founded in `~/src/aat-v3/`, and current ASF is ordinary influx to it. So this model describes what the sprint showed, and serves as a design input to the new store. Its levers (§5) and its recommended order (§10) are founding rules for that store, not repairs to ASF.
+
 *2026-11-03. Claude (Opus 5.5, councils-46), with Joseph, written up from a day's conversation. It builds on:*
 - *the RC1 segments model (`firmatum/verisectorium/theory/influx/segments-model-rc1/`), with the gaps noted in `research/rc1-vsect-gaps.md`;*
 - *the councils work in this directory (`councils-system-model.md`, `generic-collab-council.md`);*
