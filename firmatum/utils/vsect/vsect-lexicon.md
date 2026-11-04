@@ -24,6 +24,9 @@
 ## Records and their history
 
 - **atom** *(kernel)*. The unit with one fate: anything that can be refuted, superseded or ratified while its neighbors carry on (`model.md`). The archived design calls this a **statement**, and RC1 a **record**. Neither is a **file**. A file is a container and a rendering, and may hold many atoms.
+- **identity** and **name** *(kernel)*. An atom's identity is its minting event; its **name** (the slug) is a label with a history, which a rename changes. The old-slug → fate mapping is a projection over name events. Not interchangeable: renaming never changes identity.
+- **store address** *(kernel)*. `store/kind:slug`, which can be used once a store declares the other stores it names.
+- **arrangement** *(kernel)*. An authored composition of atoms (which ones, in what order, with gap rows) from which a rendering is computed. It adds no claims. An outline and a segment file are both arrangements. Not a **rendering**: the arrangement is authored, and the rendering is computed from it.
 - **kind** *(kernel)*. A declared type of atom. It is admitted only when it *"fails differently, and is repaired differently, from every other kind"* (`model.md`).
 - **log** *(kernel)*. The append-only sequence of events. Nothing in it is edited; a correction is a new event naming the one it corrects.
 - **event** *(kernel)*. One recorded act. Its fields are in `KERNEL.md`, *What an event records*.
@@ -31,7 +34,7 @@
 - **basis** *(kernel)*. The versions an act rests on: the atom's own, plus those of everything it depends on.
 - **lapse** *(kernel)*. A check stops counting because something in its basis changed. The cause is always named. Not a refutation: a lapsed check has stopped counting, but nothing has shown it wrong.
 - **confirm** *(kernel)*. A second mind judges that a change didn't touch what a lapsed check read, and the check binds again. Never done by the reviser.
-- **attested actor** *(kernel)*. Who performed an act, from the harness: agent key, parent, agent type, session, and what that rests on (harness-agent, harness-session or declared). On this machine it comes from `CC_AGENT`. Not a typed `--by` name, which is only a label.
+- **attested actor** *(kernel)*. Who performed an act, from the harness: agent key, parent, agent type, session, and what that rests on (harness-agent, harness-session or declared). On this machine it comes from `CC_AGENT`. Not a typed `--by` name, which is only a label. An actor is a mind (an agent or a person) or a **tool at a version** invoked by one, whose version is the event's era.
 
 ## Change
 
@@ -109,7 +112,8 @@
 - **claim**. A truth-apt atom at statement grain.
 - **finding**. A defect reported against an existing atom, typed by kind.
 - **question**. An open item, with a closer.
-- **check**. A securing act on an atom's version, on an evidence line.
+- **review**. What a checker sends back: an atom, which can itself be wrong.
+- **check**. Not an atom: an event that secures an atom's version on an evidence line. Its lapse is a projection.
 - **claim record**. Register, population, falsifier and so on for a claim. A separate atom, linked by `describes`.
 - **explanatory atom** and **application atom**. Content that restates or narrates claims, and content that uses claims against reality.
 - **tension**. A standing contradiction between well-supported claims, held as a state rather than a loop.

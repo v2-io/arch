@@ -32,8 +32,8 @@ subgraph cluster_working { label="Working (computed standing, not a place)"; sty
 }
 subgraph cluster_canon { label="Canon (citable standing)"; style=filled; color="#bbbbbb"; fillcolor="#e7f5e9"; fontsize=11;
   anchor_canon [shape=point, style=invis];
-  "claim" [shape=ellipse, penwidth=1, color="black", label="claim at statement grain\n(definition · scope · postulate · claim ·\nno-go · norm · recognition)"];
-  "check" [shape=ellipse, penwidth=1, color="black", label="check\n(on an evidence line, bound to a version)"];
+  "claim" [shape=ellipse, penwidth=1, color="black", label="claim at statement grain\n(definition · scope · postulate · choice ·\nclaim · no-go · norm · recognition)"];
+  "check" [shape=ellipse, penwidth=1, color="black", label="review\n(what a checker sent back: an atom;\neach check in it is an event on a claim's\nevidence line, its lapse a projection)"];
   "claim_record" [shape=ellipse, penwidth=1, color="black", label="claim record\n(describes a claim)"];
   "term" [shape=ellipse, penwidth=1, color="black", label="term and notation"];
   "decision" [shape=ellipse, penwidth=2.5, color="black", label="decision\n(importance · assumptions as edges)\n[kernel]"];
@@ -50,7 +50,7 @@ subgraph cluster_canon { label="Canon (citable standing)"; style=filled; color="
 }
 subgraph cluster_explanation { label="Explanation and pedagogy"; style=filled; color="#bbbbbb"; fillcolor="#f3eafa"; fontsize=11;
   anchor_explanation [shape=point, style=invis];
-  "arrangement" [shape=ellipse, penwidth=1, color="#c0392b", label="arrangement\n(outline order; which atoms a\nsegment holds, in what order)\n[demand on the kernel]"];
+  "arrangement" [shape=ellipse, penwidth=2.5, color="black", label="arrangement\n(outline order; which atoms a\nsegment holds, in what order)\n[kernel]"];
   "teaching" [shape=ellipse, penwidth=1, color="black", label="teaching\n(narrates)"];
   "front" [shape=ellipse, penwidth=1, color="black", label="front statement\n(headline, caption; restates)"];
   "pedagogy" [shape=ellipse, penwidth=1, color="black", label="pedagogy\n(reader gold, quiz, reading guides)"];

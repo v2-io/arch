@@ -9,7 +9,7 @@
 
 ## Flows, per regime
 
-### sprint: spectral radius ρ = 1.45  (work grows without bound)
+### sprint: spectral radius ρ = 1.45  (work grows without bound); rework only (discovery edges removed) ρ = 1.43
 
 
 | from → to | gain | tag | note |
@@ -30,10 +30,10 @@
 | stale_front → finding | 0.5 | guess | unbound restatements, found by readers |
 | claim_version → application | 0.0 | measured | Objective E unmet |
 | application → finding | 0.3 | guess |  |
-| check → internal_source | 0.05 | guess | strengthenings: new internal influx |
+| check → internal_source | 0.05 | guess | strengthenings: new internal influx (discovery, not rework) |
 | internal_source → unit | 4 | guess | a spike yields 2–8 units |
 
-### founding: spectral radius ρ = 1.00  (work grows without bound)
+### founding: spectral radius ρ = 1.00  (work grows without bound); rework only (discovery edges removed) ρ = 0.97
 
 
 | from → to | gain | tag | note |
@@ -54,5 +54,42 @@
 | stale_front → finding | 0.1 | guess | bound to versions: most rebind without a finding |
 | claim_version → application | 0.05 | proposed | the reality edge switched on |
 | application → finding | 0.3 | guess |  |
-| check → internal_source | 0.05 | guess | strengthenings: new internal influx |
+| check → internal_source | 0.05 | guess | strengthenings: new internal influx (discovery, not rework) |
+| internal_source → unit | 4 | guess | a spike yields 2–8 units |
+
+### founding_changesets: spectral radius ρ = 0.83; rework only (discovery edges removed) ρ = 0.76
+
+| item | per source of influx |
+|---|---|
+| source | 1.00 |
+| internal_source | 0.57 |
+| unit | 14.27 |
+| finding | 8.80 |
+| owed_claim | 2.14 |
+| question | 1.43 |
+| claim_version | 11.37 |
+| check | 11.37 |
+| lapse | 68.21 |
+| stale_front | 34.11 |
+| application | 0.57 |
+
+| from → to | gain | tag | note |
+|---|---|---|---|
+| source → unit | 12 | estimate | trackers 26 measured (371 of 14); audits 5–20, spikes 2–8 guessed |
+| unit → finding | 0.25 | guess | about half of units are owed (measured); the split is a guess |
+| unit → owed_claim | 0.15 | guess |  |
+| unit → question | 0.1 | guess |  |
+| finding → claim_version | 1.0 | estimate | one revise per answered finding (asf-flows assumption; the trail allows ~1.9) |
+| owed_claim → claim_version | 1.0 | estimate |  |
+| question → claim_version | 0.3 | guess |  |
+| question → finding | 0.2 | guess |  |
+| claim_version → check | 1.0 | proposed | one independent check per landing |
+| check → finding | 0.42 | measured | first independent check, 65 of 153 |
+| claim_version → lapse | 6 | measured | median transitive dependents; the roots reach 245 |
+| lapse → finding | 0.0 | proposed | limiting case: every edit with dependents is a changeset; the ~3% real changes are the change's own propagation, settled inside it before commit, not new findings in the global queue |
+| claim_version → stale_front | 3 | guess | 2–5 restatements per substantive change |
+| stale_front → finding | 0.0 | proposed | limiting case: the changeset rebinds its own restatements before commit |
+| claim_version → application | 0.05 | proposed | the reality edge switched on |
+| application → finding | 0.3 | guess |  |
+| check → internal_source | 0.05 | guess | strengthenings: new internal influx (discovery, not rework) |
 | internal_source → unit | 4 | guess | a spike yields 2–8 units |

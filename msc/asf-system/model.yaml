@@ -24,13 +24,13 @@ stocks:
   changeset:     {lane: working, kernel: true, label: "changeset\n(intent · invariant · scope)", terminal: [committed, aborted]}
   tension:       {lane: working, label: "tension\n(two supported claims)", terminal: [resolved]}
   demand:        {lane: working, kernel: true, label: "demand\n(a refused act)", terminal: [answered, declined, duplicate]}
-  claim:         {lane: canon, label: "claim at statement grain\n(definition · scope · postulate · claim ·\nno-go · norm · recognition)", terminal: [retired, superseded]}
-  check:         {lane: canon, label: "check\n(on an evidence line, bound to a version)", terminal: [lapsed]}
+  claim:         {lane: canon, label: "claim at statement grain\n(definition · scope · postulate · choice ·\nclaim · no-go · norm · recognition)", terminal: [retired, superseded], note: "kind is per atom; an ASF prefix is only a hint: def→definition, scope→scope, post→postulate, form→choice, der/deriv/result/obs→claim (derived or empirical stage), hyp/sketch→claim (earlier stage), disc→recognition or teaching, impl/intro/example→teaching or arrangement"}
+  check:         {lane: canon, label: "review\n(what a checker sent back: an atom;\neach check in it is an event on a claim's\nevidence line, its lapse a projection)", terminal: [taken, superseded]}
   claim_record:  {lane: canon, label: "claim record\n(describes a claim)", terminal: [retired]}
   term:          {lane: canon, label: "term and notation", terminal: [superseded]}
   decision:      {lane: canon, kernel: true, label: "decision\n(importance · assumptions as edges)", terminal: [superseded]}
   purpose:       {lane: canon, label: "purpose\n(the working thesis)", terminal: [superseded], founding: true, note: "written by the steward at founding; steward-only revision"}
-  arrangement:   {lane: explanation, label: "arrangement\n(outline order; which atoms a\nsegment holds, in what order)", terminal: [retired], kernel_demand: true}
+  arrangement:   {lane: explanation, label: "arrangement\n(outline order; which atoms a\nsegment holds, in what order)", terminal: [retired], kernel: true}
   teaching:      {lane: explanation, label: "teaching\n(narrates)", terminal: [retired]}
   front:         {lane: explanation, label: "front statement\n(headline, caption; restates)", terminal: [retired]}
   pedagogy:      {lane: explanation, label: "pedagogy\n(reader gold, quiz, reading guides)", terminal: [retired]}
@@ -129,16 +129,18 @@ flows:
     - {from: question, to: claim_version, value: 0.3, tag: guess}
     - {from: question, to: finding, value: 0.2, tag: guess}
     - {from: claim_version, to: check, value: 1.98, tag: measured, note: "488 checks / 246 revises", regime: sprint}
-    - {from: claim_version, to: check, value: 1.0, tag: proposed, note: "one independent check per landing", regime: founding}
+    - {from: claim_version, to: check, value: 1.0, tag: proposed, note: "one independent check per landing", regime: [founding, founding_changesets]}
     - {from: check, to: finding, value: 0.64, tag: measured, note: "313 findings / 488 checks", regime: sprint}
-    - {from: check, to: finding, value: 0.42, tag: measured, note: "first independent check, 65 of 153", regime: founding}
+    - {from: check, to: finding, value: 0.42, tag: measured, note: "first independent check, 65 of 153", regime: [founding, founding_changesets]}
     - {from: claim_version, to: lapse, value: 6, tag: measured, note: "median transitive dependents; the roots reach 245"}
-    - {from: lapse, to: finding, value: 0.03, tag: measured, note: "one confirm pass: ~3 real changes in 120 lapses"}
+    - {from: lapse, to: finding, value: 0.03, tag: measured, note: "one confirm pass: ~3 real changes in 120 lapses", regime: [sprint, founding]}
+    - {from: lapse, to: finding, value: 0.0, tag: proposed, regime: founding_changesets, note: "limiting case: every edit with dependents is a changeset; the ~3% real changes are the change's own propagation, settled inside it before commit, not new findings in the global queue"}
     - {from: claim_version, to: stale_front, value: 3, tag: guess, note: "2–5 restatements per substantive change"}
     - {from: stale_front, to: finding, value: 0.5, tag: guess, note: "unbound restatements, found by readers", regime: sprint}
     - {from: stale_front, to: finding, value: 0.1, tag: guess, note: "bound to versions: most rebind without a finding", regime: founding}
+    - {from: stale_front, to: finding, value: 0.0, tag: proposed, regime: founding_changesets, note: "limiting case: the changeset rebinds its own restatements before commit"}
     - {from: claim_version, to: application, value: 0.0, tag: measured, note: "Objective E unmet", regime: sprint}
-    - {from: claim_version, to: application, value: 0.05, tag: proposed, note: "the reality edge switched on", regime: founding}
+    - {from: claim_version, to: application, value: 0.05, tag: proposed, note: "the reality edge switched on", regime: [founding, founding_changesets]}
     - {from: application, to: finding, value: 0.3, tag: guess}
-    - {from: check, to: internal_source, value: 0.05, tag: guess, note: "strengthenings: new internal influx"}
+    - {from: check, to: internal_source, value: 0.05, tag: guess, discovery: true, note: "strengthenings: new internal influx (discovery, not rework)"}
     - {from: internal_source, to: unit, value: 4, tag: guess, note: "a spike yields 2–8 units"}

@@ -1,4 +1,6 @@
-# vsect: the kernel (draft 2)
+# vsect: the kernel (draft 3)
+
+*Draft 3 (the vsect lead, after iteration 1 of the ASF system model) admits the six demands that model raised, each by the Scope test below: arrangement, store addressing, names versus atoms, tool actors, guards that read projections, and importance both declared and computed. It also makes check an event and review an atom. The reasons are in `msc/asf-system/ASF-SYSTEM-MODEL.md`, iteration 2.*
 
 *To Joseph, and to councils-46, who checked draft 1. From Claude Opus 5.5 (session `0903e35e`), 2026-11-04.*
 
@@ -22,7 +24,8 @@ Crossing any boundary is a change of state on one record, never a copy. "Working
 - the engine's invariants;
 - the meta-model: what declaring a kind, edge kind, transition or projection means (the definition language's semantics, not its syntax);
 - what an event records;
-- the kinds the engine itself needs: the definition's own records, demand, changeset, source and unit (every store has an intake), and decision (admitting a kind is a decision);
+- the kinds the engine itself needs: the definition's own records, demand, changeset, source and unit (every store has an intake), decision (admitting a kind is a decision), and arrangement (rendering any file needs an authored composition);
+- naming and addressing: an atom's identity, its names, and other stores;
 - the interface's shape;
 - the dispatch contract;
 - the computations over the log;
@@ -67,7 +70,7 @@ Crossing any boundary is a change of state on one record, never a copy. "Working
 2. **The log is append-only.** *Carried*, from vsect 0.1 and the archived design. A correction is a new event that names the one it corrects.
 3. **Versions are content addresses.** *Carried.* A check binds to the versions of everything it rests on, and lapses, with the cause named, when any of them changes. An exact return to an earlier text restores its bindings (measured by Line A).
 4. **Standing is computed, never typed.** *Carried.* No request body may carry a status, rung or standing word.
-5. **Every event carries an attested actor.** *Carried*, from the identity work: agent key, parent, agent type, session, and what that record rests on.
+5. **Every event carries an attested actor.** *Carried*, from the identity work: agent key, parent, agent type, session, and what that record rests on. An actor is a mind (an agent or a person) or a **tool at a version** invoked by one. A tool's version is its event's era, so a mechanical result expires when the tool changes (*proposed*, ASF model demand 4).
 6. **Every change is a transition of the definition.** *Proposed.* An act the definition can't express is refused, and the refusal itself is recorded as a demand, through the one transition that is always admissible (`demand.record`).
 7. **The definition is records.** *Proposed.* Kinds, edge kinds, transitions, projections and slots change only through the definition's own transitions. The command surface is generated from them.
 8. **Every stock has an exit.** *Proposed.* Every kind declares its terminal states, and the engine reports any population that grows with no transition able to leave it.
@@ -96,6 +99,9 @@ Crossing any boundary is a change of state on one record, never a copy. "Working
 *Proposed, from the archived design's model and RC1, except where marked.*
 
 - **Store, event, atom.** An atom is the unit with one fate (*carried*, `model.md`). A file is a container, and a rendering.
+- **Identity and name.** An atom's identity is its minting event. Its **name** (the slug) is a label with a history, changed by its own event. Old names keep resolving, and Joseph's old-slug → fate mapping (renamed, split, merged, retired) is a projection over those events, so nothing extra is maintained (*proposed*, ASF model demand 3).
+- **Store address.** A store declares the other stores it names. An edge, a source's provenance or a set-aside may then designate `store/kind:slug` (*carried* in shape from the archived design's §12, *proposed* here). Whether a change in one store cascades into another is open.
+- **Arrangement.** An authored composition of atoms: which ones, in what order, and the gap rows for what is planned. Every rendering is computed from one; a segment file and an outline are both arrangements. It adds no claims (*carried*, `model.md`: "a view selects and orders records and adds no claims"). Because it is authored, it is an atom, with its own transitions (*proposed*, ASF model demand 1).
 - **Kind.** A declared type of atom, admitted only when it *"fails differently, and is repaired differently, from every other kind"* (*carried*, `model.md`). It declares:
   - its fields, each with a schema;
   - its dimensions and their rungs;
@@ -112,7 +118,7 @@ Crossing any boundary is a change of state on one record, never a copy. "Working
   Binding a restatement to the exact version it restates is the flow model's lever (`asf-flows.md` §5), and a store can declare it per edge.
 - **Transition.** One act a kind allows: kind × verb. It declares:
   - the schema of its request body;
-  - its **guard** over the atom's state, its edges, the log and the actor;
+  - its **guard** over the atom's state, its edges, the log, the actor, and any declared projection. For example, "a root edit must be inside a changeset" reads computed reach;
   - its **evidence requirement**;
   - **the dimension it moves**, and **what its close writes** (check finding 1). These are what a later charter is derived from;
   - its **decision-maker slot**;
@@ -129,10 +135,10 @@ Crossing any boundary is a change of state on one record, never a copy. "Working
 - **Decision.** A recorded choice, with:
   - its grounds;
   - its **assumptions as edges** to the records they rest on;
-  - **the importance it was made at**;
+  - **the importance it was made at**, in two parts: the stakes declared by whoever decides, and the reach computed from what rests on it;
   - what would reopen it.
 
-  It lapses, as "under-secured", when an assumption changes or its importance, recomputed from what now rests on it, rises above the importance it was made at. Lapsing asks for the decision to be secured again at the new importance; it doesn't reverse it. Admitting a kind is a decision.
+  It lapses, as "under-secured", when an assumption changes or either part of its importance rises above what it was made at. Lapsing asks for the decision to be secured again at the new importance; it doesn't reverse it. Admitting a kind is a decision.
 - **Changeset.** A transaction.
   - **Opening.** `changeset.open` takes an intent, an invariant (what must be true everywhere afterward) and a scope, which can grow. While it is open, it is a branch of the store where the same engine writes. Drafting there is cheap and attributed, and its ripples stay inside.
   - **Committing.** `changeset.commit` has its own guard, a judgment on the whole: that the change makes the store more true, coherence included (Joseph's definition). At commit every branch event is re-validated against main. A request whose `version:` main has moved past is refused as a conflict, and the changeset rebases or aborts.
@@ -164,6 +170,8 @@ Crossing any boundary is a change of state on one record, never a copy. "Working
 | changeset | `open`, `commit`, `abort`, `halt` |
 | source, unit | `source.bring`, `unit.cross` |
 | decision | `decide`, `reopen` |
+| arrangement | `arrange`, `revise`, `retire` |
+| any atom | `rename` |
 
 These can't admit themselves, which is why the first event is a founding act.
 
@@ -220,7 +228,7 @@ With adapters in place, the engine becomes the long-lived runtime Joseph describ
 - **Claim** at statement grain, with its carving transition. Line B's evidence: in `scope-adaptive-system`, one Definition paragraph held six commitments that fail separately.
 - **Finding, typed by kind.** The circuit breaker needs the type.
 - **Question**, with a closer.
-- **Check**, securing a claim version on an evidence line.
+- **Review**, what a checker sends back, which can itself be wrong. Each **check** in it is an event that secures a claim's version on an evidence line, and its lapse is a projection. A check is an act, not an atom.
 - **Claim record**, separate from its claim, with a `describes` edge (Line A: 21 of 31 record checks broke or narrowed).
 - **Explanatory and application atoms** (`restates`, `narrates`; uses against reality).
 - **Tension**, a standing contradiction between well-supported claims. Its dependents are conditioned on it, and it is re-evaluated only when bearing evidence arrives. A period-2 oscillation converts into one.
