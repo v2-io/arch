@@ -18,3 +18,4 @@
   - **Unknowns scout** (Opus, read-only) → `../../research/unknowns-scout.md`.
   - **Line B** (Fable) → founding a pilot store in `~/src/aat-v3/`, report at `~/src/aat-v3/msc/pilot-founding-2026-11-04/`.
   - **Line A** offered to the ASF lead (session 0903e35e), whose plan already holds it (phase 4, retrospective item 12). If the lead declines, a separate agent will run it on a worktree branch, unmerged.
+- **Line A accepted by the ASF lead.** A lane is extracting the Claim Records as one changeset on an asf worktree branch, after first claiming the 24 segments in vsect. No merge, no push. Its account will be at `asf/msc/inside-out-2026-10/system-review/claim-record-extraction-2026-11-04.md` on that branch, comparing the one changeset with 24 separate edits on a clone, and saying what vsect needs for episodes.
