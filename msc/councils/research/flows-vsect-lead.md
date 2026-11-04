@@ -12,7 +12,7 @@
 
 The spectral radius of the feedback block below 1 guarantees finite **work**. It does not guarantee bounded **residue**: sources that were processed and never retired, restatements nobody tied to their claim, Working Notes that kept growing. Those are stocks with an inflow and, today, no outflow edge at all. I.10 measured exactly this. After the sprint, a cold agent's total reading per claim was flat against the tag, and 94% of net new places were the effort's own files. So the model needs two conditions for steady state:
 
-- **ρ(A_feedback) below 1**, for work;
+- **$\rho(A_{\text{feedback}})$ below 1**, for work;
 - **a retirement edge from every stock**, for clutter. A source retires when all its units are terminal; a restatement retires or re-binds when its claim changes.
 
 Without the second, a system can converge on its claims and still drown its readers.
@@ -36,9 +36,9 @@ Today that edge is close to zero (*measured*):
 
 - Objective E is "one quantity measured on an agent the theory did not construct", and it is unmet.
 - The one measurement the sprint ran (E.3) measured a proxy, not the claim's own quantity.
-- `κ_processing` has been measured on no system, by its own segment's Claim Record.
+- $\kappa_{\text{processing}}$ has been measured on no system, by its own segment's Claim Record.
 
-So steady state is currently easy for a bad reason: the strongest feedback channel is missing, not stable. The model should carry the edge, and should be expected to approach ρ = 1 when it is switched on. That is the design question worth modeling ahead of time.
+So steady state is currently easy for a bad reason: the strongest feedback channel is missing, not stable. The model should carry the edge, and should be expected to approach $\rho = 1$ when it is switched on. That is the design question worth modeling ahead of time.
 
 ## 3. Priors for the yields
 
